@@ -22,7 +22,7 @@
         <v-card>
           <v-card-title>Discord</v-card-title>
           <v-card-text>
-            <a href="https://discordapp.com/invite/uJmQxG2">Join us on discord</a>
+            <a href="https://discordapp.com/invite/uJmQxG2" target="blank">Join us on discord</a>
           </v-card-text>
           <v-card-text></v-card-text>
         </v-card>
