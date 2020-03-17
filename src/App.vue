@@ -1,25 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+      <div class="d-flex align-center"></div>
 
       <v-spacer></v-spacer>
 
@@ -27,15 +9,12 @@
         <span class="mr-2">{{item.title}}</span>
         <v-icon>{{item.icon}}</v-icon>
       </v-btn>
-
-      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-content>
-      <router-view />
+      <transition name="fade">
+        <router-view />
+      </transition>
     </v-content>
   </v-app>
 </template>
@@ -49,8 +28,29 @@ export default class App extends Vue {
   public drawer = true;
   public mini = true;
   public items = [
-    { title: "Home", icon: "mdi-home-city", to: "Home" },
+    { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "Rankings" }
   ];
 }
 </script>
+
+<style lang="scss">
+.hide-footer {
+  .v-data-footer__select {
+    display: none !important;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.fade-enter-active {
+  transition-delay: .25s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+</style>

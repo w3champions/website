@@ -5,7 +5,23 @@
         <v-card>
           <v-card-title>Rankings</v-card-title>
           <v-card-text>
-            <v-data-table :items="data" :headers="headers"></v-data-table>
+            <v-data-table
+              class="elevation-1 hide-footer"
+              :headers="headers"
+              :items="rankings"
+              :options.sync="options"
+              :server-items-length="totalPlayers"
+              :footer-props="{
+                  showFirstLastPage: true,
+                }"
+              
+              @click:row="onRowClicked"
+            >
+              <template v-slot:item.matches="{ item }">{{ item.wins + item.losses }}</template>
+              <template v-slot:item.levelProgress="{ item }">
+                <v-progress-linear :value="item.levelProgress * 100" height="15"></v-progress-linear>
+              </template>
+            </v-data-table>
           </v-card-text>
         </v-card>
       </v-col>
@@ -17,17 +33,22 @@
               <v-list-item-title>{{stat.name}}</v-list-item-title>
               <v-list-item-subtitle class="text-right">{{stat.value}}</v-list-item-subtitle>
             </v-list-item>
-             
           </v-list>
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog v-model="showProfile" width="1600">
+      <v-container class="w3-bg">
+
+      </v-container>
+    </v-dialog>
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
+import { Ranking } from "../store/ranking/types";
 
 @Component({})
 export default class RankingsView extends Vue {
@@ -35,57 +56,101 @@ export default class RankingsView extends Vue {
     {
       text: "Rank",
       align: "start",
-      sortable: true,
+      sortable: false,
       value: "rank",
       width: "25px"
     },
     {
       text: "Player",
       align: "start",
-      sortable: true,
+      sortable: false,
       value: "name"
     },
     {
       text: "Wins",
       align: "end",
-      sortable: true,
+      sortable: false,
       value: "wins",
       width: "50px"
     },
     {
       text: "Losses",
       align: "end",
-      sortable: true,
+      sortable: false,
       value: "losses",
       width: "50px"
     },
     {
-      text: "Matches",
+      text: "Total",
       align: "end",
-      sortable: true,
+      sortable: false,
       value: "matches",
       width: "50px"
+    },
+    {
+      text: "Level",
+      align: "end",
+      sortable: false,
+      value: "level",
+      width: "50px"
+    },
+    {
+      text: "Progress",
+      align: "end",
+      sortable: false,
+      value: "levelProgress",
+      width: "100px"
     }
   ];
-
-  public data: any[] = [];
   public stats: any[] = [
-      { name: 'Total matches', value: 10000 },
-      { name: 'highest streak', value: 100},
-      { name: 'best winrate', value: 'Player 1' },
+    { name: "Total matches", value: 10000 },
+    { name: "highest streak", value: 100 },
+    { name: "best winrate", value: "Player 1" }
   ];
+  public options: any = {
+    itemsPerPage: 15
+  };
+  public totalPlayers = 1000;
+  public selectedPlayer = '';
+  public showProfile = false;
 
-  created() {
-    for (let i = 0; i < 100; i++) {
-      this.data.push({
-        rank: i + 1,
-        name: `Player ${i}`,
-        race: "human",
-        wins: 100 - i,
-        losses: i,
-        matches: 100
-      });
-    }
+  @Watch("options", { deep: true })
+  public onOptionsChanged() {
+    this.getRankings();
+  }
+
+  get rankings(): Ranking[] {
+    return this.$store.direct.state.rankings.rankings;
+  }
+
+  get playerUrl(): string {
+    // return `http://profile.w3champions.com/#${this.selectedPlayer}`;
+    return `http://profile.w3champions.com/#Pad#22587`;
+  }
+
+  mounted() {
+    this.getRankings();
+  }
+
+  public getRankings() {
+    this.$store.direct.dispatch.rankings.retrieveRankings(this.options);
+  }
+
+  public openPlayerProfile(playerName: string) {
+    this.selectedPlayer = playerName;
+    // this.showProfile = true;
+    window.open(this.playerUrl, '_blank');
+  }
+
+  public onRowClicked(ranking: Ranking) {
+    this.openPlayerProfile(ranking.name)
   }
 }
 </script>
+<style lang="scss" scoped>
+.w3-bg {
+  min-height: 80%;
+  min-width: 80%;
+  background: url('../assets/w3champions-profile-bg.png');
+}
+</style>
