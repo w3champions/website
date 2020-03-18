@@ -7,18 +7,12 @@ export default class RankingService {
         this.pageSize = pageSize;
     }
 
-    public async retrieveRankings(page: number): Promise<Ranking[]> {
+    public async retrieveRankings(page: number): Promise<{total: number, items: Ranking[]}> {
         const offset = page * this.pageSize;
-        const url = `/rank?limit=${this.pageSize}&offset=${offset}`;
-
+        const url = `http://w3champions.com:25059/rank?limit=${this.pageSize}&offset=${offset}`;
         
-        /*
-        // uncomment this to retrieve real data
         const response = await fetch(url);
         return await response.json();
-        */
-        
-        return this.createFakeData(page);
     }
 
     public async searchRankings(str: string): Promise<Ranking[]> {
@@ -38,7 +32,7 @@ export default class RankingService {
         for (let i = page*this.pageSize; i < (page+1)*this.pageSize; i++) {
             data.push({
                 rank: i + 1,
-                name: `Player ${i + 1}`,
+                battleTag: `Player ${i + 1}`,
                 wins: i,
                 losses: i,
                 level: Math.floor(Math.random() * 50),
@@ -55,7 +49,7 @@ export default class RankingService {
         for (let i = 0; i < 5; i++) {
             data.push({
                 rank: i + 1,
-                name: `${str}-Player ${Math.floor(Math.random() * 50)}`,
+                battleTag: `${str}-Player ${Math.floor(Math.random() * 50)}`,
                 wins: i,
                 losses: i,
                 level: Math.floor(Math.random() * 50),

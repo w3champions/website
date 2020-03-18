@@ -6,6 +6,7 @@ const mod = {
     namespaced: true,
     state: {
         page: 0,
+        totalRanks: 0,
         working: false,
         rankings: [],
         topFive: [],
@@ -19,14 +20,16 @@ const mod = {
                 commit.SET_PAGE(options.page - 1);
             }
 
-            const rankings = await rootGetters.rankingService.retrieveRankings(state.page);
-            commit.SET_RANKINGS(rankings);
+            const response = await rootGetters.rankingService.retrieveRankings(state.page);
+
+            commit.SET_TOTAL_RANKS(response.total)
+            commit.SET_RANKINGS(response.items);
         },
         async getTopFive(context: any) {
             const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
             const rankings = await rootGetters.rankingService.retrieveRankings(0);
-            commit.SET_TOP_FIVE(rankings.slice(0, 5));
+            commit.SET_TOP_FIVE(rankings.items.slice(0, 5));
         },
         async search(context: any, searchText: string) {
             const { commit, rootGetters, state } = moduleActionContext(context, mod);
@@ -41,6 +44,9 @@ const mod = {
         },
         SET_PAGE(state: RankingState, page: number) {
             state.page = page;
+        },
+        SET_TOTAL_RANKS(state: RankingState, totalRanks: number) {
+            state.totalRanks = totalRanks;
         },
         SET_TOP_FIVE(state: RankingState, rankings: Ranking[]) {
             state.topFive = rankings;

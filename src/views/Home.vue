@@ -6,19 +6,21 @@
           <v-col cols="12">
             <v-card>
               <v-card-title>Welcome</v-card-title>
-              <v-card-text>This site is under construction.</v-card-text>
               <v-card-text>
+                <h3>Installation Guide Windows</h3>
+                <p>We created a setup tool that automatically does all steps needed. You only need to select your Warcraft III folder.</p>
+              </v-card-text>
+              <v-card-text>
+                <h3>Installation Guide Mac OS</h3>
                 <p>If you want to test the latest version you have to setup W3Champions once on your pc. It automatically updates to its latest version. Follow these steps to set up everything:</p>
                 <ol>
                   <li>
-                    download the attached zip and unpack it directly into your Warcraft 3 folder (usually here C:\Program Files\Warcraft III).
-                    Afterwards you should find the following file C:\Program Files\Warcraft III\webui\index.html in place. make sure that your unzip program did NOT create two webui folders (/webui/webui/index.html )
+                    download the attached zip and unpack it directly into your Warcraft 3 folder.
+                    Afterwards you should find the following file 'Warcraft III/webui/index.html' in place. <u>Make sure that your unzip program did NOT create two webui folders (/webui/webui/index.html )</u>
                   </li>
                   <li>start reforged as usual. You will find an additional button on the top of the versus screen to search for an opponent</li>
                   <li>keep in mind, this is a very early development stage. Things are not polished, it is no final product. Please let me know about all issues you face.</li>
                 </ol>
-                <br />You can find more informations in our
-                <v-btn small text to="/Faq">FAQ section.</v-btn>
               </v-card-text>
             </v-card>
           </v-col>
@@ -91,7 +93,7 @@
                 <v-list-item v-for="(rank, i) in topFive" :key="i" @click="goToProfile(rank)">
                   <v-list-item-icon>{{i + 1}}.</v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title v-text="rank.name"></v-list-item-title>
+                    <v-list-item-title v-text="rank.battleTag"></v-list-item-title>
                     <v-list-item-subtitle>Win/Loss/Total: {{rank.wins}}/{{rank.losses}}/{{rank.wins + rank.losses}}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
@@ -120,7 +122,7 @@ export default class HomeView extends Vue {
   }
 
   public goToProfile(rank: Ranking) {
-    window.open(`http://profile.w3champions.com/#${rank.name}`, "_blank");
+    window.open(`http://profile.w3champions.com/#${rank.battleTag}`, "_blank");
   }
 }
 </script>

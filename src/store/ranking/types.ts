@@ -1,6 +1,7 @@
 export type RankingState = {
     working: boolean;
     page: number;
+    totalRanks: number;
     rankings: Ranking[];
     topFive: Ranking[];
     searchRanks: Ranking[];
@@ -8,7 +9,7 @@ export type RankingState = {
 
 export type Ranking = {
     rank: number;
-    name: string;
+    battleTag: string;
     wins: number;
     losses: number;
     level: number;

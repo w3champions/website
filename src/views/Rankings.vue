@@ -1,12 +1,12 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="12">
         <v-card>
           <v-card-title>
             Rankings
             <v-spacer></v-spacer>
-            <v-autocomplete
+            <v-autocomplete v-if="false"
               v-model="searchModel"
               append-icon="mdi-magnify"
               label="Search"
@@ -37,14 +37,15 @@
               @click:row="onRowClicked"
             >
               <template v-slot:item.matches="{ item }">{{ item.wins + item.losses }}</template>
+              <template v-slot:item.level="{ item }">{{ Math.floor(item.level) }}</template>
               <template v-slot:item.levelProgress="{ item }">
-                <v-progress-linear :value="item.levelProgress * 100" height="15"></v-progress-linear>
+                <v-progress-linear :value="(item.level - Math.floor(item.level)) * 100" height="15"></v-progress-linear>
               </template>
             </v-data-table>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="3" v-if="false">
         <v-card>
           <v-card-title>Stats</v-card-title>
           <v-list class="transparent">
@@ -81,7 +82,7 @@ export default class RankingsView extends Vue {
       text: "Player",
       align: "start",
       sortable: false,
-      value: "name"
+      value: "battleTag"
     },
     {
       text: "Wins",
@@ -178,7 +179,7 @@ export default class RankingsView extends Vue {
   }
 
   public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.name);
+    this.openPlayerProfile(ranking.battleTag);
   }
 }
 </script>
