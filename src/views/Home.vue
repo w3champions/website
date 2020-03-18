@@ -126,26 +126,12 @@
             <v-card>
               <v-card-title>Community</v-card-title>
               <v-card-text>
-                <ul>
-                  <li>
-                    <a
-                      href="https://discordapp.com/invite/uJmQxG2"
-                      target="blank"
-                    >Join us on discord</a>
-                  </li>
-                  <li>
-                    <a href="https://twitter.com/W3Pad" target="blank">Follow @W3Pad on twitter</a>
-                  </li>
-                  <li>
-                    <a href="https://www.patreon.com/w3pad" target="blank">Support us on patreon</a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
-                      target="blank"
-                    >Or directly support us via PayPal</a>
-                  </li>
-                </ul>
+                    <a href="https://discord.gg/8N8XDE" target="blank">
+                    <img src="../assets/discord.png" height="50px"/>
+                    </a>
+                    <br/>
+                    <a href="https://twitter.com/W3Pad?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @W3Pad</a><script type="application/javascript" async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <a href="https://www.patreon.com/bePatron?u=31856011" target="blank" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script type="application/javascript" async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
               </v-card-text>
               <v-card-text></v-card-text>
             </v-card>
@@ -181,6 +167,10 @@ import { Ranking } from "../store/ranking/types";
 export default class HomeView extends Vue {
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
+  }
+
+  get twitter(): string {
+    return '';
   }
 
   mounted() {

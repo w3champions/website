@@ -26,7 +26,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              class="elevation-1 hide-footer"
+              class="elevation-1 hide-footer table-row-pointer"
               :headers="headers"
               :items="rankings"
               :options.sync="options"
@@ -128,7 +128,6 @@ export default class RankingsView extends Vue {
   public options: any = {
     itemsPerPage: 15
   };
-  public totalPlayers = 1000;
   public selectedPlayer = "";
   public showProfile = false;
   public search = "";
@@ -161,6 +160,10 @@ export default class RankingsView extends Vue {
 
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
+  }
+
+  get totalPlayers(): number {
+    return this.$store.direct.state.rankings.totalRanks;
   }
 
   mounted() {
