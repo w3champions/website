@@ -128,17 +128,17 @@
               <v-card-text>
                 Join us
                 <br />
-                <a href="https://discord.gg/8N8XDE" target="blank">
+                <a href="https://discord.gg/8N8XDE" target="_blank">
                   <img src="../assets/discord-small.png" style="margin-left: -8px" height="50px" />
                 </a>
                 <br />Social Media
                 <br />
-                <a href="https://discord.gg/8N8XDE" target="blank">
+                <a href="https://twitter.com/W3Pad" target="_blank">
                   <img src="../assets/twitter.svg" height="24" />
                 </a>
                 <br />Support us
                 <br />
-                <a href="https://www.patreon.com/w3pad" target="blank">
+                <a href="https://www.patreon.com/w3pad" target="_blank">
                   <img src="../assets/patreon.png" height="24" />
                 </a>
                 <br />
@@ -146,7 +146,7 @@
                   <a
                     style="margin-top: 15px;"
                     href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
-                    target="blank"
+                    target="_blank"
                   >
                     <img src="../assets/paypal.png" height="24" />
                   </a>
