@@ -11,12 +11,12 @@ export default class RankingService {
         const offset = page * this.pageSize;
         const url = `rank?limit=${this.pageSize}&offset=${offset}`;
 
-        /*
+        
         // uncomment this to retrieve real data
         const response = await fetch(url);
-        return await response.json(); */
+        return await response.json();
 
-        return this.createFakeData(page);
+        // return this.createFakeData(page);
     }
 
     private createFakeData(page: number) {
