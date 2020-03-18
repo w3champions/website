@@ -6,27 +6,93 @@
           <v-col cols="12">
             <v-card>
               <v-card-title>Welcome</v-card-title>
+
+<v-row>
+<v-col cols="6">
               <v-card-text>
-                <h3>Installation Guide Windows</h3>
-                <p>We created a setup tool that automatically does all steps needed. You only need to select your Warcraft III folder.</p>
+                <h3>It is finally there - your Ladder for Warcraft III</h3>
+                <div>
+                  Finally your Warcraft III 1on1 Ladder is available, crafted by and for the community!
+                  <br><br>
+                  The ladder contains:
+  <ul>
+    <li>Improved Pings by non-global ladder</li>
+    <li>Matchmaking (based on W3Arena)</li>
+    <li>Ladder System (Check the RANKINGS tab top right)</li>
+    <li>Seamless integration in your Warcraft III client</li>
+    <li>Profiles</li>
+    <li>Differen Mappool</li>
+  </ul>
+
+
+<div>
+  <br/>
+                  <b>Current Map Pool</b><br>
+                    TM,EI,TSLV,CH,NIS,AZ and LR
+                    </div>
+                </div>
               </v-card-text>
-              <v-card-text>
-                <h3>Installation Guide Mac OS</h3>
-                <p>If you want to test the latest version you have to setup W3Champions once on your pc. It automatically updates to its latest version. Follow these steps to set up everything:</p>
-                <ol>
-                  <li>
-                    download the attached zip and unpack it directly into your Warcraft 3 folder.
-                    Afterwards you should find the following file 'Warcraft III/webui/index.html' in place. <u>Make sure that your unzip program did NOT create two webui folders (/webui/webui/index.html )</u>
-                  </li>
-                  <li>start reforged as usual. You will find an additional button on the top of the versus screen to search for an opponent</li>
-                  <li>keep in mind, this is a very early development stage. Things are not polished, it is no final product. Please let me know about all issues you face.</li>
-                </ol>
-              </v-card-text>
+              </v-col>
+              <v-col cols="6">
+                <img src="../assets/reforged.png" style="width: 90%">
+              </v-col>
+</v-row>
+
+              <v-row>
+                <v-col cols="6">
+                  <v-card-text>
+                    <h3>Installation Guide Windows</h3>
+                    <p>We created a setup tool that automatically does all steps needed.</p>
+                    <v-btn
+                      color="primary"
+                      href="./w3champions-setup.exe"
+                      target="_blank"
+                      value
+                    >Download the Windows installer</v-btn>
+                                        <br/><br/>
+                    <p>
+                      <ol>
+                        <li>
+                      Download the installer, execute it and select your Warcraft III installation folder.
+                     </li>
+                      <li>
+                       You are ready to go. Start Warcraft III and you should see the new button in the Versus-screen.
+                     </li>
+                    </ol>
+                    </p>
+                  </v-card-text>
+                </v-col>
+                <v-col cols="6">
+                  <v-card-text>
+                    <h3>Installation Guide Mac OS</h3>
+                    <p>With a Mac you have to place the following files in your WC3 Installation folder manually.</p>
+                    <v-btn
+                      color="primary"
+                      href="./w3champions-setup.exe"
+                      target="_blank"
+                    >Download the Mac archive</v-btn>
+                    <br/><br/>
+                    <p>
+                      <ol>
+                        <li>
+                      Download the archive file and unpack it in your Warcraft Installation folder
+                     </li>
+                     <li>
+                      Make sure to have a directory structure like Warcraft III\webui\index.html
+                     </li>
+                      <li>
+                       You are ready to go. Start Warcraft III and you should see the new button in the Versus-screen.
+                     </li>
+                    </ol>
+                    </p>
+                  </v-card-text>
+                </v-col>
+              </v-row>
             </v-card>
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" style="display:none">
             <v-card>
               <v-card-title>Lastest update</v-card-title>
               <v-card-text>
@@ -35,7 +101,7 @@
                   <li>Find opponents in 1on1 (no MMR yet, just randomly putting together players)</li>
                   <li>Select race</li>
                   <li>record of wins and losses</li>
-                  <li>profile page: http://profile.w3champions.com/#pad#22587</li>
+                  <li>profile page: http://profile.w3champions.com/</li>
                 </ul>
               </v-card-text>
               <v-card-text>

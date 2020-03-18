@@ -155,8 +155,8 @@ export default class RankingsView extends Vue {
   }
 
   get playerUrl(): string {
-    // return `http://profile.w3champions.com/#${this.selectedPlayer}`;
-    return `http://profile.w3champions.com/#Pad#22587`;
+     return `http://profile.w3champions.com/#${this.selectedPlayer}`;
+    //return `http://profile.w3champions.com/#Pad#22587`;
   }
 
   get searchRanks(): Ranking[] {
