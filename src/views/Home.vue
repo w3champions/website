@@ -132,6 +132,8 @@
                     <br/>
                     <a href="https://twitter.com/W3Pad?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @W3Pad</a><script type="application/javascript" async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     <a href="https://www.patreon.com/bePatron?u=31856011" target="blank" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script type="application/javascript" async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+
+                    <a _ngcontent-rwp-c0="" class="w3b" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=MT3PNN6W44AYN&amp;source=url" target="_blank"><img src='https://wortfilter.de/wp-content/uploads/2019/12/paypal-donate-button.png' style="width: 100px; margin-top:6px"/></a>
               </v-card-text>
               <v-card-text></v-card-text>
             </v-card>
