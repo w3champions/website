@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="12">
+      <v-col cols="8" offset="2" md="8">
         <v-card>
           <v-card-title>
             Rankings
