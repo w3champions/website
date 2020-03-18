@@ -16,7 +16,8 @@
                 <ol>
                   <li>
                     download the attached zip and unpack it directly into your Warcraft 3 folder.
-                    Afterwards you should find the following file 'Warcraft III/webui/index.html' in place. <u>Make sure that your unzip program did NOT create two webui folders (/webui/webui/index.html )</u>
+                    Afterwards you should find the following file 'Warcraft III/webui/index.html' in place.
+                    <u>Make sure that your unzip program did NOT create two webui folders (/webui/webui/index.html )</u>
                   </li>
                   <li>start reforged as usual. You will find an additional button on the top of the versus screen to search for an opponent</li>
                   <li>keep in mind, this is a very early development stage. Things are not polished, it is no final product. Please let me know about all issues you face.</li>
@@ -60,14 +61,31 @@
             <v-card>
               <v-card-title>Community</v-card-title>
               <v-card-text>
-                    <a href="https://discord.gg/8N8XDE" target="blank">
-                    <img src="../assets/discord.png" height="50px"/>
-                    </a>
-                    <br/>
-                    <a href="https://twitter.com/W3Pad?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @W3Pad</a><script type="application/javascript" async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    <a href="https://www.patreon.com/bePatron?u=31856011" target="blank" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script type="application/javascript" async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+                Join us
+                <br />
+                <a href="https://discord.gg/8N8XDE" target="blank">
+                  <img src="../assets/discord-small.png" style="margin-left: -8px" height="50px" />
+                </a>
+                <br />Social Media
+                <br />
+                <a href="https://discord.gg/8N8XDE" target="blank">
+                  <img src="../assets/twitter.svg" height="24" />
+                </a>
+                <br />Support us
+                <br />
+                <a href="https://www.patreon.com/w3pad" target="blank">
+                  <img src="../assets/patreon.png" height="24" />
+                </a>
+                <br />
+                <br />
+                <a
+                  style="margin-top: 15px;"
+                  href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
+                  target="blank"
+                >
+                  <img src="../assets/paypal.png" height="24" />
+                </a>
               </v-card-text>
-              <v-card-text></v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -104,7 +122,7 @@ export default class HomeView extends Vue {
   }
 
   get twitter(): string {
-    return '';
+    return "";
   }
 
   mounted() {
