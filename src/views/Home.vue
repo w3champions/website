@@ -21,7 +21,7 @@
     <li>Ladder System (Check the RANKINGS tab top right)</li>
     <li>Seamless integration in your Warcraft III client</li>
     <li>Profiles</li>
-    <li>Differen Mappool</li>
+    <li>Different Mappool</li>
   </ul>
 
 
@@ -68,7 +68,7 @@
                     <p>With a Mac you have to place the following files in your WC3 Installation folder manually.</p>
                     <v-btn
                       color="primary"
-                      href="./w3champions-setup.exe"
+                      href="./webui.zip"
                       target="_blank"
                     >Download the Mac archive</v-btn>
                     <br/><br/>
