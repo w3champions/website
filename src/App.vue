@@ -1,12 +1,12 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center"></div>
+      <div class="d-flex align-center">W3Champions Ladder</div>
 
       <v-spacer></v-spacer>
 
       <v-btn v-for="item in items" :key="item.title" text :to="item.to">
-        <span class="mr-2">{{item.title}}</span>
+        <span class="mr-2 hidden-xs-only">{{item.title}}</span>
         <v-icon>{{item.icon}}</v-icon>
       </v-btn>
     </v-app-bar>
@@ -29,7 +29,8 @@ export default class App extends Vue {
   public mini = true;
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
-    { title: "Rankings", icon: "mdi-view-list", to: "Rankings" }
+    { title: "Rankings", icon: "mdi-view-list", to: "Rankings" },
+    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/faq" },
   ];
 }
 </script>

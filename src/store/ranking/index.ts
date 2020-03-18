@@ -8,6 +8,8 @@ const mod = {
         page: 0,
         working: false,
         rankings: [],
+        topFive: [],
+        searchRanks: [],
     } as RankingState,
     actions: {
         async retrieveRankings(context: any, options?: DataTableOptions) {
@@ -20,6 +22,18 @@ const mod = {
             const rankings = await rootGetters.rankingService.retrieveRankings(state.page);
             commit.SET_RANKINGS(rankings);
         },
+        async getTopFive(context: any) {
+            const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+            const rankings = await rootGetters.rankingService.retrieveRankings(0);
+            commit.SET_TOP_FIVE(rankings.slice(0, 5));
+        },
+        async search(context: any, searchText: string) {
+            const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+            const rankings = await rootGetters.rankingService.searchRankings(searchText);
+            commit.SET_SEARCH_RANKINGS(rankings);
+        }
     },
     mutations: {
         SET_RANKINGS(state: RankingState, rankings: Ranking[]) {
@@ -28,6 +42,12 @@ const mod = {
         SET_PAGE(state: RankingState, page: number) {
             state.page = page;
         },
+        SET_TOP_FIVE(state: RankingState, rankings: Ranking[]) {
+            state.topFive = rankings;
+        },
+        SET_SEARCH_RANKINGS(state: RankingState, rankings: Ranking[]) {
+            state.searchRanks = rankings;
+        }
     }
 } as const;
 

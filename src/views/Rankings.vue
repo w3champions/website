@@ -1,9 +1,29 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="9">
+      <v-col cols="12" md="9">
         <v-card>
-          <v-card-title>Rankings</v-card-title>
+          <v-card-title>
+            Rankings
+            <v-spacer></v-spacer>
+            <v-autocomplete
+              v-model="searchModel"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+              :items="searchRanks"
+              :loading="isLoading"
+              :search-input.sync="search"
+              color="white"
+              hide-no-data
+              hide-selected
+              item-text="name"
+              item-value="name"
+              placeholder="Start typing to Search"
+              return-object
+            ></v-autocomplete>
+          </v-card-title>
           <v-card-text>
             <v-data-table
               class="elevation-1 hide-footer"
@@ -14,7 +34,6 @@
               :footer-props="{
                   showFirstLastPage: true,
                 }"
-              
               @click:row="onRowClicked"
             >
               <template v-slot:item.matches="{ item }">{{ item.wins + item.losses }}</template>
@@ -25,7 +44,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="12" md="3">
         <v-card>
           <v-card-title>Stats</v-card-title>
           <v-list class="transparent">
@@ -38,9 +57,7 @@
       </v-col>
     </v-row>
     <v-dialog v-model="showProfile" width="1600">
-      <v-container class="w3-bg">
-
-      </v-container>
+      <v-container class="w3-bg"></v-container>
     </v-dialog>
   </v-container>
 </template>
@@ -111,12 +128,25 @@ export default class RankingsView extends Vue {
     itemsPerPage: 15
   };
   public totalPlayers = 1000;
-  public selectedPlayer = '';
+  public selectedPlayer = "";
   public showProfile = false;
+  public search = "";
+  public searchModel = null;
+  public isLoading = false;
 
   @Watch("options", { deep: true })
   public onOptionsChanged() {
     this.getRankings();
+  }
+
+  @Watch("search")
+  public onSearchChanged(newValue: string) {
+    newValue && newValue !== this.searchModel && this.$store.direct.dispatch.rankings.search(newValue);
+  }
+
+  @Watch("searchModel")
+  public onSearchSelected(newValue: Ranking) {
+    console.log(newValue);
   }
 
   get rankings(): Ranking[] {
@@ -128,7 +158,12 @@ export default class RankingsView extends Vue {
     return `http://profile.w3champions.com/#Pad#22587`;
   }
 
+  get searchRanks(): Ranking[] {
+    return this.$store.direct.state.rankings.searchRanks;
+  }
+
   mounted() {
+    this.search = '';
     this.getRankings();
   }
 
@@ -139,11 +174,11 @@ export default class RankingsView extends Vue {
   public openPlayerProfile(playerName: string) {
     this.selectedPlayer = playerName;
     // this.showProfile = true;
-    window.open(this.playerUrl, '_blank');
+    window.open(this.playerUrl, "_blank");
   }
 
   public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.name)
+    this.openPlayerProfile(ranking.name);
   }
 }
 </script>
@@ -151,6 +186,6 @@ export default class RankingsView extends Vue {
 .w3-bg {
   min-height: 80%;
   min-width: 80%;
-  background: url('../assets/w3champions-profile-bg.png');
+  background: url("../assets/w3champions-profile-bg.png");
 }
 </style>
