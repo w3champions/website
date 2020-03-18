@@ -68,7 +68,7 @@
                 </a>
                 <br />Social Media
                 <br />
-                <a href="https://discord.gg/8N8XDE" target="blank">
+                <a href="https://twitter.com/W3Pad" target="blank">
                   <img src="../assets/twitter.svg" height="24" />
                 </a>
                 <br />Support us
