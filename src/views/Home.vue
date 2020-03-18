@@ -77,14 +77,15 @@
                   <img src="../assets/patreon.png" height="24" />
                 </a>
                 <br />
-                <br />
-                <a
-                  style="margin-top: 15px;"
-                  href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
-                  target="blank"
-                >
-                  <img src="../assets/paypal.png" height="24" />
-                </a>
+                <div style="margin-top: 5px;">
+                  <a
+                    style="margin-top: 15px;"
+                    href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
+                    target="blank"
+                  >
+                    <img src="../assets/paypal.png" height="24" />
+                  </a>
+                </div>
               </v-card-text>
             </v-card>
           </v-col>
