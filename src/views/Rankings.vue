@@ -26,7 +26,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              class="elevation-1 hide-footer"
+              class="elevation-1 hide-footer table-row-pointer"
               :headers="headers"
               :items="rankings"
               :options.sync="options"

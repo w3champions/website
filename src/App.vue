@@ -30,7 +30,7 @@ export default class App extends Vue {
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "Rankings" },
-    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/faq" },
+    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/faq" }
   ];
 }
 </script>
@@ -39,6 +39,14 @@ export default class App extends Vue {
 .hide-footer {
   .v-data-footer__select {
     display: none !important;
+  }
+}
+
+.table-row-pointer {
+  tbody {
+    tr {
+      cursor: pointer !important;
+    }
   }
 }
 
