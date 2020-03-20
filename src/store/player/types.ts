@@ -1,5 +1,10 @@
+import { Match } from '../typings';
+
 export type PlayerState = {
   playerProfile: PlayerProfile;
+  recentMatches: Match[];
+  loadingRecentMatches: boolean;
+  loadingProfile: boolean;
 };
 
 export type PlayerProfile = {

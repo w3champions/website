@@ -1,17 +1,23 @@
 import { moduleActionContext } from "..";
 import { PlayerState, PlayerProfile, RaceStat, ModeStat, RankStat } from "./types";
-import { DataTableOptions } from "../typings";
+import { Match } from "../typings";
 import PercentageService from '@/services/PercentageService';
+import { API_URL } from '@/main';
 
 const mod = {
     namespaced: true,
     state: {
-        playerProfile: {} as PlayerProfile
+        playerProfile: {} as PlayerProfile,
+        recentMatches: [] as Match[],
+        loadingProfile: false,
+        loadingRecentMatches: false,
     } as PlayerState,
     actions: {
         async loadProfile(context: any, battleTag: string) {
             const { commit } = moduleActionContext(context, mod);
-            const url = 'http://w3champions.com:25059/userstats';
+            const url = `${API_URL}/userstats`;
+
+            commit.SET_LOADING_PROFILE(true);
 
             const response = await fetch(url, {
                 method: "POST",
@@ -102,12 +108,30 @@ const mod = {
             profile.ranks = rankStats;
 
             commit.SET_PROFILE(profile);
+            commit.SET_LOADING_PROFILE(false);
+        },
+        async loadRecentMatches(context: any, battleTag: string) {
+            const { commit, rootGetters } = moduleActionContext(context, mod);
+            
+            commit.SET_LOADING_RECENT_MATCHES(true);
+            const response = await rootGetters.matchService.retrievePlayerMatches(0, battleTag);
+            commit.SET_RECENT_MATCHES(response.items);
+            commit.SET_LOADING_RECENT_MATCHES(false);
         }
     },
     mutations: {
         SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
             state.playerProfile = profile;
-        }
+        },
+        SET_RECENT_MATCHES(state: PlayerState, matches: Match[]) {
+            state.recentMatches = matches;
+        },
+        SET_LOADING_PROFILE(state: PlayerState, loading: boolean) {
+            state.loadingProfile = loading;
+        },
+        SET_LOADING_RECENT_MATCHES(state: PlayerState, loading: boolean) {
+            state.loadingRecentMatches = loading;
+        },
     }
 } as const;
 

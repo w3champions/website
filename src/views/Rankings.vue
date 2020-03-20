@@ -1,26 +1,23 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="8" offset="2" md="8">
+      <v-col cols="10" offset="1" md="10">
         <v-card>
           <v-card-title>
             Rankings
             <v-spacer></v-spacer>
             <v-autocomplete
-              v-if="false"
               v-model="searchModel"
               append-icon="mdi-magnify"
               label="Search"
               single-line
-              hide-details
+              clearable
               :items="searchRanks"
               :loading="isLoading"
               :search-input.sync="search"
-              color="white"
-              hide-no-data
-              hide-selected
-              item-text="name"
-              item-value="name"
+              :no-data-text="noDataText"
+              item-text="battleTag"
+              item-value="battleTag"
               placeholder="Start typing to Search"
               return-object
             ></v-autocomplete>
@@ -37,18 +34,50 @@
               }"
               @click:row="onRowClicked"
             >
-              <template v-slot:item.matches="{ item }">{{
-                item.wins + item.losses
-              }}</template>
-              <template v-slot:item.level="{ item }">{{
-                Math.floor(item.level)
-              }}</template>
-              <template v-slot:item.levelProgress="{ item }">
-                <v-progress-linear
-                  :value="(item.level - Math.floor(item.level)) * 100"
-                  height="15"
-                ></v-progress-linear>
+              <template v-slot:body="{ items }">
+                <tbody>
+                  <tr
+                    @click="openPlayerProfile(item.battleTag)"
+                    v-for="item in items"
+                    :key="item.name"
+                    :class="{'searchedItem': item.battleTag === searchModelBattleTag}"
+                  >
+                    <td>{{item.rank}}</td>
+                    <td>{{item.battleTag}}</td>
+                    <td class="text-end">{{item.wins}}</td>
+                    <td class="text-end">{{item.losses}}</td>
+                    <td class="text-end">{{item.wins + item.losses}}</td>
+                    <td class="text-end">{{getWinRate(item).toFixed(1)}}%</td>
+                    <td>
+                      <v-progress-linear
+                        :value="(item.level - Math.floor(item.level)) * 100"
+                        height="20"
+                      >
+                        <span
+                          class="level"
+                          v-if="item.xp > 0"
+                        >XP: {{item.xp}} | Level: {{Math.floor(item.level)}}</span>
+                        <span class="level" v-else>unranked</span>
+                      </v-progress-linear>
+                    </td>
+                  </tr>
+                </tbody>
               </template>
+              <!--
+              <template v-slot:item.matches="{ item }">
+                {{
+                item.wins + item.losses
+                }}
+              </template>
+              <template v-slot:item.level="{ item }">
+                {{
+                Math.floor(item.level)
+                }}
+              </template>
+              <template v-slot:item.levelProgress="{ item }">
+                <v-progress-linear :value="(item.level - Math.floor(item.level)) * 100" height="15"></v-progress-linear>
+              </template>
+              -->
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -59,9 +88,11 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{
+              <v-list-item-subtitle class="text-right">
+                {{
                 stat.value
-              }}</v-list-item-subtitle>
+                }}
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -77,6 +108,7 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Ranking } from "../store/ranking/types";
+import { DataTableOptions } from "../store/typings";
 
 @Component({})
 export default class RankingsView extends Vue {
@@ -116,18 +148,17 @@ export default class RankingsView extends Vue {
       width: "50px"
     },
     {
-      text: "Level",
+      text: "Percentage",
       align: "end",
       sortable: false,
-      value: "level",
       width: "50px"
     },
     {
-      text: "Progress",
-      align: "end",
+      text: "Level",
+      align: "center",
       sortable: false,
       value: "levelProgress",
-      width: "100px"
+      width: "200px"
     }
   ];
   public stats = [
@@ -135,32 +166,60 @@ export default class RankingsView extends Vue {
     { name: "highest streak", value: 100 },
     { name: "best winrate", value: "Player 1" }
   ];
-  public options: any = {
-    itemsPerPage: 15
-  };
 
   public selectedPlayer = "";
   public showProfile = false;
   public search = "";
-  public searchModel = null;
+  public searchModel = {} as Ranking;
   public isLoading = false;
 
-  @Watch("options", { deep: true })
-  public onOptionsChanged() {
-    this.getRankings();
+  @Watch("searchModel")
+  public onSearchModelChanged(newVal: Ranking) {
+    this.goToRank(newVal);
   }
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    newValue &&
-      newValue !== this.searchModel &&
-      this.$store.direct.dispatch.rankings.search(newValue);
+    if (newValue && newValue.length > 2) {
+      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+    } else {
+      this.$store.direct.dispatch.rankings.clearSearch();
+    }
   }
-
 
   @Watch("searchModel")
   public onSearchSelected(newValue: Ranking) {
     return;
+  }
+
+  public options = {
+    page: 1,
+    itemsPerPage: 15
+  } as DataTableOptions;
+
+  @Watch("options", { deep: true })
+  onOptionsChanged() {
+    this.getRankings();
+  }
+
+  get searchModelBattleTag() {
+    if (
+      !this.searchModel ||
+      this.searchModel == null ||
+      !this.searchModel.battleTag
+    ) {
+      return "";
+    }
+
+    return this.searchModel.battleTag;
+  }
+
+  get noDataText(): string {
+    if (!this.search || this.search.length < 3) {
+      return "Type at lease 3 letters";
+    }
+
+    return "No player found";
   }
 
   get rankings(): Ranking[] {
@@ -185,23 +244,45 @@ export default class RankingsView extends Vue {
     this.getRankings();
   }
 
-  public getRankings() {
-    this.$store.direct.dispatch.rankings.retrieveRankings(this.options);
+  public getWinRate(rank: Ranking) {
+    const winRate = (rank.wins * 100) / (rank.wins + rank.losses);
+
+    if (isNaN(winRate)) {
+      return 0;
+    }
+
+    return winRate;
+  }
+
+  public getRankings(options?: DataTableOptions) {
+    this.$store.direct.dispatch.rankings.retrieveRankings(
+      options || this.options
+    );
+  }
+
+  private skipPageSync = false;
+
+  public async goToRank(rank: Ranking) {
+    this.options.page = Math.floor(rank.rank / 15) + 1;
   }
 
   public openPlayerProfile(playerName: string) {
     this.selectedPlayer = playerName;
     // this.showProfile = true;
-    window.open(this.playerUrl, "_blank");
+    // window.open(this.playerUrl, "_blank");
     // this.$router.push({ name: 'Player', params: { name: playerName } });
-    
-    /*
+
     const parts = playerName.split("#");
-    this.$router.push({
+    /*this.$router.push({
       name: "Player",
       params: { name: parts[0], tag: parts[1] }
+    });*/
+
+    console.log("/player/" + parts[0] + "/" + parts[1]);
+
+    this.$router.push({
+      path: "/player/" + parts[0] + "/" + parts[1]
     });
-  */
   }
 
   public onRowClicked(ranking: Ranking) {
@@ -214,5 +295,19 @@ export default class RankingsView extends Vue {
   min-height: 80%;
   min-width: 80%;
   background: url("../assets/w3champions-profile-bg.png");
+}
+
+@keyframes highlistFade {
+  from {
+    background: lightblue;
+  }
+  to {
+    background: transparent;
+  }
+}
+
+.searchedItem {
+  animation-name: highlistFade;
+  animation-duration: 2.5s;
 }
 </style>

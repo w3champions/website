@@ -11,6 +11,7 @@ const mod = {
     rankings: [],
     topFive: [],
     searchRanks: []
+    
   } as RankingState,
   actions: {
     async retrieveRankings(context: any, options?: DataTableOptions) {
@@ -39,8 +40,13 @@ const mod = {
       const rankings = await rootGetters.rankingService.searchRankings(
         searchText
       );
-      commit.SET_SEARCH_RANKINGS(rankings);
-    }
+
+      commit.SET_SEARCH_RANKINGS(rankings.items);
+    },
+    async clearSearch(context: any) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_SEARCH_RANKINGS([]);
+    },
   },
   mutations: {
     SET_RANKINGS(state: RankingState, rankings: Ranking[]) {

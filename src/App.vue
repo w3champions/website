@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="w3app">
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">W3Champions Ladder</div>
 
@@ -64,5 +64,15 @@ export default class App extends Vue {
 .fade-enter,
 .fade-leave-active {
   opacity: 0;
+}
+
+.level {
+  color: white;
+  text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black, -0.5px 0.5px 0.5px black,
+    -0.5px -0.5px 0.5px black;
+}
+
+.w3app {
+
 }
 </style>

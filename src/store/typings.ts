@@ -12,7 +12,15 @@ export interface Match {
   host: string;
   startTime: number;
   endTime?: number;
-  players: Array<{ battleTag: string, race: ERaceEnum, bucket: number, won?: boolean, xpChange?: number }>;
+  players: MatchPlayer[];
+}
+
+export interface MatchPlayer {
+  battleTag: string;
+  race: ERaceEnum;
+  bucket: number;
+  won?: boolean;
+  xpChange?: number;
 }
 
 export enum EGameMode {

@@ -14,7 +14,8 @@
     "types": [
       "webpack-env",
       "vuetify",
-      "moment"
+      "moment",
+      "vue-moment"
     ],
     "paths": {
       "@/*": [

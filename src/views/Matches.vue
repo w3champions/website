@@ -17,7 +17,7 @@
               <span>{{ item.map.substr(item.map.lastIndexOf('/') + 1).replace('.w3x', '') }}</span>
           </template>
           <template v-slot:item.startTime="{ item }">
-              <span>{{ item.startTime | moment("MMM DD YYYY hh:mm:ss") }}</span>
+              <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
           </template>
           <template v-slot:item.endTime="{ item }">
               <span v-if="item.endTime">
