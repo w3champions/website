@@ -33,8 +33,8 @@
                 </div>
               </v-card-text>
               </v-col>
-              <v-col cols="6">
-                <img src="../assets/reforged.png" style="width: 90%">
+              <v-col cols="6" style="text-align: center">
+                <img src="../assets/reforged.png" style="max-width: 90%; max-height: 320px;">
               </v-col>
 </v-row>
 
@@ -60,6 +60,15 @@
                      </li>
                     </ol>
                     </p>
+                    <p>
+                    <b>Issues with the download link?</b><br/> Some Antivir-Software has falsely detected our setup as malicious. We contacted them and some already corrected their databases. If thats not the case for you, use the following link and unpack the setup with the <b style="white-space: nowrap;">password WC3</b>
+                    </p>
+                                        <v-btn
+                      color="secondary"
+                      href="./w3champions-setup.zip"
+                      target="_blank"
+                      value
+                    >Download the Windows installer zipped</v-btn>
                   </v-card-text>
                 </v-col>
                 <v-col cols="6">
@@ -128,7 +137,7 @@
               <v-card-text>
                 Join us
                 <br />
-                <a href="https://discord.gg/8N8XDE" target="_blank">
+                <a href="https://discord.gg/uJmQxG2" target="_blank">
                   <img src="../assets/discord-small.png" style="margin-left: -8px" height="50px" />
                 </a>
                 <br />Social Media
