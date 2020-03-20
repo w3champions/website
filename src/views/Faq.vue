@@ -4,8 +4,10 @@
       <v-card-title>FAQ</v-card-title>
       <v-card-text>
         <v-expansion-panels>
-          <v-expansion-panel v-for="(faq,i) in faqs" :key="i">
-            <v-expansion-panel-header>{{faq.question}}</v-expansion-panel-header>
+          <v-expansion-panel v-for="(faq, i) in faqs" :key="i">
+            <v-expansion-panel-header>{{
+              faq.question
+            }}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <div v-html="faq.answer"></div>
             </v-expansion-panel-content>

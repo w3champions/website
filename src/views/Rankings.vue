@@ -6,7 +6,8 @@
           <v-card-title>
             Rankings
             <v-spacer></v-spacer>
-            <v-autocomplete v-if="false"
+            <v-autocomplete
+              v-if="false"
               v-model="searchModel"
               append-icon="mdi-magnify"
               label="Search"
@@ -32,14 +33,21 @@
               :options.sync="options"
               :server-items-length="totalPlayers"
               :footer-props="{
-                  showFirstLastPage: true,
-                }"
+                showFirstLastPage: true
+              }"
               @click:row="onRowClicked"
             >
-              <template v-slot:item.matches="{ item }">{{ item.wins + item.losses }}</template>
-              <template v-slot:item.level="{ item }">{{ Math.floor(item.level) }}</template>
+              <template v-slot:item.matches="{ item }">{{
+                item.wins + item.losses
+              }}</template>
+              <template v-slot:item.level="{ item }">{{
+                Math.floor(item.level)
+              }}</template>
               <template v-slot:item.levelProgress="{ item }">
-                <v-progress-linear :value="(item.level - Math.floor(item.level)) * 100" height="15"></v-progress-linear>
+                <v-progress-linear
+                  :value="(item.level - Math.floor(item.level)) * 100"
+                  height="15"
+                ></v-progress-linear>
               </template>
             </v-data-table>
           </v-card-text>
@@ -50,8 +58,10 @@
           <v-card-title>Stats</v-card-title>
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
-              <v-list-item-title>{{stat.name}}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{stat.value}}</v-list-item-subtitle>
+              <v-list-item-title>{{ stat.name }}</v-list-item-title>
+              <v-list-item-subtitle class="text-right">{{
+                stat.value
+              }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -120,7 +130,7 @@ export default class RankingsView extends Vue {
       width: "100px"
     }
   ];
-  public stats: any[] = [
+  public stats = [
     { name: "Total matches", value: 10000 },
     { name: "highest streak", value: 100 },
     { name: "best winrate", value: "Player 1" }
@@ -128,6 +138,7 @@ export default class RankingsView extends Vue {
   public options: any = {
     itemsPerPage: 15
   };
+
   public selectedPlayer = "";
   public showProfile = false;
   public search = "";
@@ -141,12 +152,15 @@ export default class RankingsView extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    newValue && newValue !== this.searchModel && this.$store.direct.dispatch.rankings.search(newValue);
+    newValue &&
+      newValue !== this.searchModel &&
+      this.$store.direct.dispatch.rankings.search(newValue);
   }
+
 
   @Watch("searchModel")
   public onSearchSelected(newValue: Ranking) {
-    console.log(newValue);
+    return;
   }
 
   get rankings(): Ranking[] {
@@ -154,7 +168,7 @@ export default class RankingsView extends Vue {
   }
 
   get playerUrl(): string {
-     return `http://profile.w3champions.com/#${this.selectedPlayer}`;
+    return `http://profile.w3champions.com/#${this.selectedPlayer}`;
     //return `http://profile.w3champions.com/#Pad#22587`;
   }
 
@@ -167,7 +181,7 @@ export default class RankingsView extends Vue {
   }
 
   mounted() {
-    this.search = '';
+    this.search = "";
     this.getRankings();
   }
 
@@ -179,6 +193,15 @@ export default class RankingsView extends Vue {
     this.selectedPlayer = playerName;
     // this.showProfile = true;
     window.open(this.playerUrl, "_blank");
+    // this.$router.push({ name: 'Player', params: { name: playerName } });
+    
+    /*
+    const parts = playerName.split("#");
+    this.$router.push({
+      name: "Player",
+      params: { name: parts[0], tag: parts[1] }
+    });
+  */
   }
 
   public onRowClicked(ranking: Ranking) {
