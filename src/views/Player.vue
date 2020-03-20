@@ -92,7 +92,7 @@ import { PlayerProfile } from "../store/player/types";
 import { Match } from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
-import { Ranking } from '../store/ranking/types';
+import { Ranking } from "../store/ranking/types";
 
 @Component({
   components: {
