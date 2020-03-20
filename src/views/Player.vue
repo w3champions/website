@@ -5,7 +5,7 @@
         <v-card>
           <v-card-title>Profile of {{ battleTag }}</v-card-title>
           <v-tabs>
-            <v-tabs-slider></v-tabs-slider>
+            <v-tabs-slider />
             <v-tab :href="`#tab-1`" style="background-color: #f5f5f5">Profile</v-tab>
             <v-tab
               :href="`#tab-2`"
@@ -56,6 +56,7 @@
                     <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
                       <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
                     </v-data-table>
+                    <div id="#chart" /><
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -65,7 +66,7 @@
                   :size="50"
                   color="primary"
                   indeterminate
-                ></v-progress-circular>
+                />
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-2'">
@@ -76,7 +77,7 @@
                 @pageChanged="onPageChanged"
                 itemsPerPage="15"
                 :alwaysLeftName="battleTag"
-              ></matches-grid>
+              />
             </v-tab-item>
           </v-tabs>
         </v-card>

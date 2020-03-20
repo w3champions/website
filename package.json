@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/moment": "^2.13.0",
     "@types/vue-moment": "^4.0.0",
+    "apexcharts": "^3.17.0",
     "core-js": "^3.6.4",
     "direct-vuex": "^0.10.4",
     "moment": "^2.24.0",
