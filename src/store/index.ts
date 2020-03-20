@@ -8,12 +8,14 @@ import MatchService from '@/services/MatchService';
 import rankings from "./ranking/index";
 import player from "./player/index";
 import match from "./match/index";
+import ProfileService from '@/services/ProfileService';
 
 Vue.use(Vuex);
 
 const services = {
   rankingService: new RankingService(15),
-  matchService: new MatchService(100),
+  matchService: new MatchService(50),
+  profileService: new ProfileService(),
 };
 
 const mod = {
@@ -31,6 +33,9 @@ const mod = {
     },
     matchService() {
       return services.matchService;
+    },
+    profileService() {
+      return services.profileService;
     }
   }
 } as const;

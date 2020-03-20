@@ -18,64 +18,11 @@ const mod = {
     actions: {
         async loadProfile(context: any, battleTag: string) {
             const { commit, rootGetters } = moduleActionContext(context, mod);
-            const url = `${API_URL}/userstats`;
+            
 
             commit.SET_LOADING_PROFILE(true);
 
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ account: battleTag })
-            });
-
-            const data = await response.json();
-
-            const profile = {} as PlayerProfile;
-
-            profile.account = data.account;
-            profile.server = data.server;
-
-            const raceStats: RaceStat[] = [];
-
-            for (const key in data.data.stats) {
-                if (Object.prototype.hasOwnProperty.call(data.data.stats, key)) {
-                    const element = data.data.stats[key];
-
-                    const percentage = ((element.wins * 100) / (element.wins + element.losses) || 0);
-
-                    raceStats.push({
-                        race: key,
-                        wins: element.wins,
-                        losses: element.losses,
-                        total: element.wins + element.losses,
-                        percentage: percentage > 0 ? Number(percentage.toFixed(1)) : 0,
-                    });
-                }
-            }
-
-            profile.stats = raceStats;
-
-            const modeStats: ModeStat[] = [];
-
-            for (const key in data.data.ladder) {
-                if (Object.prototype.hasOwnProperty.call(data.data.ladder, key)) {
-                    const element = data.data.ladder[key];
-
-                    modeStats.push({
-                        mode: key,
-                        wins: element.wins,
-                        losses: element.losses,
-                        xp: element.xp,
-                        level: element.level,
-                        rank: element.rank,
-                    });
-                }
-            }
-
-            profile.ladder = modeStats;
+            const profile = await rootGetters.profileService.retrieveProfile(battleTag);
 
             commit.SET_PROFILE(profile);
             commit.SET_LOADING_PROFILE(false);

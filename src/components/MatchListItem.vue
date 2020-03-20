@@ -36,7 +36,7 @@ export default class PlayerView extends Vue {
 
   get selfPlayer(): MatchPlayer {
     const player = this.match.players.filter(
-      x => x.battleTag.toLowerCase() === this.selfBattleTag
+      x => x.battleTag.toLowerCase() === this.selfBattleTag.toLowerCase()
     );
 
     if (player && player.length > 0) {
@@ -48,7 +48,7 @@ export default class PlayerView extends Vue {
 
   get otherPlayer(): MatchPlayer {
     const player = this.match.players.filter(
-      x => x.battleTag.toLowerCase() !== this.selfBattleTag
+      x => x.battleTag.toLowerCase() !== this.selfBattleTag.toLowerCase()
     );
 
     if (player && player.length > 0) {

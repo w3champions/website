@@ -13,7 +13,7 @@
 
     <v-content>
       <transition name="fade">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </transition>
     </v-content>
   </v-app>
@@ -80,7 +80,34 @@ export default class App extends Vue {
   }
 }
 
+@media (min-width: 960px) {
+  .container {
+    max-width: none !important;
+  }
+}
+
+@media (min-width: 1264px) {
+  .container {
+    max-width: 1185px !important;
+  }
+}
+
+@media (min-width: 1904px) {
+  .container {
+    max-width: 1785px !important;
+  }
+}
+
+
+
+.won {
+  color: green;
+}
+
+.lost {
+  color: red;
+}
+
 .w3app {
-  
 }
 </style>

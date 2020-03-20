@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>Matches</v-card-title>
-          <matches-grid v-model="matches" :totalMatches="totalMatches" @pageChanged="onPageChanged" itemsPerPage="100"></matches-grid>
+          <matches-grid v-model="matches" :totalMatches="totalMatches" @pageChanged="onPageChanged" :itemsPerPage="50"></matches-grid>
         </v-card>
       </v-col>
     </v-row>

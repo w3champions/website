@@ -1,6 +1,18 @@
 <template>
   <div :class="textClass">
-    <div>{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</div>
+    <div>
+      <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</a>
+      </template>
+      <div v-if="profile.data">
+        Wins: {{profile.data.stats.total.wins}} | Losses: {{profile.data.stats.total.losses}} | Total: {{profile.data.stats.total.wins + profile.data.stats.total.losses}}
+      </div>
+      <div v-else>
+        Wins: ... | Losses: ... | Total: ...
+      </div>
+    </v-tooltip>
+      </div>
     <div :class="won" >
       <span v-if="won">{{won}}</span><span v-else>Playing</span> as {{race}}
       <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
@@ -12,6 +24,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Match, ERaceEnum } from "../store/typings";
+import { PlayerProfile } from '../store/player/types';
 
 @Component({})
 export default class PlayerMatchInfo extends Vue {
@@ -73,15 +86,23 @@ export default class PlayerMatchInfo extends Vue {
   get name() {
     return this.player.battleTag;
   }
+
+  public profile = {} as any;
+
+  private async lazyLoadProfile() {
+    if (!this.profile.account) {
+      this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(this.name);
+    }
+  }
+
+  public goToPlayer(playerName: string) {
+    const parts = playerName.split("#");
+
+    this.$router.push({
+      path: "/player/" + parts[0] + "/" + parts[1]
+    }).catch(err => {
+      return;
+    });
+  }
 }
 </script>
-
-<style lang="scss" scoped>
-.won {
-    color: green;
-}
-
-.lost {
-    color: red;
-}
-</style>
