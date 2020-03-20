@@ -3,14 +3,12 @@ import { API_URL } from '@/main';
 
 export default class MatchService {
     private pageSize: number;
-    private smallPageSize: number;
 
-    constructor(pageSize: number, smallPageSize: number) {
+    constructor(pageSize: number) {
         this.pageSize = pageSize;
-        this.smallPageSize = smallPageSize
     }
 
-    public async retrieveRankings(page: number): Promise<{ total: number; items: Match[] }> {
+    public async retrieveMatches(page: number): Promise<{ total: number; items: Match[] }> {
         const offset = page * this.pageSize;
         const url = `${API_URL}/match?limit=${this.pageSize}&offset=${offset}`;
 
@@ -19,8 +17,8 @@ export default class MatchService {
     }
 
     public async retrievePlayerMatches(page: number, battleTag: string): Promise<{total: number; items: Match[]}> {
-        const offset = page * this.smallPageSize;
-        const url = `${API_URL}/player/${encodeURIComponent(battleTag)}/match?limit=${this.smallPageSize}&offset=${offset}`;
+        const offset = page * 15;
+        const url = `${API_URL}/player/${encodeURIComponent(battleTag)}/match?limit=15&offset=${offset}`;
 
         const response = await fetch(url, {
             headers: {

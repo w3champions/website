@@ -13,7 +13,7 @@ Vue.use(Vuex);
 
 const services = {
   rankingService: new RankingService(15),
-  matchService: new MatchService(100, 10),
+  matchService: new MatchService(100),
 };
 
 const mod = {

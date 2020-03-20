@@ -10,14 +10,14 @@ const mod = {
         matches: [] as Match[],
     } as MatchState,
     actions: {
-        async loadMatches(context: any, options?: DataTableOptions) {
+        async loadMatches(context: any, page?: number) {
             const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-            if (options && options.page != null) {
-                commit.SET_PAGE(options.page - 1);
+            if (page != null && !isNaN(page)) {
+                commit.SET_PAGE(page - 1);
             }
 
-            const response = await rootGetters.matchService.retrieveRankings(state.page);
+            const response = await rootGetters.matchService.retrieveMatches(state.page);
 
             commit.SET_TOTAL_MATCHES(response.total);
             commit.SET_MATCHES(response.items);

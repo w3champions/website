@@ -1,8 +1,11 @@
 import { Match } from '../typings';
 
 export type PlayerState = {
+  page: number,
+  battleTag: string;
+  totalMatches: number;
   playerProfile: PlayerProfile;
-  recentMatches: Match[];
+  matches: Match[];
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
 };
@@ -27,12 +30,12 @@ export type RaceStat = {
 };
 
 export type ModeStat = {
-  type: "Wins" | "Losses" | "Percentage";
-  solo: number;
-  twoOnTwo: number;
-  threeOnThree: number;
-  fourOnFour: number;
-  ffa: number;
+  type: string;
+  solo: string | number;
+  twoOnTwo: string | number;
+  threeOnThree: string | number;
+  fourOnFour: string | number;
+  ffa: string | number;
 };
 
 export type RankStat = {

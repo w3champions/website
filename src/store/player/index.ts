@@ -1,4 +1,4 @@
-import { moduleActionContext } from "..";
+import { moduleActionContext, rootActionContext } from "..";
 import { PlayerState, PlayerProfile, RaceStat, ModeStat, RankStat } from "./types";
 import { Match } from "../typings";
 import PercentageService from '@/services/PercentageService';
@@ -7,14 +7,17 @@ import { API_URL } from '@/main';
 const mod = {
     namespaced: true,
     state: {
+        battleTag: '',
+        page: 0,
+        totalMatches: 0,
         playerProfile: {} as PlayerProfile,
-        recentMatches: [] as Match[],
+        matches: [] as Match[],
         loadingProfile: false,
         loadingRecentMatches: false,
     } as PlayerState,
     actions: {
         async loadProfile(context: any, battleTag: string) {
-            const { commit } = moduleActionContext(context, mod);
+            const { commit, rootGetters } = moduleActionContext(context, mod);
             const url = `${API_URL}/userstats`;
 
             commit.SET_LOADING_PROFILE(true);
@@ -88,49 +91,73 @@ const mod = {
                 ffa: ffa > 0 ? Number(ffa.toFixed(1)) : 0,
             });
 
+            modeStats.push({
+                type: "Rank",
+                solo: rootGetters.rankingService.toRank(data.data.ladder.solo.rank),
+                twoOnTwo: rootGetters.rankingService.toRank(data.data.ladder.two.rank),
+                threeOnThree: rootGetters.rankingService.toRank(data.data.ladder.three.rank),
+                fourOnFour: rootGetters.rankingService.toRank(data.data.ladder.four.rank),
+                ffa: rootGetters.rankingService.toRank(data.data.ladder.ffa.rank),
+            });
+
+            modeStats.push({
+                type: "Level",
+                solo: Math.floor(data.data.ladder.solo.level),
+                twoOnTwo: Math.floor(data.data.ladder.two.level),
+                threeOnThree: Math.floor(data.data.ladder.three.level),
+                fourOnFour: Math.floor(data.data.ladder.four.level),
+                ffa: Math.floor(data.data.ladder.ffa.level),
+            });
+
+            modeStats.push({
+                type: "XP",
+                solo: data.data.ladder.solo.xp,
+                twoOnTwo: data.data.ladder.two.xp,
+                threeOnThree: data.data.ladder.three.xp,
+                fourOnFour: data.data.ladder.four.xp,
+                ffa: data.data.ladder.ffa.xp,
+            });
+
             profile.ladder = modeStats;
-
-            const rankStats: RankStat[] = [];
-
-            for (const key in data.data.ladder) {
-                if (Object.prototype.hasOwnProperty.call(data.data.ladder, key)) {
-                    const element = data.data.ladder[key];
-
-                    rankStats.push({
-                        title: key,
-                        level: element.level,
-                        xp: element.xp,
-                        rank: element.rank
-                    });
-                }
-            }
-
-            profile.ranks = rankStats;
 
             commit.SET_PROFILE(profile);
             commit.SET_LOADING_PROFILE(false);
         },
-        async loadRecentMatches(context: any, battleTag: string) {
-            const { commit, rootGetters } = moduleActionContext(context, mod);
+        async loadMatches(context: any, page?: number) {
+            const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+            if (page != null && !isNaN(page)) {
+                commit.SET_PAGE(page - 1);
+            }
             
             commit.SET_LOADING_RECENT_MATCHES(true);
-            const response = await rootGetters.matchService.retrievePlayerMatches(0, battleTag);
-            commit.SET_RECENT_MATCHES(response.items);
+            const response = await rootGetters.matchService.retrievePlayerMatches(state.page, state.battleTag);
+            commit.SET_TOTAL_MATCHES(response.total);
+            commit.SET_MATCHES(response.items);
             commit.SET_LOADING_RECENT_MATCHES(false);
-        }
+        },
     },
     mutations: {
         SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
             state.playerProfile = profile;
         },
-        SET_RECENT_MATCHES(state: PlayerState, matches: Match[]) {
-            state.recentMatches = matches;
+        SET_PAGE(state: PlayerState, page: number) {
+            state.page = page;
+        },
+        SET_TOTAL_MATCHES(state: PlayerState, totalMatches: number) {
+            state.totalMatches = totalMatches;
+        },
+        SET_MATCHES(state: PlayerState, matches: Match[]) {
+            state.matches = matches;
         },
         SET_LOADING_PROFILE(state: PlayerState, loading: boolean) {
             state.loadingProfile = loading;
         },
         SET_LOADING_RECENT_MATCHES(state: PlayerState, loading: boolean) {
             state.loadingRecentMatches = loading;
+        },
+        SET_BATTLE_TAG(state: PlayerState, battleTag: string) {
+            state.battleTag = battleTag;
         },
     }
 } as const;
