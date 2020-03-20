@@ -68,11 +68,19 @@ export default class App extends Vue {
 
 .level {
   color: white;
-  text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black, -0.5px 0.5px 0.5px black,
-    -0.5px -0.5px 0.5px black;
+  text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black,
+    -0.5px 0.5px 0.5px black, -0.5px -0.5px 0.5px black;
+}
+
+.profile {
+  .v-tabs {
+    .v-tabs-bar__content {
+      border-bottom: 1px solid #cdcdcd !important;
+    }
+  }
 }
 
 .w3app {
-
+  
 }
 </style>

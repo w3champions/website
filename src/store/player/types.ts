@@ -30,12 +30,12 @@ export type RaceStat = {
 };
 
 export type ModeStat = {
-  type: string;
-  solo: string | number;
-  twoOnTwo: string | number;
-  threeOnThree: string | number;
-  fourOnFour: string | number;
-  ffa: string | number;
+  mode: string;
+  wins: number;
+  losses: number;
+  rank: number;
+  level: number;
+  xp: number;
 };
 
 export type RankStat = {

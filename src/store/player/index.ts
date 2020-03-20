@@ -59,64 +59,21 @@ const mod = {
             profile.stats = raceStats;
 
             const modeStats: ModeStat[] = [];
-            modeStats.push({
-                type: "Wins",
-                solo: data.data.ladder.solo.wins,
-                twoOnTwo: data.data.ladder.two.wins,
-                threeOnThree: data.data.ladder.three.wins,
-                fourOnFour: data.data.ladder.four.wins,
-                ffa: data.data.ladder.ffa.wins
-            });
 
-            modeStats.push({
-                type: "Losses",
-                solo: data.data.ladder.solo.losses,
-                twoOnTwo: data.data.ladder.two.losses,
-                threeOnThree: data.data.ladder.three.losses,
-                fourOnFour: data.data.ladder.four.losses,
-                ffa: data.data.ladder.ffa.losses
-            });
-            const solo = PercentageService.getPercentage(data.data.ladder.solo.wins, (data.data.ladder.solo.wins + data.data.ladder.solo.losses))
-            const twoOnTwo = PercentageService.getPercentage(data.data.ladder.two.wins, (data.data.ladder.two.wins + data.data.ladder.two.losses))
-            const threeOnThree = PercentageService.getPercentage(data.data.ladder.three.wins, (data.data.ladder.three.wins + data.data.ladder.three.losses))
-            const fourOnFour = PercentageService.getPercentage(data.data.ladder.four.wins, (data.data.ladder.four.wins + data.data.ladder.four.losses))
-            const ffa = PercentageService.getPercentage(data.data.ladder.ffa.wins, (data.data.ladder.ffa.wins + data.data.ladder.ffa.losses))
+            for (const key in data.data.ladder) {
+                if (Object.prototype.hasOwnProperty.call(data.data.ladder, key)) {
+                    const element = data.data.ladder[key];
 
-            modeStats.push({
-                type: "Percentage",
-                solo: solo > 0 ? Number(solo.toFixed(1)) : 0,
-                twoOnTwo: twoOnTwo > 0 ? Number(twoOnTwo.toFixed(1)) : 0,
-                threeOnThree: threeOnThree > 0 ? Number(threeOnThree.toFixed(1)) : 0,
-                fourOnFour: fourOnFour > 0 ? Number(fourOnFour.toFixed(1)) : 0,
-                ffa: ffa > 0 ? Number(ffa.toFixed(1)) : 0,
-            });
-
-            modeStats.push({
-                type: "Rank",
-                solo: rootGetters.rankingService.toRank(data.data.ladder.solo.rank),
-                twoOnTwo: rootGetters.rankingService.toRank(data.data.ladder.two.rank),
-                threeOnThree: rootGetters.rankingService.toRank(data.data.ladder.three.rank),
-                fourOnFour: rootGetters.rankingService.toRank(data.data.ladder.four.rank),
-                ffa: rootGetters.rankingService.toRank(data.data.ladder.ffa.rank),
-            });
-
-            modeStats.push({
-                type: "Level",
-                solo: Math.floor(data.data.ladder.solo.level),
-                twoOnTwo: Math.floor(data.data.ladder.two.level),
-                threeOnThree: Math.floor(data.data.ladder.three.level),
-                fourOnFour: Math.floor(data.data.ladder.four.level),
-                ffa: Math.floor(data.data.ladder.ffa.level),
-            });
-
-            modeStats.push({
-                type: "XP",
-                solo: data.data.ladder.solo.xp,
-                twoOnTwo: data.data.ladder.two.xp,
-                threeOnThree: data.data.ladder.three.xp,
-                fourOnFour: data.data.ladder.four.xp,
-                ffa: data.data.ladder.ffa.xp,
-            });
+                    modeStats.push({
+                        mode: key,
+                        wins: element.wins,
+                        losses: element.losses,
+                        xp: element.xp,
+                        level: element.level,
+                        rank: element.rank,
+                    });
+                }
+            }
 
             profile.ladder = modeStats;
 
@@ -129,7 +86,7 @@ const mod = {
             if (page != null && !isNaN(page)) {
                 commit.SET_PAGE(page - 1);
             }
-            
+
             commit.SET_LOADING_RECENT_MATCHES(true);
             const response = await rootGetters.matchService.retrievePlayerMatches(state.page, state.battleTag);
             commit.SET_TOTAL_MATCHES(response.total);

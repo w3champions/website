@@ -6,6 +6,7 @@
     :server-items-length="totalMatches"
     :headers="headers"
     :items="matches"
+    no-data-text="no matches found"
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
@@ -42,14 +43,15 @@ import { Match, ERaceEnum } from "../store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
-    components: {
-        PlayerMatchInfo,
-    }
+  components: {
+    PlayerMatchInfo
+  }
 })
 export default class MatchesGrid extends Vue {
   @Prop() public value!: Match[];
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
+  @Prop() public alwaysLeftName!: string;
 
   get matches(): Match[] {
     return this.value;
@@ -65,6 +67,16 @@ export default class MatchesGrid extends Vue {
   }
 
   public getWinner(match: Match) {
+    if (this.alwaysLeftName) {
+      const players = match.players.filter(
+        x => x.battleTag === this.alwaysLeftName
+      );
+
+      if (players && players.length > 0) {
+        return players[0];
+      }
+    }
+
     const winner = match.players.filter(x => x.won === true);
 
     if (winner && winner.length > 0) {
@@ -75,17 +87,27 @@ export default class MatchesGrid extends Vue {
   }
 
   public getLoser(match: Match) {
-    const winner = match.players.filter(x => x.won === false);
+    if (this.alwaysLeftName) {
+      const players = match.players.filter(
+        x => x.battleTag !== this.alwaysLeftName
+      );
 
-    if (winner && winner.length > 0) {
-      return winner[0];
+      if (players && players.length > 0) {
+        return players[0];
+      }
+    }
+
+    const loser = match.players.filter(x => x.won === false);
+
+    if (loser && loser.length > 0) {
+      return loser[0];
     }
 
     return match.players[1];
   }
 
   mounted() {
-      this.options.itemsPerPage = this.itemsPerPage;
+    this.options.itemsPerPage = this.itemsPerPage;
   }
 
   public headers = [
@@ -134,6 +156,6 @@ export default class MatchesGrid extends Vue {
 
 <style lang="scss" scoped>
 .playerCol {
-    max-width: 500px;
+  max-width: 500px;
 }
 </style>
