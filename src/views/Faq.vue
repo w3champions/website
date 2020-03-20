@@ -58,7 +58,7 @@ export default class FaqView extends Vue {
       question:
         "The Queue button is not shown in the Versus screen, what can I do?",
       answer:
-        '<a href="https://discord.gg/38HtTys">Reach out to us on discord</a>'
+        '<a href="https://discord.gg/uJmQxG2">Reach out to us on discord</a>'
     },
     {
       question: "I started the Queue but I don't find matches, what can I do?",
