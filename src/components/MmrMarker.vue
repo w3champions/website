@@ -1,42 +1,53 @@
 <template>
-  <div class="race-icon" :class="[raceIcon(), alignment()]">
-    <mmr-marker class="mmr-marker-location" :mmr="mmr" />
+  <div class="mmr-marker" :class="paintMMR()" :style="setSize()">
+    {{ mmr }}
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
-import MmrMarker from "@/components/MmrMarker.vue";
 
-@Component({
-  components: { MmrMarker }
-})
-export default class PlayerIcon extends Vue {
-  @Prop() race!: ERaceEnum;
+@Component({})
+export default class MmrMarker extends Vue {
   @Prop() mmr!: number;
-  @Prop() left!: boolean;
+  @Prop() size = 21;
 
-  raceIcon() {
-    return "race-icon-" + ERaceEnum[this.race];
+  setSize() {
+    return {
+      height: this.size + "px",
+      width: this.size + "px"
+    };
   }
 
-  alignment() {
-    return this.left ? "alignLeft" : "alignRight";
+  paintMMR() {
+    switch (this.mmr) {
+      case 1:
+      case 2:
+        return "mmr-marker-bronze";
+      case 3:
+      case 4:
+        return "mmr-marker-silver";
+      case 5:
+      case 6:
+        return "mmr-marker-gold";
+      case 7:
+      case 8:
+        return "mmr-marker-master";
+      case 9:
+      case 10:
+        return "mmr-marker-grandmaster";
+      default:
+        return "mmr-marker-bronze";
+    }
   }
 }
 </script>
 
 <style lang="scss">
-.race-icon {
-  width: 64px;
-  height: 64px;
-}
-
-.mmr-marker-location {
-  margin-left: 55px;
-  margin-top: 54px;
+.mmr-marker {
+  border-radius: 100%;
+  text-align: center;
 }
 
 .mmr-marker-bronze {
