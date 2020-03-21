@@ -1,28 +1,36 @@
 <template>
-  <v-app class="w3app variant" :dark="enableDarkMode">
-    <v-app-bar :class="{darkmode: enableDarkMode}" app>
+  <v-app class="w3app" :class="theme" :dark="isDarkTheme">
+    <v-app-bar :class="{darkmode: isDarkTheme}" app :dark="isDarkTheme">
       <div class="d-flex align-center">W3Champions Ladder</div>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        class="button-margin"
-        v-for="item in items"
-        :key="item.title"
-        text
-        tile
-        :to="item.to"
-      >
+      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
-      <v-switch
-        color="grey"
-        :dark="enableDarkMode"
-        style="padding-top: 20px;"
-        v-model="enableDarkMode"
-        label="Dark Mode"
-      ></v-switch>
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn text tile v-on="on">
+            <v-icon>mdi-invert-colors</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="theme = 'human'">
+            <v-list-item-title>Human</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="theme = 'orc'">
+            <v-list-item-title>Orc</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="theme = 'nightelf'">
+            <v-list-item-title>Night Elf</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="theme = 'undead'">
+            <v-list-item-title>Undead</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-content>
@@ -41,6 +49,7 @@ import { Component, Watch } from "vue-property-decorator";
 export default class App extends Vue {
   public drawer = true;
   public mini = true;
+  public variant = false;
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
@@ -58,6 +67,34 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(val);
   }
 
+  private selectedTheme = "";
+
+  get isDarkTheme() {
+    const isDark = this.theme === 'nightelf' || this.theme === 'undead';
+    console.log('is dark theme', isDark);
+    return isDark
+  }
+
+  get theme(): string {
+    if (!this.selectedTheme) {
+      const t = window.localStorage.getItem("theme");
+      if (t) {
+        this.selectedTheme = t;
+      }
+
+      this.selectedTheme = "human";
+    }
+
+    return this.selectedTheme;
+  }
+
+  set theme(val: string) {
+    window.localStorage.setItem("theme", val);
+    this.selectedTheme = val;
+    this.$vuetify.theme.dark = this.isDarkTheme;
+    this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
+  }
+
   created() {
     this.enableDarkMode = window.localStorage.getItem("dark") === "1";
   }
@@ -65,34 +102,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-.hide-footer {
-  .v-data-footer__select {
-    display: none !important;
-  }
-}
-
-.table-row-pointer {
-  tbody {
-    tr {
-      cursor: pointer !important;
-    }
-  }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition-property: opacity;
-  transition-duration: 0.25s;
-}
-
-.fade-enter-active {
-  transition-delay: 0.25s;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
+@import "./scss/main.scss";
 
 .level {
   color: white;
@@ -110,28 +120,6 @@ export default class App extends Vue {
 
 .button-margin {
   margin-right: 10px;
-}
-
-.v-btn:before {
-  background-color: transparent !important;
-}
-
-@media (min-width: 960px) {
-  .container {
-    max-width: none !important;
-  }
-}
-
-@media (min-width: 1264px) {
-  .container {
-    max-width: 1185px !important;
-  }
-}
-
-@media (min-width: 1904px) {
-  .container {
-    max-width: 1785px !important;
-  }
 }
 
 .won {
@@ -154,295 +142,5 @@ export default class App extends Vue {
   * {
     font-family: "Friz Quadrata Regular OS" !important;
   }
-}
-
-.v-application {
-  font-family: "Friz Quadrata Regular OS" !important;
-}
-
-.v-app-bar {
-  background-color: transparent !important;
-  font-family: "Friz Quadrata Regular OS";
-}
-
-.theme--light.v-application {
-  @font-face {
-    * {
-      font-family: "Friz Quadrata Regular OS";
-      color: #000;
-    }
-  }
-
-  background: url(./assets/human/background.jpg) no-repeat !important;
-  background-attachment: fixed !important;
-  background-size: cover !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  .v-app-bar:before {
-    content: "" !important;
-    background: inherit !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
-  }
-
-  .v-card {
-    background: inherit !important;
-    overflow: hidden !important;
-    color: #000000 !important;
-  }
-
-  .v-card__text {
-    color: #000000 !important;
-    filter: blur(0) !important;
-  }
-
-  .v-expansion-panel {
-    background-color: transparent !important;
-  }
-
-  .v-card:before {
-    content: "" !important;
-    background: inherit !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.6) !important;
-  }
-
-  .v-list {
-    background-color: transparent !important;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-  }
-
-  .v-tabs-bar {
-    background-color: transparent !important;
-    a {
-      color: #000000 !important;
-      filter: blur(0) !important;
-    }
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-  }
-
-  .v-tabs-slider-wrapper {
-    color: #000000 !important;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-  }
-
-  .v-tabs-items {
-    background-color: transparent !important;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-  }
-
-  .v-tab {
-    background-color: transparent !important;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-  }
-
-  .v-data-table {
-    background-color: transparent !important;
-    filter: blur(0);
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    transform: translate3d(0, 0, 0);
-    transform: translateZ(0);
-
-    tr:hover {
-      background-color: transparent !important;
-      box-shadow: 0 0 6px black;
-      position: relative;
-      z-index: 1;
-    }
-  }
-}
-
-.theme--light.v-application.variant {
-  background: url(./assets/orc/background.jpg) no-repeat !important;
-  background-attachment: fixed !important;
-  background-size: cover !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.theme--dark.v-application {
-  @font-face {
-    * {
-      font-family: "Friz Quadrata Regular OS";
-      color: #fff;
-    }
-  }
-
-  background: url(./assets/undead/background.jpg) no-repeat !important;
-  background-attachment: fixed !important;
-  background-size: cover !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  .v-btn {
-    font-family: "Friz Quadrata Regular OS" !important;
-    color: rgb(255, 212, 40) !important;
-    letter-spacing: 1.56px !important;
-    text-transform: uppercase !important;
-    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-  }
-
-  .v-app-bar:before {
-    content: "" !important;
-    background: inherit !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
-  }
-
-  .v-app-bar.v-toolbar.v-sheet.darkmode {
-    background-color: transparent !important;
-  }
-
-  .v-card {
-    background: inherit !important;
-    overflow: hidden !important;
-    color: #ffffff !important;
-  }
-
-  .v-card__title {
-    font-family: "Friz Quadrata Regular OS" !important;
-    color: rgb(255, 212, 40) !important;
-    letter-spacing: 1.56px !important;
-    text-transform: uppercase !important;
-    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-  }
-
-  h3 {
-    font-family: "Friz Quadrata Regular OS" !important;
-    color: rgb(255, 212, 40) !important;
-    letter-spacing: 1.56px !important;
-    text-transform: uppercase !important;
-    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-    font-weight: 400 !important;
-  }
-
-  .v-card__text {
-    color: #ffffff !important;
-    filter: blur(0) !important;
-  }
-
-  .v-expansion-panel {
-    background-color: transparent !important;
-  }
-
-  .v-card:before {
-    content: "" !important;
-    background: inherit !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
-  }
-
-  .v-list {
-    background-color: transparent !important;
-  }
-
-  .v-tabs-bar {
-    background-color: transparent !important;
-    a {
-      color: #ffffff !important;
-      filter: blur(0) !important;
-    }
-  }
-
-  .v-tabs-slider-wrapper {
-    color: #ffffff !important;
-  }
-
-  .v-tabs-items {
-    background-color: transparent !important;
-  }
-
-  .v-tab {
-    background-color: transparent !important;
-  }
-
-  .v-data-table {
-    background-color: transparent !important;
-    filter: blur(0);
-
-    tr:hover {
-      background-color: transparent !important;
-      box-shadow: 0 0 17px grey;
-      position: relative;
-      z-index: 1;
-    }
-  }
-}
-
-.theme--dark.v-application.variant {
-  background: url(./assets/nightelf/background.jpg) no-repeat !important;
-  background-attachment: fixed !important;
-  background-size: cover !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.v-card__title {
-  filter: blur(0) !important;
-}
-
-.v-app-bar.v-toolbar.v-sheet.darkmode {
-  background-color: #292b2f !important;
-}
-
-.row {
-  filter: blur(0px);
 }
 </style>

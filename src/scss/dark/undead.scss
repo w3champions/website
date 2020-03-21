@@ -1,0 +1,92 @@
+@import "./vars.scss";
+@import "../shared/index.scss";
+
+.w3-yellow-text {
+  font-family: "Friz Quadrata Regular OS" !important;
+  color: rgb(255, 212, 40) !important;
+  letter-spacing: 1.56px !important;
+  text-transform: uppercase !important;
+  text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+}
+
+.theme--dark.v-application {
+  @extend .w3-application;
+
+  @font-face {
+    * {
+      font-family: "Friz Quadrata Regular OS";
+      color: $w3-dark-color;
+    }
+  }
+
+  background: url(./assets/undead/background.jpg) no-repeat !important;
+
+  .v-btn {
+    font-family: "Friz Quadrata Regular OS" !important;
+    color: rgb(255, 212, 40) !important;
+    letter-spacing: 1.56px !important;
+    text-transform: uppercase !important;
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+  }
+
+  .v-app-bar:before {
+    @extend .w3-glass;
+
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .v-app-bar.v-toolbar.v-sheet.darkmode {
+    background-color: transparent !important;
+  }
+
+  .v-card {
+    color: $w3-dark-color !important;
+  }
+
+  .v-card__title {
+    @extend .w3-yellow-text;
+  }
+
+  h3 {
+    @extend .w3-yellow-text;
+    font-weight: 400 !important;
+  }
+
+  .v-card__text {
+    color: $w3-dark-color !important;
+  }
+
+  .v-card:before {
+    @extend .w3-glass;
+
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .v-tabs-bar {
+    a {
+      color: $w3-dark-color !important;
+    }
+  }
+
+  .v-tabs-slider-wrapper {
+    color: $w3-dark-color !important;
+  }
+
+  .v-tabs-items {
+    background-color: transparent !important;
+  }
+
+  .v-tab {
+    background-color: transparent !important;
+  }
+
+  .v-data-table {
+    tr:hover {
+      box-shadow: 0 0 17px grey;
+    }
+  }
+}
+
+.v-app-bar.v-toolbar.v-sheet.darkmode {
+  background-color: #292b2f !important;
+}
