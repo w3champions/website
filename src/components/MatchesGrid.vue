@@ -6,6 +6,7 @@
     :server-items-length="totalMatches"
     :headers="headers"
     :items="matches"
+    item-key="id"
     no-data-text="no matches found"
     :footer-props="{showFirstLastPage: true}"
   >
@@ -15,9 +16,8 @@
     <template v-slot:item.startTime="{ item }">
       <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
       <br />
-      <span v-if="item.endTime">item.endTime - item.startTime</span>
       <span
-        v-else-if="!item.endTime && Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
+        v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
       >completed</span>
       <span v-else>ongoing</span>
     </template>

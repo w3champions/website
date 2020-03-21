@@ -3,14 +3,15 @@
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title>Profile of {{ battleTag }} (<v-icon>mdi-chevron-triple-up</v-icon>{{mmr}})</v-card-title>
+          <v-card-title>
+            Profile of {{ battleTag }} (
+            <v-icon>mdi-chevron-triple-up</v-icon>
+            {{mmr}})
+          </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
-            <v-tab :href="`#tab-1`" style="background-color: #f5f5f5">Profile</v-tab>
-            <v-tab
-              :href="`#tab-2`"
-              style="background-color: #f5f5f5; margin-left: 2px;"
-            >Match History</v-tab>
+            <v-tab class="profileTab" :href="`#tab-1`">Profile</v-tab>
+            <v-tab class="profileTab" :href="`#tab-2`">Match History</v-tab>
             <v-tab-item :value="'tab-1'">
               <v-card-title>Stats</v-card-title>
               <v-card-text v-if="!loadingProfile">
@@ -236,7 +237,7 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter((x) => x.mode === '1on1')[0].bucket;
+    return this.profile.ladder.filter(x => x.mode === "1on1")[0].bucket;
   }
 
   public getMatches(page?: number) {
@@ -256,4 +257,13 @@ export default class PlayerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.profileTab {
+  background-color: #f5f5f5;
+}
+
+.theme--dark {
+  .profileTab {
+    background-color: #2f2f2f;
+  }
+}
 </style>
