@@ -115,20 +115,42 @@ export default class App extends Vue {
 .won {
   color: green;
   font-weight: 500;
-  text-shadow: 0 0 1px black;
 }
 
 .lost {
   color: red;
   font-weight: 500;
-  text-shadow: 0 0 1px black;
+}
+
+@font-face {
+  font-family: "Friz Quadrata Regular OS";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Friz Quadrata Regular OS"),
+    url("./assets/friz-quadrata-regular-os-5870333951e7c.woff") format("woff");
+
+  * {
+    font-family: "Friz Quadrata Regular OS" !important;
+  }
+}
+
+.v-application {
+  font-family: "Friz Quadrata Regular OS" !important;
 }
 
 .v-app-bar {
   background-color: transparent !important;
+  font-family: "Friz Quadrata Regular OS";
 }
 
 .theme--light.v-application {
+  @font-face {
+    * {
+      font-family: "Friz Quadrata Regular OS";
+      color: #000;
+    }
+  }
+
   background: url(./assets/human/background.jpg) no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
@@ -171,7 +193,7 @@ export default class App extends Vue {
     top: 0 !important;
     bottom: 0 !important;
     box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.8) !important;
-    filter: blur(200px) !important;
+    filter: blur(500px) !important;
   }
 
   .v-list {
@@ -204,7 +226,7 @@ export default class App extends Vue {
 
     tr:hover {
       background-color: transparent !important;
-      box-shadow: 0 0 17px black;
+      box-shadow: 0 0 6px black;
       position: relative;
       z-index: 1;
     }
@@ -212,6 +234,13 @@ export default class App extends Vue {
 }
 
 .theme--dark.v-application {
+  @font-face {
+    * {
+      font-family: "Friz Quadrata Regular OS";
+      color: #fff;
+    }
+  }
+
   background: url(./assets/undead/background.jpg) no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
@@ -237,11 +266,28 @@ export default class App extends Vue {
   .v-card {
     background: inherit !important;
     overflow: hidden !important;
-    color: #FFFFFF !important;
+    color: #ffffff !important;
+  }
+
+  .v-card__title {
+    font-family: "Friz Quadrata Regular OS" !important;
+    color: rgb(255, 212, 40) !important;
+    letter-spacing: 1.56px !important;
+    text-transform: uppercase !important;
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+  }
+
+  h3 {
+    font-family: "Friz Quadrata Regular OS" !important;
+    color: rgb(255, 212, 40) !important;
+    letter-spacing: 1.56px !important;
+    text-transform: uppercase !important;
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+    font-weight: 400 !important;
   }
 
   .v-card__text {
-    color: #FFFFFF !important;
+    color: #ffffff !important;
     filter: blur(0) !important;
   }
 
@@ -268,13 +314,13 @@ export default class App extends Vue {
   .v-tabs-bar {
     background-color: transparent !important;
     a {
-      color: #FFFFFF !important;
+      color: #ffffff !important;
       filter: blur(0) !important;
     }
   }
 
   .v-tabs-slider-wrapper {
-    color: #FFFFFF !important;
+    color: #ffffff !important;
   }
 
   .v-tabs-items {
