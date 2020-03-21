@@ -120,6 +120,14 @@ export default class App extends Vue {
   color: red;
 }
 
+.alignRight {
+  float: right;
+}
+
+.alignLeft {
+  float: left;
+}
+
 .theme--dark.v-application {
   background: #2f3136 !important;
   color: #ffffff;

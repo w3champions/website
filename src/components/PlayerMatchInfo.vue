@@ -16,7 +16,7 @@
       </v-tooltip>
     </div>
     <div :class="won" >
-      <img :src="getRacePicture(player.race)" :alt="player.race" />
+      <img :class="alignment" :src="getRacePicture(player.race)" :alt="player.race" />
       <span v-if="won">{{won}}</span>
       <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
     </div>
@@ -52,6 +52,10 @@ export default class PlayerMatchInfo extends Vue {
     }
 
     return '';
+  }
+
+  get alignment() {
+    return this.left ? "alignLeft" : "alignRight";
   }
 
   get color() {

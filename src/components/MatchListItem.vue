@@ -4,16 +4,13 @@
       <v-list-item-title>
         <v-row>
           <v-col cols="5.5">
-            <player-match-info
-              :player="selfPlayer"
-              left="true"
-            ></player-match-info>
+            <player-match-info :player="selfPlayer" left="true" />
           </v-col>
           <v-col cols="1">
             VS
           </v-col>
           <v-col cols="5.5">
-            <player-match-info :player="otherPlayer"></player-match-info>
+            <player-match-info :player="otherPlayer" />
           </v-col>
         </v-row>
       </v-list-item-title>
