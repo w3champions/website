@@ -15,6 +15,7 @@ export default class MmrMarker extends Vue {
 
   setSize() {
     return {
+      lineHeight: this.size + "px",
       height: this.size + "px",
       width: this.size + "px"
     };
