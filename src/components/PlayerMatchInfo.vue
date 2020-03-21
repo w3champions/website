@@ -14,7 +14,7 @@
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
           >
-            {{ name }}
+            {{ nameWithoutBtag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
               <span v-else> ({{ player.xpChange }})</span>
@@ -74,7 +74,11 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get name() {
-    return this.player.battleTag.split("#")[0];
+    return this.player.battleTag;
+  }
+
+  get nameWithoutBtag() {
+    return this.name.split("#")[0];
   }
 
   public profile = {} as any;
