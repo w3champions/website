@@ -143,6 +143,7 @@ export default class App extends Vue {
   font-family: "Friz Quadrata Regular OS";
 }
 
+
 .theme--light.v-application {
   @font-face {
     * {
