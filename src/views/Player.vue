@@ -68,7 +68,7 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-2'">
-              <v-card-title>{{ $t("matchHistory") }}</v-card-title>
+              <v-card-title>Match History</v-card-title>
               <matches-grid
                 v-model="matches"
                 :totalMatches="totalMatches"
@@ -87,8 +87,8 @@
 <script lang="ts">
 import Vue from "vue";
 import {Component, Prop, Watch} from "vue-property-decorator";
-import {GameMode, PlayerProfile} from "../store/player/types";
-import {Match} from "../store/typings";
+import {PlayerProfile} from "../store/player/types";
+import { EGameMode, Match } from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import {Ranking} from "../store/ranking/types";
@@ -240,7 +240,7 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter(x => x.mode === GameMode._1v1)[0].bucket;
+    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0].bucket;
   }
 
   public getMatches(page?: number) {
@@ -258,14 +258,6 @@ export default class PlayerView extends Vue {
   }
 }
 </script>
-
-<i18n>
-{
-  en: {
-    matchHistory: "Match histor trolly"
-  }
-}
-</i18n>
 
 <style lang="scss" scoped>
 .profileTab {

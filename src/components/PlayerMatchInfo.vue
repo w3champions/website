@@ -14,7 +14,7 @@
     </v-tooltip>
       </div>
     <div :class="won" >
-      <span v-if="won">{{won}}</span><span v-else>Playing</span> as {{race}}
+      <span v-if="won">{{won}}</span><span v-else>Playing</span> as {{ $t("races." + raceEnum[player.race]) }}
       <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
     </div>
   </div>
@@ -23,8 +23,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Match, ERaceEnum } from "../store/typings";
-import { PlayerProfile } from '../store/player/types';
+import { ERaceEnum } from "@/store/typings";
 
 @Component({})
 export default class PlayerMatchInfo extends Vue {
@@ -37,6 +36,7 @@ export default class PlayerMatchInfo extends Vue {
   };
 
   @Prop() public left!: boolean;
+  public raceEnum = ERaceEnum;
 
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, 'won')) {
@@ -64,23 +64,6 @@ export default class PlayerMatchInfo extends Vue {
 
   get textClass() {
       return this.left ? 'text-end' : 'text-start';
-  }
-
-  get race() {
-    switch (this.player.race) {
-      case ERaceEnum.RANDOM:
-        return "Random";
-      case ERaceEnum.HUMAN:
-        return "Human";
-      case ERaceEnum.ORC:
-        return "Orc";
-      case ERaceEnum.NIGHT_ELF:
-        return "Night Elf";
-      case ERaceEnum.UNDEAD:
-        return "Undead";
-    }
-
-    return 'Unknown';
   }
 
   get name() {

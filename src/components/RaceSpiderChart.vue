@@ -1,3 +1,4 @@
+import {ERaceEnum} from "@/store/typings";
 <template>
   <VueApexCharts
     type="radar"
@@ -7,14 +8,15 @@
 </template>
 
 <script lang="ts">
-  import Vue from "vue";
-  import VueApexCharts from "vue-apexcharts/dist/vue-apexcharts";
+import Vue from "vue";
+import VueApexCharts from "vue-apexcharts/dist/vue-apexcharts";
 
-  import Component from "vue-class-component";
-  import {Prop} from "vue-property-decorator";
-  import {Race, RaceStat} from "@/store/player/types";
+import Component from "vue-class-component";
+import { Prop } from "vue-property-decorator";
+import { RaceStat } from "@/store/player/types";
+import { ERaceEnum } from "@/store/typings";
 
-  @Component({
+@Component({
   components: {
     VueApexCharts
   }
@@ -31,26 +33,33 @@ export default class RaceSpiderChart extends Vue {
 
   private winSeries() {
     const wins = [
-      this.getGamesFor(Race.human),
-      this.getGamesFor(Race.orc),
-      this.getGamesFor(Race.nightElf),
-      this.getGamesFor(Race.undead)
+      this.getGamesFor(ERaceEnum.HUMAN),
+      this.getGamesFor(ERaceEnum.ORC),
+      this.getGamesFor(ERaceEnum.NIGHT_ELF),
+      this.getGamesFor(ERaceEnum.UNDEAD)
     ];
-    if (this.statsContainRandom()) wins.push(this.getGamesFor(Race.random));
+    if (this.statsContainRandom()) wins.push(this.getGamesFor(ERaceEnum.RANDOM));
     return wins;
   }
 
   private statsContainRandom() {
-    return this.stats.filter(s => s.race === Race.random);
+    return this.stats.filter(s => s.race === ERaceEnum.RANDOM);
   }
 
   private getCategories() {
-    const axis = ["Human", "Orc", "Nightelf", "Undead"];
-    if (this.statsContainRandom()) axis.push("Random");
+    const eRaceEnumElement = ERaceEnum[ERaceEnum.HUMAN];
+    const axis = [
+      this.$t("races." + eRaceEnumElement),
+      this.$t("races." + ERaceEnum[ERaceEnum.ORC]),
+      this.$t("races." + ERaceEnum[ERaceEnum.NIGHT_ELF]),
+      this.$t("races." + ERaceEnum[ERaceEnum.UNDEAD]),
+    ];
+    if (this.statsContainRandom())
+      axis.push(this.$t("races." + ERaceEnum[ERaceEnum.RANDOM]));
     return axis;
   }
 
-  private getGamesFor(race: Race) {
+  private getGamesFor(race: ERaceEnum) {
     const raceStats = this.stats.filter(s => s.race == race);
     const raceStat = raceStats[0];
     return raceStat.total;
