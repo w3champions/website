@@ -77,6 +77,7 @@
                 @pageChanged="onPageChanged"
                 :itemsPerPage="15"
                 :alwaysLeftName="battleTag"
+                :only-show-enemy="true"
               ></matches-grid>
             </v-tab-item>
           </v-tabs>

@@ -23,10 +23,10 @@
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
-        <v-col cols="5.5">
+        <v-col v-if="!onlyShowEnemy" cols="5">
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
-        <v-col cols="5.5">
+        <v-col cols="5">
           <player-match-info :player="getLoser(item)"></player-match-info>
         </v-col>
       </v-row>
@@ -50,6 +50,7 @@ export default class MatchesGrid extends Vue {
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
   @Prop() public alwaysLeftName!: string;
+  @Prop() public onlyShowEnemy!: boolean;
 
   get matches(): Match[] {
     return this.value;
