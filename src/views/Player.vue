@@ -4,9 +4,8 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            Profile of {{ battleTag }} (
-            <v-icon>mdi-chevron-triple-up</v-icon>
-            {{ mmr }})
+            Profile of {{ battleTag }}
+            <mmr-marker :mmr="mmr" size="30" style="margin-left: 14px" />
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -96,9 +95,11 @@ import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import {Ranking} from "../store/ranking/types";
 import XpBar from "../components/XpBar.vue";
+import MmrMarker from "@/components/MmrMarker.vue";
 
 @Component({
   components: {
+    MmrMarker,
     MatchListItem,
     MatchesGrid,
     XpBar
