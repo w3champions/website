@@ -1,6 +1,6 @@
 <template>
   <div :class="textClass">
-    <div :class="raceIcon(player.race)">
+    <div class="race-icon" :class="[raceIcon(player.race), alignment()]">
       <div class="mmr-marker">
         {{ mmr }}
       </div>
@@ -53,8 +53,11 @@ export default class PlayerMatchInfo extends Vue {
   public raceEnum = ERaceEnum;
 
   raceIcon(race: ERaceEnum) {
-    const aligment = this.left ? "alignLeft" : "alignRight";
-    return "race-icon " + " race-icon-" + this.raceEnum[race] + " " + aligment;
+    return "race-icon-" + this.raceEnum[race];
+  }
+
+  alignment() {
+    return this.left ? "alignLeft" : "alignRight";
   }
 
   get won() {
