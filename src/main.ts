@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import vueMoment from 'vue-moment';
+import VueI18n from "vue-i18n";
 
 Vue.use(vueMoment);
 
@@ -19,7 +20,15 @@ if (process.env.NODE_ENV === 'development') {
 
 export const API_URL = _apiUrl;
 
+Vue.use(VueI18n);
+
+const i18n = new VueI18n({
+  locale: 'en',
+  fallbackLocale: 'en'
+});
+
 new Vue({
+  i18n,
   router,
   store: store.original,
   vuetify,
