@@ -39,6 +39,10 @@
     background-color: transparent !important;
   }
 
+  .theme-selector.v-list {
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
+  }
+
   .v-card {
     color: $w3-dark-color !important;
   }

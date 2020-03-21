@@ -16,7 +16,7 @@
             <v-icon>mdi-invert-colors</v-icon>
           </v-btn>
         </template>
-        <v-list>
+        <v-list class="theme-selector">
           <v-list-item @click="theme = 'human'">
             <v-list-item-title>Human</v-list-item-title>
           </v-list-item>
@@ -67,24 +67,15 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(val);
   }
 
-  private selectedTheme = "";
+  private selectedTheme = "human";
 
   get isDarkTheme() {
-    const isDark = this.theme === 'nightelf' || this.theme === 'undead';
-    console.log('is dark theme', isDark);
-    return isDark
+    const isDark = this.theme === "nightelf" || this.theme === "undead";
+    console.log("is dark theme", isDark);
+    return isDark;
   }
 
   get theme(): string {
-    if (!this.selectedTheme) {
-      const t = window.localStorage.getItem("theme");
-      if (t) {
-        this.selectedTheme = t;
-      }
-
-      this.selectedTheme = "human";
-    }
-
     return this.selectedTheme;
   }
 
@@ -96,7 +87,10 @@ export default class App extends Vue {
   }
 
   created() {
-    this.enableDarkMode = window.localStorage.getItem("dark") === "1";
+    const t = window.localStorage.getItem("theme");
+    if (t && t.length > 0) {
+      this.theme = t;
+    }
   }
 }
 </script>
