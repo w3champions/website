@@ -144,11 +144,11 @@ export default class PlayerMatchInfo extends Vue {
 }
 
 .won {
-  color: green;
+  color: green !important;
 }
 
 .lost {
-  color: red;
+  color: red !important;
 }
 
 .alignRight {
