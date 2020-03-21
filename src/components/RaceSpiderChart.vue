@@ -31,17 +31,17 @@ export default class RaceSpiderChart extends Vue {
 
   private winSeries() {
     const wins = [
-      this.getGamesFor("human"),
-      this.getGamesFor("orc"),
-      this.getGamesFor("night_elf"),
-      this.getGamesFor("undead")
+      this.getGamesFor("Human"),
+      this.getGamesFor("Orc"),
+      this.getGamesFor("Night Elf"),
+      this.getGamesFor("Undead")
     ];
-    if (this.statsContainRandom()) wins.push(this.getGamesFor("random"));
+    if (this.statsContainRandom()) wins.push(this.getGamesFor("Random"));
     return wins;
   }
 
   private statsContainRandom() {
-    return this.stats.filter(s => s.race == "random");
+    return this.stats.filter(s => s.race == "Random");
   }
 
   private getCategories() {
