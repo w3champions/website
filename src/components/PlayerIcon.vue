@@ -67,11 +67,11 @@ export default class PlayerIcon extends Vue {
 }
 
 .mmr-marker-bronze {
-  background-color: #624a2e;
+  background-color: #805a46;
 }
 
 .mmr-marker-silver {
-  background-color: #cacaca;
+  background-color: #909090;
 }
 
 .mmr-marker-gold {
