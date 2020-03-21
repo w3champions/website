@@ -46,7 +46,11 @@
                       href="./w3champions-setup.exe"
                       target="_blank"
                       value
-                    >Download the Windows installer</v-btn>
+                      outlined
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Download the Windows installer</span>
+                    </v-btn>
                                         <br/><br/>
                     <p>
                       <ol>
@@ -66,7 +70,11 @@
                       href="./w3champions-setup.zip"
                       target="_blank"
                       value
-                    >Download the Windows installer zipped</v-btn>
+                      outlined
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Download the Windows installer zipped</span>
+                    </v-btn>
                   </v-card-text>
                 </v-col>
                 <v-col cols="6">
@@ -77,7 +85,11 @@
                       color="primary"
                       href="./webui.zip"
                       target="_blank"
-                    >Download the Mac archive</v-btn>
+                      outlined
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Download the Mac archive</span>
+                    </v-btn>
                     <br/><br/>
                     <p>
                       <ol>

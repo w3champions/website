@@ -4,8 +4,8 @@
       <v-progress-linear
         v-on="on"
         :value="(ranking.level - Math.floor(ranking.level)) * 100"
-        height="20"
-        color="black"
+        height="15"
+        :color="color"
       ></v-progress-linear>
     </template>
     <div>
@@ -24,5 +24,9 @@ import { Ranking } from "../store/ranking/types";
 @Component({})
 export default class XpBar extends Vue {
   @Prop() public ranking!: Ranking;
+
+  get color() {
+    return this.$store.direct.state.darkMode ? 'grey' : 'black';
+  }
 }
 </script>

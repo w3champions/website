@@ -9,6 +9,7 @@ import rankings from "./ranking/index";
 import player from "./player/index";
 import match from "./match/index";
 import ProfileService from '@/services/ProfileService';
+import { RootState } from './typings';
 
 Vue.use(Vuex);
 
@@ -24,9 +25,15 @@ const mod = {
     rankings,
     match,
   },
-  state: {},
+  state: {
+    darkMode: false,
+  } as RootState,
   actions: {},
-  mutations: {},
+  mutations: {
+    SET_DARK_MODE(state: RootState, darkMode: boolean) {
+      state.darkMode = darkMode;
+    }
+  },
   getters: {
     rankingService() {
       return services.rankingService;
@@ -36,7 +43,7 @@ const mod = {
     },
     profileService() {
       return services.profileService;
-    }
+    },
   }
 } as const;
 

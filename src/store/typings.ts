@@ -1,3 +1,7 @@
+export type RootState = {
+  darkMode: boolean;
+}
+
 export type DataTableOptions = {
   sortBy: object;
   sortDest: boolean;
