@@ -1,6 +1,6 @@
 <template>
   <div class="race-icon" :class="[raceIcon(), alignment()]">
-    <div class="mmr-marker">
+    <div class="mmr-marker" :class="paintMMR()">
       {{ mmr }}
     </div>
   </div>
@@ -24,6 +24,28 @@ export default class PlayerIcon extends Vue {
   alignment() {
     return this.left ? "alignLeft" : "alignRight";
   }
+
+  paintMMR() {
+    switch (this.mmr) {
+      case 1:
+      case 2:
+        return "mmr-marker-bronze";
+      case 3:
+      case 4:
+        return "mmr-marker-silver";
+      case 5:
+      case 6:
+        return "mmr-marker-gold";
+      case 7:
+      case 8:
+        return "mmr-marker-master";
+      case 9:
+      case 10:
+        return "mmr-marker-grandmaster";
+      default:
+        return "mmr-marker-bronze";
+    }
+  }
 }
 </script>
 
@@ -34,7 +56,6 @@ export default class PlayerIcon extends Vue {
 }
 
 .mmr-marker {
-  background-color: #cdcdcd;
   width: 21px;
   height: 21px;
   font-size: 14px;
@@ -43,6 +64,26 @@ export default class PlayerIcon extends Vue {
   text-align: center;
   margin-left: 55px;
   margin-top: 54px;
+}
+
+.mmr-marker-bronze {
+  background-color: #624a2e;
+}
+
+.mmr-marker-silver {
+  background-color: #cacaca;
+}
+
+.mmr-marker-gold {
+  background-color: #e2b007;
+}
+
+.mmr-marker-master {
+  background-color: #00a2ed;
+}
+
+.mmr-marker-grandmaster {
+  background-color: #ff6700;
 }
 
 .race-icon-HUMAN {
