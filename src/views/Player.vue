@@ -27,7 +27,7 @@
                             v-for="item in items"
                             :key="item.mode"
                           >
-                            <td>{{item.mode}}</td>
+                            <td>{{ $t("gameModes." + gameModeEnums[item.mode])}}</td>
                             <td class="text-end won">{{item.wins}}</td>
                             <td class="text-end lost">{{item.losses}}</td>
                             <td class="text-end">{{item.wins + item.losses}}</td>
@@ -46,6 +46,9 @@
                     <h4>Statistics by Race</h4>
                     <h5>Realm W3Champions</h5>
                     <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
+                      <template v-slot:item.race="{ item }">
+                        <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                      </template>
                       <template v-slot:item.wins="{ item }">
                         <span class="won">{{ item.wins }}</span>
                       </template>
@@ -88,7 +91,7 @@
 import Vue from "vue";
 import {Component, Prop, Watch} from "vue-property-decorator";
 import {PlayerProfile} from "../store/player/types";
-import { EGameMode, Match } from "../store/typings";
+import {EGameMode, ERaceEnum, Match} from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import {Ranking} from "../store/ranking/types";
@@ -106,6 +109,9 @@ import RaceSpiderChart from "../components/RaceSpiderChart.vue";
 export default class PlayerView extends Vue {
   @Prop() public name!: string;
   @Prop() public tag!: string;
+
+  public gameModeEnums = EGameMode;
+  public raceEnums = ERaceEnum;
 
   public raceHeaders = [
     {

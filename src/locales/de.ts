@@ -4,7 +4,8 @@ const de = {
         HUMAN: "Menschen",
         UNDEAD: "Untote",
         NIGHT_ELF: "NigNachtelfen",
-        RANDOM: "Zufall"
+        RANDOM: "Zufall",
+        TOTAL: "Gesamt",
     },
 
     gameModes: {
@@ -12,12 +13,8 @@ const de = {
         GM_2ON2: "2 vs 2",
         GM_3ON3: "3 vs 3",
         GM_4ON4: "4 vs 4",
-        FFA: "FFA",
+        GM_FFA: "FFA",
     },
-
-    stats: {
-        total: "Gesamt",
-    }
 };
 
 export default de

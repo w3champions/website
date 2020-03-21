@@ -5,6 +5,7 @@ const en = {
         UNDEAD: "Undead",
         NIGHT_ELF: "Night Elf",
         RANDOM: "Random",
+        TOTAL: "Total",
     },
 
     gameModes: {
@@ -12,12 +13,8 @@ const en = {
         GM_2ON2: "2 vs 2",
         GM_3ON3: "3 vs 3",
         GM_4ON4: "4 vs 4",
-        FFA: "FFA",
+        GM_FFA: "FFA",
     },
-
-    stats: {
-        total: "Total",
-    }
 };
 
 export default en
