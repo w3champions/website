@@ -1,10 +1,6 @@
 <template>
   <div :class="textClass">
-    <div class="race-icon" :class="[raceIcon(player.race), alignment()]">
-      <div class="mmr-marker">
-        {{ mmr }}
-      </div>
-    </div>
+    <player-icon :left="left" :race="player.race" :mmr="mmr" />
     <div>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -38,8 +34,11 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import PlayerIcon from "@/components/PlayerIcon.vue";
 
-@Component({})
+@Component({
+  components: {PlayerIcon}
+})
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: {
     battleTag: string;
@@ -50,15 +49,6 @@ export default class PlayerMatchInfo extends Vue {
   };
 
   @Prop() public left!: boolean;
-  public raceEnum = ERaceEnum;
-
-  raceIcon(race: ERaceEnum) {
-    return "race-icon-" + this.raceEnum[race];
-  }
-
-  alignment() {
-    return this.left ? "alignLeft" : "alignRight";
-  }
 
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
@@ -109,42 +99,6 @@ export default class PlayerMatchInfo extends Vue {
 </script>
 
 <style lang="scss">
-.race-icon {
-  width: 64px;
-  height: 64px;
-}
-
-.mmr-marker {
-  background-color: #cdcdcd;
-  width: 21px;
-  height: 21px;
-  font-size: 14px;
-  line-height: 21px;
-  border-radius: 10px;
-  text-align: center;
-  margin-left: 55px;
-  margin-top: 54px;
-}
-
-.race-icon-HUMAN {
-  background-image: url("../assets/raceIcons/HUMAN.jpg");
-}
-
-.race-icon-ORC {
-  background-image: url("../assets/raceIcons/ORC.jpg");
-}
-
-.race-icon-UNDEAD {
-  background-image: url("../assets/raceIcons/UNDEAD.jpg");
-}
-
-.race-icon-NIGHT_ELF {
-  background-image: url("../assets/raceIcons/NIGHT_ELF.jpg");
-}
-
-.race-icon-RANDOM {
-  background-image: url("../assets/raceIcons/RANDOM.jpg");
-}
 
 .won {
   color: green !important;
@@ -154,11 +108,4 @@ export default class PlayerMatchInfo extends Vue {
   color: red !important;
 }
 
-.alignRight {
-  float: right;
-}
-
-.alignLeft {
-  float: left;
-}
 </style>
