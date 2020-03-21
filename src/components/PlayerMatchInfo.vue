@@ -2,8 +2,8 @@
   <div :class="textClass">
     <div>
       <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</a>
+        <template v-slot:activator="{ on }">
+          <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</a>
         </template>
         <div v-if="profile.data">
           Wins: {{ profile.data.stats.total.wins }} | Losses:
@@ -16,8 +16,8 @@
       </v-tooltip>
     </div>
     <div :class="won" >
+      <img :src="getRacePicture(player.race)" :alt="player.race" />
       <span v-if="won">{{won}}</span>
-      <img :src="getRacePicture(player.race)" />
       <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
     </div>
   </div>

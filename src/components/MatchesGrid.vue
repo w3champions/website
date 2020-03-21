@@ -26,7 +26,6 @@
         <v-col cols="5.5">
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
-        <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
           <player-match-info :player="getLoser(item)"></player-match-info>
         </v-col>
