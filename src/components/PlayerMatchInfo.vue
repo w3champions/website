@@ -8,16 +8,18 @@
     <div>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">
+          <a
+            :class="won"
+            v-on="on"
+            @mouseover="lazyLoadProfile"
+            @click="goToPlayer(name)"
+          >
             {{ name }}
-          </a>
-          <div :class="won">
-            <span v-if="won">{{ won }}</span>
             <span v-if="player.xpChange" :class="won">
-              <span v-if="player.xpChange > 0"> +{{ player.xpChange }}</span>
-              <span v-else> {{ player.xpChange }}</span>
+              <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
+              <span v-else> ({{ player.xpChange }})</span>
             </span>
-          </div>
+          </a>
         </template>
         <div v-if="profile.data">
           Wins: {{ profile.data.stats.total.wins }} | Losses:
