@@ -5,6 +5,7 @@
         v-on="on"
         :value="(ranking.level - Math.floor(ranking.level)) * 100"
         height="20"
+        color="black"
       ></v-progress-linear>
     </template>
     <div>

@@ -4,9 +4,7 @@
       <v-col cols="12" md="8">
         <v-row>
           <v-col cols="12">
-            <v-card>
-              <v-card-title>Welcome</v-card-title>
-
+            <v-card tile>
 <v-row>
 <v-col cols="6">
               <v-card-text>
@@ -132,7 +130,7 @@
       <v-col cols="12" md="4">
         <v-row>
           <v-col cols="12">
-            <v-card>
+            <v-card tile>
               <v-card-title>Community</v-card-title>
               <v-card-text>
                 Join us
@@ -166,7 +164,7 @@
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-card>
+            <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
               <v-list dense>
                 <v-list-item v-for="(rank, i) in topFive" :key="i" @click="goToProfile(rank)">

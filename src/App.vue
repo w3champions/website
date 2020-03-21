@@ -1,6 +1,6 @@
 <template>
   <v-app class="w3app" :dark="enableDarkMode">
-    <v-app-bar :class="{darkmode: enableDarkMode}" app :color="enableDarkMode ? '' : 'primary'" dark>
+    <v-app-bar :class="{darkmode: enableDarkMode}" app>
       <div class="d-flex align-center">W3Champions Ladder</div>
 
       <v-spacer></v-spacer>
@@ -114,49 +114,199 @@ export default class App extends Vue {
 
 .won {
   color: green;
+  font-weight: 500;
+  text-shadow: 0 0 1px black;
 }
 
 .lost {
   color: red;
+  font-weight: 500;
+  text-shadow: 0 0 1px black;
+}
+
+.v-app-bar {
+  background-color: transparent !important;
+}
+
+.theme--light.v-application {
+  background: url(./assets/human/background.jpg) no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  .v-app-bar:before {
+    content: "" !important;
+    background: inherit !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
+    filter: blur(5px) !important;
+  }
+
+  .v-card {
+    background: inherit !important;
+    overflow: hidden !important;
+    color: #000000 !important;
+  }
+
+  .v-card__text {
+    color: #000000 !important;
+    filter: blur(0) !important;
+  }
+
+  .v-expansion-panel {
+    background-color: transparent !important;
+  }
+
+  .v-card:before {
+    content: "" !important;
+    background: inherit !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.8) !important;
+    filter: blur(200px) !important;
+  }
+
+  .v-list {
+    background-color: transparent !important;
+  }
+
+  .v-tabs-bar {
+    background-color: transparent !important;
+    a {
+      color: #000000 !important;
+      filter: blur(0) !important;
+    }
+  }
+
+  .v-tabs-slider-wrapper {
+    color: #000000 !important;
+  }
+
+  .v-tabs-items {
+    background-color: transparent !important;
+  }
+
+  .v-tab {
+    background-color: transparent !important;
+  }
+
+  .v-data-table {
+    background-color: transparent !important;
+    filter: blur(0);
+
+    tr:hover {
+      background-color: transparent !important;
+      box-shadow: 0 0 17px black;
+      position: relative;
+      z-index: 1;
+    }
+  }
 }
 
 .theme--dark.v-application {
-  background: #2f3136 !important;
-  color: #ffffff;
+  background: url(./assets/undead/background.jpg) no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  .v-app-bar:before {
+    content: "" !important;
+    background: inherit !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.3) !important;
+    filter: blur(5px) !important;
+  }
+
+  .v-app-bar.v-toolbar.v-sheet.darkmode {
+    background-color: transparent !important;
+  }
+
+  .v-card {
+    background: inherit !important;
+    overflow: hidden !important;
+    color: #FFFFFF !important;
+  }
+
+  .v-card__text {
+    color: #FFFFFF !important;
+    filter: blur(0) !important;
+  }
+
+  .v-expansion-panel {
+    background-color: transparent !important;
+  }
+
+  .v-card:before {
+    content: "" !important;
+    background: inherit !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.8) !important;
+    filter: blur(50px) !important;
+  }
+
+  .v-list {
+    background-color: transparent !important;
+  }
+
+  .v-tabs-bar {
+    background-color: transparent !important;
+    a {
+      color: #FFFFFF !important;
+      filter: blur(0) !important;
+    }
+  }
+
+  .v-tabs-slider-wrapper {
+    color: #FFFFFF !important;
+  }
+
+  .v-tabs-items {
+    background-color: transparent !important;
+  }
+
+  .v-tab {
+    background-color: transparent !important;
+  }
+
+  .v-data-table {
+    background-color: transparent !important;
+    filter: blur(0);
+
+    tr:hover {
+      background-color: transparent !important;
+      box-shadow: 0 0 17px black;
+      position: relative;
+      z-index: 1;
+    }
+  }
 }
 
-.theme--dark.v-card {
-  background-color: #36393f !important;
-  color: #ffffff;
+.v-card__title {
+  filter: blur(0) !important;
 }
 
-.theme--dark.v-data-table {
-  background-color: #36393f !important;
-  color: #ffffff;
+.v-app-bar.v-toolbar.v-sheet.darkmode {
+  background-color: #292b2f !important;
 }
 
-.theme--dark.v-list {
-  background: #36393f !important;
-  color: #ffffff;
-}
-
-.theme--dark.v-tabs > .v-tabs-bar {
-  background-color: #36393f !important;
-}
-
-.theme--dark.v-tabs-items {
-    background-color: #36393f !important;
-}
-
-.theme--dark.v-expansion-panels .v-expansion-panel {
-    background-color: #36393f !important;
-    color: #FFFFFF;
-}
-
-.theme--dark.v-app-bar.v-toolbar.v-sheet.darkmode {
-    background-color: #292b2f !important;
-}
-
-.w3app {
+.row {
+  filter: blur(0px);
 }
 </style>

@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="10" offset="1" md="10">
-        <v-card>
+        <v-card tile>
           <v-card-title>
             Rankings
             <v-spacer></v-spacer>
@@ -87,7 +87,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="3" v-if="false">
-        <v-card>
+        <v-card tile>
           <v-card-title>Stats</v-card-title>
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">

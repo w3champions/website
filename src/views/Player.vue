@@ -2,7 +2,7 @@
   <v-container class="profile">
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <v-card tile>
           <v-card-title>
             Profile of {{ battleTag }} (
             <v-icon>mdi-chevron-triple-up</v-icon>
