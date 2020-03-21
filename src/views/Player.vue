@@ -56,7 +56,7 @@
                     <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
                       <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
                     </v-data-table>
-                    <div id="#chart" /><
+                    <RaceSpiderChart :stats="profile.stats"></RaceSpiderChart>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -77,7 +77,7 @@
                 @pageChanged="onPageChanged"
                 itemsPerPage="15"
                 :alwaysLeftName="battleTag"
-              />
+              ></matches-grid>
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -92,13 +92,15 @@ import { Component, Prop } from "vue-property-decorator";
 import { PlayerProfile } from "../store/player/types";
 import { Match } from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
+import RaceSpiderChart from "../components/RaceSpiderChart.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import { Ranking } from "../store/ranking/types";
 
 @Component({
   components: {
     MatchListItem,
-    MatchesGrid
+    MatchesGrid,
+    RaceSpiderChart
   }
 })
 export default class PlayerView extends Vue {

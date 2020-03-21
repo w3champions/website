@@ -3,7 +3,7 @@
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">W3Champions Ladder</div>
 
-      <v-spacer />
+      <v-spacer></v-spacer>
 
       <v-btn v-for="item in items" :key="item.title" text :to="item.to">
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
