@@ -20,8 +20,7 @@ import { RaceStat } from "@/store/player/types";
   }
 })
 export default class RaceSpiderChart extends Vue {
-  @Prop() public Stats!: RaceStat[];
-  @Prop() public Label = "Games";
+  @Prop() public stats!: RaceStat[];
 
   public series = [
     {
@@ -42,7 +41,7 @@ export default class RaceSpiderChart extends Vue {
   }
 
   private statsContainRandom() {
-    return this.Stats.filter(s => s.race === "random");
+    return this.stats.filter(s => s.race == "random");
   }
 
   private getCategories() {
@@ -52,7 +51,9 @@ export default class RaceSpiderChart extends Vue {
   }
 
   private getGamesFor(race: string) {
-    return this.Stats.filter(s => s.race === race)[0].total;
+    const raceStats = this.stats.filter(s => s.race == race);
+    const raceStat = raceStats[0];
+    return raceStat.total;
   }
 
   public options = {
