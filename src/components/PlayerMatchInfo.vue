@@ -4,17 +4,20 @@
       <v-tooltip top>
       <template v-slot:activator="{ on }">
         <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</a>
-      </template>
-      <div v-if="profile.data">
-        Wins: {{profile.data.stats.total.wins}} | Losses: {{profile.data.stats.total.losses}} | Total: {{profile.data.stats.total.wins + profile.data.stats.total.losses}}
-      </div>
-      <div v-else>
-        Wins: ... | Losses: ... | Total: ...
-      </div>
-    </v-tooltip>
-      </div>
+        </template>
+        <div v-if="profile.data">
+          Wins: {{ profile.data.stats.total.wins }} | Losses:
+          {{ profile.data.stats.total.losses }} | Total:
+          {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
+        </div>
+        <div v-else>
+          Wins: ... | Losses: ... | Total: ...
+        </div>
+      </v-tooltip>
+    </div>
     <div :class="won" >
-      <span v-if="won">{{won}}</span><span v-else>Playing</span> as {{ $t("races." + raceEnum[player.race]) }}
+      <span v-if="won">{{won}}</span>
+      <img :src="getRacePicture(player.race)" />
       <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
     </div>
   </div>
@@ -38,9 +41,14 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public left!: boolean;
   public raceEnum = ERaceEnum;
 
+  getRacePicture(race: ERaceEnum) {
+    const images = require.context("../assets/raceIcons");
+    return images("./" + this.raceEnum[race] + ".jpg");
+  }
+
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, 'won')) {
-        return this.player.won ? 'won' : 'lost';
+      return this.player.won ? 'won' : 'lost';
     }
 
     return '';
@@ -48,11 +56,11 @@ export default class PlayerMatchInfo extends Vue {
 
   get color() {
     if (this.won === 'won') {
-        return 'green';
+      return "green";
     }
 
     if (this.won === 'lost') {
-        return 'red';
+      return "red";
     }
 
     return 'gray';
@@ -63,7 +71,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get textClass() {
-      return this.left ? 'text-end' : 'text-start';
+    return this.left ? "text-end" : "text-start";
   }
 
   get name() {

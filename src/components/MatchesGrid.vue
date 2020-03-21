@@ -38,7 +38,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, ERaceEnum } from "../store/typings";
+import { Match } from "../store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
@@ -111,11 +111,11 @@ export default class MatchesGrid extends Vue {
 
   public headers = [
     {
-      text: "Id",
-      align: "start",
+      text: "Players",
+      align: "center",
       sortable: false,
-      value: "id",
-      width: "100px"
+      value: "players",
+      width: "500px"
     },
     {
       text: "Map",
@@ -124,24 +124,11 @@ export default class MatchesGrid extends Vue {
       value: "map"
     },
     {
-      text: "Host",
-      align: "start",
-      sortable: false,
-      value: "host"
-    },
-    {
       text: "Start Time",
       align: "start",
       sortable: false,
       value: "startTime",
       width: "180px"
-    },
-    {
-      text: "Players",
-      align: "center",
-      sortable: false,
-      value: "players",
-      width: "500px"
     }
   ];
 }

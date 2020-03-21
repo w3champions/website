@@ -57,7 +57,6 @@
                       </template>
                       <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
                     </v-data-table>
-                    <RaceSpiderChart v-bind:stats="profile.stats" />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -96,14 +95,12 @@ import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import {Ranking} from "../store/ranking/types";
 import XpBar from "../components/XpBar.vue";
-import RaceSpiderChart from "../components/RaceSpiderChart.vue";
 
 @Component({
   components: {
     MatchListItem,
     MatchesGrid,
-    XpBar,
-    RaceSpiderChart
+    XpBar
   }
 })
 export default class PlayerView extends Vue {
