@@ -205,7 +205,11 @@ export default class HomeView extends Vue {
   }
 
   public goToProfile(rank: Ranking) {
-    window.open(`http://profile.w3champions.com/#${rank.battleTag}`, "_blank");
+    const parts = rank.battleTag.split("#");
+
+    this.$router.push({
+      path: "/player/" + parts[0] + "/" + parts[1]
+    });
   }
 }
 </script>

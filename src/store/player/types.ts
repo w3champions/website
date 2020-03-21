@@ -36,6 +36,7 @@ export type ModeStat = {
   rank: number;
   level: number;
   xp: number;
+  bucket?: number;
 };
 
 export type RankStat = {

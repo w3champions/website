@@ -6,6 +6,7 @@
     :server-items-length="totalMatches"
     :headers="headers"
     :items="matches"
+    item-key="id"
     no-data-text="no matches found"
     :footer-props="{showFirstLastPage: true}"
   >
@@ -14,11 +15,9 @@
     </template>
     <template v-slot:item.startTime="{ item }">
       <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
-    </template>
-    <template v-slot:item.endTime="{ item }">
-      <span v-if="item.endTime">item.endTime - item.startTime</span>
+      <br />
       <span
-        v-else-if="!item.endTime && Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
+        v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
       >completed</span>
       <span v-else>ongoing</span>
     </template>
@@ -69,7 +68,7 @@ export default class MatchesGrid extends Vue {
   public getWinner(match: Match) {
     if (this.alwaysLeftName) {
       const players = match.players.filter(
-        x => x.battleTag === this.alwaysLeftName
+        x => x.battleTag.toLowerCase() === this.alwaysLeftName.toLowerCase()
       );
 
       if (players && players.length > 0) {
@@ -89,7 +88,7 @@ export default class MatchesGrid extends Vue {
   public getLoser(match: Match) {
     if (this.alwaysLeftName) {
       const players = match.players.filter(
-        x => x.battleTag !== this.alwaysLeftName
+        x => x.battleTag.toLowerCase() !== this.alwaysLeftName.toLowerCase()
       );
 
       if (players && players.length > 0) {
@@ -135,13 +134,7 @@ export default class MatchesGrid extends Vue {
       align: "start",
       sortable: false,
       value: "startTime",
-      width: "115px"
-    },
-    {
-      text: "Duration",
-      align: "start",
-      sortable: false,
-      value: "endTime"
+      width: "180px"
     },
     {
       text: "Players",

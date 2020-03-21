@@ -5,9 +5,9 @@
       <v-card-text>
         <v-expansion-panels>
           <v-expansion-panel v-for="(faq, i) in faqs" :key="i">
-            <v-expansion-panel-header>{{
-              faq.question
-            }}</v-expansion-panel-header>
+            <v-expansion-panel-header>
+              <div v-html="faq.question"></div>
+            </v-expansion-panel-header>
             <v-expansion-panel-content>
               <div v-html="faq.answer"></div>
             </v-expansion-panel-content>
@@ -86,6 +86,18 @@ export default class FaqView extends Vue {
         'I get the message "Joining ladder game, please wait..." but nothing happens. What to do?',
       answer:
         "This is currently a well known bug. We investigate in it. Please restart Warcraft III via Alt+F4."
+    },
+    {
+      question:
+        'Will ladder still work after Blizzard patches wc3?',
+      answer:
+        "In general yes. But it is possible that something breaks by a patch. We will fix this within hours if that's the case."
+    },
+    {
+      question:
+        'What does <i data-v-cb9355ca="" aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-triple-up theme--light"></i> mean?',
+      answer:
+        'This is displaying the players bucket. You can read more about the buckets in <a href="https://www.reddit.com/r/WC3/comments/f3fjl7/matchmaking_deep_dive_how_w3arena_matchmaking/?utm_source=share&utm_medium=ios_app&utm_name=iossmf" target="_blank">this reddit post</a>'
     }
   ];
 }

@@ -20,7 +20,19 @@
               item-value="battleTag"
               placeholder="Start typing to Search"
               return-object
-            ></v-autocomplete>
+            >
+            <template v-slot:item="data">
+              <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
+                <template v-else>
+                  <v-list-item-content>
+                    <v-list-item-title>{{data.item.battleTag}}</v-list-item-title>
+                    <v-list-item-subtitle>Wins: {{data.item.wins}} | Losses: {{data.item.losses}} | Total: {{data.item.wins + data.item.losses}}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
           </v-card-title>
           <v-card-text>
             <v-data-table
@@ -44,21 +56,13 @@
                   >
                     <td>{{item.rank}}</td>
                     <td>{{item.battleTag}}</td>
-                    <td class="text-end">{{item.wins}}</td>
-                    <td class="text-end">{{item.losses}}</td>
+                    <td class="text-end won">{{item.wins}}</td>
+                    <td class="text-end lost">{{item.losses}}</td>
                     <td class="text-end">{{item.wins + item.losses}}</td>
                     <td class="text-end">{{getWinRate(item).toFixed(1)}}%</td>
+                    <td class="text-end">{{Math.floor(item.level)}}</td>
                     <td>
-                      <v-progress-linear
-                        :value="(item.level - Math.floor(item.level)) * 100"
-                        height="20"
-                      >
-                        <span
-                          class="level"
-                          v-if="item.xp > 0"
-                        >XP: {{item.xp}} | Level: {{Math.floor(item.level)}}</span>
-                        <span class="level" v-else>unranked</span>
-                      </v-progress-linear>
+                      <xp-bar :ranking="item"></xp-bar>
                     </td>
                   </tr>
                 </tbody>
@@ -109,8 +113,13 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Ranking } from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
+import XpBar from '../components/XpBar.vue';
 
-@Component({})
+@Component({
+  components: {
+    XpBar,
+  },
+})
 export default class RankingsView extends Vue {
   public headers = [
     {
@@ -148,17 +157,24 @@ export default class RankingsView extends Vue {
       width: "50px"
     },
     {
-      text: "Percentage",
+      text: "Winrate",
       align: "end",
       sortable: false,
       width: "50px"
     },
     {
       text: "Level",
+      align: "end",
+      sortable: false,
+      value: "level",
+      width: "25px"
+    },
+    {
+      text: "Progress",
       align: "center",
       sortable: false,
       value: "levelProgress",
-      width: "200px"
+      width: "125px"
     }
   ];
   public stats = [
@@ -268,17 +284,7 @@ export default class RankingsView extends Vue {
 
   public openPlayerProfile(playerName: string) {
     this.selectedPlayer = playerName;
-    // this.showProfile = true;
-    // window.open(this.playerUrl, "_blank");
-    // this.$router.push({ name: 'Player', params: { name: playerName } });
-
     const parts = playerName.split("#");
-    /*this.$router.push({
-      name: "Player",
-      params: { name: parts[0], tag: parts[1] }
-    });*/
-
-    console.log("/player/" + parts[0] + "/" + parts[1]);
 
     this.$router.push({
       path: "/player/" + parts[0] + "/" + parts[1]
