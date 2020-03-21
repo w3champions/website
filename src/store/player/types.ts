@@ -1,7 +1,7 @@
-import { Match } from '../typings';
+import { Match } from "../typings";
 
 export type PlayerState = {
-  page: number,
+  page: number;
   battleTag: string;
   totalMatches: number;
   playerProfile: PlayerProfile;
@@ -22,15 +22,24 @@ export type RaceStat = {
   /**
    * 'human' | 'orc' | 'undead' | 'night_elf' | 'random' | 'total'
    */
-  race: string;
+  race: Race;
   wins: number;
   losses: number;
   total: number;
   percentage: number;
 };
 
+export enum Race {
+  human,
+  orc,
+  undead,
+  nightElf,
+  random,
+  total
+}
+
 export type ModeStat = {
-  mode: string;
+  mode: GameMode;
   wins: number;
   losses: number;
   rank: number;
@@ -39,9 +48,17 @@ export type ModeStat = {
   bucket?: number;
 };
 
-export type RankStat = {
-    title: string;
-    level: number;
-    xp: number;
-    rank: number;
+export enum GameMode {
+  _1v1,
+  _2v2,
+  _3v3,
+  _4v4,
+  ffa
 }
+
+export type RankStat = {
+  title: string;
+  level: number;
+  xp: number;
+  rank: number;
+};

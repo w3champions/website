@@ -7,14 +7,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import VueApexCharts from "vue-apexcharts/dist/vue-apexcharts";
+  import Vue from "vue";
+  import VueApexCharts from "vue-apexcharts/dist/vue-apexcharts";
 
-import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
-import { RaceStat } from "@/store/player/types";
+  import Component from "vue-class-component";
+  import {Prop} from "vue-property-decorator";
+  import {Race, RaceStat} from "@/store/player/types";
 
-@Component({
+  @Component({
   components: {
     VueApexCharts
   }
@@ -31,17 +31,17 @@ export default class RaceSpiderChart extends Vue {
 
   private winSeries() {
     const wins = [
-      this.getGamesFor("Human"),
-      this.getGamesFor("Orc"),
-      this.getGamesFor("Night Elf"),
-      this.getGamesFor("Undead")
+      this.getGamesFor(Race.human),
+      this.getGamesFor(Race.orc),
+      this.getGamesFor(Race.nightElf),
+      this.getGamesFor(Race.undead)
     ];
-    if (this.statsContainRandom()) wins.push(this.getGamesFor("Random"));
+    if (this.statsContainRandom()) wins.push(this.getGamesFor(Race.random));
     return wins;
   }
 
   private statsContainRandom() {
-    return this.stats.filter(s => s.race == "Random");
+    return this.stats.filter(s => s.race === Race.random);
   }
 
   private getCategories() {
@@ -50,7 +50,7 @@ export default class RaceSpiderChart extends Vue {
     return axis;
   }
 
-  private getGamesFor(race: string) {
+  private getGamesFor(race: Race) {
     const raceStats = this.stats.filter(s => s.race == race);
     const raceStat = raceStats[0];
     return raceStat.total;

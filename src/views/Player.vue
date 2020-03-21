@@ -85,17 +85,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "../store/player/types";
-import { Match } from "../store/typings";
-import MatchListItem from "../components/MatchListItem.vue";
-import MatchesGrid from "../components/MatchesGrid.vue";
-import { Ranking } from "../store/ranking/types";
-import XpBar from "../components/XpBar.vue";
-import RaceSpiderChart from "@/components/RaceSpiderChart.vue";
+  import Vue from "vue";
+  import {Component, Prop, Watch} from "vue-property-decorator";
+  import {GameMode, PlayerProfile} from "../store/player/types";
+  import {Match} from "../store/typings";
+  import MatchListItem from "../components/MatchListItem.vue";
+  import MatchesGrid from "../components/MatchesGrid.vue";
+  import {Ranking} from "../store/ranking/types";
+  import XpBar from "../components/XpBar.vue";
+  import RaceSpiderChart from "@/components/RaceSpiderChart.vue";
 
-@Component({
+  @Component({
   components: {
     MatchListItem,
     MatchesGrid,
@@ -240,7 +240,7 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter(x => x.mode === "1on1")[0].bucket;
+    return this.profile.ladder.filter(x => x.mode === GameMode._1v1)[0].bucket;
   }
 
   public getMatches(page?: number) {

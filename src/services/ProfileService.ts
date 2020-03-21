@@ -1,5 +1,5 @@
-import { PlayerProfile, ModeStat, RaceStat } from '@/store/player/types';
-import { API_URL } from '@/main';
+import {GameMode, ModeStat, PlayerProfile, Race, RaceStat} from '@/store/player/types';
+import {API_URL} from '@/main';
 
 export default class ProfileService {
 
@@ -23,13 +23,14 @@ export default class ProfileService {
         profile.server = data.server;
 
         const raceStats: RaceStat[] = [];
-        const races: any = {
-            human: 'Human',
-            orc: 'Orc',
-            undead: 'Undead',
-            'night_elf': 'Night Elf',
-            random: 'Random',
-            total: 'Total',
+
+        const races: { [id: string]: Race; } = {
+            "human": Race.human,
+            "orc": Race.orc,
+            "undead": Race.undead,
+            "night_elf": Race.nightElf,
+            "random": Race.random,
+            "total": Race.total,
         };
 
         for (const key in data.data.stats) {
@@ -51,12 +52,12 @@ export default class ProfileService {
         profile.stats = raceStats;
 
         const modeStats: ModeStat[] = [];
-        const modes: any = {
-            solo: '1on1',
-            two: '2on2',
-            three: '3on3',
-            four: '4on4',
-            ffa: 'FFA'
+        const gameModes: { [id: string]: GameMode; } = {
+            "solo": GameMode._1v1,
+            "two": GameMode._2v2,
+            "three": GameMode._3v3,
+            "four": GameMode._4v4,
+            "ffa": GameMode.ffa,
         };
 
         for (const key in data.data.ladder) {
@@ -64,7 +65,7 @@ export default class ProfileService {
                 const element = data.data.ladder[key];
 
                 modeStats.push({
-                    mode: modes[key],
+                    mode: gameModes[key],
                     wins: element.wins,
                     losses: element.losses,
                     xp: element.xp,
