@@ -1,7 +1,6 @@
-import { moduleActionContext, rootActionContext } from "..";
-import { PlayerState, PlayerProfile, RaceStat, ModeStat, RankStat } from "./types";
+import { moduleActionContext } from "..";
+import { PlayerState, PlayerProfile, RaceStat, ModeStat } from "./types";
 import { Match } from "../typings";
-import PercentageService from '@/services/PercentageService';
 import { API_URL } from '@/main';
 
 const mod = {

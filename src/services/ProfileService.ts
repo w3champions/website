@@ -1,5 +1,6 @@
-import { PlayerProfile, ModeStat, RaceStat } from '@/store/player/types';
-import { API_URL } from '@/main';
+import { ModeStat, PlayerProfile, RaceStat} from '@/store/player/types';
+import {API_URL} from '@/main';
+import {EGameMode, ERaceEnum} from "@/store/typings";
 
 export default class ProfileService {
 
@@ -23,13 +24,14 @@ export default class ProfileService {
         profile.server = data.server;
 
         const raceStats: RaceStat[] = [];
-        const races: any = {
-            human: 'Human',
-            orc: 'Orc',
-            undead: 'Undead',
-            'night_elf': 'Night Elf',
-            random: 'Random',
-            total: 'Total',
+
+        const races: { [id: string]: ERaceEnum; } = {
+            "human": ERaceEnum.HUMAN,
+            "orc":  ERaceEnum.ORC,
+            "undead": ERaceEnum.RANDOM,
+            "night_elf": ERaceEnum.NIGHT_ELF,
+            "random": ERaceEnum.RANDOM,
+            "total": ERaceEnum.TOTAL,
         };
 
         for (const key in data.data.stats) {
@@ -51,12 +53,12 @@ export default class ProfileService {
         profile.stats = raceStats;
 
         const modeStats: ModeStat[] = [];
-        const modes: any = {
-            solo: '1on1',
-            two: '2on2',
-            three: '3on3',
-            four: '4on4',
-            ffa: 'FFA'
+        const gameModes: { [id: string]: EGameMode; } = {
+            "solo": EGameMode.GM_1ON1,
+            "two": EGameMode.GM_2ON2,
+            "three": EGameMode.GM_3ON3,
+            "four": EGameMode.GM_4ON4,
+            "ffa": EGameMode.GM_FFA,
         };
 
         for (const key in data.data.ladder) {
@@ -64,7 +66,7 @@ export default class ProfileService {
                 const element = data.data.ladder[key];
 
                 modeStats.push({
-                    mode: modes[key],
+                    mode: gameModes[key],
                     wins: element.wins,
                     losses: element.losses,
                     xp: element.xp,

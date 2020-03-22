@@ -1,7 +1,7 @@
-import { Match } from '../typings';
+import {EGameMode, ERaceEnum, Match} from "../typings";
 
 export type PlayerState = {
-  page: number,
+  page: number;
   battleTag: string;
   totalMatches: number;
   playerProfile: PlayerProfile;
@@ -22,7 +22,7 @@ export type RaceStat = {
   /**
    * 'human' | 'orc' | 'undead' | 'night_elf' | 'random' | 'total'
    */
-  race: string;
+  race: ERaceEnum;
   wins: number;
   losses: number;
   total: number;
@@ -30,7 +30,7 @@ export type RaceStat = {
 };
 
 export type ModeStat = {
-  mode: string;
+  mode: EGameMode;
   wins: number;
   losses: number;
   rank: number;
@@ -40,8 +40,8 @@ export type ModeStat = {
 };
 
 export type RankStat = {
-    title: string;
-    level: number;
-    xp: number;
-    rank: number;
-}
+  title: string;
+  level: number;
+  xp: number;
+  rank: number;
+};

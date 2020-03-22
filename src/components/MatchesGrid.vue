@@ -11,24 +11,34 @@
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
-      <span>{{ item.map.substr(item.map.lastIndexOf('/') + 1).replace('.w3x', '') }}</span>
+      <div class="mapPreview" :class="mapBackground(mapName(item))" />
+      <span>
+        {{ $t("mapNames." + mapName(item)) }}
+      </span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
-      <br />
-      <span
-        v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
-      >completed</span>
-      <span v-else>ongoing</span>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ item.startTime | moment("MMM DD YYYY HH:mm") }}</span>
+          <br />
+          <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">
+            completed
+          </span>
+          <span v-else>
+            ongoing
+          </span>
+        </template>
+        <span>Id: {{ item.id }}</span>
+      </v-tooltip>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
-        <v-col cols="5.5">
+        <v-col v-if="!onlyShowEnemy" cols="5">
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
-        <v-col cols="1">VS</v-col>
-        <v-col cols="5.5">
-          <player-match-info :player="getLoser(item)"></player-match-info>
+        <v-col v-if="!onlyShowEnemy">VS</v-col>
+        <v-col :cols="!onlyShowEnemy ? 5 : 6">
+          <player-match-info :player="getLoser(item)" :left="onlyShowEnemy"></player-match-info>
         </v-col>
       </v-row>
     </template>
@@ -38,7 +48,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, ERaceEnum } from "../store/typings";
+import { Match } from "../store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
@@ -51,6 +61,7 @@ export default class MatchesGrid extends Vue {
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
   @Prop() public alwaysLeftName!: string;
+  @Prop() public onlyShowEnemy!: boolean;
 
   get matches(): Match[] {
     return this.value;
@@ -59,6 +70,19 @@ export default class MatchesGrid extends Vue {
   public options: any = {
     itemsPerPage: 100
   };
+
+  mapBackground(item: any) {
+    return "mapPreview-" + item;
+  }
+
+  mapName(item: any) {
+    const meinString = item.map.substr(item.map.lastIndexOf('/') + 1)
+            .replace('.w3x', '')
+            .replace('(2)', '')
+            .replace('(4)', '')
+            .replace('_lv', '');
+    return meinString;
+  }
 
   @Watch("options", { deep: true })
   public onOptionsChanged() {
@@ -111,11 +135,11 @@ export default class MatchesGrid extends Vue {
 
   public headers = [
     {
-      text: "Id",
-      align: "start",
+      text: "Players",
+      align: "center",
       sortable: false,
-      value: "id",
-      width: "100px"
+      value: "players",
+      width: "600px"
     },
     {
       text: "Map",
@@ -124,24 +148,11 @@ export default class MatchesGrid extends Vue {
       value: "map"
     },
     {
-      text: "Host",
-      align: "start",
-      sortable: false,
-      value: "host"
-    },
-    {
       text: "Start Time",
       align: "start",
       sortable: false,
       value: "startTime",
       width: "180px"
-    },
-    {
-      text: "Players",
-      align: "center",
-      sortable: false,
-      value: "players",
-      width: "500px"
     }
   ];
 }
@@ -150,5 +161,48 @@ export default class MatchesGrid extends Vue {
 <style lang="scss" scoped>
 .playerCol {
   max-width: 500px;
+}
+
+.mapPreview {
+  float: left;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-right: 30px;
+  width: 42px;
+  height: 42px;
+  border: solid 1.5px #909090;
+}
+
+.mapPreview-twistedmeadows {
+  background-image: url("../assets/mapIcons/twistedmeadows.png");
+}
+
+.mapPreview-amazonia {
+  background-image: url("../assets/mapIcons/amazonia.png");
+}
+
+.mapPreview-concealedhill {
+  background-image: url("../assets/mapIcons/concealedhill.png");
+}
+
+.mapPreview-echoisles {
+  background-image: url("../assets/mapIcons/echoisles.png");
+}
+
+.mapPreview-lastrefuge {
+  background-image: url("../assets/mapIcons/lastrefuge.png");
+}
+
+.mapPreview-northernisles {
+  background-image: url("../assets/mapIcons/northernisles.png");
+}
+
+.mapPreview-northernisles {
+  background-image: url("../assets/mapIcons/northernisles.png");
+}
+
+.mapPreview-terenasstand {
+  background-image: url("../assets/mapIcons/terenasstand.png");
 }
 </style>

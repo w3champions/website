@@ -4,9 +4,8 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of {{ battleTag }} (
-            <v-icon>mdi-chevron-triple-up</v-icon>
-            {{mmr}})
+            Profile of {{ battleTag }}
+            <mmr-marker :mmr="mmr" size="30" style="margin-left: 14px" />
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -27,7 +26,7 @@
                             v-for="item in items"
                             :key="item.mode"
                           >
-                            <td>{{item.mode}}</td>
+                            <td>{{ $t("gameModes." + gameModeEnums[item.mode])}}</td>
                             <td class="text-end won">{{item.wins}}</td>
                             <td class="text-end lost">{{item.losses}}</td>
                             <td class="text-end">{{item.wins + item.losses}}</td>
@@ -46,6 +45,9 @@
                     <h4>Statistics by Race</h4>
                     <h5>Realm W3Champions</h5>
                     <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
+                      <template v-slot:item.race="{ item }">
+                        <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                      </template>
                       <template v-slot:item.wins="{ item }">
                         <span class="won">{{ item.wins }}</span>
                       </template>
@@ -67,13 +69,14 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-2'">
-              <v-card-title>Match history</v-card-title>
+              <v-card-title>Match History</v-card-title>
               <matches-grid
                 v-model="matches"
                 :totalMatches="totalMatches"
                 @pageChanged="onPageChanged"
                 :itemsPerPage="15"
                 :alwaysLeftName="battleTag"
+                :only-show-enemy="true"
               ></matches-grid>
             </v-tab-item>
           </v-tabs>
@@ -85,16 +88,18 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "../store/player/types";
-import { Match } from "../store/typings";
+import {Component, Prop, Watch} from "vue-property-decorator";
+import {PlayerProfile} from "../store/player/types";
+import {EGameMode, ERaceEnum, Match} from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
-import { Ranking } from "../store/ranking/types";
+import {Ranking} from "../store/ranking/types";
 import XpBar from "../components/XpBar.vue";
+import MmrMarker from "@/components/MmrMarker.vue";
 
 @Component({
   components: {
+    MmrMarker,
     MatchListItem,
     MatchesGrid,
     XpBar
@@ -103,6 +108,9 @@ import XpBar from "../components/XpBar.vue";
 export default class PlayerView extends Vue {
   @Prop() public name!: string;
   @Prop() public tag!: string;
+
+  public gameModeEnums = EGameMode;
+  public raceEnums = ERaceEnum;
 
   public raceHeaders = [
     {
@@ -237,7 +245,7 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter(x => x.mode === "1on1")[0].bucket;
+    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0].bucket;
   }
 
   public getMatches(page?: number) {
