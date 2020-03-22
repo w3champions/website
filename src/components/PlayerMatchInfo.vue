@@ -10,6 +10,7 @@
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
           >
+            <mmr-marker style="padding-left: 10px; padding-right: 10px" :class="textClass" :mmr="mmr" />
             {{ nameWithoutBtag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
@@ -37,9 +38,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
+import MmrMarker from "@/components/MmrMarker.vue";
 
 @Component({
-  components: {PlayerIcon}
+  components: {MmrMarker, PlayerIcon}
 })
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: {
@@ -107,6 +109,16 @@ export default class PlayerMatchInfo extends Vue {
 <style lang="scss">
 .btag {
   font-size: 10px;
+}
+
+.mmr-background:before {
+  content: "\E3E7";
+  font-family: "Material Icons";
+  display: block;
+  position: absolute;
+  right: 100%;
+  font-size: 20px;
+  color: rgb(255, 112, 62);
 }
 
 .won {
