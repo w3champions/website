@@ -1,5 +1,5 @@
 <template>
-  <v-badge overlap :content="mmr" :color="paintMMR()" />
+  <v-badge overlap offset-y="38px" bordered :content="mmr" :color="paintMMR()" />
 </template>
 
 <script lang="ts">

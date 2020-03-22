@@ -149,6 +149,14 @@ export default class App extends Vue {
     background-color: #292b2f !important;
 }
 
+.theme--dark.v-badge .v-badge__badge::after {
+  border-color: #ffffff !important;
+}
+
+.theme--light.v-badge .v-badge__badge::after {
+  border-color: #36393f !important;
+}
+
 .w3app {
 }
 </style>
