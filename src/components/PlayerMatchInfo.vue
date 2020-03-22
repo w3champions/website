@@ -20,6 +20,8 @@
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
               {{mmr}})
             </span>
+            <br />
+            <span class="btag">#{{btag}}</span>
           </a>
         </div>
       </div>
@@ -38,6 +40,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
+import MmrMarker from "@/components/MmrMarker.vue";
 
 @Component({
   components: { PlayerIcon }
@@ -107,8 +110,14 @@ export default class PlayerMatchInfo extends Vue {
 
 <style lang="scss">
 .btag {
-  font-size: 9px;
+  font-size: 10px;
 }
+
+.spacing-around-mmr-marker {
+  padding-right: 18px;
+  padding-left: 18px;
+}
+
 .won {
   color: green !important;
 }

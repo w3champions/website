@@ -54,7 +54,6 @@ export default class MatchesGrid extends Vue {
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
   @Prop() public alwaysLeftName!: string;
-  @Prop() public onlyShowEnemy!: boolean;
 
   get matches(): Match[] {
     return this.value;
@@ -63,10 +62,6 @@ export default class MatchesGrid extends Vue {
   public options: any = {
     itemsPerPage: 100
   };
-
-  mapBackground(item: any) {
-    return "mapPreview-" + item;
-  }
 
   mapName(item: any) {
     const meinString = item.map
@@ -169,7 +164,7 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      width: "600px"
+      width: "800px"
     },
     {
       text: "Map",
@@ -198,48 +193,5 @@ export default class MatchesGrid extends Vue {
 <style lang="scss" scoped>
 .playerCol {
   max-width: 500px;
-}
-
-.mapPreview {
-  float: left;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  margin-right: 30px;
-  width: 42px;
-  height: 42px;
-  border: solid 1.5px #909090;
-}
-
-.mapPreview-twistedmeadows {
-  background-image: url("../assets/mapIcons/twistedmeadows.png");
-}
-
-.mapPreview-amazonia {
-  background-image: url("../assets/mapIcons/amazonia.png");
-}
-
-.mapPreview-concealedhill {
-  background-image: url("../assets/mapIcons/concealedhill.png");
-}
-
-.mapPreview-echoisles {
-  background-image: url("../assets/mapIcons/echoisles.png");
-}
-
-.mapPreview-lastrefuge {
-  background-image: url("../assets/mapIcons/lastrefuge.png");
-}
-
-.mapPreview-northernisles {
-  background-image: url("../assets/mapIcons/northernisles.png");
-}
-
-.mapPreview-northernisles {
-  background-image: url("../assets/mapIcons/northernisles.png");
-}
-
-.mapPreview-terenasstand {
-  background-image: url("../assets/mapIcons/terenasstand.png");
 }
 </style>

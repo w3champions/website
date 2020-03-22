@@ -4,7 +4,12 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of<span class="playerTag">{{ battleTag }}</span>
+            Profile of
+            <span class="playerTag">
+              {{ battleTag }}
+              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+              {{mmr}})
+            </span>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -87,12 +92,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {Component, Prop, Watch} from "vue-property-decorator";
-import {PlayerProfile} from "../store/player/types";
-import {EGameMode, ERaceEnum, Match} from "../store/typings";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { PlayerProfile } from "../store/player/types";
+import { EGameMode, ERaceEnum, Match } from "../store/typings";
 import MatchListItem from "../components/MatchListItem.vue";
 import MatchesGrid from "../components/MatchesGrid.vue";
-import {Ranking} from "../store/ranking/types";
+import { Ranking } from "../store/ranking/types";
 import XpBar from "../components/XpBar.vue";
 import MmrMarker from "@/components/MmrMarker.vue";
 
@@ -244,7 +249,8 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0].bucket;
+    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0]
+      .bucket;
   }
 
   public getMatches(page?: number) {
