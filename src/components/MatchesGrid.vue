@@ -17,14 +17,19 @@
       </span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
-      <br />
-      <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">
-        completed
-      </span>
-      <span v-else>
-        ongoing
-      </span>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ item.startTime | moment("MMM DD YYYY HH:mm") }}</span>
+          <br />
+          <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">
+            completed
+          </span>
+          <span v-else>
+            ongoing
+          </span>
+        </template>
+        <span>Id: {{ item.id }}</span>
+      </v-tooltip>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
