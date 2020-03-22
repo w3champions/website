@@ -1,33 +1,36 @@
 <template>
-  <div :class="textClass">
-    <player-icon :left="left" :race="player.race" :mmr="mmr" />
-    <div>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <a
-            :class="won"
-            v-on="on"
-            @mouseover="lazyLoadProfile"
-            @click="goToPlayer(name)"
-          >
+  <v-tooltip top>
+    <template v-slot:activator="{ on }">
+      <div :class="textClass">
+        <player-icon :left="left" :race="player.race" :mmr="mmr" />
+        <div>
+          <a :class="won" v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">
+            <span v-if="!left">
+              (
+              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+              {{mmr}})
+            </span>
             {{ nameWithoutBtag }}#{{ btag }}
             <span v-if="player.xpChange" :class="won">
-              <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
-              <span v-else> ({{ player.xpChange }})</span>
+              <span v-if="player.xpChange > 0">(+{{ player.xpChange }})</span>
+              <span v-else>({{ player.xpChange }})</span>
+            </span>
+            <span v-if="left">
+              (
+              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+              {{mmr}})
             </span>
           </a>
-        </template>
-        <div v-if="profile.data">
-          Wins: {{ profile.data.stats.total.wins }} | Losses:
-          {{ profile.data.stats.total.losses }} | Total:
-          {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
         </div>
-        <div v-else>
-          Wins: ... | Losses: ... | Total: ...
-        </div>
-      </v-tooltip>
+      </div>
+    </template>
+    <div v-if="profile.data">
+      Wins: {{ profile.data.stats.total.wins }} | Losses:
+      {{ profile.data.stats.total.losses }} | Total:
+      {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
     </div>
-  </div>
+    <div v-else>Wins: ... | Losses: ... | Total: ...</div>
+  </v-tooltip>
 </template>
 
 <script lang="ts">
@@ -37,7 +40,7 @@ import { ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
 
 @Component({
-  components: {PlayerIcon}
+  components: { PlayerIcon }
 })
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: {
@@ -112,5 +115,9 @@ export default class PlayerMatchInfo extends Vue {
 
 .lost {
   color: red !important;
+}
+
+.mmr {
+  font-size: 18px !important;
 }
 </style>

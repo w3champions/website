@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of {{ battleTag }}
+            Profile of<span class="playerTag">{{ battleTag }}</span>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -272,5 +272,10 @@ export default class PlayerView extends Vue {
   .profileTab {
     background-color: #2f2f2f;
   }
+}
+
+.playerTag {
+  margin-left: 10px;
+  text-transform: none;
 }
 </style>

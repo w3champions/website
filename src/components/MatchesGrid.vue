@@ -26,12 +26,12 @@
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
-        <v-col v-if="!onlyShowEnemy" cols="5">
+        <v-col cols="5.5">
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
-        <v-col v-if="!onlyShowEnemy">VS</v-col>
-        <v-col :cols="!onlyShowEnemy ? 5 : 6">
-          <player-match-info :player="getLoser(item)" :left="onlyShowEnemy"></player-match-info>
+        <v-col cols="1">VS</v-col>
+        <v-col cols="5.5">
+          <player-match-info :player="getLoser(item)"></player-match-info>
         </v-col>
       </v-row>
     </template>

@@ -17,13 +17,13 @@ const en = {
     },
 
     mapNames: {
-        twistedmeadows: "Twisted Meadows (4)",
-        echoisles: "Echo Isles (2)",
-        lastrefuge: "Last Refuge (2)",
-        northernisles: "Northern Isles (2)",
-        concealedhill: "Concealed Hill (2)",
-        terenasstand: "Terenas Stand LV (2)",
-        amazonia: "Amanzonia (2)",
+        twistedmeadows: "Twisted Meadows",
+        echoisles: "Echo Isles",
+        lastrefuge: "Last Refuge",
+        northernisles: "Northern Isles",
+        concealedhill: "Concealed Hill",
+        terenasstand: "Terenas Stand LV",
+        amazonia: "Amanzonia",
     }
 };
 

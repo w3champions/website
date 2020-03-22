@@ -1,6 +1,8 @@
 @import "./vars.scss";
 @import "../shared/index.scss";
 
+$w3-orc-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
+
 .theme--light.v-application {
   @font-face {
     * {
@@ -8,7 +10,7 @@
       color: $w3-light-color;
     }
   }
-
+ 
   background: url(./assets/human/background.jpg) no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
@@ -18,7 +20,7 @@
   .v-app-bar:before {
     @extend .w3-glass;
 
-    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
+    box-shadow: $w3-orc-glass;
   }
 
   .v-btn {
@@ -29,15 +31,15 @@
   }
 
   .w3-background {
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.6) !important;
+    box-shadow: $w3-orc-glass;
   }
 
   .w3-background:hover {
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 1) !important;
+    box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 1) !important;
   }
 
   .theme-selector.v-list {
-    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
+    box-shadow: $w3-orc-glass;
   }
 
   .v-card {
@@ -51,7 +53,7 @@
   .v-card:before {
     @extend .w3-glass;
 
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.6) !important;
+    box-shadow: $w3-orc-glass;
   }
 
   .v-tabs-bar {
