@@ -11,22 +11,15 @@
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
-      <div class="mapPreview" :class="mapBackground(mapName(item))" />
-      <span>
-        {{ $t("mapNames." + mapName(item)) }}
-      </span>
+      <span>{{ $t("mapNames." + mapName(item)) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ item.startTime | moment("MMM DD YYYY HH:mm") }}</span>
           <br />
-          <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">
-            completed
-          </span>
-          <span v-else>
-            ongoing
-          </span>
+          <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">completed</span>
+          <span v-else>ongoing</span>
         </template>
         <span>Id: {{ item.id }}</span>
       </v-tooltip>
@@ -76,11 +69,12 @@ export default class MatchesGrid extends Vue {
   }
 
   mapName(item: any) {
-    const meinString = item.map.substr(item.map.lastIndexOf('/') + 1)
-            .replace('.w3x', '')
-            .replace('(2)', '')
-            .replace('(4)', '')
-            .replace('_lv', '');
+    const meinString = item.map
+      .substr(item.map.lastIndexOf("/") + 1)
+      .replace(".w3x", "")
+      .replace("(2)", "")
+      .replace("(4)", "")
+      .replace("_lv", "");
     return meinString;
   }
 
@@ -159,6 +153,8 @@ export default class MatchesGrid extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
+
 .playerCol {
   max-width: 500px;
 }

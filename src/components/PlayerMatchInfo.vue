@@ -10,13 +10,11 @@
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
           >
-            {{ nameWithoutBtag }}
+            {{ nameWithoutBtag }}#{{ btag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
               <span v-else> ({{ player.xpChange }})</span>
             </span>
-            <br />
-            <span class="btag">#{{ btag }}</span>
           </a>
         </template>
         <div v-if="profile.data">
