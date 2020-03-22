@@ -1,5 +1,5 @@
 <template>
-  <span style="margin-right: -13px">
+  <span :class="alignment()">
     <span class="mmr-number">{{mmr}}</span>
     <v-icon class="mmr-icon" :class="alignCorrect" :color="paintMMR">mdi-shield</v-icon>
   </span>
@@ -15,7 +15,9 @@ export default class MmrMarker extends Vue {
   @Prop() left!: boolean;
 
   alignment() {
-    return this.left ? "alignLeft" : "alignRight";
+    const hackClass = this.left ? "correct-hack-left" : "correct-hack-right";
+    const alignClasses = this.left ? "alignLeft" : "alignRight";
+    return hackClass + " " + alignClasses;
   }
 
   get alignCorrect() {
@@ -48,7 +50,7 @@ export default class MmrMarker extends Vue {
         return "#909090";
       case 5:
       case 6:
-        return "#E2B007";
+        return "#aba63a";
       case 7:
       case 8:
         return "#00A2ED";
@@ -69,14 +71,12 @@ export default class MmrMarker extends Vue {
   position: fixed;
 }
 
-.alignRight {
-  float: left;
-  margin-right: 10px;
+.correct-hack-left {
+  margin-right: -19px;
 }
 
-.alignLeft {
-  float: right;
-  margin-left: 10px;
+.correct-hack-right {
+  margin-right: -19px;
 }
 
 .mmr-icon-1{

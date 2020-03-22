@@ -10,14 +10,14 @@
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
           >
-            <mmr-marker style="padding-left: 10px; padding-right: 10px" :class="textClass" :mmr="mmr" />
+            <mmr-marker class="spacing-around-mmr-marker" :left="left" :mmr="mmr" />
             {{ nameWithoutBtag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
               <span v-else> ({{ player.xpChange }})</span>
             </span>
             <br />
-            <span class="btag">#{{ btag }}</span>
+            <span class="btag">#{{btag}}</span>
           </a>
         </template>
         <div v-if="profile.data">
@@ -111,14 +111,9 @@ export default class PlayerMatchInfo extends Vue {
   font-size: 10px;
 }
 
-.mmr-background:before {
-  content: "\E3E7";
-  font-family: "Material Icons";
-  display: block;
-  position: absolute;
-  right: 100%;
-  font-size: 20px;
-  color: rgb(255, 112, 62);
+.spacing-around-mmr-marker {
+  padding-right: 18px;
+  padding-left: 18px;
 }
 
 .won {
