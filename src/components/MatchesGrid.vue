@@ -11,10 +11,10 @@
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
+      <div class="mapPreview" :class="mapBackground(mapName(item))" />
       <span>
         {{ $t("mapNames." + mapName(item)) }}
       </span>
-      <span class="mapPreview" :class="mapBackground(mapName(item))" />
     </template>
     <template v-slot:item.startTime="{ item }">
       <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>

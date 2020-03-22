@@ -1,6 +1,6 @@
 <template>
   <div class="race-icon" :class="[raceIcon(), alignment()]">
-    <mmr-marker class="mmr-marker-location" :mmr="mmr" />
+    <mmr-marker :mmr="mmr" />
   </div>
 </template>
 
@@ -34,31 +34,6 @@ export default class PlayerIcon extends Vue {
   height: 42px;
   background-position: center;
   background-size: cover;
-}
-
-.mmr-marker-location {
-  margin-left: 31px;
-  margin-top: 31px;
-}
-
-.mmr-marker-bronze {
-  background-color: #805a46;
-}
-
-.mmr-marker-silver {
-  background-color: #909090;
-}
-
-.mmr-marker-gold {
-  background-color: #e2b007;
-}
-
-.mmr-marker-master {
-  background-color: #00a2ed;
-}
-
-.mmr-marker-grandmaster {
-  background-color: #ff6700;
 }
 
 .race-icon-HUMAN {
