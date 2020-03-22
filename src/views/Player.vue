@@ -5,7 +5,6 @@
         <v-card tile>
           <v-card-title>
             Profile of {{ battleTag }}
-            <mmr-marker :mmr="mmr" size="30" style="margin-left: 14px" />
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
