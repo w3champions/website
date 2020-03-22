@@ -10,8 +10,6 @@
 }
 
 .theme--dark.v-application {
-  @extend .w3-application;
-
   @font-face {
     * {
       font-family: "Friz Quadrata Regular OS";
@@ -20,6 +18,10 @@
   }
 
   background: url(./assets/undead/background.jpg) no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  align-items: center !important;
+  justify-content: center !important;
 
   .v-btn {
     font-family: "Friz Quadrata Regular OS" !important;
@@ -27,6 +29,14 @@
     letter-spacing: 1.56px !important;
     text-transform: uppercase !important;
     text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+  }
+
+  .w3-background {
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .w3-background:hover {
+    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 1) !important;
   }
 
   .v-app-bar:before {

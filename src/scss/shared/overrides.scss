@@ -4,7 +4,7 @@
   }
 }
 
-.table-row-pointer {
+.table-row-pointer {     
   tbody {
     tr {
       cursor: pointer !important;
@@ -37,10 +37,6 @@
 }
 
 .v-btn:before {
-  background-color: transparent !important;
-}
-
-.v-expansion-panel {
   background-color: transparent !important;
 }
 

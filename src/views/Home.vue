@@ -2,6 +2,37 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" md="8">
+
+
+
+<v-card tile>
+  <v-card-title></v-card-title>
+<v-row>
+  <v-col cols="8">
+    
+  </v-col>
+  <v-col cols="4">
+  </v-col>
+</v-row>
+</v-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <v-row>
           <v-col cols="12">
             <v-card tile>
@@ -32,7 +63,7 @@
               </v-card-text>
               </v-col>
               <v-col cols="6" style="text-align: center">
-                <img src="../assets/reforged.png" style="max-width: 90%; max-height: 320px;">
+                <img src="../assets/reforged.jpg" style="max-width: 90%; max-height: 320px;">
               </v-col>
 </v-row>
 
@@ -47,6 +78,7 @@
                       target="_blank"
                       value
                       outlined
+                      class="w3-background"
                     >
                       <v-icon>mdi-download</v-icon>
                       <span class="mr-2 hidden-xs-only">Download the Windows installer</span>
@@ -66,6 +98,7 @@
                     <b>Issues with the download link?</b><br/> Some Antivir-Software has falsely detected our setup as malicious. We contacted them and some already corrected their databases. If thats not the case for you, use the following link and unpack the setup with the <b style="white-space: nowrap;">password WC3</b>
                     </p>
                                         <v-btn
+                                        class="w3-background"
                       color="secondary"
                       href="./w3champions-setup.zip"
                       target="_blank"
@@ -82,6 +115,7 @@
                     <h3>Installation Guide Mac OS</h3>
                     <p>With a Mac you have to place the following files in your WC3 Installation folder manually.</p>
                     <v-btn
+                    class="w3-background"
                       color="primary"
                       href="./webui.zip"
                       target="_blank"

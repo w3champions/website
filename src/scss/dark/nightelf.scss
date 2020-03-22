@@ -1,3 +1,9 @@
+@import "../shared/index.scss";
+
 .theme--dark.v-application.nightelf {
   background: url(./assets/nightelf/background.jpg) no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
