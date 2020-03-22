@@ -17,12 +17,15 @@
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ item.startTime | moment("MMM DD YYYY HH:mm") }}</span>
-          <br />
-          <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">completed</span>
-          <span v-else>ongoing</span>
         </template>
         <span>Id: {{ item.id }}</span>
       </v-tooltip>
+    </template>
+    <template v-slot:item.duration="{ item }">
+      <span v-if="item.endTime">
+        {{item.startTime - item.endTime}}
+      </span>
+      <span v-else>ongoing</span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
@@ -146,15 +149,20 @@ export default class MatchesGrid extends Vue {
       align: "start",
       sortable: false,
       value: "startTime",
-      width: "180px"
+      width: "220px"
+    },
+    {
+      text: "Duration",
+      align: "start",
+      sortable: false,
+      value: "duration",
+      width: "220px"
     }
   ];
 }
 </script>
 
 <style lang="scss" scoped>
-
-
 .playerCol {
   max-width: 500px;
 }
