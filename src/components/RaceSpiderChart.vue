@@ -1,4 +1,3 @@
-import {ERaceEnum} from "@/store/typings";
 <template>
   <VueApexCharts
     type="radar"

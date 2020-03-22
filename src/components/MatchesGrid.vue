@@ -11,15 +11,20 @@
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
-      <span>{{ item.map.substr(item.map.lastIndexOf('/') + 1).replace('.w3x', '') }}</span>
+      <span style="textline">
+        {{ $t("mapNames." + mapName(item)) }}
+      </span>
+      <div class="mapPreview" :class="mapBackground(mapName(item))" />
     </template>
     <template v-slot:item.startTime="{ item }">
       <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
       <br />
-      <span
-        v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
-      >completed</span>
-      <span v-else>ongoing</span>
+      <span v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')">
+        completed
+      </span>
+      <span v-else>
+        ongoing
+      </span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
@@ -27,7 +32,7 @@
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
         <v-col v-if="!onlyShowEnemy">VS</v-col>
-        <v-col :cols="!onlyShowEnemy ? 5 : 7">
+        <v-col :cols="!onlyShowEnemy ? 5 : 6">
           <player-match-info :player="getLoser(item)" :left="onlyShowEnemy"></player-match-info>
         </v-col>
       </v-row>
@@ -60,6 +65,19 @@ export default class MatchesGrid extends Vue {
   public options: any = {
     itemsPerPage: 100
   };
+
+  mapBackground(item: any) {
+    return "mapPreview-" + item;
+  }
+
+  mapName(item: any) {
+    const meinString = item.map.substr(item.map.lastIndexOf('/') + 1)
+            .replace('.w3x', '')
+            .replace('(2)', '')
+            .replace('(4)', '')
+            .replace('_lv', '');
+    return meinString;
+  }
 
   @Watch("options", { deep: true })
   public onOptionsChanged() {
@@ -116,7 +134,7 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      width: "500px"
+      width: "600px"
     },
     {
       text: "Map",
@@ -138,5 +156,48 @@ export default class MatchesGrid extends Vue {
 <style lang="scss" scoped>
 .playerCol {
   max-width: 500px;
+}
+
+.mapPreview {
+  float: left;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-right: 30px;
+  width: 64px;
+  height: 64px;
+  border: solid 1.5px #909090;
+}
+
+.mapPreview-twistedmeadows {
+  background-image: url("../assets/mapIcons/twistedmeadows.png");
+}
+
+.mapPreview-amazonia {
+  background-image: url("../assets/mapIcons/amazonia.png");
+}
+
+.mapPreview-concealedhill {
+  background-image: url("../assets/mapIcons/concealedhill.png");
+}
+
+.mapPreview-echoisles {
+  background-image: url("../assets/mapIcons/echoisles.png");
+}
+
+.mapPreview-lastrefuge {
+  background-image: url("../assets/mapIcons/lastrefuge.png");
+}
+
+.mapPreview-northernisles {
+  background-image: url("../assets/mapIcons/northernisles.png");
+}
+
+.mapPreview-northernisles {
+  background-image: url("../assets/mapIcons/northernisles.png");
+}
+
+.mapPreview-terenasstand {
+  background-image: url("../assets/mapIcons/terenasstand.png");
 }
 </style>

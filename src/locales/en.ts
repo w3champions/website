@@ -15,6 +15,16 @@ const en = {
         GM_4ON4: "4 vs 4",
         GM_FFA: "FFA",
     },
+
+    mapNames: {
+        twistedmeadows: "Twisted Meadows (4)",
+        echoisles: "Echo Isles (2)",
+        lastrefuge: "Last Refuge (2)",
+        northernisles: "Northern Isles (2)",
+        concealedhill: "Concealed Hill (2)",
+        terenasstand: "Terenas Stand LV (2)",
+        amazonia: "Amanzonia (2)",
+    }
 };
 
 export default en
