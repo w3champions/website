@@ -6,7 +6,7 @@
           <v-card-title>
             Profile of
             <span class="playerTag">
-              {{ battleTag }}
+              {{ battleTag }} (
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
               {{mmr}})
             </span>

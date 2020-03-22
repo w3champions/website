@@ -20,8 +20,6 @@
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
               {{mmr}})
             </span>
-            <br />
-            <span class="btag">#{{btag}}</span>
           </a>
         </div>
       </div>
