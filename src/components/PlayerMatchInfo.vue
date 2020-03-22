@@ -108,6 +108,7 @@ export default class PlayerMatchInfo extends Vue {
 .btag {
   font-size: 10px;
 }
+
 .won {
   color: green !important;
 }

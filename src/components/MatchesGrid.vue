@@ -29,11 +29,11 @@
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="5">
           <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
-        <v-col>VS</v-col>
-        <v-col colsß="4">
+        <v-col cols="2">VS</v-col>
+        <v-col colsß="5">
           <player-match-info :player="getLoser(item)"></player-match-info>
         </v-col>
       </v-row>
