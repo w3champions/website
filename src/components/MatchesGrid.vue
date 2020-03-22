@@ -22,10 +22,7 @@
       </v-tooltip>
     </template>
     <template v-slot:item.duration="{ item }">
-      <span v-if="item.endTime">
-        {{item.startTime - item.endTime}}
-      </span>
-      <span v-else>ongoing</span>
+      <span>{{getDuration(item)}}</span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
@@ -121,6 +118,42 @@ export default class MatchesGrid extends Vue {
     return match.players[1];
   }
 
+  public getDuration(match: Match) {
+    if (
+      !Object.prototype.hasOwnProperty.call(match, "endTime") ||
+      !match.endTime
+    ) {
+      return "ongoing";
+    }
+
+    let duration = "";
+    let delta = Math.abs(match.startTime - match.endTime) / 1000;
+
+    const days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    const hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    if (hours) {
+      duration += `${hours}h `;
+    }
+
+    const minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    if (minutes) {
+      duration += `${minutes}m `;
+    }
+
+    const seconds = delta % 60;
+    if (seconds) {
+      duration += `${Math.floor(seconds)}s`;
+    }
+
+    return duration;
+  }
+
   mounted() {
     this.options.itemsPerPage = this.itemsPerPage;
   }
@@ -141,17 +174,17 @@ export default class MatchesGrid extends Vue {
     },
     {
       text: "Start Time",
-      align: "start",
+      align: "end",
       sortable: false,
       value: "startTime",
       width: "220px"
     },
     {
       text: "Duration",
-      align: "start",
+      align: "center",
       sortable: false,
       value: "duration",
-      width: "220px"
+      width: "150px"
     }
   ];
 }

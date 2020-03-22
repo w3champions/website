@@ -1,8 +1,7 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar :class="{darkmode: isDarkTheme}" app :dark="isDarkTheme">
-      <div class="d-flex align-center">W3Champions Ladder</div>
-
+      <div @click="$router.push({path: '/'})" class="d-flex align-center pointer">W3Champions - your Ladder for Warcraft III</div>
       <v-spacer></v-spacer>
 
       <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">
@@ -145,5 +144,4 @@ export default class App extends Vue {
 .theme--light.v-badge .v-badge__badge::after {
   border-color: #36393f !important;
 }
-
 </style>

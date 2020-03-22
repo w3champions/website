@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
-          <v-card-title>It is finally there - your Ladder for Warcraft III</v-card-title>
+          <v-card-title>It is finally there</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
@@ -50,54 +50,62 @@
             </v-row>
             <v-row>
               <v-col cols="6">
-                <v-btn
-                  color="primary"
-                  href="./w3champions-setup.exe"
-                  target="_blank"
-                  value
-                  outlined
-                  class="w3-background"
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Windows installer</span>
-                </v-btn>
-
+                <p>
+                  <v-btn
+                    color="primary"
+                    href="./w3champions-setup.exe"
+                    target="_blank"
+                    value
+                    outlined
+                    class="w3-background"
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Windows installer</span>
+                  </v-btn>
+                </p>
                 <p>
                   <b>Issues with the download link?</b>
                   <br />Some Antivir-Software has falsely detected our setup as malicious. We contacted them and some already corrected their databases. If thats not the case for you, use the following link and unpack the setup with the
-                  <b style="white-space: nowrap;">password WC3</b>
+                  <b
+                    style="white-space: nowrap;"
+                  >password WC3</b>
                 </p>
-                <v-btn
-                  class="w3-background"
-                  color="secondary"
-                  href="./w3champions-setup.zip"
-                  target="_blank"
-                  value
-                  outlined
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Windows installer zipped</span>
-                </v-btn>
+                <p>
+                  <v-btn
+                    class="w3-background"
+                    color="secondary"
+                    href="./w3champions-setup.zip"
+                    target="_blank"
+                    value
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Windows installer zipped</span>
+                  </v-btn>
+                </p>
               </v-col>
               <v-col cols="6">
-                <v-btn
-                  class="w3-background"
-                  color="primary"
-                  href="./webui.zip"
-                  target="_blank"
-                  outlined
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Mac archive</span>
-                </v-btn>
+                <p>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    href="./webui.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Mac archive</span>
+                  </v-btn>
+                </p>
               </v-col>
             </v-row>
           </v-card-text>
         </v-card>
       </v-col>
+
       <v-col cols="12" md="4">
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" class="no-padding">
             <v-card tile>
               <v-card-title>Community</v-card-title>
               <v-card-text>
@@ -131,7 +139,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" class>
             <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
               <v-list dense>
@@ -179,3 +187,9 @@ export default class HomeView extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.no-padding {
+  padding-top: 0;
+}
+</style>
