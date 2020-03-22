@@ -30,13 +30,15 @@ export default class PlayerIcon extends Vue {
 
 <style lang="scss">
 .race-icon {
-  width: 64px;
-  height: 64px;
+  width: 42px;
+  height: 42px;
+  background-position: center;
+  background-size: cover;
 }
 
 .mmr-marker-location {
-  margin-left: 55px;
-  margin-top: 54px;
+  margin-left: 31px;
+  margin-top: 31px;
 }
 
 .mmr-marker-bronze {

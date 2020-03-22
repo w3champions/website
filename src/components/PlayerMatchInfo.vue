@@ -6,7 +6,6 @@
         <template v-slot:activator="{ on }">
           <a
             :class="won"
-            class="playerName"
             v-on="on"
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
@@ -100,10 +99,6 @@ export default class PlayerMatchInfo extends Vue {
 </script>
 
 <style lang="scss">
-.playerName {
-  font-size: 16px;
-}
-
 .won {
   color: green !important;
 }

@@ -11,10 +11,10 @@
     :footer-props="{showFirstLastPage: true}"
   >
     <template v-slot:item.map="{ item }">
-      <span style="textline">
+      <span>
         {{ $t("mapNames." + mapName(item)) }}
       </span>
-      <div class="mapPreview" :class="mapBackground(mapName(item))" />
+      <span class="mapPreview" :class="mapBackground(mapName(item))" />
     </template>
     <template v-slot:item.startTime="{ item }">
       <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
@@ -164,8 +164,8 @@ export default class MatchesGrid extends Vue {
   background-size: cover;
   background-repeat: no-repeat;
   margin-right: 30px;
-  width: 64px;
-  height: 64px;
+  width: 42px;
+  height: 42px;
   border: solid 1.5px #909090;
 }
 
