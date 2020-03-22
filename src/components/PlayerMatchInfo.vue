@@ -15,6 +15,8 @@
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
               <span v-else> ({{ player.xpChange }})</span>
             </span>
+            <br />
+            <span class="btag">#{{ btag }}</span>
           </a>
         </template>
         <div v-if="profile.data">
@@ -74,6 +76,10 @@ export default class PlayerMatchInfo extends Vue {
     return this.name.split("#")[0];
   }
 
+  get btag() {
+    return this.name.split("#")[1];
+  }
+
   public profile = {} as any;
 
   private async lazyLoadProfile() {
@@ -99,6 +105,9 @@ export default class PlayerMatchInfo extends Vue {
 </script>
 
 <style lang="scss">
+.btag {
+  font-size: 9px;
+}
 .won {
   color: green !important;
 }
