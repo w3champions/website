@@ -18,7 +18,7 @@
   .v-app-bar:before {
     @extend .w3-glass;
 
-    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
+    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.9) !important;
   }
 
   .v-btn {
@@ -29,7 +29,7 @@
   }
 
   .w3-background {
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.6) !important;
+    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.9) !important;
   }
 
   .w3-background:hover {
@@ -37,7 +37,7 @@
   }
 
   .theme-selector.v-list {
-    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.6) !important;
+    box-shadow: inset 0 0 0 3000px rgba(200, 200, 200, 0.9) !important;
   }
 
   .v-card {
@@ -51,7 +51,7 @@
   .v-card:before {
     @extend .w3-glass;
 
-    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.6) !important;
+    box-shadow: inset 0 0 0 3000px rgba(255, 255, 255, 0.9) !important;
   }
 
   .v-tabs-bar {
