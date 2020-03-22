@@ -10,11 +10,13 @@
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
           >
-            {{ nameWithoutBtag }}#{{ btag }}
+            {{ nameWithoutBtag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0"> (+{{ player.xpChange }})</span>
               <span v-else> ({{ player.xpChange }})</span>
             </span>
+            <br />
+            <span class="btag">#{{ btag }}</span>
           </a>
         </template>
         <div v-if="profile.data">
@@ -104,7 +106,7 @@ export default class PlayerMatchInfo extends Vue {
 
 <style lang="scss">
 .btag {
-  font-size: 9px;
+  font-size: 10px;
 }
 .won {
   color: green !important;
