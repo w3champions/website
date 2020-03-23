@@ -280,7 +280,7 @@ export default class RankingsView extends Vue {
   private skipPageSync = false;
 
   public async goToRank(rank: Ranking) {
-    this.options.page = Math.floor(rank.rank / 15) + 1;
+    this.options.page = Math.floor(rank.rank / 15);
   }
 
   public openPlayerProfile(playerName: string) {

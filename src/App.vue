@@ -82,7 +82,6 @@ export default class App extends Vue {
 
   get isDarkTheme() {
     const isDark = this.theme === "nightelf" || this.theme === "undead";
-    console.log("is dark theme", isDark);
     return isDark;
   }
 
