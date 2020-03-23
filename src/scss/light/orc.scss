@@ -1,4 +1,4 @@
-@import "../shared/index.scss";
+@import '../shared/index.scss';
 
 $w3-orc-glass: inset 0 0 0 3000px rgba(199, 186, 161, 0.9) !important;
 
@@ -24,6 +24,10 @@ $w3-orc-glass: inset 0 0 0 3000px rgba(199, 186, 161, 0.9) !important;
   }
 
   .theme-selector.v-list {
+    box-shadow: $w3-orc-glass;
+  }
+
+  .v-list {
     box-shadow: $w3-orc-glass;
   }
 

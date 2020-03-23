@@ -9,16 +9,14 @@
       ></v-progress-linear>
     </template>
     <div>
-      <span
-        class="level"
-      >XP: {{ranking.xp}}</span>
+      <span class="level">XP: {{ ranking.xp }}</span>
     </div>
   </v-tooltip>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { Ranking } from "../store/ranking/types";
 
 @Component({})
@@ -26,7 +24,7 @@ export default class XpBar extends Vue {
   @Prop() public ranking!: Ranking;
 
   get color() {
-    return this.$store.direct.state.darkMode ? 'grey' : 'black';
+    return this.$store.direct.state.darkMode ? "grey" : "black";
   }
 }
 </script>

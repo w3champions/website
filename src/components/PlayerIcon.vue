@@ -1,6 +1,5 @@
 <template>
-  <div class="race-icon" :class="[raceIcon(), alignment()]">
-  </div>
+  <div class="race-icon" :class="[raceIcon(), alignment()]"></div>
 </template>
 
 <script lang="ts">

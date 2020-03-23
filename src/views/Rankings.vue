@@ -21,14 +21,22 @@
               placeholder="Start typing to Search"
               return-object
             >
-            <template v-slot:item="data">
-              <template v-if="typeof data.item !== 'object'">
+              <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
                   <v-list-item-content v-text="data.item"></v-list-item-content>
                 </template>
                 <template v-else>
                   <v-list-item-content>
-                    <v-list-item-title>{{data.item.battleTag}}</v-list-item-title>
-                    <v-list-item-subtitle>Wins: {{data.item.wins}} | Losses: {{data.item.losses}} | Total: {{data.item.wins + data.item.losses}}</v-list-item-subtitle>
+                    <v-list-item-title>{{
+                      data.item.battleTag
+                    }}</v-list-item-title>
+                    <v-list-item-subtitle
+                      >Wins: {{ data.item.wins }} | Losses:
+                      {{ data.item.losses }} | Total:
+                      {{
+                        data.item.wins + data.item.losses
+                      }}</v-list-item-subtitle
+                    >
                   </v-list-item-content>
                 </template>
               </template>
@@ -52,36 +60,36 @@
                     @click="openPlayerProfile(item.battleTag)"
                     v-for="item in items"
                     :key="item.name"
-                    :class="{'searchedItem': item.battleTag === searchModelBattleTag}"
+                    :class="{
+                      searchedItem: item.battleTag === searchModelBattleTag
+                    }"
                   >
-                    <td>{{item.rank}}</td>
-                    <td>{{item.battleTag}}</td>
-                    <td class="text-end won">{{item.wins}}</td>
-                    <td class="text-end lost">{{item.losses}}</td>
-                    <td class="text-end">{{item.wins + item.losses}}</td>
-                    <td class="text-end">{{getWinRate(item).toFixed(1)}}%</td>
-                    <td class="text-end">{{Math.floor(item.level)}}</td>
+                    <td>{{ item.rank }}</td>
+                    <td>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                      {{ item.battleTag.split("#")[0] }}
+                            
+                          </span>
+                          
+                        </template>
+                        <div>
+                          {{ item.battleTag }}
+                        </div>
+                      </v-tooltip>
+                      </td>
+                    <td class="text-end won">{{ item.wins }}</td>
+                    <td class="text-end lost">{{ item.losses }}</td>
+                    <td class="text-end">{{ item.wins + item.losses }}</td>
+                    <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
+                    <td class="text-end">{{ Math.floor(item.level) }}</td>
                     <td>
                       <xp-bar :ranking="item"></xp-bar>
                     </td>
                   </tr>
                 </tbody>
               </template>
-              <!--
-              <template v-slot:item.matches="{ item }">
-                {{
-                item.wins + item.losses
-                }}
-              </template>
-              <template v-slot:item.level="{ item }">
-                {{
-                Math.floor(item.level)
-                }}
-              </template>
-              <template v-slot:item.levelProgress="{ item }">
-                <v-progress-linear :value="(item.level - Math.floor(item.level)) * 100" height="15"></v-progress-linear>
-              </template>
-              -->
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -93,9 +101,7 @@
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
               <v-list-item-subtitle class="text-right">
-                {{
-                stat.value
-                }}
+                {{ stat.value }}
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
@@ -113,12 +119,12 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Ranking } from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
-import XpBar from '../components/XpBar.vue';
+import XpBar from "../components/XpBar.vue";
 
 @Component({
   components: {
-    XpBar,
-  },
+    XpBar
+  }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -201,11 +207,6 @@ export default class RankingsView extends Vue {
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
-  }
-
-  @Watch("searchModel")
-  public onSearchSelected(newValue: Ranking) {
-    return;
   }
 
   public options = {

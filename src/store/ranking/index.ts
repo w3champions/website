@@ -1,6 +1,7 @@
 import { moduleActionContext } from "..";
 import { RankingState, Ranking } from "./types";
-import { DataTableOptions } from "../typings";
+import { DataTableOptions, RootState } from "../typings";
+import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
@@ -11,10 +12,12 @@ const mod = {
     rankings: [],
     topFive: [],
     searchRanks: []
-    
   } as RankingState,
   actions: {
-    async retrieveRankings(context: any, options?: DataTableOptions) {
+    async retrieveRankings(
+      context: ActionContext<RankingState, RootState>,
+      options?: DataTableOptions
+    ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       if (options && options.page != null) {
@@ -28,13 +31,16 @@ const mod = {
       commit.SET_TOTAL_RANKS(response.total);
       commit.SET_RANKINGS(response.items);
     },
-    async getTopFive(context: any) {
+    async getTopFive(context: ActionContext<RankingState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.retrieveRankings(0);
       commit.SET_TOP_FIVE(rankings.items.slice(0, 5));
     },
-    async search(context: any, searchText: string) {
+    async search(
+      context: ActionContext<RankingState, RootState>,
+      searchText: string
+    ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
@@ -43,10 +49,10 @@ const mod = {
 
       commit.SET_SEARCH_RANKINGS(rankings.items);
     },
-    async clearSearch(context: any) {
+    async clearSearch(context: ActionContext<RankingState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
-    },
+    }
   },
   mutations: {
     SET_RANKINGS(state: RankingState, rankings: Ranking[]) {

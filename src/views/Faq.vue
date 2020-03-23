@@ -88,8 +88,7 @@ export default class FaqView extends Vue {
         "This is currently a well known bug. We investigate in it. Please restart Warcraft III via Alt+F4."
     },
     {
-      question:
-        'Will ladder still work after Blizzard patches wc3?',
+      question: "Will ladder still work after Blizzard patches wc3?",
       answer:
         "In general yes. But it is possible that something breaks by a patch. We will fix this within hours if that's the case."
     },

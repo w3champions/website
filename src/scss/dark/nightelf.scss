@@ -1,4 +1,4 @@
-@import "../shared/index.scss";
+@import '../shared/index.scss';
 
 $w3-nightelf-glass: inset 0 0 0 3000px rgba(13, 7, 24, 0.9) !important;
 
@@ -27,11 +27,15 @@ $w3-nightelf-glass: inset 0 0 0 3000px rgba(13, 7, 24, 0.9) !important;
     box-shadow: $w3-nightelf-glass;
   }
 
+  .v-list {
+    box-shadow: $w3-nightelf-glass;
+  }
+
   .v-card:before {
     @extend .w3-glass;
     box-shadow: $w3-nightelf-glass;
   }
-  
+
   .v-expansion-panel {
     box-shadow: $w3-nightelf-glass;
   }

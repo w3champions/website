@@ -1,4 +1,4 @@
-import {EGameMode, ERaceEnum, Match} from "../typings";
+import { EGameMode, ERaceEnum, Match } from "../typings";
 
 export type PlayerState = {
   page: number;

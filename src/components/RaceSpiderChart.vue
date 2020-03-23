@@ -37,7 +37,8 @@ export default class RaceSpiderChart extends Vue {
       this.getGamesFor(ERaceEnum.NIGHT_ELF),
       this.getGamesFor(ERaceEnum.UNDEAD)
     ];
-    if (this.statsContainRandom()) wins.push(this.getGamesFor(ERaceEnum.RANDOM));
+    if (this.statsContainRandom())
+      wins.push(this.getGamesFor(ERaceEnum.RANDOM));
     return wins;
   }
 
@@ -51,7 +52,7 @@ export default class RaceSpiderChart extends Vue {
       this.$t("races." + eRaceEnumElement),
       this.$t("races." + ERaceEnum[ERaceEnum.ORC]),
       this.$t("races." + ERaceEnum[ERaceEnum.NIGHT_ELF]),
-      this.$t("races." + ERaceEnum[ERaceEnum.UNDEAD]),
+      this.$t("races." + ERaceEnum[ERaceEnum.UNDEAD])
     ];
     if (this.statsContainRandom())
       axis.push(this.$t("races." + ERaceEnum[ERaceEnum.RANDOM]));

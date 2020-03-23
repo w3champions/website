@@ -1,16 +1,16 @@
-@import "./vars.scss";
-@import "../shared/index.scss";
+@import './vars.scss';
+@import '../shared/index.scss';
 
-$w3-orc-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
+$w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
 
 .theme--light.v-application {
   @font-face {
     * {
-      font-family: "Friz Quadrata Regular OS";
+      font-family: 'Friz Quadrata Regular OS';
       color: $w3-light-color;
     }
   }
- 
+
   background: url(./assets/human/background.jpg) no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
@@ -20,18 +20,18 @@ $w3-orc-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
   .v-app-bar:before {
     @extend .w3-glass;
 
-    box-shadow: $w3-orc-glass;
+    box-shadow: $w3-human-glass;
   }
 
   .v-btn {
-    font-family: "Friz Quadrata Regular OS" !important;
+    font-family: 'Friz Quadrata Regular OS' !important;
     color: $w3-light-color !important;
     letter-spacing: 1.56px !important;
     text-transform: uppercase !important;
   }
 
   .w3-background {
-    box-shadow: $w3-orc-glass;
+    box-shadow: $w3-human-glass;
   }
 
   .w3-background:hover {
@@ -39,7 +39,7 @@ $w3-orc-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
   }
 
   .theme-selector.v-list {
-    box-shadow: $w3-orc-glass;
+    box-shadow: $w3-human-glass;
   }
 
   .v-card {
@@ -53,7 +53,11 @@ $w3-orc-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
   .v-card:before {
     @extend .w3-glass;
 
-    box-shadow: $w3-orc-glass;
+    box-shadow: $w3-human-glass;
+  }
+
+  .v-list {
+    box-shadow: $w3-human-glass;
   }
 
   .v-tabs-bar {

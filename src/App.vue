@@ -1,10 +1,22 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
-    <v-app-bar :class="{darkmode: isDarkTheme}" app :dark="isDarkTheme">
-      <div @click="$router.push({path: '/'})" class="d-flex align-center pointer">W3Champions - your Ladder for Warcraft III</div>
+    <v-app-bar :class="{ darkmode: isDarkTheme }" app :dark="isDarkTheme">
+      <div
+        @click="$router.push({ path: '/' })"
+        class="d-flex align-center pointer"
+      >
+        W3Champions - your Ladder for Warcraft III
+      </div>
       <v-spacer></v-spacer>
 
-      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">
+      <v-btn
+        class="button-margin"
+        v-for="item in items"
+        :key="item.title"
+        text
+        tile
+        :to="item.to"
+      >
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
@@ -42,7 +54,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class App extends Vue {

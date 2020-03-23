@@ -3,30 +3,30 @@ import Vuex from "vuex";
 import { createDirectStore } from "direct-vuex";
 
 import RankingService from "@/services/RankingService";
-import MatchService from '@/services/MatchService';
+import MatchService from "@/services/MatchService";
 
 import rankings from "./ranking/index";
 import player from "./player/index";
 import match from "./match/index";
-import ProfileService from '@/services/ProfileService';
-import { RootState } from './typings';
+import ProfileService from "@/services/ProfileService";
+import { RootState } from "./typings";
 
 Vue.use(Vuex);
 
 const services = {
   rankingService: new RankingService(15),
   matchService: new MatchService(50),
-  profileService: new ProfileService(),
+  profileService: new ProfileService()
 };
 
 const mod = {
   modules: {
     player,
     rankings,
-    match,
+    match
   },
   state: {
-    darkMode: false,
+    darkMode: false
   } as RootState,
   actions: {},
   mutations: {
@@ -43,7 +43,7 @@ const mod = {
     },
     profileService() {
       return services.profileService;
-    },
+    }
   }
 } as const;
 

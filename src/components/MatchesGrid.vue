@@ -8,7 +8,7 @@
     :items="matches"
     item-key="id"
     no-data-text="no matches found"
-    :footer-props="{showFirstLastPage: true}"
+    :footer-props="{ showFirstLastPage: true }"
   >
     <template v-slot:item.map="{ item }">
       <span>{{ $t("mapNames." + mapName(item)) }}</span>
@@ -16,18 +16,23 @@
     <template v-slot:item.startTime="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <span v-on="on">{{ item.startTime | moment("MMM DD YYYY HH:mm") }}</span>
+          <span v-on="on">{{
+            item.startTime | moment("MMM DD YYYY HH:mm")
+          }}</span>
         </template>
         <span>Id: {{ item.id }}</span>
       </v-tooltip>
     </template>
     <template v-slot:item.duration="{ item }">
-      <span>{{getDuration(item)}}</span>
+      <span>{{ getDuration(item) }}</span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <player-match-info :player="getWinner(item)" left="true"></player-match-info>
+          <player-match-info
+            :player="getWinner(item)"
+            left="true"
+          ></player-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
@@ -41,7 +46,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match } from "../store/typings";
+import { Match, DataTableOptions } from "../store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
@@ -59,11 +64,11 @@ export default class MatchesGrid extends Vue {
     return this.value;
   }
 
-  public options: any = {
+  public options = {
     itemsPerPage: 100
-  };
+  } as DataTableOptions;
 
-  mapName(item: any) {
+  mapName(item: Match) {
     const meinString = item.map
       .substr(item.map.lastIndexOf("/") + 1)
       .replace(".w3x", "")

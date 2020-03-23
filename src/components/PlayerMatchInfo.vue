@@ -4,13 +4,18 @@
       <div :class="textClass">
         <player-icon :left="left" :race="player.race" :mmr="mmr" />
         <div>
-          <a :class="won" v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">
+          <a
+            :class="won"
+            v-on="on"
+            @mouseover="lazyLoadProfile"
+            @click="goToPlayer(name)"
+          >
             <span v-if="!left">
               (
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-              {{mmr}})
+              {{ mmr }})
             </span>
-            {{ nameWithoutBtag }}#{{ btag }}
+            {{ nameWithoutBtag }}
             <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0">(+{{ player.xpChange }})</span>
               <span v-else>({{ player.xpChange }})</span>
@@ -18,18 +23,37 @@
             <span v-if="left">
               (
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-              {{mmr}})
+              {{ mmr }})
             </span>
           </a>
         </div>
       </div>
     </template>
     <div v-if="profile.data">
+      <p>
+        {{ nameWithoutBtag }}#{{ btag }}
+        <span>
+          (
+          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+          {{ mmr }})
+        </span>
+      </p>
+      <p></p>
       Wins: {{ profile.data.stats.total.wins }} | Losses:
       {{ profile.data.stats.total.losses }} | Total:
       {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
     </div>
-    <div v-else>Wins: ... | Losses: ... | Total: ...</div>
+    <div v-else>
+      <p>
+        {{ nameWithoutBtag }}#{{ btag }}
+        <span v-if="left">
+          (
+          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+          {{ mmr }})
+        </span>
+      </p>
+      <p>Wins: ... | Losses: ... | Total: ...</p>
+    </div>
   </v-tooltip>
 </template>
 
@@ -38,7 +62,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
-import MmrMarker from "@/components/MmrMarker.vue";
+import { PlayerProfile } from "../store/player/types";
 
 @Component({
   components: { PlayerIcon }
@@ -82,7 +106,7 @@ export default class PlayerMatchInfo extends Vue {
     return this.name.split("#")[1];
   }
 
-  public profile = {} as any;
+  public profile = {} as PlayerProfile;
 
   private async lazyLoadProfile() {
     if (!this.profile.account) {
@@ -100,7 +124,7 @@ export default class PlayerMatchInfo extends Vue {
         path: "/player/" + parts[0] + "/" + parts[1]
       })
       .catch(err => {
-        return;
+        return err;
       });
   }
 }
