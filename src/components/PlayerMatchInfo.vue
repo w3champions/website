@@ -1,32 +1,72 @@
 <template>
-  <div :class="textClass">
-    <div>
-      <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <a v-on="on" @mouseover="lazyLoadProfile" @click="goToPlayer(name)">{{name}} (<v-icon style="font-size: 16px;">mdi-chevron-triple-up</v-icon>{{mmr}})</a>
-      </template>
-      <div v-if="profile.data">
-        Wins: {{profile.data.stats.total.wins}} | Losses: {{profile.data.stats.total.losses}} | Total: {{profile.data.stats.total.wins + profile.data.stats.total.losses}}
+  <v-tooltip top>
+    <template v-slot:activator="{ on }">
+      <div :class="textClass">
+        <player-icon :left="left" :race="player.race" :mmr="mmr" />
+        <div>
+          <a
+            :class="won"
+            v-on="on"
+            @mouseover="lazyLoadProfile"
+            @click="goToPlayer(name)"
+          >
+            <span v-if="!left">
+              (
+              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+              {{ mmr }})
+            </span>
+            {{ nameWithoutBtag }}
+            <span v-if="player.xpChange" :class="won">
+              <span v-if="player.xpChange > 0">(+{{ player.xpChange }})</span>
+              <span v-else>({{ player.xpChange }})</span>
+            </span>
+            <span v-if="left">
+              (
+              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+              {{ mmr }})
+            </span>
+          </a>
+        </div>
       </div>
-      <div v-else>
-        Wins: ... | Losses: ... | Total: ...
-      </div>
-    </v-tooltip>
-      </div>
-    <div :class="won" >
-      <span v-if="won">{{won}}</span><span v-else>Playing</span> as {{race}}
-      <span v-if="player.xpChange" :class="won">| <span v-if="player.xpChange > 0">+</span>{{player.xpChange}} XP</span>
+    </template>
+    <div v-if="profile.data">
+      <p>
+        {{ nameWithoutBtag }}#{{ btag }}
+        <span>
+          (
+          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+          {{ mmr }})
+        </span>
+      </p>
+      <p></p>
+      Wins: {{ profile.data.stats.total.wins }} | Losses:
+      {{ profile.data.stats.total.losses }} | Total:
+      {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
     </div>
-  </div>
+    <div v-else>
+      <p>
+        {{ nameWithoutBtag }}#{{ btag }}
+        <span v-if="left">
+          (
+          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
+          {{ mmr }})
+        </span>
+      </p>
+      <p>Wins: ... | Losses: ... | Total: ...</p>
+    </div>
+  </v-tooltip>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Match, ERaceEnum } from "../store/typings";
-import { PlayerProfile } from '../store/player/types';
+import { ERaceEnum } from "@/store/typings";
+import PlayerIcon from "@/components/PlayerIcon.vue";
+import { PlayerProfile } from "../store/player/types";
 
-@Component({})
+@Component({
+  components: { PlayerIcon }
+})
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: {
     battleTag: string;
@@ -39,23 +79,11 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public left!: boolean;
 
   get won() {
-    if (Object.prototype.hasOwnProperty.call(this.player, 'won')) {
-        return this.player.won ? 'won' : 'lost';
+    if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
+      return this.player.won ? "won" : "lost";
     }
 
-    return '';
-  }
-
-  get color() {
-    if (this.won === 'won') {
-        return 'green';
-    }
-
-    if (this.won === 'lost') {
-        return 'red';
-    }
-
-    return 'gray';
+    return "";
   }
 
   get mmr() {
@@ -63,46 +91,64 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get textClass() {
-      return this.left ? 'text-end' : 'text-start';
-  }
-
-  get race() {
-    switch (this.player.race) {
-      case ERaceEnum.RANDOM:
-        return "Random";
-      case ERaceEnum.HUMAN:
-        return "Human";
-      case ERaceEnum.ORC:
-        return "Orc";
-      case ERaceEnum.NIGHT_ELF:
-        return "Night Elf";
-      case ERaceEnum.UNDEAD:
-        return "Undead";
-    }
-
-    return 'Unknown';
+    return this.left ? "text-end" : "text-start";
   }
 
   get name() {
     return this.player.battleTag;
   }
 
-  public profile = {} as any;
+  get nameWithoutBtag() {
+    return this.name.split("#")[0];
+  }
+
+  get btag() {
+    return this.name.split("#")[1];
+  }
+
+  public profile = {} as PlayerProfile;
 
   private async lazyLoadProfile() {
     if (!this.profile.account) {
-      this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(this.name);
+      this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(
+        this.name
+      );
     }
   }
 
   public goToPlayer(playerName: string) {
     const parts = playerName.split("#");
 
-    this.$router.push({
-      path: "/player/" + parts[0] + "/" + parts[1]
-    }).catch(err => {
-      return;
-    });
+    this.$router
+      .push({
+        path: "/player/" + parts[0] + "/" + parts[1]
+      })
+      .catch(err => {
+        return err;
+      });
   }
 }
 </script>
+
+<style lang="scss">
+.btag {
+  font-size: 10px;
+}
+
+.spacing-around-mmr-marker {
+  padding-right: 18px;
+  padding-left: 18px;
+}
+
+.won {
+  color: green !important;
+}
+
+.lost {
+  color: red !important;
+}
+
+.mmr {
+  font-size: 18px !important;
+}
+</style>

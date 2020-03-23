@@ -17,7 +17,8 @@ const routes = [
   {
     path: "/client",
     name: "Client",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Client.vue")
+    component: () =>
+      import(/* webpackChunkName: "home" */ "../views/Client.vue")
   },
   {
     path: "/rankings",
@@ -29,17 +30,19 @@ const routes = [
     path: "/player/:name/:tag",
     name: "Player",
     props: true,
-    component: () => import(/* webpackChunkName: "rankings" */ "../views/Player.vue")
+    component: () =>
+      import(/* webpackChunkName: "rankings" */ "../views/Player.vue")
   },
   {
     path: "/matches",
-    name: 'Matches',
-    component: () => import(/* webpackChunkName: "rankings" */ "../views/Matches.vue")
+    name: "Matches",
+    component: () =>
+      import(/* webpackChunkName: "rankings" */ "../views/Matches.vue")
   }
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   routes
 });
 

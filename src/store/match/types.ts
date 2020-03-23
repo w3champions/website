@@ -1,7 +1,7 @@
-import { Match } from '../typings';
+import { Match } from "../typings";
 
 export type MatchState = {
-    matches: Match[];
-    page: number;
-    totalMatches: number;
-}
+  matches: Match[];
+  page: number;
+  totalMatches: number;
+};

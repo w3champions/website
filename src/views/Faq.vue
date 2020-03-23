@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card tile>
       <v-card-title>FAQ</v-card-title>
       <v-card-text>
-        <v-expansion-panels>
-          <v-expansion-panel v-for="(faq, i) in faqs" :key="i">
+        <v-expansion-panels tile>
+          <v-expansion-panel tile v-for="(faq, i) in faqs" :key="i">
             <v-expansion-panel-header>
               <div v-html="faq.question"></div>
             </v-expansion-panel-header>
@@ -88,8 +88,7 @@ export default class FaqView extends Vue {
         "This is currently a well known bug. We investigate in it. Please restart Warcraft III via Alt+F4."
     },
     {
-      question:
-        'Will ladder still work after Blizzard patches wc3?',
+      question: "Will ladder still work after Blizzard patches wc3?",
       answer:
         "In general yes. But it is possible that something breaks by a patch. We will fix this within hours if that's the case."
     },

@@ -8,23 +8,31 @@
     :items="matches"
     item-key="id"
     no-data-text="no matches found"
-    :footer-props="{showFirstLastPage: true}"
+    :footer-props="{ showFirstLastPage: true }"
   >
     <template v-slot:item.map="{ item }">
-      <span>{{ item.map.substr(item.map.lastIndexOf('/') + 1).replace('.w3x', '') }}</span>
+      <span>{{ $t("mapNames." + mapName(item)) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span>{{ item.startTime | moment("MMM DD YYYY HH:mm:ss") }}</span>
-      <br />
-      <span
-        v-if="Object.prototype.hasOwnProperty.call(item.players[0], 'won')"
-      >completed</span>
-      <span v-else>ongoing</span>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{
+            item.startTime | moment("MMM DD YYYY HH:mm")
+          }}</span>
+        </template>
+        <span>Id: {{ item.id }}</span>
+      </v-tooltip>
+    </template>
+    <template v-slot:item.duration="{ item }">
+      <span>{{ getDuration(item) }}</span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <player-match-info :player="getWinner(item)" left="true"></player-match-info>
+          <player-match-info
+            :player="getWinner(item)"
+            left="true"
+          ></player-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
@@ -38,7 +46,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, ERaceEnum } from "../store/typings";
+import { Match, DataTableOptions } from "../store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
@@ -56,9 +64,19 @@ export default class MatchesGrid extends Vue {
     return this.value;
   }
 
-  public options: any = {
+  public options = {
     itemsPerPage: 100
-  };
+  } as DataTableOptions;
+
+  mapName(item: Match) {
+    const meinString = item.map
+      .substr(item.map.lastIndexOf("/") + 1)
+      .replace(".w3x", "")
+      .replace("(2)", "")
+      .replace("(4)", "")
+      .replace("_lv", "");
+    return meinString;
+  }
 
   @Watch("options", { deep: true })
   public onOptionsChanged() {
@@ -105,17 +123,53 @@ export default class MatchesGrid extends Vue {
     return match.players[1];
   }
 
+  public getDuration(match: Match) {
+    if (
+      !Object.prototype.hasOwnProperty.call(match, "endTime") ||
+      !match.endTime
+    ) {
+      return "ongoing";
+    }
+
+    let duration = "";
+    let delta = Math.abs(match.startTime - match.endTime) / 1000;
+
+    const days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    const hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    if (hours) {
+      duration += `${hours}h `;
+    }
+
+    const minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    if (minutes) {
+      duration += `${minutes}m `;
+    }
+
+    const seconds = delta % 60;
+    if (seconds) {
+      duration += `${Math.floor(seconds)}s`;
+    }
+
+    return duration;
+  }
+
   mounted() {
     this.options.itemsPerPage = this.itemsPerPage;
   }
 
   public headers = [
     {
-      text: "Id",
-      align: "start",
+      text: "Players",
+      align: "center",
       sortable: false,
-      value: "id",
-      width: "100px"
+      value: "players",
+      width: "600px"
     },
     {
       text: "Map",
@@ -124,24 +178,18 @@ export default class MatchesGrid extends Vue {
       value: "map"
     },
     {
-      text: "Host",
-      align: "start",
-      sortable: false,
-      value: "host"
-    },
-    {
       text: "Start Time",
-      align: "start",
+      align: "end",
       sortable: false,
       value: "startTime",
-      width: "180px"
+      width: "220px"
     },
     {
-      text: "Players",
+      text: "Duration",
       align: "center",
       sortable: false,
-      value: "players",
-      width: "500px"
+      value: "duration",
+      width: "150px"
     }
   ];
 }

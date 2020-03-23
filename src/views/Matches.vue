@@ -2,9 +2,14 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <v-card tile>
           <v-card-title>Matches</v-card-title>
-          <matches-grid v-model="matches" :totalMatches="totalMatches" @pageChanged="onPageChanged" :itemsPerPage="50"></matches-grid>
+          <matches-grid
+            v-model="matches"
+            :totalMatches="totalMatches"
+            @pageChanged="onPageChanged"
+            :itemsPerPage="50"
+          ></matches-grid>
         </v-card>
       </v-col>
     </v-row>
@@ -13,9 +18,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import { Match } from "../store/typings";
-import MatchesGrid from '../components/MatchesGrid.vue';
+import MatchesGrid from "../components/MatchesGrid.vue";
 
 @Component({
   components: {
@@ -23,7 +28,6 @@ import MatchesGrid from '../components/MatchesGrid.vue';
   }
 })
 export default class MatchesView extends Vue {
-
   onPageChanged(page: number) {
     this.getMatches(page);
   }
