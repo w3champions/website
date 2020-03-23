@@ -1,17 +1,31 @@
 trigger:
-- master
+  - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: Docker@2
-  inputs:
-    containerRegistry: 'official-docker-modmoto'
-    repository: 'modmoto/w3champions-ui'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
-    buildContext: '.'
-    tags: |
-      $(Build.BuildId)
-      latest
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        if(!("$(Build.Reason)".Equals("PullRequest"))){
+          Write-Host "##vso[task.setvariable variable=BuildVersioning]$(Build.BuildID)"
+          Write-Host "##vso[task.setvariable variable=IsLatest]latest"
+          Write-Host "Masterversion: $(Build.BuildID)"
+        } else {
+          Write-Host "##vso[task.setvariable variable=BuildVersioning]$(System.PullRequest.PullRequestNumber)"
+          Write-Host "##vso[task.setvariable variable=IsLatest]"
+          Write-Host "PR-Version: $(System.PullRequest.PullRequestNumber)"
+        }
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: 'official-docker-modmoto'
+      repository: 'modmoto/w3champions-ui'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+      buildContext: '.'
+      tags: |
+        $(BuildVersioning)
+        $(IsLatest)
