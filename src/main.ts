@@ -11,10 +11,16 @@ Vue.use(vueMoment);
 
 Vue.config.productionTip = false;
 
-const _apiUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://test.w3champions.com:25049"
-    : "http://w3champions.com:25059";
+let _apiUrl =
+    process.env.NODE_ENV === "development"
+        ? "http://test.w3champions.com:25049"
+        : "http://w3champions.com:25059";
+
+if ((window as any)._env_.STAGE) {
+  _apiUrl = (window as any)._env_.STAGE === "dev"
+      ? "http://test.w3champions.com:25049"
+      : "http://w3champions.com:25059";
+}
 
 export const API_URL = _apiUrl;
 
