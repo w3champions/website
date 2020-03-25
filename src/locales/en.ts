@@ -23,7 +23,7 @@ const en = {
     northernisles: "Northern Isles",
     concealedhill: "Concealed Hill",
     terenasstand: "Terenas Stand LV",
-    amazonia: "Amanzonia"
+    amazonia: "Amazonia"
   }
 };
 
