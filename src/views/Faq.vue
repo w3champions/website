@@ -94,7 +94,7 @@ export default class FaqView extends Vue {
     },
     {
       question:
-        'What does <i data-v-cb9355ca="" aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-triple-up theme--light"></i> mean?',
+        'What does triple shevron icon mean?',
       answer:
         'This is displaying the players bucket. You can read more about the buckets in <a href="https://www.reddit.com/r/WC3/comments/f3fjl7/matchmaking_deep_dive_how_w3arena_matchmaking/?utm_source=share&utm_medium=ios_app&utm_name=iossmf" target="_blank">this reddit post</a>'
     },

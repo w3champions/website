@@ -27,16 +27,18 @@
                 </template>
                 <template v-else>
                   <v-list-item-content>
-                    <v-list-item-title>{{
+                    <v-list-item-title>
+                      {{
                       data.item.battleTag
-                    }}</v-list-item-title>
-                    <v-list-item-subtitle
-                      >Wins: {{ data.item.wins }} | Losses:
+                      }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      Wins: {{ data.item.wins }} | Losses:
                       {{ data.item.losses }} | Total:
                       {{
-                        data.item.wins + data.item.losses
-                      }}</v-list-item-subtitle
-                    >
+                      data.item.wins + data.item.losses
+                      }}
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </template>
@@ -57,7 +59,9 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
-                    @click="openPlayerProfile(item.battleTag)"
+                    @click.left="openPlayerProfile(item.battleTag)"
+                    @click.middle="openProfileInNewTab(item.battleTag)"
+                    @click.right="openProfileInNewTab(item.battleTag)"
                     v-for="item in items"
                     :key="item.name"
                     :class="{
@@ -68,17 +72,11 @@
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                      {{ item.battleTag.split("#")[0] }}
-                            
-                          </span>
-                          
+                          <span v-on="on">{{ item.battleTag.split("#")[0] }}</span>
                         </template>
-                        <div>
-                          {{ item.battleTag }}
-                        </div>
+                        <div>{{ item.battleTag }}</div>
                       </v-tooltip>
-                      </td>
+                    </td>
                     <td class="text-end won">{{ item.wins }}</td>
                     <td class="text-end lost">{{ item.losses }}</td>
                     <td class="text-end">{{ item.wins + item.losses }}</td>
@@ -100,9 +98,7 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">
-                {{ stat.value }}
-              </v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">{{ stat.value }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -215,8 +211,8 @@ export default class RankingsView extends Vue {
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
-  onOptionsChanged() {
-    this.getRankings();
+  onOptionsChanged(options: DataTableOptions) {
+    this.getRankings(options);
   }
 
   get searchModelBattleTag() {
@@ -243,11 +239,6 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.rankings;
   }
 
-  get playerUrl(): string {
-    return `http://profile.w3champions.com/#${this.selectedPlayer}`;
-    //return `http://profile.w3champions.com/#Pad#22587`;
-  }
-
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
   }
@@ -258,6 +249,7 @@ export default class RankingsView extends Vue {
 
   mounted() {
     this.search = "";
+    this.options.page = this.$store.direct.state.rankings.page + 1;
     this.getRankings();
   }
 
@@ -272,9 +264,7 @@ export default class RankingsView extends Vue {
   }
 
   public getRankings(options?: DataTableOptions) {
-    this.$store.direct.dispatch.rankings.retrieveRankings(
-      options || this.options
-    );
+    this.$store.direct.dispatch.rankings.retrieveRankings(options);
   }
 
   private skipPageSync = false;
@@ -285,12 +275,20 @@ export default class RankingsView extends Vue {
   }
 
   public openPlayerProfile(playerName: string) {
-    this.selectedPlayer = playerName;
+    this.$router.push({
+      path: this.getPlayerPath(playerName)
+    });
+  }
+
+  private getPlayerPath(playerName: string) {
     const parts = playerName.split("#");
 
-    this.$router.push({
-      path: "/player/" + parts[0] + "/" + parts[1]
-    });
+    return "/player/" + parts[0] + "/" + parts[1];
+  }
+
+  public openProfileInNewTab(playerName: string) {
+    const path = this.getPlayerPath(playerName);
+    window.open(path, "_blank");
   }
 
   public onRowClicked(ranking: Ranking) {

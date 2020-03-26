@@ -9,6 +9,8 @@
             v-on="on"
             @mouseover="lazyLoadProfile"
             @click="goToPlayer(name)"
+            @click.middle="openProfileInNewTab(name)"
+            @click.right="openProfileInNewTab(name)"
           >
             <span v-if="!left">
               (
@@ -114,6 +116,17 @@ export default class PlayerMatchInfo extends Vue {
         this.name
       );
     }
+  }
+
+  private getPlayerPath(playerName: string) {
+    const parts = playerName.split("#");
+
+    return "/player/" + parts[0] + "/" + parts[1];
+  }
+
+  public openProfileInNewTab(playerName: string) {
+    const path = this.getPlayerPath(playerName);
+    window.open(path, "_blank");
   }
 
   public goToPlayer(playerName: string) {
