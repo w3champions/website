@@ -28,13 +28,15 @@
   }
   60% {
     @include ballb(0px);
-    opacity: 1;
+    opacity: 0.8;
   }
   70% {
-    @include ballb(50px);
+    @include ballb(10px);
+    opacity: 0.9;
   }
   80% {
     @include ballb(-10px);
+    opacity: 0.95;
   }
   90% {
     @include ballb(0px);
