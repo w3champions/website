@@ -9,7 +9,7 @@
       ></v-progress-linear>
     </template>
     <div>
-      <span class="level">XP: {{ ranking.xp }}</span>
+      <span class="level">XP: {{ Math.floor(ranking.xp) }}</span>
     </div>
   </v-tooltip>
 </template>
