@@ -9,14 +9,62 @@ export type DataTableOptions = {
   itemsPerPage: number;
 };
 
+/**
+ * Match interface received from the Api
+ */
 export interface Match {
+  /**
+   * unique id of the match
+   */
   id: number;
+
+  /**
+   * path of the map
+   */
   map: string;
+
+  /**
+   * Mode of the game
+   */
   gameMode: EGameMode;
+
+  /**
+   * Battle Tag of the player who hosted
+   */
   host: string;
+
+  /**
+   * Start time of the match
+   */
   startTime: number;
+
+  /**
+   * End time of the match. Undefined if match is still ongoing
+   */
   endTime?: number;
+
+  /**
+   * Players that participated in the match
+   */
   players: MatchPlayer[];
+}
+
+/**
+ * Match Making Rating
+ */
+export interface Mmr {
+  /**
+   * Current rating
+   */
+  rating: number;
+  /**
+   * rd value - use unknown
+   */
+  rd: number;
+  /**
+   * vol value - use unknown
+   */
+  vol: number;
 }
 
 export interface MatchPlayer {

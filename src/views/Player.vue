@@ -6,9 +6,7 @@
           <v-card-title>
             Profile of
             <span class="playerTag">
-              {{ battleTag }} (
-              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-              {{ mmr }})
+              {{ battleTag }}
             </span>
           </v-card-title>
           <v-tabs>
@@ -22,11 +20,7 @@
                   <v-col cols="8">
                     <h4>Statistics by Game Mode</h4>
                     <h5>All Reams Combined W3Champions</h5>
-                    <v-data-table
-                      hide-default-footer
-                      :headers="modeStats"
-                      :items="profile.ladder"
-                    >
+                    <v-data-table hide-default-footer :headers="modeStats" :items="profile.ladder">
                       <template v-slot:body="{ items }">
                         <tbody>
                           <tr
@@ -34,24 +28,13 @@
                             v-for="item in items"
                             :key="item.mode"
                           >
-                            <td>
-                              {{ $t("gameModes." + gameModeEnums[item.mode]) }}
-                            </td>
+                            <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
                             <td class="text-end won">{{ item.wins }}</td>
                             <td class="text-end lost">{{ item.losses }}</td>
-                            <td class="text-end">
-                              {{ item.wins + item.losses }}
-                            </td>
-                            <td class="text-end">
-                              {{ getWinRate(item).toFixed(1) }}%
-                            </td>
+                            <td class="text-end">{{ item.wins + item.losses }}</td>
+                            <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
                             <td class="text-end">{{ item.rank }}</td>
-                            <td class="text-end">
-                              {{ Math.floor(item.level) }}
-                            </td>
-                            <td>
-                              <xp-bar :ranking="item"></xp-bar>
-                            </td>
+                            <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
                           </tr>
                         </tbody>
                       </template>
@@ -60,11 +43,7 @@
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
                     <h5>Realm W3Champions</h5>
-                    <v-data-table
-                      hide-default-footer
-                      :headers="raceHeaders"
-                      :items="profile.stats"
-                    >
+                    <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
                       <template v-slot:item.race="{ item }">
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
@@ -74,18 +53,12 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }"
-                        >{{ item.percentage }}%</template
-                      >
+                      <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
                     </v-data-table>
                   </v-col>
                 </v-row>
               </v-card-text>
-              <v-card-text
-                v-if="loadingProfile"
-                style="min-height: 500px"
-                class="text-center"
-              >
+              <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
                 <v-progress-circular
                   style="margin-top: 180px;"
                   :size="50"
@@ -209,18 +182,11 @@ export default class PlayerView extends Vue {
       width: "25px"
     },
     {
-      text: "Level",
+      text: "Rating",
       align: "end",
       sortable: false,
       value: "level",
       width: "25px"
-    },
-    {
-      text: "Progress",
-      align: "center",
-      sortable: false,
-      value: "progress",
-      width: "100px"
     }
   ];
 
@@ -264,15 +230,6 @@ export default class PlayerView extends Vue {
 
   get matches(): Match[] {
     return this.$store.direct.state.player.matches;
-  }
-
-  get mmr() {
-    if (!this.profile.ladder) {
-      return 0;
-    }
-
-    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0]
-      .bucket;
   }
 
   public getMatches(page?: number) {

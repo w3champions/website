@@ -81,10 +81,7 @@
                     <td class="text-end lost">{{ item.losses }}</td>
                     <td class="text-end">{{ item.wins + item.losses }}</td>
                     <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-                    <td class="text-end">{{ Math.floor(item.level) }}</td>
-                    <td>
-                      <xp-bar :ranking="item"></xp-bar>
-                    </td>
+                    <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -165,24 +162,12 @@ export default class RankingsView extends Vue {
       width: "50px"
     },
     {
-      text: "Level",
+      text: "Rating",
       align: "end",
       sortable: false,
       value: "level",
       width: "25px"
     },
-    {
-      text: "Progress",
-      align: "center",
-      sortable: false,
-      value: "levelProgress",
-      width: "125px"
-    }
-  ];
-  public stats = [
-    { name: "Total matches", value: 10000 },
-    { name: "highest streak", value: 100 },
-    { name: "best winrate", value: "Player 1" }
   ];
 
   public selectedPlayer = "";

@@ -69,10 +69,8 @@ export default class ProfileService {
           mode: gameModes[key],
           wins: element.wins,
           losses: element.losses,
-          xp: element.xp,
-          level: element.level,
           rank: element.rank,
-          bucket: element.bucket
+          mmr: element.mmr,
         });
       }
     }

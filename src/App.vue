@@ -36,11 +36,14 @@
     </v-app-bar>
 
     <v-content>
+      <!--
       <transition
         name="warcraft"
         enter-active-class="warcraft-transition-enter-active"
         leave-active-class="warcraft-transition-leave-active"
       >
+      -->
+      <transition name="fade">
         <router-view :key="$route.fullPath" />
       </transition>
     </v-content>
