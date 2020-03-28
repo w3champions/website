@@ -19,21 +19,22 @@
 
 @keyframes wc3enter {
   1% {
-    @include ballb(-100px);
-    opacity: 0;
+    @include ballb(-2000px);
+    opacity: 0.0;
   }
-  50% {
-    @include ballb(-50px);
+  30% {
+    @include ballb(-2000px);
     opacity: 0;
   }
   60% {
-    @include ballb(-5px);
+    @include ballb(0px);
+    opacity: 1;
   }
   70% {
-    @include ballb(0px);
+    @include ballb(50px);
   }
   80% {
-    @include ballb(10px);
+    @include ballb(-10px);
   }
   90% {
     @include ballb(0px);
@@ -48,12 +49,9 @@
   1% {
     @include ballb(0px);
   }
-  50% {
-    @include ballb(-100px);
-    opacity: 1;
-  }
+  
   100% {
-    @include ballb(-1000px);
+    @include ballb(-2000px);
     opacity: 0;
   }
 }
@@ -63,5 +61,5 @@
 }
 
 .warcraft-transition-leave-active {
-  animation: wc3leave 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) both;
+  animation: wc3leave 0.3s cubic-bezier(0.47, 0, 0.745, 0.715) both;
 }
