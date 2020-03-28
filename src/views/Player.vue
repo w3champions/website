@@ -209,7 +209,7 @@ export default class PlayerView extends Vue {
       width: "25px"
     },
     {
-      text: "Level",
+      text: "MMR",
       align: "end",
       sortable: false,
       value: "level",
