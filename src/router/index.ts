@@ -15,6 +15,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ "../views/Faq.vue")
   },
   {
+    path: "/imprint",
+    name: "Imprint",
+    component: () => import(/* webpackChunkName: "home" */ "../views/Imprint.vue")
+  },
+  {
     path: "/client",
     name: "Client",
     component: () =>
