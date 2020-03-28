@@ -165,7 +165,7 @@ export default class RankingsView extends Vue {
       width: "50px"
     },
     {
-      text: "Level",
+      text: "MMR",
       align: "end",
       sortable: false,
       value: "level",

@@ -209,7 +209,7 @@ export default class PlayerView extends Vue {
       width: "25px"
     },
     {
-      text: "Level",
+      text: "MMR",
       align: "end",
       sortable: false,
       value: "level",
@@ -271,8 +271,9 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0]
-      .bucket;
+    return Math.floor(
+      this.profile.ladder.filter(x => x.mode === EGameMode.GM_1ON1)[0].xp
+    );
   }
 
   public getMatches(page?: number) {

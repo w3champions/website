@@ -18,10 +18,10 @@
               {{ mmr }})
             </span>
             {{ nameWithoutBtag }}
-            <span v-if="player.xpChange" :class="won">
+           <!-- <span v-if="player.xpChange" :class="won">
               <span v-if="player.xpChange > 0">(+{{ player.xpChange }})</span>
               <span v-else>({{ player.xpChange }})</span>
-            </span>
+            </span>-->
             <span v-if="left">
               (
               <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
@@ -89,7 +89,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get mmr() {
-    return this.player.bucket;
+    return Math.floor(this.player.xpChange ? this.player.xpChange : 0);
   }
 
   get textClass() {
