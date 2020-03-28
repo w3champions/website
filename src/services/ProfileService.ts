@@ -4,15 +4,14 @@ import { EGameMode, ERaceEnum } from "@/store/typings";
 
 export default class ProfileService {
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}/userstats`;
+    const url = `${API_URL}/player/${battleTag.replace('#', '%23')}/stats`;
 
     const response = await fetch(url, {
-      method: "POST",
+      method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ account: battleTag })
     });
 
     const data = await response.json();
@@ -81,15 +80,14 @@ export default class ProfileService {
   }
 
   public async retrieveRawProfile(battleTag: string) {
-    const url = `${API_URL}/userstats`;
+    const url = `${API_URL}/player/${battleTag.replace('#', '%23')}/stats`;
 
     const response = await fetch(url, {
-      method: "POST",
+      method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ account: battleTag })
     });
 
     return await response.json();

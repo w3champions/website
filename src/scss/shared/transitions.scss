@@ -51,7 +51,9 @@
   1% {
     @include ballb(0px);
   }
-  
+  40% {
+    @include ballb(20px)
+  }  
   100% {
     @include ballb(-2000px);
     opacity: 0;
