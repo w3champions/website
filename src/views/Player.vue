@@ -183,7 +183,10 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
-    if (this.europeStats[0].mmr.rating < this.americaStats[0].mmr.rating) {
+    const totalGamesEurope = this.europeStats[0].wins + this.europeStats[0].losses;
+    const totalGamesAmerica = this.americaStats[0].wins + this.americaStats[0].losses;
+    
+    if (totalGamesEurope < totalGamesAmerica) {
       this.modeTabIndex = "stats-bymode-america";
     } else {
       this.modeTabIndex = "stats-bymode-europe";

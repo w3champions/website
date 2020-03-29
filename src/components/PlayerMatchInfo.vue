@@ -13,8 +13,8 @@
             @click.right="openProfileInNewTab(name)"
           >
             {{ nameWithoutBtag }}
+            ({{ currentRating }})
             <span v-if="mmrChange !== 0" :class="won">
-              ({{ currentRating }})
               <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
               <span v-else>{{ mmrChange }}</span>
             </span>
