@@ -8,7 +8,9 @@ export default class MatchService {
     this.pageSize = pageSize;
   }
 
-  public async retrieveMatches(page: number): Promise<{ total: number; items: Match[] }> {
+  public async retrieveMatches(
+    page: number
+  ): Promise<{ total: number; items: Match[] }> {
     const offset = page * this.pageSize;
     const url = `${API_URL}/match?limit=${this.pageSize}&offset=${offset}`;
 
@@ -16,7 +18,10 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrievePlayerMatches(page: number, battleTag: string): Promise<{ total: number; items: Match[] }> {
+  public async retrievePlayerMatches(
+    page: number,
+    battleTag: string
+  ): Promise<{ total: number; items: Match[] }> {
     const offset = page * 15;
     const url = `${API_URL}/player/${encodeURIComponent(
       battleTag

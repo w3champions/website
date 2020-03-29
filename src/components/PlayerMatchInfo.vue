@@ -14,10 +14,9 @@
           >
             {{ nameWithoutBtag }}
             <span v-if="mmrChange !== 0" :class="won">
-              ({{currentRating}})
+              ({{ currentRating }})
               <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
               <span v-else>{{ mmrChange }}</span>
-              
             </span>
           </a>
         </div>

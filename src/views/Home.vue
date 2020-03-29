@@ -212,10 +212,6 @@ export default class HomeView extends Vue {
     return this.$store.direct.state.rankings.topFive;
   }
 
-  get twitter(): string {
-    return "";
-  }
-
   mounted() {
     this.$store.direct.dispatch.rankings.getTopFive();
   }

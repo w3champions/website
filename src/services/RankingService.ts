@@ -8,7 +8,10 @@ export default class RankingService {
     this.pageSize = pageSize;
   }
 
-  public async retrieveRankings(page: number, gateway: Gateways): Promise<{ total: number; items: Ranking[] }> {
+  public async retrieveRankings(
+    page: number,
+    gateway: Gateways
+  ): Promise<{ total: number; items: Ranking[] }> {
     const offset = page * this.pageSize;
     const url = `${API_URL}/rank/${gateway}?limit=${this.pageSize}&offset=${offset}`;
 
@@ -16,15 +19,23 @@ export default class RankingService {
     return await response.json();
   }
 
-  public async searchRankings(str: string, gateway: Gateways): Promise<{ total: number; items: Ranking[] }> {
+  public async searchRankings(
+    str: string,
+    gateway: Gateways
+  ): Promise<{ total: number; items: Ranking[] }> {
     const url = `${API_URL}/rank/${gateway}?filter=${str}&limit=5`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
-  public async getRanksAroundRanking(rank: number, gateway: Gateways): Promise<{ total: number; items: Ranking[] }> {
-    const url = `${API_URL}/rank/${gateway}?limit=${this.pageSize}&offset=${rank - Math.floor(this.pageSize / 2)}`;
+  public async getRanksAroundRanking(
+    rank: number,
+    gateway: Gateways
+  ): Promise<{ total: number; items: Ranking[] }> {
+    const url = `${API_URL}/rank/${gateway}?limit=${
+      this.pageSize
+    }&offset=${rank - Math.floor(this.pageSize / 2)}`;
     const response = await fetch(url);
     return await response.json();
   }

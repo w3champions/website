@@ -17,13 +17,8 @@ const routes = [
   {
     path: "/imprint",
     name: "Imprint",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Imprint.vue")
-  },
-  {
-    path: "/client",
-    name: "Client",
     component: () =>
-      import(/* webpackChunkName: "home" */ "../views/Client.vue")
+      import(/* webpackChunkName: "home" */ "../views/Imprint.vue")
   },
   {
     path: "/rankings",

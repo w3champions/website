@@ -6,7 +6,7 @@ import { ActionContext } from "vuex";
 const mod = {
   namespaced: true,
   state: {
-    gateway: 'Europe',
+    gateway: Gateways.Europe,
     page: 0,
     totalRanks: 0,
     working: false,
@@ -36,7 +36,10 @@ const mod = {
     async getTopFive(context: ActionContext<RankingState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      const rankings = await rootGetters.rankingService.retrieveRankings(0, state.gateway);
+      const rankings = await rootGetters.rankingService.retrieveRankings(
+        0,
+        state.gateway
+      );
       commit.SET_TOP_FIVE(rankings.items.slice(0, 5));
     },
     async search(
@@ -46,7 +49,8 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
-        searchText, state.gateway
+        searchText,
+        state.gateway
       );
 
       commit.SET_SEARCH_RANKINGS(rankings.items);
@@ -55,9 +59,14 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
     },
-    async setGateway(context: ActionContext<RankingState, RootState>, gateway: Gateways) {
-      const { commit } = moduleActionContext(context, mod);
-      commit.SET_GATEWAY(gateway)
+    async setGateway(
+      context: ActionContext<RankingState, RootState>,
+      gateway: Gateways
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_GATEWAY(gateway);
+      commit.SET_PAGE(0);
+      dispatch.retrieveRankings(undefined);
     }
   },
   mutations: {

@@ -6,7 +6,10 @@
           <v-card-title>
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
-                <v-btn tile v-on="on" style="background-color: transparent;"><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings for Gateway: {{gateway}}</v-btn>
+                <v-btn tile v-on="on" style="background-color: transparent;"
+                  ><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings
+                  for Gateway: {{ gateway }}</v-btn
+                >
               </template>
               <v-card>
                 <v-card-text>
@@ -17,12 +20,12 @@
                   </v-list>
                   <v-divider></v-divider>
                   <v-list dense>
-                    <v-list-item @click="setGateway('Europe')">
+                    <v-list-item @click="selectEurope">
                       <v-list-item-content>
                         <v-list-item-title>Europe</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="setGateway('Americas')">
+                    <v-list-item @click="selectAmerica">
                       <v-list-item-content>
                         <v-list-item-title>Americas</v-list-item-title>
                       </v-list-item-content>
@@ -54,16 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{
-                      data.item.battleTag
-                      }}
+                      {{ data.item.battleTag }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
                       Wins: {{ data.item.wins }} | Losses:
                       {{ data.item.losses }} | Total:
-                      {{
-                      data.item.wins + data.item.losses
-                      }}
+                      {{ data.item.wins + data.item.losses }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -98,7 +97,9 @@
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                          <span v-on="on">{{ item.battleTag.split("#")[0] }}</span>
+                          <span v-on="on">{{
+                            item.battleTag.split("#")[0]
+                          }}</span>
                         </template>
                         <div>{{ item.battleTag }}</div>
                       </v-tooltip>
@@ -121,15 +122,14 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{ stat.value }}</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">{{
+                stat.value
+              }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
       </v-col>
     </v-row>
-    <v-dialog v-model="showProfile" width="1600">
-      <v-container class="w3-bg"></v-container>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -138,11 +138,9 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Ranking, Gateways } from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
-import XpBar from "../components/XpBar.vue";
 
 @Component({
   components: {
-    XpBar
   }
 })
 export default class RankingsView extends Vue {
@@ -227,7 +225,15 @@ export default class RankingsView extends Vue {
   }
 
   get gateway(): string {
-    return this.$store.direct.state.rankings.gateway;
+    if (this.$store.direct.state.rankings.gateway === Gateways.America) {
+      return "America";
+    } else if (this.$store.direct.state.rankings.gateway === Gateways.Europe) {
+      return "Europe";
+    } else if (this.$store.direct.state.rankings.gateway === Gateways.Asia) {
+      return "Asia";
+    } else {
+      return "unknown";
+    }
   }
 
   get searchModelBattleTag() {
@@ -282,8 +288,6 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
   }
 
-  private skipPageSync = false;
-
   public async goToRank(rank: Ranking) {
     const isPrevSite = rank.rank % 15 === 0 && rank.rank > 15;
     this.options.page = Math.floor(rank.rank / 15 + (isPrevSite ? 0 : 1));
@@ -313,15 +317,17 @@ export default class RankingsView extends Vue {
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
   }
+
+  public selectEurope() {
+    this.setGateway(Gateways.Europe);
+  }
+
+  public selectAmerica() {
+    this.setGateway(Gateways.America);
+  }
 }
 </script>
 <style lang="scss" scoped>
-.w3-bg {
-  min-height: 80%;
-  min-width: 80%;
-  background: url("../assets/w3champions-profile-bg.png");
-}
-
 @keyframes highlistFade {
   from {
     background: lightblue;

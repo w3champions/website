@@ -8,8 +8,6 @@ export type RankingState = {
   searchRanks: Ranking[];
 };
 
-export type Gateways = 'Europe' | 'Americas';
-
 export type Ranking = {
   rank: number;
   battleTag: string;
@@ -18,3 +16,9 @@ export type Ranking = {
   level: number;
   levelProgress: number;
 };
+
+export enum Gateways {
+  America = 10,
+  Europe = 20,
+  Asia = 30
+}

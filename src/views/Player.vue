@@ -5,9 +5,7 @@
         <v-card tile>
           <v-card-title>
             Profile of
-            <span class="playerTag">
-              {{ battleTag }}
-            </span>
+            <span class="playerTag">{{ battleTag }}</span>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -19,30 +17,20 @@
                 <v-row>
                   <v-col cols="8">
                     <h4>Statistics by Game Mode</h4>
-                    <h5>All Reams Combined W3Champions</h5>
-                    <v-data-table hide-default-footer :headers="modeStats" :items="profile.ladder">
-                      <template v-slot:body="{ items }">
-                        <tbody>
-                          <tr
-                            @click="openPlayerProfile(item.battleTag)"
-                            v-for="item in items"
-                            :key="item.mode"
-                          >
-                            <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
-                            <td class="text-end won">{{ item.wins }}</td>
-                            <td class="text-end lost">{{ item.losses }}</td>
-                            <td class="text-end">{{ item.wins + item.losses }}</td>
-                            <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-                            <td class="text-end">{{ item.rank }}</td>
-                            <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-data-table>
+                    <v-tabs v-model="modeTabIndex">
+                      <v-tabs-slider></v-tabs-slider>
+                      <v-tab class="profileTab" href="#stats-bymode-europe">Europe</v-tab>
+                      <v-tab class="profileTab" href="#stats-bymode-america">America</v-tab>
+                      <v-tab-item value="stats-bymode-europe">
+                        <mode-stats-grid :stats="europeStats"></mode-stats-grid>
+                      </v-tab-item>
+                      <v-tab-item value="stats-bymode-america">
+                        <mode-stats-grid :stats="americaStats"></mode-stats-grid>
+                      </v-tab-item>
+                    </v-tabs>
                   </v-col>
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
-                    <h5>Realm W3Champions</h5>
                     <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
                       <template v-slot:item.race="{ item }">
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
@@ -88,28 +76,23 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "../store/player/types";
-import { EGameMode, ERaceEnum, Match } from "../store/typings";
-import MatchListItem from "../components/MatchListItem.vue";
+import { PlayerProfile, ModeStat } from "../store/player/types";
+import { ERaceEnum, Match } from "../store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
-import { Ranking } from "../store/ranking/types";
-import XpBar from "../components/XpBar.vue";
-import MmrMarker from "@/components/MmrMarker.vue";
+import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 
 @Component({
   components: {
-    MmrMarker,
-    MatchListItem,
     MatchesGrid,
-    XpBar
+    ModeStatsGrid
   }
 })
 export default class PlayerView extends Vue {
   @Prop() public name!: string;
   @Prop() public tag!: string;
 
-  public gameModeEnums = EGameMode;
   public raceEnums = ERaceEnum;
+  public modeTabIndex = "stats-bymode-america";
 
   public raceHeaders = [
     {
@@ -138,58 +121,6 @@ export default class PlayerView extends Vue {
     }
   ];
 
-  public modeStats = [
-    {
-      text: "Mode",
-      align: "start",
-      sortable: false,
-      value: "type",
-      width: "25px"
-    },
-    {
-      text: "Wins",
-      align: "end",
-      sortable: false,
-      value: "wins",
-      width: "25px"
-    },
-    {
-      text: "Losses",
-      align: "end",
-      sortable: false,
-      value: "losses",
-      width: "25px"
-    },
-    {
-      text: "Total",
-      align: "end",
-      sortable: false,
-      value: "total",
-      width: "25px"
-    },
-    {
-      text: "Winrate",
-      align: "end",
-      sortable: false,
-      value: "percentage",
-      width: "25px"
-    },
-    {
-      text: "Rank",
-      align: "end",
-      sortable: false,
-      value: "fourOnFour",
-      width: "25px"
-    },
-    {
-      text: "Rating",
-      align: "end",
-      sortable: false,
-      value: "level",
-      width: "25px"
-    }
-  ];
-
   @Watch("battleTag")
   onBattleTagChanged() {
     this.init();
@@ -197,6 +128,22 @@ export default class PlayerView extends Vue {
 
   get profile(): PlayerProfile {
     return this.$store.direct.state.player.playerProfile;
+  }
+
+  get europeStats(): ModeStat[] {
+    if (this.profile && this.profile.ladder) {
+      return this.profile.ladder.europe;
+    }
+
+    return [];
+  }
+
+  get americaStats(): ModeStat[] {
+    if (this.profile && this.profile.ladder) {
+      return this.profile.ladder.america;
+    }
+
+    return [];
   }
 
   get loadingMatches(): boolean {
@@ -211,15 +158,6 @@ export default class PlayerView extends Vue {
     return this.name + "#" + this.tag;
   }
 
-  public getWinRate(rank: Ranking) {
-    const winRate = (rank.wins * 100) / (rank.wins + rank.losses);
-
-    if (isNaN(winRate)) {
-      return 0;
-    }
-
-    return winRate;
-  }
   onPageChanged(page: number) {
     this.getMatches(page);
   }
@@ -240,10 +178,16 @@ export default class PlayerView extends Vue {
     this.init();
   }
 
-  private init() {
+  private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
-    this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     this.getMatches();
+
+    await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    if (this.europeStats[0].mmr.rating < this.americaStats[0].mmr.rating) {
+      this.modeTabIndex = "stats-bymode-america";
+    } else {
+      this.modeTabIndex = "stats-bymode-europe";
+    }
   }
 }
 </script>
