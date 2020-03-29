@@ -1,4 +1,5 @@
 export type RankingState = {
+  gateway: Gateways;
   working: boolean;
   page: number;
   totalRanks: number;
@@ -6,6 +7,8 @@ export type RankingState = {
   topFive: Ranking[];
   searchRanks: Ranking[];
 };
+
+export type Gateways = 'Europe' | 'Americas';
 
 export type Ranking = {
   rank: number;

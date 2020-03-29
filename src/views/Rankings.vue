@@ -4,7 +4,33 @@
       <v-col cols="10" offset="1" md="10">
         <v-card tile>
           <v-card-title>
-            Rankings
+            <v-menu offset-x>
+              <template v-slot:activator="{ on }">
+                <v-btn tile v-on="on" style="background-color: transparent;"><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings for Gateway: {{gateway}}</v-btn>
+              </template>
+              <v-card>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item-content>
+                      <v-list-item-title>Select a gateway:</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list>
+                  <v-divider></v-divider>
+                  <v-list dense>
+                    <v-list-item @click="setGateway('Europe')">
+                      <v-list-item-content>
+                        <v-list-item-title>Europe</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="setGateway('Americas')">
+                      <v-list-item-content>
+                        <v-list-item-title>Americas</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+              </v-card>
+            </v-menu>
             <v-spacer></v-spacer>
             <v-autocomplete
               v-model="searchModel"
@@ -110,7 +136,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking } from "../store/ranking/types";
+import { Ranking, Gateways } from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
 import XpBar from "../components/XpBar.vue";
 
@@ -167,7 +193,7 @@ export default class RankingsView extends Vue {
       sortable: false,
       value: "level",
       width: "25px"
-    },
+    }
   ];
 
   public selectedPlayer = "";
@@ -198,6 +224,10 @@ export default class RankingsView extends Vue {
   @Watch("options", { deep: true })
   onOptionsChanged(options: DataTableOptions) {
     this.getRankings(options);
+  }
+
+  get gateway(): string {
+    return this.$store.direct.state.rankings.gateway;
   }
 
   get searchModelBattleTag() {
@@ -278,6 +308,10 @@ export default class RankingsView extends Vue {
 
   public onRowClicked(ranking: Ranking) {
     this.openPlayerProfile(ranking.battleTag);
+  }
+
+  public setGateway(gateway: Gateways) {
+    this.$store.direct.dispatch.rankings.setGateway(gateway);
   }
 }
 </script>
