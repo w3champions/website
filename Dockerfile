@@ -25,4 +25,5 @@ RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
 EXPOSE 80
+EXPOSE 443
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $STAGE && nginx -g \"daemon off;\""]
