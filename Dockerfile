@@ -13,7 +13,10 @@ FROM nginx:stable-alpine as production-stage
 
 # Nginx config
 RUN rm -rf /etc/nginx/conf.d
-COPY conf /etc/nginx
+COPY gzip.conf /etc/nginx/conf.d/
+COPY default.conf /etc/nginx/conf.d/
+COPY cert.pem /etc/nginx/certs/
+COPY privkey.pem /etc/nginx/certs/
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
