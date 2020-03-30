@@ -15,8 +15,6 @@ FROM nginx:stable-alpine as production-stage
 RUN rm -rf /etc/nginx/conf.d
 COPY gzip.conf /etc/nginx/conf.d/
 COPY default.conf /etc/nginx/conf.d/
-COPY cert.pem /etc/nginx/certs/
-COPY privkey.pem /etc/nginx/certs/
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
