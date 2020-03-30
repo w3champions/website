@@ -2,7 +2,7 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div :class="textClass">
-        <player-icon :left="left" :race="player.race" :mmr="mmr" />
+        <player-icon :left="left" :race="player.race" />
         <div>
           <a
             :class="won"
@@ -12,48 +12,25 @@
             @click.middle="openProfileInNewTab(name)"
             @click.right="openProfileInNewTab(name)"
           >
-            <span v-if="!left">
-              (
-              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-              {{ mmr }})
-            </span>
             {{ nameWithoutBtag }}
-           <!-- <span v-if="player.xpChange" :class="won">
-              <span v-if="player.xpChange > 0">(+{{ player.xpChange }})</span>
-              <span v-else>({{ player.xpChange }})</span>
-            </span>-->
-            <span v-if="left">
-              (
-              <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-              {{ mmr }})
+            ({{ currentRating }})
+            <span v-if="mmrChange !== 0" :class="won">
+              <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+              <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
         </div>
       </div>
     </template>
     <div v-if="profile.data">
-      <p>
-        {{ nameWithoutBtag }}#{{ btag }}
-        <span>
-          (
-          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-          {{ mmr }})
-        </span>
-      </p>
+      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
       <p></p>
       Wins: {{ profile.data.stats.total.wins }} | Losses:
       {{ profile.data.stats.total.losses }} | Total:
       {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
     </div>
     <div v-else>
-      <p>
-        {{ nameWithoutBtag }}#{{ btag }}
-        <span v-if="left">
-          (
-          <v-icon class="mmr">mdi-chevron-triple-up</v-icon>
-          {{ mmr }})
-        </span>
-      </p>
+      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
       <p>Wins: ... | Losses: ... | Total: ...</p>
     </div>
   </v-tooltip>
@@ -62,7 +39,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum, Mmr } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
 import { PlayerProfile } from "../store/player/types";
 
@@ -73,9 +50,9 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: {
     battleTag: string;
     race: ERaceEnum;
-    bucket: number;
     won?: boolean;
-    xpChange?: number;
+    mmr: Mmr;
+    updatedMmr: Mmr;
   };
 
   @Prop() public left!: boolean;
@@ -88,8 +65,16 @@ export default class PlayerMatchInfo extends Vue {
     return "";
   }
 
-  get mmr() {
-    return Math.floor(this.player.xpChange ? this.player.xpChange : 0);
+  get mmrChange() {
+    if (this.player.mmr && this.player.updatedMmr) {
+      return Math.floor(this.player.updatedMmr.rating - this.player.mmr.rating);
+    }
+
+    return 0;
+  }
+
+  get currentRating() {
+    return Math.floor(this.player.mmr.rating);
   }
 
   get textClass() {

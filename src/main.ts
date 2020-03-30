@@ -12,14 +12,15 @@ Vue.use(vueMoment);
 Vue.config.productionTip = false;
 
 let _apiUrl =
-    process.env.NODE_ENV === "development"
-        ? "http://test.w3champions.com:25049"
-        : "http://w3champions.com:25059";
+  process.env.NODE_ENV === "development"
+    ? "https://test-api.w3champions.com"
+    : "https://api.w3champions.com";
 
 if ((window as any)._env_.STAGE) {
-  _apiUrl = (window as any)._env_.STAGE === "dev"
-      ? "http://test.w3champions.com:25049"
-      : "http://w3champions.com:25059";
+  _apiUrl =
+    (window as any)._env_.STAGE === "dev"
+      ? "https://test-api.w3champions.com"
+      : "https://api.w3champions.com";
 }
 
 export const API_URL = _apiUrl;

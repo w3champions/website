@@ -1,18 +1,18 @@
 import { ModeStat, PlayerProfile, RaceStat } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { EGameMode, ERaceEnum } from "@/store/typings";
+import { Gateways } from "@/store/ranking/types";
 
 export default class ProfileService {
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}/userstats`;
+    const url = `${API_URL}/player/${battleTag.replace("#", "%23")}/stats`;
 
     const response = await fetch(url, {
-      method: "POST",
+      method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ account: battleTag })
+      }
     });
 
     const data = await response.json();
@@ -52,6 +52,29 @@ export default class ProfileService {
 
     profile.stats = raceStats;
 
+    profile.ladder = {
+      europe: this.getGameModeStats(data.data.ladder[Gateways.Europe]),
+      america: this.getGameModeStats(data.data.ladder[Gateways.America])
+    };
+
+    return profile;
+  }
+
+  public async retrieveRawProfile(battleTag: string) {
+    const url = `${API_URL}/player/${battleTag.replace("#", "%23")}/stats`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    return await response.json();
+  }
+
+  private getGameModeStats(gatewayStats: any): ModeStat[] {
     const modeStats: ModeStat[] = [];
     const gameModes: { [id: string]: EGameMode } = {
       solo: EGameMode.GM_1ON1,
@@ -61,39 +84,20 @@ export default class ProfileService {
       ffa: EGameMode.GM_FFA
     };
 
-    for (const key in data.data.ladder) {
-      if (Object.prototype.hasOwnProperty.call(data.data.ladder, key)) {
-        const element = data.data.ladder[key];
+    for (const key in gatewayStats) {
+      if (Object.prototype.hasOwnProperty.call(gatewayStats, key)) {
+        const element = gatewayStats[key];
 
         modeStats.push({
           mode: gameModes[key],
           wins: element.wins,
           losses: element.losses,
-          xp: element.xp,
-          level: element.level,
           rank: element.rank,
-          bucket: element.bucket
+          mmr: element.mmr
         });
       }
     }
 
-    profile.ladder = modeStats;
-
-    return profile;
-  }
-
-  public async retrieveRawProfile(battleTag: string) {
-    const url = `${API_URL}/userstats`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ account: battleTag })
-    });
-
-    return await response.json();
+    return modeStats;
   }
 }

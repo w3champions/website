@@ -6,10 +6,8 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
-import MmrMarker from "@/components/MmrMarker.vue";
 
 @Component({
-  components: { MmrMarker }
 })
 export default class PlayerIcon extends Vue {
   @Prop() race!: ERaceEnum;

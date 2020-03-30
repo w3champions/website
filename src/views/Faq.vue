@@ -93,14 +93,12 @@ export default class FaqView extends Vue {
         "In general yes. But it is possible that something breaks by a patch. We will fix this within hours if that's the case."
     },
     {
-      question:
-        'What does triple shevron icon mean?',
+      question: "What does triple shevron icon mean?",
       answer:
         'This is displaying the players bucket. You can read more about the buckets in <a href="https://www.reddit.com/r/WC3/comments/f3fjl7/matchmaking_deep_dive_how_w3arena_matchmaking/?utm_source=share&utm_medium=ios_app&utm_name=iossmf" target="_blank">this reddit post</a>'
     },
     {
-      question:
-        'I have joinbugs for a speficic map',
+      question: "I have joinbugs for a speficic map",
       answer:
         'If you have join bugs for specific maps with "unable to start map", you can fix by (1) deleting Maps folder in Documents/Warcraft III and in Program Files (installation location); and (2) running repair tool and your maps should work.'
     }

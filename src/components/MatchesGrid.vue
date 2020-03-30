@@ -10,18 +10,23 @@
     no-data-text="no matches found"
     :footer-props="{ showFirstLastPage: true }"
   >
+    <template v-slot:item.id="{ item }">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-icon v-on="on" @click="copyId(item)">mdi-content-copy</v-icon>
+        </template>
+        <span>Id: {{ item.id }}</span>
+      </v-tooltip>
+    </template>
     <template v-slot:item.map="{ item }">
       <span>{{ $t("mapNames." + mapName(item)) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{
-            item.startTime | moment("MMM DD YYYY HH:mm")
-          }}</span>
-        </template>
-        <span>Id: {{ item.id }}</span>
-      </v-tooltip>
+      <span v-on="on">
+        {{
+        item.startTime | moment("MMM DD YYYY HH:mm")
+        }}
+      </span>
     </template>
     <template v-slot:item.duration="{ item }">
       <span>{{ getDuration(item) }}</span>
@@ -29,10 +34,7 @@
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <player-match-info
-            :player="getWinner(item)"
-            left="true"
-          ></player-match-info>
+          <player-match-info :player="getWinner(item)" left="true"></player-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
@@ -163,7 +165,16 @@ export default class MatchesGrid extends Vue {
     this.options.itemsPerPage = this.itemsPerPage;
   }
 
+  public copyId(item: Match) {
+    navigator.clipboard.writeText(item.id.toString());
+  }
+
   public headers = [
+    {
+      text: "Id",
+      value: "id",
+      width: "10px"
+    },
     {
       text: "Players",
       align: "center",

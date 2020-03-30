@@ -4,19 +4,10 @@
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
-      >
-        W3Champions - your Ladder for Warcraft III
-      </div>
+      >W3Champions - your Ladder for Warcraft III</div>
       <v-spacer></v-spacer>
 
-      <v-btn
-        class="button-margin"
-        v-for="item in items"
-        :key="item.title"
-        text
-        tile
-        :to="item.to"
-      >
+      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
@@ -45,10 +36,19 @@
     </v-app-bar>
 
     <v-content>
-      <transition name="fade">
+      <transition
+        name="warcraft"
+        enter-active-class="warcraft-transition-enter-active"
+        leave-active-class="warcraft-transition-leave-active"
+      >
         <router-view :key="$route.fullPath" />
       </transition>
     </v-content>
+    <v-footer padless class>
+      <v-row justify="center" no-gutters>
+        <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 

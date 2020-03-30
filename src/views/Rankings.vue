@@ -4,7 +4,36 @@
       <v-col cols="10" offset="1" md="10">
         <v-card tile>
           <v-card-title>
-            Rankings
+            <v-menu offset-x>
+              <template v-slot:activator="{ on }">
+                <v-btn tile v-on="on" style="background-color: transparent;"
+                  ><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings
+                  for Gateway: {{ gateway }}</v-btn
+                >
+              </template>
+              <v-card>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item-content>
+                      <v-list-item-title>Select a gateway:</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list>
+                  <v-divider></v-divider>
+                  <v-list dense>
+                    <v-list-item @click="selectEurope">
+                      <v-list-item-content>
+                        <v-list-item-title>Europe</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="selectAmerica">
+                      <v-list-item-content>
+                        <v-list-item-title>Americas</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+              </v-card>
+            </v-menu>
             <v-spacer></v-spacer>
             <v-autocomplete
               v-model="searchModel"
@@ -28,16 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{
-                      data.item.battleTag
-                      }}
+                      {{ data.item.battleTag }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
                       Wins: {{ data.item.wins }} | Losses:
                       {{ data.item.losses }} | Total:
-                      {{
-                      data.item.wins + data.item.losses
-                      }}
+                      {{ data.item.wins + data.item.losses }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -72,7 +97,9 @@
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                          <span v-on="on">{{ item.battleTag.split("#")[0] }}</span>
+                          <span v-on="on">{{
+                            item.battleTag.split("#")[0]
+                          }}</span>
                         </template>
                         <div>{{ item.battleTag }}</div>
                       </v-tooltip>
@@ -81,10 +108,7 @@
                     <td class="text-end lost">{{ item.losses }}</td>
                     <td class="text-end">{{ item.wins + item.losses }}</td>
                     <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-                    <td class="text-end">{{ Math.floor(item.level) }}</td>
-                    <td>
-                      <xp-bar :ranking="item"></xp-bar>
-                    </td>
+                    <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -98,28 +122,25 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{ stat.value }}</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">{{
+                stat.value
+              }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
       </v-col>
     </v-row>
-    <v-dialog v-model="showProfile" width="1600">
-      <v-container class="w3-bg"></v-container>
-    </v-dialog>
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking } from "../store/ranking/types";
+import { Ranking, Gateways } from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
-import XpBar from "../components/XpBar.vue";
 
 @Component({
   components: {
-    XpBar
   }
 })
 export default class RankingsView extends Vue {
@@ -165,24 +186,12 @@ export default class RankingsView extends Vue {
       width: "50px"
     },
     {
-      text: "MMR",
+      text: "Rating",
       align: "end",
       sortable: false,
       value: "level",
       width: "25px"
-    },
-    {
-      text: "Progress",
-      align: "center",
-      sortable: false,
-      value: "levelProgress",
-      width: "125px"
     }
-  ];
-  public stats = [
-    { name: "Total matches", value: 10000 },
-    { name: "highest streak", value: 100 },
-    { name: "best winrate", value: "Player 1" }
   ];
 
   public selectedPlayer = "";
@@ -213,6 +222,18 @@ export default class RankingsView extends Vue {
   @Watch("options", { deep: true })
   onOptionsChanged(options: DataTableOptions) {
     this.getRankings(options);
+  }
+
+  get gateway(): string {
+    if (this.$store.direct.state.rankings.gateway === Gateways.America) {
+      return "America";
+    } else if (this.$store.direct.state.rankings.gateway === Gateways.Europe) {
+      return "Europe";
+    } else if (this.$store.direct.state.rankings.gateway === Gateways.Asia) {
+      return "Asia";
+    } else {
+      return "unknown";
+    }
   }
 
   get searchModelBattleTag() {
@@ -267,8 +288,6 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
   }
 
-  private skipPageSync = false;
-
   public async goToRank(rank: Ranking) {
     const isPrevSite = rank.rank % 15 === 0 && rank.rank > 15;
     this.options.page = Math.floor(rank.rank / 15 + (isPrevSite ? 0 : 1));
@@ -294,15 +313,21 @@ export default class RankingsView extends Vue {
   public onRowClicked(ranking: Ranking) {
     this.openPlayerProfile(ranking.battleTag);
   }
+
+  public setGateway(gateway: Gateways) {
+    this.$store.direct.dispatch.rankings.setGateway(gateway);
+  }
+
+  public selectEurope() {
+    this.setGateway(Gateways.Europe);
+  }
+
+  public selectAmerica() {
+    this.setGateway(Gateways.America);
+  }
 }
 </script>
 <style lang="scss" scoped>
-.w3-bg {
-  min-height: 80%;
-  min-width: 80%;
-  background: url("../assets/w3champions-profile-bg.png");
-}
-
 @keyframes highlistFade {
   from {
     background: lightblue;

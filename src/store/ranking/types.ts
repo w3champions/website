@@ -1,4 +1,5 @@
 export type RankingState = {
+  gateway: Gateways;
   working: boolean;
   page: number;
   totalRanks: number;
@@ -15,3 +16,9 @@ export type Ranking = {
   level: number;
   levelProgress: number;
 };
+
+export enum Gateways {
+  America = 10,
+  Europe = 20,
+  Asia = 30
+}

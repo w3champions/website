@@ -12,21 +12,6 @@
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition-property: opacity;
-  transition-duration: 0.25s;
-}
-
-.fade-enter-active {
-  transition-delay: 0.25s;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
-
 .v-application {
   font-family: "Friz Quadrata Regular OS" !important;
 }

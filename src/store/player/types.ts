@@ -1,4 +1,4 @@
-import { EGameMode, ERaceEnum, Match } from "../typings";
+import { EGameMode, ERaceEnum, Match, Mmr } from "../typings";
 
 export type PlayerState = {
   page: number;
@@ -14,7 +14,10 @@ export type PlayerProfile = {
   account: string;
   server: number;
   stats: RaceStat[];
-  ladder: ModeStat[];
+  ladder: {
+    europe: ModeStat[];
+    america: ModeStat[];
+  };
   ranks: RankStat[];
 };
 
@@ -34,9 +37,7 @@ export type ModeStat = {
   wins: number;
   losses: number;
   rank: number;
-  level: number;
-  xp: number;
-  bucket?: number;
+  mmr: Mmr;
 };
 
 export type RankStat = {

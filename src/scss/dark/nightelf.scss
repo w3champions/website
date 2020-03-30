@@ -39,4 +39,9 @@ $w3-nightelf-glass: inset 0 0 0 3000px rgba(13, 7, 24, 0.9) !important;
   .v-expansion-panel {
     box-shadow: $w3-nightelf-glass;
   }
+
+  .v-footer {
+    background-color: transparent !important;
+    box-shadow: $w3-nightelf-glass;
+  }
 }

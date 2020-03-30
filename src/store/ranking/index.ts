@@ -1,11 +1,12 @@
 import { moduleActionContext } from "..";
-import { RankingState, Ranking } from "./types";
+import { RankingState, Ranking, Gateways } from "./types";
 import { DataTableOptions, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
   state: {
+    gateway: Gateways.Europe,
     page: 0,
     totalRanks: 0,
     working: false,
@@ -25,26 +26,31 @@ const mod = {
       }
 
       const response = await rootGetters.rankingService.retrieveRankings(
-        state.page
+        state.page,
+        state.gateway
       );
 
       commit.SET_TOTAL_RANKS(response.total);
       commit.SET_RANKINGS(response.items);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      const rankings = await rootGetters.rankingService.retrieveRankings(0);
+      const rankings = await rootGetters.rankingService.retrieveRankings(
+        0,
+        state.gateway
+      );
       commit.SET_TOP_FIVE(rankings.items.slice(0, 5));
     },
     async search(
       context: ActionContext<RankingState, RootState>,
       searchText: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
-        searchText
+        searchText,
+        state.gateway
       );
 
       commit.SET_SEARCH_RANKINGS(rankings.items);
@@ -52,6 +58,15 @@ const mod = {
     async clearSearch(context: ActionContext<RankingState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
+    },
+    async setGateway(
+      context: ActionContext<RankingState, RootState>,
+      gateway: Gateways
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_GATEWAY(gateway);
+      commit.SET_PAGE(0);
+      dispatch.retrieveRankings(undefined);
     }
   },
   mutations: {
@@ -69,6 +84,9 @@ const mod = {
     },
     SET_SEARCH_RANKINGS(state: RankingState, rankings: Ranking[]) {
       state.searchRanks = rankings;
+    },
+    SET_GATEWAY(state: RankingState, gateway: Gateways) {
+      state.gateway = gateway;
     }
   }
 } as const;
