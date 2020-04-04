@@ -96,7 +96,7 @@ export default class PlayerMatchInfo extends Vue {
   public profile = {} as PlayerProfile;
 
   private async lazyLoadProfile() {
-    if (!this.profile.account) {
+    if (!this.profile.id) {
       this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(
         this.name
       );

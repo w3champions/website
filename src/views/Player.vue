@@ -17,21 +17,11 @@
                 <v-row>
                   <v-col cols="8">
                     <h4>Statistics by Game Mode</h4>
-                    <v-tabs v-model="modeTabIndex">
-                      <v-tabs-slider></v-tabs-slider>
-                      <v-tab class="profileTab" href="#stats-bymode-europe">Europe</v-tab>
-                      <v-tab class="profileTab" href="#stats-bymode-america">America</v-tab>
-                      <v-tab-item value="stats-bymode-europe">
-                        <mode-stats-grid :stats="europeStats"></mode-stats-grid>
-                      </v-tab-item>
-                      <v-tab-item value="stats-bymode-america">
-                        <mode-stats-grid :stats="americaStats"></mode-stats-grid>
-                      </v-tab-item>
-                    </v-tabs>
+                    <mode-stats-grid :stats="gameModeStats"></mode-stats-grid>
                   </v-col>
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
-                    <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.stats">
+                    <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.raceStats">
                       <template v-slot:item.race="{ item }">
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
@@ -130,17 +120,9 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
-  get europeStats(): ModeStat[] {
-    if (this.profile && this.profile.ladder) {
-      return this.profile.ladder.europe;
-    }
-
-    return [];
-  }
-
-  get americaStats(): ModeStat[] {
-    if (this.profile && this.profile.ladder) {
-      return this.profile.ladder.america;
+  get gameModeStats(): ModeStat[] {
+    if (this.profile && this.profile.modeStats) {
+      return this.profile.modeStats;
     }
 
     return [];
@@ -183,14 +165,6 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
-    const totalGamesEurope = this.europeStats[0].wins + this.europeStats[0].losses;
-    const totalGamesAmerica = this.americaStats[0].wins + this.americaStats[0].losses;
-    
-    if (totalGamesEurope < totalGamesAmerica) {
-      this.modeTabIndex = "stats-bymode-america";
-    } else {
-      this.modeTabIndex = "stats-bymode-europe";
-    }
   }
 }
 </script>
