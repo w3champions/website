@@ -13,13 +13,13 @@ Vue.config.productionTip = false;
 
 let _apiUrl =
   process.env.NODE_ENV === "development"
-    ? "https://test-api.w3champions.com"
+    ? "http://176.28.16.249:10200/"
     : "https://api.w3champions.com";
 
 if ((window as any)._env_.STAGE) {
   _apiUrl =
     (window as any)._env_.STAGE === "dev"
-      ? "https://test-api.w3champions.com"
+      ? "http://176.28.16.249:10200/"
       : "https://api.w3champions.com";
 }
 
