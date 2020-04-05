@@ -65,6 +65,7 @@ export default class App extends Vue {
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
+    { title: "Statistics", icon: "mdi-chart-areaspline", to: "/OverallStatistics" },
     { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" }
   ];
 
