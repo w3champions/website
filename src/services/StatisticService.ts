@@ -28,7 +28,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public async retrieveMapAndRaceStats(): Promise<StatsPerMapAndRace> {
+  public async retrieveMapAndRaceStats(): Promise<StatsPerMapAndRace[]> {
     const url = `${API_URL}api/w3c-stats/map-race-wins`;
     const response = await fetch(url, {
       method: "GET",

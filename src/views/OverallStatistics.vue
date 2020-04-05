@@ -28,6 +28,7 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-3'">
+              <v-select :items="maps" />
               <v-card-text v-if="!loadingMapAndRaceStats">
                 <v-data-table hide-default-footer :headers="headers" :items="raceWinrateWithoutRandom">
                   <template v-slot:body="{ items }">
@@ -90,12 +91,16 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
 
-  get statsPerRaceAndMap(): StatsPerMapAndRace {
+  get statsPerRaceAndMap(): StatsPerMapAndRace[] {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
 
   get raceWinrateWithoutRandom() {
-    return this.statsPerRaceAndMap.statsPerModes[0].raceVersusRaceRatio.raceWinRatio.slice(1, 5);
+    return this.statsPerRaceAndMap[0].ratio.slice(1, 5);
+  }
+
+  get maps() {
+    return this.statsPerRaceAndMap.map(r => r.mapName);
   }
 
   mounted() {

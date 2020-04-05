@@ -6,7 +6,7 @@ export type OveralStatisticState = {
   loadingGamesPerDayStats: boolean;
   playersPerDay: GameDay[];
   loadingPlayersPerDayStats: boolean;
-  statsPerMapAndRace: StatsPerMapAndRace;
+  statsPerMapAndRace: StatsPerMapAndRace[];
   loadingMapAndRaceStats: boolean
 };
 
@@ -28,38 +28,12 @@ export type WinLoss = {
   winrate: number;
 }
 
-export type RaceWinRatio = {
+export type Ratio = {
   race: ERaceEnum;
   winLosses: WinLoss[];
-}
-
-export type RaceVersusRaceRatio = {
-  raceWinRatio: RaceWinRatio[];
-  id: string;
-}
-
-export type WinLossesOnMap = {
-  map: string;
-  winLosses: WinLoss[];
-}
-
-export type RaceWinsOnMap = {
-  race: ERaceEnum;
-  winLossesOnMap: WinLossesOnMap[];
-}
-
-export type RaceOnMapVersusRaceRatio = {
-  raceWinsOnMap: RaceWinsOnMap[];
-  id: string;
-}
-
-export type StatsPerMode = {
-  gameMode: EGameMode;
-  totalGames: number;
-  raceVersusRaceRatio: RaceVersusRaceRatio;
-  raceOnMapVersusRaceRatio: RaceOnMapVersusRaceRatio;
 }
 
 export type StatsPerMapAndRace = {
-  statsPerModes: StatsPerMode[];
+  mapName: string;
+  ratio: Ratio[];
 }
