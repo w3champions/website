@@ -1,10 +1,9 @@
-import { API_URL } from "@/main";
+import {API_URL} from "@/main";
 import {GameDay} from "@/store/overallStats/types";
 
 export default class StatisticService {
   public async retrieveGamesPerDay(): Promise<GameDay[]> {
     const url = `${API_URL}api/w3c-stats/games-per-day`;
-    const days: GameDay[] = [];
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -13,7 +12,6 @@ export default class StatisticService {
       }
     });
 
-    const data = await response.json();
-    return days;
+    return await response.json();
   }
 }
