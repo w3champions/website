@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import {GameDay, OveralStatisticState, PlayersPerDay} from "./types";
+import {GameDay, OveralStatisticState, PlayersPerDay, StatsPerMapAndRace} from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -7,9 +7,11 @@ const mod = {
   namespaced: true,
   state: {
     loadingGamesPerDayStats: false,
+    loadingMapAndRaceStats: false,
     loadingPlayersPerDayStats: false,
     gamesPerDay: [] as GameDay[],
-    playersPerDay: [] as GameDay[]
+    playersPerDay: [] as GameDay[],
+    statsPerMapAndRace: {} as StatsPerMapAndRace
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -40,6 +42,18 @@ const mod = {
       const playersPerDay = games.map(r => mapToGameDay(r));
       commit.SET_PLAYERS_PER_DAY(playersPerDay);
       commit.SET_LOADING_PLAYERS_PER_DAY(false);
+    },
+    async loadMapAndRaceStatistics(
+        context: ActionContext<OveralStatisticState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      commit.SET_LOADING_MAP_AND_RACE_STATS(true);
+
+      const stats = await rootGetters.statisticService.retrieveMapAndRaceStats();
+
+      commit.SET_MAP_AND_RACE_STATS(stats);
+      commit.SET_LOADING_MAP_AND_RACE_STATS(false);
     }
   },
   mutations: {
@@ -54,6 +68,12 @@ const mod = {
     },
     SET_PLAYERS_PER_DAY(state: OveralStatisticState, games: GameDay[]) {
       state.playersPerDay = games;
+    },
+    SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
+      state.loadingMapAndRaceStats = loading;
+    },
+    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerMapAndRace) {
+      state.statsPerMapAndRace = stats
     }
   }
 } as const;

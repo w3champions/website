@@ -10,6 +10,7 @@
             <v-tabs-slider />
             <v-tab class="profileTab" :href="`#tab-1`">Games Per Day</v-tab>
             <v-tab class="profileTab" :href="`#tab-2`">Players Per Day</v-tab>
+            <v-tab class="profileTab" :href="`#tab-3`">Winrates</v-tab>
             <v-tab-item :value="'tab-1'">
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart class="ammount-per-day-chart" :game-days="gameDays" />
@@ -18,6 +19,14 @@
             <v-tab-item :value="'tab-2'">
               <v-card-text v-if="!loadingPlayersPerDayStats">
                 <amount-per-day-chart class="ammount-per-day-chart" :game-days="playersPerDay" />
+              </v-card-text>
+            </v-tab-item>
+            <v-tab-item :value="'tab-3'">
+              <v-card-text v-if="!loadingMapAndRaceStats">
+                <span>Games in 1v1{{
+                    statsPerRaceAndMap.statsPerModes[0].totalGames
+                  }}</span
+                >
               </v-card-text>
             </v-tab-item>
           </v-tabs>
@@ -31,12 +40,16 @@
 import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { GameDay } from "@/store/overallStats/types";
+import { GameDay, StatsPerMapAndRace } from "@/store/overallStats/types";
 
 @Component({
   components: { AmountPerDayChart }
 })
 export default class OverallStatisticsView extends Vue {
+  get loadingMapAndRaceStats(): boolean {
+    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
+  }
+
   get loadingGamesPerDayStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
   }
@@ -53,6 +66,10 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
 
+  get statsPerRaceAndMap(): StatsPerMapAndRace {
+    return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
+  }
+
   mounted() {
     this.init();
   }
@@ -60,6 +77,7 @@ export default class OverallStatisticsView extends Vue {
   private async init() {
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
   }
 }
 </script>
