@@ -37,7 +37,7 @@ export default class PlayersPerDayChart extends Mixins(Line) {
   }
 
   get gameDayDates() {
-    return this.gameDays.map(g => g.date.toString());
+    return this.gameDays.map(g => g.date.toLocaleString());
   }
 
   get gameDayCounts() {

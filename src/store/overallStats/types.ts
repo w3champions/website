@@ -1,4 +1,4 @@
-import VueMoment from "vue-moment";
+import { Moment } from 'moment';
 
 export type OveralStatisticState = {
   games: GameDay[];
@@ -6,7 +6,7 @@ export type OveralStatisticState = {
 };
 
 export type GameDay = {
-  date: VueMoment,
+  date: Moment,
   gamesPlayed: number,
   id: string
 }
