@@ -3,6 +3,7 @@ import { Component, Prop, Mixins } from "vue-property-decorator";
 import { Line } from "vue-chartjs";
 
 import { GameDay } from "@/store/overallStats/types";
+import moment from "moment";
 
 @Component({})
 export default class PlayersPerDayChart extends Mixins(Line) {
@@ -23,6 +24,7 @@ export default class PlayersPerDayChart extends Mixins(Line) {
         ]
       },
       {
+        maintainAspectRatio: false,
         scales: {
           yAxes: [
             {
@@ -37,7 +39,7 @@ export default class PlayersPerDayChart extends Mixins(Line) {
   }
 
   get gameDayDates() {
-    return this.gameDays.map(g => g.date.toLocaleString());
+    return this.gameDays.map(g => moment(g.date).format("LL"));
   }
 
   get gameDayCounts() {

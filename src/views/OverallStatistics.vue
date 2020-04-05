@@ -12,9 +12,7 @@
             <v-tab-item :value="'tab-1'">
               <v-card-title>Games Per Day</v-card-title>
               <v-card-text v-if="!loadingStats">
-                <div class="player-per-day-chart">
-                  <players-per-day-chart :game-days="gameDays" />
-                </div>
+                <players-per-day-chart class="player-per-day-chart" :game-days="gameDays" />
               </v-card-text>
             </v-tab-item>
           </v-tabs>
@@ -54,7 +52,6 @@ export default class OverallStatisticsView extends Vue {
 
 <style type="text/css">
 .player-per-day-chart {
-  position: relative;
   height: 600px;
 }
 </style>
