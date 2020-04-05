@@ -25,8 +25,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import {PlayerProfile} from "@/store/player/types";
-import {GameDay} from "@/store/overallStats/types";
+import { GameDay } from "@/store/overallStats/types";
 
 @Component({})
 export default class OverallStatisticsView extends Vue {
