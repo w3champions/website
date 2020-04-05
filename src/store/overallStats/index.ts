@@ -11,7 +11,7 @@ const mod = {
     loadingPlayersPerDayStats: false,
     gamesPerDay: [] as GameDay[],
     playersPerDay: [] as GameDay[],
-    statsPerMapAndRace: {} as StatsPerMapAndRace
+    statsPerMapAndRace: [] as StatsPerMapAndRace[]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -72,7 +72,7 @@ const mod = {
     SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
       state.loadingMapAndRaceStats = loading;
     },
-    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerMapAndRace) {
+    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerMapAndRace[]) {
       state.statsPerMapAndRace = stats
     }
   }
