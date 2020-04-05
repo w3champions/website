@@ -28,7 +28,7 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-3'">
-              <v-select :items="maps" />
+              <v-select :items="maps" @change="setSelectedMap" />
               <v-card-text v-if="!loadingMapAndRaceStats">
                 <v-data-table hide-default-footer :headers="headers" :items="raceWinrateWithoutRandom">
                   <template v-slot:body="{ items }">
@@ -56,7 +56,7 @@
 import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { GameDay, StatsPerMapAndRace, WinLoss } from "@/store/overallStats/types";
+import { GameDay, Ratio, StatsPerMapAndRace, WinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
@@ -66,6 +66,12 @@ import { ERaceEnum } from "@/store/typings";
 })
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
+
+  public selectedMap = "Overall";
+
+  public setSelectedMap(map: string) {
+    this.selectedMap = map;
+  }
 
   public winrateText(item: WinLoss) {
     return `${(item.winrate * 100).toFixed(1)}% (${item.wins}/${item.losses})`;
@@ -95,8 +101,10 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
 
-  get raceWinrateWithoutRandom() {
-    return this.statsPerRaceAndMap[0].ratio.slice(1, 5);
+  get raceWinrateWithoutRandom(): Ratio[] {
+    return this.statsPerRaceAndMap
+      .filter(r => r.mapName == this.selectedMap)[0]
+      .ratio.slice(1, 5);
   }
 
   get maps() {
