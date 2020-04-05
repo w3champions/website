@@ -36,7 +36,7 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get gameDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.games;
+    return this.$store.direct.state.overallStatistics.games.reverse();
   }
 
   mounted() {
