@@ -6,7 +6,7 @@ import { ActionContext } from "vuex";
 const mod = {
   namespaced: true,
   state: {
-    loadingStats: false,
+    loadingGamesPerDayStats: false,
     games: [] as GameDay[]
   } as OveralStatisticState,
   actions: {
@@ -25,7 +25,7 @@ const mod = {
   },
   mutations: {
     SET_LOADING_GAMES_PER_DAY(state: OveralStatisticState, loading: boolean) {
-      state.loadingStats = loading;
+      state.loadingGamesPerDayStats = loading;
     },
     SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDay[]) {
       state.games = games;

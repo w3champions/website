@@ -10,7 +10,7 @@
             <v-tabs-slider />
             <v-tab class="profileTab" :href="`#tab-1`">Games Per Day</v-tab>
             <v-tab-item :value="'tab-1'">
-              <v-card-text v-if="!loadingStats">
+              <v-card-text v-if="!loadingGamesPerDayStats">
                 <players-per-day-chart class="player-per-day-chart" :game-days="gameDays" />
               </v-card-text>
             </v-tab-item>
@@ -31,8 +31,8 @@ import { GameDay } from "@/store/overallStats/types";
   components: { PlayersPerDayChart }
 })
 export default class OverallStatisticsView extends Vue {
-  get loadingStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingStats;
+  get loadingGamesPerDayStats(): boolean {
+    return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
   }
 
   get gameDays(): GameDay[] {

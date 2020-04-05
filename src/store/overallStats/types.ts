@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 
 export type OveralStatisticState = {
   games: GameDay[];
-  loadingStats: boolean;
+  loadingGamesPerDayStats: boolean;
 };
 
 export type GameDay = {
