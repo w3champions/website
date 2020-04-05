@@ -13,6 +13,7 @@
               <v-card-title>Games Per Day</v-card-title>
               <v-card-text v-if="!loadingStats">
                 <span>{{ gameDays[0].date }}</span>
+                <players-per-day-chart :game-days="gameDays" />
               </v-card-text>
             </v-tab-item>
           </v-tabs>
@@ -25,20 +26,23 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import PlayersPerDayChart from "@/components/PlayersPerDayChart.vue";
 import { GameDay } from "@/store/overallStats/types";
 
-@Component({})
+@Component({
+  components: { PlayersPerDayChart }
+})
 export default class OverallStatisticsView extends Vue {
   get loadingStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingStats;
   }
 
-  mounted() {
-    this.init();
-  }
-
   get gameDays(): GameDay[] {
     return this.$store.direct.state.overallStatistics.games;
+  }
+
+  mounted() {
+    this.init();
   }
 
   private async init() {

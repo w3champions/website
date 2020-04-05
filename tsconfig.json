@@ -15,6 +15,7 @@
       "webpack-env",
       "vuetify",
       "moment",
+      "chart.js",
       "vue-moment"
     ],
     "paths": {
