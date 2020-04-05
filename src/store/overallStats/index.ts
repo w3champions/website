@@ -6,7 +6,8 @@ import { ActionContext } from "vuex";
 const mod = {
   namespaced: true,
   state: {
-    loadingStats: false
+    loadingStats: false,
+    games: [] as GameDay[]
   } as OveralStatisticState,
   actions: {
     async loadStatistics(
