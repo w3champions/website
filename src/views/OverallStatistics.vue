@@ -107,6 +107,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
   }
+
   public headers = [
     {
       text: "",
@@ -115,7 +116,7 @@ export default class OverallStatisticsView extends Vue {
       value: "race"
     },
     {
-      text: `VS Human`,
+      text: "VS Human",
       align: "start",
       sortable: false,
       value: "vsHu"
@@ -133,7 +134,7 @@ export default class OverallStatisticsView extends Vue {
       value: "vsUd"
     },
     {
-      text: "VS Night Elve",
+      text: "VS Night Elf",
       align: "start",
       sortable: false,
       value: "vsNe"
