@@ -9,9 +9,15 @@
           <v-tabs>
             <v-tabs-slider />
             <v-tab class="profileTab" :href="`#tab-1`">Games Per Day</v-tab>
+            <v-tab class="profileTab" :href="`#tab-2`">Players Per Day</v-tab>
             <v-tab-item :value="'tab-1'">
               <v-card-text v-if="!loadingGamesPerDayStats">
-                <players-per-day-chart class="player-per-day-chart" :game-days="gameDays" />
+                <amount-per-day-chart class="ammount-per-day-chart" :game-days="gameDays" />
+              </v-card-text>
+            </v-tab-item>
+            <v-tab-item :value="'tab-2'">
+              <v-card-text v-if="!loadingPlayersPerDayStats">
+                <amount-per-day-chart class="ammount-per-day-chart" :game-days="playersPerDay" />
               </v-card-text>
             </v-tab-item>
           </v-tabs>
@@ -22,21 +28,29 @@
 </template>
 
 <script lang="ts">
-import PlayersPerDayChart from "@/components/PlayersPerDayChart.vue";
+import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { GameDay } from "@/store/overallStats/types";
 
 @Component({
-  components: { PlayersPerDayChart }
+  components: { AmountPerDayChart }
 })
 export default class OverallStatisticsView extends Vue {
   get loadingGamesPerDayStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
   }
 
+  get loadingPlayersPerDayStats(): boolean {
+    return this.$store.direct.state.overallStatistics.loadingPlayersPerDayStats;
+  }
+
   get gameDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.games.reverse();
+    return this.$store.direct.state.overallStatistics.gamesPerDay.reverse();
+  }
+
+  get playersPerDay(): GameDay[] {
+    return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
 
   mounted() {
@@ -44,13 +58,14 @@ export default class OverallStatisticsView extends Vue {
   }
 
   private async init() {
-    await this.$store.direct.dispatch.overallStatistics.loadStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
   }
 }
 </script>
 
 <style type="text/css">
-.player-per-day-chart {
+.ammount-per-day-chart {
   height: 650px;
 }
 </style>

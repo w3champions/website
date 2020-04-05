@@ -6,7 +6,7 @@ import { GameDay } from "@/store/overallStats/types";
 import moment from "moment";
 
 @Component({})
-export default class PlayersPerDayChart extends Mixins(Line) {
+export default class AmountPerDayChart extends Mixins(Line) {
   @Prop() public gameDays!: GameDay[];
 
   mounted() {
@@ -24,6 +24,23 @@ export default class PlayersPerDayChart extends Mixins(Line) {
         ]
       },
       {
+        legend: {
+          display: false
+        },
+        tooltips: {
+          custom: function(tooltip) {
+            if (!tooltip) return;
+            tooltip.displayColors = false;
+          },
+          callbacks: {
+            label: function(tooltipItem, data) {
+              return `${tooltipItem.xLabel}: ${tooltipItem.yLabel}`;
+            },
+            title: function(tooltipItem, data) {
+              return "";
+            }
+          }
+        },
         maintainAspectRatio: false,
         scales: {
           yAxes: [
