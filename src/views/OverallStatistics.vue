@@ -153,26 +153,22 @@ export default class OverallStatisticsView extends Vue {
     {
       text: "VS Human",
       align: "start",
-      sortable: false,
-      value: "vsHu"
+      sortable: false
     },
     {
       text: "VS Orc",
       align: "start",
-      sortable: false,
-      value: "vsOc"
+      sortable: false
     },
     {
       text: "VS Undead",
       align: "start",
-      sortable: false,
-      value: "vsUd"
+      sortable: false
     },
     {
       text: "VS Night Elf",
       align: "start",
-      sortable: false,
-      value: "vsNe"
+      sortable: false
     }
   ];
 }
