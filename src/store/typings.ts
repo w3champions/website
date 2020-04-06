@@ -37,12 +37,18 @@ export type Match = {
   gateWay: number;
 }
 
-export interface MatchPlayer {
+export type MatchPlayer = {
   battleTag: string;
   race: ERaceEnum;
   bucket: number;
   won?: boolean;
   xpChange?: number;
+}
+
+export type Mmr = {
+  rating: number;
+  rd: number;
+  vol: number;
 }
 
 export enum EGameMode {

@@ -1,7 +1,6 @@
 import { ModeStat, PlayerProfile, RaceStat } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { EGameMode, ERaceEnum } from "@/store/typings";
-import { Gateways } from "@/store/ranking/types";
 
 export default class ProfileService {
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
@@ -82,12 +81,8 @@ export default class ProfileService {
         mode: mode.mode,
         wins: mode.wins,
         losses: mode.losses,
-        mmr: {
-          rating: 0,
-          rd: 0,
-          vol: 0
-        },
-        rank:0
+        winrate: mode.winrate,
+        mmr: mode.mmr,
       });
 
     });

@@ -24,7 +24,7 @@ export default class MatchService {
     battleTag: string
   ): Promise<Match[]> {
     const offset = page * 15;
-    const url = `${API_URL}api/matches/search?offset=0&pageSize=2&gateway=${gateway}&playerId=${encodeURIComponent(battleTag)}`;
+    const url = `${API_URL}api/matches/search?offset=${offset}&gateway=${gateway}&playerId=${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url, {
       headers: {

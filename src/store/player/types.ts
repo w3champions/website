@@ -1,4 +1,4 @@
-import { EGameMode, ERaceEnum, Match, Mmr } from "../typings";
+import { EGameMode, ERaceEnum, Match } from "../typings";
 
 export type PlayerState = {
   page: number;
@@ -32,8 +32,8 @@ export type ModeStat = {
   mode: EGameMode;
   wins: number;
   losses: number;
-  rank: number;
-  mmr: Mmr;
+  winrate: number;
+  mmr: number;
 };
 
 export type RankStat = {
