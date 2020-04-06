@@ -149,7 +149,6 @@ export default class RankingsView extends Vue {
       text: "Rank",
       align: "start",
       sortable: false,
-      value: "rank",
       width: "25px"
     },
     {
@@ -162,21 +161,21 @@ export default class RankingsView extends Vue {
       text: "Wins",
       align: "end",
       sortable: false,
-      value: "wins",
+      value: "totalWins",
       width: "50px"
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
-      value: "losses",
+      value: "totalLosses",
       width: "50px"
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
-      value: "matches",
+      value: "games",
       width: "50px"
     },
     {
@@ -189,7 +188,7 @@ export default class RankingsView extends Vue {
       text: "Rating",
       align: "end",
       sortable: false,
-      value: "level",
+      value: "mmr",
       width: "25px"
     }
   ];
@@ -275,13 +274,7 @@ export default class RankingsView extends Vue {
   }
 
   public getWinRate(rank: Ranking) {
-    const winRate = (rank.wins * 100) / (rank.wins + rank.losses);
-
-    if (isNaN(winRate)) {
-      return 0;
-    }
-
-    return winRate;
+    return rank.winrate * 100;
   }
 
   public getRankings(options?: DataTableOptions) {
@@ -289,8 +282,8 @@ export default class RankingsView extends Vue {
   }
 
   public async goToRank(rank: Ranking) {
-    const isPrevSite = rank.rank % 15 === 0 && rank.rank > 15;
-    this.options.page = Math.floor(rank.rank / 15 + (isPrevSite ? 0 : 1));
+    const isPrevSite = rank.mmr % 15 === 0 && rank.mmr > 15;
+    this.options.page = Math.floor(rank.mmr / 15 + (isPrevSite ? 0 : 1));
   }
 
   public openPlayerProfile(playerName: string) {

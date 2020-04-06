@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "../store/typings";
 import { ModeStat } from "../store/player/types";
 import { Ranking } from "../store/ranking/types";
@@ -34,13 +34,7 @@ export default class ModeStatsGrid extends Vue {
   public gameModeEnums = EGameMode;
 
   public getWinRate(rank: Ranking) {
-    const winRate = (rank.wins * 100) / (rank.wins + rank.losses);
-
-    if (isNaN(winRate)) {
-      return 0;
-    }
-
-    return winRate;
+    return rank.winrate * 100;
   }
 
   public headers = [

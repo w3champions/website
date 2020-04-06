@@ -9,12 +9,15 @@ export type RankingState = {
 };
 
 export type Ranking = {
-  rank: number;
+  id: string;
   battleTag: string;
-  wins: number;
-  losses: number;
-  level: number;
-  levelProgress: number;
+  name: string;
+  totalLosses: number;
+  totalWins: number;
+  games: number;
+  winrate: number;
+  mmr: number;
+  gateWay: number;
 };
 
 export enum Gateways {
