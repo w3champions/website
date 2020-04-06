@@ -6,6 +6,8 @@ RUN npm install
 COPY . .
 RUN npm run build:prod
 
+ENV BASE_URL prod
+
 # production stage
 FROM nginx:stable-alpine as production-stage
 
