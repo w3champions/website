@@ -11,13 +11,9 @@ export type PlayerState = {
 };
 
 export type PlayerProfile = {
-  account: string;
-  server: number;
-  stats: RaceStat[];
-  ladder: {
-    europe: ModeStat[];
-    america: ModeStat[];
-  };
+  id: string;
+  raceStats: RaceStat[];
+  modeStats: ModeStat[];
   ranks: RankStat[];
 };
 

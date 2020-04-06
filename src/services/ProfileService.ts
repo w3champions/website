@@ -5,7 +5,7 @@ import { Gateways } from "@/store/ranking/types";
 
 export default class ProfileService {
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}/player/${battleTag.replace("#", "%23")}/stats`;
+    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -19,8 +19,7 @@ export default class ProfileService {
 
     const profile = {} as PlayerProfile;
 
-    profile.account = data.account;
-    profile.server = data.server;
+    profile.id = data.id;
 
     const raceStats: RaceStat[] = [];
 
@@ -33,35 +32,28 @@ export default class ProfileService {
       total: ERaceEnum.TOTAL
     };
 
-    for (const key in data.data.stats) {
-      if (Object.prototype.hasOwnProperty.call(data.data.stats, key)) {
-        const element = data.data.stats[key];
+    data.raceStats.forEach((stat:any) => {
+      const percentage =
+          (stat.wins * 100) / (stat.wins + stat.losses) || 0;
+      raceStats.push({
+        race: stat.race,
+        wins: stat.wins,
+        losses: stat.losses,
+        total: stat.wins + stat.losses,
+        percentage: percentage > 0 ? Number(percentage.toFixed(1)) : 0
+      });
+    });
 
-        const percentage =
-          (element.wins * 100) / (element.wins + element.losses) || 0;
 
-        raceStats.push({
-          race: races[key],
-          wins: element.wins,
-          losses: element.losses,
-          total: element.wins + element.losses,
-          percentage: percentage > 0 ? Number(percentage.toFixed(1)) : 0
-        });
-      }
-    }
+    profile.raceStats = raceStats;
 
-    profile.stats = raceStats;
-
-    profile.ladder = {
-      europe: this.getGameModeStats(data.data.ladder[Gateways.Europe]),
-      america: this.getGameModeStats(data.data.ladder[Gateways.America])
-    };
+    profile.modeStats = this.getGameModeStats(data.gameModeStats);
 
     return profile;
   }
 
   public async retrieveRawProfile(battleTag: string) {
-    const url = `${API_URL}/player/${battleTag.replace("#", "%23")}/stats`;
+    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -74,7 +66,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  private getGameModeStats(gatewayStats: any): ModeStat[] {
+  private getGameModeStats(gameModeStats: any): ModeStat[] {
     const modeStats: ModeStat[] = [];
     const gameModes: { [id: string]: EGameMode } = {
       solo: EGameMode.GM_1ON1,
@@ -84,19 +76,21 @@ export default class ProfileService {
       ffa: EGameMode.GM_FFA
     };
 
-    for (const key in gatewayStats) {
-      if (Object.prototype.hasOwnProperty.call(gatewayStats, key)) {
-        const element = gatewayStats[key];
+    gameModeStats.forEach((mode: ModeStat) => {
 
-        modeStats.push({
-          mode: gameModes[key],
-          wins: element.wins,
-          losses: element.losses,
-          rank: element.rank,
-          mmr: element.mmr
-        });
-      }
-    }
+      modeStats.push({
+        mode: mode.mode,
+        wins: mode.wins,
+        losses: mode.losses,
+        mmr: {
+          rating: 0,
+          rd: 0,
+          vol: 0
+        },
+        rank:0
+      });
+
+    });
 
     return modeStats;
   }
