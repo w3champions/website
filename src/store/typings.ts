@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 export type RootState = {
   darkMode: boolean;
 };
@@ -9,62 +11,30 @@ export type DataTableOptions = {
   itemsPerPage: number;
 };
 
-/**
- * Match interface received from the Api
- */
-export interface Match {
-  /**
-   * unique id of the match
-   */
-  id: number;
-
-  /**
-   * path of the map
-   */
-  map: string;
-
-  /**
-   * Mode of the game
-   */
-  gameMode: EGameMode;
-
-  /**
-   * Battle Tag of the player who hosted
-   */
-  host: string;
-
-  /**
-   * Start time of the match
-   */
-  startTime: number;
-
-  /**
-   * End time of the match. Undefined if match is still ongoing
-   */
-  endTime?: number;
-
-  /**
-   * Players that participated in the match
-   */
-  players: MatchPlayer[];
+export type PlayerInTeam = {
+  wins: number;
+  losses: number;
+  oldMmr: number;
+  currentMmr: number;
+  battleTag: string;
+  name: string;
+  mmrGain: number;
+  winrate: number;
 }
 
-/**
- * Match Making Rating
- */
-export interface Mmr {
-  /**
-   * Current rating
-   */
-  rating: number;
-  /**
-   * rd value - use unknown
-   */
-  rd: number;
-  /**
-   * vol value - use unknown
-   */
-  vol: number;
+export type Team = {
+  players: PlayerInTeam[];
+}
+
+export type Match = {
+  map: string;
+  id: number;
+  durationInSeconds: number;
+  startTime: Moment;
+  endTime: Moment;
+  gameMode: number;
+  teams: Team[];
+  gateWay: number;
 }
 
 export interface MatchPlayer {

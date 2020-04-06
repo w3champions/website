@@ -25,8 +25,8 @@ const mod = {
         state.page
       );
 
-      commit.SET_TOTAL_MATCHES(response.total);
-      commit.SET_MATCHES(response.items);
+      commit.SET_TOTAL_MATCHES(response.length);
+      commit.SET_MATCHES(response);
     }
   },
   mutations: {
