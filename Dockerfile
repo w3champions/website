@@ -6,8 +6,6 @@ RUN npm install
 COPY . .
 RUN npm run build:prod
 
-ENV STAGE production
-
 # production stage
 FROM nginx:stable-alpine as production-stage
 
@@ -26,4 +24,4 @@ RUN chmod +x env.sh
 
 EXPOSE 80
 EXPOSE 443
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $STAGE && nginx -g \"daemon off;\""]
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $BASE_URL && nginx -g \"daemon off;\""]

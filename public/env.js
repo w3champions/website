@@ -1,3 +1,3 @@
 window._env_ = {
-  STAGE: ""
+  BASE_URL: "http://176.28.16.249:10200/"
 };
