@@ -11,8 +11,7 @@
           <td class="text-end won">{{ item.wins }}</td>
           <td class="text-end lost">{{ item.losses }}</td>
           <td class="text-end">{{ item.wins + item.losses }}</td>
-          <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-          <td class="text-end">{{ item.rank }}</td>
+          <td class="text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
           <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
         </tr>
       </tbody>
@@ -32,10 +31,6 @@ export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;
-
-  public getWinRate(rank: Ranking) {
-    return rank.winrate * 100;
-  }
 
   public headers = [
     {
@@ -71,13 +66,6 @@ export default class ModeStatsGrid extends Vue {
       align: "end",
       sortable: false,
       value: "percentage",
-      width: "25px"
-    },
-    {
-      text: "Rank",
-      align: "end",
-      sortable: false,
-      value: "fourOnFour",
       width: "25px"
     },
     {
