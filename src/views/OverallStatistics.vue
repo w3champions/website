@@ -28,22 +28,39 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-3'">
-              <v-select :items="maps" @change="setSelectedMap" />
-              <v-card-text v-if="!loadingMapAndRaceStats">
-                <v-data-table hide-default-footer :headers="headers" :items="raceWinrateWithoutRandom">
-                  <template v-slot:body="{ items }">
-                    <tbody>
-                      <tr v-for="item in items" :key="item.race">
-                        <td>{{ $t("races." + raceEnums[item.race]) }}</td>
-                        <td>{{ winrateText(item.winLosses[1]) }}</td>
-                        <td>{{ winrateText(item.winLosses[2]) }}</td>
-                        <td>{{ winrateText(item.winLosses[3]) }}</td>
-                        <td>{{ winrateText(item.winLosses[4]) }}</td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-data-table>
-              </v-card-text>
+              <v-row>
+                <v-col cols="3">
+                  <div class="map-selector">
+                    <v-select
+                      :items="maps"
+                      @change="setSelectedMap"
+                      label="Select Map"
+                      outlined
+                    />
+                  </div>
+                </v-col>
+                <v-col cols="9">
+                  <v-card-text v-if="!loadingMapAndRaceStats">
+                    <v-data-table
+                      hide-default-footer
+                      :headers="headers"
+                      :items="raceWinrateWithoutRandom"
+                    >
+                      <template v-slot:body="{ items }">
+                        <tbody>
+                          <tr v-for="item in items" :key="item.race">
+                            <td>{{ $t("races." + raceEnums[item.race]) }}</td>
+                            <td>{{ winrateText(item.winLosses[1]) }}</td>
+                            <td>{{ winrateText(item.winLosses[2]) }}</td>
+                            <td>{{ winrateText(item.winLosses[3]) }}</td>
+                            <td>{{ winrateText(item.winLosses[4]) }}</td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-data-table>
+                  </v-card-text>
+                </v-col>
+              </v-row>
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -56,7 +73,12 @@
 import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { GameDay, Ratio, StatsPerMapAndRace, WinLoss } from "@/store/overallStats/types";
+import {
+  GameDay,
+  Ratio,
+  StatsPerMapAndRace,
+  WinLoss
+} from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
@@ -159,5 +181,11 @@ export default class OverallStatisticsView extends Vue {
 <style type="text/css">
 .ammount-per-day-chart {
   height: 650px;
+}
+
+.map-selector {
+  margin-top: 30px;
+  margin-left: 30px;
+  margin-bottom: 30px;
 }
 </style>
