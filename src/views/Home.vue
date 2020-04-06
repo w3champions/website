@@ -183,11 +183,11 @@
                   <v-list-item-icon>{{ i + 1 }}.</v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-text="rank.battleTag"
+                      v-text="rank.id"
                     ></v-list-item-title>
                     <v-list-item-subtitle
-                      >Win/Loss/Total: {{ rank.wins }}/{{ rank.losses }}/{{
-                        rank.wins + rank.losses
+                      >Win/Loss/Total: {{ rank.totalWins }}/{{ rank.totalLosses }}/{{
+                        rank.games
                       }}</v-list-item-subtitle
                     >
                   </v-list-item-content>
