@@ -186,9 +186,7 @@
                       v-text="rank.id"
                     ></v-list-item-title>
                     <v-list-item-subtitle
-                      >Win/Loss/Total: {{ rank.totalWins }}/{{ rank.totalLosses }}/{{
-                        rank.games
-                      }}</v-list-item-subtitle
+                      >Win/Loss/Total: {{ rank.totalWins }}/{{ rank.totalLosses }}/{{rank.games}}</v-list-item-subtitle
                     >
                   </v-list-item-content>
                 </v-list-item>
