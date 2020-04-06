@@ -6,9 +6,9 @@ import { ActionContext } from "vuex";
 const mod = {
   namespaced: true,
   state: {
-    loadingGamesPerDayStats: false,
-    loadingMapAndRaceStats: false,
-    loadingPlayersPerDayStats: false,
+    loadingGamesPerDayStats: true,
+    loadingMapAndRaceStats: true,
+    loadingPlayersPerDayStats: true,
     gamesPerDay: [] as GameDay[],
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerMapAndRace[]

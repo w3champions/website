@@ -30,7 +30,7 @@
             <v-tab-item :value="'tab-3'">
               <v-row>
                 <v-col cols="3">
-                  <v-card-text>
+                  <v-card-text v-if="!loadingMapAndRaceStats">
                     <v-select
                       :items="maps"
                       @change="setSelectedMap"
@@ -89,7 +89,7 @@ import { ERaceEnum } from "@/store/typings";
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
-  public selectedMap = "Overall";
+  public selectedMap = this.maps[0];
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
@@ -126,7 +126,7 @@ export default class OverallStatisticsView extends Vue {
   get raceWinrateWithoutRandom(): Ratio[] {
     return this.statsPerRaceAndMap
       .filter(r => r.mapName == this.selectedMap)[0]
-      .ratio.slice(1, 5);
+      ?.ratio.slice(1, 5);
   }
 
   get maps() {
