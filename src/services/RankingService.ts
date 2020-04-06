@@ -23,7 +23,7 @@ export default class RankingService {
     str: string,
     gateway: Gateways
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder?gateway=${gateway}&searchFor=${str}`;
+    const url = `${API_URL}api/ladder/search?gateway=${gateway}&searchFor=${str}`;
 
     const response = await fetch(url);
     return await response.json();

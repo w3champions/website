@@ -45,8 +45,8 @@
               :loading="isLoading"
               :search-input.sync="search"
               :no-data-text="noDataText"
-              item-text="battleTag"
-              item-value="battleTag"
+              item-text="id"
+              item-value="id"
               placeholder="Start typing to Search"
               return-object
             >
