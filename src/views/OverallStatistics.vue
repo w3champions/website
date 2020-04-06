@@ -89,7 +89,7 @@ import { ERaceEnum } from "@/store/typings";
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
-  public selectedMap = this.maps[0];
+  public selectedMap = "Overall";
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
@@ -126,7 +126,7 @@ export default class OverallStatisticsView extends Vue {
   get raceWinrateWithoutRandom(): Ratio[] {
     return this.statsPerRaceAndMap
       .filter(r => r.mapName == this.selectedMap)[0]
-      ?.ratio.slice(1, 5);
+      .ratio.slice(1, 5);
   }
 
   get maps() {
