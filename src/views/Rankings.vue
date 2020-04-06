@@ -57,12 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.battleTag }}
+                      {{ data.item.id }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.wins }} | Losses:
-                      {{ data.item.losses }} | Total:
-                      {{ data.item.wins + data.item.losses }}
+                      Wins: {{ data.item.totalWins }} | Losses:
+                      {{ data.item.totalLosses }} | Total:
+                      {{ data.item.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
