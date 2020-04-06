@@ -93,22 +93,24 @@
                       searchedItem: item.battleTag === searchModelBattleTag
                     }"
                   >
-                    <td>{{ item.rank }}</td>
+                    <td>1</td>
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <span v-on="on">{{
-                            item.battleTag.split("#")[0]
+                            item.id
                           }}</span>
                         </template>
-                        <div>{{ item.battleTag }}</div>
+                        <div>{{ item.name }}</div>
                       </v-tooltip>
                     </td>
-                    <td class="text-end won">{{ item.wins }}</td>
-                    <td class="text-end lost">{{ item.losses }}</td>
-                    <td class="text-end">{{ item.wins + item.losses }}</td>
-                    <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-                    <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
+                    <td class="text-end won">{{ item.totalWins }}</td>
+                    <td class="text-end lost">{{ item.totalLosses }}</td>
+                    <td class="text-end">{{ item.games }}</td>
+                    <td class="text-end">
+                      {{ (item.winrate * 100).toFixed(1) }}%
+                    </td>
+                    <td class="text-end">{{ item.mmr }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -155,27 +157,23 @@ export default class RankingsView extends Vue {
       text: "Player",
       align: "start",
       sortable: false,
-      value: "battleTag"
     },
     {
       text: "Wins",
       align: "end",
       sortable: false,
-      value: "totalWins",
       width: "50px"
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
-      value: "totalLosses",
       width: "50px"
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
-      value: "games",
       width: "50px"
     },
     {
@@ -188,7 +186,6 @@ export default class RankingsView extends Vue {
       text: "Rating",
       align: "end",
       sortable: false,
-      value: "mmr",
       width: "25px"
     }
   ];
