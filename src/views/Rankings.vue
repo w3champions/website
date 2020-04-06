@@ -191,7 +191,7 @@ export default class RankingsView extends Vue {
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
-    this.goToRank(newVal);
+    this.openPlayerProfile(newVal.id);
   }
 
   @Watch("search")
@@ -263,17 +263,8 @@ export default class RankingsView extends Vue {
     this.getRankings();
   }
 
-  public getWinRate(rank: Ranking) {
-    return rank.winrate * 100;
-  }
-
   public getRankings(options?: DataTableOptions) {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
-  }
-
-  public async goToRank(rank: Ranking) {
-    const isPrevSite = rank.mmr % 15 === 0 && rank.mmr > 15;
-    this.options.page = Math.floor(rank.mmr / 15 + (isPrevSite ? 0 : 1));
   }
 
   public openPlayerProfile(playerName: string) {
