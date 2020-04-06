@@ -30,14 +30,14 @@
             <v-tab-item :value="'tab-3'">
               <v-row>
                 <v-col cols="3">
-                  <div class="map-selector">
+                  <v-card-text>
                     <v-select
                       :items="maps"
                       @change="setSelectedMap"
                       label="Select Map"
                       outlined
                     />
-                  </div>
+                  </v-card-text>
                 </v-col>
                 <v-col cols="9">
                   <v-card-text v-if="!loadingMapAndRaceStats">
@@ -181,11 +181,5 @@ export default class OverallStatisticsView extends Vue {
 <style type="text/css">
 .ammount-per-day-chart {
   height: 650px;
-}
-
-.map-selector {
-  margin-top: 30px;
-  margin-left: 30px;
-  margin-bottom: 30px;
 }
 </style>
