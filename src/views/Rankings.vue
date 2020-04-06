@@ -84,24 +84,23 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
-                    @click.left="openPlayerProfile(item.battleTag)"
-                    @click.middle="openProfileInNewTab(item.battleTag)"
-                    @click.right="openProfileInNewTab(item.battleTag)"
+                    @click.left="openPlayerProfile(item.id)"
+                    @click.middle="openProfileInNewTab(item.id)"
+                    @click.right="openProfileInNewTab(item.id)"
                     v-for="item in items"
                     :key="item.name"
                     :class="{
-                      searchedItem: item.battleTag === searchModelBattleTag
+                      searchedItem: item.id === searchModelBattleTag
                     }"
                   >
-                    <td>1</td>
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <span v-on="on">{{
-                            item.id
+                            item.name
                           }}</span>
                         </template>
-                        <div>{{ item.name }}</div>
+                        <div>{{ item.id }}</div>
                       </v-tooltip>
                     </td>
                     <td class="text-end won">{{ item.totalWins }}</td>
@@ -147,12 +146,6 @@ import { DataTableOptions } from "../store/typings";
 })
 export default class RankingsView extends Vue {
   public headers = [
-    {
-      text: "Rank",
-      align: "start",
-      sortable: false,
-      width: "25px"
-    },
     {
       text: "Player",
       align: "start",
