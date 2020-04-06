@@ -1,3 +1,3 @@
 window._env_ = {
-  STAGE: ""
+  STAGE: "dev"
 };

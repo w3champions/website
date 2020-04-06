@@ -11,17 +11,10 @@ Vue.use(vueMoment);
 
 Vue.config.productionTip = false;
 
-let _apiUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://176.28.16.249:10200/"
-    : "http://176.28.16.249:10300/";
-
-if ((window as any)._env_.STAGE) {
-  _apiUrl =
+const _apiUrl =
     (window as any)._env_.STAGE === "dev"
       ? "http://176.28.16.249:10200/"
       : "http://176.28.16.249:10300/";
-}
 
 export const API_URL = _apiUrl;
 
