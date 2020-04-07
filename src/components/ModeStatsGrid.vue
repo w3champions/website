@@ -2,11 +2,7 @@
   <v-data-table hide-default-footer :headers="headers" :items="stats">
     <template v-slot:body="{ items }">
       <tbody>
-        <tr
-          @click="openPlayerProfile(item.battleTag)"
-          v-for="item in items"
-          :key="item.mode"
-        >
+        <tr v-for="item in items" :key="item.mode">
           <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
           <td class="text-end won">{{ item.wins }}</td>
           <td class="text-end lost">{{ item.losses }}</td>
@@ -24,7 +20,6 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "../store/typings";
 import { ModeStat } from "../store/player/types";
-import { Ranking } from "../store/ranking/types";
 
 @Component({})
 export default class ModeStatsGrid extends Vue {
