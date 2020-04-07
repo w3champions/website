@@ -12,15 +12,11 @@ export type DataTableOptions = {
 };
 
 export type PlayerInTeam = {
-  wins: number;
-  losses: number;
   oldMmr: number;
   currentMmr: number;
   battleTag: string;
   name: string;
   mmrGain: number;
-  winrate: number;
-  games: number;
   race: ERaceEnum;
   won: boolean;
 }

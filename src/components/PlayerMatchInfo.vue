@@ -50,20 +50,8 @@ export default class PlayerMatchInfo extends Vue {
     return "";
   }
 
-  get wins() {
-    return this.player.wins;
-  }
-
   get race() {
     return this.player.race;
-  }
-
-  get losses() {
-    return this.player.losses;
-  }
-
-  get games() {
-    return this.player.games;
   }
 
   get mmrChange() {
