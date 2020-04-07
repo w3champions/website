@@ -45,8 +45,8 @@
               :loading="isLoading"
               :search-input.sync="search"
               :no-data-text="noDataText"
-              item-text="battleTag"
-              item-value="battleTag"
+              item-text="id"
+              item-value="id"
               placeholder="Start typing to Search"
               return-object
             >
@@ -57,12 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.battleTag }}
+                      {{ data.item.id }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.wins }} | Losses:
-                      {{ data.item.losses }} | Total:
-                      {{ data.item.wins + data.item.losses }}
+                      Wins: {{ data.item.totalWins }} | Losses:
+                      {{ data.item.totalLosses }} | Total:
+                      {{ data.item.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -84,24 +84,23 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
-                    @click.left="openPlayerProfile(item.battleTag)"
-                    @click.middle="openProfileInNewTab(item.battleTag)"
-                    @click.right="openProfileInNewTab(item.battleTag)"
+                    @click.left="openPlayerProfile(item.id)"
+                    @click.middle="openProfileInNewTab(item.id)"
+                    @click.right="openProfileInNewTab(item.id)"
                     v-for="item in items"
                     :key="item.name"
                     :class="{
-                      searchedItem: item.battleTag === searchModelBattleTag
+                      searchedItem: item.id === searchModelBattleTag
                     }"
                   >
-                    <td>1</td>
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <span v-on="on">{{
-                            item.id
+                            item.name
                           }}</span>
                         </template>
-                        <div>{{ item.name }}</div>
+                        <div>{{ item.id }}</div>
                       </v-tooltip>
                     </td>
                     <td class="text-end won">{{ item.totalWins }}</td>
@@ -148,12 +147,6 @@ import { DataTableOptions } from "../store/typings";
 export default class RankingsView extends Vue {
   public headers = [
     {
-      text: "Rank",
-      align: "start",
-      sortable: false,
-      width: "25px"
-    },
-    {
       text: "Player",
       align: "start",
       sortable: false,
@@ -198,7 +191,7 @@ export default class RankingsView extends Vue {
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
-    this.goToRank(newVal);
+    this.openPlayerProfile(newVal.id);
   }
 
   @Watch("search")
@@ -270,17 +263,8 @@ export default class RankingsView extends Vue {
     this.getRankings();
   }
 
-  public getWinRate(rank: Ranking) {
-    return rank.winrate * 100;
-  }
-
   public getRankings(options?: DataTableOptions) {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
-  }
-
-  public async goToRank(rank: Ranking) {
-    const isPrevSite = rank.mmr % 15 === 0 && rank.mmr > 15;
-    this.options.page = Math.floor(rank.mmr / 15 + (isPrevSite ? 0 : 1));
   }
 
   public openPlayerProfile(playerName: string) {

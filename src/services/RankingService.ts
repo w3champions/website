@@ -11,7 +11,7 @@ export default class RankingService {
   public async retrieveRankings(
     page: number,
     gateway: Gateways
-  ): Promise<{ total: number; items: Ranking[] }> {
+  ): Promise<Ranking[]> {
     const offset = page * this.pageSize;
     const url = `${API_URL}api/ladder?pageSize=${this.pageSize}&offset=${offset}&gateway=${gateway}`;
 
@@ -22,8 +22,8 @@ export default class RankingService {
   public async searchRankings(
     str: string,
     gateway: Gateways
-  ): Promise<{ total: number; items: Ranking[] }> {
-    const url = `${API_URL}/rank/${gateway}?filter=${str}&limit=5`;
+  ): Promise<Ranking[]> {
+    const url = `${API_URL}api/ladder/search?gateway=${gateway}&searchFor=${str}`;
 
     const response = await fetch(url);
     return await response.json();
