@@ -22,7 +22,8 @@ const mod = {
       }
 
       const response = await rootGetters.matchService.retrieveMatches(
-        state.page
+        state.page,
+        10
       );
 
       commit.SET_TOTAL_MATCHES(response.length);

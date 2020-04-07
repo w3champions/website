@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Match, MatchPlayer } from "@/store/typings";
+import { Match, PlayerInTeam } from "@/store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 
 @Component({
@@ -33,8 +33,9 @@ export default class PlayerView extends Vue {
   @Prop() public match!: Match;
   @Prop() public selfBattleTag!: string;
 
-  get selfPlayer(): MatchPlayer {
-    const player = this.match.players.filter(
+  get selfPlayer(): PlayerInTeam {
+    const playersOfMatch = this.match.teams.map(m => m.players).flat();
+    const player = playersOfMatch.filter(
       x => x.battleTag.toLowerCase() === this.selfBattleTag.toLowerCase()
     );
 
@@ -42,11 +43,12 @@ export default class PlayerView extends Vue {
       return player[0];
     }
 
-    return {} as MatchPlayer;
+    return {} as PlayerInTeam;
   }
 
-  get otherPlayer(): MatchPlayer {
-    const player = this.match.players.filter(
+  get otherPlayer(): PlayerInTeam {
+    const playersOfMatch = this.match.teams.map(m => m.players).flat();
+    const player = playersOfMatch.filter(
       x => x.battleTag.toLowerCase() !== this.selfBattleTag.toLowerCase()
     );
 
@@ -54,15 +56,7 @@ export default class PlayerView extends Vue {
       return player[0];
     }
 
-    return {} as MatchPlayer;
-  }
-
-  get won(): string {
-    if (Object.prototype.hasOwnProperty.call(this.selfPlayer, "won")) {
-      return this.selfPlayer.won ? "won" : "lost";
-    }
-
-    return "";
+    return {} as PlayerInTeam;
   }
 }
 </script>

@@ -9,10 +9,11 @@ export default class MatchService {
   }
 
   public async retrieveMatches(
-    page: number
+    page: number,
+    gateway: number
   ): Promise<Match[]> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}/match?limit=${this.pageSize}&offset=${offset}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
 
     const response = await fetch(url);
     return await response.json();

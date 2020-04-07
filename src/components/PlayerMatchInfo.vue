@@ -41,7 +41,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, Mmr } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
-import { PlayerProfile } from "../store/player/types";
+import { PlayerProfile } from "@/store/player/types";
 
 @Component({
   components: { PlayerIcon }

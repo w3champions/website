@@ -20,6 +20,7 @@ export type PlayerInTeam = {
   name: string;
   mmrGain: number;
   winrate: number;
+  won: boolean;
 }
 
 export type Team = {
@@ -35,14 +36,6 @@ export type Match = {
   gameMode: number;
   teams: Team[];
   gateWay: number;
-}
-
-export type MatchPlayer = {
-  battleTag: string;
-  race: ERaceEnum;
-  bucket: number;
-  won?: boolean;
-  xpChange?: number;
 }
 
 export type Mmr = {
