@@ -55,18 +55,4 @@ export default class ProfileService {
 
     return profile;
   }
-
-  public async retrieveRawProfile(battleTag: string) {
-    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    });
-
-    return await response.json();
-  }
 }
