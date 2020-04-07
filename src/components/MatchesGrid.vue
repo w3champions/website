@@ -19,13 +19,11 @@
       </v-tooltip>
     </template>
     <template v-slot:item.map="{ item }">
-      <span>{{ $t("mapNames." + mapName(item)) }}</span>
+      <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span v-on="on">
-        {{
-        item.startTime | moment("MMM DD YYYY HH:mm")
-        }}
+      <span>
+        {{ item.startTime | moment("MMM DD YYYY HH:mm") }}
       </span>
     </template>
     <template v-slot:item.duration="{ item }">
@@ -48,8 +46,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, DataTableOptions } from "../store/typings";
+import { Match, DataTableOptions } from "@/store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
+import moment from "moment";
 
 @Component({
   components: {
@@ -70,59 +69,17 @@ export default class MatchesGrid extends Vue {
     itemsPerPage: 100
   } as DataTableOptions;
 
-  mapName(item: Match) {
-    const meinString = item.map
-      .substr(item.map.lastIndexOf("/") + 1)
-      .replace(".w3x", "")
-      .replace("(2)", "")
-      .replace("(4)", "")
-      .replace("_lv", "");
-    return meinString;
-  }
-
   @Watch("options", { deep: true })
   public onOptionsChanged() {
     this.$emit("pageChanged", this.options.page);
   }
 
   public getWinner(match: Match) {
-    if (this.alwaysLeftName) {
-      const players = match.players.filter(
-        x => x.battleTag.toLowerCase() === this.alwaysLeftName.toLowerCase()
-      );
-
-      if (players && players.length > 0) {
-        return players[0];
-      }
-    }
-
-    const winner = match.players.filter(x => x.won === true);
-
-    if (winner && winner.length > 0) {
-      return winner[0];
-    }
-
-    return match.players[0];
+    return match.teams[0].players[0];
   }
 
   public getLoser(match: Match) {
-    if (this.alwaysLeftName) {
-      const players = match.players.filter(
-        x => x.battleTag.toLowerCase() !== this.alwaysLeftName.toLowerCase()
-      );
-
-      if (players && players.length > 0) {
-        return players[0];
-      }
-    }
-
-    const loser = match.players.filter(x => x.won === false);
-
-    if (loser && loser.length > 0) {
-      return loser[0];
-    }
-
-    return match.players[1];
+    return match.teams[1].players[0];
   }
 
   public getDuration(match: Match) {
@@ -133,32 +90,7 @@ export default class MatchesGrid extends Vue {
       return "ongoing";
     }
 
-    let duration = "";
-    let delta = Math.abs(match.startTime - match.endTime) / 1000;
-
-    const days = Math.floor(delta / 86400);
-    delta -= days * 86400;
-
-    const hours = Math.floor(delta / 3600) % 24;
-    delta -= hours * 3600;
-
-    if (hours) {
-      duration += `${hours}h `;
-    }
-
-    const minutes = Math.floor(delta / 60) % 60;
-    delta -= minutes * 60;
-
-    if (minutes) {
-      duration += `${minutes}m `;
-    }
-
-    const seconds = delta % 60;
-    if (seconds) {
-      duration += `${Math.floor(seconds)}s`;
-    }
-
-    return duration;
+    return moment.utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds()).format("mm:ss");
   }
 
   mounted() {
@@ -193,7 +125,7 @@ export default class MatchesGrid extends Vue {
       align: "end",
       sortable: false,
       value: "startTime",
-      width: "220px"
+      width: "150px"
     },
     {
       text: "Duration",

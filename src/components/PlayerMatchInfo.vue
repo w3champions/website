@@ -2,15 +2,15 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div :class="textClass">
-        <player-icon :left="left" :race="player.race" />
+        <player-icon :left="left" :race="race" />
         <div>
           <a
             :class="won"
             v-on="on"
-            @mouseover="lazyLoadProfile"
-            @click="goToPlayer(name)"
-            @click.middle="openProfileInNewTab(name)"
-            @click.right="openProfileInNewTab(name)"
+            @mouseover="lazyLoadWinrate"
+            @click="goToPlayer()"
+            @click.middle="openProfileInNewTab()"
+            @click.right="openProfileInNewTab()"
           >
             {{ nameWithoutBtag }}
             ({{ currentRating }})
@@ -22,15 +22,14 @@
         </div>
       </div>
     </template>
-    <div v-if="profile.data">
-      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
+    <div v-if="winrate">
+      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
       <p></p>
-      Wins: {{ profile.data.stats.total.wins }} | Losses:
-      {{ profile.data.stats.total.losses }} | Total:
-      {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
+      Wins: {{ winrate.wins }} | Losses: {{ winrate.losses }} | Total:
+      {{ winrate.games }}
     </div>
     <div v-else>
-      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
+      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
       <p>Wins: ... | Losses: ... | Total: ...</p>
     </div>
   </v-tooltip>
@@ -39,23 +38,19 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum, Mmr } from "@/store/typings";
+import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
-import { PlayerProfile } from "../store/player/types";
+import { WinRate } from "@/store/player/types";
 
 @Component({
   components: { PlayerIcon }
 })
 export default class PlayerMatchInfo extends Vue {
-  @Prop() public player!: {
-    battleTag: string;
-    race: ERaceEnum;
-    won?: boolean;
-    mmr: Mmr;
-    updatedMmr: Mmr;
-  };
+  @Prop() public player!: PlayerInTeam;
 
   @Prop() public left!: boolean;
+
+  public winrate: WinRate = {} as WinRate;
 
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
@@ -65,61 +60,53 @@ export default class PlayerMatchInfo extends Vue {
     return "";
   }
 
+  get race() {
+    return this.player.race;
+  }
+
   get mmrChange() {
-    if (this.player.mmr && this.player.updatedMmr) {
-      return Math.floor(this.player.updatedMmr.rating - this.player.mmr.rating);
+    if (this.player.oldMmr && this.player.currentMmr) {
+      return Math.floor(this.player.currentMmr - this.player.oldMmr);
     }
 
     return 0;
   }
 
   get currentRating() {
-    return Math.floor(this.player.mmr.rating);
+    return Math.floor(this.player.currentMmr);
   }
 
   get textClass() {
     return this.left ? "text-end" : "text-start";
   }
 
-  get name() {
+  get battleTag() {
     return this.player.battleTag;
   }
 
   get nameWithoutBtag() {
-    return this.name.split("#")[0];
+    return this.player.name;
   }
 
-  get btag() {
-    return this.name.split("#")[1];
+  private getPlayerPath() {
+    return "/player/" + this.nameWithoutBtag + "/" + this.battleTag;
   }
 
-  public profile = {} as PlayerProfile;
-
-  private async lazyLoadProfile() {
-    if (!this.profile.id) {
-      this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(
-        this.name
-      );
-    }
-  }
-
-  private getPlayerPath(playerName: string) {
-    const parts = playerName.split("#");
-
-    return "/player/" + parts[0] + "/" + parts[1];
-  }
-
-  public openProfileInNewTab(playerName: string) {
-    const path = this.getPlayerPath(playerName);
+  public openProfileInNewTab() {
+    const path = this.getPlayerPath();
     window.open(path, "_blank");
   }
 
-  public goToPlayer(playerName: string) {
-    const parts = playerName.split("#");
+  private async lazyLoadWinrate() {
+    this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
+      `${this.player.name}#${this.player.battleTag}`
+    );
+  }
 
+  public goToPlayer() {
     this.$router
       .push({
-        path: "/player/" + parts[0] + "/" + parts[1]
+        path: "/player/" + this.nameWithoutBtag + "/" + this.battleTag
       })
       .catch(err => {
         return err;

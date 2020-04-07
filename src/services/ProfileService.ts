@@ -1,9 +1,22 @@
-import { ModeStat, PlayerProfile, RaceStat } from "@/store/player/types";
-import { API_URL } from "@/main";
-import { EGameMode, ERaceEnum } from "@/store/typings";
-import { Gateways } from "@/store/ranking/types";
+import {ModeStat, PlayerProfile, RaceStat, WinRate} from "@/store/player/types";
+import {API_URL} from "@/main";
+import {EGameMode, ERaceEnum} from "@/store/typings";
 
 export default class ProfileService {
+  public async retrieveWinRate(battleTag: string): Promise<WinRate> {
+    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}/winrate`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    return data.stats;
+  }
+
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
     const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
 
@@ -82,12 +95,8 @@ export default class ProfileService {
         mode: mode.mode,
         wins: mode.wins,
         losses: mode.losses,
-        mmr: {
-          rating: 0,
-          rd: 0,
-          vol: 0
-        },
-        rank:0
+        winrate: mode.winrate,
+        mmr: mode.mmr,
       });
 
     });

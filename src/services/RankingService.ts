@@ -11,9 +11,9 @@ export default class RankingService {
   public async retrieveRankings(
     page: number,
     gateway: Gateways
-  ): Promise<{ total: number; items: Ranking[] }> {
+  ): Promise<Ranking[]> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}/rank/${gateway}?limit=${this.pageSize}&offset=${offset}`;
+    const url = `${API_URL}api/ladder?pageSize=${this.pageSize}&offset=${offset}&gateway=${gateway}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -22,40 +22,10 @@ export default class RankingService {
   public async searchRankings(
     str: string,
     gateway: Gateways
-  ): Promise<{ total: number; items: Ranking[] }> {
-    const url = `${API_URL}/rank/${gateway}?filter=${str}&limit=5`;
+  ): Promise<Ranking[]> {
+    const url = `${API_URL}api/ladder/search?gateway=${gateway}&searchFor=${str}`;
 
     const response = await fetch(url);
     return await response.json();
-  }
-
-  public async getRanksAroundRanking(
-    rank: number,
-    gateway: Gateways
-  ): Promise<{ total: number; items: Ranking[] }> {
-    const url = `${API_URL}/rank/${gateway}?limit=${
-      this.pageSize
-    }&offset=${rank - Math.floor(this.pageSize / 2)}`;
-    const response = await fetch(url);
-    return await response.json();
-  }
-
-  public toRank(rank: number) {
-    if (rank === 0) {
-      return "-";
-    }
-
-    const j = rank % 10,
-      k = rank % 100;
-    if (j == 1 && k != 11) {
-      return rank + "st";
-    }
-    if (j == 2 && k != 12) {
-      return rank + "nd";
-    }
-    if (j == 3 && k != 13) {
-      return rank + "rd";
-    }
-    return rank + "th";
   }
 }

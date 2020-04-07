@@ -2,18 +2,13 @@
   <v-data-table hide-default-footer :headers="headers" :items="stats">
     <template v-slot:body="{ items }">
       <tbody>
-        <tr
-          @click="openPlayerProfile(item.battleTag)"
-          v-for="item in items"
-          :key="item.mode"
-        >
+        <tr v-for="item in items" :key="item.mode">
           <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
           <td class="text-end won">{{ item.wins }}</td>
           <td class="text-end lost">{{ item.losses }}</td>
           <td class="text-end">{{ item.wins + item.losses }}</td>
-          <td class="text-end">{{ getWinRate(item).toFixed(1) }}%</td>
-          <td class="text-end">{{ item.rank }}</td>
-          <td class="text-end">{{ Math.floor(item.mmr.rating) }}</td>
+          <td class="text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
+          <td class="text-end">{{ item.mmr }}</td>
         </tr>
       </tbody>
     </template>
@@ -22,26 +17,15 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "../store/typings";
 import { ModeStat } from "../store/player/types";
-import { Ranking } from "../store/ranking/types";
 
 @Component({})
 export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;
-
-  public getWinRate(rank: Ranking) {
-    const winRate = (rank.wins * 100) / (rank.wins + rank.losses);
-
-    if (isNaN(winRate)) {
-      return 0;
-    }
-
-    return winRate;
-  }
 
   public headers = [
     {
@@ -77,13 +61,6 @@ export default class ModeStatsGrid extends Vue {
       align: "end",
       sortable: false,
       value: "percentage",
-      width: "25px"
-    },
-    {
-      text: "Rank",
-      align: "end",
-      sortable: false,
-      value: "fourOnFour",
       width: "25px"
     },
     {

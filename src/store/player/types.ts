@@ -1,4 +1,4 @@
-import { EGameMode, ERaceEnum, Match, Mmr } from "../typings";
+import { EGameMode, ERaceEnum, Match } from "../typings";
 
 export type PlayerState = {
   page: number;
@@ -17,6 +17,13 @@ export type PlayerProfile = {
   ranks: RankStat[];
 };
 
+export type WinRate = {
+  wins: number;
+  losses: number;
+  games: number;
+  winrate: number;
+};
+
 export type RaceStat = {
   /**
    * 'human' | 'orc' | 'undead' | 'night_elf' | 'random' | 'total'
@@ -32,8 +39,8 @@ export type ModeStat = {
   mode: EGameMode;
   wins: number;
   losses: number;
-  rank: number;
-  mmr: Mmr;
+  winrate: number;
+  mmr: number;
 };
 
 export type RankStat = {

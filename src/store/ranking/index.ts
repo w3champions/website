@@ -30,8 +30,8 @@ const mod = {
         state.gateway
       );
 
-      commit.SET_TOTAL_RANKS(response.total);
-      commit.SET_RANKINGS(response.items);
+      commit.SET_TOTAL_RANKS(response.length);
+      commit.SET_RANKINGS(response);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
@@ -40,7 +40,7 @@ const mod = {
         0,
         state.gateway
       );
-      commit.SET_TOP_FIVE(rankings.items.slice(0, 5));
+      commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
     async search(
       context: ActionContext<RankingState, RootState>,
@@ -53,7 +53,7 @@ const mod = {
         state.gateway
       );
 
-      commit.SET_SEARCH_RANKINGS(rankings.items);
+      commit.SET_SEARCH_RANKINGS(rankings);
     },
     async clearSearch(context: ActionContext<RankingState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
@@ -66,7 +66,7 @@ const mod = {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_GATEWAY(gateway);
       commit.SET_PAGE(0);
-      dispatch.retrieveRankings(undefined);
+      await dispatch.retrieveRankings(undefined);
     }
   },
   mutations: {

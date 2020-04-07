@@ -11,7 +11,7 @@ Vue.use(vueMoment);
 
 Vue.config.productionTip = false;
 
-const _apiUrl = (window as any)._env_.BASE_URL
+const _apiUrl = (window as any)._env_.BASE_URL;
 
 export const API_URL = _apiUrl;
 
