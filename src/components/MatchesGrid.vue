@@ -32,11 +32,11 @@
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <player-match-info :player="getWinner(item)" left="true"></player-match-info>
+          <team-match-info :team="getWinner(item)" left="true"></team-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
-          <player-match-info :player="getLoser(item)"></player-match-info>
+          <team-match-info :team="getLoser(item)"></team-match-info>
         </v-col>
       </v-row>
     </template>
@@ -49,9 +49,11 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import { Match, DataTableOptions } from "@/store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 import moment from "moment";
+import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
 
 @Component({
   components: {
+    TeamMatchInfo,
     PlayerMatchInfo
   }
 })
@@ -75,11 +77,11 @@ export default class MatchesGrid extends Vue {
   }
 
   public getWinner(match: Match) {
-    return match.teams[0].players[0];
+    return match.teams[0];
   }
 
   public getLoser(match: Match) {
-    return match.teams[1].players[0];
+    return match.teams[1];
   }
 
   public getDuration(match: Match) {

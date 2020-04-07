@@ -36,15 +36,6 @@ export default class ProfileService {
 
     const raceStats: RaceStat[] = [];
 
-    const races: { [id: string]: ERaceEnum } = {
-      human: ERaceEnum.HUMAN,
-      orc: ERaceEnum.ORC,
-      undead: ERaceEnum.UNDEAD,
-      'night_elf': ERaceEnum.NIGHT_ELF,
-      random: ERaceEnum.RANDOM,
-      total: ERaceEnum.TOTAL
-    };
-
     data.raceStats.forEach((stat:any) => {
       const percentage =
           (stat.wins * 100) / (stat.wins + stat.losses) || 0;
@@ -60,47 +51,8 @@ export default class ProfileService {
 
     profile.raceStats = raceStats;
 
-    profile.modeStats = this.getGameModeStats(data.gameModeStats);
+    profile.modeStats = data.gameModeStats;
 
     return profile;
-  }
-
-  public async retrieveRawProfile(battleTag: string) {
-    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    });
-
-    return await response.json();
-  }
-
-  private getGameModeStats(gameModeStats: any): ModeStat[] {
-    const modeStats: ModeStat[] = [];
-    const gameModes: { [id: string]: EGameMode } = {
-      solo: EGameMode.GM_1ON1,
-      two: EGameMode.GM_2ON2,
-      three: EGameMode.GM_3ON3,
-      four: EGameMode.GM_4ON4,
-      ffa: EGameMode.GM_FFA
-    };
-
-    gameModeStats.forEach((mode: ModeStat) => {
-
-      modeStats.push({
-        mode: mode.mode,
-        wins: mode.wins,
-        losses: mode.losses,
-        winrate: mode.winrate,
-        mmr: mode.mmr,
-      });
-
-    });
-
-    return modeStats;
   }
 }
