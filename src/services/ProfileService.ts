@@ -36,15 +36,6 @@ export default class ProfileService {
 
     const raceStats: RaceStat[] = [];
 
-    const races: { [id: string]: ERaceEnum } = {
-      human: ERaceEnum.HUMAN,
-      orc: ERaceEnum.ORC,
-      undead: ERaceEnum.UNDEAD,
-      'night_elf': ERaceEnum.NIGHT_ELF,
-      random: ERaceEnum.RANDOM,
-      total: ERaceEnum.TOTAL
-    };
-
     data.raceStats.forEach((stat:any) => {
       const percentage =
           (stat.wins * 100) / (stat.wins + stat.losses) || 0;
@@ -60,7 +51,7 @@ export default class ProfileService {
 
     profile.raceStats = raceStats;
 
-    profile.modeStats = this.getGameModeStats(data.gameModeStats);
+    profile.modeStats = data.gameModeStats;
 
     return profile;
   }
@@ -77,23 +68,5 @@ export default class ProfileService {
     });
 
     return await response.json();
-  }
-
-  private getGameModeStats(gameModeStats: any): ModeStat[] {
-    const modeStats: ModeStat[] = [];
-
-    gameModeStats.forEach((mode: ModeStat) => {
-
-      modeStats.push({
-        mode: mode.mode,
-        wins: mode.wins,
-        losses: mode.losses,
-        winrate: mode.winrate,
-        mmr: mode.mmr,
-      });
-
-    });
-
-    return modeStats;
   }
 }
