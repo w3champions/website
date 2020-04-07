@@ -46,7 +46,6 @@ export enum EGameMode {
   UNDEFINED,
   GM_1ON1,
   GM_2ON2,
-  GM_3ON3,
   GM_4ON4,
   GM_FFA
 }

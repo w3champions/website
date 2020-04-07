@@ -81,13 +81,6 @@ export default class ProfileService {
 
   private getGameModeStats(gameModeStats: any): ModeStat[] {
     const modeStats: ModeStat[] = [];
-    const gameModes: { [id: string]: EGameMode } = {
-      solo: EGameMode.GM_1ON1,
-      two: EGameMode.GM_2ON2,
-      three: EGameMode.GM_3ON3,
-      four: EGameMode.GM_4ON4,
-      ffa: EGameMode.GM_FFA
-    };
 
     gameModeStats.forEach((mode: ModeStat) => {
 
