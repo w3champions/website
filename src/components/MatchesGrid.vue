@@ -77,45 +77,11 @@ export default class MatchesGrid extends Vue {
   }
 
   public getWinner(match: Match) {
-    const playersOfMatch = match.teams.map(m => m.players).flat();
-    if (this.alwaysLeftName) {
-      const players = playersOfMatch.filter(
-        x => x.battleTag.toLowerCase() === this.alwaysLeftName.toLowerCase()
-      );
-
-      if (players && players.length > 0) {
-        return players[0];
-      }
-    }
-
-    const winner = playersOfMatch.filter(x => x.won);
-
-    if (winner && winner.length > 0) {
-      return winner[0];
-    }
-
-    return playersOfMatch[0];
+    return match.teams[0].players[0];
   }
 
   public getLoser(match: Match) {
-    const playersOfMatch = match.teams.map(m => m.players).flat();
-    if (this.alwaysLeftName) {
-      const players = playersOfMatch.filter(
-        x => x.battleTag.toLowerCase() !== this.alwaysLeftName.toLowerCase()
-      );
-
-      if (players && players.length > 0) {
-        return players[0];
-      }
-    }
-
-    const loser = playersOfMatch.filter(x => !x.won);
-
-    if (loser && loser.length > 0) {
-      return loser[0];
-    }
-
-    return playersOfMatch[1];
+    return match.teams[1].players[0];
   }
 
   public getDuration(match: Match) {
