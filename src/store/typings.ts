@@ -20,6 +20,8 @@ export type PlayerInTeam = {
   name: string;
   mmrGain: number;
   winrate: number;
+  games: number;
+  race: ERaceEnum;
   won: boolean;
 }
 

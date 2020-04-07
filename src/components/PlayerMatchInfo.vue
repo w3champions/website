@@ -2,15 +2,14 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div :class="textClass">
-        <player-icon :left="left" :race="player.race" />
+        <player-icon :left="left" :race="race" />
         <div>
           <a
             :class="won"
             v-on="on"
-            @mouseover="lazyLoadProfile"
-            @click="goToPlayer(nameWithoutBtag, battleTag)"
-            @click.middle="openProfileInNewTab(nameWithoutBtag, battleTag)"
-            @click.right="openProfileInNewTab(nameWithoutBtag, battleTag)"
+            @click="goToPlayer()"
+            @click.middle="openProfileInNewTab()"
+            @click.right="openProfileInNewTab()"
           >
             {{ nameWithoutBtag }}
             ({{ currentRating }})
@@ -22,17 +21,10 @@
         </div>
       </div>
     </template>
-    <div v-if="profile.data">
-      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
-      <p></p>
-      Wins: {{ profile.data.stats.total.wins }} | Losses:
-      {{ profile.data.stats.total.losses }} | Total:
-      {{ profile.data.stats.total.wins + profile.data.stats.total.losses }}
-    </div>
-    <div v-else>
-      <p>{{ nameWithoutBtag }}#{{ btag }}</p>
-      <p>Wins: ... | Losses: ... | Total: ...</p>
-    </div>
+    <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
+    <p></p>
+    Wins: {{ wins }} | Losses: {{ losses }} | Total:
+    {{ games }}
   </v-tooltip>
 </template>
 
@@ -41,7 +33,6 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
-import { PlayerProfile } from "@/store/player/types";
 
 @Component({
   components: { PlayerIcon }
@@ -57,6 +48,22 @@ export default class PlayerMatchInfo extends Vue {
     }
 
     return "";
+  }
+
+  get wins() {
+    return this.player.wins;
+  }
+
+  get race() {
+    return this.player.race;
+  }
+
+  get losses() {
+    return this.player.losses;
+  }
+
+  get games() {
+    return this.player.games;
   }
 
   get mmrChange() {
@@ -83,35 +90,19 @@ export default class PlayerMatchInfo extends Vue {
     return this.player.name;
   }
 
-  get btag() {
-    return this.player.battleTag;
+  private getPlayerPath() {
+    return "/player/" + this.nameWithoutBtag + "/" + this.battleTag;
   }
 
-  public profile = {} as PlayerProfile;
-
-  private async lazyLoadProfile() {
-    if (!this.profile.id) {
-      this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(
-        this.nameWithoutBtag
-      );
-    }
-  }
-
-  private getPlayerPath(playerName: string, battleTag: string) {
-    return "/player/" + playerName + "/" + battleTag;
-  }
-
-  public openProfileInNewTab(playerName: string, battleTag: string) {
-    const path = this.getPlayerPath(playerName, battleTag);
+  public openProfileInNewTab() {
+    const path = this.getPlayerPath();
     window.open(path, "_blank");
   }
 
-  public goToPlayer(playerName: string) {
-    const parts = playerName.split("#");
-
+  public goToPlayer() {
     this.$router
       .push({
-        path: "/player/" + parts[0] + "/" + parts[1]
+        path: "/player/" + this.nameWithoutBtag + "/" + this.battleTag
       })
       .catch(err => {
         return err;
