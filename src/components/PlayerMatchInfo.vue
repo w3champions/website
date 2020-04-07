@@ -7,6 +7,7 @@
           <a
             :class="won"
             v-on="on"
+            @mouseover="lazyLoadWinrate"
             @click="goToPlayer()"
             @click.middle="openProfileInNewTab()"
             @click.right="openProfileInNewTab()"
@@ -21,10 +22,16 @@
         </div>
       </div>
     </template>
-    <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
-    <p></p>
-    Wins: {{ wins }} | Losses: {{ losses }} | Total:
-    {{ games }}
+    <div v-if="winrate">
+      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
+      <p></p>
+      Wins: {{ winrate.wins }} | Losses: {{ winrate.losses }} | Total:
+      {{ winrate.games }}
+    </div>
+    <div v-else>
+      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
+      <p>Wins: ... | Losses: ... | Total: ...</p>
+    </div>
   </v-tooltip>
 </template>
 
@@ -33,6 +40,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
+import { WinRate } from "@/store/player/types";
 
 @Component({
   components: { PlayerIcon }
@@ -41,6 +49,8 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: PlayerInTeam;
 
   @Prop() public left!: boolean;
+
+  public winrate: WinRate = {} as WinRate;
 
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
@@ -85,6 +95,12 @@ export default class PlayerMatchInfo extends Vue {
   public openProfileInNewTab() {
     const path = this.getPlayerPath();
     window.open(path, "_blank");
+  }
+
+  private async lazyLoadWinrate() {
+    this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
+      `${this.player.name}#${this.player.battleTag}`
+    );
   }
 
   public goToPlayer() {

@@ -17,6 +17,13 @@ export type PlayerProfile = {
   ranks: RankStat[];
 };
 
+export type WinRate = {
+  wins: number;
+  losses: number;
+  games: number;
+  winrate: number;
+};
+
 export type RaceStat = {
   /**
    * 'human' | 'orc' | 'undead' | 'night_elf' | 'random' | 'total'
