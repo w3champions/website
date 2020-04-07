@@ -22,10 +22,8 @@
       <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span v-on="on">
-        {{
-        item.startTime | moment("MMM DD YYYY HH:mm")
-        }}
+      <span>
+        {{ item.startTime | moment("MMM DD YYYY HH:mm") }}
       </span>
     </template>
     <template v-slot:item.duration="{ item }">
