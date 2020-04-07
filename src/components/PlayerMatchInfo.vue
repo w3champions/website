@@ -8,9 +8,9 @@
             :class="won"
             v-on="on"
             @mouseover="lazyLoadProfile"
-            @click="goToPlayer(name)"
-            @click.middle="openProfileInNewTab(name)"
-            @click.right="openProfileInNewTab(name)"
+            @click="goToPlayer(nameWithoutBtag, battleTag)"
+            @click.middle="openProfileInNewTab(nameWithoutBtag, battleTag)"
+            @click.right="openProfileInNewTab(nameWithoutBtag, battleTag)"
           >
             {{ nameWithoutBtag }}
             ({{ currentRating }})
@@ -39,7 +39,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum, Mmr } from "@/store/typings";
+import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
 import { PlayerProfile } from "@/store/player/types";
 
@@ -47,13 +47,7 @@ import { PlayerProfile } from "@/store/player/types";
   components: { PlayerIcon }
 })
 export default class PlayerMatchInfo extends Vue {
-  @Prop() public player!: {
-    battleTag: string;
-    race: ERaceEnum;
-    won?: boolean;
-    mmr: Mmr;
-    updatedMmr: Mmr;
-  };
+  @Prop() public player!: PlayerInTeam;
 
   @Prop() public left!: boolean;
 
@@ -66,31 +60,31 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get mmrChange() {
-    if (this.player.mmr && this.player.updatedMmr) {
-      return Math.floor(this.player.updatedMmr.rating - this.player.mmr.rating);
+    if (this.player.oldMmr && this.player.currentMmr) {
+      return Math.floor(this.player.currentMmr - this.player.oldMmr);
     }
 
     return 0;
   }
 
   get currentRating() {
-    return Math.floor(this.player.mmr.rating);
+    return Math.floor(this.player.currentMmr);
   }
 
   get textClass() {
     return this.left ? "text-end" : "text-start";
   }
 
-  get name() {
+  get battleTag() {
     return this.player.battleTag;
   }
 
   get nameWithoutBtag() {
-    return this.name.split("#")[0];
+    return this.player.name;
   }
 
   get btag() {
-    return this.name.split("#")[1];
+    return this.player.battleTag;
   }
 
   public profile = {} as PlayerProfile;
@@ -98,19 +92,17 @@ export default class PlayerMatchInfo extends Vue {
   private async lazyLoadProfile() {
     if (!this.profile.id) {
       this.profile = await this.$store.direct.getters.profileService.retrieveRawProfile(
-        this.name
+        this.nameWithoutBtag
       );
     }
   }
 
-  private getPlayerPath(playerName: string) {
-    const parts = playerName.split("#");
-
-    return "/player/" + parts[0] + "/" + parts[1];
+  private getPlayerPath(playerName: string, battleTag: string) {
+    return "/player/" + playerName + "/" + battleTag;
   }
 
-  public openProfileInNewTab(playerName: string) {
-    const path = this.getPlayerPath(playerName);
+  public openProfileInNewTab(playerName: string, battleTag: string) {
+    const path = this.getPlayerPath(playerName, battleTag);
     window.open(path, "_blank");
   }
 
