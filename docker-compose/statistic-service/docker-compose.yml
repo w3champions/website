@@ -5,7 +5,7 @@ services:
     container_name: w3champions-statistic-service-dev
     restart: always
     networks:
-      - frontproxy_default
+      - nginx-proxy_default
       - default
     environment:
       - VIRTUAL_HOST=statistic-service-test.blood-bowl-league.com

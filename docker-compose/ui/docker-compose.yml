@@ -5,7 +5,7 @@ services:
     container_name: w3champions-ui
     restart: always
     networks:
-      - frontproxy_default
+      - nginx-proxy_default
       - default
     environment:
       - VIRTUAL_HOST=test.blood-bowl-league.com
