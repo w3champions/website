@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   statistic-service:
-    image: modmoto/w3champions-ui:latest
+    image: modmoto/w3champions-ui:dev-17
     container_name: w3champions-ui-dev
     restart: always
     environment:
