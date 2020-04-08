@@ -1,8 +1,8 @@
 version: '3.1'
 services:
   statistic-service:
-    image: modmoto/w3champions-statistic-service-dev:latest
-    container_name: w3champions-statistic-service-dev-dev
+    image: modmoto/w3champions-statistic-service:latest
+    container_name: w3champions-statistic-service-ngi
     restart: always
     environment:
       - VIRTUAL_HOST=statistic-service.blood-bowl-league.com

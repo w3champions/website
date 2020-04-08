@@ -1,10 +1,11 @@
 version: '3.1'
 services:
   statistic-service:
-    image: modmoto/w3champions-statistic-service-dev:latest
-    container_name: w3champions-statistic-service-dev-dev
+    image: modmoto/w3champions-statistic-service:latest
+    container_name: w3champions-statistic-service-dev-ngi
     restart: always
     environment:
+      - MONGO_CONNECTION_STRING='mongodb://w3champions:62473fd9-4e7b-47f3-978f-0a112e926596@176.28.16.249:3510'
       - VIRTUAL_HOST=statistic-service-test.blood-bowl-league.com
 
 networks:
