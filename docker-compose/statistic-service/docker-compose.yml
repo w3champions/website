@@ -1,0 +1,11 @@
+version: '2'
+services:
+  statistic-service:
+    image: modmoto/w3champions-statistic-service:latest
+    container_name: w3champions-statistic-service-dev
+    restart: always
+    networks:
+      - frontproxy_default
+      - default
+    environment:
+      - VIRTUAL_HOST=statistic-service-test.blood-bowl-league.com
