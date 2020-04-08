@@ -1,5 +1,6 @@
+import {EGameMode} from "@/store/typings";
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="stats">
+  <v-data-table hide-default-footer :headers="headers" :items="oneVersusOneStats">
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.mode">
@@ -17,15 +18,19 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { EGameMode } from "../store/typings";
-import { ModeStat } from "../store/player/types";
+import {Component, Prop} from "vue-property-decorator";
+import {EGameMode} from "../store/typings";
+import {ModeStat} from "../store/player/types";
 
 @Component({})
 export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;
+
+  public get oneVersusOneStats() {
+    return this.stats.filter(s => s.mode == EGameMode.GM_1ON1)
+  }
 
   public headers = [
     {

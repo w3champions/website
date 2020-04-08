@@ -1,3 +1,3 @@
 window._env_ = {
-  BASE_URL: "http://176.28.16.249:10200/"
+  BASE_URL: "https://statistic-service-test.blood-bowl-league.com/"
 };
