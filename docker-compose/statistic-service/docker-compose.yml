@@ -4,8 +4,10 @@ services:
     image: modmoto/w3champions-statistic-service:latest
     container_name: w3champions-statistic-service-dev
     restart: always
-    networks:
-      - nginx-proxy_default
-      - default
     environment:
       - VIRTUAL_HOST=statistic-service-test.blood-bowl-league.com
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
