@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   statistic-service:
-    image: modmoto/w3champions-statistic-service:232
+    image: modmoto/w3champions-statistic-service
     container_name: w3champions-statistic-service-ngi
     restart: always
     environment:
