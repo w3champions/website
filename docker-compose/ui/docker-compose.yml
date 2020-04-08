@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       - VIRTUAL_HOST=blood-bowl-league.com
-      - BASE_URL='http://statistic-service.blood-bowl-league.com/'
+      - BASE_URL='https://statistic-service.blood-bowl-league.com/'
 
 networks:
   default:
