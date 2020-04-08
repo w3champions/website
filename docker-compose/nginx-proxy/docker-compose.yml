@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   nginx-proxy:
-    image: jwilder/nginx-proxy
+    image: jwilder/nginx-proxy:latest
     container_name: nginx-proxy
     restart: always
     ports:
