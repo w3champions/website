@@ -1,3 +1,4 @@
+import {EGameMode} from "@/store/typings";
 <template>
   <v-container class="profile">
     <v-row>
@@ -19,7 +20,7 @@
                 <v-row>
                   <v-col cols="8">
                     <h4>Statistics by Game Mode</h4>
-                    <mode-stats-grid :stats="gameModeStats"></mode-stats-grid>
+                    <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
                   </v-col>
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
@@ -68,8 +69,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile, ModeStat } from "@/store/player/types";
-import { ERaceEnum, Match } from "@/store/typings";
+import { ModeStat, PlayerProfile } from "@/store/player/types";
+import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 
@@ -121,9 +122,9 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
-  get gameModeStats(): ModeStat[] {
+  get oneVersusOneGameModeStats(): ModeStat[] {
     if (this.profile && this.profile.gameModeStats) {
-      return this.profile.gameModeStats;
+      return this.profile.gameModeStats.filter(g => g.mode === EGameMode.GM_1ON1);
     }
 
     return [];
