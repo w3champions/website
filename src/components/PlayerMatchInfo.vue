@@ -106,7 +106,7 @@ export default class PlayerMatchInfo extends Vue {
   public goToPlayer() {
     this.$router
       .push({
-        path: "/player/" + this.player.id
+        path: "/player/" + encodeURIComponent(this.player.id)
       })
       .catch(err => {
         return err;

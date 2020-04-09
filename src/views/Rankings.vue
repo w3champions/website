@@ -274,8 +274,7 @@ export default class RankingsView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    const name = playerName.replace("#", "%23");
-    return "/player/" + name;
+    return "/player/" + encodeURIComponent(playerName);
   }
 
   public openProfileInNewTab(playerName: string) {

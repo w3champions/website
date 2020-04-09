@@ -215,9 +215,8 @@ export default class HomeView extends Vue {
   }
 
   public goToProfile(rank: Ranking) {
-    const name = rank.player.id.replace("#", "%23");
     this.$router.push({
-      path: "/player/" + name
+      path: "/player/" + encodeURIComponent(rank.player.id)
     });
   }
 }

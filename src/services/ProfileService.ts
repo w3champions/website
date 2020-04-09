@@ -3,7 +3,7 @@ import {API_URL} from "@/main";
 
 export default class ProfileService {
   public async retrieveWinRate(battleTag: string): Promise<WinRate> {
-    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}/winrate`;
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/winrate`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -17,7 +17,7 @@ export default class ProfileService {
   }
 
   public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}api/players/${battleTag.replace("#", "%23")}`;
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url, {
       method: "GET",
