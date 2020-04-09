@@ -78,8 +78,7 @@ import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
   }
 })
 export default class PlayerView extends Vue {
-  @Prop() public name!: string;
-  @Prop() public tag!: string;
+  @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
   public modeTabIndex = "stats-bymode-america";
@@ -137,7 +136,7 @@ export default class PlayerView extends Vue {
   }
 
   get battleTag(): string {
-    return this.name + "#" + this.tag;
+    return this.id;
   }
 
   onPageChanged(page: number) {

@@ -57,12 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.id }}
+                      {{ data.item.player.player.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.totalWins }} | Losses:
-                      {{ data.item.totalLosses }} | Total:
-                      {{ data.item.games }}
+                      Wins: {{ data.item.player.totalWins }} | Losses:
+                      {{ data.item.player.totalLosses }} | Total:
+                      {{ data.item.player.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -84,32 +84,32 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
-                    @click.left="openPlayerProfile(item.id)"
-                    @click.middle="openProfileInNewTab(item.id)"
-                    @click.right="openProfileInNewTab(item.id)"
+                    @click.left="openPlayerProfile(item.player.id)"
+                    @click.middle="openProfileInNewTab(item.player.id)"
+                    @click.right="openProfileInNewTab(item.player.id)"
                     v-for="item in items"
-                    :key="item.name"
+                    :key="item.player.name"
                     :class="{
-                      searchedItem: item.id === searchModelBattleTag
+                      searchedItem: item.player.id === searchModelBattleTag
                     }"
                   >
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <span v-on="on">{{
-                            item.name
+                            item.player.name
                           }}</span>
                         </template>
-                        <div>{{ item.id }}</div>
+                        <div>{{ item.player.id }}</div>
                       </v-tooltip>
                     </td>
-                    <td class="text-end won">{{ item.totalWins }}</td>
-                    <td class="text-end lost">{{ item.totalLosses }}</td>
-                    <td class="text-end">{{ item.games }}</td>
+                    <td class="text-end won">{{ item.player.totalWins }}</td>
+                    <td class="text-end lost">{{ item.player.totalLosses }}</td>
+                    <td class="text-end">{{ item.player.games }}</td>
                     <td class="text-end">
-                      {{ (item.winrate * 100).toFixed(1) }}%
+                      {{ (item.player.winrate * 100).toFixed(1) }}%
                     </td>
-                    <td class="text-end">{{ item.mmr }}</td>
+                    <td class="text-end">{{ item.player.mmr }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -191,7 +191,7 @@ export default class RankingsView extends Vue {
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
-    this.openPlayerProfile(newVal.id);
+    this.openPlayerProfile(newVal.player.id);
   }
 
   @Watch("search")
@@ -229,12 +229,12 @@ export default class RankingsView extends Vue {
     if (
       !this.searchModel ||
       this.searchModel == null ||
-      !this.searchModel.battleTag
+      !this.searchModel.player.id
     ) {
       return "";
     }
 
-    return this.searchModel.battleTag;
+    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
@@ -274,9 +274,8 @@ export default class RankingsView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    const parts = playerName.split("#");
-
-    return "/player/" + parts[0] + "/" + parts[1];
+    const name = playerName.replace("#", "%23");
+    return "/player/" + name;
   }
 
   public openProfileInNewTab(playerName: string) {
@@ -285,7 +284,7 @@ export default class RankingsView extends Vue {
   }
 
   public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.battleTag);
+    this.openPlayerProfile(ranking.player.id);
   }
 
   public setGateway(gateway: Gateways) {
