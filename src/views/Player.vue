@@ -33,7 +33,7 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }">{{ item.winrate }}%</template>
+                      <template v-slot:item.percentage="{ item }">{{ (item.winrate *100).toFixed(1) }}%</template>
                     </v-data-table>
                   </v-col>
                 </v-row>

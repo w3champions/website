@@ -6,7 +6,7 @@
           <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
           <td class="text-end won">{{ item.wins }}</td>
           <td class="text-end lost">{{ item.losses }}</td>
-          <td class="text-end">{{ item.wins + item.losses }}</td>
+          <td class="text-end">{{ item.games }}</td>
           <td class="text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
           <td class="text-end">{{ item.mmr }}</td>
         </tr>

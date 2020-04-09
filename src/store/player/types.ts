@@ -33,14 +33,15 @@ export type RaceStat = {
   race: ERaceEnum;
   wins: number;
   losses: number;
-  total: number;
-  percentage: number;
+  games: number;
+  winrate: number;
 };
 
 export type ModeStat = {
   mode: EGameMode;
   wins: number;
   losses: number;
+  games: number;
   winrate: number;
   mmr: number;
 };

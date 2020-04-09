@@ -1,6 +1,5 @@
-import {ModeStat, PlayerProfile, RaceStat, WinRate} from "@/store/player/types";
+import {PlayerProfile, WinRate} from "@/store/player/types";
 import {API_URL} from "@/main";
-import {EGameMode, ERaceEnum} from "@/store/typings";
 
 export default class ProfileService {
   public async retrieveWinRate(battleTag: string): Promise<WinRate> {
