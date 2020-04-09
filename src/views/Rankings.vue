@@ -57,12 +57,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.player.player.name }}
+                      {{ data.item.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.player.totalWins }} | Losses:
-                      {{ data.item.player.totalLosses }} | Total:
-                      {{ data.item.player.games }}
+                      Wins: {{ data.item.totalWins }} | Losses:
+                      {{ data.item.totalLosses }} | Total:
+                      {{ data.item.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -138,7 +138,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways } from "../store/ranking/types";
+import {Ranking, Gateways, PlayerOverview} from "../store/ranking/types";
 import { DataTableOptions } from "../store/typings";
 
 @Component({
@@ -151,6 +151,7 @@ export default class RankingsView extends Vue {
       text: "Rank",
       align: "start",
       sortable: false,
+      width: "25px"
     },
     {
       text: "Player",
@@ -189,15 +190,13 @@ export default class RankingsView extends Vue {
     }
   ];
 
-  public selectedPlayer = "";
-  public showProfile = false;
   public search = "";
-  public searchModel = {} as Ranking;
+  public searchModel = {} as PlayerOverview;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: Ranking) {
-    this.openPlayerProfile(newVal.player.id);
+  public onSearchModelChanged(newVal: PlayerOverview) {
+    this.openPlayerProfile(newVal.id);
   }
 
   @Watch("search")
@@ -232,15 +231,11 @@ export default class RankingsView extends Vue {
   }
 
   get searchModelBattleTag() {
-    if (
-      !this.searchModel ||
-      this.searchModel == null ||
-      !this.searchModel.player
-    ) {
+    if (!this.searchModel || !this.searchModel.name) {
       return "";
     }
 
-    return this.searchModel.player.id;
+    return this.searchModel.name;
   }
 
   get noDataText(): string {
