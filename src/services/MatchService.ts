@@ -21,11 +21,10 @@ export default class MatchService {
 
   public async retrievePlayerMatches(
     page: number,
-    gateway: number,
     battleTag: string
   ): Promise<Match[]> {
     const offset = page * 15;
-    const url = `${API_URL}api/matches/search?offset=${offset}&gateway=${gateway}&playerId=${encodeURIComponent(battleTag)}`;
+    const url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url, {
       headers: {

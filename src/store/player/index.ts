@@ -43,7 +43,6 @@ const mod = {
       commit.SET_LOADING_RECENT_MATCHES(true);
       const response = await rootGetters.matchService.retrievePlayerMatches(
         state.page,
-        10,
         state.battleTag
       );
       commit.SET_TOTAL_MATCHES(response.length);
