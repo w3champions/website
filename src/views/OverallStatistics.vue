@@ -33,6 +33,8 @@
                   <v-card-text v-if="!loadingMapAndRaceStats">
                     <v-select
                       :items="maps"
+                      item-text="mapName"
+                      item-value="mapId"
                       @change="setSelectedMap"
                       label="Select Map"
                       outlined
@@ -130,7 +132,9 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get maps() {
-    return this.statsPerRaceAndMap.map(r => r.mapName);
+    return this.statsPerRaceAndMap.map(r => {
+      return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
+    });
   }
 
   mounted() {
