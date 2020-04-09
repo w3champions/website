@@ -11,7 +11,7 @@ export default class MatchService {
   public async retrieveMatches(
     page: number,
     gateway: number
-  ): Promise<Match[]> {
+  ): Promise<{count: number, matches: Match[]}> {
     const offset = page * this.pageSize;
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
 
@@ -22,7 +22,7 @@ export default class MatchService {
   public async retrievePlayerMatches(
     page: number,
     battleTag: string
-  ): Promise<Match[]> {
+  ): Promise<{count: number, matches: Match[]}> {
     const offset = page * 15;
     const url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
 
