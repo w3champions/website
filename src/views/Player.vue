@@ -66,8 +66,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile, ModeStat } from "../store/player/types";
-import { ERaceEnum, Match } from "../store/typings";
+import { PlayerProfile, ModeStat } from "@/store/player/types";
+import { ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 
@@ -125,10 +125,6 @@ export default class PlayerView extends Vue {
     }
 
     return [];
-  }
-
-  get loadingMatches(): boolean {
-    return this.$store.direct.state.player.loadingRecentMatches;
   }
 
   get loadingProfile(): boolean {

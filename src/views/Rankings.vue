@@ -93,14 +93,15 @@
                       searchedItem: item.player.id === searchModelBattleTag
                     }"
                   >
+                    <td>{{ item.rankNumber }}.</td>
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                          <span v-on="on">{{
-                            item.player.name
-                          }}</span>
+                          <span v-on="on">{{ item.player.name }}</span>
                         </template>
-                        <div>{{ item.player.id }}</div>
+                        <div>
+                          {{ item.player.name }}#{{ item.player.battleTag }}
+                        </div>
                       </v-tooltip>
                     </td>
                     <td class="text-end won">{{ item.player.totalWins }}</td>
@@ -109,7 +110,7 @@
                     <td class="text-end">
                       {{ (item.player.winrate * 100).toFixed(1) }}%
                     </td>
-                    <td class="text-end">{{ item.player.mmr }}</td>
+                    <td class="text-end">{{ item.rankingPoints }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -146,6 +147,11 @@ import { DataTableOptions } from "../store/typings";
 })
 export default class RankingsView extends Vue {
   public headers = [
+    {
+      text: "Rank",
+      align: "start",
+      sortable: false,
+    },
     {
       text: "Player",
       align: "start",
@@ -229,12 +235,12 @@ export default class RankingsView extends Vue {
     if (
       !this.searchModel ||
       this.searchModel == null ||
-      !this.searchModel.player.id
+      !this.searchModel.name
     ) {
       return "";
     }
 
-    return this.searchModel.player.id;
+    return this.searchModel.id;
   }
 
   get noDataText(): string {
