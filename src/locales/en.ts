@@ -16,6 +16,7 @@ const en = {
   },
 
   mapNames: {
+    Overall: "Overall",
     twistedmeadows: "Twisted Meadows",
     echoisles: "Echo Isles",
     lastrefuge: "Last Refuge",
