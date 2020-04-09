@@ -6,7 +6,7 @@ export default class RankingService {
     leagueId: number,
     gateway: Gateways
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder/${leagueId}&gateway=${gateway}`;
+    const url = `${API_URL}api/ladder/${leagueId}?gateWay=${gateway}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -16,7 +16,7 @@ export default class RankingService {
     str: string,
     gateway: Gateways
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder/search?gateway=${gateway}&searchFor=${str}`;
+    const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}`;
 
     const response = await fetch(url);
     return await response.json();
