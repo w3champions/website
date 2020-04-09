@@ -235,12 +235,12 @@ export default class RankingsView extends Vue {
     if (
       !this.searchModel ||
       this.searchModel == null ||
-      !this.searchModel.name
+      !this.searchModel.player
     ) {
       return "";
     }
 
-    return this.searchModel.id;
+    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
