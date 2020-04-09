@@ -138,12 +138,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import {Ranking, Gateways, PlayerOverview} from "../store/ranking/types";
-import { DataTableOptions } from "../store/typings";
+import { Ranking, Gateways, PlayerOverview } from "@/store/ranking/types";
+import { DataTableOptions } from "@/store/typings";
 
 @Component({
-  components: {
-  }
+  components: {}
 })
 export default class RankingsView extends Vue {
   public headers = [

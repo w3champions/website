@@ -28,31 +28,6 @@ export default class ProfileService {
       }
     });
 
-    const data = await response.json();
-
-    const profile = {} as PlayerProfile;
-
-    profile.id = data.id;
-
-    const raceStats: RaceStat[] = [];
-
-    data.raceStats.forEach((stat:any) => {
-      const percentage =
-          (stat.wins * 100) / (stat.wins + stat.losses) || 0;
-      raceStats.push({
-        race: stat.race,
-        wins: stat.wins,
-        losses: stat.losses,
-        total: stat.wins + stat.losses,
-        percentage: percentage > 0 ? Number(percentage.toFixed(1)) : 0
-      });
-    });
-
-
-    profile.raceStats = raceStats;
-
-    profile.modeStats = data.gameModeStats;
-
-    return profile;
+    return await response.json();
   }
 }

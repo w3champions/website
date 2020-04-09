@@ -18,8 +18,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { EGameMode } from "../store/typings";
-import { ModeStat } from "../store/player/types";
+import { EGameMode } from "@/store/typings";
+import { ModeStat } from "@/store/player/types";
 
 @Component({})
 export default class ModeStatsGrid extends Vue {

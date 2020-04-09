@@ -5,7 +5,9 @@
         <v-card tile>
           <v-card-title>
             Profile of
-            <span class="playerTag">{{ battleTag }}</span>
+            <span v-if="!loadingProfile" class="playerTag">
+              {{ profile.name }}#{{ profile.battleTag }}</span
+            >
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -31,7 +33,7 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
+                      <template v-slot:item.percentage="{ item }">{{ item.winrate }}%</template>
                     </v-data-table>
                   </v-col>
                 </v-row>
@@ -120,8 +122,8 @@ export default class PlayerView extends Vue {
   }
 
   get gameModeStats(): ModeStat[] {
-    if (this.profile && this.profile.modeStats) {
-      return this.profile.modeStats;
+    if (this.profile && this.profile.gameModeStats) {
+      return this.profile.gameModeStats;
     }
 
     return [];
