@@ -1,3 +1,4 @@
+import {EGameMode} from "@/store/typings";
 <template>
   <v-container class="profile">
     <v-row>
@@ -5,7 +6,9 @@
         <v-card tile>
           <v-card-title>
             Profile of
-            <span class="playerTag">{{ battleTag }}</span>
+            <span v-if="!loadingProfile" class="playerTag">
+              {{ profile.name }}#{{ profile.battleTag }}</span
+            >
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -17,7 +20,7 @@
                 <v-row>
                   <v-col cols="8">
                     <h4>Statistics by Game Mode</h4>
-                    <mode-stats-grid :stats="gameModeStats"></mode-stats-grid>
+                    <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
                   </v-col>
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
@@ -31,7 +34,7 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }">{{ item.percentage }}%</template>
+                      <template v-slot:item.percentage="{ item }">{{ (item.winrate *100).toFixed(1) }}%</template>
                     </v-data-table>
                   </v-col>
                 </v-row>
@@ -66,8 +69,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile, ModeStat } from "../store/player/types";
-import { ERaceEnum, Match } from "../store/typings";
+import { ModeStat, PlayerProfile } from "@/store/player/types";
+import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 
@@ -78,8 +81,7 @@ import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
   }
 })
 export default class PlayerView extends Vue {
-  @Prop() public name!: string;
-  @Prop() public tag!: string;
+  @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
   public modeTabIndex = "stats-bymode-america";
@@ -120,16 +122,12 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
-  get gameModeStats(): ModeStat[] {
-    if (this.profile && this.profile.modeStats) {
-      return this.profile.modeStats;
+  get oneVersusOneGameModeStats(): ModeStat[] {
+    if (this.profile && this.profile.gameModeStats) {
+      return this.profile.gameModeStats.filter(g => g.mode === EGameMode.GM_1ON1);
     }
 
     return [];
-  }
-
-  get loadingMatches(): boolean {
-    return this.$store.direct.state.player.loadingRecentMatches;
   }
 
   get loadingProfile(): boolean {
@@ -137,7 +135,7 @@ export default class PlayerView extends Vue {
   }
 
   get battleTag(): string {
-    return this.name + "#" + this.tag;
+    return this.id;
   }
 
   onPageChanged(page: number) {

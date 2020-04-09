@@ -183,10 +183,10 @@
                   <v-list-item-icon>{{ i + 1 }}.</v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-text="rank.id"
+                      v-text="rank.player.name"
                     ></v-list-item-title>
                     <v-list-item-subtitle
-                      >Win/Loss/Total: {{ rank.totalWins }}/{{ rank.totalLosses }}/{{rank.games}}</v-list-item-subtitle
+                      >Win/Loss/Total: {{ rank.player.totalWins }}/{{ rank.player.totalLosses }}/{{rank.player.games}}</v-list-item-subtitle
                     >
                   </v-list-item-content>
                 </v-list-item>
@@ -215,10 +215,8 @@ export default class HomeView extends Vue {
   }
 
   public goToProfile(rank: Ranking) {
-    const parts = rank.battleTag.split("#");
-
     this.$router.push({
-      path: "/player/" + parts[0] + "/" + parts[1]
+      path: "/player/" + encodeURIComponent(rank.player.id)
     });
   }
 }

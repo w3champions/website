@@ -9,6 +9,14 @@ export type RankingState = {
 };
 
 export type Ranking = {
+  gateway: number;
+  league: number;
+  rankNumber: number;
+  rankingPoints: number;
+  player: PlayerOverview;
+};
+
+export type PlayerOverview = {
   id: string;
   battleTag: string;
   name: string;
@@ -18,7 +26,8 @@ export type Ranking = {
   winrate: number;
   mmr: number;
   gateWay: number;
-};
+}
+
 
 export enum Gateways {
   America = 10,

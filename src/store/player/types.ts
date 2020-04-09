@@ -12,8 +12,10 @@ export type PlayerState = {
 
 export type PlayerProfile = {
   id: string;
+  name: string;
+  battleTag: string;
   raceStats: RaceStat[];
-  modeStats: ModeStat[];
+  gameModeStats: ModeStat[];
   ranks: RankStat[];
 };
 
@@ -31,14 +33,15 @@ export type RaceStat = {
   race: ERaceEnum;
   wins: number;
   losses: number;
-  total: number;
-  percentage: number;
+  games: number;
+  winrate: number;
 };
 
 export type ModeStat = {
   mode: EGameMode;
   wins: number;
   losses: number;
+  games: number;
   winrate: number;
   mmr: number;
 };

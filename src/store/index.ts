@@ -16,7 +16,7 @@ import StatisticService from "@/services/StatisticService";
 Vue.use(Vuex);
 
 const services = {
-  rankingService: new RankingService(15),
+  rankingService: new RankingService(),
   matchService: new MatchService(50),
   profileService: new ProfileService(),
   statisticService: new StatisticService(),

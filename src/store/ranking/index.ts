@@ -26,7 +26,7 @@ const mod = {
       }
 
       const response = await rootGetters.rankingService.retrieveRankings(
-        state.page,
+        0,
         state.gateway
       );
 

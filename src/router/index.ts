@@ -27,7 +27,7 @@ const routes = [
       import(/* webpackChunkName: "rankings" */ "../views/Rankings.vue")
   },
   {
-    path: "/player/:name/:tag",
+    path: "/player/:id",
     name: "Player",
     props: true,
     component: () =>

@@ -57,7 +57,7 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.id }}
+                      {{ data.item.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
                       Wins: {{ data.item.totalWins }} | Losses:
@@ -84,32 +84,33 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
-                    @click.left="openPlayerProfile(item.id)"
-                    @click.middle="openProfileInNewTab(item.id)"
-                    @click.right="openProfileInNewTab(item.id)"
+                    @click.left="openPlayerProfile(item.player.id)"
+                    @click.middle="openProfileInNewTab(item.player.id)"
+                    @click.right="openProfileInNewTab(item.player.id)"
                     v-for="item in items"
-                    :key="item.name"
+                    :key="item.player.name"
                     :class="{
-                      searchedItem: item.id === searchModelBattleTag
+                      searchedItem: item.player.id === searchModelBattleTag
                     }"
                   >
+                    <td>{{ item.rankNumber }}.</td>
                     <td>
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                          <span v-on="on">{{
-                            item.name
-                          }}</span>
+                          <span v-on="on">{{ item.player.name }}</span>
                         </template>
-                        <div>{{ item.id }}</div>
+                        <div>
+                          {{ item.player.name }}#{{ item.player.battleTag }}
+                        </div>
                       </v-tooltip>
                     </td>
-                    <td class="text-end won">{{ item.totalWins }}</td>
-                    <td class="text-end lost">{{ item.totalLosses }}</td>
-                    <td class="text-end">{{ item.games }}</td>
+                    <td class="text-end won">{{ item.player.totalWins }}</td>
+                    <td class="text-end lost">{{ item.player.totalLosses }}</td>
+                    <td class="text-end">{{ item.player.games }}</td>
                     <td class="text-end">
-                      {{ (item.winrate * 100).toFixed(1) }}%
+                      {{ (item.player.winrate * 100).toFixed(1) }}%
                     </td>
-                    <td class="text-end">{{ item.mmr }}</td>
+                    <td class="text-end">{{ item.rankingPoints }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -137,15 +138,20 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways } from "../store/ranking/types";
-import { DataTableOptions } from "../store/typings";
+import { Ranking, Gateways, PlayerOverview } from "@/store/ranking/types";
+import { DataTableOptions } from "@/store/typings";
 
 @Component({
-  components: {
-  }
+  components: {}
 })
 export default class RankingsView extends Vue {
   public headers = [
+    {
+      text: "Rank",
+      align: "start",
+      sortable: false,
+      width: "25px"
+    },
     {
       text: "Player",
       align: "start",
@@ -183,14 +189,12 @@ export default class RankingsView extends Vue {
     }
   ];
 
-  public selectedPlayer = "";
-  public showProfile = false;
   public search = "";
-  public searchModel = {} as Ranking;
+  public searchModel = {} as PlayerOverview;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: Ranking) {
+  public onSearchModelChanged(newVal: PlayerOverview) {
     this.openPlayerProfile(newVal.id);
   }
 
@@ -226,15 +230,11 @@ export default class RankingsView extends Vue {
   }
 
   get searchModelBattleTag() {
-    if (
-      !this.searchModel ||
-      this.searchModel == null ||
-      !this.searchModel.battleTag
-    ) {
+    if (!this.searchModel || !this.searchModel.name) {
       return "";
     }
 
-    return this.searchModel.battleTag;
+    return this.searchModel.name;
   }
 
   get noDataText(): string {
@@ -274,9 +274,7 @@ export default class RankingsView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    const parts = playerName.split("#");
-
-    return "/player/" + parts[0] + "/" + parts[1];
+    return "/player/" + encodeURIComponent(playerName);
   }
 
   public openProfileInNewTab(playerName: string) {
@@ -285,7 +283,7 @@ export default class RankingsView extends Vue {
   }
 
   public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.battleTag);
+    this.openPlayerProfile(ranking.player.id);
   }
 
   public setGateway(gateway: Gateways) {
