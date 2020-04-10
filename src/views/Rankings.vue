@@ -45,7 +45,7 @@
               :loading="isLoading"
               :search-input.sync="search"
               :no-data-text="noDataText"
-              item-text="id"
+              item-text="name"
               item-value="id"
               placeholder="Start typing to Search"
               return-object
@@ -190,12 +190,12 @@ export default class RankingsView extends Vue {
   ];
 
   public search = "";
-  public searchModel = {} as PlayerOverview;
+  public searchModel = {} as Ranking;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: PlayerOverview) {
-    this.openPlayerProfile(newVal.id);
+  public onSearchModelChanged(newVal: Ranking) {
+    this.goToRank(newVal);
   }
 
   @Watch("search")
@@ -205,6 +205,13 @@ export default class RankingsView extends Vue {
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
+  }
+
+  public async goToRank(rank: Ranking) {
+    const isPrevSite = rank.rankingPoints % 15 === 0 && rank.rankingPoints > 15;
+    this.options.page = Math.floor(
+      rank.rankingPoints / 15 + (isPrevSite ? 0 : 1)
+    );
   }
 
   public options = {
@@ -230,11 +237,11 @@ export default class RankingsView extends Vue {
   }
 
   get searchModelBattleTag() {
-    if (!this.searchModel || !this.searchModel.name) {
+    if (!this.searchModel || !this.searchModel.player) {
       return "";
     }
 
-    return this.searchModel.name;
+    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
