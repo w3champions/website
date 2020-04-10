@@ -242,6 +242,10 @@ export default class RankingsView extends Vue {
 
   public async goToRank(rank: Ranking) {
     if (!rank) return;
+    window.scrollTo({
+      top: rank.rankNumber * 48,
+      behavior: "smooth"
+    });
     this.setLeague(rank.league);
   }
 
