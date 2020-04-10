@@ -116,6 +116,7 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
+                    :id="`listitem_${item.rankNumber}`"
                     @click.left="openPlayerProfile(item.player.id)"
                     @click.middle="openProfileInNewTab(item.player.id)"
                     @click.right="openProfileInNewTab(item.player.id)"
@@ -242,11 +243,23 @@ export default class RankingsView extends Vue {
 
   public async goToRank(rank: Ranking) {
     if (!rank) return;
-    window.scrollTo({
-      top: rank.rankNumber * 48,
-      behavior: "smooth"
-    });
     this.setLeague(rank.league);
+
+    const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+
+    if (!listItemOfPlayer) return;
+
+    const offset =
+      listItemOfPlayer.offsetHeight +
+      listItemOfPlayer.offsetTop +
+      200 -
+      window.screenTop;
+    if (offset > window.innerHeight) {
+      window.scrollTo({
+        top: offset - window.innerHeight + 150,
+        behavior: "smooth"
+      });
+    }
   }
 
   public options = {
@@ -389,6 +402,6 @@ export default class RankingsView extends Vue {
 
 .searchedItem {
   animation-name: highlistFade;
-  animation-duration: 2.5s;
+  animation-duration: 4.5s;
 }
 </style>
