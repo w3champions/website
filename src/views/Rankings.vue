@@ -190,12 +190,13 @@ export default class RankingsView extends Vue {
   ];
 
   public search = "";
-  public searchModel = {} as Ranking;
+  public searchModel = {} as PlayerOverview;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: Ranking) {
-    this.goToRank(newVal);
+  public onSearchModelChanged(newVal: PlayerOverview) {
+    const rank = this.searchRanks.filter(r => r.player.id == newVal.id)[0];
+    this.goToRank(rank);
   }
 
   @Watch("search")
@@ -236,11 +237,11 @@ export default class RankingsView extends Vue {
   }
 
   get searchModelBattleTag() {
-    if (!this.searchModel || !this.searchModel.player) {
+    if (!this.searchModel || !this.searchModel.id) {
       return "";
     }
 
-    return this.searchModel.player.id;
+    return this.searchModel.id;
   }
 
   get noDataText(): string {
