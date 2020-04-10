@@ -45,8 +45,7 @@
               :loading="isLoading"
               :search-input.sync="search"
               :no-data-text="noDataText"
-              item-text="name"
-              item-value="id"
+              item-text="player.name"
               placeholder="Start typing to Search"
               return-object
             >
@@ -57,12 +56,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.name }}
+                      {{ data.item.player.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.totalWins }} | Losses:
-                      {{ data.item.totalLosses }} | Total:
-                      {{ data.item.games }}
+                      Wins: {{ data.item.player.totalWins }} | Losses:
+                      {{ data.item.player.totalLosses }} | Total:
+                      {{ data.item.player.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -88,7 +87,7 @@
                     @click.middle="openProfileInNewTab(item.player.id)"
                     @click.right="openProfileInNewTab(item.player.id)"
                     v-for="item in items"
-                    :key="item.player.name"
+                    :key="item.player.id"
                     :class="{
                       searchedItem: item.player.id === searchModelBattleTag
                     }"
@@ -208,6 +207,7 @@ export default class RankingsView extends Vue {
   }
 
   public async goToRank(rank: Ranking) {
+    if (!rank) return;
     const isPrevSite = rank.rankingPoints % 15 === 0 && rank.rankingPoints > 15;
     const newSite = rank.rankingPoints / 15 + (isPrevSite ? 0 : 1);
     this.options.page = Math.floor(newSite);
