@@ -56,28 +56,28 @@ export default class RaceToMapStat extends Vue {
       width: "25px"
     },
     {
-      text: "vs HU",
+      text: "vs Human",
       align: "end",
       sortable: false,
       value: "wins",
       width: "25px"
     },
     {
-      text: "vs OC",
+      text: "vs Orc",
       align: "end",
       sortable: false,
       value: "losses",
       width: "25px"
     },
     {
-      text: "vs NE",
+      text: "vs Night elf",
       align: "end",
       sortable: false,
       value: "total",
       width: "25px"
     },
     {
-      text: "vs UD",
+      text: "vs Undead",
       align: "end",
       sortable: false,
       value: "percentage",
