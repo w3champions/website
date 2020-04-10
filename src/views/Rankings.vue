@@ -138,7 +138,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways, PlayerOverview } from "@/store/ranking/types";
+import { Ranking, Gateways } from "@/store/ranking/types";
 import { DataTableOptions } from "@/store/typings";
 
 @Component({
@@ -190,13 +190,12 @@ export default class RankingsView extends Vue {
   ];
 
   public search = "";
-  public searchModel = {} as PlayerOverview;
+  public searchModel = {} as Ranking;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: PlayerOverview) {
-    const rank = this.searchRanks.filter(r => r.player.id == newVal.id)[0];
-    this.goToRank(rank);
+  public onSearchModelChanged(newVal: Ranking) {
+    this.goToRank(newVal);
   }
 
   @Watch("search")
@@ -237,11 +236,11 @@ export default class RankingsView extends Vue {
   }
 
   get searchModelBattleTag() {
-    if (!this.searchModel || !this.searchModel.id) {
+    if (!this.searchModel || !this.searchModel.player) {
       return "";
     }
 
-    return this.searchModel.id;
+    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
