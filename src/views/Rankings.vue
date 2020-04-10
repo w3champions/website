@@ -209,9 +209,8 @@ export default class RankingsView extends Vue {
 
   public async goToRank(rank: Ranking) {
     const isPrevSite = rank.rankingPoints % 15 === 0 && rank.rankingPoints > 15;
-    this.options.page = Math.floor(
-      rank.rankingPoints / 15 + (isPrevSite ? 0 : 1)
-    );
+    const newSite = rank.rankingPoints / 15 + (isPrevSite ? 0 : 1);
+    this.options.page = Math.floor(newSite);
   }
 
   public options = {
