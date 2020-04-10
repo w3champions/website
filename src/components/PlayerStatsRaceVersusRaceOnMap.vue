@@ -1,5 +1,5 @@
 <template>
-  <v-tabs>
+  <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">{{
       $t("races." + raceEnums[stat.race])
@@ -30,5 +30,22 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   @Prop() public stats!: RaceWinsOnMap[];
 
   public raceEnums = ERaceEnum;
+  public selectedTab = "tab-1";
+
+  mounted() {
+    let maxRace = ERaceEnum.RANDOM;
+    let maxGames = 0;
+    this.stats.forEach(s => s.winLossesOnMap.forEach(w => {
+        const gamesOfRace = w.winLosses
+          .map(wl => wl.games)
+          .reduce((a, b) => a + b, 0);
+        if (maxGames < gamesOfRace) {
+          maxRace = s.race;
+          maxGames = gamesOfRace;
+        }
+      })
+    );
+    this.selectedTab = `tab-${maxRace}`;
+  }
 }
 </script>

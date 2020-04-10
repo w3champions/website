@@ -126,6 +126,7 @@ export default class PlayerView extends Vue {
   }
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
+    if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
       r => r.race !== ERaceEnum.RANDOM
     );
