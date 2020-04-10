@@ -1,6 +1,7 @@
 import { EGameMode, ERaceEnum, Match } from "../typings";
 
 export type PlayerState = {
+  playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
   page: number;
   battleTag: string;
   totalMatches: number;
@@ -19,17 +20,7 @@ export type PlayerProfile = {
   ranks: RankStat[];
 };
 
-export type WinRate = {
-  wins: number;
-  losses: number;
-  games: number;
-  winrate: number;
-};
-
 export type RaceStat = {
-  /**
-   * 'human' | 'orc' | 'undead' | 'night_elf' | 'random' | 'total'
-   */
   race: ERaceEnum;
   wins: number;
   losses: number;
@@ -52,3 +43,18 @@ export type RankStat = {
   xp: number;
   rank: number;
 };
+
+export interface WinLossesOnMap {
+  map: string;
+  winLosses: RaceStat[];
+}
+
+export interface RaceWinsOnMap {
+  race: ERaceEnum;
+  winLossesOnMap: WinLossesOnMap[];
+}
+
+export interface PlayerStatsRaceOnMapVersusRace {
+  raceWinsOnMap: RaceWinsOnMap[];
+  id: string;
+}
