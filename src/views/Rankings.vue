@@ -38,7 +38,7 @@
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
                 <v-btn tile v-on="on" style="background-color: transparent;">
-                  {{ selectedLeague }}
+                  {{ selectedLeagueName }}
                 </v-btn>
               </template>
               <v-card>
@@ -237,14 +237,12 @@ export default class RankingsView extends Vue {
 
   public async goToRank(rank: Ranking) {
     if (!rank) return;
-    const isPrevSite = rank.rankingPoints % 15 === 0 && rank.rankingPoints > 15;
-    const newSite = rank.rankingPoints / 15 + (isPrevSite ? 0 : 1);
-    this.options.page = Math.floor(newSite);
+    this.setLeague(rank.league);
   }
 
   public options = {
     page: 1,
-    itemsPerPage: 15
+    itemsPerPage: this.selectedLEageuMaxParticipantCount
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
@@ -264,13 +262,21 @@ export default class RankingsView extends Vue {
     }
   }
 
-  get selectedLeague(): string {
+  get selectedLeague(): League {
     const league = this.$store.direct.state.rankings.league;
     const gw = this.$store.direct.state.rankings.gateway;
     const ladder = this.$store.direct.state.rankings.ladders.filter(l => l.gateway == gw)[0];
-    if (!ladder) return "";
+    if (!ladder) return {} as League;
 
-    return ladder.leagues.filter(l => l.id == league)[0].name;
+    return ladder.leagues.filter(l => l.id == league)[0];
+  }
+
+  get selectedLeagueName(): string {
+    return !this.selectedLeague ? "" : this.selectedLeague.name;
+  }
+
+  get selectedLEageuMaxParticipantCount(): number {
+    return !this.selectedLeague ? 0: this.selectedLeague.maxParticipantCount;
   }
 
   get searchModelBattleTag() {
@@ -342,6 +348,7 @@ export default class RankingsView extends Vue {
 
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
+    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   public setLeague(league: number) {
