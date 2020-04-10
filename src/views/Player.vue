@@ -1,5 +1,3 @@
-import {ERaceEnum} from "@/store/typings";
-import {EGameMode} from "@/store/typings";
 <template>
   <v-container class="profile">
     <v-row>
