@@ -7,6 +7,7 @@ export type OveralStatisticState = {
   playersPerDay: GameDay[];
   loadingPlayersPerDayStats: boolean;
   statsPerMapAndRace: StatsPerMapAndRace[];
+  gameLengths: GameLength[];
   loadingMapAndRaceStats: boolean
 };
 
@@ -36,4 +37,14 @@ export type Ratio = {
 export type StatsPerMapAndRace = {
   mapName: string;
   ratio: Ratio[];
+}
+
+export interface Length {
+  passedTimeInSeconds: number;
+  games: number;
+}
+
+export interface GameLength {
+  gameMode: number;
+  lengths: Length[];
 }

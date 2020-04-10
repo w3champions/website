@@ -1,24 +1,24 @@
 <script lang="ts">
 import { Component, Prop, Mixins } from "vue-property-decorator";
-import { Line } from "vue-chartjs";
 
-import { GameDay } from "@/store/overallStats/types";
+import { GameLength } from "@/store/overallStats/types";
+import { Bar } from "vue-chartjs";
 import moment from "moment";
 
 @Component({})
-export default class AmountPerDayChart extends Mixins(Line) {
-  @Prop() public gameDays!: GameDay[];
+export default class GameLengthChart extends Mixins(Bar) {
+  @Prop() public gameLength!: GameLength;
 
   mounted() {
     this.renderChart(
       {
-        labels: this.gameDayDates,
+        labels: this.passedTime,
         datasets: [
           {
             label: "# of Games",
-            data: this.gameDayCounts,
-            backgroundColor: ["rgba(54, 162, 235, 0.2)"],
-            borderColor: ["rgba(54, 162, 235, 1)"],
+            data: this.gamesCount,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1
           }
         ]
@@ -34,7 +34,7 @@ export default class AmountPerDayChart extends Mixins(Line) {
           },
           callbacks: {
             label: function(tooltipItem) {
-              return `${tooltipItem.xLabel}: ${tooltipItem.yLabel}`;
+              return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
             },
             title: function() {
               return "";
@@ -55,12 +55,22 @@ export default class AmountPerDayChart extends Mixins(Line) {
     );
   }
 
-  get gameDayDates() {
-    return this.gameDays.map(g => moment(g.date).format("LL"));
+  getTrimmedTimes() {
+    const times = this.gameLength.lengths.slice(4);
+    times.pop();
+    return times;
   }
 
-  get gameDayCounts() {
-    return this.gameDays.map(g => g.gamesPlayed);
+  get passedTime() {
+    return this.getTrimmedTimes().map(g =>
+      moment
+        .utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds())
+        .format("mm:ss")
+    );
+  }
+
+  get gamesCount() {
+    return this.getTrimmedTimes().map(g => g.games);
   }
 }
 </script>

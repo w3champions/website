@@ -11,6 +11,7 @@
             <v-tab class="profileTab" :href="`#tab-games-per-day`">Games Per Day</v-tab>
             <v-tab class="profileTab" :href="`#tab-players-per-day`">Players Per Day</v-tab>
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">Winrates</v-tab>
+            <v-tab class="profileTab" :href="`#tab-gametimes`">Gametimes</v-tab>
             <v-tab-item :value="'tab-games-per-day'">
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart
@@ -64,6 +65,31 @@
                 </v-col>
               </v-row>
             </v-tab-item>
+            <v-tab-item :value="'tab-gametimes'">
+              <v-row>
+                <v-col cols="1">
+<!--                  Uncomment as soon as 2v2 etc is here-->
+<!--                  <v-card-text>-->
+<!--                    <v-select-->
+<!--                      :items="gameModes"-->
+<!--                      item-text="modeName"-->
+<!--                      item-value="modeId"-->
+<!--                      @change="setSelectedMode"-->
+<!--                      label="Select Mode"-->
+<!--                      outlined-->
+<!--                    />-->
+<!--                  </v-card-text>-->
+                </v-col>
+                <v-col cols="10">
+                  <v-card-text>
+                    <game-length-chart
+                      class="ammount-per-day-chart"
+                      :game-length="getSelectedLength"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-tab-item>
           </v-tabs>
         </v-card>
       </v-col>
@@ -77,24 +103,34 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import {
   GameDay,
+  GameLength,
   Ratio,
   StatsPerMapAndRace,
   WinLoss
 } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
+import BarChart from "@/components/GameLengthChart.vue";
+import GameLengthChart from "@/components/GameLengthChart.vue";
 
 @Component({
   components: {
-    AmountPerDayChart
+    BarChart,
+    AmountPerDayChart,
+    GameLengthChart
   }
 })
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
+  public selectedMode = 1;
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
+  }
+
+  public setSelectedMode(mode: number) {
+    this.selectedMode = mode;
   }
 
   public winrateText(item: WinLoss) {
@@ -121,6 +157,14 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
 
+  get gameLength(): GameLength[] {
+    return this.$store.direct.state.overallStatistics.gameLengths;
+  }
+
+  get getSelectedLength(): GameLength {
+    return this.gameLength.filter(g => g.gameMode == this.selectedMode)[0];
+  }
+
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
@@ -137,6 +181,27 @@ export default class OverallStatisticsView extends Vue {
     });
   }
 
+  get gameModes() {
+    return [
+      {
+        modeName: "1vs1",
+        modeId: 1
+      },
+      {
+        modeName: "2vs2",
+        modeId: 2
+      },
+      {
+        modeName: "4vs4",
+        modeId: 3
+      },
+      {
+        modeName: "FFA",
+        modeId: 4
+      }
+    ];
+  }
+
   mounted() {
     this.init();
   }
@@ -145,6 +210,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
   }
 
   public headers = [

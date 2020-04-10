@@ -1,5 +1,5 @@
 import {API_URL} from "@/main";
-import {GameDay, PlayersPerDay, StatsPerMapAndRace} from "@/store/overallStats/types";
+import {GameDay, GameLength, PlayersPerDay, StatsPerMapAndRace} from "@/store/overallStats/types";
 
 export default class StatisticService {
   public async retrieveGamesPerDay(): Promise<GameDay[]> {
@@ -40,4 +40,19 @@ export default class StatisticService {
 
     return await response.json();
   }
+
+  public async retrieveGameTimes(): Promise<GameLength[]> {
+    const url = `${API_URL}api/w3c-stats/games-lengths`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    return data.gameLengths;
+  }
+
 }
