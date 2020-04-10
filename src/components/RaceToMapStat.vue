@@ -1,22 +1,28 @@
 <template>
-  <v-data-table
-    hide-default-footer
-    :headers="headers"
-    :items="stats"
-  >
-    <template v-slot:body="{ items }">
-      <tbody>
-        <tr v-for="item in items" :key="item.map">
-          <td>{{ $t("mapNames." + item.map) }}</td>
-          <td class="text-end">{{ toWinText(item.winLosses[1]) }}</td>
-          <td class="text-end">{{ toWinText(item.winLosses[2]) }}</td>
-          <td class="text-end">{{ toWinText(item.winLosses[3]) }}</td>
-          <td class="text-end">{{ toWinText(item.winLosses[4]) }}</td>
-          <td class="text-end">{{ totalWins(item.winLosses) }}</td>
-        </tr>
-      </tbody>
-    </template>
-  </v-data-table>
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="stats"
+      hide-default-footer
+      :hidden="stats.length === 0"
+    >
+      <template v-slot:body="{ items }">
+        <tbody>
+          <tr v-for="item in items" :key="item.map">
+            <td>{{ $t("mapNames." + item.map) }}</td>
+            <td class="text-end">{{ toWinText(item.winLosses[1]) }}</td>
+            <td class="text-end">{{ toWinText(item.winLosses[2]) }}</td>
+            <td class="text-end">{{ toWinText(item.winLosses[3]) }}</td>
+            <td class="text-end">{{ toWinText(item.winLosses[4]) }}</td>
+            <td class="text-end">{{ totalWins(item.winLosses) }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-data-table>
+    <v-card-text :hidden="stats.length !== 0">
+      No games played with this race yet.
+    </v-card-text>
+  </div>
 </template>
 
 <script lang="ts">
