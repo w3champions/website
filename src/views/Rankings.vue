@@ -38,10 +38,8 @@
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
                 <v-btn tile v-on="on" style="background-color: transparent;">
-                  <league-icon
-                    :league="selectedLeageueId"
-                    :league-name="selectedLeagueName"
-                  />
+                  <league-icon :league="selectedLeageueId" />
+                  {{ selectedLeagueName }}
                 </v-btn>
               </template>
               <v-card>
@@ -60,10 +58,8 @@
                     >
                       <v-list-item-content>
                         <v-list-item-title>
-                          <league-icon
-                            :league="item.order"
-                            :league-name="item.name"
-                          />
+                          <league-icon :league="item.order" />
+                          {{ item.name }}
                         </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
