@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import { RankingState, Ranking, Gateways } from "./types";
+import { RankingState, Ranking, Gateways, Ladder } from "./types";
 import { DataTableOptions, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -7,9 +7,11 @@ const mod = {
   namespaced: true,
   state: {
     gateway: Gateways.Europe,
+    league: 0,
     page: 0,
     totalRanks: 0,
     working: false,
+    ladders: [],
     rankings: [],
     topFive: [],
     searchRanks: []
@@ -26,7 +28,7 @@ const mod = {
       }
 
       const response = await rootGetters.rankingService.retrieveRankings(
-        0,
+        state.league,
         state.gateway
       );
 
@@ -67,6 +69,23 @@ const mod = {
       commit.SET_GATEWAY(gateway);
       commit.SET_PAGE(0);
       await dispatch.retrieveRankings(undefined);
+    },
+    async setLeague(
+        context: ActionContext<RankingState, RootState>,
+        league: number
+    ) {
+      const { commit, dispatch  } = moduleActionContext(context, mod);
+      commit.SET_LEAGUE(league);
+      await dispatch.retrieveRankings(undefined);
+    },
+    async retrieveLeagueConstellation(
+        context: ActionContext<RankingState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const ladders = await rootGetters.rankingService.retrieveLadders();
+
+      commit.SET_LEAGUE_CONSTELLATION(ladders);
     }
   },
   mutations: {
@@ -87,6 +106,12 @@ const mod = {
     },
     SET_GATEWAY(state: RankingState, gateway: Gateways) {
       state.gateway = gateway;
+    },
+    SET_LEAGUE(state: RankingState, league: number) {
+      state.league = league;
+    },
+    SET_LEAGUE_CONSTELLATION(state: RankingState, ladders: Ladder[]) {
+      state.ladders = ladders;
     }
   }
 } as const;
