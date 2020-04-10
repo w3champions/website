@@ -33,10 +33,10 @@ export default class AmountPerDayChart extends Mixins(Line) {
             tooltip.displayColors = false;
           },
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function(tooltipItem) {
               return `${tooltipItem.xLabel}: ${tooltipItem.yLabel}`;
             },
-            title: function(tooltipItem, data) {
+            title: function() {
               return "";
             }
           }

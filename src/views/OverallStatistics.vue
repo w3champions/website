@@ -11,6 +11,7 @@
             <v-tab class="profileTab" :href="`#tab-games-per-day`">Games Per Day</v-tab>
             <v-tab class="profileTab" :href="`#tab-players-per-day`">Players Per Day</v-tab>
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">Winrates</v-tab>
+            <v-tab class="profileTab" :href="`#tab-gametimes`">Gametimes</v-tab>
             <v-tab-item :value="'tab-games-per-day'">
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart
@@ -64,6 +65,14 @@
                 </v-col>
               </v-row>
             </v-tab-item>
+            <v-tab-item :value="'tab-gametimes'">
+              <v-card-text v-if="!loadingPlayersPerDayStats">
+                <game-length-chart
+                  class="ammount-per-day-chart"
+                  :game-lengths="gameLength"
+                />
+              </v-card-text>
+            </v-tab-item>
           </v-tabs>
         </v-card>
       </v-col>
@@ -77,15 +86,20 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import {
   GameDay,
+  GameLength,
   Ratio,
   StatsPerMapAndRace,
   WinLoss
 } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
+import BarChart from "@/components/GameLengthChart.vue";
+import GameLengthChart from "@/components/GameLengthChart.vue";
 
 @Component({
   components: {
-    AmountPerDayChart
+    BarChart,
+    AmountPerDayChart,
+    GameLengthChart
   }
 })
 export default class OverallStatisticsView extends Vue {
@@ -121,6 +135,10 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
 
+  get gameLength(): GameLength[] {
+    return this.$store.direct.state.overallStatistics.gameLengths;
+  }
+
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
@@ -145,6 +163,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
   }
 
   public headers = [
