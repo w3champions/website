@@ -38,7 +38,10 @@
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
                 <v-btn tile v-on="on" style="background-color: transparent;">
-                  {{ selectedLeagueName }}
+                  <league-icon
+                    :league="selectedLeageueId"
+                    :league-name="selectedLeagueName"
+                  />
                 </v-btn>
               </template>
               <v-card>
@@ -56,7 +59,12 @@
                       @click="setLeague(item.id)"
                     >
                       <v-list-item-content>
-                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                        <v-list-item-title>
+                          <league-icon
+                            :league="item.order"
+                            :league-name="item.name"
+                          />
+                        </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -166,11 +174,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import {Ranking, Gateways, Ladder, League} from "@/store/ranking/types";
+import { Ranking, Gateways, League } from "@/store/ranking/types";
 import { DataTableOptions } from "@/store/typings";
+import LeagueIcon from "@/components/LeagueIcon.vue";
 
 @Component({
-  components: {}
+  components: { LeagueIcon }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -242,7 +251,7 @@ export default class RankingsView extends Vue {
 
   public options = {
     page: 1,
-    itemsPerPage: this.selectedLEageuMaxParticipantCount
+    itemsPerPage: this.selectedLeagueMaxParticipantCount
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
@@ -275,8 +284,12 @@ export default class RankingsView extends Vue {
     return !this.selectedLeague ? "" : this.selectedLeague.name;
   }
 
-  get selectedLEageuMaxParticipantCount(): number {
-    return !this.selectedLeague ? 0: this.selectedLeague.maxParticipantCount;
+  get selectedLeagueMaxParticipantCount(): number {
+    return !this.selectedLeague ? 0 : this.selectedLeague.maxParticipantCount;
+  }
+
+  get selectedLeageueId(): number {
+    return !this.selectedLeague ? 0 : this.selectedLeague.id;
   }
 
   get searchModelBattleTag() {
