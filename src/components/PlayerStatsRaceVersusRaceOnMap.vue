@@ -8,8 +8,8 @@
     <v-tab-item :value="'tab-1'">
       <v-card-text>
         <v-row>
-          <v-col cols="6">
-            <race-to-map-stat :stats="stats[1]" />
+          <v-col cols="8">
+            <race-to-map-stat :stats="stats[1].winLossesOnMap" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -17,8 +17,8 @@
     <v-tab-item :value="'tab-2'">
       <v-card-text>
         <v-row>
-          <v-col cols="6">
-            <race-to-map-stat :stats="stats[2]" />
+          <v-col cols="8">
+            <race-to-map-stat :stats="stats[2].winLossesOnMap" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -26,8 +26,8 @@
     <v-tab-item :value="'tab-3'">
       <v-card-text>
         <v-row>
-          <v-col cols="6">
-            <race-to-map-stat :stats="stats[3]" />
+          <v-col cols="8">
+            <race-to-map-stat :stats="stats[3].winLossesOnMap" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -35,8 +35,8 @@
     <v-tab-item :value="'tab-4'">
       <v-card-text>
         <v-row>
-          <v-col cols="6">
-            <race-to-map-stat :stats="stats[4]" />
+          <v-col cols="8">
+            <race-to-map-stat :stats="stats[4].winLossesOnMap" />
           </v-col>
         </v-row>
       </v-card-text>
