@@ -55,14 +55,22 @@ export default class GameLengthChart extends Mixins(Bar) {
     );
   }
 
- get passedTime() {
-    return this.gameLength.lengths.map(g =>
-      moment.utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds()).format("mm:ss")
+  getTrimmedTimes() {
+    const times = this.gameLength.lengths.slice(4);
+    times.pop();
+    return times;
+  }
+
+  get passedTime() {
+    return this.getTrimmedTimes().map(g =>
+      moment
+        .utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds())
+        .format("mm:ss")
     );
   }
 
   get gamesCount() {
-    return this.gameLength.lengths.map(g => g.games);
+    return this.getTrimmedTimes().map(g => g.games);
   }
 }
 </script>
