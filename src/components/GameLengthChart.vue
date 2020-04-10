@@ -3,12 +3,11 @@ import { Component, Prop, Mixins } from "vue-property-decorator";
 
 import { GameLength } from "@/store/overallStats/types";
 import { Bar } from "vue-chartjs";
-import { EGameMode } from "@/store/typings";
-import moment from 'moment';
+import moment from "moment";
 
 @Component({})
 export default class GameLengthChart extends Mixins(Bar) {
-  @Prop() public gameLengths!: GameLength[];
+  @Prop() public gameLength!: GameLength;
 
   mounted() {
     this.renderChart(
@@ -56,18 +55,14 @@ export default class GameLengthChart extends Mixins(Bar) {
     );
   }
 
-  get oneVersusOneLengths(): GameLength {
-    return this.gameLengths.filter(g => g.gameMode === EGameMode.GM_1ON1)[0];
-  }
-
-  get passedTime() {
-    return this.oneVersusOneLengths.lengths.map(g =>
+ get passedTime() {
+    return this.gameLength.lengths.map(g =>
       moment.utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds()).format("mm:ss")
     );
   }
 
   get gamesCount() {
-    return this.oneVersusOneLengths.lengths.map(g => g.games);
+    return this.gameLength.lengths.map(g => g.games);
   }
 }
 </script>

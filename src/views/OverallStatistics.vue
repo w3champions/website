@@ -66,12 +66,29 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
-              <v-card-text v-if="!loadingPlayersPerDayStats">
-                <game-length-chart
-                  class="ammount-per-day-chart"
-                  :game-lengths="gameLength"
-                />
-              </v-card-text>
+              <v-row>
+                <v-col cols="1">
+<!--                  Uncomment as soon as 2v2 etc is here-->
+<!--                  <v-card-text>-->
+<!--                    <v-select-->
+<!--                      :items="gameModes"-->
+<!--                      item-text="modeName"-->
+<!--                      item-value="modeId"-->
+<!--                      @change="setSelectedMode"-->
+<!--                      label="Select Mode"-->
+<!--                      outlined-->
+<!--                    />-->
+<!--                  </v-card-text>-->
+                </v-col>
+                <v-col cols="10">
+                  <v-card-text>
+                    <game-length-chart
+                      class="ammount-per-day-chart"
+                      :game-length="getSelectedLength"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -106,9 +123,14 @@ export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
+  public selectedMode = 1;
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
+  }
+
+  public setSelectedMode(mode: number) {
+    this.selectedMode = mode;
   }
 
   public winrateText(item: WinLoss) {
@@ -139,6 +161,10 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.gameLengths;
   }
 
+  get getSelectedLength(): GameLength {
+    return this.gameLength.filter(g => g.gameMode == this.selectedMode)[0];
+  }
+
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
@@ -153,6 +179,27 @@ export default class OverallStatisticsView extends Vue {
     return this.statsPerRaceAndMap.map(r => {
       return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
     });
+  }
+
+  get gameModes() {
+    return [
+      {
+        modeName: "1vs1",
+        modeId: 1
+      },
+      {
+        modeName: "2vs2",
+        modeId: 2
+      },
+      {
+        modeName: "4vs4",
+        modeId: 3
+      },
+      {
+        modeName: "FFA",
+        modeId: 4
+      }
+    ];
   }
 
   mounted() {
