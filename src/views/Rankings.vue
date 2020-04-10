@@ -294,15 +294,17 @@ export default class RankingsView extends Vue {
   }
 
   get selectedLeagueName(): string {
-    return !this.selectedLeague ? "" : this.selectedLeague.name;
+    return !this.selectedLeague.name ? "" : this.selectedLeague.name;
   }
 
   get selectedLeagueMaxParticipantCount(): number {
-    return !this.selectedLeague ? 0 : this.selectedLeague.maxParticipantCount;
+    return !this.selectedLeague.maxParticipantCount
+      ? 0
+      : this.selectedLeague.maxParticipantCount;
   }
 
   get selectedLeageueId(): number {
-    return !this.selectedLeague ? 0 : this.selectedLeague.id;
+    return !this.selectedLeague.id ? 0 : this.selectedLeague.id;
   }
 
   get searchModelBattleTag() {
