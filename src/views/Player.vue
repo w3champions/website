@@ -1,4 +1,3 @@
-import {EGameMode} from "@/store/typings";
 <template>
   <v-container class="profile">
     <v-row>
@@ -12,9 +11,10 @@ import {EGameMode} from "@/store/typings";
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
-            <v-tab class="profileTab" :href="`#tab-1`">Profile</v-tab>
-            <v-tab class="profileTab" :href="`#tab-2`">Match History</v-tab>
-            <v-tab-item :value="'tab-1'">
+            <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
+            <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
+            <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
+            <v-tab-item :value="'tab-profile'">
               <v-card-title>Stats</v-card-title>
               <v-card-text v-if="!loadingProfile">
                 <v-row>
@@ -48,7 +48,7 @@ import {EGameMode} from "@/store/typings";
                 ></v-progress-circular>
               </v-card-text>
             </v-tab-item>
-            <v-tab-item :value="'tab-2'">
+            <v-tab-item :value="'tab-matches'">
               <v-card-title>Match History</v-card-title>
               <matches-grid
                 v-model="matches"
@@ -58,6 +58,12 @@ import {EGameMode} from "@/store/typings";
                 :alwaysLeftName="battleTag"
                 :only-show-enemy="true"
               ></matches-grid>
+            </v-tab-item>
+            <v-tab-item :value="'tab-statistics'">
+              <v-card-title>Statistics</v-card-title>
+              <player-stats-race-versus-race-on-map
+                :stats="raceWithoutRandom"
+              />
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -69,13 +75,15 @@ import {EGameMode} from "@/store/typings";
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { ModeStat, PlayerProfile } from "@/store/player/types";
+import { ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
+import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
 
 @Component({
   components: {
+    PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid
   }
@@ -84,7 +92,6 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public modeTabIndex = "stats-bymode-america";
 
   public raceHeaders = [
     {
@@ -118,8 +125,19 @@ export default class PlayerView extends Vue {
     this.init();
   }
 
+  get raceWithoutRandom(): RaceWinsOnMap[] {
+    if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
+    return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
+      r => r.race !== ERaceEnum.RANDOM
+    );
+  }
+
   get profile(): PlayerProfile {
     return this.$store.direct.state.player.playerProfile;
+  }
+
+  get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
+    return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
   }
 
   get oneVersusOneGameModeStats(): ModeStat[] {
@@ -163,6 +181,7 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
   }
 }
 </script>

@@ -1,11 +1,12 @@
 import { moduleActionContext } from "..";
-import { PlayerState, PlayerProfile } from "./types";
+import {PlayerState, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "./types";
 import { Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
   state: {
+    playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
     battleTag: "",
     page: 0,
     totalMatches: 0,
@@ -29,6 +30,18 @@ const mod = {
 
       commit.SET_PROFILE(profile);
       commit.SET_LOADING_PROFILE(false);
+    },
+    async loadPlayerStatsRaceVersusRaceOnMap(
+      context: ActionContext<PlayerState, RootState>,
+      battleTag: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const profile = await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
+        battleTag
+      );
+
+      commit.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
     },
     async loadMatches(
       context: ActionContext<PlayerState, RootState>,
@@ -71,6 +84,9 @@ const mod = {
     },
     SET_BATTLE_TAG(state: PlayerState, battleTag: string) {
       state.battleTag = battleTag;
+    },
+    SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
+      state.playerStatsRaceVersusRaceOnMap = stats;
     }
   }
 } as const;

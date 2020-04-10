@@ -40,7 +40,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/PlayerIcon.vue";
-import { WinRate } from "@/store/player/types";
+import {RaceStat} from "@/store/player/types";
 
 @Component({
   components: { PlayerIcon }
@@ -50,7 +50,7 @@ export default class PlayerMatchInfo extends Vue {
 
   @Prop() public left!: boolean;
 
-  public winrate: WinRate = {} as WinRate;
+  public winrate: RaceStat = {} as RaceStat;
 
   get won() {
     if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
