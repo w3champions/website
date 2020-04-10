@@ -6,7 +6,11 @@
         ? "as " + $t("races." + raceEnums[stat.race])
         : "All races"
     }}</v-tab>
-    <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
+    <v-tab-item
+      v-for="stat of stats"
+      :key="stat.race"
+      :value="'tab-' + stat.race"
+    >
       <v-card-text>
         <v-row>
           <v-col cols="8">
@@ -37,16 +41,19 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   mounted() {
     let maxRace = ERaceEnum.RANDOM;
     let maxGames = 0;
-    this.stats.forEach(s => s.winLossesOnMap.forEach(w => {
-        const gamesOfRace = w.winLosses
-          .map(wl => wl.games)
-          .reduce((a, b) => a + b, 0);
-        if (maxGames < gamesOfRace) {
-          maxRace = s.race;
-          maxGames = gamesOfRace;
-        }
-      })
-    );
+    this.stats
+      .filter(s => s.race !== ERaceEnum.TOTAL)
+      .forEach(s =>
+        s.winLossesOnMap.forEach(w => {
+          const gamesOfRace = w.winLosses
+            .map(wl => wl.games)
+            .reduce((a, b) => a + b, 0);
+          if (maxGames < gamesOfRace) {
+            maxRace = s.race;
+            maxGames = gamesOfRace;
+          }
+        })
+      );
     this.selectedTab = `tab-${maxRace}`;
   }
 }
