@@ -33,6 +33,35 @@
                   </v-list>
                 </v-card-text>
               </v-card>
+
+            </v-menu>
+            <v-menu offset-x>
+              <template v-slot:activator="{ on }">
+                <v-btn tile v-on="on" style="background-color: transparent;">
+                  {{ selectedLeague }}
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item-content>
+                      <v-list-item-title>Select a league:</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list>
+                  <v-divider></v-divider>
+                  <v-list dense>
+                    <v-list-item
+                      v-for="item in ladders"
+                      :key="item.id"
+                      @click="setLeague(item.id)"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+              </v-card>
             </v-menu>
             <v-spacer></v-spacer>
             <v-autocomplete
@@ -137,7 +166,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways } from "@/store/ranking/types";
+import {Ranking, Gateways, Ladder, League} from "@/store/ranking/types";
 import { DataTableOptions } from "@/store/typings";
 
 @Component({
@@ -235,6 +264,15 @@ export default class RankingsView extends Vue {
     }
   }
 
+  get selectedLeague(): string {
+    const league = this.$store.direct.state.rankings.league;
+    const gw = this.$store.direct.state.rankings.gateway;
+    const ladder = this.$store.direct.state.rankings.ladders.filter(l => l.gateway == gw)[0];
+    if (!ladder) return "";
+
+    return ladder.leagues.filter(l => l.id == league)[0].name;
+  }
+
   get searchModelBattleTag() {
     if (!this.searchModel || !this.searchModel.player) {
       return "";
@@ -255,6 +293,11 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.rankings;
   }
 
+  get ladders(): League[] {
+    const gw = this.$store.direct.state.rankings.gateway;
+    return this.$store.direct.state.rankings.ladders.filter(l => l.gateway === gw)[0]?.leagues;
+  }
+
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
   }
@@ -267,10 +310,15 @@ export default class RankingsView extends Vue {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
     this.getRankings();
+    this.getLadders();
   }
 
   public getRankings(options?: DataTableOptions) {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
+  }
+
+  public getLadders() {
+    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
   }
 
   public openPlayerProfile(playerName: string) {
@@ -294,6 +342,10 @@ export default class RankingsView extends Vue {
 
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
+  }
+
+  public setLeague(league: number) {
+    this.$store.direct.dispatch.rankings.setLeague(league);
   }
 
   public selectEurope() {

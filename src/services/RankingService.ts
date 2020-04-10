@@ -1,4 +1,4 @@
-import { Ranking, Gateways } from "@/store/ranking/types";
+import {Ranking, Gateways, Ladder} from "@/store/ranking/types";
 import { API_URL } from "@/main";
 
 export default class RankingService {
@@ -17,6 +17,13 @@ export default class RankingService {
     gateway: Gateways
   ): Promise<Ranking[]> {
     const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async retrieveLadders(): Promise<Ladder[]> {
+    const url = `${API_URL}api/ladder/league-constellation`;
 
     const response = await fetch(url);
     return await response.json();
