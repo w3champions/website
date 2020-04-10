@@ -1,3 +1,4 @@
+import {ERaceEnum} from "@/store/typings";
 import {EGameMode} from "@/store/typings";
 <template>
   <v-container class="profile">
@@ -63,7 +64,7 @@ import {EGameMode} from "@/store/typings";
             <v-tab-item :value="'tab-statistics'">
               <v-card-title>Statistics</v-card-title>
               <player-stats-race-versus-race-on-map
-                :stats="playerStatsRaceVersusRaceOnMap.raceWinsOnMap"
+                :stats="raceWithoutRandom"
               />
             </v-tab-item>
           </v-tabs>
@@ -76,7 +77,7 @@ import {EGameMode} from "@/store/typings";
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import {ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "@/store/player/types";
+import { ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
@@ -124,6 +125,12 @@ export default class PlayerView extends Vue {
   @Watch("battleTag")
   onBattleTagChanged() {
     this.init();
+  }
+
+  get raceWithoutRandom(): RaceWinsOnMap[] {
+    return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
+      r => r.race !== ERaceEnum.RANDOM
+    );
   }
 
   get profile(): PlayerProfile {
