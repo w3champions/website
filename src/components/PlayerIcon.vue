@@ -1,5 +1,5 @@
 <template>
-  <div class="race-icon" :class="[raceIcon(), alignment()]"></div>
+  <div class="league-icon" :class="[raceIcon(), alignment()]"></div>
 </template>
 
 <script lang="ts">
@@ -7,8 +7,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 
-@Component({
-})
+@Component({})
 export default class PlayerIcon extends Vue {
   @Prop() race!: ERaceEnum;
   @Prop() mmr!: number;
@@ -25,7 +24,7 @@ export default class PlayerIcon extends Vue {
 </script>
 
 <style lang="scss">
-.race-icon {
+.league-icon {
   width: 24px;
   height: 24px;
   background-position: center;

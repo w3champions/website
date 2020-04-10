@@ -1,12 +1,26 @@
 export type RankingState = {
   gateway: Gateways;
+  league: number;
   working: boolean;
   page: number;
   totalRanks: number;
+  ladders: Ladder[];
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
 };
+
+export type Ladder = {
+  gateway: Gateways;
+  leagues: League[];
+};
+
+export type League = {
+  id: number,
+  name: string,
+  order: number,
+  maxParticipantCount: number
+}
 
 export type Ranking = {
   gateway: number;

@@ -33,6 +33,39 @@
                   </v-list>
                 </v-card-text>
               </v-card>
+
+            </v-menu>
+            <v-menu offset-x>
+              <template v-slot:activator="{ on }">
+                <v-btn tile v-on="on" style="background-color: transparent;">
+                  <league-icon :league="selectedLeageueId" />
+                  {{ selectedLeagueName }}
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item-content>
+                      <v-list-item-title>Select a league:</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list>
+                  <v-divider></v-divider>
+                  <v-list dense>
+                    <v-list-item
+                      v-for="item in ladders"
+                      :key="item.id"
+                      @click="setLeague(item.id)"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <league-icon :league="item.order" />
+                          {{ item.name }}
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+              </v-card>
             </v-menu>
             <v-spacer></v-spacer>
             <v-autocomplete
@@ -45,8 +78,7 @@
               :loading="isLoading"
               :search-input.sync="search"
               :no-data-text="noDataText"
-              item-text="id"
-              item-value="id"
+              item-text="player.name"
               placeholder="Start typing to Search"
               return-object
             >
@@ -57,12 +89,12 @@
                 <template v-else>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.name }}
+                      {{ data.item.player.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      Wins: {{ data.item.totalWins }} | Losses:
-                      {{ data.item.totalLosses }} | Total:
-                      {{ data.item.games }}
+                      Wins: {{ data.item.player.totalWins }} | Losses:
+                      {{ data.item.player.totalLosses }} | Total:
+                      {{ data.item.player.games }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
@@ -84,11 +116,12 @@
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr
+                    :id="`listitem_${item.rankNumber}`"
                     @click.left="openPlayerProfile(item.player.id)"
                     @click.middle="openProfileInNewTab(item.player.id)"
                     @click.right="openProfileInNewTab(item.player.id)"
                     v-for="item in items"
-                    :key="item.player.name"
+                    :key="item.player.id"
                     :class="{
                       searchedItem: item.player.id === searchModelBattleTag
                     }"
@@ -138,11 +171,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways, PlayerOverview } from "@/store/ranking/types";
+import { Ranking, Gateways, League } from "@/store/ranking/types";
 import { DataTableOptions } from "@/store/typings";
+import LeagueIcon from "@/components/LeagueIcon.vue";
 
 @Component({
-  components: {}
+  components: { LeagueIcon }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -190,12 +224,12 @@ export default class RankingsView extends Vue {
   ];
 
   public search = "";
-  public searchModel = {} as PlayerOverview;
+  public searchModel = {} as Ranking;
   public isLoading = false;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: PlayerOverview) {
-    this.openPlayerProfile(newVal.id);
+  public onSearchModelChanged(newVal: Ranking) {
+    this.goToRank(newVal);
   }
 
   @Watch("search")
@@ -207,9 +241,30 @@ export default class RankingsView extends Vue {
     }
   }
 
+  public async goToRank(rank: Ranking) {
+    if (!rank) return;
+    this.setLeague(rank.league);
+
+    const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+
+    if (!listItemOfPlayer) return;
+
+    const offset =
+      listItemOfPlayer.offsetHeight +
+      listItemOfPlayer.offsetTop +
+      200 -
+      window.screenTop;
+    if (offset > window.innerHeight) {
+      window.scrollTo({
+        top: offset - window.innerHeight + 150,
+        behavior: "smooth"
+      });
+    }
+  }
+
   public options = {
     page: 1,
-    itemsPerPage: 15
+    itemsPerPage: this.selectedLeagueMaxParticipantCount
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
@@ -229,12 +284,35 @@ export default class RankingsView extends Vue {
     }
   }
 
+  get selectedLeague(): League {
+    const league = this.$store.direct.state.rankings.league;
+    const gw = this.$store.direct.state.rankings.gateway;
+    const ladder = this.$store.direct.state.rankings.ladders.filter(l => l.gateway == gw)[0];
+    if (!ladder) return {} as League;
+
+    return ladder.leagues.filter(l => l.id == league)[0];
+  }
+
+  get selectedLeagueName(): string {
+    return !this.selectedLeague.name ? "" : this.selectedLeague.name;
+  }
+
+  get selectedLeagueMaxParticipantCount(): number {
+    return !this.selectedLeague.maxParticipantCount
+      ? 0
+      : this.selectedLeague.maxParticipantCount;
+  }
+
+  get selectedLeageueId(): number {
+    return !this.selectedLeague.id ? 0 : this.selectedLeague.id;
+  }
+
   get searchModelBattleTag() {
-    if (!this.searchModel || !this.searchModel.name) {
+    if (!this.searchModel || !this.searchModel.player) {
       return "";
     }
 
-    return this.searchModel.name;
+    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
@@ -249,6 +327,11 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.rankings;
   }
 
+  get ladders(): League[] {
+    const gw = this.$store.direct.state.rankings.gateway;
+    return this.$store.direct.state.rankings.ladders.filter(l => l.gateway === gw)[0]?.leagues;
+  }
+
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
   }
@@ -261,10 +344,15 @@ export default class RankingsView extends Vue {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
     this.getRankings();
+    this.getLadders();
   }
 
   public getRankings(options?: DataTableOptions) {
     this.$store.direct.dispatch.rankings.retrieveRankings(options);
+  }
+
+  public getLadders() {
+    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
   }
 
   public openPlayerProfile(playerName: string) {
@@ -288,6 +376,11 @@ export default class RankingsView extends Vue {
 
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
+    this.$store.direct.dispatch.rankings.setLeague(0);
+  }
+
+  public setLeague(league: number) {
+    this.$store.direct.dispatch.rankings.setLeague(league);
   }
 
   public selectEurope() {
@@ -311,6 +404,6 @@ export default class RankingsView extends Vue {
 
 .searchedItem {
   animation-name: highlistFade;
-  animation-duration: 2.5s;
+  animation-duration: 4.5s;
 }
 </style>

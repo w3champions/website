@@ -8,10 +8,10 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :href="`#tab-1`">Games Per Day</v-tab>
-            <v-tab class="profileTab" :href="`#tab-2`">Players Per Day</v-tab>
-            <v-tab class="profileTab" :href="`#tab-3`">Winrates</v-tab>
-            <v-tab-item :value="'tab-1'">
+            <v-tab class="profileTab" :href="`#tab-games-per-day`">Games Per Day</v-tab>
+            <v-tab class="profileTab" :href="`#tab-players-per-day`">Players Per Day</v-tab>
+            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">Winrates</v-tab>
+            <v-tab-item :value="'tab-games-per-day'">
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart
                   class="ammount-per-day-chart"
@@ -19,7 +19,7 @@
                 />
               </v-card-text>
             </v-tab-item>
-            <v-tab-item :value="'tab-2'">
+            <v-tab-item :value="'tab-players-per-day'">
               <v-card-text v-if="!loadingPlayersPerDayStats">
                 <amount-per-day-chart
                   class="ammount-per-day-chart"
@@ -27,7 +27,7 @@
                 />
               </v-card-text>
             </v-tab-item>
-            <v-tab-item :value="'tab-3'">
+            <v-tab-item :value="'tab-winrates-per-race-and-map'">
               <v-row>
                 <v-col cols="3">
                   <v-card-text v-if="!loadingMapAndRaceStats">
