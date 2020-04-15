@@ -1,9 +1,9 @@
 import {BlizzardToken} from "@/store/oauth/types";
-import { API_URL } from "@/main";
+import { API_URL, REDIRECT_URL } from "@/main";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<BlizzardToken> {
-    const url = `${API_URL}api/oauth/token?code=${code}&redirectUri=http://localhost:8080/login`;
+    const url = `${API_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

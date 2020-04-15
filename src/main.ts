@@ -12,8 +12,10 @@ Vue.use(vueMoment);
 Vue.config.productionTip = false;
 
 const _apiUrl = (window as any)._env_.BASE_URL;
+const _redirectUrl = (window as any)._env_.REDIRECT_URL;
 
 export const API_URL = _apiUrl;
+export const REDIRECT_URL = _redirectUrl;
 
 Vue.use(VueI18n);
 
