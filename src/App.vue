@@ -12,6 +12,10 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
+      <v-btn class="button-margin" :href="blizzardOauthLink">
+        <v-icon class="mr-2 hidden-xs-only">mdi-account</v-icon>
+      </v-btn>
+
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on">
@@ -66,8 +70,12 @@ export default class App extends Vue {
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     { title: "Statistics", icon: "mdi-chart-areaspline", to: "/OverallStatistics" },
-    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" }
+    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" },
   ];
+
+  get blizzardOauthLink(): string {
+    return "https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=http://localhost:8080/login";
+  }
 
   get enableDarkMode(): boolean {
     return this.$vuetify.theme.dark;

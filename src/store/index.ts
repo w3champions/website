@@ -2,16 +2,18 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { createDirectStore } from "direct-vuex";
 
-import RankingService from "@/services/RankingService";
-import MatchService from "@/services/MatchService";
-
 import rankings from "./ranking/index";
 import player from "./player/index";
 import match from "./match/index";
 import overallStatistics from "./overallStats/index";
+import oauth from "./oauth/index";
+
+import RankingService from "@/services/RankingService";
+import MatchService from "@/services/MatchService";
 import ProfileService from "@/services/ProfileService";
 import { RootState } from "./typings";
 import StatisticService from "@/services/StatisticService";
+import AuthorizationService from "@/services/AuthorizationService";
 
 Vue.use(Vuex);
 
@@ -20,6 +22,7 @@ const services = {
   matchService: new MatchService(50),
   profileService: new ProfileService(),
   statisticService: new StatisticService(),
+  oauthService: new AuthorizationService(),
 };
 
 const mod = {
@@ -27,7 +30,8 @@ const mod = {
     player,
     rankings,
     match,
-    overallStatistics
+    overallStatistics,
+    oauth
   },
   state: {
     darkMode: false
@@ -50,6 +54,9 @@ const mod = {
     },
     statisticService() {
       return services.statisticService;
+    },
+    oauthService() {
+      return services.oauthService;
     }
   }
 } as const;

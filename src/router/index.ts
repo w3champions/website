@@ -10,9 +10,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue")
   },
   {
+    path: "/login",
+    name: "Login",
+    component: () => import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    props: (route: { query: { code: string; }; }) => ({ code: route.query.code })
+  },
+  {
     path: "/faq",
     name: "FAQ",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Faq.vue")
+    component: () => import(/* webpackChunkName: "faq" */ "../views/Faq.vue")
   },
   {
     path: "/imprint",
