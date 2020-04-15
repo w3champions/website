@@ -18,7 +18,20 @@
               <v-card-title>Stats</v-card-title>
               <v-card-text v-if="!loadingProfile">
                 <v-row>
-                  <v-col cols="8">
+                  <v-col cols="2">
+                    <v-card-text >
+                      <v-text-field
+                        placeholder="Personal message"
+                        @change="changeMessageValue"
+                        @focusout="saveMessage"
+                        filled
+                        :readonly="!isLoggedInPlayer"
+                      />
+                    </v-card-text>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="6">
                     <h4>Statistics by Game Mode</h4>
                     <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
                   </v-col>
@@ -80,6 +93,7 @@ import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
+import {PersonalSetting} from "@/store/personalSettings/types";
 
 @Component({
   components: {
@@ -92,6 +106,7 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
+  public changedMessageValue = "";
 
   public raceHeaders = [
     {
@@ -136,6 +151,10 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
+  get personalSettings(): PersonalSetting {
+    return this.$store.direct.state.personalSettings.personalSettings;
+  }
+
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
   }
@@ -160,8 +179,27 @@ export default class PlayerView extends Vue {
     this.getMatches(page);
   }
 
+  changeMessageValue(value: string) {
+    this.changedMessageValue = value;
+  }
+
+  saveMessage() {
+    const sendMessageOptions = {
+      message: this.changedMessageValue,
+      bearer: this.$store.direct.state.oauth.token.access_token
+    };
+    this.$store.direct.dispatch.personalSettings.savePersonalSettings(sendMessageOptions);
+  }
+
   get totalMatches(): number {
     return this.$store.direct.state.player.totalMatches;
+  }
+
+  get isLoggedInPlayer(): boolean {
+    return (
+      this.$store.direct.state.oauth.blizzardVerifiedBtag ==
+      `${this.profile.name}#${this.profile.battleTag}`
+    );
   }
 
   get matches(): Match[] {
@@ -182,6 +220,8 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(`${this.profile.name}#${this.profile.battleTag}`);
+    this.changedMessageValue = this.$store.direct.state.personalSettings.personalSettings?.ProfileMessage;
   }
 }
 </script>

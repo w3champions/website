@@ -7,6 +7,7 @@ import player from "./player/index";
 import match from "./match/index";
 import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
+import personalSettings from "./personalSettings/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -14,6 +15,7 @@ import ProfileService from "@/services/ProfileService";
 import { RootState } from "./typings";
 import StatisticService from "@/services/StatisticService";
 import AuthorizationService from "@/services/AuthorizationService";
+import PersonalSettingsService from "@/services/PersonalSettingsService";
 
 Vue.use(Vuex);
 
@@ -23,6 +25,7 @@ const services = {
   profileService: new ProfileService(),
   statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
+  personalSettingsService: new PersonalSettingsService(),
 };
 
 const mod = {
@@ -31,7 +34,8 @@ const mod = {
     rankings,
     match,
     overallStatistics,
-    oauth
+    oauth,
+    personalSettings
   },
   state: {
     darkMode: false
@@ -57,6 +61,9 @@ const mod = {
     },
     oauthService() {
       return services.oauthService;
+    },
+    personalSettingsService() {
+      return services.personalSettingsService;
     }
   }
 } as const;
