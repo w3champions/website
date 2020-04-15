@@ -1,8 +1,11 @@
+import {BlizzardToken} from "@/store/oauth/types";
+import { API_URL } from "@/main";
+
 export default class AuthorizationService {
-  public async authorize(code: string): Promise<string> {
-    const url = `https://eu.battle.net/oauth/token?region=eu&code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8080/login&client_id=d7bd6dd46e2842c8a680866759ad34c2&client_secret=7qs8iu2dcX4ZrURpIpezwZJHNM7OJmXg`;
+  public async authorize(code: string): Promise<BlizzardToken> {
+    const url = `${API_URL}api/oauth/token?code=${code}&redirectUri=http://localhost:8080/login`;
     const response = await fetch(url, {
-      method: "POST",
+      method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"

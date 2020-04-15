@@ -1,14 +1,13 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import {OauthState} from "@/store/oauth/types";
+import {BlizzardToken, OauthState} from "@/store/oauth/types";
 
 const mod = {
   namespaced: true,
   state: {
     code: "",
-    bearer: "",
-    blizzardVerifiedBtag: ""
+    token: {} as BlizzardToken
   } as OauthState,
   actions: {
     async authorizeWithCode(
@@ -18,15 +17,15 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
-      const profileName = await rootGetters.oauthService.getProfileName(bearer);
-
       commit.SET_BEARER(bearer);
+
+      const profileName = await rootGetters.oauthService.getProfileName(bearer.access_token);
       commit.SET_PROFILE_NAME(profileName);
     }
   },
   mutations: {
-    SET_BEARER(state: OauthState, code: string) {
-      state.bearer = code;
+    SET_BEARER(state: OauthState, token: BlizzardToken) {
+      state.token = token;
     },
     SET_PROFILE_NAME(state: OauthState, btag: string) {
       state.blizzardVerifiedBtag = btag;
