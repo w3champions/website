@@ -7,6 +7,7 @@ const mod = {
   namespaced: true,
   state: {
     code: "",
+    blizzardVerifiedBtag: "",
     token: {} as BlizzardToken
   } as OauthState,
   actions: {

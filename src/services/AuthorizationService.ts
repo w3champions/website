@@ -1,5 +1,5 @@
 import {BlizzardToken} from "@/store/oauth/types";
-import { API_URL, REDIRECT_URL } from "@/main";
+import {API_URL, REDIRECT_URL} from "@/main";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<BlizzardToken> {
@@ -12,18 +12,16 @@ export default class AuthorizationService {
       }
     });
 
-    const data = await response.json();
-    return data.access_token;
+    return await response.json();
   }
 
   public async getProfileName(bearer: string): Promise<string> {
-    const url = `https://eu.battle.net/oauth/userinfo`;
+    const url = `${API_URL}api/oauth/battleTag?bearer=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${bearer}`
+        "Content-Type": "application/json"
       }
     });
 
