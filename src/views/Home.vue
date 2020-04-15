@@ -203,6 +203,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "../store/ranking/types";
+import { SalteAuth } from "@salte-auth/salte-auth";
 
 @Component({})
 export default class HomeView extends Vue {
@@ -212,6 +213,26 @@ export default class HomeView extends Vue {
 
   mounted() {
     this.$store.direct.dispatch.rankings.getTopFive();
+    const auth = new SalteAuth({
+      providerUrl: 'https://salte-os.auth0.com',
+      responseType: 'id_token',
+      redirectUrl: location.origin,
+      clientId: '9JTBXBREtckkFHTxTNBceewrnn7NeDd0',
+      scope: 'openid',
+
+      routes: [
+        'http://localhost:8080/account'
+      ],
+
+      endpoints: [
+        'https://jsonplaceholder.typicode.com/posts/1'
+      ],
+
+      provider: 'auth0'
+    });
+
+// Display an iframe to the user that allows them to login
+    auth.loginWithIframe();
   }
 
   public goToProfile(rank: Ranking) {
