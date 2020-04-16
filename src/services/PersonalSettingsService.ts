@@ -33,4 +33,25 @@ export default class PersonalSettingsService {
     });
     return response.ok;
   }
+
+  public async setPersonalSettingHomepage(
+      value: string
+  ): Promise<boolean> {
+    const authorizationService = new AuthorizationService();
+    const cookie = await authorizationService.loadAuthCookie();
+
+    const url = `${API_URL}api/personal-settings/home-page?authentication=${cookie.accesToken}`;
+
+    const post = { Value: value };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "PUT",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    return response.ok;
+  }
 }

@@ -19,16 +19,66 @@
                 <v-row>
                   <v-col cols="2">
                     <v-card-text>
-                      <v-text-field
-                        placeholder="Personal message"
-                        v-model="messageValue"
-                        @change="saveMessage"
-                        filled
-                      />
-                      <h3>Homepage: <v-icon v-if="isLoggedInPlayer" class="mr-2 hidden-xs-only float-lg-right">mdi-pencil</v-icon></h3>
+                      <h3>Homepage:
+                        <template>
+                          <v-icon
+                            class="float-lg-right"
+                            @click="homepageEdit.opened = !homepageEdit.opened"
+                            >mdi-pencil</v-icon
+                          >
+                        </template>
+                        <v-dialog
+                          v-model="homepageEdit.opened"
+                          max-width="500px"
+                        >
+                          <v-card>
+                            <v-card-text>
+                              <v-text-field
+                                label="Homepage"
+                                placeholder="Homepage"
+                                v-model="homepageEdit.text"
+                              ></v-text-field>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn text color="primary" @click="saveHomepageInfo">Save</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </h3>
                       <div>{{ homePage ? homePage : "none" }}</div>
-                      <h3>Additional Information: <v-icon v-if="isLoggedInPlayer" class="mr-2 hidden-xs-only float-lg-right">mdi-pencil</v-icon></h3>
-                      <div>{{ savedMessageValue ? savedMessageValue : "none" }}</div>
+                      <h3>Additional Information:
+                        <template>
+                          <v-icon
+                            class="float-lg-right"
+                            @click="
+                              additonalInfoEdit.opened = !additonalInfoEdit.opened
+                            "
+                            >mdi-pencil</v-icon
+                          >
+                        </template>
+                        <v-dialog
+                          v-model="additonalInfoEdit.opened"
+                          max-width="500px"
+                        >
+                          <v-card>
+                            <v-card-text>
+                              <v-text-field
+                                label="Additional Info"
+                                placeholder="Additional Info"
+                                v-model="additonalInfoEdit.text"
+                              ></v-text-field>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn text color="primary" @click="saveAdditionalInfo">Save</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </h3>
+                      <div>
+                        {{ savedMessageValue ? savedMessageValue : "none" }}
+                      </div>
                     </v-card-text>
                   </v-col>
                   <v-col cols="6">
@@ -88,12 +138,17 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
+import {
+  ModeStat,
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+  RaceWinsOnMap
+} from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
-import {PersonalSetting} from "@/store/personalSettings/types";
+import { PersonalSetting } from "@/store/personalSettings/types";
 
 @Component({
   components: {
@@ -106,7 +161,8 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public messageValue = "";
+  public homepageEdit = { opened: false, text: "" };
+  public additonalInfoEdit = { opened: false, text: "" };
 
   public raceHeaders = [
     {
@@ -191,8 +247,14 @@ export default class PlayerView extends Vue {
     this.getMatches(page);
   }
 
-  saveMessage() {
-    this.$store.direct.dispatch.personalSettings.savePersonalSettings(this.messageValue);
+  saveAdditionalInfo() {
+    this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+    this.additonalInfoEdit.opened = false;
+  }
+
+  saveHomepageInfo() {
+    this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+    this.homepageEdit.opened = false;
   }
 
   get totalMatches(): number {

@@ -20,13 +20,22 @@ const mod = {
       commit.SET_PERSONAL_SETTING(response);
     },
 
-    async savePersonalSettings(
+    async saveAditionalInfo(
         context: ActionContext<PersonalSettingsState, RootState>,
         message: string
     ) {
       const { rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.personalSettingsService.setPersonalSettingMessage(message);
+    },
+
+    async saveHomepageInfo(
+        context: ActionContext<PersonalSettingsState, RootState>,
+        message: string
+    ) {
+      const { rootGetters } = moduleActionContext(context, mod);
+
+      await rootGetters.personalSettingsService.setPersonalSettingHomepage(message);
     }
   },
   mutations: {
