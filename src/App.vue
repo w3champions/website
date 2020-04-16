@@ -64,9 +64,6 @@ import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class App extends Vue {
-  public drawer = true;
-  public mini = true;
-  public variant = false;
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
@@ -76,7 +73,14 @@ export default class App extends Vue {
   ];
 
   get blizzardOauthLink(): string {
+    if (this.isLoggedIn) {
+      return this.getPlayerPath(this.battleTag);
+    }
     return "https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=http://localhost:8080/login";
+  }
+
+  private getPlayerPath(playerName: string) {
+    return "/player/" + encodeURIComponent(`${playerName}@${this.$store.direct.state.rankings.gateway}`);
   }
 
   get isLoggedIn(): string {
@@ -87,17 +91,9 @@ export default class App extends Vue {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag?.split("#")[0];
   }
 
-  get enableDarkMode(): boolean {
-    return this.$vuetify.theme.dark;
+  get battleTag(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
-
-  set enableDarkMode(val: boolean) {
-    window.localStorage.setItem("dark", val ? "1" : "0");
-    this.$vuetify.theme.dark = val;
-    this.$store.direct.commit.SET_DARK_MODE(val);
-  }
-
-
 
   private selectedTheme = "human";
 
