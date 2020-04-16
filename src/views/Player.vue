@@ -184,11 +184,7 @@ export default class PlayerView extends Vue {
   }
 
   saveMessage() {
-    const sendMessageOptions = {
-      message: this.changedMessageValue,
-      bearer: this.$store.direct.state.oauth.token.access_token
-    };
-    this.$store.direct.dispatch.personalSettings.savePersonalSettings(sendMessageOptions);
+    this.$store.direct.dispatch.personalSettings.savePersonalSettings(this.changedMessageValue);
   }
 
   get totalMatches(): number {
@@ -221,7 +217,6 @@ export default class PlayerView extends Vue {
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(`${this.profile.name}#${this.profile.battleTag}`);
-    this.changedMessageValue = this.$store.direct.state.personalSettings.personalSettings?.ProfileMessage;
   }
 }
 </script>

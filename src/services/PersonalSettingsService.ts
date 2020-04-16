@@ -1,5 +1,6 @@
 import { API_URL } from "@/main";
 import {PersonalSetting} from "@/store/personalSettings/types";
+import Vue from 'vue';
 
 export default class PersonalSettingsService {
   public async retrievePersonalSetting(
@@ -13,9 +14,10 @@ export default class PersonalSettingsService {
   }
 
   public async setPersonalSettingMessage(
-      bearer: string,
       message: string
   ): Promise<boolean> {
+    const bearer = Vue.cookies.get("BnetAuth")?.toString() ?? "";
+
     const url = `${API_URL}api/personal-settings/profile-message?authentication=${bearer}`;
 
     const post = { Message: message };

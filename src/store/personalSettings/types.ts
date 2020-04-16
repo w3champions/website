@@ -7,9 +7,3 @@ export type PersonalSetting = {
   ProfilePicture: string;
   Id: string;
 }
-
-export type SendMessageOptions = {
-  message: string;
-  bearer: string;
-};
-

@@ -21,6 +21,7 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-class-component": "^7.2.2",
+    "vue-cookies-ts": "^1.5.19",
     "vue-i18n": "^8.15.5",
     "vue-moment": "^4.1.0",
     "vue-property-decorator": "^8.3.0",

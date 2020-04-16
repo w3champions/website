@@ -105,6 +105,14 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
+  mounted() {
+    this.init();
+  }
+
+  private async init() {
+    await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
+  }
+
   created() {
     const t = window.localStorage.getItem("theme");
     if (t && t.length > 0) {

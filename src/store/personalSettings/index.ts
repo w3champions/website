@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import {PersonalSetting, PersonalSettingsState, SendMessageOptions} from "@/store/personalSettings/types";
+import {PersonalSetting, PersonalSettingsState} from "@/store/personalSettings/types";
 
 const mod = {
   namespaced: true,
@@ -22,11 +22,11 @@ const mod = {
 
     async savePersonalSettings(
         context: ActionContext<PersonalSettingsState, RootState>,
-        options: SendMessageOptions
+        message: string
     ) {
       const { rootGetters } = moduleActionContext(context, mod);
 
-      await rootGetters.personalSettingsService.setPersonalSettingMessage(options.bearer, options.message);
+      await rootGetters.personalSettingsService.setPersonalSettingMessage(message);
     }
   },
   mutations: {
