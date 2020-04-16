@@ -14,6 +14,7 @@ const mod = {
       battleTag: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
+      commit.SET_PERSONAL_SETTING({} as PersonalSetting);
 
       const response = await rootGetters.personalSettingsService.retrievePersonalSetting(battleTag);
 

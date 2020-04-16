@@ -22,6 +22,7 @@
                       <h3>Homepage:
                         <template>
                           <v-icon
+                            v-if="isLoggedInPlayer"
                             class="float-lg-right"
                             @click="homepageEdit.opened = !homepageEdit.opened"
                             >mdi-pencil</v-icon
@@ -50,6 +51,7 @@
                       <h3>Additional Information:
                         <template>
                           <v-icon
+                            v-if="isLoggedInPlayer"
                             class="float-lg-right"
                             @click="
                               additonalInfoEdit.opened = !additonalInfoEdit.opened
