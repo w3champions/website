@@ -12,7 +12,7 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn text tile class="button-margin" :href="blizzardOauthLink">
+      <v-btn text tile class="button-margin" @click="loginOrGoToProfile">
         <v-icon v-if="!isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
         <v-icon v-if="isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
         <span v-if="isLoggedIn" class="mr-2 hidden-xs-only">{{ loginName }}</span>
@@ -61,6 +61,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import {REDIRECT_URL} from "@/main";
 
 @Component({})
 export default class App extends Vue {
@@ -72,11 +73,19 @@ export default class App extends Vue {
     { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" },
   ];
 
-  get blizzardOauthLink(): string {
+  loginOrGoToProfile() {
     if (this.isLoggedIn) {
-      return this.getPlayerPath(this.battleTag);
+      this.openPlayerProfile();
+    } else {
+      location.href =
+        `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
     }
-    return "https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=http://localhost:8080/login";
+  }
+
+  public openPlayerProfile() {
+    this.$router.push({
+      path: this.getPlayerPath(this.battleTag)
+    });
   }
 
   private getPlayerPath(playerName: string) {
