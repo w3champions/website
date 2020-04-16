@@ -15,22 +15,22 @@
             <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
             <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
             <v-tab-item :value="'tab-profile'">
-              <v-card-title>Stats</v-card-title>
               <v-card-text v-if="!loadingProfile">
                 <v-row>
                   <v-col cols="2">
-                    <v-card-text >
+                    <v-card-text>
                       <v-text-field
                         placeholder="Personal message"
-                        @change="changeMessageValue"
-                        @focusout="saveMessage"
+                        v-model="messageValue"
+                        @change="saveMessage"
                         filled
-                        :readonly="!isLoggedInPlayer"
                       />
+                      <h3>Homepage: <v-icon v-if="isLoggedInPlayer" class="mr-2 hidden-xs-only float-lg-right">mdi-pencil</v-icon></h3>
+                      <div>{{ homePage ? homePage : "none" }}</div>
+                      <h3>Additional Information: <v-icon v-if="isLoggedInPlayer" class="mr-2 hidden-xs-only float-lg-right">mdi-pencil</v-icon></h3>
+                      <div>{{ savedMessageValue ? savedMessageValue : "none" }}</div>
                     </v-card-text>
                   </v-col>
-                </v-row>
-                <v-row>
                   <v-col cols="6">
                     <h4>Statistics by Game Mode</h4>
                     <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
@@ -106,7 +106,7 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public changedMessageValue = "";
+  public messageValue = "";
 
   public raceHeaders = [
     {
@@ -155,6 +155,10 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.personalSettings.personalSettings;
   }
 
+  get verifiedBtag(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+  }
+
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
   }
@@ -175,16 +179,20 @@ export default class PlayerView extends Vue {
     return this.id;
   }
 
+  get savedMessageValue(): string {
+    return this.personalSettings.profileMessage;
+  }
+
+  get homePage(): string {
+    return this.personalSettings.homePage;
+  }
+
   onPageChanged(page: number) {
     this.getMatches(page);
   }
 
-  changeMessageValue(value: string) {
-    this.changedMessageValue = value;
-  }
-
   saveMessage() {
-    this.$store.direct.dispatch.personalSettings.savePersonalSettings(this.changedMessageValue);
+    this.$store.direct.dispatch.personalSettings.savePersonalSettings(this.messageValue);
   }
 
   get totalMatches(): number {
@@ -192,10 +200,7 @@ export default class PlayerView extends Vue {
   }
 
   get isLoggedInPlayer(): boolean {
-    return (
-      this.$store.direct.state.oauth.blizzardVerifiedBtag ==
-      `${this.profile.name}#${this.profile.battleTag}`
-    );
+    return this.verifiedBtag === this.battleTag.split("@")[0];
   }
 
   get matches(): Match[] {
@@ -216,7 +221,7 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(`${this.profile.name}#${this.profile.battleTag}`);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
   }
 }
 </script>

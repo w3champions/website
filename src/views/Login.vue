@@ -19,7 +19,7 @@ export default class LoginView extends Vue {
   }
 
   get bearer(): string {
-    return this.$store.direct.state.oauth.token?.access_token;
+    return this.$store.direct.state.oauth.token;
   }
 
   get account(): string {

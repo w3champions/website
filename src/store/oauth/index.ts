@@ -1,14 +1,14 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { BlizzardToken, OauthState } from "@/store/oauth/types";
+import { OauthState } from "@/store/oauth/types";
 
 const mod = {
   namespaced: true,
   state: {
     code: "",
     blizzardVerifiedBtag: "",
-    token: {} as BlizzardToken
+    token: ""
   } as OauthState,
   actions: {
     async authorizeWithCode(
@@ -18,11 +18,12 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
-      await rootGetters.oauthService.saveAuthToken(bearer);
-      commit.SET_BEARER(bearer);
+      commit.SET_BEARER(bearer.access_token);
 
       const profileName = await rootGetters.oauthService.getProfileName(bearer.access_token);
       commit.SET_PROFILE_NAME(profileName);
+
+      await rootGetters.oauthService.saveAuthToken({ blizzardVerifiedBtag: profileName, expiresIn: bearer.expires_in, accesToken: bearer.access_token });
     },
     async loadAuthCodeToState(
         context: ActionContext<OauthState, RootState>
@@ -30,11 +31,12 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.loadAuthCookie();
-      commit.SET_BEARER(bearer);
+      commit.SET_BEARER(bearer.accesToken);
+      commit.SET_PROFILE_NAME(bearer.blizzardVerifiedBtag);
     }
   },
   mutations: {
-    SET_BEARER(state: OauthState, token: BlizzardToken) {
+    SET_BEARER(state: OauthState, token: string) {
       state.token = token;
     },
     SET_PROFILE_NAME(state: OauthState, btag: string) {

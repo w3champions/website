@@ -3,7 +3,8 @@ export type PersonalSettingsState = {
 };
 
 export type PersonalSetting = {
-  ProfileMessage: string;
-  ProfilePicture: string;
-  Id: string;
+  profileMessage: string;
+  homePage: string;
+  profilePicture: string;
+  id: string;
 }

@@ -14,14 +14,14 @@ export default class PersonalSettingsService {
   }
 
   public async setPersonalSettingMessage(
-      message: string
+      value: string
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
     const cookie = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/profile-message?authentication=${cookie.access_token}`;
+    const url = `${API_URL}api/personal-settings/profile-message?authentication=${cookie.accesToken}`;
 
-    const post = { Message: message };
+    const post = { Value: value };
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "PUT",
