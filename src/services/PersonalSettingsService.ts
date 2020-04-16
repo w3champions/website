@@ -1,7 +1,6 @@
 import { API_URL } from "@/main";
 import {PersonalSetting} from "@/store/personalSettings/types";
-import Vue from 'vue';
-import {BlizzardToken} from "@/store/oauth/types";
+import AuthorizationService from "@/services/AuthorizationService";
 
 export default class PersonalSettingsService {
   public async retrievePersonalSetting(
@@ -17,7 +16,8 @@ export default class PersonalSettingsService {
   public async setPersonalSettingMessage(
       message: string
   ): Promise<boolean> {
-    const cookie =  Vue.cookies.get("BnetAuth") as BlizzardToken ?? {} as BlizzardToken;
+    const authorizationService = new AuthorizationService();
+    const cookie = await authorizationService.loadAuthCookie();
 
     const url = `${API_URL}api/personal-settings/profile-message?authentication=${cookie.access_token}`;
 
