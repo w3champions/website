@@ -161,8 +161,8 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public homepageEdit = { opened: false, text: "" };
-  public additonalInfoEdit = { opened: false, text: "" };
+  public homepageEdit = { opened: false, text: this.personalSettings.homePage };
+  public additonalInfoEdit = { opened: false, text: this.personalSettings.profileMessage };
 
   public raceHeaders = [
     {
