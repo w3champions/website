@@ -247,13 +247,15 @@ export default class PlayerView extends Vue {
     this.getMatches(page);
   }
 
-  saveAdditionalInfo() {
-    this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+  async saveAdditionalInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
     this.additonalInfoEdit.opened = false;
   }
 
-  saveHomepageInfo() {
-    this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+  async saveHomepageInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
     this.homepageEdit.opened = false;
   }
 
