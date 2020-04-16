@@ -12,8 +12,10 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn class="button-margin" :href="blizzardOauthLink">
-        <v-icon class="mr-2 hidden-xs-only">mdi-account</v-icon>
+      <v-btn text tile class="button-margin" :href="blizzardOauthLink">
+        <v-icon v-if="!isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
+        <span v-if="isLoggedIn" class="mr-2 hidden-xs-only">{{ loginName }}</span>
       </v-btn>
 
       <v-menu offset-y>
@@ -77,6 +79,14 @@ export default class App extends Vue {
     return "https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=http://localhost:8080/login";
   }
 
+  get isLoggedIn(): string {
+    return this.$store.direct.state.oauth.token;
+  }
+
+  get loginName(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag?.split("#")[0];
+  }
+
   get enableDarkMode(): boolean {
     return this.$vuetify.theme.dark;
   }
@@ -86,6 +96,8 @@ export default class App extends Vue {
     this.$vuetify.theme.dark = val;
     this.$store.direct.commit.SET_DARK_MODE(val);
   }
+
+
 
   private selectedTheme = "human";
 
