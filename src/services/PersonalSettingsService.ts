@@ -1,6 +1,7 @@
 import { API_URL } from "@/main";
 import {PersonalSetting} from "@/store/personalSettings/types";
 import Vue from 'vue';
+import {BlizzardToken} from "@/store/oauth/types";
 
 export default class PersonalSettingsService {
   public async retrievePersonalSetting(
@@ -16,9 +17,9 @@ export default class PersonalSettingsService {
   public async setPersonalSettingMessage(
       message: string
   ): Promise<boolean> {
-    const bearer = Vue.cookies.get("BnetAuth")?.toString() ?? "";
+    const cookie =  Vue.cookies.get("BnetAuth") as BlizzardToken ?? {} as BlizzardToken;
 
-    const url = `${API_URL}api/personal-settings/profile-message?authentication=${bearer}`;
+    const url = `${API_URL}api/personal-settings/profile-message?authentication=${cookie.access_token}`;
 
     const post = { Message: message };
     const data = JSON.stringify(post);
