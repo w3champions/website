@@ -34,15 +34,19 @@
                         >
                           <v-card>
                             <v-card-text>
-                              <v-text-field
-                                label="Homepage"
-                                placeholder="Homepage"
-                                v-model="homepageEdit.text"
-                              ></v-text-field>
+                              <v-form v-model="homepageEdit.savable">
+                                <v-text-field
+                                  counter="50"
+                                  :rules="[rules.maxLength(50)]"
+                                  label="Homepage"
+                                  placeholder="Homepage"
+                                  v-model="homepageEdit.text"
+                                ></v-text-field>
+                              </v-form>
                             </v-card-text>
                             <v-card-actions>
                               <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="saveHomepageInfo">Save</v-btn>
+                              <v-btn :disabled="!homepageEdit.savable" text color="primary" @click="saveHomepageInfo">Save</v-btn>
                             </v-card-actions>
                           </v-card>
                         </v-dialog>
@@ -65,15 +69,19 @@
                         >
                           <v-card>
                             <v-card-text>
-                              <v-text-field
-                                label="Additional Info"
-                                placeholder="Additional Info"
-                                v-model="additonalInfoEdit.text"
-                              ></v-text-field>
+                              <v-form v-model="additonalInfoEdit.savable">
+                                <v-textarea
+                                  counter="300"
+                                  :rules="[rules.maxLength(300)]"
+                                  label="Additional Info"
+                                  placeholder="Additional Info"
+                                  v-model="additonalInfoEdit.text"
+                                ></v-textarea>
+                              </v-form>
                             </v-card-text>
                             <v-card-actions>
                               <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="saveAdditionalInfo">Save</v-btn>
+                              <v-btn :disabled="!additonalInfoEdit.savable" text color="primary" @click="saveAdditionalInfo">Save</v-btn>
                             </v-card-actions>
                           </v-card>
                         </v-dialog>
@@ -163,8 +171,12 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public homepageEdit = { opened: false, text: this.personalSettings.homePage };
-  public additonalInfoEdit = { opened: false, text: this.personalSettings.profileMessage };
+  public homepageEdit = { opened: false, text: this.personalSettings.homePage, savable: true };
+  public additonalInfoEdit = { opened: false, text: this.personalSettings.profileMessage, form: true };
+
+  public rules = {
+    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
+  };
 
   public raceHeaders = [
     {
