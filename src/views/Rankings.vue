@@ -360,7 +360,7 @@ export default class RankingsView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(`${playerName}@`);
+    return "/player/" + encodeURIComponent(`${playerName}`);
   }
 
   public openProfileInNewTab(playerName: string) {

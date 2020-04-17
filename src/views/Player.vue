@@ -47,8 +47,8 @@
                           </v-card>
                         </v-dialog>
                       </h3>
-                      <div>{{ homePage ? homePage : "none" }}</div>
-                      <h3>Additional Information:
+                      <div>{{ homePage ? homePage : "-" }}</div>
+                      <h3>About:
                         <template>
                           <v-icon
                             v-if="isLoggedInPlayer"
@@ -79,7 +79,7 @@
                         </v-dialog>
                       </h3>
                       <div>
-                        {{ savedMessageValue ? savedMessageValue : "none" }}
+                        {{ savedMessageValue ? savedMessageValue : "-" }}
                       </div>
                     </v-card-text>
                   </v-col>
