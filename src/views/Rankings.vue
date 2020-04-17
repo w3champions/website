@@ -108,9 +108,7 @@
               :items="rankings"
               :options.sync="options"
               :server-items-length="totalPlayers"
-              :footer-props="{
-                showFirstLastPage: true
-              }"
+              hide-default-footer
               @click:row="onRowClicked"
             >
               <template v-slot:body="{ items }">
