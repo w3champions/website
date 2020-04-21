@@ -23,7 +23,7 @@ const mod = {
       const profileName = await rootGetters.oauthService.getProfileName(bearer.access_token);
       commit.SET_PROFILE_NAME(profileName);
 
-      await rootGetters.oauthService.saveAuthToken({ blizzardVerifiedBtag: profileName, expiresIn: bearer.expires_in, accesToken: bearer.access_token });
+      await rootGetters.oauthService.saveAuthToken(bearer);
     },
     async loadAuthCodeToState(
         context: ActionContext<OauthState, RootState>
@@ -31,8 +31,16 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.loadAuthCookie();
-      commit.SET_BEARER(bearer.accesToken);
-      commit.SET_PROFILE_NAME(bearer.blizzardVerifiedBtag);
+      commit.SET_BEARER(bearer);
+    },
+    async loadBlizzardBtag(
+        context: ActionContext<OauthState, RootState>,
+        bearerToken: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const profileName = await rootGetters.oauthService.getProfileName(bearerToken);
+      commit.SET_PROFILE_NAME(profileName);
     }
   },
   mutations: {

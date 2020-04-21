@@ -17,9 +17,9 @@ export default class PersonalSettingsService {
       value: string
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
-    const cookie = await authorizationService.loadAuthCookie();
+    const authToken = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/profile-message?authentication=${cookie.accesToken}`;
+    const url = `${API_URL}api/personal-settings/profile-message?authentication=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);
@@ -38,9 +38,9 @@ export default class PersonalSettingsService {
       value: string
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
-    const cookie = await authorizationService.loadAuthCookie();
+    const authToken = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/home-page?authentication=${cookie.accesToken}`;
+    const url = `${API_URL}api/personal-settings/home-page?authentication=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);

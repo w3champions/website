@@ -13,9 +13,9 @@
       </v-btn>
 
       <v-btn text tile class="button-margin" @click="loginOrGoToProfile">
-        <v-icon v-if="!isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
-        <v-icon v-if="isLoggedIn" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
-        <span v-if="isLoggedIn" class="mr-2 hidden-xs-only">{{ loginName }}</span>
+        <v-icon v-if="!authCode" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="authCode" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
+        <span v-if="authCode" class="mr-2 hidden-xs-only">{{ loginName }}</span>
       </v-btn>
 
       <v-menu offset-y>
@@ -74,7 +74,7 @@ export default class App extends Vue {
   ];
 
   loginOrGoToProfile() {
-    if (this.isLoggedIn) {
+    if (this.authCode) {
       this.openPlayerProfile();
     } else {
       location.href =
@@ -92,7 +92,7 @@ export default class App extends Vue {
     return "/player/" + encodeURIComponent(`${playerName}@${this.$store.direct.state.rankings.gateway}`);
   }
 
-  get isLoggedIn(): string {
+  get authCode(): string {
     return this.$store.direct.state.oauth.token;
   }
 
@@ -128,6 +128,7 @@ export default class App extends Vue {
 
   private async init() {
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
+    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
   }
 
   created() {

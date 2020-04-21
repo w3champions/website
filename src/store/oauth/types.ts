@@ -9,9 +9,3 @@ export type BlizzardToken = {
   token_type: string,
   expires_in: number
 }
-
-export type AuthDetails = {
-  accesToken: string,
-  blizzardVerifiedBtag: string,
-  expiresIn: number
-}

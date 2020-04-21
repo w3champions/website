@@ -1,4 +1,4 @@
-import {AuthDetails, BlizzardToken} from "@/store/oauth/types";
+import { BlizzardToken} from "@/store/oauth/types";
 import {API_URL, REDIRECT_URL} from "@/main";
 import Vue from 'vue';
 
@@ -16,13 +16,13 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public async loadAuthCookie(): Promise<AuthDetails> {
+  public async loadAuthCookie(): Promise<string> {
     const cookie =  Vue.cookies.get("BnetAuth");
-    return cookie as AuthDetails ?? {} as AuthDetails;
+    return cookie as string ?? "";
   }
 
-  public async saveAuthToken(token: AuthDetails) {
-    Vue.cookies.set("BnetAuth", token, { expires: token.expiresIn });
+  public async saveAuthToken(token: BlizzardToken) {
+    Vue.cookies.set("BnetAuth", token.access_token, { expires: token.expires_in });
   }
 
   public async getProfileName(bearer: string): Promise<string> {

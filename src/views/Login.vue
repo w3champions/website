@@ -14,8 +14,13 @@ export default class LoginView extends Vue {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
+  get authCode(): string {
+    return this.$store.direct.state.oauth.token;
+  }
+
   private async init() {
     await this.$store.direct.dispatch.oauth.authorizeWithCode(this.code);
+    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
     this.openPlayerProfile(this.account);
   }
 
