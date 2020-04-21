@@ -108,9 +108,7 @@
               :items="rankings"
               :options.sync="options"
               :server-items-length="totalPlayers"
-              :footer-props="{
-                showFirstLastPage: true
-              }"
+              hide-default-footer
               @click:row="onRowClicked"
             >
               <template v-slot:body="{ items }">
@@ -362,7 +360,7 @@ export default class RankingsView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(playerName);
+    return "/player/" + encodeURIComponent(`${playerName}`);
   }
 
   public openProfileInNewTab(playerName: string) {

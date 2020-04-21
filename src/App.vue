@@ -12,6 +12,12 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
+      <v-btn text tile class="button-margin" @click="loginOrGoToProfile">
+        <v-icon v-if="!authCode" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="authCode" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
+        <span v-if="authCode" class="mr-2 hidden-xs-only">{{ loginName }}</span>
+      </v-btn>
+
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on">
@@ -55,28 +61,47 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import {REDIRECT_URL} from "@/main";
 
 @Component({})
 export default class App extends Vue {
-  public drawer = true;
-  public mini = true;
-  public variant = false;
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     { title: "Statistics", icon: "mdi-chart-areaspline", to: "/OverallStatistics" },
-    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" }
+    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" },
   ];
 
-  get enableDarkMode(): boolean {
-    return this.$vuetify.theme.dark;
+  loginOrGoToProfile() {
+    if (this.authCode) {
+      this.openPlayerProfile();
+    } else {
+      location.href =
+        `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
+    }
   }
 
-  set enableDarkMode(val: boolean) {
-    window.localStorage.setItem("dark", val ? "1" : "0");
-    this.$vuetify.theme.dark = val;
-    this.$store.direct.commit.SET_DARK_MODE(val);
+  public openPlayerProfile() {
+    this.$router.push({
+      path: this.getPlayerPath(this.battleTag)
+    });
+  }
+
+  private getPlayerPath(playerName: string) {
+    return "/player/" + encodeURIComponent(`${playerName}@${this.$store.direct.state.rankings.gateway}`);
+  }
+
+  get authCode(): string {
+    return this.$store.direct.state.oauth.token;
+  }
+
+  get loginName(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag?.split("#")[0];
+  }
+
+  get battleTag(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
   private selectedTheme = "human";
@@ -95,6 +120,15 @@ export default class App extends Vue {
     this.selectedTheme = val;
     this.$vuetify.theme.dark = this.isDarkTheme;
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
+  }
+
+  mounted() {
+    this.init();
+  }
+
+  private async init() {
+    await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
+    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
   }
 
   created() {

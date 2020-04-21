@@ -15,10 +15,83 @@
             <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
             <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
             <v-tab-item :value="'tab-profile'">
-              <v-card-title>Stats</v-card-title>
               <v-card-text v-if="!loadingProfile">
                 <v-row>
-                  <v-col cols="8">
+                  <v-col cols="2">
+                    <v-card-text>
+                      <h3>Homepage:
+                        <template>
+                          <v-icon
+                            v-if="isLoggedInPlayer"
+                            class="float-lg-right"
+                            @click="homepageEdit.opened = !homepageEdit.opened"
+                            >mdi-pencil</v-icon
+                          >
+                        </template>
+                        <v-dialog
+                          v-model="homepageEdit.opened"
+                          max-width="500px"
+                        >
+                          <v-card>
+                            <v-card-text>
+                              <v-form v-model="homepageEdit.savable">
+                                <v-text-field
+                                  counter="50"
+                                  :rules="[rules.maxLength(50)]"
+                                  label="Homepage"
+                                  placeholder="Homepage"
+                                  v-model="homepageEdit.text"
+                                ></v-text-field>
+                              </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn :disabled="!homepageEdit.savable" text color="primary" @click="saveHomepageInfo">Save</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </h3>
+                      <div>{{ homePage ? homePage : "-" }}</div>
+                      <h3>About:
+                        <template>
+                          <v-icon
+                            v-if="isLoggedInPlayer"
+                            class="float-lg-right"
+                            @click="
+                              additonalInfoEdit.opened = !additonalInfoEdit.opened
+                            "
+                            >mdi-pencil</v-icon
+                          >
+                        </template>
+                        <v-dialog
+                          v-model="additonalInfoEdit.opened"
+                          max-width="500px"
+                        >
+                          <v-card>
+                            <v-card-text>
+                              <v-form v-model="additonalInfoEdit.savable">
+                                <v-textarea
+                                  counter="300"
+                                  :rules="[rules.maxLength(300)]"
+                                  label="Additional Info"
+                                  placeholder="Additional Info"
+                                  v-model="additonalInfoEdit.text"
+                                ></v-textarea>
+                              </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn :disabled="!additonalInfoEdit.savable" text color="primary" @click="saveAdditionalInfo">Save</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </h3>
+                      <div>
+                        {{ savedMessageValue ? savedMessageValue : "-" }}
+                      </div>
+                    </v-card-text>
+                  </v-col>
+                  <v-col cols="6">
                     <h4>Statistics by Game Mode</h4>
                     <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
                   </v-col>
@@ -75,11 +148,17 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
+import {
+  ModeStat,
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+  RaceWinsOnMap
+} from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
+import { PersonalSetting } from "@/store/personalSettings/types";
 
 @Component({
   components: {
@@ -92,6 +171,12 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
+  public homepageEdit = { opened: false, text: this.personalSettings.homePage, savable: true };
+  public additonalInfoEdit = { opened: false, text: this.personalSettings.profileMessage, form: true };
+
+  public rules = {
+    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
+  };
 
   public raceHeaders = [
     {
@@ -136,6 +221,14 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
+  get personalSettings(): PersonalSetting {
+    return this.$store.direct.state.personalSettings.personalSettings;
+  }
+
+  get verifiedBtag(): string {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+  }
+
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
   }
@@ -156,12 +249,36 @@ export default class PlayerView extends Vue {
     return this.id;
   }
 
+  get savedMessageValue(): string {
+    return this.personalSettings.profileMessage;
+  }
+
+  get homePage(): string {
+    return this.personalSettings.homePage;
+  }
+
   onPageChanged(page: number) {
     this.getMatches(page);
   }
 
+  async saveAdditionalInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
+    this.additonalInfoEdit.opened = false;
+  }
+
+  async saveHomepageInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
+    this.homepageEdit.opened = false;
+  }
+
   get totalMatches(): number {
     return this.$store.direct.state.player.totalMatches;
+  }
+
+  get isLoggedInPlayer(): boolean {
+    return this.verifiedBtag === this.battleTag.split("@")[0];
   }
 
   get matches(): Match[] {
@@ -182,6 +299,7 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
   }
 }
 </script>

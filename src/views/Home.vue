@@ -202,7 +202,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { Ranking } from "../store/ranking/types";
+import { Ranking } from "@/store/ranking/types";
 
 @Component({})
 export default class HomeView extends Vue {
