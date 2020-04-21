@@ -1,3 +1,17 @@
+<template>
+  <v-container>
+    <v-card class="text-center">
+      <v-progress-circular
+        :size="100"
+        color="primary"
+        indeterminate
+        class="loader"
+      >
+        <div class="inner-text">Logging you in...</div>
+      </v-progress-circular>
+    </v-card>
+  </v-container>
+</template>
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
@@ -31,7 +45,25 @@ export default class LoginView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(`${playerName}@${this.$store.direct.state.rankings.gateway}`);
+    return (
+      "/player/" +
+      encodeURIComponent(
+        `${playerName}@${this.$store.direct.state.rankings.gateway}`
+      )
+    );
   }
 }
 </script>
+<style type="text/css" scoped>
+.inner-text {
+  margin: 20px;
+  text-align: center;
+}
+
+.loader {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 180px;
+  margin-bottom: 180px;
+}
+</style>
