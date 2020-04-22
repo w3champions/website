@@ -9,7 +9,7 @@
     <v-dialog max-width="1400px" v-model="dialogOpened">
       <v-card>
         <v-card-title class="headline">Choose a picture</v-card-title>
-        <v-card-text style="margin-left: auto; margin-right: auto">
+        <v-card-text>
           <v-row v-for="race in races" :key="race">
             <v-col cols="1" v-for="nePic in PicNumbers" :key="nePic">
               <v-card-text
@@ -43,7 +43,7 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.HUMAN,
     ERaceEnum.ORC,
     ERaceEnum.NIGHT_ELF,
-    // ERaceEnum.UNDEAD,
+    ERaceEnum.UNDEAD,
     // ERaceEnum.RANDOM
   ];
   public PicNumbers = Array.from(Array(11).keys());
