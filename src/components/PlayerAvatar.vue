@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card-text
+      style="cursor: pointer"
       @click.stop="openDialog"
       class="player-avatar text-center"
       :style="{ 'background-image': 'url(' + racePicture + ')' }"
@@ -16,7 +17,7 @@
                 <template v-slot:activator="{ on }">
                   <v-card-text
                     v-on="on"
-                    :class="enabledIfEnoughWins(race, number) ? 'player-avatar-choosing' : 'player-avatar-choosing-disabled player-avatar-choosing'"
+                    :class="getCorrectClasses(race, number)"
                     @click="isLoggedInPlayer ? savePicture(race, number) : null"
                     :style="{
                       'background-image': 'url(' + picture(race, number) + ')'
@@ -63,6 +64,17 @@ export default class PlayerAvatar extends Vue {
       "_" +
       this.icon +
       ".png");
+  }
+
+  getCorrectClasses(race: ERaceEnum, iconId: number) {
+    const classes = ["player-avatar-choosing"];
+    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(race, iconId))
+      classes.push("player-avatar-choosing-clickable");
+
+    if (!this.enabledIfEnoughWins(race, iconId))
+      classes.push("player-avatar-choosing-disabled");
+
+    return classes;
   }
 
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
@@ -135,6 +147,10 @@ export default class PlayerAvatar extends Vue {
   height: 100px;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.player-avatar-choosing-clickable {
+  cursor: pointer;
 }
 
 .player-avatar-choosing-disabled {
