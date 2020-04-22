@@ -1,5 +1,8 @@
 <template>
-  <img :src="raceIcon" :alt="race" />
+  <div
+    class="player-avatar text-center"
+    :style="{'background-image': 'url(' + racePicture + ')'}"
+  />
 </template>
 
 <script lang="ts">
@@ -10,20 +13,23 @@ import { ERaceEnum } from "@/store/typings";
 @Component({})
 export default class PlayerAvatar extends Vue {
   @Prop() race!: ERaceEnum;
-  @Prop() wins!: number;
+  @Prop() icon!: number;
 
-  get raceIcon() {
-    const images = require.context('../assets/raceAvatars/', false, /\.png$/);
-    return images('./' + ERaceEnum[this.race] + "_" + this.parseWins(this.wins) + ".png")
+  get racePicture() {
+    return require('../assets/raceAvatars/' + ERaceEnum[this.race] + '_' + this.icon + '.png');
   }
 
   private parseWins(wins: number) {
-    if (wins > 1000) return 6;
-    if (wins > 500) return 5;
-    if (wins > 200) return 4;
-    if (wins > 75) return 3;
-    if (wins > 20) return 2;
-    if (wins > 5) return 1;
+    if (wins >= 1200) return 10;
+    if (wins >= 900) return 9;
+    if (wins >= 600) return 8;
+    if (wins >= 450) return 7;
+    if (wins >= 300) return 6;
+    if (wins >= 200) return 5;
+    if (wins >= 120) return 4;
+    if (wins >= 50) return 3;
+    if (wins >= 20) return 2;
+    if (wins >= 5) return 1;
 
     return 0;
   }
@@ -32,9 +38,12 @@ export default class PlayerAvatar extends Vue {
 
 <style lang="scss" scoped>
 .player-avatar {
-  width: 90px;
-  height: 90px;
-  background-position: center;
-  background-size: cover;
+  padding-top: 100%;
+  padding-bottom: 20px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 </style>

@@ -18,7 +18,11 @@
               <v-card-text v-if="!loadingProfile">
                 <v-row>
                   <v-col cols="2">
-                    <v-card-text>
+                    <v-card-text style="padding-top: 0 !important;">
+                      <player-avatar
+                        :icon="this.personalSettings.profilePicture.pictureId"
+                        :race="this.personalSettings.profilePicture.race"
+                      />
                       <h3>Homepage:
                         <template>
                           <v-icon
@@ -159,9 +163,11 @@ import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
 import { PersonalSetting } from "@/store/personalSettings/types";
+import PlayerAvatar from "@/components/PlayerAvatar.vue";
 
 @Component({
   components: {
+    PlayerAvatar,
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid
