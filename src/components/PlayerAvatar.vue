@@ -11,11 +11,12 @@
         <v-card-title class="headline">Choose a picture</v-card-title>
         <v-card-text>
           <v-row v-for="race in races" :key="race">
-            <v-col cols="1" v-for="nePic in PicNumbers" :key="nePic">
+            <v-col cols="1" v-for="number in PicNumbers" :key="number">
               <v-card-text
                 class="player-avatar-choosing"
+                @click="savePicture(race, number)"
                 :style="{
-                  'background-image': 'url(' + picture(race, nePic) + ')'
+                  'background-image': 'url(' + picture(race, number) + ')'
                 }"
               />
             </v-col>
@@ -67,10 +68,10 @@ export default class PlayerAvatar extends Vue {
     this.dialogOpened = true;
   }
 
-  async savePicture() {
+  async savePicture(race: ERaceEnum, picture: number) {
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
-      race: ERaceEnum.NIGHT_ELF,
-      pictureId: 3
+      race: race,
+      pictureId: picture
     });
 
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(
