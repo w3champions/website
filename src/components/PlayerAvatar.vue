@@ -38,13 +38,12 @@ export default class PlayerAvatar extends Vue {
   @Prop() btag!: string;
 
   public dialogOpened = false;
-  public racesEnums = ERaceEnum;
   public races = [
     ERaceEnum.HUMAN,
     ERaceEnum.ORC,
     ERaceEnum.NIGHT_ELF,
     ERaceEnum.UNDEAD,
-    // ERaceEnum.RANDOM
+    ERaceEnum.RANDOM
   ];
   public PicNumbers = Array.from(Array(11).keys());
 
