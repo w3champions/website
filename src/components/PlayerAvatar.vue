@@ -12,13 +12,19 @@
         <v-card-text>
           <v-row v-for="race in races" :key="race">
             <v-col cols="1" v-for="number in PicNumbers" :key="number">
-              <v-card-text
-                class="player-avatar-choosing"
-                @click="savePicture(race, number)"
-                :style="{
-                  'background-image': 'url(' + picture(race, number) + ')'
-                }"
-              />
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-card-text
+                    v-on="on"
+                    :class="enabledIfEnoughWins(race, number) ? 'player-avatar-choosing' : 'player-avatar-choosing-disabled player-avatar-choosing'"
+                    @click="isLoggedInPlayer ? savePicture(race, number) : null"
+                    :style="{
+                      'background-image': 'url(' + picture(race, number) + ')'
+                    }"
+                  />
+                </template>
+                <span>{{ winsOf(winsOfRace(race), number) }}</span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </v-card-text>
@@ -31,12 +37,15 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import { RaceStat } from "@/store/player/types";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
   @Prop() race!: ERaceEnum;
   @Prop() icon!: number;
   @Prop() btag!: string;
+  @Prop() isLoggedInPlayer!: boolean;
+  @Prop() wins!: RaceStat[];
 
   public dialogOpened = false;
   public races = [
@@ -56,6 +65,35 @@ export default class PlayerAvatar extends Vue {
       ".png");
   }
 
+  enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
+    const wins = this.winsOfRace(race);
+    const neededWins = this.winsTransformed(iconId);
+    return wins >= neededWins;
+  }
+
+  winsOfRace(race: ERaceEnum) {
+    return this.wins.filter(w => w.race == race)[0].wins;
+  }
+
+  winsOf(wins: number, iconId: number) {
+    return `${wins}/${this.winsTransformed(iconId)}`;
+  }
+
+  private winsTransformed(iconId: number) {
+    if (iconId == 0) return 0;
+    if (iconId == 1) return 5;
+    if (iconId == 2) return 20;
+    if (iconId == 3) return 50;
+    if (iconId == 4) return 120;
+    if (iconId == 5) return 200;
+    if (iconId == 6) return 300;
+    if (iconId == 7) return 450;
+    if (iconId == 8) return 600;
+    if (iconId == 9) return 900;
+    if (iconId == 10) return 1200;
+    return 0;
+  }
+
   picture(race: ERaceEnum, nePic: number) {
     return require("../assets/raceAvatars/" +
       ERaceEnum[race] +
@@ -69,6 +107,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   async savePicture(race: ERaceEnum, picture: number) {
+    if (!this.enabledIfEnoughWins(race, picture)) return;
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
       race: race,
       pictureId: picture
@@ -78,21 +117,6 @@ export default class PlayerAvatar extends Vue {
       this.btag
     );
     this.dialogOpened = false;
-  }
-
-  private parseWins(wins: number) {
-    if (wins >= 1200) return 10;
-    if (wins >= 900) return 9;
-    if (wins >= 600) return 8;
-    if (wins >= 450) return 7;
-    if (wins >= 300) return 6;
-    if (wins >= 200) return 5;
-    if (wins >= 120) return 4;
-    if (wins >= 50) return 3;
-    if (wins >= 20) return 2;
-    if (wins >= 5) return 1;
-
-    return 0;
   }
 }
 </script>
@@ -111,5 +135,11 @@ export default class PlayerAvatar extends Vue {
   height: 100px;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.player-avatar-choosing-disabled {
+  opacity: 0.6;
+  filter: alpha(opacity=40);
+  background-color: #000;
 }
 </style>
