@@ -22,6 +22,7 @@
                       <player-avatar
                         :icon="this.personalRaceIcon"
                         :race="this.personalRace"
+                        :btag="this.battleTag.split('@')[0]"
                       />
                       <h3>Homepage:
                         <template>
