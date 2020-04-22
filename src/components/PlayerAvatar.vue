@@ -1,5 +1,6 @@
 <template>
   <div
+    @click="savePicture"
     class="player-avatar text-center"
     :style="{'background-image': 'url(' + racePicture + ')'}"
   />
@@ -17,6 +18,10 @@ export default class PlayerAvatar extends Vue {
 
   get racePicture() {
     return require('../assets/raceAvatars/' + ERaceEnum[this.race] + '_' + this.icon + '.png');
+  }
+
+  savePicture() {
+    this.$store.direct.dispatch.personalSettings.saveAvatar({ race: ERaceEnum.NIGHT_ELF, pictureId: 3 });
   }
 
   private parseWins(wins: number) {
@@ -41,8 +46,6 @@ export default class PlayerAvatar extends Vue {
   padding-top: 100%;
   padding-bottom: 20px;
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
   background-repeat: no-repeat;
   background-size: contain;
 }

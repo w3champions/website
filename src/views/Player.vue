@@ -20,8 +20,8 @@
                   <v-col cols="2">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
-                        :icon="this.personalSettings.profilePicture.pictureId"
-                        :race="this.personalSettings.profilePicture.race"
+                        :icon="this.personalRaceIcon"
+                        :race="this.personalRace"
                       />
                       <h3>Homepage:
                         <template>
@@ -150,22 +150,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  ModeStat,
-  PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace,
-  RaceWinsOnMap
-} from "@/store/player/types";
-import { EGameMode, ERaceEnum, Match } from "@/store/typings";
-import MatchesGrid from "../components/MatchesGrid.vue";
-import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
-import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
-import { PersonalSetting } from "@/store/personalSettings/types";
-import PlayerAvatar from "@/components/PlayerAvatar.vue";
+  import Vue from "vue";
+  import {Component, Prop, Watch} from "vue-property-decorator";
+  import {ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap} from "@/store/player/types";
+  import {EGameMode, ERaceEnum, Match} from "@/store/typings";
+  import MatchesGrid from "../components/MatchesGrid.vue";
+  import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
+  import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
+  import {PersonalSetting} from "@/store/personalSettings/types";
+  import PlayerAvatar from "@/components/PlayerAvatar.vue";
 
-@Component({
+  @Component({
   components: {
     PlayerAvatar,
     PlayerStatsRaceVersusRaceOnMap,
@@ -221,6 +216,14 @@ export default class PlayerView extends Vue {
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
       r => r.race !== ERaceEnum.RANDOM
     );
+  }
+
+  get personalRaceIcon(): number {
+    return this.personalSettings?.profilePicture?.pictureId ?? 0;
+  }
+
+  get personalRace(): ERaceEnum {
+    return this.personalSettings?.profilePicture?.race ?? ERaceEnum.TOTAL;
   }
 
   get profile(): PlayerProfile {
