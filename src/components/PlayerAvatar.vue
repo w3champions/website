@@ -39,12 +39,11 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import { RaceStat } from "@/store/player/types";
+import { PersonalSetting } from "@/store/personalSettings/types";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
-  @Prop() race!: ERaceEnum;
-  @Prop() icon!: number;
-  @Prop() btag!: string;
+  @Prop() personalSetting!: PersonalSetting;
   @Prop() isLoggedInPlayer!: boolean;
   @Prop() wins!: RaceStat[];
 
@@ -60,9 +59,9 @@ export default class PlayerAvatar extends Vue {
 
   get racePicture() {
     return require("../assets/raceAvatars/" +
-      ERaceEnum[this.race] +
+      ERaceEnum[this.personalRace] +
       "_" +
-      this.icon +
+      this.personalRaceIcon +
       ".png");
   }
 
@@ -77,10 +76,19 @@ export default class PlayerAvatar extends Vue {
     return classes;
   }
 
+  get personalRaceIcon(): number {
+    return this.personalSetting?.profilePicture?.pictureId ?? 0;
+  }
+
+  get personalRace(): ERaceEnum {
+    return this.personalSetting?.profilePicture?.race ?? ERaceEnum.TOTAL;
+  }
+
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
-    const wins = this.winsOfRace(race);
-    const neededWins = this.winsTransformed(iconId);
-    return wins >= neededWins;
+    return (
+      this.personalSetting.pickablePictures?.filter(r => r.race == race)[0]
+        .max >= iconId
+    );
   }
 
   winsOfRace(race: ERaceEnum) {
@@ -91,26 +99,17 @@ export default class PlayerAvatar extends Vue {
     return `${wins}/${this.winsTransformed(iconId)}`;
   }
 
-  private winsTransformed(iconId: number) {
-    if (iconId == 0) return 0;
-    if (iconId == 1) return 5;
-    if (iconId == 2) return 20;
-    if (iconId == 3) return 50;
-    if (iconId == 4) return 120;
-    if (iconId == 5) return 200;
-    if (iconId == 6) return 300;
-    if (iconId == 7) return 450;
-    if (iconId == 8) return 600;
-    if (iconId == 9) return 900;
-    if (iconId == 10) return 1200;
-    return 0;
+  winsTransformed(iconId: number) {
+    return this.personalSetting.pictureRange?.filter(
+      p => p.pictureId == iconId
+    )[0]?.neededWins;
   }
 
-  picture(race: ERaceEnum, nePic: number) {
+  picture(race: ERaceEnum, picId: number) {
     return require("../assets/raceAvatars/" +
       ERaceEnum[race] +
       "_" +
-      nePic +
+      picId +
       ".png");
   }
 

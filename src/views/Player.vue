@@ -20,9 +20,7 @@
                   <v-col cols="2">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
-                        :icon="this.personalRaceIcon"
-                        :race="this.personalRace"
-                        :btag="this.battleTag"
+                        :personal-setting="this.personalSettings"
                         :wins="this.playerWins"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
@@ -224,13 +222,6 @@ export default class PlayerView extends Vue {
   get playerWins() {
     return this.$store.direct.state.player?.playerProfile?.raceStats ?? [];
   }
-  get personalRaceIcon(): number {
-    return this.personalSettings?.profilePicture?.pictureId ?? 0;
-  }
-
-  get personalRace(): ERaceEnum {
-    return this.personalSettings?.profilePicture?.race ?? ERaceEnum.TOTAL;
-  }
 
   get profile(): PlayerProfile {
     return this.$store.direct.state.player.playerProfile;
@@ -314,7 +305,7 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
   }
 }
 </script>
