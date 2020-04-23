@@ -12,97 +12,36 @@
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
-            <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
-            <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
+            <v-tab class="profileTab" :href="`#tab-matches`"
+              >Match History</v-tab
+            >
+            <v-tab class="profileTab" :href="`#tab-statistics`"
+              >Statistics</v-tab
+            >
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
                 <v-row>
                   <v-col cols="2">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
-                        :personal-setting="this.personalSettings"
                         :wins="this.playerWins"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
-                      <h3>Homepage:
-                        <template>
-                          <v-icon
-                            v-if="isLoggedInPlayer"
-                            class="float-lg-right"
-                            @click="homepageEdit.opened = !homepageEdit.opened"
-                            >mdi-pencil</v-icon
-                          >
-                        </template>
-                        <v-dialog
-                          v-model="homepageEdit.opened"
-                          max-width="500px"
-                        >
-                          <v-card>
-                            <v-card-text>
-                              <v-form v-model="homepageEdit.savable">
-                                <v-text-field
-                                  counter="50"
-                                  :rules="[rules.maxLength(50)]"
-                                  label="Homepage"
-                                  placeholder="Homepage"
-                                  v-model="homepageEdit.text"
-                                ></v-text-field>
-                              </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn :disabled="!homepageEdit.savable" text color="primary" @click="saveHomepageInfo">Save</v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
-                      </h3>
-                      <div>{{ homePage ? homePage : "-" }}</div>
-                      <h3>About:
-                        <template>
-                          <v-icon
-                            v-if="isLoggedInPlayer"
-                            class="float-lg-right"
-                            @click="
-                              additonalInfoEdit.opened = !additonalInfoEdit.opened
-                            "
-                            >mdi-pencil</v-icon
-                          >
-                        </template>
-                        <v-dialog
-                          v-model="additonalInfoEdit.opened"
-                          max-width="500px"
-                        >
-                          <v-card>
-                            <v-card-text>
-                              <v-form v-model="additonalInfoEdit.savable">
-                                <v-textarea
-                                  counter="300"
-                                  :rules="[rules.maxLength(300)]"
-                                  label="Additional Info"
-                                  placeholder="Additional Info"
-                                  v-model="additonalInfoEdit.text"
-                                ></v-textarea>
-                              </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn :disabled="!additonalInfoEdit.savable" text color="primary" @click="saveAdditionalInfo">Save</v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
-                      </h3>
-                      <div>
-                        {{ savedMessageValue ? savedMessageValue : "-" }}
-                      </div>
                     </v-card-text>
                   </v-col>
                   <v-col cols="6">
                     <h4>Statistics by Game Mode</h4>
-                    <mode-stats-grid :stats="oneVersusOneGameModeStats"></mode-stats-grid>
+                    <mode-stats-grid
+                      :stats="oneVersusOneGameModeStats"
+                    ></mode-stats-grid>
                   </v-col>
                   <v-col cols="4">
                     <h4>Statistics by Race</h4>
-                    <v-data-table hide-default-footer :headers="raceHeaders" :items="profile.raceStats">
+                    <v-data-table
+                      hide-default-footer
+                      :headers="raceHeaders"
+                      :items="profile.raceStats"
+                    >
                       <template v-slot:item.race="{ item }">
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
@@ -112,12 +51,18 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }">{{ (item.winrate *100).toFixed(1) }}%</template>
+                      <template v-slot:item.percentage="{ item }"
+                        >{{ (item.winrate * 100).toFixed(1) }}%</template
+                      >
                     </v-data-table>
                   </v-col>
                 </v-row>
               </v-card-text>
-              <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
+              <v-card-text
+                v-if="loadingProfile"
+                style="min-height: 500px"
+                class="text-center"
+              >
                 <v-progress-circular
                   style="margin-top: 180px;"
                   :size="50"
@@ -152,13 +97,17 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {Component, Prop, Watch} from "vue-property-decorator";
-import {ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap} from "@/store/player/types";
-import {EGameMode, ERaceEnum, Match} from "@/store/typings";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import {
+  ModeStat,
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+  RaceWinsOnMap
+} from "@/store/player/types";
+import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
-import {PersonalSetting} from "@/store/personalSettings/types";
 import PlayerAvatar from "@/components/PlayerAvatar.vue";
 
 @Component({
@@ -173,12 +122,6 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
-  public homepageEdit = { opened: false, text: this.personalSettings.homePage, savable: true };
-  public additonalInfoEdit = { opened: false, text: this.personalSettings.profileMessage, form: true };
-
-  public rules = {
-    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
-  };
 
   public raceHeaders = [
     {
@@ -227,10 +170,6 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile;
   }
 
-  get personalSettings(): PersonalSetting {
-    return this.$store.direct.state.personalSettings.personalSettings;
-  }
-
   get verifiedBtag(): string {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
@@ -241,7 +180,9 @@ export default class PlayerView extends Vue {
 
   get oneVersusOneGameModeStats(): ModeStat[] {
     if (this.profile && this.profile.gameModeStats) {
-      return this.profile.gameModeStats.filter(g => g.mode === EGameMode.GM_1ON1);
+      return this.profile.gameModeStats.filter(
+        g => g.mode === EGameMode.GM_1ON1
+      );
     }
 
     return [];
@@ -255,26 +196,8 @@ export default class PlayerView extends Vue {
     return this.id;
   }
 
-  get savedMessageValue(): string {
-    return this.personalSettings.profileMessage;
-  }
-
-  get homePage(): string {
-    return this.personalSettings.homePage;
-  }
-
   onPageChanged(page: number) {
     this.getMatches(page);
-  }
-
-  async saveAdditionalInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
-    this.additonalInfoEdit.opened = false;
-  }
-
-  async saveHomepageInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
-    this.homepageEdit.opened = false;
   }
 
   get totalMatches(): number {
@@ -302,8 +225,9 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
-    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
+    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
+      this.battleTag
+    );
   }
 }
 </script>

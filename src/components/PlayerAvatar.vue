@@ -31,6 +31,83 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <h3>
+      Homepage:
+      <template>
+        <v-icon
+          v-if="isLoggedInPlayer"
+          class="float-lg-right"
+          @click="homepageEdit.opened = !homepageEdit.opened"
+          >mdi-pencil</v-icon
+        >
+      </template>
+      <v-dialog v-model="homepageEdit.opened" max-width="500px">
+        <v-card>
+          <v-card-text>
+            <v-form v-model="homepageEdit.savable">
+              <v-text-field
+                counter="50"
+                :rules="[rules.maxLength(50)]"
+                label="Homepage"
+                placeholder="Homepage"
+                v-model="homepageEdit.text"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="!homepageEdit.savable"
+              text
+              color="primary"
+              @click="saveHomepageInfo"
+              >Save</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </h3>
+    <div>{{ homePage ? homePage : "-" }}</div>
+    <h3>
+      About:
+      <template>
+        <v-icon
+          v-if="isLoggedInPlayer"
+          class="float-lg-right"
+          @click="additonalInfoEdit.opened = !additonalInfoEdit.opened"
+          >mdi-pencil</v-icon
+        >
+      </template>
+      <v-dialog v-model="additonalInfoEdit.opened" max-width="500px">
+        <v-card>
+          <v-card-text>
+            <v-form v-model="additonalInfoEdit.savable">
+              <v-textarea
+                counter="300"
+                :rules="[rules.maxLength(300)]"
+                label="Additional Info"
+                placeholder="Additional Info"
+                v-model="additonalInfoEdit.text"
+              ></v-textarea>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="!additonalInfoEdit.savable"
+              text
+              color="primary"
+              @click="saveAdditionalInfo"
+              >Save</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </h3>
+    <div>
+      {{ savedMessageValue ? savedMessageValue : "-" }}
+    </div>
   </div>
 </template>
 
@@ -39,11 +116,9 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import { RaceStat } from "@/store/player/types";
-import { PersonalSetting } from "@/store/personalSettings/types";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
-  @Prop() personalSetting!: PersonalSetting;
   @Prop() isLoggedInPlayer!: boolean;
   @Prop() wins!: RaceStat[];
 
@@ -63,6 +138,35 @@ export default class PlayerAvatar extends Vue {
       "_" +
       this.personalRaceIcon +
       ".png");
+  }
+
+  get homePage(): string {
+    return this.personalSetting.homePage;
+  }
+
+  get savedMessageValue(): string {
+    return this.personalSetting.profileMessage;
+  }
+
+  get personalSetting() {
+    return this.$store.direct.state.personalSettings.personalSettings;
+  }
+
+  public rules = {
+    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
+  };
+
+  public homepageEdit = { opened: false, text: this.personalSetting.homePage, savable: true };
+  public additonalInfoEdit = { opened: false, text: this.personalSetting.profileMessage, savable: true };
+
+  async saveAdditionalInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+    this.additonalInfoEdit.opened = false;
+  }
+
+  async saveHomepageInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+    this.homepageEdit.opened = false;
   }
 
   getCorrectClasses(race: ERaceEnum, iconId: number) {
@@ -125,6 +229,13 @@ export default class PlayerAvatar extends Vue {
     });
 
     this.dialogOpened = false;
+  }
+  mounted() {
+    this.init();
+  }
+
+  async init() {
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
   }
 }
 </script>
