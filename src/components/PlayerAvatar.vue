@@ -159,8 +159,8 @@ export default class PlayerAvatar extends Vue {
     maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
   };
 
-  public homepageEdit = { opened: false, text: this.personalSetting.homePage, savable: true };
-  public additonalInfoEdit = { opened: false, text: this.personalSetting.profileMessage, savable: true };
+  public homepageEdit = { opened: false, text: this.homePage, savable: true };
+  public additonalInfoEdit = { opened: false, text: this.savedMessageValue, savable: true };
 
   async saveAdditionalInfo() {
     await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
