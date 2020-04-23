@@ -7,28 +7,31 @@
       :style="{ 'background-image': 'url(' + racePicture + ')' }"
     />
 
-    <v-dialog max-width="1400px" v-model="dialogOpened">
+    <v-dialog v-model="dialogOpened" max-width="1400px">
       <v-card>
-        <v-card-title class="headline">Choose a picture</v-card-title>
-        <v-card-text>
-          <v-row v-for="race in races" :key="race">
-            <v-col cols="1" v-for="number in PicNumbers" :key="number">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-card-text
-                    v-on="on"
-                    :class="getCorrectClasses(race, number)"
-                    @click="isLoggedInPlayer ? savePicture(race, number) : null"
-                    :style="{
-                      'background-image': 'url(' + picture(race, number) + ')'
-                    }"
-                  />
-                </template>
-                <span>{{ winsOf(winsOfRace(race), number) }}</span>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-        </v-card-text>
+        <v-row
+          style="padding-left: 25px; padding-right: 25px"
+          v-for="race in races"
+          :key="race"
+          align="center"
+          justify="space-between"
+        >
+          <v-col cols="1" v-for="number in PicNumbers" :key="number">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-card-text
+                  v-on="on"
+                  :class="getCorrectClasses(race, number)"
+                  @click="isLoggedInPlayer ? savePicture(race, number) : null"
+                  :style="{
+                    'background-image': 'url(' + picture(race, number) + ')'
+                  }"
+                />
+              </template>
+              <span>{{ winsOf(winsOfRace(race), number) }}</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog>
 
@@ -261,8 +264,8 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-avatar-choosing-disabled {
-  opacity: 0.6;
-  filter: alpha(opacity=40);
+  opacity: 0.5;
+  filter: alpha(opacity=50);
   background-color: #000;
 }
 </style>
