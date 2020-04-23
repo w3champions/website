@@ -61,9 +61,6 @@ export default class LoginView extends Vue {
 }
 
 .loader {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 180px;
-  margin-bottom: 180px;
+  margin: 180px auto;
 }
 </style>

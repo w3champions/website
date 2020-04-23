@@ -34,6 +34,83 @@
         </v-row>
       </v-card>
     </v-dialog>
+
+    <h3>
+      Homepage:
+      <template>
+        <v-icon
+          v-if="isLoggedInPlayer"
+          class="float-lg-right"
+          @click="homepageEdit.opened = !homepageEdit.opened"
+          >mdi-pencil</v-icon
+        >
+      </template>
+      <v-dialog v-model="homepageEdit.opened" max-width="500px">
+        <v-card>
+          <v-card-text>
+            <v-form v-model="homepageEdit.savable">
+              <v-text-field
+                counter="50"
+                :rules="[rules.maxLength(50)]"
+                label="Homepage"
+                placeholder="Homepage"
+                v-model="homepageEdit.text"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="!homepageEdit.savable"
+              text
+              color="primary"
+              @click="saveHomepageInfo"
+              >Save</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </h3>
+    <div>{{ homePage ? homePage : "-" }}</div>
+    <h3>
+      About:
+      <template>
+        <v-icon
+          v-if="isLoggedInPlayer"
+          class="float-lg-right"
+          @click="additonalInfoEdit.opened = !additonalInfoEdit.opened"
+          >mdi-pencil</v-icon
+        >
+      </template>
+      <v-dialog v-model="additonalInfoEdit.opened" max-width="500px">
+        <v-card>
+          <v-card-text>
+            <v-form v-model="additonalInfoEdit.savable">
+              <v-textarea
+                counter="300"
+                :rules="[rules.maxLength(300)]"
+                label="Additional Info"
+                placeholder="Additional Info"
+                v-model="additonalInfoEdit.text"
+              ></v-textarea>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="!additonalInfoEdit.savable"
+              text
+              color="primary"
+              @click="saveAdditionalInfo"
+              >Save</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </h3>
+    <div>
+      {{ savedMessageValue ? savedMessageValue : "-" }}
+    </div>
   </div>
 </template>
 
@@ -45,9 +122,6 @@ import { RaceStat } from "@/store/player/types";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
-  @Prop() race!: ERaceEnum;
-  @Prop() icon!: number;
-  @Prop() btag!: string;
   @Prop() isLoggedInPlayer!: boolean;
   @Prop() wins!: RaceStat[];
 
@@ -63,10 +137,39 @@ export default class PlayerAvatar extends Vue {
 
   get racePicture() {
     return require("../assets/raceAvatars/" +
-      ERaceEnum[this.race] +
+      ERaceEnum[this.personalRace] +
       "_" +
-      this.icon +
+      this.personalRaceIcon +
       ".png");
+  }
+
+  get homePage(): string {
+    return this.personalSetting.homePage;
+  }
+
+  get savedMessageValue(): string {
+    return this.personalSetting.profileMessage;
+  }
+
+  get personalSetting() {
+    return this.$store.direct.state.personalSettings.personalSettings;
+  }
+
+  public rules = {
+    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
+  };
+
+  public homepageEdit = { opened: false, text: this.homePage, savable: true };
+  public additonalInfoEdit = { opened: false, text: this.savedMessageValue, savable: true };
+
+  async saveAdditionalInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
+    this.additonalInfoEdit.opened = false;
+  }
+
+  async saveHomepageInfo() {
+    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
+    this.homepageEdit.opened = false;
   }
 
   getCorrectClasses(race: ERaceEnum, iconId: number) {
@@ -80,10 +183,19 @@ export default class PlayerAvatar extends Vue {
     return classes;
   }
 
+  get personalRaceIcon(): number {
+    return this.personalSetting?.profilePicture?.pictureId ?? 0;
+  }
+
+  get personalRace(): ERaceEnum {
+    return this.personalSetting?.profilePicture?.race ?? ERaceEnum.TOTAL;
+  }
+
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
-    const wins = this.winsOfRace(race);
-    const neededWins = this.winsTransformed(iconId);
-    return wins >= neededWins;
+    return (
+      this.personalSetting.pickablePictures?.filter(r => r.race == race)[0]
+        .max >= iconId
+    );
   }
 
   winsOfRace(race: ERaceEnum) {
@@ -94,26 +206,17 @@ export default class PlayerAvatar extends Vue {
     return `${wins}/${this.winsTransformed(iconId)}`;
   }
 
-  private winsTransformed(iconId: number) {
-    if (iconId == 0) return 0;
-    if (iconId == 1) return 5;
-    if (iconId == 2) return 20;
-    if (iconId == 3) return 50;
-    if (iconId == 4) return 120;
-    if (iconId == 5) return 200;
-    if (iconId == 6) return 300;
-    if (iconId == 7) return 450;
-    if (iconId == 8) return 600;
-    if (iconId == 9) return 900;
-    if (iconId == 10) return 1200;
-    return 0;
+  winsTransformed(iconId: number) {
+    return this.personalSetting.pictureRange?.filter(
+      p => p.pictureId == iconId
+    )[0]?.neededWins;
   }
 
-  picture(race: ERaceEnum, nePic: number) {
+  picture(race: ERaceEnum, picId: number) {
     return require("../assets/raceAvatars/" +
       ERaceEnum[race] +
       "_" +
-      nePic +
+      picId +
       ".png");
   }
 
@@ -128,10 +231,14 @@ export default class PlayerAvatar extends Vue {
       pictureId: picture
     });
 
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(
-      this.btag
-    );
     this.dialogOpened = false;
+  }
+  mounted() {
+    this.init();
+  }
+
+  async init() {
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
   }
 }
 </script>
