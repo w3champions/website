@@ -38,7 +38,7 @@
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
                 <v-btn tile v-on="on" style="background-color: transparent;">
-                  <league-icon :league="selectedLeageueId" />
+                  <league-icon :league="selectedLeageueOrder" />
                   {{ selectedLeagueName }}
                 </v-btn>
               </template>
@@ -301,8 +301,8 @@ export default class RankingsView extends Vue {
       : this.selectedLeague.maxParticipantCount;
   }
 
-  get selectedLeageueId(): number {
-    return !this.selectedLeague.id ? 0 : this.selectedLeague.id;
+  get selectedLeageueOrder(): number {
+    return !this.selectedLeague.order ? 0 : this.selectedLeague.order;
   }
 
   get searchModelBattleTag() {
@@ -327,7 +327,8 @@ export default class RankingsView extends Vue {
 
   get ladders(): League[] {
     const gw = this.$store.direct.state.rankings.gateway;
-    return this.$store.direct.state.rankings.ladders.filter(l => l.gateway === gw)[0]?.leagues;
+    const league = this.$store.direct.state.rankings.ladders.filter(l => l.gateway === gw)[0];
+    return league?.leagues;
   }
 
   get searchRanks(): Ranking[] {
