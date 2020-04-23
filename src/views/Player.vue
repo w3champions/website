@@ -269,13 +269,11 @@ export default class PlayerView extends Vue {
 
   async saveAdditionalInfo() {
     await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
     this.additonalInfoEdit.opened = false;
   }
 
   async saveHomepageInfo() {
     await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
     this.homepageEdit.opened = false;
   }
 
