@@ -157,8 +157,8 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-avatar-choosing-disabled {
-  opacity: 0.6;
-  filter: alpha(opacity=40);
+  opacity: 0.5;
+  filter: alpha(opacity=50);
   background-color: #000;
 }
 </style>
