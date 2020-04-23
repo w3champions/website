@@ -7,27 +7,31 @@
       :style="{ 'background-image': 'url(' + racePicture + ')' }"
     />
 
-    <v-dialog max-width="1400px" v-model="dialogOpened">
+    <v-dialog v-model="dialogOpened">
       <v-card>
-        <v-card-text style="padding-bottom: 0 !important;">
-          <v-row v-for="race in races" :key="race">
-            <v-col cols="1" v-for="number in PicNumbers" :key="number">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-card-text
-                    v-on="on"
-                    :class="getCorrectClasses(race, number)"
-                    @click="isLoggedInPlayer ? savePicture(race, number) : null"
-                    :style="{
-                      'background-image': 'url(' + picture(race, number) + ')'
-                    }"
-                  />
-                </template>
-                <span>{{ winsOf(winsOfRace(race), number) }}</span>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-        </v-card-text>
+        <v-row
+          style="padding-left: 25px; padding-right: 25px"
+          v-for="race in races"
+          :key="race"
+          align="center"
+          justify="space-between"
+        >
+          <v-col cols="1" v-for="number in PicNumbers" :key="number">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-card-text
+                  v-on="on"
+                  :class="getCorrectClasses(race, number)"
+                  @click="isLoggedInPlayer ? savePicture(race, number) : null"
+                  :style="{
+                    'background-image': 'url(' + picture(race, number) + ')'
+                  }"
+                />
+              </template>
+              <span>{{ winsOf(winsOfRace(race), number) }}</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog>
   </div>
