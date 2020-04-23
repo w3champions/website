@@ -125,9 +125,8 @@ export default class PlayerAvatar extends Vue {
       pictureId: picture
     });
 
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(
-      this.btag
-    );
+    // Das hier wieder weg
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
     this.dialogOpened = false;
   }
 }

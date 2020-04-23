@@ -22,7 +22,7 @@
                       <player-avatar
                         :icon="this.personalRaceIcon"
                         :race="this.personalRace"
-                        :btag="this.battleTag.split('@')[0]"
+                        :btag="this.battleTag"
                         :wins="this.playerWins"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
@@ -278,13 +278,13 @@ export default class PlayerView extends Vue {
 
   async saveAdditionalInfo() {
     await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
     this.additonalInfoEdit.opened = false;
   }
 
   async saveHomepageInfo() {
     await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
     this.homepageEdit.opened = false;
   }
 
@@ -293,7 +293,7 @@ export default class PlayerView extends Vue {
   }
 
   get isLoggedInPlayer(): boolean {
-    return this.verifiedBtag === this.battleTag.split("@")[0];
+    return this.battleTag.startsWith(this.verifiedBtag);
   }
 
   get matches(): Match[] {
@@ -314,7 +314,7 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag.split("@")[0]);
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag);
   }
 }
 </script>

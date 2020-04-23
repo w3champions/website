@@ -1,7 +1,6 @@
 import { API_URL } from "@/main";
 import {PersonalSetting, ProfilePicture} from "@/store/personalSettings/types";
 import AuthorizationService from "@/services/AuthorizationService";
-import {PlayerProfile} from "@/store/player/types";
 
 export default class PersonalSettingsService {
   public async retrievePersonalSetting(
@@ -15,12 +14,13 @@ export default class PersonalSettingsService {
   }
 
   public async setPersonalSettingMessage(
+      battleTag: string,
       value: string
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
     const authToken = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/profile-message?authentication=${authToken}`;
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/profile-message?authentication=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);
@@ -36,12 +36,13 @@ export default class PersonalSettingsService {
   }
 
   public async setPersonalSettingHomepage(
+      battleTag: string,
       value: string
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
     const authToken = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/home-page?authentication=${authToken}`;
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/home-page?authentication=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);
@@ -57,15 +58,15 @@ export default class PersonalSettingsService {
   }
 
   public async setAvatar(
-      value: ProfilePicture,
-      gateway: number
+      battleTag: string,
+      value: ProfilePicture
   ): Promise<boolean> {
     const authorizationService = new AuthorizationService();
     const authToken = await authorizationService.loadAuthCookie();
 
-    const url = `${API_URL}api/personal-settings/profile-picture?authentication=${authToken}`;
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/profile-picture?authentication=${authToken}`;
 
-    const post = { GateWay: gateway, PictureId: value.pictureId, Race: value.race };
+    const post = { PictureId: value.pictureId, Race: value.race };
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "PUT",
