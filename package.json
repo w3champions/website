@@ -9,7 +9,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@salte-auth/salte-auth": "^2.14.2",
     "@types/chart.js": "^2.9.18",
     "@types/moment": "^2.13.0",
     "@types/vue-moment": "^4.0.0",
