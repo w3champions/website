@@ -25,7 +25,7 @@ const mod = {
     ) {
       const { commit, rootGetters, rootState  } = moduleActionContext(context, mod);
 
-      const success = await rootGetters.personalSettingsService.setPersonalSettingMessage(rootState.player.battleTag, message);
+      const success = await rootGetters.personalSettingsService.setPersonalSettingMessage(rootState.player.battleTag, message, rootState.oauth.token);
       if (success) commit.SET_MESSAGE(message);
     },
     async saveHomepageInfo(
@@ -34,7 +34,7 @@ const mod = {
     ) {
       const { commit, rootGetters, rootState  } = moduleActionContext(context, mod);
 
-      const success = await rootGetters.personalSettingsService.setPersonalSettingHomepage( rootState.player.battleTag, message);
+      const success = await rootGetters.personalSettingsService.setPersonalSettingHomepage( rootState.player.battleTag, message, rootState.oauth.token);
       if (success) commit.SET_WEBSITE(message);
     },
     async saveAvatar(
@@ -43,7 +43,7 @@ const mod = {
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
-      const success = await rootGetters.personalSettingsService.setAvatar(rootState.player.battleTag, picture);
+      const success = await rootGetters.personalSettingsService.setAvatar(rootState.player.battleTag, picture, rootState.oauth.token);
       if (success) commit.SET_PICTURE(picture);
     }
   },
