@@ -33,13 +33,12 @@
                   </v-list>
                 </v-card-text>
               </v-card>
-
             </v-menu>
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
                 <v-btn tile v-on="on" style="background-color: transparent;">
                   <league-icon :league="selectedLeageueOrder" />
-                  {{ selectedLeagueName }}
+                  {{ selectedLeagueName }} {{ getDivision(selectedLeague.id) }}
                 </v-btn>
               </template>
               <v-card>
@@ -59,7 +58,7 @@
                       <v-list-item-content>
                         <v-list-item-title>
                           <league-icon :league="item.order" />
-                          {{ item.name }}
+                          {{ item.name }} {{ getDivision(item.id) }}
                         </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
@@ -187,7 +186,7 @@ export default class RankingsView extends Vue {
     {
       text: "Player",
       align: "start",
-      sortable: false,
+      sortable: false
     },
     {
       text: "Wins",
@@ -243,7 +242,9 @@ export default class RankingsView extends Vue {
     if (!rank) return;
     this.setLeague(rank.league);
 
-    const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+    const listItemOfPlayer = document.getElementById(
+      `listitem_${rank.rankNumber}`
+    );
 
     if (!listItemOfPlayer) return;
 
@@ -282,10 +283,18 @@ export default class RankingsView extends Vue {
     }
   }
 
+  getDivision(division: number): string {
+    if (division == 0 || division == 1) return "";
+
+    return (((division + 2) % 4) + 1).toString();
+  }
+
   get selectedLeague(): League {
     const league = this.$store.direct.state.rankings.league;
     const gw = this.$store.direct.state.rankings.gateway;
-    const ladder = this.$store.direct.state.rankings.ladders.filter(l => l.gateway == gw)[0];
+    const ladder = this.$store.direct.state.rankings.ladders.filter(
+      l => l.gateway == gw
+    )[0];
     if (!ladder) return {} as League;
 
     return ladder.leagues.filter(l => l.id == league)[0];
@@ -327,7 +336,9 @@ export default class RankingsView extends Vue {
 
   get ladders(): League[] {
     const gw = this.$store.direct.state.rankings.gateway;
-    const league = this.$store.direct.state.rankings.ladders.filter(l => l.gateway === gw)[0];
+    const league = this.$store.direct.state.rankings.ladders.filter(
+      l => l.gateway === gw
+    )[0];
     return league?.leagues;
   }
 
