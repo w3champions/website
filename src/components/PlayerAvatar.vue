@@ -9,8 +9,7 @@
 
     <v-dialog max-width="1400px" v-model="dialogOpened">
       <v-card>
-        <v-card-title class="headline">Choose a picture</v-card-title>
-        <v-card-text>
+        <v-card-text style="padding-bottom: 0 !important;">
           <v-row v-for="race in races" :key="race">
             <v-col cols="1" v-for="number in PicNumbers" :key="number">
               <v-tooltip top>
