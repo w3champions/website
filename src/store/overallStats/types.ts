@@ -8,7 +8,10 @@ export type OveralStatisticState = {
   loadingPlayersPerDayStats: boolean;
   statsPerMapAndRace: StatsPerMapAndRace[];
   gameLengths: GameLength[];
-  loadingMapAndRaceStats: boolean
+  popularGameHours: PopularGameHour[];
+  selectedGameLength: EGameMode;
+  selectedPopularHour: EGameMode;
+  loadingMapAndRaceStats: boolean;
 };
 
 export type GameDay = {
@@ -44,7 +47,19 @@ export interface Length {
   games: number;
 }
 
+export interface SpecificGameHour {
+  passedTimeInSeconds: number;
+  games: number;
+  minutes: number;
+  hours: number;
+}
+
 export interface GameLength {
-  gameMode: number;
+  gameMode: EGameMode;
   lengths: Length[];
+}
+
+export interface PopularGameHour {
+  gameMode: EGameMode;
+  playTimePerHour: SpecificGameHour[];
 }
