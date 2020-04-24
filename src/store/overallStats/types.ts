@@ -9,7 +9,9 @@ export type OveralStatisticState = {
   statsPerMapAndRace: StatsPerMapAndRace[];
   gameLengths: GameLength[];
   popularGameHours: PopularGameHour[];
-  loadingMapAndRaceStats: boolean
+  selectedGameLength: EGameMode;
+  selectedPopularHour: EGameMode;
+  loadingMapAndRaceStats: boolean;
 };
 
 export type GameDay = {

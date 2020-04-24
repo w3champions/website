@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import {GameDay, GameLength, OveralStatisticState, PlayersPerDay, PopularGameHour, StatsPerMapAndRace} from "./types";
-import { RootState } from "../typings";
+import {EGameMode, RootState} from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -14,6 +14,8 @@ const mod = {
     statsPerMapAndRace: [] as StatsPerMapAndRace[],
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
+    selectedGameLength: EGameMode.GM_1ON1,
+    selectedPopularHour: EGameMode.GM_1ON1,
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -100,6 +102,12 @@ const mod = {
     },
     SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
       state.popularGameHours = stats
+    },
+    SET_SELECTED_GAME_LENGTH(state: OveralStatisticState, selectedGameLength: EGameMode) {
+      state.selectedGameLength = selectedGameLength
+    },
+    SET_SELECTED_POPULAR_HOUR(state: OveralStatisticState, selectedPopularHour: EGameMode) {
+      state.selectedPopularHour = selectedPopularHour
     }
   }
 } as const;
