@@ -77,6 +77,7 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
+              <v-card-title>Average Gamelength of 1v1 matches</v-card-title>
               <v-row>
 <!--                <v-col cols="2">-->
 <!--                  <v-card-text>-->
@@ -101,10 +102,7 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
-              <v-card-title
-                >Here you can see the average active matches from the last two
-                weeks</v-card-title
-              >
+              <v-card-title>Here you can see the average active matches from the last two weeks</v-card-title>
               <v-row>
 <!--                <v-col cols="2">-->
 <!--                  <v-card-text>-->
