@@ -8,10 +8,21 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :href="`#tab-games-per-day`">Games Per Day</v-tab>
-            <v-tab class="profileTab" :href="`#tab-players-per-day`">Players Per Day</v-tab>
-            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">Winrates</v-tab>
-            <v-tab class="profileTab" :href="`#tab-gametimes`">Gametimes</v-tab>
+            <v-tab class="profileTab" :href="`#tab-games-per-day`"
+              >Games Per Day</v-tab
+            >
+            <v-tab class="profileTab" :href="`#tab-players-per-day`"
+              >Players Per Day</v-tab
+            >
+            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
+              >Winrates</v-tab
+            >
+            <v-tab class="profileTab" :href="`#tab-gametimes`"
+              >Gamelengths</v-tab
+            >
+            <v-tab class="profileTab" :href="`#tab-popular-game-hours`"
+              >Popular Hours</v-tab
+            >
             <v-tab-item :value="'tab-games-per-day'">
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart
@@ -67,8 +78,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
-                <v-col cols="1">
-<!--                  Uncomment as soon as 2v2 etc is here-->
+<!--                <v-col cols="2">-->
 <!--                  <v-card-text>-->
 <!--                    <v-select-->
 <!--                      :items="gameModes"-->
@@ -79,12 +89,40 @@
 <!--                      outlined-->
 <!--                    />-->
 <!--                  </v-card-text>-->
-                </v-col>
-                <v-col cols="10">
+<!--                </v-col>-->
+                <v-col cols="12">
                   <v-card-text>
                     <game-length-chart
                       class="ammount-per-day-chart"
                       :game-length="getSelectedLength"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-tab-item>
+            <v-tab-item :value="'tab-popular-game-hours'">
+              <v-card-title
+                >Here you can see the average active matches from the last two
+                weeks</v-card-title
+              >
+              <v-row>
+<!--                <v-col cols="2">-->
+<!--                  <v-card-text>-->
+<!--                    <v-select-->
+<!--                      :items="gameModes"-->
+<!--                      item-text="modeName"-->
+<!--                      item-value="modeId"-->
+<!--                      @change="selectedModeGameHour"-->
+<!--                      label="Select Mode"-->
+<!--                      outlined-->
+<!--                    />-->
+<!--                  </v-card-text>-->
+<!--                </v-col>-->
+                <v-col cols="12">
+                  <v-card-text>
+                    <popular-game-time-charts
+                      class="ammount-per-day-chart"
+                      :game-hours="getSelectedGameHours"
                     />
                   </v-card-text>
                 </v-col>
@@ -104,6 +142,7 @@ import { Component } from "vue-property-decorator";
 import {
   GameDay,
   GameLength,
+  PopularGameHour,
   Ratio,
   StatsPerMapAndRace,
   WinLoss
@@ -111,9 +150,11 @@ import {
 import { ERaceEnum } from "@/store/typings";
 import BarChart from "@/components/GameLengthChart.vue";
 import GameLengthChart from "@/components/GameLengthChart.vue";
+import PopularGameTimeCharts from "@/components/PopularGameTimeCharts.vue";
 
 @Component({
   components: {
+    PopularGameTimeCharts,
     BarChart,
     AmountPerDayChart,
     GameLengthChart
@@ -123,14 +164,15 @@ export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
-  public selectedMode = 1;
+  public selectedModeGameLength = 1;
+  public selectedModeGameHour = 1;
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
   }
 
   public setSelectedMode(mode: number) {
-    this.selectedMode = mode;
+    this.selectedModeGameLength = mode;
   }
 
   public winrateText(item: WinLoss) {
@@ -161,8 +203,16 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.gameLengths;
   }
 
+  get popularGameHours(): PopularGameHour[] {
+    return this.$store.direct.state.overallStatistics.popularGameHours;
+  }
+
   get getSelectedLength(): GameLength {
-    return this.gameLength.filter(g => g.gameMode == this.selectedMode)[0];
+    return this.gameLength.filter(g => g.gameMode == this.selectedModeGameLength)[0];
+  }
+
+  get getSelectedGameHours(): PopularGameHour {
+    return this.popularGameHours.filter(g => g.gameMode == this.selectedModeGameHour)[0];
   }
 
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
@@ -211,6 +261,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
   }
 
   public headers = [

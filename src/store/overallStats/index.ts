@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import {GameDay, GameLength, OveralStatisticState, PlayersPerDay, StatsPerMapAndRace} from "./types";
+import {GameDay, GameLength, OveralStatisticState, PlayersPerDay, PopularGameHour, StatsPerMapAndRace} from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -13,6 +13,7 @@ const mod = {
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerMapAndRace[],
     gameLengths: [] as GameLength[],
+    popularGameHours: [] as PopularGameHour[],
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -64,6 +65,15 @@ const mod = {
       const stats = await rootGetters.statisticService.retrieveGameTimes();
 
       commit.SET_GAME_LENGTH_STATS(stats);
+    },
+    async loadpopularGameHours(
+        context: ActionContext<OveralStatisticState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const stats = await rootGetters.statisticService.retrievePopularGameHours();
+
+      commit.SET_POPULAR_GAME_HOURS(stats);
     }
   },
   mutations: {
@@ -87,6 +97,9 @@ const mod = {
     },
     SET_GAME_LENGTH_STATS(state: OveralStatisticState, stats: GameLength[]) {
       state.gameLengths = stats
+    },
+    SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
+      state.popularGameHours = stats
     }
   }
 } as const;
