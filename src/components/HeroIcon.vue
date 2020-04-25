@@ -27,6 +27,7 @@ export default class HeroIcon extends Vue {
 
 <style type="text/css" scoped>
 .hero-icon {
+  margin-top: 12px;
   padding-top: 100%;
   width: 100%;
   padding-bottom: 0 !important;
