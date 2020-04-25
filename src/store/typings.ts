@@ -37,6 +37,68 @@ export type Match = {
   gateWay: number;
 }
 
+export type MatchDetail = {
+  match: Match;
+  playerScores: PlayerScore[];
+}
+
+export interface Player {
+  race: number;
+  oldMmr: number;
+  currentMmr: number;
+  battleTag: string;
+  name: string;
+  id: string;
+  mmrGain: number;
+  won: boolean;
+}
+
+export interface OverallScore {
+  unitScore: number;
+  heroScore: number;
+  resourceScore: number;
+  totalScore: number;
+}
+
+export interface UnitScore {
+  unitsProduced: number;
+  unitsKilled: number;
+  structuresProduced: number;
+  structuresKilled: number;
+  largestArmy: number;
+}
+
+export interface Hero {
+  icon: string;
+  level: number;
+}
+
+export interface HeroScore {
+  heroesKilled: number;
+  itemsObtained: number;
+  mercsHired: number;
+  expGained: number;
+  strongerHeroes: number;
+}
+
+export interface ResourceScore {
+  goldCollected: number;
+  lumberCollected: number;
+  resourcesReceived: number;
+  ressourcesSent: number;
+  techPercentage: number;
+  goldUpkeepLost: number;
+}
+
+export interface PlayerScore {
+  battleTag: string;
+  overallScore: OverallScore;
+  unitScore: UnitScore;
+  heroes: Hero[];
+  heroScore: HeroScore;
+  resourceScore: ResourceScore;
+}
+
 export type Mmr = {
   rating: number;
   rd: number;

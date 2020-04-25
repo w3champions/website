@@ -40,6 +40,13 @@ const routes = [
       import(/* webpackChunkName: "rankings" */ "../views/Player.vue")
   },
   {
+    path: "/match/:matchId",
+    name: "Match",
+    props: true,
+    component: () =>
+      import(/* webpackChunkName: "rankings" */ "../views/MatchDetail.vue")
+  },
+  {
     path: "/matches",
     name: "Matches",
     component: () =>
