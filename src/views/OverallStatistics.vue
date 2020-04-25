@@ -41,7 +41,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-winrates-per-race-and-map'">
               <v-row>
-                <v-col cols="3">
+                <v-col cols="md-3">
                   <v-card-text v-if="!loadingMapAndRaceStats">
                     <v-select
                       :items="maps"
@@ -53,12 +53,13 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="9">
+                <v-col cols="md-9">
                   <v-card-text v-if="!loadingMapAndRaceStats">
                     <v-data-table
                       hide-default-footer
                       :headers="headers"
                       :items="raceWinrateWithoutRandom"
+                      :mobile-breakpoint="400"
                     >
                       <template v-slot:body="{ items }">
                         <tbody>

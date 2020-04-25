@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="10" offset="1" md="10">
-        <v-card tile>
+        <v-card class="mt-2" tile>
           <v-card-title>
             <v-menu offset-x>
               <template v-slot:activator="{ on }">
@@ -107,6 +105,7 @@
               :items="rankings"
               :options.sync="options"
               :server-items-length="totalPlayers"
+              :mobile-breakpoint="400"
               hide-default-footer
               @click:row="onRowClicked"
             >
@@ -147,7 +146,6 @@
             </v-data-table>
           </v-card-text>
         </v-card>
-      </v-col>
       <v-col cols="12" md="3" v-if="false">
         <v-card tile>
           <v-card-title>Stats</v-card-title>
@@ -161,7 +159,6 @@
           </v-list>
         </v-card>
       </v-col>
-    </v-row>
   </v-container>
 </template>
 

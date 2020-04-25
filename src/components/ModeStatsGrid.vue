@@ -1,5 +1,5 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="stats">
+  <v-data-table hide-default-footer :headers="headers" :items="stats" mobile-breakpoint="400">
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.mode">
@@ -33,42 +33,36 @@ export default class ModeStatsGrid extends Vue {
       align: "start",
       sortable: false,
       value: "type",
-      width: "25px"
     },
     {
       text: "Wins",
       align: "end",
       sortable: false,
       value: "wins",
-      width: "25px"
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
       value: "losses",
-      width: "25px"
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
       value: "total",
-      width: "25px"
     },
     {
       text: "Winrate",
       align: "end",
       sortable: false,
       value: "percentage",
-      width: "25px"
     },
     {
       text: "Rating",
       align: "end",
       sortable: false,
       value: "level",
-      width: "25px"
     }
   ];
 }
