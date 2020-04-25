@@ -4,7 +4,9 @@
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
-      >W3Champions - your Ladder for Warcraft III</div>
+      >
+        <span class="d-none d-md-inline">W3Champions - your Ladder for Warcraft III</span>
+      </div>
       <v-spacer></v-spacer>
 
       <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">

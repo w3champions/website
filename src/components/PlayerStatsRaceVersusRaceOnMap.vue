@@ -13,7 +13,7 @@
     >
       <v-card-text>
         <v-row>
-          <v-col cols="8">
+          <v-col cols="md-8">
             <race-to-map-stat :stats="stat.winLossesOnMap" />
           </v-col>
         </v-row>
