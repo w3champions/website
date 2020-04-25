@@ -34,11 +34,12 @@ export default class HeroIcon extends Vue {
   background-size: contain;
 }
 
-.hero-level-flag {
-  background: rgba(12, 30, 122, 0.5);
+.theme--light .hero-level-flag {
+  background: rgba(52, 122, 154, 0.5);
 }
-.hero-level-flag {
-  background: rgba(12, 30, 122, 0.5);
+
+.theme--dark .hero-level-flag {
+  background: rgba(50, 194, 165, 0.4);
 }
 
 .hero-level-flag {
