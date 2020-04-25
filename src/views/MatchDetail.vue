@@ -63,6 +63,23 @@
             </v-col>
             <v-col cols="1"> </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="1"> </v-col>
+            <v-col>
+              <player-performance-on-match
+                :unit-score="scoresOfWinner.unitScore"
+                :resource-scoure="scoresOfWinner.resourceScore"
+                :left="true"
+              />
+            </v-col>
+            <v-col>
+              <player-performance-on-match
+                :unit-score="scoresOfLooser.unitScore"
+                :resource-scoure="scoresOfLooser.resourceScore"
+              />
+            </v-col>
+            <v-col cols="1"> </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -76,9 +93,15 @@ import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
 import moment from "moment";
 import MatchHiglights from "@/components/MatchHiglights.vue";
 import HeroIcon from "@/components/HeroIcon.vue";
+import PlayerPerformanceOnMatch from "@/components/PlayerPerformanceOnMatch.vue";
 
 @Component({
-  components: { HeroIcon, MatchHiglights, TeamMatchInfo }
+  components: {
+    PlayerPerformanceOnMatch,
+    HeroIcon,
+    MatchHiglights,
+    TeamMatchInfo
+  }
 })
 export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
