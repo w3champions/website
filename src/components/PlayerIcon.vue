@@ -1,5 +1,5 @@
 <template>
-  <div class="league-icon" :class="[raceIcon(), alignment()]"></div>
+  <div :class="[raceIcon(), alignment(), raceIconSize()]"></div>
 </template>
 
 <script lang="ts">
@@ -12,9 +12,14 @@ export default class PlayerIcon extends Vue {
   @Prop() race!: ERaceEnum;
   @Prop() mmr!: number;
   @Prop() left!: boolean;
+  @Prop() big!: boolean;
 
   raceIcon() {
     return "race-icon-" + ERaceEnum[this.race];
+  }
+
+  raceIconSize() {
+    return this.big ? "race-icon-big" : "race-icon";
   }
 
   alignment() {
@@ -24,9 +29,16 @@ export default class PlayerIcon extends Vue {
 </script>
 
 <style lang="scss">
-.league-icon {
+.race-icon {
   width: 24px;
   height: 24px;
+  background-position: center;
+  background-size: cover;
+}
+
+.race-icon-big {
+  width: 40px;
+  height: 40px;
   background-position: center;
   background-size: cover;
 }

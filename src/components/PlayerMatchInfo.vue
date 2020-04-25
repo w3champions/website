@@ -2,8 +2,8 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div :class="textClass">
-        <player-icon :left="left" :race="race" />
-        <div>
+        <player-icon :left="left" :race="race" :big="bigRaceIcon" />
+        <span>
           <a
             :class="won"
             v-on="on"
@@ -19,7 +19,7 @@
               <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
-        </div>
+        </span>
       </div>
     </template>
     <div v-if="winrate">
@@ -49,6 +49,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: PlayerInTeam;
 
   @Prop() public left!: boolean;
+  @Prop() public bigRaceIcon!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
