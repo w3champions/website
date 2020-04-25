@@ -30,10 +30,18 @@ export default class MatchService {
 
   public async retrievePlayerMatches(
     page: number,
-    battleTag: string
+    battleTag: string,
+    opponentTag: string
   ): Promise<{count: number, matches: Match[]}> {
-    const offset = page * 15;
-    const url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
+    const offset = page * 50;
+    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
+
+    if (opponentTag.length) {
+      const convertedOpponentId = opponentTag.replace('#', '%23').replace('@','%40');
+      url += `&opponentId=${convertedOpponentId}`;
+    } else {
+      url += `&pageSize=${this.pageSize}`;
+    }
 
     const response = await fetch(url, {
       headers: {

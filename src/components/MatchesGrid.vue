@@ -32,11 +32,11 @@
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <team-match-info :team="getWinner(item)" left="true"></team-match-info>
+          <team-match-info :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)" left="true"></team-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
-          <team-match-info :team="getLoser(item)"></team-match-info>
+          <team-match-info :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"></team-match-info>
         </v-col>
       </v-row>
     </template>
@@ -46,7 +46,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, DataTableOptions } from "@/store/typings";
+import { Match, DataTableOptions, Team, PlayerInTeam } from "@/store/typings";
 import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 import moment from "moment";
 import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
@@ -82,6 +82,23 @@ export default class MatchesGrid extends Vue {
 
   public getLoser(match: Match) {
     return match.teams[1];
+  }
+
+  public getPlayerTeam(match: Match) {
+    return match.teams.find((team: Team) =>
+      team.players.some(
+        (player: PlayerInTeam) => player.id === this.alwaysLeftName
+      )
+    );
+  }
+
+  public getOpponentTeam(match: Match) {
+    return match.teams.find(
+      (team: Team) =>
+        !team.players.some(
+          (player: PlayerInTeam) => player.id === this.alwaysLeftName
+        )
+    );
   }
 
   public getDuration(match: Match) {

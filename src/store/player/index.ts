@@ -13,7 +13,8 @@ const mod = {
     playerProfile: {} as PlayerProfile,
     matches: [] as Match[],
     loadingProfile: false,
-    loadingRecentMatches: false
+    loadingRecentMatches: false,
+    opponentTag: "",
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -56,7 +57,8 @@ const mod = {
       commit.SET_LOADING_RECENT_MATCHES(true);
       const response = await rootGetters.matchService.retrievePlayerMatches(
         state.page,
-        state.battleTag
+        state.battleTag,
+        state.opponentTag
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -84,6 +86,9 @@ const mod = {
     },
     SET_BATTLE_TAG(state: PlayerState, battleTag: string) {
       state.battleTag = battleTag;
+    },
+    SET_OPPONENT_TAG(state: PlayerState, opponentTag: string) {
+      state.opponentTag = opponentTag;
     },
     SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
       state.playerStatsRaceVersusRaceOnMap = stats;
