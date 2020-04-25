@@ -19,7 +19,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { Match } from "../store/typings";
+import { Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 
 @Component({

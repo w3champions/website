@@ -1,23 +1,16 @@
 <template>
   <v-data-table
     dense
-    class="hide-footer"
+    class="hide-footer clickable"
     :options.sync="options"
     :server-items-length="totalMatches"
     :headers="headers"
     :items="matches"
     item-key="id"
+    @click:row="gotToMatchDetailPage"
     no-data-text="no matches found"
     :footer-props="{ showFirstLastPage: true }"
   >
-    <template v-slot:item.id="{ item }">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-icon v-on="on" @click="copyId(item)">mdi-content-copy</v-icon>
-        </template>
-        <span>Id: {{ item.id }}</span>
-      </v-tooltip>
-    </template>
     <template v-slot:item.map="{ item }">
       <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
@@ -80,6 +73,12 @@ export default class MatchesGrid extends Vue {
     return match.teams[0];
   }
 
+  public gotToMatchDetailPage(match: Match) {
+    this.$router.push({
+      path: `/match/${match.id}`
+    });
+  }
+
   public getLoser(match: Match) {
     return match.teams[1];
   }
@@ -116,16 +115,7 @@ export default class MatchesGrid extends Vue {
     this.options.itemsPerPage = this.itemsPerPage;
   }
 
-  public copyId(item: Match) {
-    navigator.clipboard.writeText(item.id.toString());
-  }
-
   public headers = [
-    {
-      text: "Id",
-      value: "id",
-      width: "10px"
-    },
     {
       text: "Players",
       align: "center",
@@ -157,7 +147,10 @@ export default class MatchesGrid extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.clickable {
+  cursor: pointer !important;
+}
 .playerCol {
   max-width: 500px;
 }
