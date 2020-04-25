@@ -11,7 +11,7 @@
           </div>
         </v-tooltip>
       </v-col>
-      <v-col class="text-no-wrap" :align="left ? 'left' : 'right'">
+      <v-col :align="left ? 'left' : 'right'">
         {{ heroKills }}
       </v-col>
     </v-row>
@@ -26,7 +26,7 @@
           </div>
         </v-tooltip>
       </v-col>
-      <v-col class="text-no-wrap" :align="left ? 'left' : 'right'">
+      <v-col :align="left ? 'left' : 'right'">
         {{ experience }}
       </v-col>
     </v-row>
@@ -41,7 +41,7 @@
           </div>
         </v-tooltip>
       </v-col>
-      <v-col class="text-no-wrap" :align="left ? 'left' : 'right'">
+      <v-col :align="left ? 'left' : 'right'">
         {{ itemsCollected }}
       </v-col>
     </v-row>
