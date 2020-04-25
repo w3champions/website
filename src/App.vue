@@ -9,14 +9,14 @@
       </div>
       <v-spacer></v-spacer>
 
-      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to">
+      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to" :class="item.class">
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn text tile class="button-margin" @click="loginOrGoToProfile">
-        <v-icon v-if="!authCode" class="mr-2 hidden-xs-only">mdi-account-circle-outline</v-icon>
-        <v-icon v-if="authCode" class="mr-2 hidden-xs-only">mdi-account-circle</v-icon>
+      <v-btn text tile @click="loginOrGoToProfile">
+        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="authCode" class="mr-2">mdi-account-circle</v-icon>
         <span v-if="authCode" class="mr-2 hidden-xs-only">{{ loginName }}</span>
       </v-btn>
 
@@ -72,7 +72,7 @@ export default class App extends Vue {
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     { title: "Statistics", icon: "mdi-chart-areaspline", to: "/OverallStatistics" },
-    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq" },
+    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq", class:'d-none d-md-flex' },
   ];
 
   loginOrGoToProfile() {
