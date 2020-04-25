@@ -121,19 +121,6 @@ export default class PlayerMatchInfo extends Vue {
   font-size: 10px;
 }
 
-.spacing-around-mmr-marker {
-  padding-right: 18px;
-  padding-left: 18px;
-}
-
-.won {
-  color: green !important;
-}
-
-.lost {
-  color: red !important;
-}
-
 .mmr {
   font-size: 18px !important;
 }

@@ -31,16 +31,15 @@
           </v-card-title>
           <v-row justify="space-between">
             <v-col cols="1">
-              h3
             </v-col>
             <v-col cols="1">
-              h2
+              <hero-icon :hero="heroesOfWinner[2]" />
             </v-col>
             <v-col cols="1">
-              h1
+              <hero-icon :hero="heroesOfWinner[1]" />
             </v-col>
             <v-col cols="1">
-              h1
+              <hero-icon :hero="heroesOfWinner[0]" />
             </v-col>
             <v-col cols="2">
               <match-higlights
@@ -58,16 +57,15 @@
               />
             </v-col>
             <v-col cols="1">
-              h1
+              <hero-icon :hero="heroesOfLooser[0]" />
             </v-col>
             <v-col cols="1">
-              h1
+              <hero-icon :hero="heroesOfLooser[1]" />
             </v-col>
             <v-col cols="1">
-              h2
+              <hero-icon :hero="heroesOfLooser[2]" />
             </v-col>
             <v-col cols="1">
-              h3
             </v-col>
           </v-row>
         </v-card>
@@ -82,9 +80,10 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
 import moment from "moment";
 import MatchHiglights from "@/components/MatchHiglights.vue";
+import HeroIcon from "@/components/HeroIcon.vue";
 
 @Component({
-  components: { MatchHiglights, TeamMatchInfo }
+  components: {HeroIcon, MatchHiglights, TeamMatchInfo }
 })
 export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
@@ -114,6 +113,14 @@ export default class MatchDetailView extends Vue {
 
   get match() {
     return this.$store.direct.state.matches.matchDetail.match;
+  }
+
+  get heroesOfWinner() {
+    return this.scoresOfWinner.heroes;
+  }
+
+  get heroesOfLooser() {
+    return this.scoresOfLooser.heroes;
   }
 
   get scoresOfWinner() {

@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     dense
-    class="hide-footer clickable"
+    class="hide-footer pointer"
     :options.sync="options"
     :server-items-length="totalMatches"
     :headers="headers"
@@ -148,9 +148,6 @@ export default class MatchesGrid extends Vue {
 </script>
 
 <style lang="scss">
-.clickable {
-  cursor: pointer !important;
-}
 .playerCol {
   max-width: 500px;
 }
