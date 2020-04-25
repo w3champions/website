@@ -30,7 +30,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
-import moment from 'moment';
+import moment from "moment";
 
 @Component({
   components: { TeamMatchInfo }
@@ -56,15 +56,15 @@ export default class MatchDetailView extends Vue {
   }
 
   get matchResult() {
-    return this.$store.direct.state.match.matchDetail.match;
+    return this.$store.direct.state.matches.matchDetail.match;
   }
 
   get loading() {
-    return this.$store.direct.state.match.loadingMatchDetail;
+    return this.$store.direct.state.matches.loadingMatchDetail;
   }
 
   private async init() {
-    await this.$store.direct.dispatch.match.loadMatchDetail(this.matchId);
+    await this.$store.direct.dispatch.matches.loadMatchDetail(this.matchId);
   }
 }
 </script>
