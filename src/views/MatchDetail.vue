@@ -1,12 +1,5 @@
 <template>
   <v-container class="profile">
-    <v-progress-circular
-      v-if="loading"
-      style="margin-top: 180px;"
-      :size="50"
-      color="primary"
-      indeterminate
-    ></v-progress-circular>
     <v-row v-if="!loading">
       <v-col cols="12">
         <v-card tile>
