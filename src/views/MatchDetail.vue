@@ -49,30 +49,6 @@ export default class MatchDetailView extends Vue {
     this.init();
   }
 
-  get winnerNames() {
-    return this.matchResult.teams[0].players
-      .map(p => `${p.name} (${p.oldMmr})`)
-      .join(", ");
-  }
-
-  get looserNames() {
-    return this.matchResult.teams[1].players
-      .map(p => `${p.name} (${p.oldMmr})`)
-      .join(", ");
-  }
-
-  get winnerMmrGain() {
-    return this.matchResult.teams[0].players[0].mmrGain;
-  }
-
-  get looserMmrGain() {
-    return this.matchResult.teams[1].players[0].mmrGain;
-  }
-
-  get playerDetails() {
-    return this.$store.direct.state.match.matchDetail.playerScores;
-  }
-
   get matchResult() {
     return this.$store.direct.state.match.matchDetail.match;
   }
