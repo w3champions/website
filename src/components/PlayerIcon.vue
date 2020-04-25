@@ -37,8 +37,8 @@ export default class PlayerIcon extends Vue {
 }
 
 .race-icon-big {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background-position: center;
   background-size: cover;
 }
