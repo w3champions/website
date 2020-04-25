@@ -20,18 +20,14 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-title
-            style="margin-top: -30px !important;"
-            class="justify-center"
-          >
+          <v-card-title class="justify-center small-title">
             <v-card-subtitle>
               {{ $t(`mapNames.${match.map}`) }} ({{ matchDuration }})
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
           <v-row justify="space-between">
-            <v-col cols="1">
-            </v-col>
+            <v-col cols="1"> </v-col>
             <v-col cols="1">
               <hero-icon :hero="heroesOfWinner[2]" />
             </v-col>
@@ -65,8 +61,7 @@
             <v-col cols="1">
               <hero-icon :hero="heroesOfLooser[2]" />
             </v-col>
-            <v-col cols="1">
-            </v-col>
+            <v-col cols="1"> </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -83,7 +78,7 @@ import MatchHiglights from "@/components/MatchHiglights.vue";
 import HeroIcon from "@/components/HeroIcon.vue";
 
 @Component({
-  components: {HeroIcon, MatchHiglights, TeamMatchInfo }
+  components: { HeroIcon, MatchHiglights, TeamMatchInfo }
 })
 export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
@@ -144,3 +139,10 @@ export default class MatchDetailView extends Vue {
   }
 }
 </script>
+
+<style type="text/css">
+.small-title {
+  margin-top: -30px !important;
+  margin-bottom: -25px !important;
+}
+</style>
