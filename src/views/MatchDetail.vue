@@ -4,9 +4,9 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            <span class="won">{{ winnerNames }} +{{winnerMmrGain}}</span>
+            <span class="won">{{ winnerNames }} +{{ winnerMmrGain }}</span>
             <span style="margin-left: 20px; margin-right: 20px">VS</span>
-            <span class="lost">{{ looserNames }} {{looserMmrGain}}</span>
+            <span class="lost">{{ looserNames }} {{ looserMmrGain }}</span>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
