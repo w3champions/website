@@ -2,7 +2,14 @@
   <div>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-icon class="mr-2">mdi-skull</v-icon>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">mdi-skull</v-icon>
+          </template>
+          <div>
+            Herokills
+          </div>
+        </v-tooltip>
       </v-col>
       <v-col :align="left ? 'left' : 'right'">
         {{ heroKills }}
@@ -10,7 +17,14 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-icon class="mr-2">mdi-chevron-triple-up</v-icon>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">mdi-chevron-triple-up</v-icon>
+          </template>
+          <div>
+            Experience gained
+          </div>
+        </v-tooltip>
       </v-col>
       <v-col :align="left ? 'left' : 'right'">
         {{ experience }}
@@ -18,7 +32,14 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-icon class="mr-2">mdi-treasure-chest</v-icon>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">mdi-treasure-chest</v-icon>
+          </template>
+          <div>
+            Items collected
+          </div>
+        </v-tooltip>
       </v-col>
       <v-col :align="left ? 'left' : 'right'">
         {{ itemsCollected }}
