@@ -9,6 +9,7 @@ export type PlayerState = {
   matches: Match[];
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
+  opponentTag: string;
 };
 
 export type PlayerProfile = {

@@ -72,12 +72,72 @@
               </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-matches'">
-              <v-card-title>Match History</v-card-title>
+              <v-card-title>
+                <v-row align="center">
+                  Match History
+                  <v-spacer />
+                  <v-autocomplete
+                    v-model="searchModel"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    single-line
+                    clearable
+                    :items="searchRanks"
+                    :loading="isLoading"
+                    :search-input.sync="search"
+                    :no-data-text="noDataText"
+                    item-text="player.name"
+                    placeholder="Search an opponent"
+                    return-object
+                  >
+                    <template v-slot:item="data">
+                      <template v-if="typeof data.item !== 'object'">
+                        <v-list-item-content
+                          v-text="data.item"
+                        ></v-list-item-content>
+                      </template>
+                      <template v-else>
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ data.item.player.name }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle>
+                            Wins: {{ data.item.player.totalWins }} | Losses:
+                            {{ data.item.player.totalLosses }} | Total:
+                            {{ data.item.player.games }}
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                      </template>
+                    </template>
+                  </v-autocomplete>
+                </v-row>
+              </v-card-title>
+              <v-card-text v-if="searchModel && searchModel.player">
+                <v-row align="center">
+                  <v-col cols="12">
+                    <span class="won">Wins: {{ opponentWins }}</span>
+                    /
+                    <span class="lost">
+                      Losses: {{ matches.length - opponentWins }}
+                    </span>
+                    /
+                    <span>
+                      Winrate: {{ (opponentWins / matches.length) * 100 }}%
+                      VS
+                      {{
+                        searchModel.player.name +
+                          "#" +
+                          searchModel.player.battleTag
+                      }}
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-card-text>
               <matches-grid
                 v-model="matches"
                 :totalMatches="totalMatches"
                 @pageChanged="onPageChanged"
-                :itemsPerPage="15"
+                :itemsPerPage="50"
                 :alwaysLeftName="battleTag"
                 :only-show-enemy="true"
               ></matches-grid>
@@ -104,11 +164,18 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap
 } from "@/store/player/types";
-import { EGameMode, ERaceEnum, Match } from "@/store/typings";
+import {
+  EGameMode,
+  ERaceEnum,
+  Match,
+  Team,
+  PlayerInTeam
+} from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/PlayerAvatar.vue";
+import { Ranking } from "@/store/ranking/types";
 
 @Component({
   components: {
@@ -122,6 +189,10 @@ export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
   public raceEnums = ERaceEnum;
+  public search = "";
+  public searchModel = {} as Ranking;
+  public isLoading = false;
+  public opponentWins = 0;
 
   public raceHeaders = [
     {
@@ -155,6 +226,25 @@ export default class PlayerView extends Vue {
     this.init();
   }
 
+  @Watch("searchModel")
+  public onSearchModelChanged(newVal: Ranking) {
+    if (newVal) {
+      this.$store.direct.commit.player.SET_OPPONENT_TAG(newVal.player.id);
+    } else {
+      this.$store.direct.commit.player.SET_OPPONENT_TAG("");
+    }
+    this.getMatches();
+  }
+
+  @Watch("search")
+  public onSearchChanged(newValue: string) {
+    if (newValue && newValue.length > 2) {
+      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+    } else {
+      this.$store.direct.dispatch.rankings.clearSearch();
+    }
+  }
+
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
@@ -176,6 +266,18 @@ export default class PlayerView extends Vue {
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+  }
+
+  get searchRanks(): Ranking[] {
+    return this.$store.direct.state.rankings.searchRanks;
+  }
+
+  get noDataText(): string {
+    if (!this.search || this.search.length < 3) {
+      return "Type at lease 3 letters";
+    }
+
+    return "No player found";
   }
 
   get oneVersusOneGameModeStats(): ModeStat[] {
@@ -212,8 +314,18 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.matches;
   }
 
-  public getMatches(page?: number) {
-    this.$store.direct.dispatch.player.loadMatches(page);
+  public async getMatches(page?: number) {
+    await this.$store.direct.dispatch.player.loadMatches(page);
+    this.opponentWins = 0;
+    if (this.$store.direct.state.player.opponentTag.length) {
+      this.opponentWins = this.matches.filter((match: Match) =>
+        match.teams.some((team: Team) => {
+          return team.players.some(
+            (player: PlayerInTeam) => player.id === this.battleTag && player.won
+          );
+        })
+      ).length;
+    }
   }
 
   mounted() {
