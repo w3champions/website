@@ -4,22 +4,106 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="justify-center">
-            <team-match-info
-              :big-race-icon="true"
-              :left="true"
-              :team="matchResult.teams[0]"
-            ></team-match-info>
-            <span style="margin-right: 30px; margin-left: 30px">VS</span>
-            <team-match-info
-              :big-race-icon="true"
-              :team="matchResult.teams[1]"
-            ></team-match-info>
+            <v-row justify="space-around  ">
+              <v-col>
+                <team-match-info
+                  :big-race-icon="true"
+                  :left="true"
+                  :team="matchResult.teams[0]"
+                />
+              </v-col>
+              <v-col cols="1" class="text-center">
+                <span>VS</span>
+              </v-col>
+              <v-col>
+                <team-match-info
+                  :big-race-icon="true"
+                  :team="matchResult.teams[1]"
+                />
+              </v-col>
+            </v-row>
           </v-card-title>
-          <v-card-title style="margin-top: -30px !important;" class="justify-center">
+          <v-card-title
+            style="margin-top: -30px !important;"
+            class="justify-center"
+          >
             <v-card-subtitle>
-              {{ $t(`mapNames.${matchResult.map}`) }} ({{ matchDuration }}) {{ playedDate }}
+              {{ $t(`mapNames.${matchResult.map}`) }} ({{ matchDuration }})
+              {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
+          <v-row justify="space-between">
+            <v-col cols="1" style="border: 1px solid red">
+              h3
+            </v-col>
+            <v-col cols="1" style="border: 1px solid red">
+              h2
+            </v-col>
+            <v-col cols="1" style="border: 1px solid red">
+              h1
+            </v-col>
+            <v-col cols="2" style="border: 1px solid red">
+              <v-row>
+                <v-col align="right">
+                  <v-icon class="mr-2">mdi-skull</v-icon>
+                </v-col>
+                <v-col>
+                  3
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col align="right">
+                  <v-icon class="mr-2">mdi-treasure-chest</v-icon>
+                </v-col>
+                <v-col>
+                  1453
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col align="right">
+                  <v-icon class="mr-2">mdi-chevron-triple-up</v-icon>
+                </v-col>
+                <v-col>
+                  6
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="2" style="border: 1px solid red">
+              <v-row>
+                <v-col align="right">
+                  3
+                </v-col>
+                <v-col>
+                  <v-icon class="mr-2">mdi-skull</v-icon>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col align="right">
+                  1453
+                </v-col>
+                <v-col>
+                  <v-icon class="mr-2">mdi-treasure-chest</v-icon>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col align="right">
+                  6
+                </v-col>
+                <v-col>
+                  <v-icon class="mr-2">mdi-chevron-triple-up</v-icon>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="1" style="border: 1px solid red">
+              h1
+            </v-col>
+            <v-col cols="1" style="border: 1px solid red">
+              h2
+            </v-col>
+            <v-col cols="1" style="border: 1px solid red">
+              h3
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -48,7 +132,13 @@ export default class MatchDetailView extends Vue {
   }
 
   get matchDuration() {
-    return moment.utc(moment.duration(this.matchResult.durationInSeconds, "seconds").asMilliseconds()).format("mm:ss");
+    return moment
+      .utc(
+        moment
+          .duration(this.matchResult.durationInSeconds, "seconds")
+          .asMilliseconds()
+      )
+      .format("mm:ss");
   }
 
   get playedDate() {
