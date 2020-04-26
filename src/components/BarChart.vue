@@ -14,12 +14,12 @@ export default class BarChart extends Mixins(Bar) {
       display: false
     },
     tooltips: {
-      custom: function(tooltip) {
+      custom: function(tooltip: { displayColors: boolean; }) {
         if (!tooltip) return;
         tooltip.displayColors = false;
       },
       callbacks: {
-        label: function(tooltipItem) {
+        label: function(tooltipItem: { xLabel: any; yLabel: any; }) {
           return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
         },
         title: function() {
