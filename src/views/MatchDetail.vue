@@ -43,6 +43,9 @@
                 :experience="scoresOfWinner.heroScore.expGained"
                 :hero-kills="scoresOfWinner.heroScore.heroesKilled"
                 :items-collected="scoresOfWinner.heroScore.itemsObtained"
+                :hero-kills-opponent="scoresOfLooser.heroScore.heroesKilled"
+                :experience-opponent="scoresOfLooser.heroScore.expGained"
+                :items-collected-opponent="scoresOfLooser.heroScore.itemsObtained"
               />
             </v-col>
             <v-col cols="2">
@@ -50,6 +53,9 @@
                 :experience="scoresOfLooser.heroScore.expGained"
                 :hero-kills="scoresOfLooser.heroScore.heroesKilled"
                 :items-collected="scoresOfLooser.heroScore.itemsObtained"
+                :hero-kills-opponent="scoresOfWinner.heroScore.heroesKilled"
+                :experience-opponent="scoresOfWinner.heroScore.expGained"
+                :items-collected-opponent="scoresOfWinner.heroScore.itemsObtained"
               />
             </v-col>
             <v-col cols="1">
