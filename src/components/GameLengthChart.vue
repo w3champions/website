@@ -39,7 +39,7 @@ export default class GameLengthChart extends Vue {
       labels: this.passedTime,
       datasets: [
         {
-          label: "# of Games",
+          label: "amount of games",
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
