@@ -29,7 +29,9 @@ export default class HeroIcon extends Vue {
   }
 
   get firstHeroOrNot() {
-    return this.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second";
+    return this.firstHero
+      ? "hero-level-flag-first-hero"
+      : "hero-level-flag-second";
   }
 }
 </script>
