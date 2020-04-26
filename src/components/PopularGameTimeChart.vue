@@ -42,7 +42,7 @@ export default class PopularGameTimeChart extends Mixins(BarChart) {
       labels: this.passedTime,
       datasets: [
         {
-          label: "# of Games",
+          label: "accumulated games over the last 2 weeks",
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

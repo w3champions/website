@@ -11,7 +11,7 @@ export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
   private options = {
     legend: {
-      display: false
+      display: true
     },
     tooltips: {
       custom: function(tooltip: { displayColors: boolean; }) {

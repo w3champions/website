@@ -99,10 +99,6 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
-              <v-card-title
-                >Here you can see the accumulated active matches from the last
-                two weeks</v-card-title
-              >
               <v-row>
                 <v-col cols="12">
                   <v-select
