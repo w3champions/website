@@ -75,6 +75,8 @@
               <player-performance-on-match
                 :unit-score="scoresOfWinner.unitScore"
                 :resource-scoure="scoresOfWinner.resourceScore"
+                :unit-score-opponent="scoresOfLooser.unitScore"
+                :resource-scoure-opponent="scoresOfLooser.resourceScore"
                 :left="true"
               />
             </v-col>
@@ -82,6 +84,8 @@
               <player-performance-on-match
                 :unit-score="scoresOfLooser.unitScore"
                 :resource-scoure="scoresOfLooser.resourceScore"
+                :unit-score-opponent="scoresOfWinner.unitScore"
+                :resource-scoure-opponent="scoresOfWinner.resourceScore"
               />
             </v-col>
             <v-col cols="1"> </v-col>
