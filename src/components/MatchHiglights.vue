@@ -4,7 +4,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">mdi-skull</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">mdi-skull</v-icon>
           </template>
           <div>
             Herokills
@@ -19,7 +19,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">mdi-chevron-triple-up</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">mdi-chevron-triple-up</v-icon>
           </template>
           <div>
             Experience gained
@@ -34,7 +34,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">mdi-treasure-chest</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">mdi-treasure-chest</v-icon>
           </template>
           <div>
             Items collected

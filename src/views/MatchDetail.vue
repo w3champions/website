@@ -71,7 +71,7 @@
           </v-row>
           <v-row>
             <v-col cols="1"> </v-col>
-            <v-col>
+            <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfWinner.unitScore"
                 :resource-scoure="scoresOfWinner.resourceScore"
@@ -80,7 +80,7 @@
                 :left="true"
               />
             </v-col>
-            <v-col>
+            <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfLooser.unitScore"
                 :resource-scoure="scoresOfLooser.resourceScore"
