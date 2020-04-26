@@ -294,21 +294,22 @@ export default class RankingsView extends Vue {
     )[0];
     if (!ladder) return {} as League;
 
-    return ladder.leagues.filter(l => l.id == league)[0];
+    const foundLeague = ladder.leagues.filter(l => l.id == league)[0] || {};
+    return foundLeague;
   }
 
   get selectedLeagueName(): string {
-    return !this.selectedLeague.name ? "" : this.selectedLeague.name;
+    return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
   }
 
   get selectedLeagueMaxParticipantCount(): number {
-    return !this.selectedLeague.maxParticipantCount
+    return !this.selectedLeague?.maxParticipantCount
       ? 0
-      : this.selectedLeague.maxParticipantCount;
+      : this.selectedLeague?.maxParticipantCount;
   }
 
   get selectedLeageueOrder(): number {
-    return !this.selectedLeague.order ? 0 : this.selectedLeague.order;
+    return !this.selectedLeague?.order ? 0 : this.selectedLeague?.order;
   }
 
   get searchModelBattleTag() {
