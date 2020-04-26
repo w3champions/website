@@ -1,0 +1,55 @@
+<template>
+  <bar-chart :chart-data="gameHourChartData" />
+</template>
+<script lang="ts">
+import { Component, Prop, Mixins } from "vue-property-decorator";
+
+import { PopularGameHour } from "@/store/overallStats/types";
+import { ChartData } from "chart.js";
+import moment from "moment";
+import BarChart from "@/components/BarChart.vue";
+
+@Component({
+  components: { BarChart }
+})
+export default class PopularGameTimeChart extends Mixins(BarChart) {
+  @Prop() public popularGameHour!: PopularGameHour;
+
+  getTrimmedTimes() {
+    const times = this.popularGameHour.playTimePerHour.slice(4);
+    times.pop();
+    return times;
+  }
+
+  get passedTime() {
+    return this.getTrimmedTimes().map(g =>
+      moment
+        .utc(
+          moment
+            .duration(g.hours, "hours")
+            .add(moment.duration(g.minutes, "minutes"))
+            .asMilliseconds()
+        )
+        .format("HH:mm")
+    );
+  }
+
+  get gamesCount() {
+    return this.getTrimmedTimes().map(g => g.games);
+  }
+  get gameHourChartData(): ChartData {
+    return {
+      labels: this.passedTime,
+      datasets: [
+        {
+          label: "# of Games",
+          data: this.gamesCount,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1
+        }
+      ]
+    };
+  }
+}
+</script>

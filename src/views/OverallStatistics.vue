@@ -80,18 +80,18 @@
             <v-tab-item :value="'tab-gametimes'">
               <v-card-title>Average gamelength of 1v1 matches</v-card-title>
               <v-row>
-<!--                <v-col cols="2">-->
-<!--                  <v-card-text>-->
-<!--                    <v-select-->
-<!--                      :items="gameModes"-->
-<!--                      item-text="modeName"-->
-<!--                      item-value="modeId"-->
-<!--                      @change="setSelectedMode"-->
-<!--                      label="Select Mode"-->
-<!--                      outlined-->
-<!--                    />-->
-<!--                  </v-card-text>-->
-<!--                </v-col>-->
+                <!--                <v-col cols="2">-->
+                <!--                  <v-card-text>-->
+                <!--                    <v-select-->
+                <!--                      :items="gameModes"-->
+                <!--                      item-text="modeName"-->
+                <!--                      item-value="modeId"-->
+                <!--                      @change="setSelectedMode"-->
+                <!--                      label="Select Mode"-->
+                <!--                      outlined-->
+                <!--                    />-->
+                <!--                  </v-card-text>-->
+                <!--                </v-col>-->
                 <v-col cols="12">
                   <v-card-text>
                     <game-length-chart
@@ -103,25 +103,27 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
-              <v-card-title>Here you can see the accumulated active matches from the last two weeks</v-card-title>
+              <v-card-title
+                >Here you can see the accumulated active matches from the last
+                two weeks</v-card-title
+              >
               <v-row>
-<!--                <v-col cols="2">-->
-<!--                  <v-card-text>-->
-<!--                    <v-select-->
-<!--                      :items="gameModes"-->
-<!--                      item-text="modeName"-->
-<!--                      item-value="modeId"-->
-<!--                      @change="setSelectedModeGameHour"-->
-<!--                      label="Select Mode"-->
-<!--                      outlined-->
-<!--                    />-->
-<!--                  </v-card-text>-->
-<!--                </v-col>-->
+                <v-col cols="2">
+                  <v-card-text>
+                    <v-select
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedModeGameHour"
+                      label="Select Mode"
+                      outlined
+                    />
+                  </v-card-text>
+                </v-col>
                 <v-col cols="12">
                   <v-card-text>
-                    <popular-game-time-charts
-                      class="ammount-per-day-chart"
-                      :game-hours="getSelectedGameHours"
+                    <popular-game-time-chart
+                      :popular-game-hour="getSelectedGameHours"
                     />
                   </v-card-text>
                 </v-col>
@@ -147,14 +149,12 @@ import {
   WinLoss
 } from "@/store/overallStats/types";
 import { EGameMode, ERaceEnum } from "@/store/typings";
-import BarChart from "@/components/GameLengthChart.vue";
 import GameLengthChart from "@/components/GameLengthChart.vue";
-import PopularGameTimeCharts from "@/components/PopularGameTimeCharts.vue";
+import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
 
 @Component({
   components: {
-    PopularGameTimeCharts,
-    BarChart,
+    PopularGameTimeChart,
     AmountPerDayChart,
     GameLengthChart
   }
@@ -221,7 +221,9 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get getSelectedGameHours(): PopularGameHour {
-    return this.popularGameHours.filter(g => g.gameMode == this.selectedPopularHour)[0];
+    return this.popularGameHours.filter(
+      g => g.gameMode == this.selectedPopularHour
+    )[0];
   }
 
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
