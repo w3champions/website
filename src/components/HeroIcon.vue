@@ -1,0 +1,76 @@
+<template>
+  <div v-if="hero">
+    <v-card-text
+      class="hero-icon"
+      :style="{ 'background-image': 'url(' + heroPicture + ')' }"
+    />
+    <div class="text-center hero-level-flag" :class="firstHeroOrNot">
+      <span>{{ hero.level }}</span>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+import { Hero } from "@/store/typings";
+
+@Component({})
+export default class HeroIcon extends Vue {
+  @Prop() hero!: Hero;
+  @Prop() firstHero!: boolean;
+
+  get heroPicture() {
+    try {
+      return require("../assets/heroes/" + this.hero.icon + ".png");
+    } catch (e) {
+      return null;
+    }
+  }
+
+  get firstHeroOrNot() {
+    return this.firstHero
+      ? "hero-level-flag-first-hero"
+      : "hero-level-flag-second";
+  }
+}
+</script>
+
+<style type="text/css" scoped>
+.hero-icon {
+  z-index: 1;
+  position: relative;
+  margin-top: 12px;
+  padding-top: 100%;
+  width: 100%;
+  padding-bottom: 0 !important;
+  margin-bottom: -2px !important;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.theme--light .hero-level-flag {
+  background: rgba(52, 122, 154, 0.5);
+}
+
+.theme--dark .hero-level-flag {
+  background: rgba(50, 194, 165, 0.4);
+}
+
+.hero-level-flag {
+  padding-bottom: 5px;
+  clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
+}
+
+.hero-level-flag-second {
+  font-size: 1.1em;
+  margin-left: 17%;
+  margin-right: 17%;
+}
+
+.hero-level-flag-first-hero {
+  font-size: 1.3em;
+  margin-left: 7%;
+  margin-right: 7%;
+}
+</style>

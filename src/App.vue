@@ -163,16 +163,6 @@ export default class App extends Vue {
   margin-right: 10px;
 }
 
-.won {
-  color: green;
-  font-weight: 500;
-}
-
-.lost {
-  color: red;
-  font-weight: 500;
-}
-
 @font-face {
   font-family: "Friz Quadrata Regular OS";
   font-style: normal;

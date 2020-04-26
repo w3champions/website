@@ -4,7 +4,7 @@ import { createDirectStore } from "direct-vuex";
 
 import rankings from "./ranking/index";
 import player from "./player/index";
-import match from "./match/index";
+import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
@@ -32,7 +32,7 @@ const mod = {
   modules: {
     player,
     rankings,
-    match,
+    matches,
     overallStatistics,
     oauth,
     personalSettings

@@ -18,6 +18,7 @@ export default class AmountPerDayChart extends Mixins(Line) {
             label: "# of Games",
             data: this.gameDayCounts,
             backgroundColor: ["rgba(54, 162, 235, 0.2)"],
+            pointBackgroundColor: "#ffffff",
             borderColor: ["rgba(54, 162, 235, 1)"],
             borderWidth: 1
           }

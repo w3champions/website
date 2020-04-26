@@ -198,7 +198,7 @@ export default class PlayerAvatar extends Vue {
   getCorrectClasses(race: ERaceEnum, iconId: number) {
     const classes = ["player-avatar-choosing"];
     if (this.isLoggedInPlayer && this.enabledIfEnoughWins(race, iconId))
-      classes.push("player-avatar-choosing-clickable");
+      classes.push("pointer");
 
     if (!this.enabledIfEnoughWins(race, iconId))
       classes.push("player-avatar-choosing-disabled");
@@ -286,14 +286,10 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-avatar-choosing {
-  width: 100px;
-  height: 100px;
+  padding-top: 100%;
+  width: 100%;
   background-repeat: no-repeat;
   background-size: contain;
-}
-
-.player-avatar-choosing-clickable {
-  cursor: pointer;
 }
 
 .player-avatar-choosing-disabled {

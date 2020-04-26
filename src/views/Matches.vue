@@ -19,7 +19,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { Match } from "../store/typings";
+import { Match } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 
 @Component({
@@ -33,15 +33,15 @@ export default class MatchesView extends Vue {
   }
 
   get totalMatches(): number {
-    return this.$store.direct.state.match.totalMatches;
+    return this.$store.direct.state.matches.totalMatches;
   }
 
   get matches(): Match[] {
-    return this.$store.direct.state.match.matches;
+    return this.$store.direct.state.matches.matches;
   }
 
   public getMatches(page?: number) {
-    this.$store.direct.dispatch.match.loadMatches(page);
+    this.$store.direct.dispatch.matches.loadMatches(page);
   }
 
   created() {

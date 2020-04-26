@@ -4,20 +4,20 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 
-import { GameLength } from "@/store/overallStats/types";
+import { PopularGameHour } from "@/store/overallStats/types";
+import { ChartData } from "chart.js";
 import moment from "moment";
 import BarChart from "@/components/BarChart.vue";
-import { ChartData } from "chart.js";
 import Vue from "vue";
 
 @Component({
   components: { BarChart }
 })
-export default class GameLengthChart extends Vue {
-  @Prop() public gameLength!: GameLength;
+export default class PopularGameTimeChart extends Vue {
+  @Prop() public popularGameHour!: PopularGameHour;
 
   getTrimmedTimes() {
-    const times = this.gameLength.lengths.slice(4);
+    const times = this.popularGameHour.playTimePerHour.slice(4);
     times.pop();
     return times;
   }
@@ -25,21 +25,25 @@ export default class GameLengthChart extends Vue {
   get passedTime() {
     return this.getTrimmedTimes().map(g =>
       moment
-        .utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds())
-        .format("mm:ss")
+        .utc(
+          moment
+            .duration(g.hours, "hours")
+            .add(moment.duration(g.minutes, "minutes"))
+            .asMilliseconds()
+        )
+        .format("HH:mm")
     );
   }
 
   get gamesCount() {
     return this.getTrimmedTimes().map(g => g.games);
   }
-
   get gameHourChartData(): ChartData {
     return {
       labels: this.passedTime,
       datasets: [
         {
-          label: "amount of games",
+          label: "accumulated games over the last two weeks",
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

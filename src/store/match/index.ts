@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import { MatchState } from "./types";
-import { Match, RootState } from "../typings";
+import {Match, MatchDetail, RootState} from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -8,7 +8,9 @@ const mod = {
   state: {
     page: 0,
     totalMatches: 0,
-    matches: [] as Match[]
+    loadingMatchDetail: true,
+    matches: [] as Match[],
+    matchDetail: {} as MatchDetail
   } as MatchState,
   actions: {
     async loadMatches(
@@ -28,6 +30,18 @@ const mod = {
 
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
+    },
+    async loadMatchDetail(
+        context: ActionContext<MatchState, RootState>,
+        id: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      commit.SET_LOADING_MATCH_DETAIL(true);
+      const response = await rootGetters.matchService.retrieveMatchDetail(id);
+
+      commit.SET_MATCH_DETAIL(response);
+      commit.SET_LOADING_MATCH_DETAIL(false);
     }
   },
   mutations: {
@@ -39,6 +53,12 @@ const mod = {
     },
     SET_MATCHES(state: MatchState, matches: Match[]) {
       state.matches = matches;
+    },
+    SET_MATCH_DETAIL(state: MatchState, matchDetail: MatchDetail) {
+      state.matchDetail = matchDetail;
+    },
+    SET_LOADING_MATCH_DETAIL(state: MatchState, loading: boolean) {
+      state.loadingMatchDetail = loading;
     }
   }
 } as const;

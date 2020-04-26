@@ -1,164 +1,164 @@
 <template>
   <v-container>
-        <v-card class="mt-2" tile>
-          <v-card-title>
-            <v-menu offset-x>
-              <template v-slot:activator="{ on }">
-                <v-btn tile v-on="on" style="background-color: transparent;"
-                  ><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings
-                  for Gateway: {{ gateway }}</v-btn
-                >
-              </template>
-              <v-card>
-                <v-card-text>
-                  <v-list>
-                    <v-list-item-content>
-                      <v-list-item-title>Select a gateway:</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list>
-                  <v-divider></v-divider>
-                  <v-list dense>
-                    <v-list-item @click="selectEurope">
-                      <v-list-item-content>
-                        <v-list-item-title>Europe</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item @click="selectAmerica">
-                      <v-list-item-content>
-                        <v-list-item-title>Americas</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card-text>
-              </v-card>
-            </v-menu>
-            <v-menu offset-x>
-              <template v-slot:activator="{ on }">
-                <v-btn tile v-on="on" style="background-color: transparent;">
-                  <league-icon :league="selectedLeageueOrder" />
-                  {{ selectedLeagueName }} {{ getDivision(selectedLeague.id) }}
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-text>
-                  <v-list>
-                    <v-list-item-content>
-                      <v-list-item-title>Select a league:</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list>
-                  <v-divider></v-divider>
-                  <v-list dense>
-                    <v-list-item
-                      v-for="item in ladders"
-                      :key="item.id"
-                      @click="setLeague(item.id)"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          <league-icon :league="item.order" />
-                          {{ item.name }} {{ getDivision(item.id) }}
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card-text>
-              </v-card>
-            </v-menu>
-            <v-spacer></v-spacer>
-            <v-autocomplete
-              v-model="searchModel"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              clearable
-              :items="searchRanks"
-              :loading="isLoading"
-              :search-input.sync="search"
-              :no-data-text="noDataText"
-              item-text="player.name"
-              placeholder="Start typing to Search"
-              return-object
+    <v-card class="mt-2" tile>
+      <v-card-title>
+        <v-menu offset-x>
+          <template v-slot:activator="{ on }">
+            <v-btn tile v-on="on" style="background-color: transparent;"
+              ><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings
+              for Gateway: {{ gateway }}</v-btn
             >
-              <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                  <v-list-item-content v-text="data.item"></v-list-item-content>
-                </template>
-                <template v-else>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-content>
+                  <v-list-item-title>Select a gateway:</v-list-item-title>
+                </v-list-item-content>
+              </v-list>
+              <v-divider></v-divider>
+              <v-list dense>
+                <v-list-item @click="selectEurope">
+                  <v-list-item-content>
+                    <v-list-item-title>Europe</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="selectAmerica">
+                  <v-list-item-content>
+                    <v-list-item-title>Americas</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <v-menu offset-x>
+          <template v-slot:activator="{ on }">
+            <v-btn tile v-on="on" style="background-color: transparent;">
+              <league-icon :league="selectedLeageueOrder" />
+              {{ selectedLeagueName }} {{ getDivision(selectedLeague.id) }}
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-content>
+                  <v-list-item-title>Select a league:</v-list-item-title>
+                </v-list-item-content>
+              </v-list>
+              <v-divider></v-divider>
+              <v-list dense>
+                <v-list-item
+                  v-for="item in ladders"
+                  :key="item.id"
+                  @click="setLeague(item.id)"
+                >
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ data.item.player.name }}
+                      <league-icon :league="item.order" />
+                      {{ item.name }} {{ getDivision(item.id) }}
                     </v-list-item-title>
-                    <v-list-item-subtitle>
-                      Wins: {{ data.item.player.totalWins }} | Losses:
-                      {{ data.item.player.totalLosses }} | Total:
-                      {{ data.item.player.games }}
-                    </v-list-item-subtitle>
                   </v-list-item-content>
-                </template>
-              </template>
-            </v-autocomplete>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table
-              class="elevation-1 hide-footer table-row-pointer"
-              :headers="headers"
-              :items="rankings"
-              :options.sync="options"
-              :server-items-length="totalPlayers"
-              :mobile-breakpoint="400"
-              hide-default-footer
-              @click:row="onRowClicked"
-            >
-              <template v-slot:body="{ items }">
-                <tbody>
-                  <tr
-                    :id="`listitem_${item.rankNumber}`"
-                    @click.left="openPlayerProfile(item.player.id)"
-                    @click.middle="openProfileInNewTab(item.player.id)"
-                    @click.right="openProfileInNewTab(item.player.id)"
-                    v-for="item in items"
-                    :key="item.player.id"
-                    :class="{
-                      searchedItem: item.player.id === searchModelBattleTag
-                    }"
-                  >
-                    <td>{{ item.rankNumber }}.</td>
-                    <td>
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">{{ item.player.name }}</span>
-                        </template>
-                        <div>
-                          {{ item.player.name }}#{{ item.player.battleTag }}
-                        </div>
-                      </v-tooltip>
-                    </td>
-                    <td class="text-end won">{{ item.player.totalWins }}</td>
-                    <td class="text-end lost">{{ item.player.totalLosses }}</td>
-                    <td class="text-end">{{ item.player.games }}</td>
-                    <td class="text-end">
-                      {{ (item.player.winrate * 100).toFixed(1) }}%
-                    </td>
-                    <td class="text-end">{{ item.rankingPoints }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      <v-col cols="12" md="3" v-if="false">
-        <v-card tile>
-          <v-card-title>Stats</v-card-title>
-          <v-list class="transparent">
-            <v-list-item v-for="(stat, index) in stats" :key="index">
-              <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{
-                stat.value
-              }}</v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <v-spacer></v-spacer>
+        <v-autocomplete
+          v-model="searchModel"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          clearable
+          :items="searchRanks"
+          :loading="isLoading"
+          :search-input.sync="search"
+          :no-data-text="noDataText"
+          item-text="player.name"
+          placeholder="Start typing to Search"
+          return-object
+        >
+          <template v-slot:item="data">
+            <template v-if="typeof data.item !== 'object'">
+              <v-list-item-content v-text="data.item"></v-list-item-content>
+            </template>
+            <template v-else>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ data.item.player.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Wins: {{ data.item.player.totalWins }} | Losses:
+                  {{ data.item.player.totalLosses }} | Total:
+                  {{ data.item.player.games }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+          </template>
+        </v-autocomplete>
+      </v-card-title>
+      <v-card-text>
+        <v-data-table
+          class="elevation-1 hide-footer table-row-pointer"
+          :headers="headers"
+          :items="rankings"
+          :options.sync="options"
+          :server-items-length="totalPlayers"
+          :mobile-breakpoint="400"
+          hide-default-footer
+          @click:row="onRowClicked"
+        >
+          <template v-slot:body="{ items }">
+            <tbody>
+              <tr
+                :id="`listitem_${item.rankNumber}`"
+                @click.left="openPlayerProfile(item.player.id)"
+                @click.middle="openProfileInNewTab(item.player.id)"
+                @click.right="openProfileInNewTab(item.player.id)"
+                v-for="item in items"
+                :key="item.player.id"
+                :class="{
+                  searchedItem: item.player.id === searchModelBattleTag
+                }"
+              >
+                <td>{{ item.rankNumber }}.</td>
+                <td>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on">{{ item.player.name }}</span>
+                    </template>
+                    <div>
+                      {{ item.player.name }}#{{ item.player.battleTag }}
+                    </div>
+                  </v-tooltip>
+                </td>
+                <td class="text-end won">{{ item.player.totalWins }}</td>
+                <td class="text-end lost">{{ item.player.totalLosses }}</td>
+                <td class="text-end">{{ item.player.games }}</td>
+                <td class="text-end">
+                  {{ (item.player.winrate * 100).toFixed(1) }}%
+                </td>
+                <td class="text-end">{{ item.rankingPoints }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
+    <v-col cols="12" md="3" v-if="false">
+      <v-card tile>
+        <v-card-title>Stats</v-card-title>
+        <v-list class="transparent">
+          <v-list-item v-for="(stat, index) in stats" :key="index">
+            <v-list-item-title>{{ stat.name }}</v-list-item-title>
+            <v-list-item-subtitle class="text-right">{{
+              stat.value
+            }}</v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
   </v-container>
 </template>
 

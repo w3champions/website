@@ -1,4 +1,4 @@
-import { Match } from "@/store/typings";
+import {Match, MatchDetail} from "@/store/typings";
 import { API_URL } from "@/main";
 
 export default class MatchService {
@@ -14,6 +14,15 @@ export default class MatchService {
   ): Promise<{count: number, matches: Match[]}> {
     const offset = page * this.pageSize;
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async retrieveMatchDetail(
+    matchId: string
+  ): Promise<MatchDetail> {
+    const url = `${API_URL}api/matches/${matchId}`;
 
     const response = await fetch(url);
     return await response.json();

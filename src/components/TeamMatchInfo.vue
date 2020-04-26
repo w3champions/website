@@ -1,9 +1,9 @@
 <template>
   <div>
-    <player-match-info :player="team.players[0]" :left="left" />
-    <player-match-info v-if="team.players.length > 1" :player="team.players[1]" :left="left" />
-    <player-match-info v-if="team.players.length > 2" :player="team.players[2]" :left="left" />
-    <player-match-info v-if="team.players.length > 3" :player="team.players[3]" :left="left" />
+    <player-match-info :player="team.players[0]" :left="left" :big-race-icon="bigRaceIcon" />
+    <player-match-info v-if="team.players.length > 1" :player="team.players[1]" :left="left" :big-race-icon="bigRaceIcon" />
+    <player-match-info v-if="team.players.length > 2" :player="team.players[2]" :left="left" :big-race-icon="bigRaceIcon" />
+    <player-match-info v-if="team.players.length > 3" :player="team.players[3]" :left="left" :big-race-icon="bigRaceIcon" />
   </div>
 </template>
 
@@ -19,5 +19,6 @@ import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
 export default class TeamMatchInfo extends Vue {
   @Prop() public team!: Team;
   @Prop() public left!: boolean;
+  @Prop() public bigRaceIcon!: boolean;
 }
 </script>
