@@ -78,7 +78,6 @@
               </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
-              <v-card-title>Average gamelength of 1v1 matches</v-card-title>
               <v-row>
                 <v-col cols="12">
                   <v-select
@@ -301,9 +300,6 @@ export default class OverallStatisticsView extends Vue {
 </script>
 
 <style type="text/css">
-.ammount-per-day-chart {
-  height: 650px;
-}
 
 .over-chart-select-box {
   position: absolute;
