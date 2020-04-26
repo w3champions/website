@@ -278,9 +278,8 @@ export default class PlayerAvatar extends Vue {
 
 <style lang="scss" scoped>
 .player-avatar {
-  padding-top: 100%;
-  padding-bottom: 20px;
-  width: 100%;
+  max-width: 185px;
+  height: 185px;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -303,8 +302,7 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-league {
-  width: 200px;
-  margin: 0 auto;
+  width: 182px;
 
   .league-image {
   }
