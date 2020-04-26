@@ -56,7 +56,6 @@ export default class HeroIcon extends Vue {
 }
 
 .hero-level-number {
-  opacity: 100% !important;
   z-index: 1000;
 }
 </style>
