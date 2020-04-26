@@ -6,6 +6,20 @@
       class="player-avatar text-center"
       :style="{ 'background-image': 'url(' + racePicture + ')' }"
     />
+    <v-row v-if="topLeague" class="player-league">
+      <v-col cols="md-6">
+        <img class="league-image" :src="'https://w3champions.com/integration/leagues/' + topLeague.leagueOrder + '.png'" />
+      </v-col>
+      <v-col cols="md-6">
+        <div class="player-league-rank">Rank
+          <div>
+            <b>{{topLeague.rank}}</b>
+          </div> 
+        </div>
+        <div class="mt-2 player-league-points">MMR: <b>{{topLeague.mmr}}</b></div>
+        <div class="player-league-points">RP: <b>{{topLeague.rankingPoints}}</b></div>
+      </v-col>
+    </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px">
       <v-card>
@@ -27,9 +41,11 @@
                     'background-image': 'url(' + picture(race, number) + ')'
                   }"
                 />
+
               </template>
               <span>{{ winsOf(winsOfRace(race), number) }}</span>
             </v-tooltip>
+
           </v-col>
         </v-row>
       </v-card>
@@ -117,13 +133,14 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
-import { RaceStat } from "@/store/player/types";
+import { ERaceEnum, EGameMode } from "@/store/typings";
+import { RaceStat, ModeStat } from "@/store/player/types";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
   @Prop() wins!: RaceStat[];
+  @Prop() modeStats!: ModeStat[];
 
   public dialogOpened = false;
   public races = [
@@ -189,6 +206,16 @@ export default class PlayerAvatar extends Vue {
 
   get personalRace(): ERaceEnum {
     return this.personalSetting?.profilePicture?.race ?? ERaceEnum.TOTAL;
+  }
+
+  get topLeague(): ModeStat | null {
+    if(!this.modeStats) {
+      return null;
+    }
+
+    // We should implement sorting by league here in the future when we support more modes
+    const league = this.modeStats.find(x => x.mode === EGameMode.GM_1ON1) || null;
+    return league;
   }
 
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
@@ -267,5 +294,19 @@ export default class PlayerAvatar extends Vue {
   opacity: 0.5;
   filter: alpha(opacity=50);
   background-color: #000;
+}
+
+.player-league {
+  .league-image {
+    margin-left: -10px;
+  }
+
+  .player-league-rank {
+    font-size: 20px;
+  }
+
+  .player-league-points {
+    font-size: 13px;
+  }
 }
 </style>

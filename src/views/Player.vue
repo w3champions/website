@@ -25,6 +25,7 @@
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
                         :wins="this.playerWins"
+                        :modeStats="this.profile.gameModeStats"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
                     </v-card-text>

@@ -36,6 +36,10 @@ export type ModeStat = {
   games: number;
   winrate: number;
   mmr: number;
+  leagueId: number;
+  leagueOrder: number;
+  rank: number;
+  rankingPoints: number;
 };
 
 export type RankStat = {
