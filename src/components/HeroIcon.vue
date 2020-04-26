@@ -23,7 +23,6 @@ export default class HeroIcon extends Vue {
     try {
       return require("../assets/heroes/" + this.hero.icon + ".png");
     } catch (e) {
-      console.error(`Did not find ${this.hero.icon}.png!`);
       return null;
     }
   }
