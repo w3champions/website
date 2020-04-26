@@ -8,11 +8,12 @@ import { GameLength } from "@/store/overallStats/types";
 import moment from "moment";
 import BarChart from "@/components/BarChart.vue";
 import { ChartData } from "chart.js";
+import Vue from "vue";
 
 @Component({
   components: { BarChart }
 })
-export default class GameLengthChart {
+export default class GameLengthChart extends Vue {
   @Prop() public gameLength!: GameLength;
 
   getTrimmedTimes() {

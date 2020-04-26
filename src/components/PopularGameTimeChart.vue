@@ -2,17 +2,18 @@
   <bar-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 import { PopularGameHour } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import moment from "moment";
 import BarChart from "@/components/BarChart.vue";
+import Vue from "vue";
 
 @Component({
   components: { BarChart }
 })
-export default class PopularGameTimeChart extends Mixins(BarChart) {
+export default class PopularGameTimeChart extends Vue {
   @Prop() public popularGameHour!: PopularGameHour;
 
   getTrimmedTimes() {
