@@ -5,7 +5,7 @@
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
     <div class="text-center hero-level-flag">
-      <span class="hero-level-number">{{ hero.level }}</span>
+      <span>{{ hero.level }}</span>
     </div>
   </div>
 </template>
@@ -31,10 +31,13 @@ export default class HeroIcon extends Vue {
 
 <style type="text/css" scoped>
 .hero-icon {
+  z-index: 1;
+  position: relative;
   margin-top: 12px;
   padding-top: 100%;
   width: 100%;
   padding-bottom: 0 !important;
+  margin-bottom: -2px !important;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -53,9 +56,5 @@ export default class HeroIcon extends Vue {
   margin-left: 10%;
   margin-right: 10%;
   clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
-}
-
-.hero-level-number {
-  z-index: 1000;
 }
 </style>
