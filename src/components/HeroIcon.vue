@@ -20,7 +20,11 @@ export default class HeroIcon extends Vue {
   @Prop() hero!: Hero;
 
   get heroPicture() {
-    return require("../assets/heroes/" + this.hero.icon + ".png");
+    try {
+      return require("../assets/heroes/" + this.hero.icon + ".png");
+    } catch (e) {
+      return null;
+    }
   }
 }
 </script>
