@@ -21,7 +21,7 @@
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
                 <v-row>
-                  <v-col cols="md-2">
+                  <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
                         :wins="this.playerWins"
@@ -30,13 +30,13 @@
                       />
                     </v-card-text>
                   </v-col>
-                  <v-col cols="md-6">
+                  <v-col md="7" lg="5">
                     <h4>Statistics by Game Mode</h4>
                     <mode-stats-grid
                       :stats="oneVersusOneGameModeStats"
                     ></mode-stats-grid>
                   </v-col>
-                  <v-col cols="md-4">
+                  <v-col md="12" lg="4">
                     <h4>Statistics by Race</h4>
                     <v-data-table
                       hide-default-footer
