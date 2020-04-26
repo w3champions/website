@@ -253,8 +253,8 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-avatar-choosing {
-  width: 100px;
-  height: 100px;
+  padding-top: 100%;
+  width: 100%;
   background-repeat: no-repeat;
   background-size: contain;
 }
