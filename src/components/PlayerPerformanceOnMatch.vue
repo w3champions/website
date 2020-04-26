@@ -2,7 +2,7 @@
   <div>
     <v-row dense>
       <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Units Killed
+        Units killed
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
@@ -16,7 +16,7 @@
     </v-row>
     <v-row dense>
       <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Units Produced
+        Units produced
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
@@ -30,7 +30,7 @@
     </v-row>
     <v-row dense>
       <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Gold Mined
+        Gold mined
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
@@ -44,7 +44,7 @@
     </v-row>
     <v-row dense>
       <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Lumber Harversted
+        Lumber harversted
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col

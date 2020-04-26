@@ -7,7 +7,7 @@
             <v-icon class="mr-4 ml-4" v-on="on">mdi-skull</v-icon>
           </template>
           <div>
-            Herokills
+            Heroes killed
           </div>
         </v-tooltip>
       </v-col>
