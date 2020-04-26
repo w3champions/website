@@ -4,7 +4,7 @@
       class="hero-icon"
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
-    <div class="text-center hero-level-flag">
+    <div class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>
   </div>
@@ -18,6 +18,7 @@ import { Hero } from "@/store/typings";
 @Component({})
 export default class HeroIcon extends Vue {
   @Prop() hero!: Hero;
+  @Prop() firstHero!: boolean;
 
   get heroPicture() {
     try {
@@ -25,6 +26,10 @@ export default class HeroIcon extends Vue {
     } catch (e) {
       return null;
     }
+  }
+
+  get firstHeroOrNot() {
+    return this.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second";
   }
 }
 </script>
@@ -51,10 +56,19 @@ export default class HeroIcon extends Vue {
 }
 
 .hero-level-flag {
-  font-size: 1.3em;
   padding-bottom: 5px;
-  margin-left: 10%;
-  margin-right: 10%;
   clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
+}
+
+.hero-level-flag-second {
+  font-size: 1em;
+  margin-left: 17%;
+  margin-right: 17%;
+}
+
+.hero-level-flag-first-hero {
+  font-size: 1.3em;
+  margin-left: 7%;
+  margin-right: 7%;
 }
 </style>

@@ -35,7 +35,7 @@
               <hero-icon :hero="heroesOfWinner[1]" />
             </v-col>
             <v-col cols="1">
-              <hero-icon :hero="heroesOfWinner[0]" />
+              <hero-icon :first-hero="true" :hero="heroesOfWinner[0]" />
             </v-col>
             <v-col cols="2">
               <match-higlights
@@ -59,7 +59,7 @@
               />
             </v-col>
             <v-col cols="1">
-              <hero-icon :hero="heroesOfLooser[0]" />
+              <hero-icon :first-hero="true" :hero="heroesOfLooser[0]" />
             </v-col>
             <v-col cols="1">
               <hero-icon :hero="heroesOfLooser[1]" />
