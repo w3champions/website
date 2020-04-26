@@ -126,7 +126,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get playedDate() {
-    return moment(this.match.startTime).format("MM.DD.YY");
+    return moment(this.match.startTime).format("MM.DD.YYYY");
   }
 
   get match() {
