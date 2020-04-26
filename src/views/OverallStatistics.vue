@@ -80,19 +80,16 @@
             <v-tab-item :value="'tab-gametimes'">
               <v-card-title>Average gamelength of 1v1 matches</v-card-title>
               <v-row>
-                <!--                <v-col cols="2">-->
-                <!--                  <v-card-text>-->
-                <!--                    <v-select-->
-                <!--                      :items="gameModes"-->
-                <!--                      item-text="modeName"-->
-                <!--                      item-value="modeId"-->
-                <!--                      @change="setSelectedMode"-->
-                <!--                      label="Select Mode"-->
-                <!--                      outlined-->
-                <!--                    />-->
-                <!--                  </v-card-text>-->
-                <!--                </v-col>-->
                 <v-col cols="12">
+                  <v-select
+                    class="over-chart-select-box"
+                    :items="gameModes"
+                    item-text="modeName"
+                    item-value="modeId"
+                    @change="setSelectedMode"
+                    label="Select Mode"
+                    outlined
+                  />
                   <v-card-text>
                     <game-length-chart
                       class="ammount-per-day-chart"
@@ -108,19 +105,16 @@
                 two weeks</v-card-title
               >
               <v-row>
-                <v-col cols="2">
-                  <v-card-text>
-                    <v-select
-                      :items="gameModes"
-                      item-text="modeName"
-                      item-value="modeId"
-                      @change="setSelectedModeGameHour"
-                      label="Select Mode"
-                      outlined
-                    />
-                  </v-card-text>
-                </v-col>
                 <v-col cols="12">
+                  <v-select
+                    class="over-chart-select-box"
+                    :items="gameModes"
+                    item-text="modeName"
+                    item-value="modeId"
+                    @change="setSelectedModeGameHour"
+                    label="Select Mode"
+                    outlined
+                  />
                   <v-card-text>
                     <popular-game-time-chart
                       :popular-game-hour="getSelectedGameHours"
@@ -309,5 +303,12 @@ export default class OverallStatisticsView extends Vue {
 <style type="text/css">
 .ammount-per-day-chart {
   height: 650px;
+}
+
+.over-chart-select-box {
+  position: absolute;
+  z-index: 10;
+  margin-left: 60px !important;
+  width: 100px;
 }
 </style>

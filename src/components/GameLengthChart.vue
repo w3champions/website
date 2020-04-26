@@ -1,59 +1,19 @@
+<template>
+  <bar-chart :chart-data="gameHourChartData" />
+</template>
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 import { GameLength } from "@/store/overallStats/types";
-import { Bar } from "vue-chartjs";
 import moment from "moment";
+import BarChart from "@/components/BarChart.vue";
+import { ChartData } from "chart.js";
 
-@Component({})
-export default class GameLengthChart extends Mixins(Bar) {
+@Component({
+  components: { BarChart }
+})
+export default class GameLengthChart {
   @Prop() public gameLength!: GameLength;
-
-  mounted() {
-    this.renderChart(
-      {
-        labels: this.passedTime,
-        datasets: [
-          {
-            label: "# of Games",
-            data: this.gamesCount,
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            borderWidth: 1
-          }
-        ]
-      },
-      {
-        legend: {
-          display: false
-        },
-        tooltips: {
-          custom: function(tooltip) {
-            if (!tooltip) return;
-            tooltip.displayColors = false;
-          },
-          callbacks: {
-            label: function(tooltipItem) {
-              return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
-            },
-            title: function() {
-              return "";
-            }
-          }
-        },
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true
-              }
-            }
-          ]
-        }
-      }
-    );
-  }
 
   getTrimmedTimes() {
     const times = this.gameLength.lengths.slice(4);
@@ -71,6 +31,21 @@ export default class GameLengthChart extends Mixins(Bar) {
 
   get gamesCount() {
     return this.getTrimmedTimes().map(g => g.games);
+  }
+
+  get gameHourChartData(): ChartData {
+    return {
+      labels: this.passedTime,
+      datasets: [
+        {
+          label: "# of Games",
+          data: this.gamesCount,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1
+        }
+      ]
+    };
   }
 }
 </script>
