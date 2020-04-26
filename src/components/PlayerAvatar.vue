@@ -1,23 +1,29 @@
 <template>
   <div>
-    <v-card-text
-      style="cursor: pointer"
-      @click.stop="openDialog"
-      class="player-avatar text-center"
-      :style="{ 'background-image': 'url(' + racePicture + ')' }"
-    />
-    <v-row v-if="topLeague" class="player-league">
-      <v-col cols="md-6">
-        <img class="league-image" :src="'https://w3champions.com/integration/leagues/' + topLeague.leagueOrder + '.png'" />
+    <v-row>
+      <v-col cols="5" md="12">
+        <v-card-text
+          style="cursor: pointer"
+          @click.stop="openDialog"
+          class="player-avatar text-center"
+          :style="{ 'background-image': 'url(' + racePicture + ')' }"
+        />
       </v-col>
-      <v-col cols="md-6">
-        <div class="player-league-rank">Rank
-          <div>
-            <b>{{topLeague.rank}}</b>
-          </div> 
-        </div>
-        <div class="mt-2 player-league-points">MMR: <b>{{topLeague.mmr}}</b></div>
-        <div class="player-league-points">RP: <b>{{topLeague.rankingPoints}}</b></div>
+      <v-col cols="7" md="12">
+        <div v-if="topLeague" class="player-league">
+            <img class="float-left league-image" :src="'https://w3champions.com/integration/leagues/' + topLeague.leagueOrder + '.png'" />
+
+            <div class="float-right">
+              <div class="player-league-rank">Rank
+                <div>
+                  <b>{{topLeague.rank}}</b>
+                </div> 
+              </div>
+              <div class="mt-2 player-league-points">MMR: <b>{{topLeague.mmr}}</b></div>
+              <div class="player-league-points">RP: <b>{{topLeague.rankingPoints}}</b></div>
+            </div>
+            <div class="float-clear"></div>
+          </div>
       </v-col>
     </v-row>
 
@@ -293,8 +299,10 @@ export default class PlayerAvatar extends Vue {
 }
 
 .player-league {
+  width: 200px;
+  margin: 0 auto;
+
   .league-image {
-    margin-left: -10px;
   }
 
   .player-league-rank {
@@ -304,5 +312,9 @@ export default class PlayerAvatar extends Vue {
   .player-league-points {
     font-size: 13px;
   }
+}
+
+.float-clear {
+  clear:both;
 }
 </style>
