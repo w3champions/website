@@ -61,7 +61,7 @@ export default class HeroIcon extends Vue {
 }
 
 .hero-level-flag-second {
-  font-size: 1em;
+  font-size: 1.1em;
   margin-left: 17%;
   margin-right: 17%;
 }
