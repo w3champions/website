@@ -53,18 +53,9 @@ export interface Player {
   won: boolean;
 }
 
-export interface OverallScore {
-  unitScore: number;
-  heroScore: number;
-  resourceScore: number;
-  totalScore: number;
-}
-
 export interface UnitScore {
   unitsProduced: number;
   unitsKilled: number;
-  structuresProduced: number;
-  structuresKilled: number;
   largestArmy: number;
 }
 
@@ -78,31 +69,20 @@ export interface HeroScore {
   itemsObtained: number;
   mercsHired: number;
   expGained: number;
-  strongerHeroes: number;
 }
 
 export interface ResourceScore {
   goldCollected: number;
   lumberCollected: number;
-  resourcesReceived: number;
-  ressourcesSent: number;
-  techPercentage: number;
   goldUpkeepLost: number;
 }
 
 export interface PlayerScore {
   battleTag: string;
-  overallScore: OverallScore;
   unitScore: UnitScore;
   heroes: Hero[];
   heroScore: HeroScore;
   resourceScore: ResourceScore;
-}
-
-export type Mmr = {
-  rating: number;
-  rd: number;
-  vol: number;
 }
 
 export enum EGameMode {
