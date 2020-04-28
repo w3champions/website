@@ -62,41 +62,80 @@ export default class PlayerLeague extends Vue {
 </script>
 
 <style lang="scss" scoped>
+// grandmaster
 .grandmaster:after {
-    background-image: url(https://w3champions.com/integration/leagues/0.png);
+    background-image: url(../assets/leagueFlags/grandmaster.png);
     background-repeat: no-repeat;
 }
 
-.grandmaster:before {
+.LadderSummaryShowcase-card.grandmaster:before {
     border-top: 2px solid #593BA8;
 }
 
-// gold
-
-.gold:after {
-    background-image: url(https://w3champions.com/integration/leagues/4.png);
+// master
+.master:after {
+    background-image: url(../assets/leagueFlags/master.png);
     background-repeat: no-repeat;
 }
 
-.gold:before {
-    border-top: 2px solid #EEBF01;
+.LadderSummaryShowcase-card.master:before {
+    border-top: 2px solid #593BA8;
 }
 
 // diamond
-
 .diamond:after {
-    background-image: url(https://w3champions.com/integration/leagues/2.png);
+    background-image: url(../assets/leagueFlags/diamond.png);
     background-repeat: no-repeat;
 }
 
-.diamond:before {
+.LadderSummaryShowcase-card.diamond:before {
     border-top: 2px solid #2C33FF;
 }
 
-// unranked
+// platinum
+.platinum:after {
+    background-image: url(../assets/leagueFlags/platinum.png);
+    background-repeat: no-repeat;
+}
 
+.LadderSummaryShowcase-card.platinum:before {
+    border-top: 2px solid #A0B3C2;
+}
+
+
+// gold
+.gold:after {
+    background-image: url(../assets/leagueFlags/gold.png);
+    background-repeat: no-repeat;
+}
+
+.LadderSummaryShowcase-card.gold:before {
+    border-top: 2px solid #EEBF01;
+}
+
+// silver
+.silver:after {
+    background-image: url(../assets/leagueFlags/silver.png);
+    background-repeat: no-repeat;
+}
+
+.LadderSummaryShowcase-card.silver:before {
+    border-top: 2px solid #97A1A8;
+}
+
+// bronze
+.bronze:after {
+    background-image: url(../assets/leagueFlags/bronze.png);
+    background-repeat: no-repeat;
+}
+
+.LadderSummaryShowcase-card.bronze:before {
+    border-top: 2px solid #955941;
+}
+
+// unranked
 .unranked:after {
-    background-image: url(https://static.starcraft2.com/dist/images/none.c8b435f5900fab1ac7981cc9b56f6f44.png);
+    background-image: url(../assets/leagueFlags/unranked.png);
     background-repeat: no-repeat;
     background-position: 0 -315px;
 }
@@ -121,6 +160,7 @@ export default class PlayerLeague extends Vue {
     padding: 1em;
     background-color: rgba(9,28,46,.31);
     padding-bottom: 30px;
+    min-height: 181px;
 }
 
 .LadderSummaryShowcase-card:before {
