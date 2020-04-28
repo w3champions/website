@@ -20,7 +20,7 @@
             >
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
-                <v-row>
+                <v-row class="mt-4">
                   <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
@@ -30,15 +30,24 @@
                       />
                     </v-card-text>
                   </v-col>
-                  <v-col md="7" lg="5">
-                    <h4>Statistics by Game Mode</h4>
-                    <mode-stats-grid
-                      :stats="oneVersusOneGameModeStats"
-                    ></mode-stats-grid>
+                  <v-col md="12" lg="9">
+                    <v-row>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
+                          <player-league :modeStat="profile.gameModeStats[0]"></player-league>
+                      </v-col>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
+                          <player-league :modeStat="profile.gameModeStats[1]"></player-league>
+                      </v-col>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
+                          <player-league :modeStat="profile.gameModeStats[2]"></player-league>
+                      </v-col>
+                    </v-row>
                   </v-col>
-                  <v-col md="12" lg="4">
-                    <h4>Statistics by Race</h4>
-                    <v-data-table
+                </v-row>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <h4>Race by stats</h4>
+                  <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
                       :items="profile.raceStats"
@@ -55,9 +64,9 @@
                       <template v-slot:item.percentage="{ item }"
                         >{{ (item.winrate * 100).toFixed(1) }}%</template
                       >
-                    </v-data-table>
-                  </v-col>
-                </v-row>
+                    </v-data-table>  
+                </v-col>       
+              </v-row>
               </v-card-text>
               <v-card-text
                 v-if="loadingProfile"
@@ -176,11 +185,13 @@ import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/PlayerAvatar.vue";
+import PlayerLeague from "@/components/PlayerLeague.vue";
 import { Ranking } from "@/store/ranking/types";
 
 @Component({
   components: {
     PlayerAvatar,
+    PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid
