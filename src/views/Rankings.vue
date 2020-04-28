@@ -239,23 +239,26 @@ export default class RankingsView extends Vue {
     if (!rank) return;
     this.setLeague(rank.league);
 
-    const listItemOfPlayer = document.getElementById(
-      `listitem_${rank.rankNumber}`
-    );
+    setTimeout(() => {
+      const listItemOfPlayer = document.getElementById(
+        `listitem_${rank.rankNumber}`
+      );
 
-    if (!listItemOfPlayer) return;
+      if (!listItemOfPlayer) return;
 
-    const offset =
-      listItemOfPlayer.offsetHeight +
-      listItemOfPlayer.offsetTop +
-      200 -
-      window.screenTop;
-    if (offset > window.innerHeight) {
-      window.scrollTo({
-        top: offset - window.innerHeight + 150,
-        behavior: "smooth"
-      });
-    }
+      const offset =
+        listItemOfPlayer.offsetHeight +
+        listItemOfPlayer.offsetTop +
+        200 -
+        window.screenTop;
+      if (offset > window.innerHeight) {
+        window.scrollTo({
+          top: offset - window.innerHeight + 150,
+          behavior: "smooth"
+        });
+      }
+
+    }, 150)
   }
 
   public options = {
