@@ -9,9 +9,9 @@
           :style="{ 'background-image': 'url(' + racePicture + ')' }"
         />
       </v-col>
-      <v-col cols="7" md="12">
+      <!-- <v-col cols="7" md="12">
         <div v-if="topLeague" class="player-league">
-            <img class="float-left league-image" :src="'https://w3champions.com/integration/leagues/' + topLeague.leagueOrder + '.png'" />
+            <img class="float-left league-image" :src="'https://w3champions.com/integration/leagues/0.png'" />
 
             <div class="float-right">
               <div class="player-league-rank">Rank
@@ -24,7 +24,7 @@
             </div>
             <div class="float-clear"></div>
           </div>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px">
