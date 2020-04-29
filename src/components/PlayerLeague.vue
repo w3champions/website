@@ -69,7 +69,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.grandmaster:before {
-    border-top: 2px solid #593BA8;
+    border-top: 2px solid #593BA8 !important;
 }
 
 // master
@@ -79,7 +79,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.master:before {
-    border-top: 2px solid #593BA8;
+    border-top: 2px solid #593BA8 !important;
 }
 
 // diamond
@@ -89,7 +89,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.diamond:before {
-    border-top: 2px solid #2C33FF;
+    border-top: 2px solid #2C33FF !important;
 }
 
 // platinum
@@ -99,7 +99,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.platinum:before {
-    border-top: 2px solid #A0B3C2;
+    border-top: 2px solid #A0B3C2 !important;
 }
 
 
@@ -110,7 +110,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.gold:before {
-    border-top: 2px solid #EEBF01;
+    border-top: 2px solid #EEBF01 !important;
 }
 
 // silver
@@ -120,7 +120,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.silver:before {
-    border-top: 2px solid #97A1A8;
+    border-top: 2px solid #97A1A8 !important;
 }
 
 // bronze
@@ -130,7 +130,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-card.bronze:before {
-    border-top: 2px solid #955941;
+    border-top: 2px solid #955941 !important;
 }
 
 // unranked
@@ -177,6 +177,26 @@ export default class PlayerLeague extends Vue {
     margin: initial;
 }
 
+
+
+.theme--light {
+    .LadderSummaryShowcase-card:before {
+        border: 2px solid rgb(205, 205, 205);
+    }
+
+    .LadderSummaryShowcase-card {
+        background-color: transparent;
+    }
+
+    .LadderSummaryShowcase-title:first-child{
+        color: black;
+    }
+
+    .LadderSummaryShowcase-subtitle{
+        color: black;
+    }
+}
+
 .LadderSummaryShowcase-title:first-child {
     margin-top: 40px;
     margin-bottom: 0;
@@ -190,6 +210,7 @@ export default class PlayerLeague extends Vue {
 }
 
 .LadderSummaryShowcase-subtitle {
+    color: #7aa3cc;
     margin-top: .4em;
     font: 400 .8em Eurostile;
     text-align: center;
