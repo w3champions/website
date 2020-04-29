@@ -286,7 +286,7 @@ export default class RankingsView extends Vue {
   getDivision(division: number): string {
     if (division == 0 || division == 1) return "";
 
-    return (((division + 2) % 4) + 1).toString();
+    return (((division + 4) % 6) + 1).toString();
   }
 
   get selectedLeague(): League {

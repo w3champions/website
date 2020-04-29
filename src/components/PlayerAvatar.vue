@@ -17,7 +17,7 @@
               <div class="player-league-rank">Rank
                 <div>
                   <b>{{topLeague.rank}}</b>
-                </div> 
+                </div>
               </div>
               <div class="mt-2 player-league-points">MMR: <b>{{topLeague.mmr}}</b></div>
               <div class="player-league-points">RP: <b>{{topLeague.rankingPoints}}</b></div>
@@ -294,7 +294,6 @@ export default class PlayerAvatar extends Vue {
 .player-avatar-choosing-disabled {
   opacity: 0.5;
   filter: alpha(opacity=50);
-  background-color: #000;
 }
 
 .player-league {
