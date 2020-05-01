@@ -139,6 +139,7 @@
                 <td class="text-end">
                   {{ (item.player.winrate * 100).toFixed(1) }}%
                 </td>
+                <td class="text-end">{{ item.player.mmr }}</td>
                 <td class="text-end">{{ item.rankingPoints }}</td>
               </tr>
             </tbody>
@@ -208,6 +209,12 @@ export default class RankingsView extends Vue {
       align: "end",
       sortable: false,
       width: "50px"
+    },
+    {
+      text: "MMR",
+      align: "end",
+      sortable: false,
+      width: "25px"
     },
     {
       text: "Rating",
