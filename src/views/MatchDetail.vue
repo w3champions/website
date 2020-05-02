@@ -27,35 +27,35 @@
             </v-card-subtitle>
           </v-card-title>
           <match-detail-hero-row
-            :heroes-of-looser="heroesOfLooser1"
-            :heroes-of-winner="heroesOfWinner1"
-            :scores-of-looser="scoresOfLooser1.heroScore"
-            :scores-of-winner="scoresOfWinner1.heroScore"
+            :heroes-of-winner="scoresOfWinners[0].heroes"
+            :heroes-of-looser="scoresOfLoosers[0].heroes"
+            :scores-of-looser="scoresOfLoosers[0].heroScore"
+            :scores-of-winner="scoresOfWinners[0].heroScore"
           />
           <match-detail-hero-row
             v-if="matchIs2v2"
-            :heroes-of-looser="heroesOfLooser2"
-            :heroes-of-winner="heroesOfWinner2"
-            :scores-of-looser="scoresOfLooser2.heroScore"
-            :scores-of-winner="scoresOfWinner2.heroScore"
+            :heroes-of-winner="scoresOfWinners[1].heroes"
+            :heroes-of-looser="scoresOfLoosers[1].heroes"
+            :scores-of-looser="scoresOfLoosers[1].heroScore"
+            :scores-of-winner="scoresOfWinners[1].heroScore"
           />
           <v-row>
             <v-col cols="1"> </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfWinner1.unitScore"
-                :resource-scoure="scoresOfWinner1.resourceScore"
-                :unit-score-opponent="scoresOfLooser1.unitScore"
-                :resource-scoure-opponent="scoresOfLooser1.resourceScore"
+                :unit-score="scoresOfWinners.map(h => h.unitScore)"
+                :resource-scoure="scoresOfWinners.map(h => h.resourceScore)"
+                :unit-score-opponent="scoresOfLoosers.map(h => h.unitScore)"
+                :resource-scoure-opponent="scoresOfLoosers.map(h => h.resourceScore)"
                 :left="true"
               />
             </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfLooser1.unitScore"
-                :resource-scoure="scoresOfLooser1.resourceScore"
-                :unit-score-opponent="scoresOfWinner1.unitScore"
-                :resource-scoure-opponent="scoresOfWinner1.resourceScore"
+                :unit-score="scoresOfLoosers.map(h => h.unitScore)"
+                :resource-scoure="scoresOfLoosers.map(h => h.resourceScore)"
+                :unit-score-opponent="scoresOfWinners.map(h => h.unitScore)"
+                :resource-scoure-opponent="scoresOfWinners.map(h => h.resourceScore)"
               />
             </v-col>
             <v-col cols="1"> </v-col>
@@ -75,7 +75,7 @@ import MatchHiglights from "@/components/MatchHiglights.vue";
 import HeroIcon from "@/components/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/MatchDetailHeroRow.vue";
-import {EGameMode} from "@/store/typings";
+import { EGameMode } from "@/store/typings";
 
 @Component({
   components: {
@@ -123,44 +123,20 @@ export default class MatchDetailView extends Vue {
     );
   }
 
-  get heroesOfWinner1() {
-    return this.scoresOfWinner1.heroes;
+  get scoresOfWinners() {
+    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+      s =>
+        this.match.teams[0].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
+        this.match.teams[0].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+    );
   }
 
-  get heroesOfWinner2() {
-    return this.scoresOfWinner2.heroes;
-  }
-
-  get heroesOfLooser1() {
-    return this.scoresOfLooser1.heroes;
-  }
-
-  get heroesOfLooser2() {
-    return this.scoresOfLooser2.heroes;
-  }
-
-  get scoresOfWinner1() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[0].players[0].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
-  }
-
-  get scoresOfWinner2() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[0].players[1].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
-  }
-
-  get scoresOfLooser1() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[1].players[0].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
-  }
-
-  get scoresOfLooser2() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[1].players[1].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
+  get scoresOfLoosers() {
+    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+      s =>
+        this.match.teams[1].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
+        this.match.teams[1].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+    );
   }
 
   get loading() {
