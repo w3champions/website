@@ -53,19 +53,22 @@
                       :items="profile.raceStats"
                     >
                       <template v-slot:item.race="{ item }">
-                        <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                        <span class="number-text">{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
                       <template v-slot:item.wins="{ item }">
-                        <span class="won">{{ item.wins }}</span>
+                        <span class="number-text won">{{ item.wins }}</span>
                       </template>
                       <template v-slot:item.losses="{ item }">
-                        <span class="lost">{{ item.losses }}</span>
+                        <span class="number-text lost">{{ item.losses }}</span>
                       </template>
                       <template v-slot:item.percentage="{ item }"
-                        >{{ (item.winrate * 100).toFixed(1) }}%</template
                       >
-                    </v-data-table>  
-                </v-col>       
+                        <span class="number-text">
+                          {{ (item.winrate * 100).toFixed(1) }}%
+                        </span></template
+                      >
+                    </v-data-table>
+                </v-col>
               </v-row>
               </v-card-text>
               <v-card-text

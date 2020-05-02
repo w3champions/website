@@ -182,4 +182,10 @@ export default class App extends Vue {
 .theme--light.v-badge .v-badge__badge::after {
   border-color: #36393f !important;
 }
+
+.number-text {
+  font-family: "Inter" !important;
+  font-style: normal;
+}
+
 </style>

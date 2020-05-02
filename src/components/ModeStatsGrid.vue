@@ -4,11 +4,11 @@
       <tbody>
         <tr v-for="item in items" :key="item.mode">
           <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
-          <td class="text-end won">{{ item.wins }}</td>
-          <td class="text-end lost">{{ item.losses }}</td>
-          <td class="text-end">{{ item.wins + item.losses }}</td>
-          <td class="text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
-          <td class="text-end">{{ item.mmr }}</td>
+          <td class="number-text text-end won">{{ item.wins }}</td>
+          <td class="number-text text-end lost">{{ item.losses }}</td>
+          <td class="number-text text-end">{{ item.wins + item.losses }}</td>
+          <td class="number-text text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
+          <td class="number-text text-end">{{ item.mmr }}</td>
         </tr>
       </tbody>
     </template>

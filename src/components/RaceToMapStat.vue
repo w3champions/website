@@ -10,11 +10,56 @@
         <tbody>
           <tr v-for="item in items" :key="item.map">
             <td>{{ $t("mapNames." + item.map) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[1]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[2]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[3]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[4]) }}</td>
-            <td class="text-end">{{ totalWins(item.winLosses) }}</td>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" class="number-text">
+                  {{ toWinText(item.winLosses[1]) }}
+                </td>
+              </template>
+              <div>
+                {{ winAndLossText(item.winLosses[1]) }}
+              </div>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" class="number-text">
+                  {{ toWinText(item.winLosses[2]) }}
+                </td>
+              </template>
+              <div>
+                {{ winAndLossText(item.winLosses[2]) }}
+              </div>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" class="number-text">
+                  {{ toWinText(item.winLosses[3]) }}
+                </td>
+              </template>
+              <div>
+                {{ winAndLossText(item.winLosses[3]) }}
+              </div>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" class="number-text">
+                  {{ toWinText(item.winLosses[4]) }}
+                </td>
+              </template>
+              <div>
+                {{ winAndLossText(item.winLosses[4]) }}
+              </div>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" class="number-text">
+                  {{ toWinText(totalWins(item.winLosses)) }}
+                </td>
+              </template>
+              <div>
+                {{ winAndLossText(totalWins(item.winLosses)) }}
+              </div>
+            </v-tooltip>
           </tr>
         </tbody>
       </template>
@@ -35,16 +80,20 @@ export default class RaceToMapStat extends Vue {
   @Prop() public stats!: WinLossesOnMap[];
 
   public toWinText(stat: RaceStat): string {
-    return `${(stat.winrate * 100).toFixed(1)}% (${stat.wins}/${stat.losses})`;
+    return `${(stat.winrate * 100).toFixed(1)}%`;
   }
 
-  public totalWins(stat: RaceStat[]): string {
+  public winAndLossText(stat: RaceStat): string {
+    return `(${stat.wins}/${stat.losses})`;
+  }
+
+  public totalWins(stat: RaceStat[]) {
     const totalWins = stat.map(s => s.wins).reduce((a, b) => a + b, 0);
     const totalLosses = stat.map(s => s.losses).reduce((a, b) => a + b, 0);
     const totalWinrate =
       totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
-    return `${(totalWinrate * 100).toFixed(1)}% (${totalWins}/${totalLosses})`;
+    return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
   }
 
   public headers = [
@@ -52,42 +101,36 @@ export default class RaceToMapStat extends Vue {
       text: "Map",
       align: "start",
       sortable: false,
-      value: "type",
       width: "25px"
     },
     {
       text: "vs Human",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "wins",
       width: "25px"
     },
     {
       text: "vs Orc",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "losses",
       width: "25px"
     },
     {
-      text: "vs Night elf",
-      align: "end",
+      text: "vs Nightelf",
+      align: "start",
       sortable: false,
-      value: "total",
       width: "25px"
     },
     {
       text: "vs Undead",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "percentage",
       width: "25px"
     },
     {
       text: "Total",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "level",
       width: "25px"
     }
   ];
