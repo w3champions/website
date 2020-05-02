@@ -6,7 +6,7 @@
           <v-card-title>
             Profile of
             <span v-if="!loadingProfile" class="playerTag">
-              {{ profile.name }}#{{ profile.battleTag }}</span
+              {{ profile.name }}#<span class="number-text">{{ profile.battleTag }}</span></span
             >
           </v-card-title>
           <v-tabs>
@@ -56,13 +56,14 @@
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
                       <template v-slot:item.wins="{ item }">
-                        <span class="won">{{ item.wins }}</span>
+                        <span class="won number-text">{{ item.wins }}</span>
                       </template>
                       <template v-slot:item.losses="{ item }">
-                        <span class="lost">{{ item.losses }}</span>
+                        <span class="lost number-text">{{ item.losses }}</span>
                       </template>
                       <template v-slot:item.percentage="{ item }"
-                        >{{ (item.winrate * 100).toFixed(1) }}%</template
+                        ><span class="number-text">{{ (item.winrate * 100).toFixed(1) }}%</span>
+                      </template
                       >
                     </v-data-table>
                   </v-col>

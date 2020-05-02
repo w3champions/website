@@ -183,9 +183,4 @@ export default class App extends Vue {
   border-color: #36393f !important;
 }
 
-.number-text {
-  font-family: "Inter" !important;
-  font-style: normal;
-}
-
 </style>

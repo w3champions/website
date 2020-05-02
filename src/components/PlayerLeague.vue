@@ -5,8 +5,8 @@
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <span
-        >Rank {{ modeStat.rank }} | {{ modeStat.wins }} -
-        {{ modeStat.losses }}</span
+        >Rank <span class="number-text">{{ modeStat.rank }} | {{ modeStat.wins }} -
+        {{ modeStat.losses }}</span></span
       >
     </div>
     <img
@@ -15,9 +15,9 @@
     />
     <div>
       <div class="text-center">
-        <span>MMR: {{ modeStat.mmr }}</span>
+        <span>MMR: <span class="number-text">{{ modeStat.mmr }}</span></span>
         <span class="ml-2" style="font-size:13px"
-          >RP: {{ modeStat.rankingPoints }}</span
+        >RP: <span class="number-text">{{ modeStat.rankingPoints }}</span></span
         >
       </div>
     </div>
