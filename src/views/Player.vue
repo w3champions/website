@@ -32,22 +32,44 @@
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
-                          <player-league :modeStat="profile.gameModeStats[0]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="profile.gameModeStats && profile.gameModeStats[0]"
+                      >
+                        <player-league
+                          :modeStat="profile.gameModeStats[0]"
+                        ></player-league>
                       </v-col>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
-                          <player-league :modeStat="profile.gameModeStats[1]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="profile.gameModeStats && profile.gameModeStats[1]"
+                      >
+                        <player-league
+                          :modeStat="profile.gameModeStats[1]"
+                        ></player-league>
                       </v-col>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
-                          <player-league :modeStat="profile.gameModeStats[2]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="profile.gameModeStats && profile.gameModeStats[2]"
+                      >
+                        <player-league
+                          :modeStat="profile.gameModeStats[2]"
+                        ></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <h4>Race by stats</h4>
-                  <v-data-table
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <h4>Stats by game mode</h4>
+                    <mode-stats-grid :stats="gameModeStats" />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <h4>Stats by race</h4>
+                    <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
                       :items="profile.raceStats"
@@ -64,9 +86,9 @@
                       <template v-slot:item.percentage="{ item }"
                         >{{ (item.winrate * 100).toFixed(1) }}%</template
                       >
-                    </v-data-table>  
-                </v-col>       
-              </v-row>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
               </v-card-text>
               <v-card-text
                 v-if="loadingProfile"
@@ -132,8 +154,7 @@
                     </span>
                     /
                     <span>
-                      Winrate: {{ (opponentWins / matches.length) * 100 }}%
-                      VS
+                      Winrate: {{ (opponentWins / matches.length) * 100 }}% VS
                       {{
                         searchModel.player.name +
                           "#" +
@@ -178,8 +199,8 @@ import {
   EGameMode,
   ERaceEnum,
   Match,
-  Team,
-  PlayerInTeam
+  PlayerInTeam,
+  Team
 } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
@@ -292,10 +313,10 @@ export default class PlayerView extends Vue {
     return "No player found";
   }
 
-  get oneVersusOneGameModeStats(): ModeStat[] {
+  get gameModeStats(): ModeStat[] {
     if (this.profile && this.profile.gameModeStats) {
       return this.profile.gameModeStats.filter(
-        g => g.mode === EGameMode.GM_1ON1
+        g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2
       );
     }
 

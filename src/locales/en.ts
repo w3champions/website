@@ -23,7 +23,13 @@ const en = {
     northernisles: "Northern Isles",
     concealedhill: "Concealed Hill",
     terenasstand: "Terenas Stand LV",
-    amazonia: "Amazonia"
+    amazonia: "Amazonia",
+    avalanche: "Avalanche",
+    goldshire: "Goldshire",
+    gnollwood: "Gnoll Wood",
+    turtlerock: "Turtle Rock",
+    losttemple: "Lost Temple",
+    hillsbradcreek: "Hillsbrad Creek"
   }
 };
 
