@@ -46,7 +46,7 @@
                 </v-row>
               <v-row>
                 <v-col cols="12" md="6">
-                  <h4>Race by stats</h4>
+                  <h4>Stats by race</h4>
                   <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
@@ -66,6 +66,10 @@
                       </template
                       >
                     </v-data-table>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <h4>Stats by game mode</h4>
+                    <mode-stats-grid :stats="profile.gameModeStats" />
                   </v-col>
                 </v-row>
               </v-card-text>
