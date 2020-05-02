@@ -89,8 +89,8 @@ export enum EGameMode {
   UNDEFINED,
   GM_1ON1 = 1,
   GM_2ON2 = 6,
-  GM_4ON4 = 12,
-  GM_FFA = 14
+  GM_4ON4 = 3,
+  GM_FFA = 4
 }
 
 export enum ERaceEnum {
