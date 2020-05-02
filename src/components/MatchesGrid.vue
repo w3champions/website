@@ -25,11 +25,11 @@
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <team-match-info :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)" left="true"></team-match-info>
+          <team-match-info :not-clickable="true" :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)" left="true"></team-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
-          <team-match-info :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"></team-match-info>
+          <team-match-info :not-clickable="true" :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"></team-match-info>
         </v-col>
       </v-row>
     </template>

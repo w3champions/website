@@ -8,7 +8,7 @@
             :class="won"
             v-on="on"
             @mouseover="lazyLoadWinrate"
-            @click="goToPlayer()"
+            @click="notClickable ? null : goToPlayer()"
             @click.middle="openProfileInNewTab()"
             @click.right="openProfileInNewTab()"
           >
@@ -50,6 +50,7 @@ export default class PlayerMatchInfo extends Vue {
 
   @Prop() public left!: boolean;
   @Prop() public bigRaceIcon!: boolean;
+  @Prop() public notClickable!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
