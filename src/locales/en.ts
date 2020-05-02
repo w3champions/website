@@ -29,7 +29,7 @@ const en = {
     gnollwood: "Gnoll Wood",
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
-    hillsbradcreek: "Hilsbrad Creek"
+    hillsbradcreek: "Hillsbrad Creek"
   }
 };
 
