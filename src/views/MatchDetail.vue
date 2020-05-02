@@ -26,66 +26,36 @@
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
-          <v-row justify="space-between">
-            <v-col cols="1"> </v-col>
-            <v-col cols="1">
-              <hero-icon :hero="heroesOfWinner[2]" />
-            </v-col>
-            <v-col cols="1">
-              <hero-icon :hero="heroesOfWinner[1]" />
-            </v-col>
-            <v-col cols="1">
-              <hero-icon :first-hero="true" :hero="heroesOfWinner[0]" />
-            </v-col>
-            <v-col cols="2">
-              <match-higlights
-                :left="true"
-                :experience="scoresOfWinner.heroScore.expGained"
-                :hero-kills="scoresOfWinner.heroScore.heroesKilled"
-                :items-collected="scoresOfWinner.heroScore.itemsObtained"
-                :hero-kills-opponent="scoresOfLooser.heroScore.heroesKilled"
-                :experience-opponent="scoresOfLooser.heroScore.expGained"
-                :items-collected-opponent="scoresOfLooser.heroScore.itemsObtained"
-              />
-            </v-col>
-            <v-col cols="2">
-              <match-higlights
-                :experience="scoresOfLooser.heroScore.expGained"
-                :hero-kills="scoresOfLooser.heroScore.heroesKilled"
-                :items-collected="scoresOfLooser.heroScore.itemsObtained"
-                :hero-kills-opponent="scoresOfWinner.heroScore.heroesKilled"
-                :experience-opponent="scoresOfWinner.heroScore.expGained"
-                :items-collected-opponent="scoresOfWinner.heroScore.itemsObtained"
-              />
-            </v-col>
-            <v-col cols="1">
-              <hero-icon :first-hero="true" :hero="heroesOfLooser[0]" />
-            </v-col>
-            <v-col cols="1">
-              <hero-icon :hero="heroesOfLooser[1]" />
-            </v-col>
-            <v-col cols="1">
-              <hero-icon :hero="heroesOfLooser[2]" />
-            </v-col>
-            <v-col cols="1"> </v-col>
-          </v-row>
+          <match-detail-hero-row
+            :heroes-of-winner="scoresOfWinners[0].heroes"
+            :heroes-of-looser="scoresOfLoosers[0].heroes"
+            :scores-of-looser="scoresOfLoosers[0].heroScore"
+            :scores-of-winner="scoresOfWinners[0].heroScore"
+          />
+          <match-detail-hero-row
+            v-if="matchIs2v2"
+            :heroes-of-winner="scoresOfWinners[1].heroes"
+            :heroes-of-looser="scoresOfLoosers[1].heroes"
+            :scores-of-looser="scoresOfLoosers[1].heroScore"
+            :scores-of-winner="scoresOfWinners[1].heroScore"
+          />
           <v-row>
             <v-col cols="1"> </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfWinner.unitScore"
-                :resource-scoure="scoresOfWinner.resourceScore"
-                :unit-score-opponent="scoresOfLooser.unitScore"
-                :resource-scoure-opponent="scoresOfLooser.resourceScore"
+                :unit-score="scoresOfWinners.map(h => h.unitScore)"
+                :resource-scoure="scoresOfWinners.map(h => h.resourceScore)"
+                :unit-score-opponent="scoresOfLoosers.map(h => h.unitScore)"
+                :resource-scoure-opponent="scoresOfLoosers.map(h => h.resourceScore)"
                 :left="true"
               />
             </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfLooser.unitScore"
-                :resource-scoure="scoresOfLooser.resourceScore"
-                :unit-score-opponent="scoresOfWinner.unitScore"
-                :resource-scoure-opponent="scoresOfWinner.resourceScore"
+                :unit-score="scoresOfLoosers.map(h => h.unitScore)"
+                :resource-scoure="scoresOfLoosers.map(h => h.resourceScore)"
+                :unit-score-opponent="scoresOfWinners.map(h => h.unitScore)"
+                :resource-scoure-opponent="scoresOfWinners.map(h => h.resourceScore)"
               />
             </v-col>
             <v-col cols="1"> </v-col>
@@ -104,9 +74,12 @@ import moment from "moment";
 import MatchHiglights from "@/components/MatchHiglights.vue";
 import HeroIcon from "@/components/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/PlayerPerformanceOnMatch.vue";
+import MatchDetailHeroRow from "@/components/MatchDetailHeroRow.vue";
+import { EGameMode } from "@/store/typings";
 
 @Component({
   components: {
+    MatchDetailHeroRow,
     PlayerPerformanceOnMatch,
     HeroIcon,
     MatchHiglights,
@@ -143,24 +116,27 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match;
   }
 
-  get heroesOfWinner() {
-    return this.scoresOfWinner.heroes;
+  get matchIs2v2() {
+    return (
+      this.$store.direct.state.matches.matchDetail.match.gameMode ==
+      EGameMode.GM_2ON2
+    );
   }
 
-  get heroesOfLooser() {
-    return this.scoresOfLooser.heroes;
+  get scoresOfWinners() {
+    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+      s =>
+        this.match.teams[0].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
+        this.match.teams[0].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+    );
   }
 
-  get scoresOfWinner() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[0].players[0].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
-  }
-
-  get scoresOfLooser() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s =>
-      this.match.teams[1].players[0].id.startsWith(s.battleTag.toLowerCase())
-    )[0];
+  get scoresOfLoosers() {
+    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+      s =>
+        this.match.teams[1].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
+        this.match.teams[1].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+    );
   }
 
   get loading() {

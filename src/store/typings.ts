@@ -32,7 +32,7 @@ export type Match = {
   durationInSeconds: number;
   startTime: Moment;
   endTime: Moment;
-  gameMode: number;
+  gameMode: EGameMode;
   teams: Team[];
   gateWay: number;
 }
@@ -87,10 +87,10 @@ export interface PlayerScore {
 
 export enum EGameMode {
   UNDEFINED,
-  GM_1ON1,
-  GM_2ON2,
-  GM_4ON4,
-  GM_FFA
+  GM_1ON1 = 1,
+  GM_2ON2 = 6,
+  GM_4ON4 = 3,
+  GM_FFA = 4
 }
 
 export enum ERaceEnum {

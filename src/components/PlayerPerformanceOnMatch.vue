@@ -11,7 +11,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.unitsKilled }}
+        {{ unitScore.map(r => r.unitsKilled).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -25,7 +25,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.unitsProduced }}
+        {{ unitScore.map(r => r.unitsProduced).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -39,7 +39,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.goldCollected }}
+        {{ resourceScoure.map(r => r.goldCollected).join(" + ")  }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -53,7 +53,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.lumberCollected }}
+        {{ resourceScoure.map(r => r.lumberCollected).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -67,7 +67,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.goldUpkeepLost }}
+        {{ resourceScoure.map(r => r.goldUpkeepLost).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -81,7 +81,7 @@
         cols="2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.largestArmy }}
+        {{ unitScore.map(r => r.largestArmy).join(" / ") }}
       </v-col>
     </v-row>
   </div>
@@ -96,50 +96,50 @@ import { ResourceScore, UnitScore } from "@/store/typings";
 export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() left!: boolean;
 
-  @Prop() unitScore!: UnitScore;
-  @Prop() unitScoreOpponent!: UnitScore;
-  @Prop() resourceScoure!: ResourceScore;
-  @Prop() resourceScoureOpponent!: ResourceScore;
+  @Prop() unitScore!: UnitScore[];
+  @Prop() unitScoreOpponent!: UnitScore[];
+  @Prop() resourceScoure!: ResourceScore[];
+  @Prop() resourceScoureOpponent!: ResourceScore[];
 
   get goldComparison() {
     return this.comparison(
-      this.resourceScoureOpponent.goldCollected,
-      this.resourceScoure.goldCollected
+      this.resourceScoureOpponent.map(s => s.goldCollected).reduce((a, b) => a + b, 0),
+      this.resourceScoure.map(s => s.goldCollected).reduce((a, b) => a + b, 0)
     );
   }
 
   get woodComparison() {
     return this.comparison(
-      this.resourceScoureOpponent.lumberCollected,
-      this.resourceScoure.lumberCollected
+      this.resourceScoureOpponent.map(s => s.lumberCollected).reduce((a, b) => a + b, 0),
+      this.resourceScoure.map(s => s.lumberCollected).reduce((a, b) => a + b, 0)
     );
   }
 
   get upkeepComparison() {
     return this.comparison(
-      this.resourceScoure.goldUpkeepLost,
-      this.resourceScoureOpponent.goldUpkeepLost
+      this.resourceScoure.map(s => s.goldUpkeepLost).reduce((a, b) => a + b, 0),
+      this.resourceScoureOpponent.map(s => s.goldUpkeepLost).reduce((a, b) => a + b, 0)
     );
   }
 
   get armyComparison() {
     return this.comparison(
-      this.unitScoreOpponent.largestArmy,
-      this.unitScore.largestArmy
+      this.unitScoreOpponent.map(s => s.largestArmy).reduce((a, b) => a + b, 0),
+      this.unitScore.map(s => s.largestArmy).reduce((a, b) => a + b, 0)
     );
   }
 
   get unitsKilledComparison() {
     return this.comparison(
-      this.unitScoreOpponent.unitsKilled,
-      this.unitScore.unitsKilled
+      this.unitScoreOpponent.map(s => s.unitsKilled).reduce((a, b) => a + b, 0),
+      this.unitScore.map(s => s.unitsKilled).reduce((a, b) => a + b, 0)
     );
   }
 
   get unitsProducedComparison() {
     return this.comparison(
-      this.unitScoreOpponent.unitsProduced,
-      this.unitScore.unitsProduced
+      this.unitScoreOpponent.map(s => s.unitsProduced).reduce((a, b) => a + b, 0),
+      this.unitScore.map(s => s.unitsProduced).reduce((a, b) => a + b, 0)
     );
   }
 
