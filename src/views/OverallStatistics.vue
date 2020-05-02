@@ -126,22 +126,15 @@
 </template>
 
 <script lang="ts">
-import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-import {
-  GameDay,
-  GameLength,
-  PopularGameHour,
-  Ratio,
-  StatsPerMapAndRace,
-  WinLoss
-} from "@/store/overallStats/types";
-import { EGameMode, ERaceEnum } from "@/store/typings";
-import GameLengthChart from "@/components/GameLengthChart.vue";
-import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
+  import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
+  import Vue from "vue";
+  import {Component} from "vue-property-decorator";
+  import {GameDay, GameLength, PopularGameHour, Ratio, StatsPerMapAndRace, WinLoss} from "@/store/overallStats/types";
+  import {EGameMode, ERaceEnum} from "@/store/typings";
+  import GameLengthChart from "@/components/GameLengthChart.vue";
+  import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
 
-@Component({
+  @Component({
   components: {
     PopularGameTimeChart,
     AmountPerDayChart,
@@ -150,6 +143,7 @@ import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
 })
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
+  public gameEnums = EGameMode;
 
   public selectedMap = "Overall";
 
@@ -235,19 +229,19 @@ export default class OverallStatisticsView extends Vue {
     return [
       {
         modeName: "1vs1",
-        modeId: 1
+        modeId: EGameMode.GM_1ON1
       },
       {
         modeName: "2vs2",
-        modeId: 2
+        modeId: EGameMode.GM_2ON2
       },
       {
         modeName: "4vs4",
-        modeId: 3
+        modeId: EGameMode.GM_4ON4
       },
       {
         modeName: "FFA",
-        modeId: 4
+        modeId: EGameMode.GM_FFA
       }
     ];
   }
