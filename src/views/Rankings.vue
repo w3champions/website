@@ -411,17 +411,14 @@ export default class RankingsView extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@keyframes highlistFade {
-  from {
-    background: lightblue;
-  }
-  to {
-    background: transparent;
+.theme--light {
+  .searchedItem {
+    background-color: lightblue;
   }
 }
-
-.searchedItem {
-  animation-name: highlistFade;
-  animation-duration: 4.5s;
+.theme--dark {
+  .searchedItem {
+    background-color: #310e6f;
+  }
 }
 </style>
