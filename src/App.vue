@@ -164,15 +164,9 @@ export default class App extends Vue {
 }
 
 @font-face {
-  font-family: "Friz Quadrata Regular OS";
+  font-family: "Inter";
   font-style: normal;
   font-weight: normal;
-  src: local("Friz Quadrata Regular OS"),
-    url("./assets/friz-quadrata-regular-os-5870333951e7c.woff") format("woff");
-
-  * {
-    font-family: "Friz Quadrata Regular OS" !important;
-  }
 }
 
 .theme--dark.v-badge .v-badge__badge::after {
