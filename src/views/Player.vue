@@ -114,8 +114,8 @@
                             {{ data.item.player.name }}
                           </v-list-item-title>
                           <v-list-item-subtitle>
-                            Wins: {{ data.item.player.totalWins }} | Losses:
-                            {{ data.item.player.totalLosses }} | Total:
+                            Wins: {{ data.item.player.wins }} | Losses:
+                            {{ data.item.player.losses }} | Total:
                             {{ data.item.player.games }}
                           </v-list-item-subtitle>
                         </v-list-item-content>
@@ -134,12 +134,10 @@
                     </span>
                     /
                     <span>
-                      Winrate: {{ (opponentWins / matches.length) * 100 }}%
+                      Winrate: {{((opponentWins / matches.length) * 100).toFixed(1) }}%
                       VS
                       {{
-                        searchModel.player.name +
-                          "#" +
-                          searchModel.player.battleTag
+                        searchModel.player.name
                       }}
                     </span>
                   </v-col>
