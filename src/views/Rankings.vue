@@ -89,8 +89,8 @@
                   {{ data.item.player.name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Wins: {{ data.item.player.totalWins }} | Losses:
-                  {{ data.item.player.totalLosses }} | Total:
+                  Wins: {{ data.item.player.wins }} | Losses:
+                  {{ data.item.player.losses }} | Total:
                   {{ data.item.player.games }}
                 </v-list-item-subtitle>
               </v-list-item-content>
