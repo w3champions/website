@@ -4,6 +4,7 @@
 $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
 .w3-yellow-text {
+  font-family: 'Friz Quadrata Regular OS' !important;
   color: rgb(255, 212, 40) !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
@@ -13,6 +14,7 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 .theme--dark.v-application {
   @font-face {
     * {
+      font-family: 'Friz Quadrata Regular OS';
       color: $w3-dark-color;
     }
   }
@@ -25,7 +27,7 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
   .v-btn {
     color: rgb(255, 212, 40) !important;
-    text-transform: uppercase !important;
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
   }
 
   .w3-background {
@@ -64,7 +66,6 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
   h3 {
     @extend .w3-yellow-text;
-    font-weight: 400 !important;
   }
 
   .v-card__text {

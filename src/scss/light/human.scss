@@ -6,7 +6,7 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
 .theme--light.v-application {
   @font-face {
     * {
-      font-family: "Inter";
+      font-family: "Friz Quadrata Regular OS";
       color: $w3-light-color;
     }
   }
@@ -21,10 +21,6 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
     @extend .w3-glass;
 
     box-shadow: $w3-human-glass;
-  }
-
-  .v-btn {
-    color: $w3-light-color !important;
   }
 
   .w3-background {

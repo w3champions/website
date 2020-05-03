@@ -4,10 +4,7 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of
-            <span v-if="!loadingProfile" class="playerTag">
-              {{ profile.name }}#<span class="number-text">{{ profile.battleTag }}</span></span
-            >
+            Profile of {{ profile.name }}#{{ profile.battleTag }}
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
