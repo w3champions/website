@@ -1,3 +1,5 @@
+import {WinLoss} from "@/store/overallStats/types";
+
 export type RankingState = {
   gateway: Gateways;
   league: number;
@@ -30,18 +32,18 @@ export type Ranking = {
   player: PlayerOverview;
 };
 
-export type PlayerOverview = {
+interface PlayerId {
   id: string;
-  battleTag: string;
   name: string;
-  totalLosses: number;
-  totalWins: number;
-  games: number;
-  winrate: number;
-  mmr: number;
-  gateWay: number;
+  battleTag: string;
 }
 
+export interface PlayerOverview extends WinLoss{
+  id: string;
+  mmr: number;
+  gateWay: number;
+  playerIds: PlayerId[]
+}
 
 export enum Gateways {
   America = 10,
