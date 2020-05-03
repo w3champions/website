@@ -89,8 +89,8 @@
                   {{ data.item.player.name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Wins: {{ data.item.player.totalWins }} | Losses:
-                  {{ data.item.player.totalLosses }} | Total:
+                  Wins: {{ data.item.player.wins }} | Losses:
+                  {{ data.item.player.losses }} | Total:
                   {{ data.item.player.games }}
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -126,15 +126,15 @@
                 <td>
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
-                      <span v-on="on">{{ item.player.name }}</span>
+                      <span v-on="on">{{ item.player.playerIds.map(n => n.name).join(" & ") }}</span>
                     </template>
                     <div>
-                      {{ item.player.name }}#{{ item.player.battleTag }}
+                      {{ item.player.playerIds.map(p => p.name + "#" + p.battleTag).join(" & ") }}
                     </div>
                   </v-tooltip>
                 </td>
-                <td class="number-text text-end won">{{ item.player.totalWins }}</td>
-                <td class="number-text text-end lost">{{ item.player.totalLosses }}</td>
+                <td class="number-text text-end won">{{ item.player.wins }}</td>
+                <td class="number-text text-end lost">{{ item.player.losses }}</td>
                 <td class="number-text text-end">{{ item.player.games }}</td>
                 <td class="number-text text-end">
                   {{ (item.player.winrate * 100).toFixed(1) }}%

@@ -157,7 +157,7 @@
   import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
   import Vue from "vue";
   import {Component} from "vue-property-decorator";
-  import {GameDay, GameLength, PopularGameHour, Ratio, StatsPerMapAndRace, WinLoss} from "@/store/overallStats/types";
+  import {GameDay, GameLength, PopularGameHour, Ratio, StatsPerMapAndRace, RaceWinLoss} from "@/store/overallStats/types";
   import {EGameMode, ERaceEnum} from "@/store/typings";
   import GameLengthChart from "@/components/GameLengthChart.vue";
   import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
@@ -187,11 +187,11 @@ export default class OverallStatisticsView extends Vue {
     this.$store.direct.commit.overallStatistics.SET_SELECTED_POPULAR_HOUR(mode);
   }
 
-  public winrateText(item: WinLoss) {
+  public winrateText(item: RaceWinLoss) {
     return `${(item.winrate * 100).toFixed(1)}%`;
   }
 
-  public winAndLossText(item: WinLoss) {
+  public winAndLossText(item: RaceWinLoss) {
     return `(${item.wins}/${item.losses})`;
   }
 

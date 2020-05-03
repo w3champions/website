@@ -25,16 +25,21 @@ export type PlayersPerDay = {
   distinctPlayers: number
 }
 
-export type WinLoss = {
-  race: ERaceEnum;
+
+export interface WinLoss {
   wins: number;
   losses: number;
   winrate: number;
+  games: number;
+}
+
+export interface RaceWinLoss extends WinLoss {
+  race: ERaceEnum;
 }
 
 export type Ratio = {
   race: ERaceEnum;
-  winLosses: WinLoss[];
+  winLosses: RaceWinLoss[];
 }
 
 export type StatsPerMapAndRace = {
