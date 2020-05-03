@@ -4,10 +4,7 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of
-            <span v-if="!loadingProfile" class="playerTag">
-              {{ profile.name }}#{{ profile.battleTag }}</span
-            >
+            Profile of {{ profile.name }}#{{ profile.battleTag }}
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -32,44 +29,22 @@
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="profile.gameModeStats && profile.gameModeStats[0]"
-                      >
-                        <player-league
-                          :modeStat="profile.gameModeStats[0]"
-                        ></player-league>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
+                          <player-league :modeStat="profile.gameModeStats[0]"></player-league>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="profile.gameModeStats && profile.gameModeStats[1]"
-                      >
-                        <player-league
-                          :modeStat="profile.gameModeStats[1]"
-                        ></player-league>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
+                          <player-league :modeStat="profile.gameModeStats[1]"></player-league>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="profile.gameModeStats && profile.gameModeStats[2]"
-                      >
-                        <player-league
-                          :modeStat="profile.gameModeStats[2]"
-                        ></player-league>
+                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
+                          <player-league :modeStat="profile.gameModeStats[2]"></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <h4>Stats by game mode</h4>
-                    <mode-stats-grid :stats="gameModeStats" />
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <h4>Stats by race</h4>
-                    <v-data-table
+              <v-row>
+                <v-col cols="12" md="6">
+                  <h4>Stats by race</h4>
+                  <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
                       :items="profile.raceStats"
@@ -78,15 +53,20 @@
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
                       </template>
                       <template v-slot:item.wins="{ item }">
-                        <span class="won">{{ item.wins }}</span>
+                        <span class="won number-text">{{ item.wins }}</span>
                       </template>
                       <template v-slot:item.losses="{ item }">
-                        <span class="lost">{{ item.losses }}</span>
+                        <span class="lost number-text">{{ item.losses }}</span>
                       </template>
                       <template v-slot:item.percentage="{ item }"
-                        >{{ (item.winrate * 100).toFixed(1) }}%</template
+                        ><span class="number-text">{{ (item.winrate * 100).toFixed(1) }}%</span>
+                      </template
                       >
                     </v-data-table>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <h4>Stats by game mode</h4>
+                    <mode-stats-grid :stats="supportedGameModes" />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -154,7 +134,8 @@
                     </span>
                     /
                     <span>
-                      Winrate: {{ (opponentWins / matches.length) * 100 }}% VS
+                      Winrate: {{ (opponentWins / matches.length) * 100 }}%
+                      VS
                       {{
                         searchModel.player.name +
                           "#" +
@@ -199,8 +180,8 @@ import {
   EGameMode,
   ERaceEnum,
   Match,
-  PlayerInTeam,
-  Team
+  Team,
+  PlayerInTeam
 } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
@@ -313,7 +294,7 @@ export default class PlayerView extends Vue {
     return "No player found";
   }
 
-  get gameModeStats(): ModeStat[] {
+  get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gameModeStats) {
       return this.profile.gameModeStats.filter(
         g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2

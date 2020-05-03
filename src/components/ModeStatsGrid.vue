@@ -4,11 +4,12 @@
       <tbody>
         <tr v-for="item in items" :key="item.mode">
           <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
-          <td class="text-end won">{{ item.wins }}</td>
-          <td class="text-end lost">{{ item.losses }}</td>
-          <td class="text-end">{{ item.wins + item.losses }}</td>
-          <td class="text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
-          <td class="text-end">{{ item.mmr }}</td>
+          <td class="number-text text-end won">{{ item.wins }}</td>
+          <td class="number-text text-end lost">{{ item.losses }}</td>
+          <td class="number-text text-end">{{ item.wins + item.losses }}</td>
+          <td class="number-text text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
+          <td class="number-text text-end">{{ item.mmr }}</td>
+          <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
       </tbody>
     </template>
@@ -32,25 +33,21 @@ export default class ModeStatsGrid extends Vue {
       text: "Mode",
       align: "start",
       sortable: false,
-      value: "type",
     },
     {
       text: "Wins",
       align: "end",
       sortable: false,
-      value: "wins",
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
-      value: "losses",
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
-      value: "total",
     },
     {
       text: "Winrate",
@@ -59,10 +56,14 @@ export default class ModeStatsGrid extends Vue {
       value: "percentage",
     },
     {
-      text: "Rating",
+      text: "MMR",
       align: "end",
       sortable: false,
-      value: "level",
+    },
+    {
+      text: "RP",
+      align: "end",
+      sortable: false,
     }
   ];
 }

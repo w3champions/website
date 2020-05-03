@@ -15,21 +15,35 @@
       <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <span>
-        {{ item.startTime | moment("MMM DD YYYY HH:mm") }}
-      </span>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on" class="number-text">
+            {{ item.startTime | moment("HH:mm") }}
+          </span>
+        </template>
+        <div class="number-text">
+          {{ item.startTime | moment("HH:mm MM.DD.YYYY") }}
+        </div>
+      </v-tooltip>
     </template>
-    <template v-slot:item.duration="{ item }">
-      <span>{{ getDuration(item) }}</span>
+    <template class="number-text" v-slot:item.duration="{ item }">
+      <span class="number-text">{{ getDuration(item) }}</span>
     </template>
     <template v-slot:item.players="{ item }">
       <v-row>
         <v-col cols="5.5">
-          <team-match-info :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)" left="true"></team-match-info>
+          <team-match-info
+            :not-clickable="true"
+            :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
+            left="true"
+          ></team-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
-          <team-match-info :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"></team-match-info>
+          <team-match-info
+            :not-clickable="true"
+            :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
+          ></team-match-info>
         </v-col>
       </v-row>
     </template>
@@ -108,7 +122,9 @@ export default class MatchesGrid extends Vue {
       return "ongoing";
     }
 
-    return moment.utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds()).format("mm:ss");
+    return moment
+      .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
+      .format("mm:ss");
   }
 
   mounted() {

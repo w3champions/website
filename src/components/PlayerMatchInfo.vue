@@ -8,13 +8,13 @@
             :class="won"
             v-on="on"
             @mouseover="lazyLoadWinrate"
-            @click="goToPlayer()"
+            @click="notClickable ? null : goToPlayer()"
             @click.middle="openProfileInNewTab()"
             @click.right="openProfileInNewTab()"
           >
             {{ nameWithoutBtag }}
-            ({{ currentRating }})
-            <span v-if="mmrChange !== 0" :class="won">
+            <span class="number-text">({{ currentRating }}) </span>
+            <span class="number-text" v-if="mmrChange !== 0" :class="won">
               <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
               <span v-else>{{ mmrChange }}</span>
             </span>
@@ -23,10 +23,10 @@
       </div>
     </template>
     <div v-if="winrate">
-      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
+      <p>{{ nameWithoutBtag }}#<span class="number-text">{{ battleTag }}</span></p>
       <p></p>
-      Wins: {{ winrate.wins }} | Losses: {{ winrate.losses }} | Total:
-      {{ winrate.games }}
+      Wins: <span class="number-text">{{ winrate.wins }}</span> | Losses: <span class="number-text">{{ winrate.losses }}</span> | Total:
+      <span class="number-text">{{ winrate.games }}</span>
     </div>
     <div v-else>
       <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
@@ -50,6 +50,7 @@ export default class PlayerMatchInfo extends Vue {
 
   @Prop() public left!: boolean;
   @Prop() public bigRaceIcon!: boolean;
+  @Prop() public notClickable!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 

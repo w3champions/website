@@ -4,7 +4,7 @@
   }
 }
 
-.table-row-pointer {     
+.table-row-pointer {
   tbody {
     tr {
       cursor: pointer !important;
@@ -12,8 +12,28 @@
   }
 }
 
-.v-application {
+.v-card__title {
   font-family: "Friz Quadrata Regular OS" !important;
+  letter-spacing: 1.56px !important;
+  text-transform: uppercase !important;
+}
+
+.v-btn {
+  font-family: "Friz Quadrata Regular OS" !important;
+  color: $w3-light-color !important;
+  letter-spacing: 1.56px !important;
+  text-transform: uppercase !important;
+}
+
+.v-application {
+  font-family: "Inter" !important;
+}
+
+h3 {
+  font-family: "Friz Quadrata Regular OS" !important;
+  font-weight: 400 !important;
+  letter-spacing: 1.56px !important;
+  text-transform: uppercase !important;
 }
 
 .v-app-bar {

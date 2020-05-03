@@ -122,7 +122,7 @@
                   searchedItem: item.player.id === searchModelBattleTag
                 }"
               >
-                <td>{{ item.rankNumber }}.</td>
+                <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
@@ -133,14 +133,14 @@
                     </div>
                   </v-tooltip>
                 </td>
-                <td class="text-end won">{{ item.player.totalWins }}</td>
-                <td class="text-end lost">{{ item.player.totalLosses }}</td>
-                <td class="text-end">{{ item.player.games }}</td>
-                <td class="text-end">
+                <td class="number-text text-end won">{{ item.player.totalWins }}</td>
+                <td class="number-text text-end lost">{{ item.player.totalLosses }}</td>
+                <td class="number-text text-end">{{ item.player.games }}</td>
+                <td class="number-text text-end">
                   {{ (item.player.winrate * 100).toFixed(1) }}%
                 </td>
-                <td class="text-end">{{ item.player.mmr }}</td>
-                <td class="text-end">{{ item.rankingPoints }}</td>
+                <td class="number-text text-end">{{ item.player.mmr }}</td>
+                <td class="number-text text-end">{{ item.rankingPoints }}</td>
               </tr>
             </tbody>
           </template>
@@ -411,17 +411,14 @@ export default class RankingsView extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@keyframes highlistFade {
-  from {
-    background: lightblue;
-  }
-  to {
-    background: transparent;
+.theme--light {
+  .searchedItem {
+    background-color: lightblue;
   }
 }
-
-.searchedItem {
-  animation-name: highlistFade;
-  animation-duration: 4.5s;
+.theme--dark {
+  .searchedItem {
+    background-color: #310e6f;
+  }
 }
 </style>

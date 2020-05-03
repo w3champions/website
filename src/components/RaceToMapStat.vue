@@ -10,11 +10,11 @@
         <tbody>
           <tr v-for="item in items" :key="item.map">
             <td>{{ $t("mapNames." + item.map) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[1]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[2]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[3]) }}</td>
-            <td class="text-end">{{ toWinText(item.winLosses[4]) }}</td>
-            <td class="text-end">{{ totalWins(item.winLosses) }}</td>
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
           </tr>
         </tbody>
       </template>
@@ -29,22 +29,21 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
+import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 
-@Component({})
+@Component({
+  components: {PlayerStatsRaceVersusRaceOnMapTableCell}
+})
 export default class RaceToMapStat extends Vue {
   @Prop() public stats!: WinLossesOnMap[];
 
-  public toWinText(stat: RaceStat): string {
-    return `${(stat.winrate * 100).toFixed(1)}% (${stat.wins}/${stat.losses})`;
-  }
-
-  public totalWins(stat: RaceStat[]): string {
+  public totalWins(stat: RaceStat[]) {
     const totalWins = stat.map(s => s.wins).reduce((a, b) => a + b, 0);
     const totalLosses = stat.map(s => s.losses).reduce((a, b) => a + b, 0);
     const totalWinrate =
       totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
-    return `${(totalWinrate * 100).toFixed(1)}% (${totalWins}/${totalLosses})`;
+    return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
   }
 
   public headers = [
@@ -52,42 +51,36 @@ export default class RaceToMapStat extends Vue {
       text: "Map",
       align: "start",
       sortable: false,
-      value: "type",
       width: "25px"
     },
     {
       text: "vs Human",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "wins",
       width: "25px"
     },
     {
       text: "vs Orc",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "losses",
       width: "25px"
     },
     {
-      text: "vs Night elf",
-      align: "end",
+      text: "vs Nightelf",
+      align: "start",
       sortable: false,
-      value: "total",
       width: "25px"
     },
     {
       text: "vs Undead",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "percentage",
       width: "25px"
     },
     {
       text: "Total",
-      align: "end",
+      align: "start",
       sortable: false,
-      value: "level",
       width: "25px"
     }
   ];

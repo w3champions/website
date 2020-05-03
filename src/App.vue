@@ -182,4 +182,5 @@ export default class App extends Vue {
 .theme--light.v-badge .v-badge__badge::after {
   border-color: #36393f !important;
 }
+
 </style>

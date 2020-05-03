@@ -65,10 +65,38 @@
                         <tbody>
                           <tr v-for="item in items" :key="item.race">
                             <td>{{ $t("races." + raceEnums[item.race]) }}</td>
-                            <td>{{ winrateText(item.winLosses[1]) }}</td>
-                            <td>{{ winrateText(item.winLosses[2]) }}</td>
-                            <td>{{ winrateText(item.winLosses[3]) }}</td>
-                            <td>{{ winrateText(item.winLosses[4]) }}</td>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[1]) }}</td>
+                              </template>
+                              <div>
+                                {{ winAndLossText(item.winLosses[1]) }}
+                              </div>
+                            </v-tooltip>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[2]) }}</td>
+                              </template>
+                              <div>
+                                {{ winAndLossText(item.winLosses[2]) }}
+                              </div>
+                            </v-tooltip>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[3]) }}</td>
+                              </template>
+                              <div>
+                                {{ winAndLossText(item.winLosses[3]) }}
+                              </div>
+                            </v-tooltip>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[4]) }}</td>
+                              </template>
+                              <div>
+                                {{ winAndLossText(item.winLosses[4]) }}
+                              </div>
+                            </v-tooltip>
                           </tr>
                         </tbody>
                       </template>
@@ -160,7 +188,11 @@ export default class OverallStatisticsView extends Vue {
   }
 
   public winrateText(item: WinLoss) {
-    return `${(item.winrate * 100).toFixed(1)}% (${item.wins}/${item.losses})`;
+    return `${(item.winrate * 100).toFixed(1)}%`;
+  }
+
+  public winAndLossText(item: WinLoss) {
+    return `(${item.wins}/${item.losses})`;
   }
 
   get loadingMapAndRaceStats(): boolean {
