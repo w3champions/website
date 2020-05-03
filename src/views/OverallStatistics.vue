@@ -267,14 +267,14 @@ export default class OverallStatisticsView extends Vue {
         modeName: "2vs2",
         modeId: EGameMode.GM_2ON2
       },
-      {
-        modeName: "4vs4",
-        modeId: EGameMode.GM_4ON4
-      },
-      {
-        modeName: "FFA",
-        modeId: EGameMode.GM_FFA
-      }
+      // {
+      //   modeName: "4vs4",
+      //   modeId: EGameMode.GM_4ON4
+      // },
+      // {
+      //   modeName: "FFA",
+      //   modeId: EGameMode.GM_FFA
+      // }
     ];
   }
 
