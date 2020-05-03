@@ -40,6 +40,7 @@ interface PlayerId {
 
 export interface PlayerOverview extends WinLoss{
   id: string;
+  name: string;
   mmr: number;
   gateWay: number;
   playerIds: PlayerId[]
