@@ -66,7 +66,7 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <h4>Stats by game mode</h4>
-                    <mode-stats-grid :stats="profile.gameModeStats" />
+                    <mode-stats-grid :stats="supportedGameModes" />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -294,10 +294,10 @@ export default class PlayerView extends Vue {
     return "No player found";
   }
 
-  get oneVersusOneGameModeStats(): ModeStat[] {
+  get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gameModeStats) {
       return this.profile.gameModeStats.filter(
-        g => g.mode === EGameMode.GM_1ON1
+        g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2
       );
     }
 
