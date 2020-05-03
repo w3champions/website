@@ -10,56 +10,11 @@
         <tbody>
           <tr v-for="item in items" :key="item.map">
             <td>{{ $t("mapNames." + item.map) }}</td>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <td v-on="on" class="number-text">
-                  {{ toWinText(item.winLosses[1]) }}
-                </td>
-              </template>
-              <div>
-                {{ winAndLossText(item.winLosses[1]) }}
-              </div>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <td v-on="on" class="number-text">
-                  {{ toWinText(item.winLosses[2]) }}
-                </td>
-              </template>
-              <div>
-                {{ winAndLossText(item.winLosses[2]) }}
-              </div>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <td v-on="on" class="number-text">
-                  {{ toWinText(item.winLosses[3]) }}
-                </td>
-              </template>
-              <div>
-                {{ winAndLossText(item.winLosses[3]) }}
-              </div>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <td v-on="on" class="number-text">
-                  {{ toWinText(item.winLosses[4]) }}
-                </td>
-              </template>
-              <div>
-                {{ winAndLossText(item.winLosses[4]) }}
-              </div>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <td v-on="on" class="number-text">
-                  {{ toWinText(totalWins(item.winLosses)) }}
-                </td>
-              </template>
-              <div>
-                {{ winAndLossText(totalWins(item.winLosses)) }}
-              </div>
-            </v-tooltip>
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
           </tr>
         </tbody>
       </template>
@@ -74,18 +29,13 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
+import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 
-@Component({})
+@Component({
+  components: {PlayerStatsRaceVersusRaceOnMapTableCell}
+})
 export default class RaceToMapStat extends Vue {
   @Prop() public stats!: WinLossesOnMap[];
-
-  public toWinText(stat: RaceStat): string {
-    return `${(stat.winrate * 100).toFixed(1)}%`;
-  }
-
-  public winAndLossText(stat: RaceStat): string {
-    return `(${stat.wins}/${stat.losses})`;
-  }
 
   public totalWins(stat: RaceStat[]) {
     const totalWins = stat.map(s => s.wins).reduce((a, b) => a + b, 0);
