@@ -117,7 +117,16 @@
                           item-text="modeName"
                           item-value="modeId"
                           @change="setSelectedHeroesPlayedMode"
-                          label="Select Mode"
+                          label="Mode"
+                          outlined
+                  />
+                  <v-select
+                          class="over-chart-select-box over-chart-select-box-2"
+                          :items="picks"
+                          item-text="pickName"
+                          item-value="pickId"
+                          @change="setSelectedHeroesPlayedPick"
+                          label="Pick"
                           outlined
                   />
                   <v-card-text>
@@ -181,13 +190,13 @@
   import {
     GameDay,
     GameLength,
+    PlayedHero,
     PopularGameHour,
-    Ratio,
-    StatsPerMapAndRace,
     RaceWinLoss,
-    PlayedHero
+    Ratio,
+    StatsPerMapAndRace
   } from "@/store/overallStats/types";
-  import {EGameMode, ERaceEnum} from "@/store/typings";
+  import {EGameMode, EPick, ERaceEnum} from "@/store/typings";
   import GameLengthChart from "@/components/GameLengthChart.vue";
   import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
   import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
@@ -207,9 +216,14 @@ export default class OverallStatisticsView extends Vue {
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
+  public selectedHeroesPlayedPick = 0;
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
+  }
+
+  public setSelectedHeroesPlayedPick(pick: number) {
+    this.selectedHeroesPlayedPick = pick;
   }
 
   public setSelectedHeroesPlayedMode(mode: EGameMode) {
@@ -271,7 +285,9 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get selectedPlayedHeroes(): PlayedHero[] {
-    return this.$store.direct.state.overallStatistics.playedHeroes.filter(g => g.gameMode == this.selectedHeroesPlayedMode)[0]?.stats ?? [];
+    const heroes = this.$store.direct.state.overallStatistics.playedHeroes
+    if (heroes.length === 0) return [];
+    return heroes.filter(g => g.gameMode == this.selectedHeroesPlayedMode)[0].orderedPicks[this.selectedHeroesPlayedPick].stats ?? [];
   }
 
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {
@@ -308,6 +324,27 @@ export default class OverallStatisticsView extends Vue {
       //   modeName: "FFA",
       //   modeId: EGameMode.GM_FFA
       // }
+    ];
+  }
+
+  get picks() {
+    return [
+      {
+        pickName: "overall",
+        pickId: EPick.OVERALL
+      },
+      {
+        pickName: "first",
+        pickId: EPick.FIRST
+      },
+      {
+        pickName: "second",
+        pickId: EPick.SECOND
+      },
+      {
+        pickName: "third",
+        pickId: EPick.THIRD
+      },
     ];
   }
 
@@ -355,11 +392,15 @@ export default class OverallStatisticsView extends Vue {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 .over-chart-select-box {
   position: absolute;
   z-index: 10;
   margin-left: 80px !important;
   width: 100px;
+}
+
+.over-chart-select-box-2 {
+  margin-left: 200px !important;
 }
 </style>

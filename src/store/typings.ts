@@ -93,6 +93,13 @@ export enum EGameMode {
   GM_FFA = 4
 }
 
+export enum EPick {
+  OVERALL,
+  FIRST = 1,
+  SECOND = 2,
+  THIRD = 3
+}
+
 export enum ERaceEnum {
   RANDOM = 0,
   HUMAN = 1,
