@@ -2,7 +2,7 @@ import {API_URL} from "@/main";
 import {
   GameDay,
   GameLength,
-  PlayedHero,
+  PlayedHero, PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
   StatsPerMapAndRace
@@ -62,7 +62,7 @@ export default class StatisticService {
     return data.gameLengths;
   }
 
-  public async retrievePlayedHeroes(): Promise<PlayedHero[]> {
+  public async retrievePlayedHeroes(): Promise<PlayedHeroByMode[]> {
     const url = `${API_URL}api/w3c-stats/heroes-played`;
     const response = await fetch(url, {
       method: "GET",

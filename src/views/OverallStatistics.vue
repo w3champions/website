@@ -111,7 +111,18 @@
             <v-tab-item :value="'tab-heroes'">
               <v-row>
                 <v-col cols="12">
-                  {{ playedHeroes.length }}
+                  <v-select
+                          class="over-chart-select-box"
+                          :items="gameModes"
+                          item-text="modeName"
+                          item-value="modeId"
+                          @change="setSelectedHeroesPlayedMode"
+                          label="Select Mode"
+                          outlined
+                  />
+                  <v-card-text>
+                    <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
+                  </v-card-text>
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -123,14 +134,14 @@
                     :items="gameModes"
                     item-text="modeName"
                     item-value="modeId"
-                    @change="setSelectedMode"
+                    @change="setSelectedLengthMode"
                     label="Select Mode"
                     outlined
                   />
                   <v-card-text>
                     <game-length-chart
                       class="ammount-per-day-chart"
-                      :game-length="getSelectedLength"
+                      :game-length="selectedGameLength"
                     />
                   </v-card-text>
                 </v-col>
@@ -150,7 +161,7 @@
                   />
                   <v-card-text>
                     <popular-game-time-chart
-                      :popular-game-hour="getSelectedGameHours"
+                      :popular-game-hour="selectedGameHours"
                     />
                   </v-card-text>
                 </v-col>
@@ -179,9 +190,11 @@
   import {EGameMode, ERaceEnum} from "@/store/typings";
   import GameLengthChart from "@/components/GameLengthChart.vue";
   import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
+  import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
 
   @Component({
   components: {
+    PlayedHeroesChart,
     PopularGameTimeChart,
     AmountPerDayChart,
     GameLengthChart
@@ -189,20 +202,26 @@
 })
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
-  public gameEnums = EGameMode;
 
   public selectedMap = "Overall";
+  public selectedLengthMode = EGameMode.GM_1ON1;
+  public selectedPopularHourMode = EGameMode.GM_1ON1;
+  public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
 
   public setSelectedMap(map: string) {
     this.selectedMap = map;
   }
 
-  public setSelectedMode(mode: EGameMode) {
-    this.$store.direct.commit.overallStatistics.SET_SELECTED_GAME_LENGTH(mode);
+  public setSelectedHeroesPlayedMode(mode: EGameMode) {
+    this.selectedHeroesPlayedMode = mode;
+  }
+
+  public setSelectedLengthMode(mode: EGameMode) {
+    this.selectedLengthMode = mode;
   }
 
   public setSelectedModeGameHour(mode: EGameMode) {
-    this.$store.direct.commit.overallStatistics.SET_SELECTED_POPULAR_HOUR(mode);
+    this.selectedPopularHourMode = mode;
   }
 
   public winrateText(item: RaceWinLoss) {
@@ -229,10 +248,6 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.gamesPerDay.reverse();
   }
 
-  get playedHeroes(): PlayedHero[] {
-    return this.$store.direct.state.overallStatistics.playedHeroes;
-  }
-
   get playersPerDay(): GameDay[] {
     return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
   }
@@ -245,22 +260,18 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.overallStatistics.popularGameHours;
   }
 
-  get selectedLength() {
-    return this.$store.direct.state.overallStatistics.selectedGameLength;
+  get selectedGameLength(): GameLength {
+    return this.gameLength.filter(g => g.gameMode == this.selectedLengthMode)[0];
   }
 
-  get selectedPopularHour() {
-    return this.$store.direct.state.overallStatistics.selectedPopularHour;
-  }
-
-  get getSelectedLength(): GameLength {
-    return this.gameLength.filter(g => g.gameMode == this.selectedLength)[0];
-  }
-
-  get getSelectedGameHours(): PopularGameHour {
+  get selectedGameHours(): PopularGameHour {
     return this.popularGameHours.filter(
-      g => g.gameMode == this.selectedPopularHour
+      g => g.gameMode == this.selectedPopularHourMode
     )[0];
+  }
+
+  get selectedPlayedHeroes(): PlayedHero[] {
+    return this.$store.direct.state.overallStatistics.playedHeroes.filter(g => g.gameMode == this.selectedHeroesPlayedMode)[0]?.stats ?? [];
   }
 
   get statsPerRaceAndMap(): StatsPerMapAndRace[] {

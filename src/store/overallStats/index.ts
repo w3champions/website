@@ -3,7 +3,7 @@ import {
   GameDay,
   GameLength,
   OveralStatisticState,
-  PlayedHero,
+  PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
   StatsPerMapAndRace
@@ -22,9 +22,7 @@ const mod = {
     statsPerMapAndRace: [] as StatsPerMapAndRace[],
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
-    playedHeroes: [] as PlayedHero[],
-    selectedGameLength: EGameMode.GM_1ON1,
-    selectedPopularHour: EGameMode.GM_1ON1,
+    playedHeroes: [] as PlayedHeroByMode[],
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -121,13 +119,7 @@ const mod = {
     SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
       state.popularGameHours = stats
     },
-    SET_SELECTED_GAME_LENGTH(state: OveralStatisticState, selectedGameLength: EGameMode) {
-      state.selectedGameLength = selectedGameLength
-    },
-    SET_SELECTED_POPULAR_HOUR(state: OveralStatisticState, selectedPopularHour: EGameMode) {
-      state.selectedPopularHour = selectedPopularHour
-    },
-    SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHero[]) {
+    SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHeroByMode[]) {
       state.playedHeroes = playedHeroes
     }
   }
