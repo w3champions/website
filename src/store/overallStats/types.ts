@@ -1,6 +1,17 @@
 import { Moment } from 'moment';
 import {EGameMode, ERaceEnum} from "@/store/typings";
 
+
+export interface PlayedHeroByMode {
+  gameMode: EGameMode;
+  stats: PlayedHero[];
+}
+
+export interface PlayedHero {
+  icon: string;
+  count: number;
+}
+
 export type OveralStatisticState = {
   gamesPerDay: GameDay[];
   loadingGamesPerDayStats: boolean;
@@ -9,8 +20,7 @@ export type OveralStatisticState = {
   statsPerMapAndRace: StatsPerMapAndRace[];
   gameLengths: GameLength[];
   popularGameHours: PopularGameHour[];
-  selectedGameLength: EGameMode;
-  selectedPopularHour: EGameMode;
+  playedHeroes: PlayedHeroByMode[];
   loadingMapAndRaceStats: boolean;
 };
 

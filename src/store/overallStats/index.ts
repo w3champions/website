@@ -1,5 +1,13 @@
 import { moduleActionContext } from "..";
-import {GameDay, GameLength, OveralStatisticState, PlayersPerDay, PopularGameHour, StatsPerMapAndRace} from "./types";
+import {
+  GameDay,
+  GameLength,
+  OveralStatisticState,
+  PlayedHeroByMode,
+  PlayersPerDay,
+  PopularGameHour,
+  StatsPerMapAndRace
+} from "./types";
 import {EGameMode, RootState} from "../typings";
 import { ActionContext } from "vuex";
 
@@ -14,8 +22,7 @@ const mod = {
     statsPerMapAndRace: [] as StatsPerMapAndRace[],
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
-    selectedGameLength: EGameMode.GM_1ON1,
-    selectedPopularHour: EGameMode.GM_1ON1,
+    playedHeroes: [] as PlayedHeroByMode[],
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -68,6 +75,15 @@ const mod = {
 
       commit.SET_GAME_LENGTH_STATS(stats);
     },
+    async loadPlayedHeroes(
+        context: ActionContext<OveralStatisticState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const stats = await rootGetters.statisticService.retrievePlayedHeroes();
+
+      commit.SET_PLAYED_HEROES(stats);
+    },
     async loadpopularGameHours(
         context: ActionContext<OveralStatisticState, RootState>
     ) {
@@ -103,11 +119,8 @@ const mod = {
     SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
       state.popularGameHours = stats
     },
-    SET_SELECTED_GAME_LENGTH(state: OveralStatisticState, selectedGameLength: EGameMode) {
-      state.selectedGameLength = selectedGameLength
-    },
-    SET_SELECTED_POPULAR_HOUR(state: OveralStatisticState, selectedPopularHour: EGameMode) {
-      state.selectedPopularHour = selectedPopularHour
+    SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHeroByMode[]) {
+      state.playedHeroes = playedHeroes
     }
   }
 } as const;
