@@ -1,10 +1,15 @@
 import { Moment } from 'moment';
-import {EGameMode, ERaceEnum} from "@/store/typings";
+import {EGameMode, EPick, ERaceEnum} from "@/store/typings";
 
+
+export interface PlayedHeroPick {
+  pick: EPick;
+  stats: PlayedHero[];
+}
 
 export interface PlayedHeroByMode {
   gameMode: EGameMode;
-  stats: PlayedHero[];
+  orderedPicks: PlayedHeroPick[];
 }
 
 export interface PlayedHero {
