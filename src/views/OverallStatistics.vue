@@ -17,6 +17,9 @@
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
               >Winrates</v-tab
             >
+            <v-tab class="profileTab" :href="`#tab-heroes`"
+              >Heroes</v-tab
+            >
             <v-tab class="profileTab" :href="`#tab-gametimes`"
               >Gamelengths</v-tab
             >
@@ -105,6 +108,13 @@
                 </v-col>
               </v-row>
             </v-tab-item>
+            <v-tab-item :value="'tab-heroes'">
+              <v-row>
+                <v-col cols="12">
+                  {{ playedHeroes.length }}
+                </v-col>
+              </v-row>
+            </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
                 <v-col cols="12">
@@ -157,7 +167,15 @@
   import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
   import Vue from "vue";
   import {Component} from "vue-property-decorator";
-  import {GameDay, GameLength, PopularGameHour, Ratio, StatsPerMapAndRace, RaceWinLoss} from "@/store/overallStats/types";
+  import {
+    GameDay,
+    GameLength,
+    PopularGameHour,
+    Ratio,
+    StatsPerMapAndRace,
+    RaceWinLoss,
+    PlayedHero
+  } from "@/store/overallStats/types";
   import {EGameMode, ERaceEnum} from "@/store/typings";
   import GameLengthChart from "@/components/GameLengthChart.vue";
   import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
@@ -209,6 +227,10 @@ export default class OverallStatisticsView extends Vue {
 
   get gameDays(): GameDay[] {
     return this.$store.direct.state.overallStatistics.gamesPerDay.reverse();
+  }
+
+  get playedHeroes(): PlayedHero[] {
+    return this.$store.direct.state.overallStatistics.playedHeroes;
   }
 
   get playersPerDay(): GameDay[] {
@@ -288,6 +310,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
+    await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
   }
 
   public headers = [
