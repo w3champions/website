@@ -107,15 +107,11 @@
           :server-items-length="totalPlayers"
           :mobile-breakpoint="400"
           hide-default-footer
-          @click:row="onRowClicked"
         >
           <template v-slot:body="{ items }">
             <tbody>
               <tr
                 :id="`listitem_${item.rankNumber}`"
-                @click.left="openPlayerProfile(item.player.id)"
-                @click.middle="openProfileInNewTab(item.player.id)"
-                @click.right="openProfileInNewTab(item.player.id)"
                 v-for="item in items"
                 :key="item.player.id"
                 :class="{
@@ -124,14 +120,9 @@
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <span v-on="on">{{ item.player.playerIds.map(n => n.name).join(" & ") }}</span>
-                    </template>
-                    <div>
-                      {{ item.player.playerIds.map(p => p.name + "#" + p.battleTag).join(" & ") }}
-                    </div>
-                  </v-tooltip>
+                  <div v-for="playerId in item.player.playerIds" :key="playerId.id">
+                    <player-rank-info :player-id="playerId" />
+                  </div>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
                 <td class="number-text text-end lost">{{ item.player.losses }}</td>
@@ -169,9 +160,11 @@ import { Component, Watch } from "vue-property-decorator";
 import { Ranking, Gateways, League } from "@/store/ranking/types";
 import { DataTableOptions } from "@/store/typings";
 import LeagueIcon from "@/components/LeagueIcon.vue";
+import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
+import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
 
 @Component({
-  components: { LeagueIcon }
+  components: {PlayerRankInfo, PlayerMatchInfo, LeagueIcon }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -371,25 +364,6 @@ export default class RankingsView extends Vue {
 
   public getLadders() {
     this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
-  }
-
-  public openPlayerProfile(playerName: string) {
-    this.$router.push({
-      path: this.getPlayerPath(playerName)
-    });
-  }
-
-  private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(`${playerName}`);
-  }
-
-  public openProfileInNewTab(playerName: string) {
-    const path = this.getPlayerPath(playerName);
-    window.open(path, "_blank");
-  }
-
-  public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.player.id);
   }
 
   public setGateway(gateway: Gateways) {
