@@ -17,7 +17,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { PlayerId, Ranking } from "@/store/ranking/types";
+import { PlayerId } from "@/store/ranking/types";
 
 @Component({})
 export default class PlayerRankInfo extends Vue {
@@ -27,23 +27,23 @@ export default class PlayerRankInfo extends Vue {
     return `${this.playerId.name}#${this.playerId.battleTag}`;
   }
 
-  public openPlayerProfile(playerName: string) {
+  public openPlayerProfile(playerId: string) {
     this.$router.push({
-      path: this.getPlayerPath(playerName)
+      path: this.getPlayerPath(playerId)
     });
   }
 
-  private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(`${playerName}`);
+  private getPlayerPath(playerId: string) {
+    return "/player/" + encodeURIComponent(`${playerId}`);
   }
 
-  public openProfileInNewTab(playerName: string) {
-    const path = this.getPlayerPath(playerName);
+  public openProfileInNewTab(playerId: string) {
+    const path = this.getPlayerPath(playerId);
     window.open(path, "_blank");
   }
 
-  public onRowClicked(ranking: Ranking) {
-    this.openPlayerProfile(ranking.player.id);
+  public onRowClicked(playerId: string) {
+    this.openPlayerProfile(playerId);
   }
 }
 </script>
