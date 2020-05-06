@@ -14,7 +14,8 @@ const mod = {
     ladders: [],
     rankings: [],
     topFive: [],
-    searchRanks: []
+    searchRanks: [],
+    loadingMatches:true
   } as RankingState,
   actions: {
     async retrieveRankings(
@@ -50,12 +51,15 @@ const mod = {
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
+      commit.SET_MATCHES_LOADING(true);
+
       const rankings = await rootGetters.rankingService.searchRankings(
         searchText,
         state.gateway
       );
 
       commit.SET_SEARCH_RANKINGS(rankings);
+      commit.SET_MATCHES_LOADING(false);
     },
     async clearSearch(context: ActionContext<RankingState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
@@ -112,6 +116,9 @@ const mod = {
     },
     SET_LEAGUE_CONSTELLATION(state: RankingState, ladders: Ladder[]) {
       state.ladders = ladders;
+    },
+    SET_MATCHES_LOADING(state: RankingState, loading: boolean) {
+      state.loadingMatches = loading;
     }
   }
 } as const;

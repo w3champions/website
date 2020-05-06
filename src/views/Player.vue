@@ -144,6 +144,7 @@
                 </v-row>
               </v-card-text>
               <matches-grid
+                v-if="!loadingMatches"
                 v-model="matches"
                 :totalMatches="totalMatches"
                 @pageChanged="onPageChanged"
@@ -151,6 +152,15 @@
                 :alwaysLeftName="battleTag"
                 :only-show-enemy="true"
               ></matches-grid>
+              <v-card-text v-if="loadingMatches">
+                <v-progress-circular
+                  :size="100"
+                  color="primary"
+                  indeterminate
+                >
+                  <div class="inner-text">Searching Matches...</div>
+                </v-progress-circular>
+              </v-card-text>
             </v-tab-item>
             <v-tab-item :value="'tab-statistics'">
               <v-card-title>Statistics</v-card-title>
@@ -278,6 +288,10 @@ export default class PlayerView extends Vue {
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+  }
+
+  get loadingMatches() {
+    return this.$store.direct.state.rankings.loadingMatches;
   }
 
   get searchRanks(): Ranking[] {
