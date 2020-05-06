@@ -10,7 +10,6 @@ export type RankingState = {
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
-  loadingMatches:boolean;
 };
 
 export type Ladder = {
