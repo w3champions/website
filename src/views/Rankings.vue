@@ -103,7 +103,6 @@
           class="elevation-1 hide-footer table-row-pointer"
           :headers="headers"
           :items="rankings"
-          @click:row="(e) => e.preventDefault()"
           :options.sync="options"
           :server-items-length="totalPlayers"
           :mobile-breakpoint="400"

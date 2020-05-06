@@ -1,15 +1,19 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <span v-on="on">{{ combinedBtag }}</span>
+      <span
+        class="pointer"
+        @click="onRowClicked"
+        @click.left="openPlayerProfile(playerId.id)"
+        @click.middle="openProfileInNewTab(playerId.id)"
+        @click.right="openProfileInNewTab(playerId.id)"
+        v-on="on"
+      >
+        {{ playerId.name }}
+      </span>
     </template>
-    <div
-      @click="onRowClicked"
-      @click.left="openPlayerProfile(playerId.id)"
-      @click.middle="openProfileInNewTab(playerId.id)"
-      @click.right="openProfileInNewTab(playerId.id)"
-    >
-      {{ playerId.name }}
+    <div>
+      {{ combinedBtag }}
     </div>
   </v-tooltip>
 </template>
@@ -43,7 +47,7 @@ export default class PlayerRankInfo extends Vue {
   }
 
   public onRowClicked(playerId: string) {
-    console.log("click")
+    console.log("click");
     this.openPlayerProfile(playerId);
   }
 }
