@@ -29,14 +29,14 @@
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
-                          <player-league :modeStat="profile.gameModeStats[0]"></player-league>
+                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
+                        <player-league :modeStat="profile.gameModeStats[0]"></player-league>
                       </v-col>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
-                          <player-league :modeStat="profile.gameModeStats[1]"></player-league>
+                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
+                        <player-league :modeStat="profile.gameModeStats[1]"></player-league>
                       </v-col>
-                        <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
-                          <player-league :modeStat="profile.gameModeStats[2]"></player-league>
+                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
+                        <player-league :modeStat="profile.gameModeStats[2]"></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
