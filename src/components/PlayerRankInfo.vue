@@ -47,7 +47,6 @@ export default class PlayerRankInfo extends Vue {
   }
 
   public onRowClicked(playerId: string) {
-    console.log("click");
     this.openPlayerProfile(playerId);
   }
 }
