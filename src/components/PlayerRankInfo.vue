@@ -4,7 +4,7 @@
       <span v-on="on">{{ combinedBtag }}</span>
     </template>
     <div
-      @click:row="onRowClicked"
+      @click="onRowClicked"
       @click.left="openPlayerProfile(playerId.id)"
       @click.middle="openProfileInNewTab(playerId.id)"
       @click.right="openProfileInNewTab(playerId.id)"
@@ -43,6 +43,7 @@ export default class PlayerRankInfo extends Vue {
   }
 
   public onRowClicked(playerId: string) {
+    console.log("click")
     this.openPlayerProfile(playerId);
   }
 }
