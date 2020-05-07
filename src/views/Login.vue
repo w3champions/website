@@ -45,12 +45,7 @@ export default class LoginView extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    return (
-      "/player/" +
-      encodeURIComponent(
-        `${playerName}@${this.$store.direct.state.rankings.gateway}`
-      )
-    );
+    return "/player/" + encodeURIComponent(playerName);
   }
 }
 </script>

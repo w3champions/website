@@ -3,9 +3,9 @@
     <v-row>
       <v-col cols="12">
         <v-card tile>
-          <v-card-title>
-            Profile of {{ profile.battleTag }}
-            <gate-way-select></gate-way-select>
+          <v-card-title class="justify-space-between">
+            <span>Profile of {{ profile.battleTag }}</span>
+            <gate-way-select />
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>

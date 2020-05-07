@@ -91,7 +91,7 @@ export default class App extends Vue {
   }
 
   private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(`${playerName}@${this.$store.direct.state.rankings.gateway}`);
+    return "/player/" + encodeURIComponent(playerName);
   }
 
   get authCode(): string {
