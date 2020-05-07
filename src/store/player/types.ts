@@ -17,7 +17,7 @@ export type PlayerProfile = {
   name: string;
   battleTag: string;
   raceStats: RaceStat[];
-  gameModeStats: ModeStat[];
+  gateWayStats: GateWayStats[]
   ranks: RankStat[];
 };
 
@@ -40,6 +40,11 @@ export type ModeStat = {
   leagueOrder: number;
   rank: number;
   rankingPoints: number;
+};
+
+export type GateWayStats = {
+  gateWay: number;
+  gameModeStats: ModeStat[];
 };
 
 export type RankStat = {

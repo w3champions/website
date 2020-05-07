@@ -91,7 +91,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   private getPlayerPath() {
-    return "/player/" + this.player.id;
+    return "/player/" + this.player.battleTag;
   }
 
   public openProfileInNewTab() {
@@ -101,14 +101,14 @@ export default class PlayerMatchInfo extends Vue {
 
   private async lazyLoadWinrate() {
     this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
-      this.player.id
+      this.player.battleTag
     );
   }
 
   public goToPlayer() {
     this.$router
       .push({
-        path: "/player/" + encodeURIComponent(this.player.id)
+        path: "/player/" + encodeURIComponent(this.player.battleTag)
       })
       .catch(err => {
         return err;

@@ -120,7 +120,7 @@
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
-                  <div v-for="playerId in item.player.playerIds" :key="playerId.id">
+                  <div v-for="playerId in item.player.playerIds" :key="playerId.battleTag">
                     <player-rank-info :player-id="playerId" />
                   </div>
                 </td>

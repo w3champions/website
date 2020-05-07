@@ -33,7 +33,6 @@ export type Ranking = {
 };
 
 export interface PlayerId {
-  id: string;
   name: string;
   battleTag: string;
 }
