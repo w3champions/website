@@ -42,7 +42,7 @@ export default class PlayerLeague extends Vue {
     switch (this.modeStat.mode) {
       case EGameMode.GM_1ON1:
         return "1v1";
-      case EGameMode.GM_2ON2:
+      case EGameMode.GM_2ON2_AT:
         return "2v2";
       case EGameMode.GM_4ON4:
         return "4v4";
