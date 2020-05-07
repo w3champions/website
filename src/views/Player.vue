@@ -242,7 +242,7 @@ export default class PlayerView extends Vue {
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
     if (newVal) {
-      this.$store.direct.commit.player.SET_OPPONENT_TAG(`${newVal.player.playerIds[0].name.toLowerCase()}#${newVal.player.playerIds[0].battleTag}@${newVal.player.gateWay}`);
+      this.$store.direct.commit.player.SET_OPPONENT_TAG(`${newVal.player.playerIds[0].battleTag}`);
     } else {
       this.$store.direct.commit.player.SET_OPPONENT_TAG("");
     }
