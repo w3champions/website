@@ -55,7 +55,8 @@ const mod = {
 
       const rankings = await rootGetters.rankingService.searchRankings(
         searchText,
-        state.gateway
+        state.gateway,
+        state.gameMode
       );
 
       commit.SET_SEARCH_RANKINGS(rankings);
