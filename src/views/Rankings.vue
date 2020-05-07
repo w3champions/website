@@ -195,15 +195,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { Ranking, Gateways, League } from "@/store/ranking/types";
-import { DataTableOptions, EGameMode } from "@/store/typings";
-import LeagueIcon from "@/components/LeagueIcon.vue";
-import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
-import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
+  import Vue from "vue";
+  import {Component, Watch} from "vue-property-decorator";
+  import {Gateways, League, Ranking} from "@/store/ranking/types";
+  import {DataTableOptions, EGameMode} from "@/store/typings";
+  import LeagueIcon from "@/components/LeagueIcon.vue";
+  import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
+  import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
 
-@Component({
+  @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon }
 })
 export default class RankingsView extends Vue {
@@ -329,13 +329,13 @@ export default class RankingsView extends Vue {
   get selectedLeague(): League {
     const league = this.$store.direct.state.rankings.league;
     const gw = this.$store.direct.state.rankings.gateway;
+    const gameMode = this.$store.direct.state.rankings.gameMode;
     const ladder = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway == gw
+      l => l.gateway == gw && l.gameMode === gameMode
     )[0];
     if (!ladder) return {} as League;
 
-    const foundLeague = ladder.leagues.filter(l => l.id == league)[0] || {};
-    return foundLeague;
+    return ladder.leagues.filter(l => l.id == league)[0] || {};
   }
 
   get selectedLeagueName(): string {
@@ -373,9 +373,10 @@ export default class RankingsView extends Vue {
   }
 
   get ladders(): League[] {
-    const gw = this.$store.direct.state.rankings.gateway;
+    const gateway = this.$store.direct.state.rankings.gateway;
+    const gameMode = this.$store.direct.state.rankings.gameMode;
     const league = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway === gw
+      l => l.gateway === gateway && l.gameMode === gameMode
     )[0];
     return league?.leagues;
   }

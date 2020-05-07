@@ -16,6 +16,7 @@ export type RankingState = {
 
 export type Ladder = {
   gateway: Gateways;
+  gameMode: EGameMode;
   leagues: League[];
 };
 
