@@ -11,6 +11,7 @@ const en = {
   gameModes: {
     GM_1ON1: "1 vs 1",
     GM_2ON2: "2 vs 2",
+    GM_2ON2_AT: "2 vs 2 AT",
     GM_4ON4: "4 vs 4",
     GM_FFA: "FFA"
   },
