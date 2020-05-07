@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Profile of {{ profile.name }}#{{ profile.battleTag }}
+            Profile of {{ profile.battleTag }}
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
