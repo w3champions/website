@@ -5,8 +5,8 @@
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;"
-              ><v-icon style="margin-right: 5px;">mdi-earth</v-icon>Rankings
-              for Gateway: {{ gateway }}</v-btn
+              ><v-icon style="margin-right: 5px;">mdi-earth</v-icon
+              >{{ gateway }}</v-btn
             >
           </template>
           <v-card>
@@ -18,14 +18,42 @@
               </v-list>
               <v-divider></v-divider>
               <v-list dense>
-                <v-list-item @click="selectEurope">
+                <v-list-item
+                  v-for="mode in gateWays"
+                  :key="mode.gateway"
+                  @click="setGateway(mode.gateway)"
+                >
                   <v-list-item-content>
-                    <v-list-item-title>Europe</v-list-item-title>
+                    <v-list-item-title>{{ mode.name }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-                <v-list-item @click="selectAmerica">
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <v-menu offset-x>
+          <template v-slot:activator="{ on }">
+            <v-btn tile v-on="on" style="background-color: transparent;"
+              ><v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon
+              >{{ gameMode }}</v-btn
+            >
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-content>
+                  <v-list-item-title>Select a gamemode:</v-list-item-title>
+                </v-list-item-content>
+              </v-list>
+              <v-divider></v-divider>
+              <v-list dense>
+                <v-list-item
+                  v-for="mode in gameModes"
+                  :key="mode.gameMode"
+                  @click="selectGameMode(mode.gameMode)"
+                >
                   <v-list-item-content>
-                    <v-list-item-title>Americas</v-list-item-title>
+                    <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -120,12 +148,24 @@
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
-                  <div v-for="playerId in item.player.playerIds" :key="playerId.battleTag">
+                  <span
+                    v-for="playerId in item.player.playerIds"
+                    :key="playerId.battleTag"
+                  >
                     <player-rank-info :player-id="playerId" />
-                  </div>
+                    <span
+                      v-if="
+                        item.player.playerIds.indexOf(playerId) !==
+                          item.player.playerIds.length - 1
+                      "
+                      >&</span
+                    >
+                  </span>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
-                <td class="number-text text-end lost">{{ item.player.losses }}</td>
+                <td class="number-text text-end lost">
+                  {{ item.player.losses }}
+                </td>
                 <td class="number-text text-end">{{ item.player.games }}</td>
                 <td class="number-text text-end">
                   {{ (item.player.winrate * 100).toFixed(1) }}%
@@ -158,13 +198,13 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Ranking, Gateways, League } from "@/store/ranking/types";
-import { DataTableOptions } from "@/store/typings";
+import { DataTableOptions, EGameMode } from "@/store/typings";
 import LeagueIcon from "@/components/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
 
 @Component({
-  components: {PlayerRankInfo, PlayerMatchInfo, LeagueIcon }
+  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -257,8 +297,7 @@ export default class RankingsView extends Vue {
           behavior: "smooth"
         });
       }
-
-    }, 150)
+    }, 150);
   }
 
   public options = {
@@ -271,16 +310,18 @@ export default class RankingsView extends Vue {
     this.getRankings(options);
   }
 
-  get gateway(): string {
-    if (this.$store.direct.state.rankings.gateway === Gateways.America) {
-      return "America";
-    } else if (this.$store.direct.state.rankings.gateway === Gateways.Europe) {
-      return "Europe";
-    } else if (this.$store.direct.state.rankings.gateway === Gateways.Asia) {
-      return "Asia";
-    } else {
-      return "unknown";
-    }
+  public isNotLast(rank: string) {
+    this.player.playerIds.indexOf(rank);
+  }
+
+  get gateway() {
+    const gateway = this.$store.direct.state.rankings.gateway;
+    return this.gateWays.filter(g => g.gateway == gateway)[0].name;
+  }
+
+  get gameMode() {
+    const gameMode = this.$store.direct.state.rankings.gameMode;
+    return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
   }
 
   getDivision(division: number): string {
@@ -375,12 +416,23 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.setLeague(league);
   }
 
-  public selectEurope() {
-    this.setGateway(Gateways.Europe);
+  public selectGameMode(gameMode: EGameMode) {
+    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
-  public selectAmerica() {
-    this.setGateway(Gateways.America);
+  get gateWays() {
+    return [
+      { name: "Europe", gateway: Gateways.Europe },
+      { name: "America", gateway: Gateways.America }
+    ];
+  }
+
+  get gameModes() {
+    return [
+      { modeName: "1 vs 1", gameMode: EGameMode.GM_1ON1 },
+      { modeName: "2 vs 2 AT", gameMode: EGameMode.GM_2ON2_AT }
+    ];
   }
 }
 </script>

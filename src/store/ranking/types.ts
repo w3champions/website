@@ -1,4 +1,5 @@
 import {WinLoss} from "@/store/overallStats/types";
+import {EGameMode} from "@/store/typings";
 
 export type RankingState = {
   gateway: Gateways;
@@ -10,6 +11,7 @@ export type RankingState = {
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
+  gameMode: EGameMode;
 };
 
 export type Ladder = {

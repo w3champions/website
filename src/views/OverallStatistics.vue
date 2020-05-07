@@ -112,22 +112,22 @@
               <v-row>
                 <v-col cols="12">
                   <v-select
-                          class="over-chart-select-box"
-                          :items="gameModes"
-                          item-text="modeName"
-                          item-value="modeId"
-                          @change="setSelectedHeroesPlayedMode"
-                          label="Mode"
-                          outlined
+                    class="over-chart-select-box"
+                    :items="gameModes"
+                    item-text="modeName"
+                    item-value="modeId"
+                    @change="setSelectedHeroesPlayedMode"
+                    label="Mode"
+                    outlined
                   />
                   <v-select
-                          class="over-chart-select-box over-chart-select-box-2"
-                          :items="picks"
-                          item-text="pickName"
-                          item-value="pickId"
-                          @change="setSelectedHeroesPlayedPick"
-                          label="Pick"
-                          outlined
+                    class="over-chart-select-box over-chart-select-box-2"
+                    :items="picks"
+                    item-text="pickName"
+                    item-value="pickId"
+                    @change="setSelectedHeroesPlayedPick"
+                    label="Pick"
+                    outlined
                   />
                   <v-card-text>
                     <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
@@ -184,24 +184,24 @@
 </template>
 
 <script lang="ts">
-  import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
-  import Vue from "vue";
-  import {Component} from "vue-property-decorator";
-  import {
-    GameDay,
-    GameLength,
-    PlayedHero,
-    PopularGameHour,
-    RaceWinLoss,
-    Ratio,
-    StatsPerMapAndRace
-  } from "@/store/overallStats/types";
-  import {EGameMode, EPick, ERaceEnum} from "@/store/typings";
-  import GameLengthChart from "@/components/GameLengthChart.vue";
-  import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
-  import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
+import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
+import {
+  GameDay,
+  GameLength,
+  PlayedHero,
+  PopularGameHour,
+  RaceWinLoss,
+  Ratio,
+  StatsPerMapAndRace
+} from "@/store/overallStats/types";
+import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
+import GameLengthChart from "@/components/GameLengthChart.vue";
+import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
+import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
 
-  @Component({
+@Component({
   components: {
     PlayedHeroesChart,
     PopularGameTimeChart,
@@ -314,7 +314,7 @@ export default class OverallStatisticsView extends Vue {
       },
       {
         modeName: "2vs2",
-        modeId: EGameMode.GM_2ON2
+        modeId: EGameMode.GM_2ON2_AT
       },
       // {
       //   modeName: "4vs4",

@@ -1,7 +1,7 @@
-import { moduleActionContext } from "..";
-import { RankingState, Ranking, Gateways, Ladder } from "./types";
-import { DataTableOptions, RootState } from "../typings";
-import { ActionContext } from "vuex";
+import {moduleActionContext} from "..";
+import {Gateways, Ladder, Ranking, RankingState} from "./types";
+import {DataTableOptions, EGameMode, RootState} from "../typings";
+import {ActionContext} from "vuex";
 
 const mod = {
   namespaced: true,
@@ -14,7 +14,8 @@ const mod = {
     ladders: [],
     rankings: [],
     topFive: [],
-    searchRanks: []
+    searchRanks: [],
+    gameMode: EGameMode.GM_1ON1
   } as RankingState,
   actions: {
     async retrieveRankings(
@@ -29,7 +30,8 @@ const mod = {
 
       const response = await rootGetters.rankingService.retrieveRankings(
         state.league,
-        state.gateway
+        state.gateway,
+        state.gameMode
       );
 
       commit.SET_TOTAL_RANKS(response.length);
@@ -40,7 +42,8 @@ const mod = {
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
-        state.gateway
+        state.gateway,
+        EGameMode.GM_1ON1
       );
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
@@ -78,6 +81,14 @@ const mod = {
       commit.SET_LEAGUE(league);
       await dispatch.retrieveRankings(undefined);
     },
+    async setGameMode(
+        context: ActionContext<RankingState, RootState>,
+        gameMode: EGameMode
+    ) {
+      const { commit, dispatch  } = moduleActionContext(context, mod);
+      commit.SET_GAME_MODE(gameMode);
+      await dispatch.retrieveRankings(undefined);
+    },
     async retrieveLeagueConstellation(
         context: ActionContext<RankingState, RootState>
     ) {
@@ -112,6 +123,9 @@ const mod = {
     },
     SET_LEAGUE_CONSTELLATION(state: RankingState, ladders: Ladder[]) {
       state.ladders = ladders;
+    },
+    SET_GAME_MODE(state: RankingState, gameMode: EGameMode) {
+      state.gameMode = gameMode;
     }
   }
 } as const;

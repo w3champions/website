@@ -297,7 +297,7 @@ export default class PlayerView extends Vue {
     if (this.profile && this.profile.gateWayStats) {
 
       return this.gameModesByGateway.filter(
-        g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2
+        g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
       );
     }
 
