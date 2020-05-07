@@ -1,9 +1,7 @@
 import en from "./en";
-import de from "./de";
 
 const languages = {
-  en: en,
-  de: de
+  en: en
 };
 
 export default languages;

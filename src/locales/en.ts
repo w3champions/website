@@ -10,10 +10,7 @@ const en = {
 
   gameModes: {
     GM_1ON1: "1 vs 1",
-    GM_2ON2: "2 vs 2",
     GM_2ON2_AT: "2 vs 2 AT",
-    GM_4ON4: "4 vs 4",
-    GM_FFA: "FFA"
   },
 
   mapNames: {
@@ -31,6 +28,33 @@ const en = {
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
     hillsbradcreek: "Hillsbrad Creek"
+  },
+
+  heroNames: {
+    archmage: "Archmage",
+    alchemist: "Goblin Alchemist",
+    avatarofflame: "Firelord",
+    bansheeranger: "Darkranger",
+    beastmaster: "Beastmaster",
+    blademaster: "Blademaster",
+    cryptlord: "Cryptlord",
+    deathknight: "Deathknight",
+    demonhunter: "Demonhunter",
+    dreadlord: "Dreadlord",
+    farseer: "Farseer",
+    keeperofthegrove: "Keeper of the Grove",
+    lich: "Lich",
+    mountainking: "Mountainking",
+    paladin: "Paladin",
+    pandarenbrewmaster: "Pandaren Brewmaster",
+    pitlord: "Pitlord",
+    priestessofthemoon: "Priestress of the Moon",
+    seawitch: "Naga Seawitch",
+    shadowhunter: "Shadowhunter",
+    sorceror: "Bloodmage",
+    taurenchieftain: "Tauren Chieftain",
+    tinker: "Goblin Tinker",
+    warden: "Warden",
   }
 };
 
