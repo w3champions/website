@@ -16,7 +16,6 @@ export type PlayerInTeam = {
   currentMmr: number;
   battleTag: string;
   name: string;
-  id: string;
   mmrGain: number;
   race: ERaceEnum;
   won: boolean;

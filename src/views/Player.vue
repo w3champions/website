@@ -22,21 +22,21 @@
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
                         :wins="this.playerWins"
-                        :modeStats="this.profile.gameModeStats"
+                        :modeStats="gameModesByGateway"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
                     </v-card-text>
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[0]">
-                        <player-league :modeStat="profile.gameModeStats[0]"></player-league>
+                      <v-col cols="12" md="4" v-if="gameModesByGateway && gameModesByGateway[0]">
+                        <player-league :modeStat="gameModesByGateway[0]"></player-league>
                       </v-col>
-                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[1]">
-                        <player-league :modeStat="profile.gameModeStats[1]"></player-league>
+                      <v-col cols="12" md="4" v-if="gameModesByGateway && gameModesByGateway[1]">
+                        <player-league :modeStat="gameModesByGateway[1]"></player-league>
                       </v-col>
-                      <v-col cols="12" md="4" v-if="profile.gameModeStats && profile.gameModeStats[2]">
-                        <player-league :modeStat="profile.gameModeStats[2]"></player-league>
+                      <v-col cols="12" md="4" v-if="profile.gameModeStats && gameModesByGateway[2]">
+                        <player-league :modeStat="gameModesByGateway[2]"></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -205,6 +205,7 @@ export default class PlayerView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public opponentWins = 0;
+  public selectedGateWay = 20;
 
   public raceHeaders = [
     {
@@ -293,8 +294,9 @@ export default class PlayerView extends Vue {
   }
 
   get supportedGameModes(): ModeStat[] {
-    if (this.profile && this.profile.gameModeStats) {
-      return this.profile.gameModeStats.filter(
+    if (this.profile && this.profile.gateWayStats) {
+
+      return this.gameModesByGateway.filter(
         g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2
       );
     }
@@ -326,6 +328,16 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.matches;
   }
 
+  get gameModesByGateway(): ModeStat[] {
+    if (!this.profile || !this.profile.gateWayStats) {
+      return [];
+    }
+
+    const gateWayStats = this.profile.gateWayStats.find(x => x.gateWay == this.selectedGateWay);
+
+    return (gateWayStats || {}).gameModeStats || [];
+  }
+
   public async getMatches(page?: number) {
     await this.$store.direct.dispatch.player.loadMatches(page);
     this.opponentWins = 0;
@@ -333,7 +345,7 @@ export default class PlayerView extends Vue {
       this.opponentWins = this.matches.filter((match: Match) =>
         match.teams.some((team: Team) => {
           return team.players.some(
-            (player: PlayerInTeam) => player.id === this.battleTag && player.won
+            (player: PlayerInTeam) => player.battleTag === this.battleTag && player.won
           );
         })
       ).length;

@@ -216,7 +216,7 @@ export default class HomeView extends Vue {
 
   public goToProfile(rank: Ranking) {
     this.$router.push({
-      path: "/player/" + encodeURIComponent(rank.player.playerIds[0].id)
+      path: "/player/" + encodeURIComponent(rank.player.playerIds[0].battleTag)
     });
   }
 }

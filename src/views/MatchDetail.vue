@@ -126,16 +126,16 @@ export default class MatchDetailView extends Vue {
   get scoresOfWinners() {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       s =>
-        this.match.teams[0].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
-        this.match.teams[0].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+        this.match.teams[0].players[0].battleTag.startsWith(s.battleTag) ||
+        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag)
     );
   }
 
   get scoresOfLoosers() {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       s =>
-        this.match.teams[1].players[0].id.startsWith(s.battleTag.toLowerCase()) ||
-        this.match.teams[1].players[1]?.id?.startsWith(s.battleTag.toLowerCase())
+        this.match.teams[1].players[0].battleTag.startsWith(s.battleTag) ||
+        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag)
     );
   }
 

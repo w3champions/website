@@ -100,7 +100,7 @@ export default class MatchesGrid extends Vue {
   public getPlayerTeam(match: Match) {
     return match.teams.find((team: Team) =>
       team.players.some(
-        (player: PlayerInTeam) => player.id === this.alwaysLeftName
+        (player: PlayerInTeam) => player.battleTag === this.alwaysLeftName
       )
     );
   }
@@ -109,7 +109,7 @@ export default class MatchesGrid extends Vue {
     return match.teams.find(
       (team: Team) =>
         !team.players.some(
-          (player: PlayerInTeam) => player.id === this.alwaysLeftName
+          (player: PlayerInTeam) => player.battleTag === this.alwaysLeftName
         )
     );
   }

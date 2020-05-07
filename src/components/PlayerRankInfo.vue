@@ -4,16 +4,16 @@
       <span
         class="pointer"
         @click="onRowClicked"
-        @click.left="openPlayerProfile(playerId.id)"
-        @click.middle="openProfileInNewTab(playerId.id)"
-        @click.right="openProfileInNewTab(playerId.id)"
+        @click.left="openPlayerProfile(playerId.battleTag)"
+        @click.middle="openProfileInNewTab(playerId.battleTag)"
+        @click.right="openProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
         {{ playerId.name }}
       </span>
     </template>
     <div>
-      {{ combinedBtag }}
+      {{ playerId.battleTag }}
     </div>
   </v-tooltip>
 </template>
@@ -26,10 +26,6 @@ import { PlayerId } from "@/store/ranking/types";
 @Component({})
 export default class PlayerRankInfo extends Vue {
   @Prop() public playerId!: PlayerId;
-
-  get combinedBtag() {
-    return `${this.playerId.name}#${this.playerId.battleTag}`;
-  }
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({
@@ -46,8 +42,8 @@ export default class PlayerRankInfo extends Vue {
     window.open(path, "_blank");
   }
 
-  public onRowClicked(playerId: string) {
-    this.openPlayerProfile(playerId);
+  public onRowClicked() {
+    this.openPlayerProfile(this.playerId.battleTag);
   }
 }
 </script>
