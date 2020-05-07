@@ -5,6 +5,7 @@
         <v-card tile>
           <v-card-title>
             Profile of {{ profile.battleTag }}
+            <gate-way-select></gate-way-select>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -187,6 +188,7 @@ import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRa
 import PlayerAvatar from "@/components/PlayerAvatar.vue";
 import PlayerLeague from "@/components/PlayerLeague.vue";
 import { Ranking } from "@/store/ranking/types";
+import GateWaySelect from "@/components/GateWaySelect.vue";
 
 @Component({
   components: {
@@ -194,7 +196,8 @@ import { Ranking } from "@/store/ranking/types";
     PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
-    ModeStatsGrid
+    ModeStatsGrid,
+    GateWaySelect
   }
 })
 export default class PlayerView extends Vue {
@@ -205,7 +208,6 @@ export default class PlayerView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public opponentWins = 0;
-  public selectedGateWay = 20;
 
   public raceHeaders = [
     {
@@ -336,6 +338,11 @@ export default class PlayerView extends Vue {
     const gateWayStats = this.profile.gateWayStats.find(x => x.gateWay == this.selectedGateWay);
 
     return (gateWayStats || {}).gameModeStats || [];
+  }
+
+  get selectedGateWay() {
+    const gateway = this.$store.direct.state.rankings.gateway;
+    return gateway || 20;
   }
 
   public async getMatches(page?: number) {

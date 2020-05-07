@@ -2,35 +2,7 @@
   <v-container>
     <v-card class="mt-2" tile>
       <v-card-title>
-        <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent;"
-              ><v-icon style="margin-right: 5px;">mdi-earth</v-icon
-              >{{ gateway }}</v-btn
-            >
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Select a gateway:</v-list-item-title>
-                </v-list-item-content>
-              </v-list>
-              <v-divider></v-divider>
-              <v-list dense>
-                <v-list-item
-                  v-for="mode in gateWays"
-                  :key="mode.gateway"
-                  @click="setGateway(mode.gateway)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ mode.name }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
+        <gate-way-select></gate-way-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;"
@@ -197,14 +169,15 @@
 <script lang="ts">
   import Vue from "vue";
   import {Component, Watch} from "vue-property-decorator";
-  import {Gateways, League, Ranking} from "@/store/ranking/types";
+  import {League, Ranking} from "@/store/ranking/types";
   import {DataTableOptions, EGameMode} from "@/store/typings";
   import LeagueIcon from "@/components/LeagueIcon.vue";
   import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
   import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
+  import GateWaySelect from "@/components/GateWaySelect.vue";
 
   @Component({
-  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon }
+  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -310,11 +283,6 @@ export default class RankingsView extends Vue {
     this.getRankings(options);
   }
 
-  get gateway() {
-    const gateway = this.$store.direct.state.rankings.gateway;
-    return this.gateWays.filter(g => g.gateway == gateway)[0].name;
-  }
-
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
@@ -404,11 +372,6 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
   }
 
-  public setGateway(gateway: Gateways) {
-    this.$store.direct.dispatch.rankings.setGateway(gateway);
-    this.$store.direct.dispatch.rankings.setLeague(0);
-  }
-
   public setLeague(league: number) {
     this.$store.direct.dispatch.rankings.setLeague(league);
   }
@@ -416,19 +379,6 @@ export default class RankingsView extends Vue {
   public selectGameMode(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
     this.$store.direct.dispatch.rankings.setLeague(0);
-  }
-
-  get gateWays() {
-    return [
-      {
-        name: this.$t(`gatewayNames.${Gateways[Gateways.Europe]}`),
-        gateway: Gateways.Europe
-      },
-      {
-        name: this.$t(`gatewayNames.${Gateways[Gateways.America]}`),
-        gateway: Gateways.America
-      }
-    ];
   }
 
   get gameModes() {
