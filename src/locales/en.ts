@@ -13,6 +13,11 @@ const en = {
     GM_2ON2_AT: "2 vs 2 AT",
   },
 
+  gatewayNames: {
+    Europe: "Europe",
+    America: "America",
+  },
+
   mapNames: {
     Overall: "Overall",
     twistedmeadows: "Twisted Meadows",

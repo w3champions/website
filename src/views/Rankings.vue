@@ -310,10 +310,6 @@ export default class RankingsView extends Vue {
     this.getRankings(options);
   }
 
-  public isNotLast(rank: string) {
-    this.player.playerIds.indexOf(rank);
-  }
-
   get gateway() {
     const gateway = this.$store.direct.state.rankings.gateway;
     return this.gateWays.filter(g => g.gateway == gateway)[0].name;
@@ -423,15 +419,27 @@ export default class RankingsView extends Vue {
 
   get gateWays() {
     return [
-      { name: "Europe", gateway: Gateways.Europe },
-      { name: "America", gateway: Gateways.America }
+      {
+        name: this.$t(`gatewayNames.${Gateways[Gateways.Europe]}`),
+        gateway: Gateways.Europe
+      },
+      {
+        name: this.$t(`gatewayNames.${Gateways[Gateways.America]}`),
+        gateway: Gateways.America
+      }
     ];
   }
 
   get gameModes() {
     return [
-      { modeName: "1 vs 1", gameMode: EGameMode.GM_1ON1 },
-      { modeName: "2 vs 2 AT", gameMode: EGameMode.GM_2ON2_AT }
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
+        gameMode: EGameMode.GM_1ON1
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
+        gameMode: EGameMode.GM_2ON2_AT
+      }
     ];
   }
 }
