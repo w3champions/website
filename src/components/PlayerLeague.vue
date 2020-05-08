@@ -1,7 +1,7 @@
 <template>
   <div class="LadderSummaryShowcase-card mt-1" :class="leagueName">
     <h2 class="LadderSummaryShowcase-title">
-      {{ leagueMode }} {{ leagueName }}
+      {{ leagueMode }} {{ leagueName }} {{modeStat.division !== 0 ? this.modeStat.division : null}}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <span
@@ -34,23 +34,8 @@ import { ModeStat } from "@/store/player/types";
 export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
 
-  get leagueMode(): string {
-    if (!this.modeStat) {
-      return "";
-    }
-
-    switch (this.modeStat.mode) {
-      case EGameMode.GM_1ON1:
-        return "1v1";
-      case EGameMode.GM_2ON2_AT:
-        return "2v2";
-      case EGameMode.GM_4ON4:
-        return "4v4";
-      case EGameMode.GM_FFA:
-        return "FFA";
-      default:
-        return "";
-    }
+  get leagueMode() {
+    return this.$t(`gameModes.${EGameMode[this.modeStat.mode]}`);
   }
 
   get leagueName(): string {

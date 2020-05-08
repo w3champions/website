@@ -36,7 +36,7 @@
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
               <league-icon :league="selectedLeageueOrder" />
-              {{ selectedLeagueName }} {{ getDivision(selectedLeague.id) }}
+              {{ selectedLeagueName }} {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
             </v-btn>
           </template>
           <v-card>
@@ -56,7 +56,7 @@
                   <v-list-item-content>
                     <v-list-item-title>
                       <league-icon :league="item.order" />
-                      {{ item.name }} {{ getDivision(item.id) }}
+                      {{ item.name }} {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -286,12 +286,6 @@ export default class RankingsView extends Vue {
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
-  }
-
-  getDivision(division: number): string {
-    if (division == 0 || division == 1) return "";
-
-    return (((division + 4) % 6) + 1).toString();
   }
 
   get selectedLeague(): League {

@@ -38,6 +38,7 @@ export type ModeStat = {
   mmr: number;
   leagueId: number;
   leagueOrder: number;
+  division: number;
   rank: number;
   rankingPoints: number;
 };

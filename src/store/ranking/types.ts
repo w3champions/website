@@ -24,6 +24,7 @@ export type League = {
   id: number,
   name: string,
   order: number,
+  division: number,
   maxParticipantCount: number
 }
 
