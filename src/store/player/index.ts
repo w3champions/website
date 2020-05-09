@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import {PlayerState, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "./types";
-import { Match, RootState } from "../typings";
+import {EGameMode, Match, RootState} from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -15,6 +15,7 @@ const mod = {
     loadingProfile: false,
     loadingRecentMatches: false,
     opponentTag: "",
+    gameModeForSearch: EGameMode.UNDEFINED
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -58,7 +59,8 @@ const mod = {
       const response = await rootGetters.matchService.retrievePlayerMatches(
         state.page,
         state.battleTag,
-        state.opponentTag
+        state.opponentTag,
+        state.gameModeForSearch
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -92,6 +94,9 @@ const mod = {
     },
     SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
       state.playerStatsRaceVersusRaceOnMap = stats;
+    },
+    SET_GAME_MODE_FOR_SEARCH(state: PlayerState, gameMode: EGameMode) {
+      state.gameModeForSearch = gameMode;
     }
   }
 } as const;
