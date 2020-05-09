@@ -96,11 +96,19 @@ const mod = {
       commit.SET_POPULAR_GAME_HOURS(stats);
     },
     async loadHeroWinrates(
-        context: ActionContext<OveralStatisticState, RootState>
+        context: ActionContext<OveralStatisticState, RootState>,
+        heroSelectOptions: { first: string, second: string, third: string, opFirst: string, opSecond: string, opThird: string }
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrieveHeroWinrates("archmage", "all", "all", "deathknight", "all", "all");
+      const stats = await rootGetters.statisticService.retrieveHeroWinrates(
+        heroSelectOptions.first,
+        heroSelectOptions.second,
+        heroSelectOptions.third,
+        heroSelectOptions.opFirst,
+        heroSelectOptions.opSecond,
+        heroSelectOptions.opThird
+      );
 
       commit.SET_HERO_WINRATES(stats);
     }

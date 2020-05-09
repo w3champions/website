@@ -1,76 +1,81 @@
 <template>
   <v-card-text>
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(0, value)"
-      label="Select Mode"
-      outlined
-    />
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(1, value)"
-      label="Select Mode"
-      outlined
-    />
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(2, value)"
-      label="Select Mode"
-      outlined
-    />
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(3, value)"
-      label="Select Mode"
-      outlined
-    />
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(4, value)"
-      label="Select Mode"
-      outlined
-    />
-    <v-select
-      :items="heroes"
-      item-text="name"
-      item-value="heroId"
-      @change="value => setHero(5, value)"
-      label="Select Mode"
-      outlined
-    />
+    <v-card-title class="justify-center">
+      Pick a hero
+    </v-card-title>
+    <v-row>
+      <v-col v-for="i in [2, 1, 0]" :key="i">
+        <v-select
+          :items="heroes"
+          item-text="name"
+          item-value="heroId"
+          @change="value => setHero(i, value)"
+          :label="i + 1"
+          outlined
+          dense
+        />
+        <hero-picture :hero-icon="selectedIds[i]" />
+      </v-col>
+      <v-col v-for="i in [3, 4, 5]" :key="i">
+        <v-select
+          :items="heroes"
+          item-text="name"
+          item-value="heroId"
+          @change="value => setHero(i, value)"
+          :label="i - 2"
+          outlined
+          dense
+        />
+        <hero-picture :hero-icon="selectedIds[i]" />
+      </v-col>
+    </v-row>
+    <v-card-title v-if="winrate" class="justify-center text-center">
+      {{ (winrate * 100).toFixed(2) + "%" }}
+      <br />
+      {{ wins }} / {{ losses }}
+    </v-card-title>
   </v-card-text>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
-@Component({})
+@Component({
+  components: {HeroPicture}
+})
 export default class HeroWinrate extends Vue {
   public selectedIds = ["all", "all", "all", "all", "all", "all"];
 
-  get size() {
+  get winrate() {
     return this.$store.direct.state.overallStatistics.heroWinrate.winrate;
+  }
+
+  get wins() {
+    return this.$store.direct.state.overallStatistics.heroWinrate.wins
+  }
+
+  get losses() {
+    return this.$store.direct.state.overallStatistics.heroWinrate.losses
   }
 
   setHero(index: number, heroId: string) {
     this.selectedIds[index] = heroId;
+    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
+      first: this.selectedIds[0],
+      second: this.selectedIds[1],
+      third: this.selectedIds[2],
+      opFirst: this.selectedIds[3],
+      opSecond: this.selectedIds[4],
+      opThird: this.selectedIds[5],
+    });
   }
 
   get heroes() {
     return [
-      { name: "All", heroId: "all"  },
       { name: "None", heroId: "none"  },
+      { name: "All", heroId: "all"  },
 
       { name: this.$t(`heroNames.archmage`), heroId: "archmage"  },
       { name: this.$t(`heroNames.mountainking`), heroId: "mountainking"  },

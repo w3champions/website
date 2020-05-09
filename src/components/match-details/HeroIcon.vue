@@ -1,9 +1,6 @@
 <template>
   <div v-if="hero">
-    <v-card-text
-      class="hero-icon"
-      :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-    />
+    <hero-picture :hero-icon="hero.icon" />
     <div class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>
@@ -14,19 +11,14 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Hero } from "@/store/typings";
+import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
-@Component({})
+@Component({
+  components: {HeroPicture}
+})
 export default class HeroIcon extends Vue {
   @Prop() hero!: Hero;
   @Prop() firstHero!: boolean;
-
-  get heroPicture() {
-    try {
-      return require("../assets/heroes/" + this.hero.icon + ".png");
-    } catch (e) {
-      return null;
-    }
-  }
 
   get firstHeroOrNot() {
     return this.firstHero
@@ -37,17 +29,6 @@ export default class HeroIcon extends Vue {
 </script>
 
 <style type="text/css" scoped>
-.hero-icon {
-  z-index: 1;
-  position: relative;
-  margin-top: 12px;
-  padding-top: 100%;
-  width: 100%;
-  padding-bottom: 0 !important;
-  margin-bottom: -2px !important;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
 
 .theme--light .hero-level-flag {
   background: rgba(52, 122, 154, 0.5);
