@@ -403,7 +403,7 @@ export default class PlayerView extends Vue {
   get gameModes() {
     return [
       {
-        modeName: "None",
+        modeName: "All",
         modeId: EGameMode.UNDEFINED,
       },
       {
