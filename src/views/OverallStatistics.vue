@@ -194,7 +194,7 @@
 </template>
 
 <script lang="ts">
-import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
+import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import {
@@ -207,10 +207,10 @@ import {
   StatsPerMapAndRace
 } from "@/store/overallStats/types";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
-import GameLengthChart from "@/components/GameLengthChart.vue";
-import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
-import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
-import HeroWinrate from "@/components/HeroWinrate.vue";
+import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
+import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
+import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
+import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 
 @Component({
   components: {
@@ -371,6 +371,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+    await this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
   }
 
   public headers = [

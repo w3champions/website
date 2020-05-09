@@ -6,9 +6,10 @@ import {
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace
+  StatsPerMapAndRace,
+  WinLoss
 } from "./types";
-import {EGameMode, RootState} from "../typings";
+import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -23,6 +24,7 @@ const mod = {
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
+    heroWinrate: {} as WinLoss
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -92,6 +94,15 @@ const mod = {
       const stats = await rootGetters.statisticService.retrievePopularGameHours();
 
       commit.SET_POPULAR_GAME_HOURS(stats);
+    },
+    async loadHeroWinrates(
+        context: ActionContext<OveralStatisticState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const stats = await rootGetters.statisticService.retrieveHeroWinrates("archmage", "all", "all", "deathknight", "all", "all");
+
+      commit.SET_HERO_WINRATES(stats);
     }
   },
   mutations: {
@@ -121,6 +132,9 @@ const mod = {
     },
     SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHeroByMode[]) {
       state.playedHeroes = playedHeroes
+    },
+    SET_HERO_WINRATES(state: OveralStatisticState, winLoss: WinLoss) {
+      state.heroWinrate = winLoss
     }
   }
 } as const;

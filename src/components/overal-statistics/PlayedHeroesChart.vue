@@ -5,7 +5,7 @@
 import { Component, Prop } from "vue-property-decorator";
 
 import { PlayedHero } from "@/store/overallStats/types";
-import BarChart from "@/components/BarChart.vue";
+import BarChart from "@/components/overal-statistics/BarChart.vue";
 import { ChartData } from "chart.js";
 import Vue from "vue";
 

@@ -48,8 +48,8 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Hero, HeroScore } from "@/store/typings";
-import HeroIcon from "@/components/HeroIcon.vue";
-import MatchHiglights from "@/components/MatchHiglights.vue";
+import HeroIcon from "@/components/match-details/HeroIcon.vue";
+import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
 
 @Component({
   components: { MatchHiglights, HeroIcon }

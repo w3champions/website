@@ -44,23 +44,23 @@ export default class PlayerIcon extends Vue {
 }
 
 .race-icon-HUMAN {
-  background-image: url("../assets/raceIcons/HUMAN.jpg");
+  background-image: url("../../assets/raceIcons/HUMAN.jpg");
 }
 
 .race-icon-ORC {
-  background-image: url("../assets/raceIcons/ORC.jpg");
+  background-image: url("../../assets/raceIcons/ORC.jpg");
 }
 
 .race-icon-UNDEAD {
-  background-image: url("../assets/raceIcons/UNDEAD.jpg");
+  background-image: url("../../assets/raceIcons/UNDEAD.jpg");
 }
 
 .race-icon-NIGHT_ELF {
-  background-image: url("../assets/raceIcons/NIGHT_ELF.jpg");
+  background-image: url("../../assets/raceIcons/NIGHT_ELF.jpg");
 }
 
 .race-icon-RANDOM {
-  background-image: url("../assets/raceIcons/RANDOM.jpg");
+  background-image: url("../../assets/raceIcons/RANDOM.jpg");
 }
 
 .alignRight {

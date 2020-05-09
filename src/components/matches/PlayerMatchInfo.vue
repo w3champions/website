@@ -39,7 +39,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
-import PlayerIcon from "@/components/PlayerIcon.vue";
+import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import {RaceStat} from "@/store/player/types";
 
 @Component({

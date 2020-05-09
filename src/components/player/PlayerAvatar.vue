@@ -6,25 +6,9 @@
           style="cursor: pointer"
           @click.stop="openDialog"
           class="player-avatar text-center"
-          :style="{ 'background-image': 'url(' + racePicture + ')' }"
+          :style="{ 'background-image': 'url(' + picture(personalRace, personalRaceIcon) + ')' }"
         />
       </v-col>
-      <!-- <v-col cols="7" md="12">
-        <div v-if="topLeague" class="player-league">
-            <img class="float-left league-image" :src="'https://w3champions.com/integration/leagues/0.png'" />
-
-            <div class="float-right">
-              <div class="player-league-rank">Rank
-                <div>
-                  <b>{{topLeague.rank}}</b>
-                </div>
-              </div>
-              <div class="mt-2 player-league-points">MMR: <b>{{topLeague.mmr}}</b></div>
-              <div class="player-league-points">RP: <b>{{topLeague.rankingPoints}}</b></div>
-            </div>
-            <div class="float-clear"></div>
-          </div>
-      </v-col> -->
     </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px">
@@ -158,14 +142,6 @@ export default class PlayerAvatar extends Vue {
   ];
   public PicNumbers = Array.from(Array(11).keys());
 
-  get racePicture() {
-    return require("../assets/raceAvatars/" +
-      ERaceEnum[this.personalRace] +
-      "_" +
-      this.personalRaceIcon +
-      ".png");
-  }
-
   get homePage(): string {
     return this.personalSetting.homePage;
   }
@@ -214,16 +190,6 @@ export default class PlayerAvatar extends Vue {
     return this.personalSetting?.profilePicture?.race ?? ERaceEnum.TOTAL;
   }
 
-  get topLeague(): ModeStat | null {
-    if(!this.modeStats) {
-      return null;
-    }
-
-    // We should implement sorting by league here in the future when we support more modes
-    const league = this.modeStats.find(x => x.mode === EGameMode.GM_1ON1) || null;
-    return league;
-  }
-
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
     return (
       this.personalSetting.pickablePictures?.filter(r => r.race == race)[0]
@@ -246,7 +212,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   picture(race: ERaceEnum, picId: number) {
-    return require("../assets/raceAvatars/" +
+    return require("../../assets/raceAvatars/" +
       ERaceEnum[race] +
       "_" +
       picId +

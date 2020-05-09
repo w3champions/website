@@ -26,6 +26,7 @@ export type OveralStatisticState = {
   gameLengths: GameLength[];
   popularGameHours: PopularGameHour[];
   playedHeroes: PlayedHeroByMode[];
+  heroWinrate: WinLoss;
   loadingMapAndRaceStats: boolean;
 };
 

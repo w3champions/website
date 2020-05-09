@@ -20,7 +20,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Match } from "@/store/typings";
-import MatchesGrid from "../components/MatchesGrid.vue";
+import MatchesGrid from "../components/matches/MatchesGrid.vue";
 
 @Component({
   components: {

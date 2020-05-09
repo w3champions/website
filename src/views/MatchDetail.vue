@@ -69,12 +69,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import TeamMatchInfo from "@/components/TeamMatchInfo.vue";
+import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import moment from "moment";
-import MatchHiglights from "@/components/MatchHiglights.vue";
-import HeroIcon from "@/components/HeroIcon.vue";
-import PlayerPerformanceOnMatch from "@/components/PlayerPerformanceOnMatch.vue";
-import MatchDetailHeroRow from "@/components/MatchDetailHeroRow.vue";
+import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
+import HeroIcon from "@/components/match-details/HeroIcon.vue";
+import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
+import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import { EGameMode } from "@/store/typings";
 
 @Component({
