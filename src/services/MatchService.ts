@@ -1,5 +1,5 @@
-import {Match, MatchDetail} from "@/store/typings";
-import { API_URL } from "@/main";
+import {EGameMode, Match, MatchDetail} from "@/store/typings";
+import {API_URL} from "@/main";
 
 export default class MatchService {
   private pageSize: number;
@@ -31,16 +31,20 @@ export default class MatchService {
   public async retrievePlayerMatches(
     page: number,
     battleTag: string,
-    opponentTag: string
+    opponentTag: string,
+    gameMode: EGameMode,
   ): Promise<{count: number, matches: Match[]}> {
     const offset = page * 50;
     let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
 
     if (opponentTag.length) {
-      const convertedOpponentId = opponentTag.replace('#', '%23').replace('@','%40');
-      url += `&opponentId=${convertedOpponentId}`;
+      url += `&opponentId=${(encodeURIComponent(opponentTag))}`;
     } else {
       url += `&pageSize=${this.pageSize}`;
+    }
+
+    if (gameMode !== EGameMode.UNDEFINED) {
+      url += `&gameMode=${gameMode}`;
     }
 
     const response = await fetch(url, {

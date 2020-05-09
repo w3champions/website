@@ -30,22 +30,40 @@
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                      <v-col cols="12" md="4" v-if="gameModesByGateway && gameModesByGateway[0]">
-                        <player-league :modeStat="gameModesByGateway[0]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="gameModesByGateway && gameModesByGateway[0]"
+                      >
+                        <player-league
+                          :modeStat="gameModesByGateway[0]"
+                        ></player-league>
                       </v-col>
-                      <v-col cols="12" md="4" v-if="gameModesByGateway && gameModesByGateway[1]">
-                        <player-league :modeStat="gameModesByGateway[1]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="gameModesByGateway && gameModesByGateway[1]"
+                      >
+                        <player-league
+                          :modeStat="gameModesByGateway[1]"
+                        ></player-league>
                       </v-col>
-                      <v-col cols="12" md="4" v-if="profile.gameModeStats && gameModesByGateway[2]">
-                        <player-league :modeStat="gameModesByGateway[2]"></player-league>
+                      <v-col
+                        cols="12"
+                        md="4"
+                        v-if="profile.gameModeStats && gameModesByGateway[2]"
+                      >
+                        <player-league
+                          :modeStat="gameModesByGateway[2]"
+                        ></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <h4>Stats by race</h4>
-                  <v-data-table
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <h4>Stats by race</h4>
+                    <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
                       :items="profile.raceStats"
@@ -60,9 +78,10 @@
                         <span class="lost number-text">{{ item.losses }}</span>
                       </template>
                       <template v-slot:item.percentage="{ item }"
-                        ><span class="number-text">{{ (item.winrate * 100).toFixed(1) }}%</span>
-                      </template
-                      >
+                        ><span class="number-text"
+                          >{{ (item.winrate * 100).toFixed(1) }}%</span
+                        >
+                      </template>
                     </v-data-table>
                   </v-col>
                   <v-col cols="12" md="6">
@@ -73,7 +92,7 @@
               </v-card-text>
               <v-card-text
                 v-if="loadingProfile"
-                style="min-height: 500px"
+                style="min-height: 500px;"
                 class="text-center"
               >
                 <v-progress-circular
@@ -87,42 +106,56 @@
             <v-tab-item :value="'tab-matches'">
               <v-card-title>
                 <v-row align="center">
-                  Match History
-                  <v-spacer />
-                  <v-autocomplete
-                    v-model="searchModel"
-                    append-icon="mdi-magnify"
-                    label="Search"
-                    single-line
-                    clearable
-                    :items="searchRanks"
-                    :loading="isLoading"
-                    :search-input.sync="search"
-                    :no-data-text="noDataText"
-                    item-text="player.name"
-                    placeholder="Search an opponent"
-                    return-object
-                  >
-                    <template v-slot:item="data">
-                      <template v-if="typeof data.item !== 'object'">
-                        <v-list-item-content
-                          v-text="data.item"
-                        ></v-list-item-content>
+                  <v-col cols="5">
+                    Match History
+                  </v-col>
+                  <v-col cols="5">
+                    <v-autocomplete
+                      v-model="searchModel"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      single-line
+                      clearable
+                      :items="searchRanks"
+                      :loading="isLoading"
+                      :search-input.sync="search"
+                      :no-data-text="noDataText"
+                      item-text="player.name"
+                      placeholder="Search an opponent"
+                      return-object
+                    >
+                      <template v-slot:item="data">
+                        <template v-if="typeof data.item !== 'object'">
+                          <v-list-item-content
+                            v-text="data.item"
+                          ></v-list-item-content>
+                        </template>
+                        <template v-else>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ data.item.player.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                              Wins: {{ data.item.player.wins }} | Losses:
+                              {{ data.item.player.losses }} | Total:
+                              {{ data.item.player.games }}
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                        </template>
                       </template>
-                      <template v-else>
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            {{ data.item.player.name }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            Wins: {{ data.item.player.wins }} | Losses:
-                            {{ data.item.player.losses }} | Total:
-                            {{ data.item.player.games }}
-                          </v-list-item-subtitle>
-                        </v-list-item-content>
-                      </template>
-                    </template>
-                  </v-autocomplete>
+                    </v-autocomplete>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-select
+                      class="over-chart-select-box"
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedGameModeForSearch"
+                      label="Mode"
+                      outlined
+                    />
+                  </v-col>
                 </v-row>
               </v-card-title>
               <v-card-text v-if="searchModel && searchModel.player">
@@ -135,11 +168,10 @@
                     </span>
                     /
                     <span>
-                      Winrate: {{((opponentWins / matches.length) * 100).toFixed(1) }}%
+                      Winrate:
+                      {{ ((opponentWins / matches.length) * 100).toFixed(1) }}%
                       VS
-                      {{
-                        searchModel.player.name
-                      }}
+                      {{ searchModel.player.name }}
                     </span>
                   </v-col>
                 </v-row>
@@ -173,14 +205,14 @@ import {
   ModeStat,
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
-  RaceWinsOnMap
+  RaceWinsOnMap,
 } from "@/store/player/types";
 import {
   EGameMode,
   ERaceEnum,
   Match,
   Team,
-  PlayerInTeam
+  PlayerInTeam,
 } from "@/store/typings";
 import MatchesGrid from "../components/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
@@ -197,8 +229,8 @@ import GateWaySelect from "@/components/GateWaySelect.vue";
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid,
-    GateWaySelect
-  }
+    GateWaySelect,
+  },
 })
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
@@ -214,26 +246,26 @@ export default class PlayerView extends Vue {
       text: "Race",
       align: "start",
       sortable: false,
-      value: "race"
+      value: "race",
     },
     {
       text: "Wins",
       align: "start",
       sortable: false,
-      value: "wins"
+      value: "wins",
     },
     {
       text: "Losses",
       align: "start",
       sortable: false,
-      value: "losses"
+      value: "losses",
     },
     {
       text: "Winrate",
       align: "start",
       sortable: false,
-      value: "percentage"
-    }
+      value: "percentage",
+    },
   ];
 
   @Watch("battleTag")
@@ -244,7 +276,9 @@ export default class PlayerView extends Vue {
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
     if (newVal) {
-      this.$store.direct.commit.player.SET_OPPONENT_TAG(`${newVal.player.playerIds[0].battleTag}`);
+      this.$store.direct.commit.player.SET_OPPONENT_TAG(
+        `${newVal.player.playerIds[0].battleTag}`
+      );
     } else {
       this.$store.direct.commit.player.SET_OPPONENT_TAG("");
     }
@@ -263,7 +297,7 @@ export default class PlayerView extends Vue {
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
-      r => r.race !== ERaceEnum.RANDOM
+      (r) => r.race !== ERaceEnum.RANDOM
     );
   }
 
@@ -297,9 +331,8 @@ export default class PlayerView extends Vue {
 
   get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gateWayStats) {
-
       return this.gameModesByGateway.filter(
-        g => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
+        (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
       );
     }
 
@@ -335,7 +368,9 @@ export default class PlayerView extends Vue {
       return [];
     }
 
-    const gateWayStats = this.profile.gateWayStats.find(x => x.gateWay == this.selectedGateWay);
+    const gateWayStats = this.profile.gateWayStats.find(
+      (x) => x.gateWay == this.selectedGateWay
+    );
 
     return (gateWayStats || {}).gameModeStats || [];
   }
@@ -352,11 +387,42 @@ export default class PlayerView extends Vue {
       this.opponentWins = this.matches.filter((match: Match) =>
         match.teams.some((team: Team) => {
           return team.players.some(
-            (player: PlayerInTeam) => player.battleTag === this.battleTag && player.won
+            (player: PlayerInTeam) =>
+              player.battleTag === this.battleTag && player.won
           );
         })
       ).length;
     }
+  }
+
+  public setSelectedGameModeForSearch(gameMode: EGameMode) {
+    this.$store.direct.commit.player.SET_GAME_MODE_FOR_SEARCH(gameMode);
+    this.getMatches();
+  }
+
+  get gameModes() {
+    return [
+      {
+        modeName: "None",
+        modeId: EGameMode.UNDEFINED,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
+        modeId: EGameMode.GM_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
+        modeId: EGameMode.GM_2ON2_AT,
+      },
+      // {
+      //   modeName: "4vs4",
+      //   modeId: EGameMode.GM_4ON4
+      // },
+      // {
+      //   modeName: "FFA",
+      //   modeId: EGameMode.GM_FFA
+      // }
+    ];
   }
 
   mounted() {
