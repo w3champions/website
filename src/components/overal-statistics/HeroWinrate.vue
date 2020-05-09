@@ -7,10 +7,12 @@
       <v-col cols="2" v-for="i in [2, 1, 0]" :key="i">
         <v-select
           :items="heroesHome"
+          :hide-selected="true"
           item-text="name"
           item-value="heroId"
           @change="(value) => setSelectedHero(i, value)"
           :label="(i + 1).toString()"
+          id="homeSelect"
           outlined
           dense
         />
@@ -19,11 +21,13 @@
       <v-col cols="2" v-for="i in [3, 4, 5]" :key="i">
         <v-select
           :items="heroesOpponent"
+          :hide-selected="true"
           item-text="name"
           item-value="heroId"
           @change="(value) => setSelectedHero(i, value)"
           :label="(i - 2).toString()"
           outlined
+          id="opponenSelect"
           dense
         />
         <hero-picture :hero-icon="selectedHeroIds[i]" />
@@ -62,6 +66,7 @@ export default class HeroWinrate extends Vue {
 
   setSelectedHero(index: number, heroId: string) {
     this.selectedHeroIds[index] = heroId;
+
     if (index < 3) {
       this.heroesHome.forEach(h => h.disabled = false);
       this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[0])[0].disabled = true
@@ -77,6 +82,35 @@ export default class HeroWinrate extends Vue {
     this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
     this.heroesHome.filter(h => h.heroId == "none")[0].disabled = false
     this.heroesOpponent.filter(h => h.heroId == "all")[0].disabled = false
+    this.heroesOpponent.filter(h => h.heroId == "none")[0].disabled = false
+
+    // make all selections equal depending on the higher order one and not allowing hero selections after non/all
+    if (heroId === "none" || heroId === "all") {
+      if (index == 0) {
+        this.selectedHeroIds[1] = heroId;
+        this.selectedHeroIds[2] = heroId;
+      }
+      if (index == 1) {
+        this.selectedHeroIds[2] = heroId;
+      }
+      if (index == 3) {
+        this.selectedHeroIds[4] = heroId;
+        this.selectedHeroIds[5] = heroId;
+      }
+      if (index == 4) {
+        this.selectedHeroIds[5] = heroId;
+      }
+    }
+
+    // for not allowing none as first hero
+    if (heroId === "none") {
+      if (index == 0) {
+        this.selectedHeroIds[0] = "all";
+      }
+      if (index == 3) {
+        this.selectedHeroIds[3] = "all";
+      }
+    }
 
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
       first: this.selectedHeroIds[0],
