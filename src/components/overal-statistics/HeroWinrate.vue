@@ -29,8 +29,8 @@
         <hero-picture :hero-icon="selectedHeroIds[i]" />
       </v-col>
     </v-row>
-    <v-card-title v-if="winrate" class="justify-center text-center">
-      {{ (winrate * 100).toFixed(2) + "%" }}
+    <v-card-title class="justify-center text-center">
+      {{ winrate === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       <br />
       {{ wins }} / {{ losses }}
     </v-card-title>
@@ -159,6 +159,17 @@ export default class HeroWinrate extends Vue {
       { name: this.$t(`heroNames.tinker`), heroId: "tinker", disabled: false },
       { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", disabled: false },
     ];
+  }
+
+  mounted() {
+    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
+      first: this.selectedHeroIds[0],
+      second: this.selectedHeroIds[1],
+      third: this.selectedHeroIds[2],
+      opFirst: this.selectedHeroIds[3],
+      opSecond: this.selectedHeroIds[4],
+      opThird: this.selectedHeroIds[5],
+    });
   }
 }
 </script>
