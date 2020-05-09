@@ -90,6 +90,7 @@ export default class HeroWinrate extends Vue {
 
   get heroesOpponent() {
     return [
+      { name: this.$t(`heroNames.none`), heroId: "none", disabled: false },
       { name: this.$t(`heroNames.all`), heroId: "all", disabled: false },
 
       { name: this.$t(`heroNames.archmage`), heroId: "archmage", disabled: false },
