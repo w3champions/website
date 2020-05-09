@@ -6,27 +6,27 @@
     <v-row>
       <v-col cols="2" v-for="i in [2, 1, 0]" :key="i">
         <v-select
-          :items="heroes"
+          :items="heroesHome"
           item-text="name"
           item-value="heroId"
-          @change="(value) => setHero(i, value)"
+          @change="(value) => setSelectedHero(i, value)"
           :label="(i + 1).toString()"
           outlined
           dense
         />
-        <hero-picture :hero-icon="selectedIds[i]" />
+        <hero-picture :hero-icon="selectedHeroIds[i]" />
       </v-col>
       <v-col cols="2" v-for="i in [3, 4, 5]" :key="i">
         <v-select
-          :items="heroesExceptNone"
+          :items="heroesOpponent"
           item-text="name"
           item-value="heroId"
-          @change="(value) => setHero(i, value)"
+          @change="(value) => setSelectedHero(i, value)"
           :label="(i - 2).toString()"
           outlined
           dense
         />
-        <hero-picture :hero-icon="selectedIds[i]" />
+        <hero-picture :hero-icon="selectedHeroIds[i]" />
       </v-col>
     </v-row>
     <v-card-title v-if="winrate" class="justify-center text-center">
@@ -46,7 +46,7 @@ import HeroPicture from "@/components/match-details/HeroPicture.vue";
   components: { HeroPicture },
 })
 export default class HeroWinrate extends Vue {
-  public selectedIds = ["all", "all", "all", "all", "all", "all"];
+  public selectedHeroIds = ["all", "all", "all", "all", "all", "all"];
 
   get winrate() {
     return this.$store.direct.state.overallStatistics.heroWinrate.winrate;
@@ -60,67 +60,105 @@ export default class HeroWinrate extends Vue {
     return this.$store.direct.state.overallStatistics.heroWinrate.losses;
   }
 
-  setHero(index: number, heroId: string) {
-    this.selectedIds[index] = heroId;
+  setSelectedHero(index: number, heroId: string) {
+    this.selectedHeroIds[index] = heroId;
+    if (index < 3) {
+      this.heroesHome.forEach(h => h.disabled = false);
+      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[0])[0].disabled = true
+      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[1])[0].disabled = true
+      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[2])[0].disabled = true
+    } else {
+      this.heroesOpponent.forEach(h => h.disabled = false);
+      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[3])[0].disabled = true
+      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[4])[0].disabled = true
+      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[5])[0].disabled = true
+    }
+
+    this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
+    this.heroesHome.filter(h => h.heroId == "none")[0].disabled = false
+    this.heroesOpponent.filter(h => h.heroId == "all")[0].disabled = false
+
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
-      first: this.selectedIds[0],
-      second: this.selectedIds[1],
-      third: this.selectedIds[2],
-      opFirst: this.selectedIds[3],
-      opSecond: this.selectedIds[4],
-      opThird: this.selectedIds[5],
+      first: this.selectedHeroIds[0],
+      second: this.selectedHeroIds[1],
+      third: this.selectedHeroIds[2],
+      opFirst: this.selectedHeroIds[3],
+      opSecond: this.selectedHeroIds[4],
+      opThird: this.selectedHeroIds[5],
     });
   }
 
-  get heroesExceptNone() {
+  get heroesOpponent() {
     return [
-      { name: this.$t(`heroNames.all`), heroId: "all" },
+      { name: this.$t(`heroNames.all`), heroId: "all", disabled: false },
 
-      { name: this.$t(`heroNames.archmage`), heroId: "archmage" },
-      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking" },
-      { name: this.$t(`heroNames.paladin`), heroId: "paladin" },
-      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror" },
+      { name: this.$t(`heroNames.archmage`), heroId: "archmage", disabled: false },
+      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking", disabled: false },
+      { name: this.$t(`heroNames.paladin`), heroId: "paladin", disabled: false },
+      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror", disabled: false },
 
-      { name: this.$t(`heroNames.farseer`), heroId: "farseer" },
-      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster" },
-      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter" },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain" },
+      { name: this.$t(`heroNames.farseer`), heroId: "farseer", disabled: false },
+      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster", disabled: false },
+      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter", disabled: false },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false },
 
-      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight" },
-      { name: this.$t(`heroNames.lich`), heroId: "lich" },
-      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord" },
-      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord" },
+      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight", disabled: false },
+      { name: this.$t(`heroNames.lich`), heroId: "lich", disabled: false },
+      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord", disabled: false },
+      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord", disabled: false },
 
-      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter" },
-      {
-        name: this.$t(`heroNames.keeperofthegrove`),
-        heroId: "keeperofthegrove",
-      },
-      { name: this.$t(`heroNames.warden`), heroId: "warden" },
-      {
-        name: this.$t(`heroNames.priestessofthemoon`),
-        heroId: "priestessofthemoon",
-      },
+      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter", disabled: false },
+      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove", disabled: false },
+      { name: this.$t(`heroNames.warden`), heroId: "warden", disabled: false },
+      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon", disabled: false },
 
-      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame" },
-      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger" },
-      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster" },
-      {
-        name: this.$t(`heroNames.pandarenbrewmaster`),
-        heroId: "pandarenbrewmaster",
-      },
-      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord" },
-      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch" },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain" },
-      { name: this.$t(`heroNames.tinker`), heroId: "tinker" },
-      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist" },
+      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame", disabled: false },
+      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger", disabled: false },
+      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster", disabled: false },
+      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster", disabled: false },
+      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord", disabled: false },
+      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch", disabled: false },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false },
+      { name: this.$t(`heroNames.tinker`), heroId: "tinker", disabled: false },
+      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", disabled: false },
     ];
   }
 
-  get heroes() {
-    return [{ name: this.$t(`heroNames.none`), heroId: "none" }].concat(
-      this.heroesExceptNone
-    );
+  get heroesHome() {
+    return [
+      { name: this.$t(`heroNames.none`), heroId: "none", disabled: false },
+      { name: this.$t(`heroNames.all`), heroId: "all", disabled: false },
+
+      { name: this.$t(`heroNames.archmage`), heroId: "archmage", disabled: false },
+      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking", disabled: false },
+      { name: this.$t(`heroNames.paladin`), heroId: "paladin", disabled: false },
+      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror", disabled: false },
+
+      { name: this.$t(`heroNames.farseer`), heroId: "farseer", disabled: false },
+      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster", disabled: false },
+      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter", disabled: false },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false },
+
+      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight", disabled: false },
+      { name: this.$t(`heroNames.lich`), heroId: "lich", disabled: false },
+      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord", disabled: false },
+      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord", disabled: false },
+
+      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter", disabled: false },
+      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove", disabled: false },
+      { name: this.$t(`heroNames.warden`), heroId: "warden", disabled: false },
+      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon", disabled: false },
+
+      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame", disabled: false },
+      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger", disabled: false },
+      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster", disabled: false },
+      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster", disabled: false },
+      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord", disabled: false },
+      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch", disabled: false },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false },
+      { name: this.$t(`heroNames.tinker`), heroId: "tinker", disabled: false },
+      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", disabled: false },
+    ];
   }
 }
 </script>
