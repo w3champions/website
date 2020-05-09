@@ -18,7 +18,7 @@
       </v-col>
       <v-col v-for="i in [3, 4, 5]" :key="i">
         <v-select
-          :items="heroes"
+          :items="heroesExceptNone"
           item-text="name"
           item-value="heroId"
           @change="(value) => setHero(i, value)"
@@ -43,7 +43,7 @@ import { Component } from "vue-property-decorator";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
 @Component({
-  components: {HeroPicture}
+  components: { HeroPicture },
 })
 export default class HeroWinrate extends Vue {
   public selectedIds = ["all", "all", "all", "all", "all", "all"];
@@ -53,11 +53,11 @@ export default class HeroWinrate extends Vue {
   }
 
   get wins() {
-    return this.$store.direct.state.overallStatistics.heroWinrate.wins
+    return this.$store.direct.state.overallStatistics.heroWinrate.wins;
   }
 
   get losses() {
-    return this.$store.direct.state.overallStatistics.heroWinrate.losses
+    return this.$store.direct.state.overallStatistics.heroWinrate.losses;
   }
 
   setHero(index: number, heroId: string) {
@@ -72,41 +72,55 @@ export default class HeroWinrate extends Vue {
     });
   }
 
-  get heroes() {
+  get heroesExceptNone() {
     return [
-      { name: "None", heroId: "none"  },
-      { name: "All", heroId: "all"  },
+      { name: this.$t(`heroNames.all`), heroId: "all" },
 
-      { name: this.$t(`heroNames.archmage`), heroId: "archmage"  },
-      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking"  },
-      { name: this.$t(`heroNames.paladin`), heroId: "paladin"  },
-      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror"  },
+      { name: this.$t(`heroNames.archmage`), heroId: "archmage" },
+      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking" },
+      { name: this.$t(`heroNames.paladin`), heroId: "paladin" },
+      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror" },
 
-      { name: this.$t(`heroNames.farseer`), heroId: "farseer"  },
-      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster"  },
-      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter"  },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain"  },
+      { name: this.$t(`heroNames.farseer`), heroId: "farseer" },
+      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster" },
+      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter" },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain" },
 
-      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight"  },
-      { name: this.$t(`heroNames.lich`), heroId: "lich"  },
-      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord"  },
-      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord"  },
+      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight" },
+      { name: this.$t(`heroNames.lich`), heroId: "lich" },
+      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord" },
+      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord" },
 
-      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter"  },
-      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove"  },
-      { name: this.$t(`heroNames.warden`), heroId: "warden"  },
-      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon"  },
+      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter" },
+      {
+        name: this.$t(`heroNames.keeperofthegrove`),
+        heroId: "keeperofthegrove",
+      },
+      { name: this.$t(`heroNames.warden`), heroId: "warden" },
+      {
+        name: this.$t(`heroNames.priestessofthemoon`),
+        heroId: "priestessofthemoon",
+      },
 
-      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame"  },
-      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger"  },
-      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster"  },
-      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster"  },
-      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord"  },
-      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch"  },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain"  },
-      { name: this.$t(`heroNames.tinker`), heroId: "tinker"  },
-      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist"  },
-    ]
+      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame" },
+      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger" },
+      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster" },
+      {
+        name: this.$t(`heroNames.pandarenbrewmaster`),
+        heroId: "pandarenbrewmaster",
+      },
+      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord" },
+      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch" },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain" },
+      { name: this.$t(`heroNames.tinker`), heroId: "tinker" },
+      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist" },
+    ];
+  }
+
+  get heroes() {
+    return [{ name: this.$t(`heroNames.none`), heroId: "none" }].concat(
+      this.heroesExceptNone
+    );
   }
 }
 </script>

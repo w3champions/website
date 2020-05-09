@@ -36,6 +36,8 @@ const en = {
   },
 
   heroNames: {
+    all: "All",
+    none: "None",
     archmage: "Archmage",
     alchemist: "Goblin Alchemist",
     avatarofflame: "Firelord",
