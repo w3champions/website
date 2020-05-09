@@ -27,19 +27,25 @@
             </v-card-subtitle>
           </v-card-title>
           <match-detail-hero-row
+            v-if="isIncompleteGame"
             :heroes-of-winner="scoresOfWinners[0].heroes"
             :heroes-of-looser="scoresOfLoosers[0].heroes"
             :scores-of-looser="scoresOfLoosers[0].heroScore"
             :scores-of-winner="scoresOfWinners[0].heroScore"
           />
           <match-detail-hero-row
-            v-if="matchIs2v2"
+            v-if="matchIs2v2 && isIncompleteGame"
             :heroes-of-winner="scoresOfWinners[1].heroes"
             :heroes-of-looser="scoresOfLoosers[1].heroes"
             :scores-of-looser="scoresOfLoosers[1].heroScore"
             :scores-of-winner="scoresOfWinners[1].heroScore"
           />
-          <v-row>
+          <v-row v-if="!isIncompleteGame" class="justify-center">
+            <v-card-subtitle>
+              Sorry, but this games seems to have incomplete data
+            </v-card-subtitle>
+          </v-row>
+          <v-row v-if="isIncompleteGame">
             <v-col cols="1"> </v-col>
             <v-col cols="5">
               <player-performance-on-match
@@ -121,6 +127,10 @@ export default class MatchDetailView extends Vue {
       this.$store.direct.state.matches.matchDetail.match.gameMode ==
       EGameMode.GM_2ON2_AT
     );
+  }
+
+  get isIncompleteGame() {
+    return this.$store.direct.state.matches.matchDetail.playerScores;
   }
 
   get scoresOfWinners() {
