@@ -371,7 +371,6 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
-    await this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
   }
 
   public headers = [
