@@ -29,7 +29,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
-import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 
 @Component({
   components: {PlayerStatsRaceVersusRaceOnMapTableCell}

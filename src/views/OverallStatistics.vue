@@ -20,6 +20,9 @@
             <v-tab class="profileTab" :href="`#tab-heroes`"
               >Heroes</v-tab
             >
+            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"
+              >Heroe Winrates</v-tab
+            >
             <v-tab class="profileTab" :href="`#tab-gametimes`"
               >Gamelengths</v-tab
             >
@@ -135,6 +138,13 @@
                 </v-col>
               </v-row>
             </v-tab-item>
+            <v-tab-item :value="'tab-heroes-winrates'">
+              <v-row>
+                <v-col cols="12">
+                  <hero-winrate />
+                </v-col>
+              </v-row>
+            </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
                 <v-col cols="12">
@@ -184,7 +194,7 @@
 </template>
 
 <script lang="ts">
-import AmountPerDayChart from "@/components/AmountPerDayChart.vue";
+import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import {
@@ -197,12 +207,14 @@ import {
   StatsPerMapAndRace
 } from "@/store/overallStats/types";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
-import GameLengthChart from "@/components/GameLengthChart.vue";
-import PopularGameTimeChart from "@/components/PopularGameTimeChart.vue";
-import PlayedHeroesChart from "@/components/PlayedHeroesChart.vue";
+import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
+import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
+import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
+import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 
 @Component({
   components: {
+    HeroWinrate,
     PlayedHeroesChart,
     PopularGameTimeChart,
     AmountPerDayChart,

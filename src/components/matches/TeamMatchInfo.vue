@@ -11,7 +11,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Team } from "@/store/typings";
-import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
+import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 
 @Component({
   components: { PlayerMatchInfo }

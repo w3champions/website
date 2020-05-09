@@ -171,10 +171,10 @@
   import {Component, Watch} from "vue-property-decorator";
   import {League, Ranking} from "@/store/ranking/types";
   import {DataTableOptions, EGameMode} from "@/store/typings";
-  import LeagueIcon from "@/components/LeagueIcon.vue";
-  import PlayerMatchInfo from "@/components/PlayerMatchInfo.vue";
-  import PlayerRankInfo from "@/components/PlayerRankInfo.vue";
-  import GateWaySelect from "@/components/GateWaySelect.vue";
+  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+  import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
+  import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
+  import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
   @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }

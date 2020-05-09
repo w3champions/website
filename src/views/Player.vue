@@ -214,13 +214,13 @@ import {
   Team,
   PlayerInTeam,
 } from "@/store/typings";
-import MatchesGrid from "../components/MatchesGrid.vue";
-import ModeStatsGrid from "@/components/ModeStatsGrid.vue";
-import PlayerStatsRaceVersusRaceOnMap from "@/components/PlayerStatsRaceVersusRaceOnMap.vue";
-import PlayerAvatar from "@/components/PlayerAvatar.vue";
-import PlayerLeague from "@/components/PlayerLeague.vue";
+import MatchesGrid from "../components/matches/MatchesGrid.vue";
+import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
+import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
+import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
+import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking } from "@/store/ranking/types";
-import GateWaySelect from "@/components/GateWaySelect.vue";
+import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
 @Component({
   components: {
@@ -403,7 +403,7 @@ export default class PlayerView extends Vue {
   get gameModes() {
     return [
       {
-        modeName: "None",
+        modeName: "All",
         modeId: EGameMode.UNDEFINED,
       },
       {

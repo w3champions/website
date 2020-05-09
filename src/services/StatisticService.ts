@@ -5,7 +5,7 @@ import {
   PlayedHero, PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace
+  StatsPerMapAndRace, WinLoss
 } from "@/store/overallStats/types";
 
 export default class StatisticService {
@@ -77,6 +77,26 @@ export default class StatisticService {
 
   public async retrievePopularGameHours(): Promise<PopularGameHour[]> {
     const url = `${API_URL}api/w3c-stats/play-hours`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    return await response.json();
+  }
+
+  public async retrieveHeroWinrates(
+      first: string,
+      second: string,
+      third: string,
+      opFirst: string,
+      opSecond: string,
+      opThird: string,
+  ): Promise<WinLoss> {
+    const url = `${API_URL}api/w3c-stats/heroes-winrate?first=${first}&second=${second}&third=${third}&opFirst=${opFirst}&opSecond=${opSecond}&opThird=${opThird}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

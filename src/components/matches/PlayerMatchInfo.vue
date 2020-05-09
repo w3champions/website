@@ -23,13 +23,13 @@
       </div>
     </template>
     <div v-if="winrate">
-      <p>{{ nameWithoutBtag }}#<span class="number-text">{{ battleTag }}</span></p>
+      <p>{{ battleTag }}</p>
       <p></p>
       Wins: <span class="number-text">{{ winrate.wins }}</span> | Losses: <span class="number-text">{{ winrate.losses }}</span> | Total:
       <span class="number-text">{{ winrate.games }}</span>
     </div>
     <div v-else>
-      <p>{{ nameWithoutBtag }}#{{ battleTag }}</p>
+      <p>{{ battleTag }}</p>
       <p>Wins: ... | Losses: ... | Total: ...</p>
     </div>
   </v-tooltip>
@@ -39,7 +39,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
-import PlayerIcon from "@/components/PlayerIcon.vue";
+import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import {RaceStat} from "@/store/player/types";
 
 @Component({
