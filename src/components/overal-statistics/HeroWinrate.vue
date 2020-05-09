@@ -9,8 +9,8 @@
           :items="heroes"
           item-text="name"
           item-value="heroId"
-          @change="value => setHero(i, value)"
-          :label="i + 1"
+          @change="(value) => setHero(i, value)"
+          :label="(i + 1).toString()"
           outlined
           dense
         />
@@ -21,8 +21,8 @@
           :items="heroes"
           item-text="name"
           item-value="heroId"
-          @change="value => setHero(i, value)"
-          :label="i - 2"
+          @change="(value) => setHero(i, value)"
+          :label="(i - 2).toString()"
           outlined
           dense
         />
