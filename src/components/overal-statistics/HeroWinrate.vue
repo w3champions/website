@@ -30,7 +30,7 @@
       </v-col>
     </v-row>
     <v-card-title class="justify-center text-center">
-      {{ winrate === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
+      {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       <br />
       {{ wins }} / {{ losses }}
     </v-card-title>
