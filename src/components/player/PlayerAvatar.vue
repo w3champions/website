@@ -238,6 +238,8 @@ export default class PlayerAvatar extends Vue {
 
   async init() {
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
+    this.homepageEdit.text = this.homePage;
+    this.additonalInfoEdit.text = this.savedMessageValue;
   }
 }
 </script>
