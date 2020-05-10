@@ -270,7 +270,7 @@ export default class RankingsView extends Vue {
           behavior: "smooth"
         });
       }
-    }, 150);
+    }, 200);
   }
 
   public options = {
@@ -391,13 +391,13 @@ export default class RankingsView extends Vue {
 </script>
 <style lang="scss" scoped>
 .theme--light {
-  .searchedItem {
-    background-color: lightblue;
+  tr.searchedItem, tr.searchedItem:hover {
+    background-color: lightblue !important;
   }
 }
 .theme--dark {
-  .searchedItem {
-    background-color: #310e6f;
+  tr.searchedItem, tr.searchedItem:hover {
+    background-color: #310e6f !important;
   }
 }
 </style>

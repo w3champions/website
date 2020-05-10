@@ -106,10 +106,10 @@
             <v-tab-item :value="'tab-matches'">
               <v-card-title>
                 <v-row align="center">
-                  <v-col cols="5">
+                  <v-col cols="12" md="5">
                     Match History
                   </v-col>
-                  <v-col cols="5">
+                  <v-col cols="12" md="5">
                     <v-autocomplete
                       v-model="searchModel"
                       append-icon="mdi-magnify"
@@ -145,7 +145,7 @@
                       </template>
                     </v-autocomplete>
                   </v-col>
-                  <v-col cols="2">
+                  <v-col cols="12" md="2">
                     <v-select
                       class="over-chart-select-box"
                       :items="gameModes"
@@ -437,6 +437,8 @@ export default class PlayerView extends Vue {
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
+
+    window.scrollTo(0, 0);
   }
 }
 </script>

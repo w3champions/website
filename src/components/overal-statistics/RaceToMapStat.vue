@@ -4,6 +4,7 @@
       :headers="headers"
       :items="stats"
       hide-default-footer
+      :mobile-breakpoint="400"
       :hidden="stats.length === 0"
     >
       <template v-slot:body="{ items }">
