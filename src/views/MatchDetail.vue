@@ -111,11 +111,11 @@ export default class MatchDetailView extends Vue {
           .duration(this.match.durationInSeconds, "seconds")
           .asMilliseconds()
       )
-      .format("mm:ss");
+      .format(this.$t('dateFormats.timeShort').toString());
   }
 
   get playedDate() {
-    return moment(this.match.startTime).format("MM.DD.YYYY");
+    return moment(this.match.startTime).format(this.$t('dateFormats.date').toString());
   }
 
   get match() {
