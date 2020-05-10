@@ -356,6 +356,7 @@ export default class PlayerView extends Vue {
   }
 
   get isLoggedInPlayer(): boolean {
+    if (this.verifiedBtag === '') return false;
     return this.battleTag.startsWith(this.verifiedBtag);
   }
 
