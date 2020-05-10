@@ -113,10 +113,10 @@
             </v-tab-item>
             <v-tab-item :value="'tab-heroes'">
               <v-row>
-                <v-col cols="md-3">
-                  <v-card-text>
+                <v-col cols="md-6">
+                  <v-card-text class="over-chart-select-box-container">
                     <v-select
-                            class="over-chart-select-box"
+                            class="mr-5"
                             :items="gameModes"
                             item-text="modeName"
                             item-value="modeId"
@@ -125,7 +125,7 @@
                             outlined
                     />
                     <v-select
-                            class="over-chart-select-box over-chart-select-box-2"
+                            class="ml-5"
                             :items="picks"
                             item-text="pickName"
                             item-value="pickId"
@@ -154,7 +154,6 @@
                 <v-col cols="md-3">
                   <v-card-text>
                     <v-select
-                            class="over-chart-select-box"
                             :items="gameModes"
                             item-text="modeName"
                             item-value="modeId"
@@ -179,7 +178,6 @@
                 <v-col cols="md-3">
                   <v-card-text>
                     <v-select
-                            class="over-chart-select-box"
                             :items="gameModes"
                             item-text="modeName"
                             item-value="modeId"
@@ -424,7 +422,8 @@ export default class OverallStatisticsView extends Vue {
   width: 100px;
 }
 
-.over-chart-select-box-2 {
-  margin-left: 200px !important;
+.over-chart-select-box-container {
+  display: flex;
+  flex-direction: row;
 }
 </style>
