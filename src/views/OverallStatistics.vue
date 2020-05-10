@@ -377,17 +377,3 @@ export default class OverallStatisticsView extends Vue {
   ];
 }
 </script>
-
-<style type="text/css" scoped>
-.over-chart-select-box {
-  position: absolute;
-  z-index: 10;
-  margin-left: 80px !important;
-  width: 100px;
-}
-
-.over-chart-select-box-container {
-  display: flex;
-  flex-direction: row;
-}
-</style>
