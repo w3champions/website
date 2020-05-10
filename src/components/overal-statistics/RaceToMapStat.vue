@@ -12,8 +12,8 @@
             <td>{{ $t("mapNames." + item.map) }}</td>
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
           </tr>
         </tbody>
