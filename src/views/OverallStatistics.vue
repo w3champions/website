@@ -113,28 +113,32 @@
             </v-tab-item>
             <v-tab-item :value="'tab-heroes'">
               <v-row>
-                <v-col cols="12">
-                  <v-select
-                    class="over-chart-select-box"
-                    :items="gameModes"
-                    item-text="modeName"
-                    item-value="modeId"
-                    @change="setSelectedHeroesPlayedMode"
-                    label="Mode"
-                    outlined
-                  />
-                  <v-select
-                    class="over-chart-select-box over-chart-select-box-2"
-                    :items="picks"
-                    item-text="pickName"
-                    item-value="pickId"
-                    @change="setSelectedHeroesPlayedPick"
-                    label="Pick"
-                    outlined
-                  />
+                <v-col cols="md-3">
                   <v-card-text>
-                    <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
+                    <v-select
+                            class="over-chart-select-box"
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedHeroesPlayedMode"
+                            label="Mode"
+                            outlined
+                    />
+                    <v-select
+                            class="over-chart-select-box over-chart-select-box-2"
+                            :items="picks"
+                            item-text="pickName"
+                            item-value="pickId"
+                            @change="setSelectedHeroesPlayedPick"
+                            label="Pick"
+                            outlined
+                    />
                   </v-card-text>
+                </v-col>
+                <v-col cols="md-12">
+                    <v-card-text>
+                        <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
+                    </v-card-text>
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -147,20 +151,24 @@
 <!--            </v-tab-item>-->
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
-                <v-col cols="12">
-                  <v-select
-                    class="over-chart-select-box"
-                    :items="gameModes"
-                    item-text="modeName"
-                    item-value="modeId"
-                    @change="setSelectedLengthMode"
-                    label="Select Mode"
-                    outlined
-                  />
+                <v-col cols="md-3">
+                  <v-card-text>
+                    <v-select
+                            class="over-chart-select-box"
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedLengthMode"
+                            label="Select Mode"
+                            outlined
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="md-12">
                   <v-card-text>
                     <game-length-chart
-                      class="ammount-per-day-chart"
-                      :game-length="selectedGameLength"
+                            class="ammount-per-day-chart"
+                            :game-length="selectedGameLength"
                     />
                   </v-card-text>
                 </v-col>
@@ -168,19 +176,23 @@
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
               <v-row>
-                <v-col cols="12">
-                  <v-select
-                    class="over-chart-select-box"
-                    :items="gameModes"
-                    item-text="modeName"
-                    item-value="modeId"
-                    @change="setSelectedModeGameHour"
-                    label="Select Mode"
-                    outlined
-                  />
+                <v-col cols="md-3">
+                  <v-card-text>
+                    <v-select
+                            class="over-chart-select-box"
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedModeGameHour"
+                            label="Select Mode"
+                            outlined
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="md-12">
                   <v-card-text>
                     <popular-game-time-chart
-                      :popular-game-hour="selectedGameHours"
+                            :popular-game-hour="selectedGameHours"
                     />
                   </v-card-text>
                 </v-col>
