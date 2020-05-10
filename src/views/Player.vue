@@ -121,6 +121,7 @@
                       :search-input.sync="search"
                       :no-data-text="noDataText"
                       item-text="player.name"
+                      item-value="player.id"
                       placeholder="Search an opponent"
                       return-object
                     >
@@ -133,7 +134,7 @@
                         <template v-else>
                           <v-list-item-content>
                             <v-list-item-title>
-                              {{ data.item.player.name }}
+                              {{ stripGateWayFromPlayerId(data.item.player.id) }}
                             </v-list-item-title>
                             <v-list-item-subtitle>
                               Wins: {{ data.item.player.wins }} | Losses:
@@ -221,6 +222,7 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import { stripGateWayFromPlayerId } from "@/helpers/player-helpers";
 
 @Component({
   components: {
@@ -293,6 +295,8 @@ export default class PlayerView extends Vue {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
   }
+
+  public stripGateWayFromPlayerId = stripGateWayFromPlayerId;
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];

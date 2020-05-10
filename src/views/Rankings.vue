@@ -75,7 +75,8 @@
           :loading="isLoading"
           :search-input.sync="search"
           :no-data-text="noDataText"
-          item-text="player.id"
+          item-text="player.name"
+          item-value="player.id"
           placeholder="Start typing to Search"
           return-object
         >
@@ -86,7 +87,7 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ stripGateWay(data.item.player.id) }}
+                  {{ stripGateWayFromPlayerId(data.item.player.id) }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -175,6 +176,7 @@
   import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
   import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
   import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+  import { stripGateWayFromPlayerId } from "@/helpers/player-helpers";
 
   @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }
@@ -272,6 +274,8 @@ export default class RankingsView extends Vue {
       }
     }, 200);
   }
+
+  public stripGateWayFromPlayerId = stripGateWayFromPlayerId;
 
   public options = {
     page: 1,
@@ -373,18 +377,6 @@ export default class RankingsView extends Vue {
   public selectGameMode(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
     this.$store.direct.dispatch.rankings.setLeague(0);
-  }
-
-  public stripGateWay(battleTagWithGateWay: string) {
-    if (!battleTagWithGateWay) return '';
-
-    const atIndex = battleTagWithGateWay.indexOf('@');
-
-    if (atIndex === -1) {
-      return battleTagWithGateWay;
-    }
-
-    return battleTagWithGateWay.substring(0, atIndex);
   }
 
   get gameModes() {
