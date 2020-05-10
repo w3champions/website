@@ -15,16 +15,7 @@
       <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on" class="number-text">
-            {{ item.startTime | moment("HH:mm") }}
-          </span>
-        </template>
-        <div class="number-text">
-          {{ item.startTime | moment("HH:mm MM.DD.YYYY") }}
-        </div>
-      </v-tooltip>
+      {{ item.startTime | moment($t('dateFormats.dateTime').toString()) }}
     </template>
     <template class="number-text" v-slot:item.duration="{ item }">
       <span class="number-text">{{ getDuration(item) }}</span>

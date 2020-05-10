@@ -71,38 +71,10 @@
                         <tbody>
                           <tr v-for="item in items" :key="item.race">
                             <td>{{ $t("races." + raceEnums[item.race]) }}</td>
-                            <v-tooltip top>
-                              <template v-slot:activator="{ on }">
-                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[1]) }}</td>
-                              </template>
-                              <div>
-                                {{ winAndLossText(item.winLosses[1]) }}
-                              </div>
-                            </v-tooltip>
-                            <v-tooltip top>
-                              <template v-slot:activator="{ on }">
-                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[2]) }}</td>
-                              </template>
-                              <div>
-                                {{ winAndLossText(item.winLosses[2]) }}
-                              </div>
-                            </v-tooltip>
-                            <v-tooltip top>
-                              <template v-slot:activator="{ on }">
-                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[3]) }}</td>
-                              </template>
-                              <div>
-                                {{ winAndLossText(item.winLosses[3]) }}
-                              </div>
-                            </v-tooltip>
-                            <v-tooltip top>
-                              <template v-slot:activator="{ on }">
-                                <td v-on="on" class="number-text">{{ winrateText(item.winLosses[4]) }}</td>
-                              </template>
-                              <div>
-                                {{ winAndLossText(item.winLosses[4]) }}
-                              </div>
-                            </v-tooltip>
+                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
+                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
+                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
+                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
                           </tr>
                         </tbody>
                       </template>
@@ -221,6 +193,7 @@ import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue"
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
 import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
+import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 
 @Component({
   components: {
@@ -228,7 +201,8 @@ import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
     PlayedHeroesChart,
     PopularGameTimeChart,
     AmountPerDayChart,
-    GameLengthChart
+    GameLengthChart,
+    PlayerStatsRaceVersusRaceOnMapTableCell
   }
 })
 export default class OverallStatisticsView extends Vue {
@@ -258,14 +232,6 @@ export default class OverallStatisticsView extends Vue {
 
   public setSelectedModeGameHour(mode: EGameMode) {
     this.selectedPopularHourMode = mode;
-  }
-
-  public winrateText(item: RaceWinLoss) {
-    return `${(item.winrate * 100).toFixed(1)}%`;
-  }
-
-  public winAndLossText(item: RaceWinLoss) {
-    return `(${item.wins}/${item.losses})`;
   }
 
   get loadingMapAndRaceStats(): boolean {

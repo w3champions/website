@@ -22,7 +22,7 @@ export type PlayerProfile = {
   ranks: RankStat[];
 };
 
-export type RaceStat = {
+export type RaceStat  = {
   race: ERaceEnum;
   wins: number;
   losses: number;
