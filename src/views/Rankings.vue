@@ -75,7 +75,7 @@
           :loading="isLoading"
           :search-input.sync="search"
           :no-data-text="noDataText"
-          item-text="player.name"
+          item-text="player.id"
           placeholder="Start typing to Search"
           return-object
         >
@@ -86,7 +86,7 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ data.item.player.name }}
+                  {{ stripGateWay(data.item.player.id) }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -373,6 +373,18 @@ export default class RankingsView extends Vue {
   public selectGameMode(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
     this.$store.direct.dispatch.rankings.setLeague(0);
+  }
+
+  public stripGateWay(battleTagWithGateWay: string) {
+    if (!battleTagWithGateWay) return '';
+
+    const atIndex = battleTagWithGateWay.indexOf('@');
+
+    if (atIndex === -1) {
+      return battleTagWithGateWay;
+    }
+
+    return battleTagWithGateWay.substring(0, atIndex);
   }
 
   get gameModes() {
