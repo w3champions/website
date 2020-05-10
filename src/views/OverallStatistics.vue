@@ -20,9 +20,9 @@
             <v-tab class="profileTab" :href="`#tab-heroes`"
               >Heroes</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"
-              >Heroe Winrates</v-tab
-            >
+<!--            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"-->
+<!--              >Heroe Winrates</v-tab-->
+<!--            >-->
             <v-tab class="profileTab" :href="`#tab-gametimes`"
               >Gamelengths</v-tab
             >
@@ -138,13 +138,13 @@
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :value="'tab-heroes-winrates'">
-              <v-row>
-                <v-col cols="12">
-                  <hero-winrate />
-                </v-col>
-              </v-row>
-            </v-tab-item>
+<!--            <v-tab-item :value="'tab-heroes-winrates'">-->
+<!--              <v-row>-->
+<!--                <v-col cols="12">-->
+<!--                  <hero-winrate />-->
+<!--                </v-col>-->
+<!--              </v-row>-->
+<!--            </v-tab-item>-->
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
                 <v-col cols="12">
