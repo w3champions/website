@@ -1,16 +1,14 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <span
+      <div
         class="pointer"
-        @click="onRowClicked"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openProfileInNewTab(playerId.battleTag)"
-        @click.right="openProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
         {{ playerId.name }}
-      </span>
+      </div>
     </template>
     <div>
       {{ playerId.battleTag }}

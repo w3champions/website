@@ -14,11 +14,26 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn text tile @click="loginOrGoToProfile">
+      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
         <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
-        <v-icon v-if="authCode" class="mr-2">mdi-account-circle</v-icon>
-        <span v-if="authCode" class="mr-2 hidden-xs-only">{{ loginName }}</span>
       </v-btn>
+
+      <v-menu offset-y v-if="authCode">
+        <template v-slot:activator="{ on }">
+          <v-btn text tile v-on="on">
+            <v-icon class="mr-2">mdi-account-circle</v-icon>
+            <span class="mr-2 hidden-xs-only">{{ loginName }}</span>
+          </v-btn>
+        </template>
+        <v-list >
+          <v-list-item @click="openPlayerProfile">
+            <v-list-item-title >View Profile</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logout">
+            <v-list-item-title >Logout</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
@@ -82,6 +97,10 @@ export default class App extends Vue {
       location.href =
         `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
     }
+  }
+
+  logout() {
+     this.$store.direct.dispatch.oauth.logout();
   }
 
   public openPlayerProfile() {

@@ -41,6 +41,15 @@ const mod = {
 
       const profileName = await rootGetters.oauthService.getProfileName(bearerToken);
       commit.SET_PROFILE_NAME(profileName);
+    },
+    logout(context: ActionContext<OauthState, RootState>){
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+       rootGetters.oauthService.deleteAuthCookie();
+       commit.SET_PROFILE_NAME('');
+       commit.SET_BEARER('');
+
+       window.open('https://www.blizzard.com/logout', "_blank");
     }
   },
   mutations: {
