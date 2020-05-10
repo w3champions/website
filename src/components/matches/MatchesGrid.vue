@@ -141,14 +141,14 @@ export default class MatchesGrid extends Vue {
       align: "end",
       sortable: false,
       value: "startTime",
-      width: "150px"
+      width: "180px"
     },
     {
       text: "Duration",
       align: "center",
       sortable: false,
       value: "duration",
-      width: "150px"
+      width: "120px"
     }
   ];
 }
