@@ -4,33 +4,93 @@
       Pick a hero
     </v-card-title>
     <v-row>
-      <v-col cols="2" v-for="i in [2, 1, 0]" :key="i">
+      <v-col cols="2">
         <v-select
           :items="heroesHome"
-          :hide-selected="true"
           item-text="name"
           item-value="heroId"
-          @change="(value) => setSelectedHero(i, value)"
-          :label="(i + 1).toString()"
-          id="homeSelect"
+          v-model="thirdPickHome"
+          label="3"
+          return-object
+          @change="(v) => setSelectedHero(2, v)"
+          :disabled="secondPickHome.heroId === 'none' || secondPickHome.heroId === 'all'"
           outlined
           dense
         />
-        <hero-picture :hero-icon="selectedHeroIds[i]" />
+        <hero-picture :hero-icon="thirdPickHome.heroId" />
       </v-col>
-      <v-col cols="2" v-for="i in [3, 4, 5]" :key="i">
+      <v-col cols="2">
+        <v-select
+          :items="heroesHome"
+          item-text="name"
+          item-value="heroId"
+          v-model="secondPickHome"
+          label="2"
+          return-object
+          @change="(v) => setSelectedHero(1, v)"
+          :disabled="firstPickHome.heroId === 'none' || firstPickHome.heroId === 'all'"
+          outlined
+          dense
+        />
+        <hero-picture :hero-icon="secondPickHome.heroId" />
+      </v-col>
+      <v-col cols="2">
+        <v-select
+          :items="heroesHome"
+          item-text="name"
+          item-value="heroId"
+          v-model="firstPickHome"
+          label="1"
+          return-object
+          outlined
+          @change="(v) => setSelectedHero(0, v)"
+          dense
+        />
+        <hero-picture :hero-icon="firstPickHome.heroId" />
+      </v-col>
+      <v-col cols="2">
         <v-select
           :items="heroesOpponent"
-          :hide-selected="true"
           item-text="name"
           item-value="heroId"
-          @change="(value) => setSelectedHero(i, value)"
-          :label="(i - 2).toString()"
+          v-model="firstPickOpponent"
+          label="1"
+          @change="(v) => setSelectedHero(3, v)"
+          return-object
           outlined
-          id="opponenSelect"
           dense
         />
-        <hero-picture :hero-icon="selectedHeroIds[i]" />
+        <hero-picture :hero-icon="firstPickOpponent.heroId" />
+      </v-col>
+      <v-col cols="2">
+        <v-select
+          :items="heroesOpponent"
+          item-text="name"
+          item-value="heroId"
+          v-model="secondPickOpponent"
+          label="2"
+          @change="(v) => setSelectedHero(4, v)"
+          return-object
+          :disabled="firstPickOpponent.heroId === 'none' || firstPickOpponent.heroId === 'all'"
+          outlined
+          dense
+        />
+        <hero-picture :hero-icon="secondPickOpponent.heroId" />
+      </v-col>
+      <v-col cols="2">
+        <v-select
+          :items="heroesOpponent"
+          item-text="name"
+          item-value="heroId"
+          v-model="thirdPickOpponent"
+          label="3"
+          return-object
+          outlined
+          :disabled="secondPickOpponent.heroId === 'none' || secondPickOpponent.heroId === 'all'"
+          @change="(v) => setSelectedHero(5, v)"
+          dense
+        />
+        <hero-picture :hero-icon="thirdPickOpponent.heroId" />
       </v-col>
     </v-row>
     <v-card-title class="justify-center text-center">
@@ -50,7 +110,6 @@ import HeroPicture from "@/components/match-details/HeroPicture.vue";
   components: { HeroPicture },
 })
 export default class HeroWinrate extends Vue {
-  public selectedHeroIds = ["all", "all", "all", "all", "all", "all"];
 
   get winrate() {
     return this.$store.direct.state.overallStatistics.heroWinrate.winrate;
@@ -64,19 +123,17 @@ export default class HeroWinrate extends Vue {
     return this.$store.direct.state.overallStatistics.heroWinrate.losses;
   }
 
-  setSelectedHero(index: number, heroId: string) {
-    this.selectedHeroIds[index] = heroId;
-
+  setSelectedHero(index: number, selection: { heroId: string, name: string }) {
     if (index < 3) {
       this.heroesHome.forEach(h => h.disabled = false);
-      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[0])[0].disabled = true
-      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[1])[0].disabled = true
-      this.heroesHome.filter(h => h.heroId == this.selectedHeroIds[2])[0].disabled = true
+      this.heroesHome.filter(h => h.heroId == this.firstPickHome.heroId)[0].disabled = true
+      this.heroesHome.filter(h => h.heroId == this.secondPickHome.heroId)[0].disabled = true
+      this.heroesHome.filter(h => h.heroId == this.thirdPickHome.heroId)[0].disabled = true
     } else {
       this.heroesOpponent.forEach(h => h.disabled = false);
-      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[3])[0].disabled = true
-      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[4])[0].disabled = true
-      this.heroesOpponent.filter(h => h.heroId == this.selectedHeroIds[5])[0].disabled = true
+      this.heroesOpponent.filter(h => h.heroId == this.firstPickOpponent.heroId)[0].disabled = true
+      this.heroesOpponent.filter(h => h.heroId == this.secondPickOpponent.heroId)[0].disabled = true
+      this.heroesOpponent.filter(h => h.heroId == this.thirdPickOpponent.heroId)[0].disabled = true
     }
 
     this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
@@ -85,42 +142,50 @@ export default class HeroWinrate extends Vue {
     this.heroesOpponent.filter(h => h.heroId == "none")[0].disabled = false
 
     // make all selections equal depending on the higher order one and not allowing hero selections after non/all
-    if (heroId === "none" || heroId === "all") {
+    if (selection.heroId === "none" || selection.heroId === "all") {
       if (index == 0) {
-        this.selectedHeroIds[1] = heroId;
-        this.selectedHeroIds[2] = heroId;
+        this.secondPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
+        this.thirdPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
       }
       if (index == 1) {
-        this.selectedHeroIds[2] = heroId;
+        this.thirdPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
       }
       if (index == 3) {
-        this.selectedHeroIds[4] = heroId;
-        this.selectedHeroIds[5] = heroId;
+        this.secondPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
+        this.thirdPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
       }
       if (index == 4) {
-        this.selectedHeroIds[5] = heroId;
+        this.thirdPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
       }
     }
 
     // for not allowing none as first hero
-    if (heroId === "none") {
+    if (selection.heroId === "none") {
       if (index == 0) {
-        this.selectedHeroIds[0] = "all";
+        this.firstPickHome = { name: "all", heroId: "all", disabled: false };
       }
       if (index == 3) {
-        this.selectedHeroIds[3] = "all";
+        this.firstPickOpponent = { name: "all", heroId: "all", disabled: false };
       }
     }
 
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
-      first: this.selectedHeroIds[0],
-      second: this.selectedHeroIds[1],
-      third: this.selectedHeroIds[2],
-      opFirst: this.selectedHeroIds[3],
-      opSecond: this.selectedHeroIds[4],
-      opThird: this.selectedHeroIds[5],
+      first: this.firstPickHome.heroId,
+      second: this.secondPickHome.heroId,
+      third: this.thirdPickHome.heroId,
+      opFirst: this.firstPickOpponent.heroId,
+      opSecond: this.secondPickOpponent.heroId,
+      opThird: this.thirdPickOpponent.heroId,
     });
   }
+
+  public firstPickHome = { name: "all", heroId: "all", disabled: false };
+  public secondPickHome = { name: "all", heroId: "all", disabled: false };
+  public thirdPickHome = { name: "all", heroId: "all", disabled: false };
+
+  public firstPickOpponent = { name: "all", heroId: "all", disabled: false };
+  public secondPickOpponent = { name: "all", heroId: "all", disabled: false };
+  public thirdPickOpponent = { name: "all", heroId: "all", disabled: false };
 
   get heroesOpponent() {
     return [
@@ -198,12 +263,12 @@ export default class HeroWinrate extends Vue {
 
   mounted() {
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates({
-      first: this.selectedHeroIds[0],
-      second: this.selectedHeroIds[1],
-      third: this.selectedHeroIds[2],
-      opFirst: this.selectedHeroIds[3],
-      opSecond: this.selectedHeroIds[4],
-      opThird: this.selectedHeroIds[5],
+      first: this.firstPickHome.heroId,
+      second: this.secondPickHome.heroId,
+      third: this.thirdPickHome.heroId,
+      opFirst: this.firstPickOpponent.heroId,
+      opSecond: this.secondPickOpponent.heroId,
+      opThird: this.thirdPickOpponent.heroId,
     });
   }
 }
