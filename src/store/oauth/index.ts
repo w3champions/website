@@ -48,8 +48,6 @@ const mod = {
        rootGetters.oauthService.deleteAuthCookie();
        commit.SET_PROFILE_NAME('');
        commit.SET_BEARER('');
-
-       window.open('https://www.blizzard.com/logout', "_blank");
     }
   },
   mutations: {
