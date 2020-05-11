@@ -24,3 +24,21 @@
   font-family: "Inter" !important;
   font-style: normal;
 }
+
+.custom-table {
+    width: 100%;
+    border-spacing: 0;
+
+    td, th {
+      padding: 0 16px;
+    }
+
+    td {
+      font-size: .875rem;
+      height: 48px;
+  }
+}
+
+.custom-table-wrapper {
+  overflow-x: auto;
+}
