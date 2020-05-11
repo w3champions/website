@@ -4,7 +4,7 @@
       Pick a hero
     </v-card-title>
     <v-row>
-      <v-col cols="2" v-for="i in [2, 1, 0]" :key="i">
+      <v-col cols="12" md="2" v-for="i in [2, 1, 0]" :key="i">
         <v-select
           :items="heroesHome"
           :hide-selected="true"
@@ -18,7 +18,7 @@
         />
         <hero-picture :hero-icon="selectedHeroIds[i]" />
       </v-col>
-      <v-col cols="2" v-for="i in [3, 4, 5]" :key="i">
+      <v-col cols="12" md="2" v-for="i in [3, 4, 5]" :key="i">
         <v-select
           :items="heroesOpponent"
           :hide-selected="true"

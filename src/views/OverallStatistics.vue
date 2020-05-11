@@ -85,7 +85,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-heroes'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
@@ -121,7 +121,7 @@
 <!--            </v-tab-item>-->
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
@@ -145,7 +145,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
