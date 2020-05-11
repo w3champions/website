@@ -105,7 +105,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="md-10">
+                <v-col cols="12" md="10">
                     <v-card-text>
                         <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
                     </v-card-text>
@@ -133,7 +133,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="10">
+                <v-col cols="12" md="10">
                   <v-card-text>
                     <game-length-chart
                             class="ammount-per-day-chart"
@@ -157,7 +157,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="10">
+                <v-col cols="12" md="10">
                   <v-card-text>
                     <popular-game-time-chart
                             :popular-game-hour="selectedGameHours"
