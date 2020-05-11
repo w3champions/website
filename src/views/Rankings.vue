@@ -1,8 +1,5 @@
 <template>
   <v-container>
-    <div style="background-color:inherit">
-
-    </div>
     <v-card class="mt-2" tile>
       <v-card-title>
         <gate-way-select></gate-way-select>
