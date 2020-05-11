@@ -2,6 +2,7 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div
+        style="display: inline"
         class="pointer"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openProfileInNewTab(playerId.battleTag)"
