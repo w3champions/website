@@ -18,7 +18,7 @@
             >
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
-                <v-row class="mt-4">
+                <v-row class="mt-4 filter-none">
                   <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
@@ -60,7 +60,7 @@
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row class="filter-none">
                   <v-col cols="12" md="6">
                     <h4>Stats by race</h4>
                     <v-data-table

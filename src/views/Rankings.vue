@@ -100,57 +100,57 @@
         </v-autocomplete>
       </v-card-title>
       <v-card-text>
-        <v-data-table
-          class="elevation-1 hide-footer table-row-pointer"
-          :headers="headers"
-          :items="rankings"
-          :options.sync="options"
-          :server-items-length="totalPlayers"
-          :mobile-breakpoint="400"
-          hide-default-footer
-        >
-          <template v-slot:body="{ items }">
-            <tbody>
-              <tr
-                :id="`listitem_${item.rankNumber}`"
-                v-for="item in items"
-                :key="item.player.id"
-                :class="{
-                  searchedItem: item.player.id === searchModelBattleTag
-                }"
-              >
-                <td class="number-text">{{ item.rankNumber }}.</td>
-                <td>
-                  <span
-                    v-for="playerId in item.player.playerIds"
-                    :key="playerId.battleTag"
-                  >
-                    <player-rank-info :player-id="playerId" />
-                    <span
-                      v-if="
-                        item.player.playerIds.indexOf(playerId) !==
-                          item.player.playerIds.length - 1
-                      "
-                      >&</span
-                    >
-                  </span>
+        <div class="custom-table-wrapper elevation-1">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <td v-for="header in headers" :key="header.text" v-bind:style="{ width: header.width }">
+                  {{header.text}}
                 </td>
-                <td class="number-text text-end won">{{ item.player.wins }}</td>
-                <td class="number-text text-end lost">
-                  {{ item.player.losses }}
-                </td>
-                <td class="number-text text-end">{{ item.player.games }}</td>
-                <td class="number-text text-end">
-                  {{ (item.player.winrate * 100).toFixed(1) }}%
-                </td>
-                <td class="number-text text-end">{{ item.player.mmr }}</td>
-                <td class="number-text text-end">{{ item.rankingPoints }}</td>
               </tr>
-            </tbody>
-          </template>
-        </v-data-table>
+            </thead>
+            <tbody>
+                <tr
+                  :id="`listitem_${item.rankNumber}`"
+                  v-for="item in rankings"
+                  :key="item.player.id"
+                  :class="{
+                    searchedItem: item.player.id === searchModelBattleTag
+                  }"
+                >
+                  <td class="number-text">{{ item.rankNumber }}.</td>
+                  <td>
+                    <span
+                      v-for="playerId in item.player.playerIds"
+                      :key="playerId.battleTag"
+                    >
+                      <player-rank-info :player-id="playerId" />
+                      <span
+                        v-if="
+                          item.player.playerIds.indexOf(playerId) !==
+                            item.player.playerIds.length - 1
+                        "
+                        >&</span
+                      >
+                    </span>
+                  </td>
+                  <td class="number-text text-end won">{{ item.player.wins }}</td>
+                  <td class="number-text text-end lost">
+                    {{ item.player.losses }}
+                  </td>
+                  <td class="number-text text-end">{{ item.player.games }}</td>
+                  <td class="number-text text-end">
+                    {{ (item.player.winrate * 100).toFixed(1) }}%
+                  </td>
+                  <td class="number-text text-end">{{ item.player.mmr }}</td>
+                  <td class="number-text text-end">{{ item.rankingPoints }}</td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
       </v-card-text>
     </v-card>
+    <v-row>
     <v-col cols="12" md="3" v-if="false">
       <v-card tile>
         <v-card-title>Stats</v-card-title>
@@ -164,6 +164,8 @@
         </v-list>
       </v-card>
     </v-col>
+    </v-row>
+
   </v-container>
 </template>
 

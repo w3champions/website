@@ -96,7 +96,7 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
     background-color: transparent !important;
   }
 
-  .v-data-table {
+  .v-data-table, .custom-table {
     tr:hover {
       box-shadow: 0 0 17px grey;
     }

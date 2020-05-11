@@ -42,10 +42,6 @@ h3 {
   overflow: hidden !important;
 }
 
-.v-card__text {
-  filter: blur(0) !important;
-}
-
 .v-list {
   background-color: transparent !important;
   -webkit-backface-visibility: hidden;
@@ -61,7 +57,6 @@ h3 {
 .v-tabs-bar {
   background-color: transparent !important;
   a {
-    filter: blur(0) !important;
   }
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
@@ -109,9 +104,8 @@ h3 {
   transform: translateZ(0);
 }
 
-.v-data-table {
+.v-data-table, .custom-table {
   background-color: transparent !important;
-  filter: blur(0);
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
@@ -129,9 +123,10 @@ h3 {
 }
 
 .v-card__title {
-  filter: blur(0) !important;
+  filter:blur(0)!important;
 }
 
 .row {
-  filter: blur(0px);
+  filter:blur(0);
 }
+
