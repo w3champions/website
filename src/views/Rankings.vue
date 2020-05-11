@@ -227,7 +227,7 @@ export default class RankingsView extends Vue {
       width: "25px"
     },
     {
-      text: "Ranking",
+      text: "RP",
       align: "end",
       sortable: false,
       width: "25px"
