@@ -136,7 +136,7 @@
           <v-col cols="12" class="no-padding">
             <v-card tile>
               <v-card-title>Community</v-card-title>
-              <v-card-text>
+              <v-card-text class="filter-blur">
                 Join us
                 <br />
                 <a href="https://discord.gg/uJmQxG2" target="_blank">
