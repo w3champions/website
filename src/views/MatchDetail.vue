@@ -105,13 +105,10 @@ export default class MatchDetailView extends Vue {
   }
 
   get matchDuration() {
+    const format = this.match.durationInSeconds >= 6000 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
     return moment
-      .utc(
-        moment
-          .duration(this.match.durationInSeconds, "seconds")
-          .asMilliseconds()
-      )
-      .format(this.$t('dateFormats.timeShort').toString());
+            .utc(moment.duration(this.match.durationInSeconds, "seconds").asMilliseconds())
+            .format(format.toString()).toString();
   }
 
   get playedDate() {

@@ -113,9 +113,10 @@ export default class MatchesGrid extends Vue {
       return "ongoing";
     }
 
+    const format = match.durationInSeconds >= 6000 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
     return moment
       .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
-      .format("mm:ss");
+      .format(format.toString()).toString();
   }
 
   mounted() {
