@@ -118,12 +118,13 @@ const mod = {
     async retrieveSeasons(
         context: ActionContext<RankingState, RootState>
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, rootCommit } = moduleActionContext(context, mod);
 
       const seasons = await rootGetters.rankingService.retrieveSeasons();
 
       commit.SET_SEASONS(seasons);
       commit.SET_SELECTED_SEASON(seasons[0]);
+      rootCommit.player.SET_SELECTED_SEASON(seasons[0]);
     }
   },
   mutations: {

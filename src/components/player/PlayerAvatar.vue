@@ -195,7 +195,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   winsOfRace(race: ERaceEnum) {
-    return this.personalSetting.winLosses.filter(w => w.race == race)[0].wins;
+    return this.personalSetting.winLosses?.filter(w => w.race == race)[0]?.wins ?? 0;
   }
 
   winsOf(wins: number, iconId: number) {

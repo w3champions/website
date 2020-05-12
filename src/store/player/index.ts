@@ -2,6 +2,7 @@ import { moduleActionContext } from "..";
 import {PlayerState, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "./types";
 import {EGameMode, Match, RootState} from "../typings";
 import { ActionContext } from "vuex";
+import {Season} from "@/store/ranking/types";
 
 const mod = {
   namespaced: true,
@@ -14,7 +15,8 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
-    opponentTag: ""
+    opponentTag: "",
+    selectedSeason: {} as Season
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -93,7 +95,10 @@ const mod = {
     },
     SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
       state.playerStatsRaceVersusRaceOnMap = stats;
-    }
+    },
+    SET_SELECTED_SEASON(state: PlayerState, season: Season) {
+      state.selectedSeason = season;
+    },
   }
 } as const;
 

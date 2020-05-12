@@ -5,7 +5,38 @@
         <v-card tile>
           <v-card-title class="justify-space-between">
             <span>Profile of {{ profile.battleTag }}</span>
-            <gate-way-select />
+            <div>
+              <gate-way-select />
+              <v-menu offset-x>
+                <template v-slot:activator="{ on }">
+                  <v-btn tile v-on="on" class="ma-2" style="background-color: transparent;">
+                    <span class="pa-0">Season {{ selectedSeason.id }}</span>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-text>
+                    <v-list>
+                      <v-list-item-content>
+                        <v-list-item-title>Previous seasons:</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list>
+                    <v-list dense>
+                      <v-list-item
+                        v-for="item in seasons"
+                        :key="item.id"
+                        @click="selectSeason(item)"
+                      >
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            Season {{ item.id }}
+                          </v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-card-text>
+                </v-card>
+              </v-menu>
+            </div>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -31,7 +62,7 @@
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="gameModesByGateway && gameModesByGateway[0]"
+                        v-if="gameModesByGateway && gameModesByGateway[1]"
                       >
                         <player-league
                           :modeStat="gameModesByGateway[0]"
@@ -219,7 +250,7 @@ import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Ranking } from "@/store/ranking/types";
+import {Ranking, Season} from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
 @Component({
@@ -303,6 +334,14 @@ export default class PlayerView extends Vue {
     );
   }
 
+  public selectSeason(season: Season) {
+    this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
+  }
+
+  get seasons() {
+    return this.$store.direct.state.rankings.seasons;
+  }
+
   get profile(): PlayerProfile {
     return this.$store.direct.state.player.playerProfile;
   }
@@ -330,7 +369,7 @@ export default class PlayerView extends Vue {
   get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gateWayStats) {
       return this.gameModesByGateway.filter(
-        (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
+        (g) => (g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT) && g.season === this.selectedSeason.id
       );
     }
 
@@ -339,6 +378,10 @@ export default class PlayerView extends Vue {
 
   get loadingProfile(): boolean {
     return this.$store.direct.state.player.loadingProfile;
+  }
+
+  get selectedSeason() {
+    return this.$store.direct.state.player.selectedSeason;
   }
 
   get battleTag(): string {
@@ -367,11 +410,13 @@ export default class PlayerView extends Vue {
       return [];
     }
 
-    const gateWayStats = this.profile.gateWayStats.find(
-      (x) => x.gateWay == this.selectedGateWay
+    const gateWayStats = this.profile.gateWayStats.filter(
+      (g) => g.gateWay == this.selectedGateWay
     );
 
-    return (gateWayStats || {}).gameModeStats || [];
+    const gameModeStats = gateWayStats.find(g => g.gameModeStats.filter(g => g.season  === this.selectedSeason.id))
+
+    return gameModeStats?.gameModeStats || [];
   }
 
   get selectedGateWay() {
