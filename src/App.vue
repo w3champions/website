@@ -145,6 +145,7 @@ export default class App extends Vue {
 
   mounted() {
     this.init();
+    this.$store.direct.dispatch.rankings.retrieveSeasons();
   }
 
   private async init() {

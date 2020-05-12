@@ -32,7 +32,8 @@ const mod = {
       const response = await rootGetters.rankingService.retrieveRankings(
         state.league,
         state.gateway,
-        state.gameMode
+        state.gameMode,
+        state.seasons[0].id
       );
 
       commit.SET_TOTAL_RANKS(response.length);
@@ -44,7 +45,8 @@ const mod = {
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
         state.gateway,
-        EGameMode.GM_1ON1
+        EGameMode.GM_1ON1,
+        state.seasons[0].id
       );
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
@@ -57,7 +59,8 @@ const mod = {
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,
         state.gateway,
-        search.gameMode
+        search.gameMode,
+        state.seasons[0].id
       );
 
       commit.SET_SEARCH_RANKINGS(rankings);
@@ -94,9 +97,9 @@ const mod = {
     async retrieveLeagueConstellation(
         context: ActionContext<RankingState, RootState>
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      const ladders = await rootGetters.rankingService.retrieveLadders();
+      const ladders = await rootGetters.rankingService.retrieveLadders(state.seasons[0].id);
 
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },

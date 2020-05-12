@@ -370,7 +370,6 @@ export default class RankingsView extends Vue {
     this.options.page = this.$store.direct.state.rankings.page + 1;
     this.getRankings();
     this.getLadders();
-    this.$store.direct.dispatch.rankings.retrieveSeasons();
   }
 
   public getRankings(options?: DataTableOptions) {
@@ -378,7 +377,7 @@ export default class RankingsView extends Vue {
   }
 
   public getLadders() {
-    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
+    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation(this.currentSeason);
   }
 
   public setLeague(league: number) {
