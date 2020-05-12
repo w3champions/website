@@ -1,5 +1,5 @@
 import {moduleActionContext} from "..";
-import {Gateways, Ladder, Ranking, RankingState} from "./types";
+import {Gateways, Ladder, Ranking, RankingState, Season} from "./types";
 import {DataTableOptions, EGameMode, RootState} from "../typings";
 import {ActionContext} from "vuex";
 
@@ -15,7 +15,8 @@ const mod = {
     rankings: [],
     topFive: [],
     searchRanks: [],
-    gameMode: EGameMode.GM_1ON1
+    gameMode: EGameMode.GM_1ON1,
+    seasons: [] as Season[]
   } as RankingState,
   actions: {
     async retrieveRankings(
@@ -98,6 +99,15 @@ const mod = {
       const ladders = await rootGetters.rankingService.retrieveLadders();
 
       commit.SET_LEAGUE_CONSTELLATION(ladders);
+    },
+    async retrieveSeasons(
+        context: ActionContext<RankingState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const seasons = await rootGetters.rankingService.retrieveSeasons();
+
+      commit.SET_SEASONS(seasons);
     }
   },
   mutations: {
@@ -127,6 +137,9 @@ const mod = {
     },
     SET_GAME_MODE(state: RankingState, gameMode: EGameMode) {
       state.gameMode = gameMode;
+    },
+    SET_SEASONS(state: RankingState, seasons: Season[]) {
+      state.seasons = seasons;
     }
   }
 } as const;

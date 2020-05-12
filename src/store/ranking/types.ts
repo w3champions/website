@@ -12,12 +12,17 @@ export type RankingState = {
   topFive: Ranking[];
   searchRanks: Ranking[];
   gameMode: EGameMode;
+  seasons: Season[];
 };
 
 export type Ladder = {
   gateway: Gateways;
   gameMode: EGameMode;
   leagues: League[];
+};
+
+export type Season = {
+  id: number;
 };
 
 export type League = {

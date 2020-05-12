@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mt-2" tile>
       <v-card-title>
-        <gate-way-select></gate-way-select>
+        <gate-way-select />
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;"
@@ -100,6 +100,9 @@
           </template>
         </v-autocomplete>
       </v-card-title>
+      <v-card-text>
+        <v-card-title>Season {{ currentSeason.id }}</v-card-title>
+      </v-card-text>
       <v-card-text>
         <div class="custom-table-wrapper elevation-1">
           <table class="custom-table">
@@ -287,6 +290,9 @@ export default class RankingsView extends Vue {
     this.getRankings(options);
   }
 
+  get currentSeason() {
+    return this.$store.direct.state.rankings.seasons[0];
+  }
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
@@ -364,6 +370,7 @@ export default class RankingsView extends Vue {
     this.options.page = this.$store.direct.state.rankings.page + 1;
     this.getRankings();
     this.getLadders();
+    this.$store.direct.dispatch.rankings.retrieveSeasons();
   }
 
   public getRankings(options?: DataTableOptions) {
