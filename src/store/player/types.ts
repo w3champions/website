@@ -10,7 +10,6 @@ export type PlayerState = {
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
   opponentTag: string;
-  gameModeForSearch: EGameMode;
 };
 
 export type PlayerProfile = {

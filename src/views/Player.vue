@@ -134,7 +134,8 @@
                         <template v-else>
                           <v-list-item-content>
                             <v-list-item-title>
-                              {{ stripGateWayFromPlayerId(data.item.player.id) }}
+                              <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
+                              <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
                             </v-list-item-title>
                             <v-list-item-subtitle>
                               Wins: {{ data.item.player.wins }} | Losses:
@@ -222,7 +223,6 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-import { stripGateWayFromPlayerId } from "@/helpers/player-helpers";
 
 @Component({
   components: {
@@ -290,13 +290,13 @@ export default class PlayerView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+      this.$store.direct.dispatch.rankings.search({searchText: newValue.toLowerCase(), gameMode: this.selectedGameModeForSearch});
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
   }
 
-  public stripGateWayFromPlayerId = stripGateWayFromPlayerId;
+  public selectedGameModeForSearch = EGameMode.GM_1ON1;
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
@@ -386,7 +386,7 @@ export default class PlayerView extends Vue {
   }
 
   public async getMatches(page?: number) {
-    await this.$store.direct.dispatch.player.loadMatches(page);
+    await this.$store.direct.dispatch.player.loadMatches({ page: page, gameMode: this.selectedGameModeForSearch });
     this.opponentWins = 0;
     if (this.$store.direct.state.player.opponentTag.length) {
       this.opponentWins = this.matches.filter((match: Match) =>
@@ -400,8 +400,12 @@ export default class PlayerView extends Vue {
     }
   }
 
+  public isDuplicateName(name: string) {
+    return this.searchRanks.filter(r => r.player.name === name).length > 1
+  }
+
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
-    this.$store.direct.commit.player.SET_GAME_MODE_FOR_SEARCH(gameMode);
+    this.selectedGameModeForSearch = gameMode;
     this.getMatches();
   }
 

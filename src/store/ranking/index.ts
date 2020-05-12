@@ -49,14 +49,14 @@ const mod = {
     },
     async search(
       context: ActionContext<RankingState, RootState>,
-      searchText: string
+      search: { searchText: string, gameMode: EGameMode}
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
-        searchText,
+        search.searchText,
         state.gateway,
-        state.gameMode
+        search.gameMode
       );
 
       commit.SET_SEARCH_RANKINGS(rankings);

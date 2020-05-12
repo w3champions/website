@@ -87,7 +87,8 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ stripGateWayFromPlayerId(data.item.player.id) }}
+                  <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
+                  <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -174,7 +175,6 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-import { stripGateWayFromPlayerId } from "@/helpers/player-helpers";
 
 @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }
@@ -242,10 +242,14 @@ export default class RankingsView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+      this.$store.direct.dispatch.rankings.search({ searchText: newValue.toLowerCase(), gameMode: this.selectedGameMode });
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
+  }
+
+  public isDuplicateName(name: string) {
+    return this.searchRanks.filter(r => r.player.name === name).length > 1
   }
 
   public async goToRank(rank: Ranking) {
@@ -273,8 +277,6 @@ export default class RankingsView extends Vue {
     }, 200);
   }
 
-  public stripGateWayFromPlayerId = stripGateWayFromPlayerId;
-
   public options = {
     page: 1,
     itemsPerPage: this.selectedLeagueMaxParticipantCount
@@ -288,6 +290,10 @@ export default class RankingsView extends Vue {
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
+  }
+
+  get selectedGameMode() {
+    return this.$store.direct.state.rankings.gameMode;
   }
 
   get selectedLeague(): League {
