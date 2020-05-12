@@ -369,7 +369,7 @@ export default class PlayerView extends Vue {
   get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gateWayStats) {
       return this.gameModesByGateway.filter(
-        (g) => (g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT) && g.season === this.selectedSeason.id
+        (g) => (g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT)
       );
     }
 
@@ -414,7 +414,7 @@ export default class PlayerView extends Vue {
       (g) => g.gateWay == this.selectedGateWay
     );
 
-    const gameModeStats = gateWayStats.find(g => g.gameModeStats.filter(g => g.season  === this.selectedSeason.id))
+    const gameModeStats = gateWayStats.find(g => g.season === this.selectedSeason.id)
 
     return gameModeStats?.gameModeStats || [];
   }

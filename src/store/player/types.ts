@@ -48,6 +48,7 @@ export type ModeStat = {
 
 export type GateWayStats = {
   gateWay: number;
+  season: number;
   gameModeStats: ModeStat[];
 };
 
