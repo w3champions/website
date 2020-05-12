@@ -296,7 +296,7 @@ export default class PlayerView extends Vue {
     }
   }
 
-  public selectedGameModeForSearch = EGameMode.GM_1ON1;
+  public selectedGameModeForSearch = EGameMode.UNDEFINED;
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
