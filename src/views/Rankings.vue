@@ -100,9 +100,36 @@
           </template>
         </v-autocomplete>
       </v-card-title>
-      <v-card-text>
-        <v-card-title>Season {{ currentSeason.id }}</v-card-title>
-      </v-card-text>
+      <v-menu offset-x>
+        <template v-slot:activator="{ on }">
+          <v-btn tile v-on="on" class="ma-2" style="background-color: transparent;">
+            <v-card-title class="pa-0">Season {{ currentSeason.id }}</v-card-title>
+            <v-icon class="ml-4">mdi-chevron-right</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-text>
+            <v-list>
+              <v-list-item-content>
+                <v-list-item-title>Previous seasons:</v-list-item-title>
+              </v-list-item-content>
+            </v-list>
+            <v-list dense>
+              <v-list-item
+                v-for="item in seasons"
+                :key="item.id"
+                @click="selectSeason(item)"
+              >
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Season {{ item.id }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-menu>
       <v-card-text>
         <div class="custom-table-wrapper elevation-1">
           <table class="custom-table">
@@ -172,7 +199,7 @@
 <script lang="ts">
 import Vue from "vue";
 import {Component, Watch} from "vue-property-decorator";
-import {League, Ranking} from "@/store/ranking/types";
+import {League, Ranking, Season} from "@/store/ranking/types";
 import {DataTableOptions, EGameMode} from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
@@ -291,8 +318,13 @@ export default class RankingsView extends Vue {
   }
 
   get currentSeason() {
-    return this.$store.direct.state.rankings.seasons[0];
+    return this.$store.direct.state.rankings.selectedSeason;
   }
+
+  get seasons() {
+    return this.$store.direct.state.rankings.seasons;
+  }
+
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
@@ -361,10 +393,6 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.searchRanks;
   }
 
-  get totalPlayers(): number {
-    return this.$store.direct.state.rankings.totalRanks;
-  }
-
   mounted() {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
@@ -377,7 +405,11 @@ export default class RankingsView extends Vue {
   }
 
   public getLadders() {
-    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation(this.currentSeason);
+    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
+  }
+
+  public selectSeason(season: Season) {
+    this.$store.direct.dispatch.rankings.setSeason(season);
   }
 
   public setLeague(league: number) {

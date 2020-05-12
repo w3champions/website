@@ -16,7 +16,8 @@ const mod = {
     topFive: [],
     searchRanks: [],
     gameMode: EGameMode.GM_1ON1,
-    seasons: [] as Season[]
+    seasons: [] as Season[],
+    selectedSeason: {} as Season
   } as RankingState,
   actions: {
     async retrieveRankings(
@@ -33,7 +34,7 @@ const mod = {
         state.league,
         state.gateway,
         state.gameMode,
-        state.seasons[0].id
+        state.selectedSeason.id
       );
 
       commit.SET_TOTAL_RANKS(response.length);
@@ -46,7 +47,7 @@ const mod = {
         0,
         state.gateway,
         EGameMode.GM_1ON1,
-        state.seasons[0].id
+        state.selectedSeason.id
       );
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
@@ -60,7 +61,7 @@ const mod = {
         search.searchText,
         state.gateway,
         search.gameMode,
-        state.seasons[0].id
+        state.selectedSeason.id
       );
 
       commit.SET_SEARCH_RANKINGS(rankings);
@@ -86,6 +87,14 @@ const mod = {
       commit.SET_LEAGUE(league);
       await dispatch.retrieveRankings(undefined);
     },
+    async setSeason(
+        context: ActionContext<RankingState, RootState>,
+        season: Season
+    ) {
+      const { commit, dispatch  } = moduleActionContext(context, mod);
+      commit.SET_SELECTED_SEASON(season);
+      await dispatch.retrieveRankings(undefined);
+    },
     async setGameMode(
         context: ActionContext<RankingState, RootState>,
         gameMode: EGameMode
@@ -99,7 +108,7 @@ const mod = {
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      const ladders = await rootGetters.rankingService.retrieveLadders(state.seasons[0].id);
+      const ladders = await rootGetters.rankingService.retrieveLadders(state.selectedSeason.id);
 
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },
@@ -111,6 +120,7 @@ const mod = {
       const seasons = await rootGetters.rankingService.retrieveSeasons();
 
       commit.SET_SEASONS(seasons);
+      commit.SET_SELECTED_SEASON(seasons[0]);
     }
   },
   mutations: {
@@ -143,6 +153,9 @@ const mod = {
     },
     SET_SEASONS(state: RankingState, seasons: Season[]) {
       state.seasons = seasons;
+    },
+    SET_SELECTED_SEASON(state: RankingState, season: Season) {
+      state.selectedSeason = season;
     }
   }
 } as const;

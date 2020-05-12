@@ -13,6 +13,7 @@ export type RankingState = {
   searchRanks: Ranking[];
   gameMode: EGameMode;
   seasons: Season[];
+  selectedSeason: Season;
 };
 
 export type Ladder = {
