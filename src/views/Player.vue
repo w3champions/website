@@ -22,8 +22,6 @@
                   <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
-                        :wins="this.playerWins"
-                        :modeStats="gameModesByGateway"
                         :is-logged-in-player="isLoggedInPlayer"
                       />
                     </v-card-text>
@@ -303,10 +301,6 @@ export default class PlayerView extends Vue {
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
       (r) => r.race !== ERaceEnum.RANDOM
     );
-  }
-
-  get playerWins() {
-    return this.$store.direct.state.player?.playerProfile?.raceStats ?? [];
   }
 
   get profile(): PlayerProfile {

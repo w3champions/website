@@ -123,14 +123,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum, EGameMode } from "@/store/typings";
-import { RaceStat, ModeStat } from "@/store/player/types";
+import { ERaceEnum } from "@/store/typings";
 
 @Component({})
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
-  @Prop() wins!: RaceStat[];
-  @Prop() modeStats!: ModeStat[];
 
   public dialogOpened = false;
   public races = [
@@ -198,7 +195,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   winsOfRace(race: ERaceEnum) {
-    return this.wins.filter(w => w.race == race)[0].wins;
+    return this.personalSetting.winLosses.filter(w => w.race == race)[0].wins;
   }
 
   winsOf(wins: number, iconId: number) {
