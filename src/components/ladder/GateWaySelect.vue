@@ -58,7 +58,6 @@ export default class GateWaySelect extends Vue {
 
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
-    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 }
 </script>

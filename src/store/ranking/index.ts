@@ -76,6 +76,7 @@ const mod = {
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_GATEWAY(gateway);
+      commit.SET_LEAGUE(0);
       commit.SET_PAGE(0);
       await dispatch.retrieveRankings(undefined);
     },
@@ -93,6 +94,8 @@ const mod = {
     ) {
       const { commit, dispatch  } = moduleActionContext(context, mod);
       commit.SET_SELECTED_SEASON(season);
+
+      await dispatch.retrieveLeagueConstellation();
       await dispatch.retrieveRankings(undefined);
     },
     async setGameMode(
