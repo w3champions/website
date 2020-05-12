@@ -149,6 +149,7 @@ export default class App extends Vue {
 
   private async init() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.$store.direct.dispatch.rankings.getTopFive();
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     if (this.authCode) {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
