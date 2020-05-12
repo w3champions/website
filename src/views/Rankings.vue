@@ -383,8 +383,9 @@ export default class RankingsView extends Vue {
   get ladders(): League[] {
     const gateway = this.$store.direct.state.rankings.gateway;
     const gameMode = this.$store.direct.state.rankings.gameMode;
+    const season = this.$store.direct.state.rankings.selectedSeason;
     const league = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway === gateway && l.gameMode === gameMode
+      l => l.gateway === gateway && l.gameMode === gameMode && l.season === season.id
     )[0];
     return league?.leagues;
   }
@@ -410,6 +411,7 @@ export default class RankingsView extends Vue {
 
   public selectSeason(season: Season) {
     this.$store.direct.dispatch.rankings.setSeason(season);
+    this.getLadders();
   }
 
   public setLeague(league: number) {
