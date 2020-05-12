@@ -384,9 +384,8 @@ export default class RankingsView extends Vue {
   get ladders(): League[] {
     const gateway = this.$store.direct.state.rankings.gateway;
     const gameMode = this.$store.direct.state.rankings.gameMode;
-    const season = this.$store.direct.state.rankings.selectedSeason;
     const league = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway === gateway && l.gameMode === gameMode && l.season === season.id
+      l => l.gateway === gateway && l.gameMode === gameMode && l.season === this.currentSeason.id
     )[0];
     return league?.leagues;
   }
