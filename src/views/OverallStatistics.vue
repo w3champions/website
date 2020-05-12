@@ -85,7 +85,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-heroes'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
@@ -105,7 +105,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="md-10">
+                <v-col cols="12" md="10">
                     <v-card-text>
                         <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
                     </v-card-text>
@@ -121,7 +121,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
@@ -133,7 +133,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="10">
+                <v-col cols="12" md="10">
                   <v-card-text>
                     <game-length-chart
                             class="ammount-per-day-chart"
@@ -145,7 +145,7 @@
             </v-tab-item>
             <v-tab-item :value="'tab-popular-game-hours'">
               <v-row>
-                <v-col cols="2">
+                <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
                             :items="gameModes"
@@ -157,7 +157,7 @@
                     />
                   </v-card-text>
                 </v-col>
-                <v-col cols="10">
+                <v-col cols="12" md="10">
                   <v-card-text>
                     <popular-game-time-chart
                             :popular-game-hour="selectedGameHours"

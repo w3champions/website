@@ -18,7 +18,7 @@
             >
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
-                <v-row class="mt-4">
+                <v-row class="mt-4 filter-none">
                   <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
                       <player-avatar
@@ -60,7 +60,7 @@
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row class="filter-none">
                   <v-col cols="12" md="6">
                     <h4>Stats by race</h4>
                     <v-data-table
@@ -121,6 +121,7 @@
                       :search-input.sync="search"
                       :no-data-text="noDataText"
                       item-text="player.name"
+                      item-value="player.id"
                       placeholder="Search an opponent"
                       return-object
                     >
@@ -133,7 +134,8 @@
                         <template v-else>
                           <v-list-item-content>
                             <v-list-item-title>
-                              {{ data.item.player.name }}
+                              <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
+                              <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
                             </v-list-item-title>
                             <v-list-item-subtitle>
                               Wins: {{ data.item.player.wins }} | Losses:
@@ -288,11 +290,13 @@ export default class PlayerView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+      this.$store.direct.dispatch.rankings.search({searchText: newValue.toLowerCase(), gameMode: this.selectedGameModeForSearch});
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
   }
+
+  public selectedGameModeForSearch = EGameMode.GM_1ON1;
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
@@ -382,7 +386,7 @@ export default class PlayerView extends Vue {
   }
 
   public async getMatches(page?: number) {
-    await this.$store.direct.dispatch.player.loadMatches(page);
+    await this.$store.direct.dispatch.player.loadMatches({ page: page, gameMode: this.selectedGameModeForSearch });
     this.opponentWins = 0;
     if (this.$store.direct.state.player.opponentTag.length) {
       this.opponentWins = this.matches.filter((match: Match) =>
@@ -396,8 +400,12 @@ export default class PlayerView extends Vue {
     }
   }
 
+  public isDuplicateName(name: string) {
+    return this.searchRanks.filter(r => r.player.name === name).length > 1
+  }
+
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
-    this.$store.direct.commit.player.SET_GAME_MODE_FOR_SEARCH(gameMode);
+    this.selectedGameModeForSearch = gameMode;
     this.getMatches();
   }
 

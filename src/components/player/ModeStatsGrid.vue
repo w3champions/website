@@ -61,7 +61,7 @@ export default class ModeStatsGrid extends Vue {
       sortable: false,
     },
     {
-      text: "Ranking",
+      text: "RP",
       align: "end",
       sortable: false,
     }

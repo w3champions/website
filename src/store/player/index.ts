@@ -14,8 +14,7 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
-    opponentTag: "",
-    gameModeForSearch: EGameMode.UNDEFINED
+    opponentTag: ""
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -47,12 +46,12 @@ const mod = {
     },
     async loadMatches(
       context: ActionContext<PlayerState, RootState>,
-      page?: number
+      search: {page?: number, gameMode: EGameMode}
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      if (page != null && !isNaN(page)) {
-        commit.SET_PAGE(page - 1);
+      if (search.page != null && !isNaN(search.page)) {
+        commit.SET_PAGE(search.page - 1);
       }
 
       commit.SET_LOADING_RECENT_MATCHES(true);
@@ -60,7 +59,7 @@ const mod = {
         state.page,
         state.battleTag,
         state.opponentTag,
-        state.gameModeForSearch
+        search.gameMode
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -94,9 +93,6 @@ const mod = {
     },
     SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
       state.playerStatsRaceVersusRaceOnMap = stats;
-    },
-    SET_GAME_MODE_FOR_SEARCH(state: PlayerState, gameMode: EGameMode) {
-      state.gameModeForSearch = gameMode;
     }
   }
 } as const;

@@ -76,6 +76,7 @@
           :search-input.sync="search"
           :no-data-text="noDataText"
           item-text="player.name"
+          item-value="player.id"
           placeholder="Start typing to Search"
           return-object
         >
@@ -86,7 +87,8 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ data.item.player.name }}
+                  <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
+                  <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -99,20 +101,19 @@
         </v-autocomplete>
       </v-card-title>
       <v-card-text>
-        <v-data-table
-          class="elevation-1 hide-footer table-row-pointer"
-          :headers="headers"
-          :items="rankings"
-          :options.sync="options"
-          :server-items-length="totalPlayers"
-          :mobile-breakpoint="400"
-          hide-default-footer
-        >
-          <template v-slot:body="{ items }">
+        <div class="custom-table-wrapper elevation-1">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <td v-for="header in headers" :key="header.text" v-bind:style="{ width: header.width }">
+                  {{header.text}}
+                </td>
+              </tr>
+            </thead>
             <tbody>
               <tr
                 :id="`listitem_${item.rankNumber}`"
-                v-for="item in items"
+                v-for="item in rankings"
                 :key="item.player.id"
                 :class="{
                   searchedItem: item.player.id === searchModelBattleTag
@@ -125,13 +126,9 @@
                     :key="playerId.battleTag"
                   >
                     <player-rank-info :player-id="playerId" />
-                    <span
-                      v-if="
-                        item.player.playerIds.indexOf(playerId) !==
-                          item.player.playerIds.length - 1
-                      "
-                      >&</span
-                    >
+                    <span v-if="item.player.playerIds.indexOf(playerId) !== item.player.playerIds.length - 1">
+                      &
+                    </span>
                   </span>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
@@ -146,37 +143,40 @@
                 <td class="number-text text-end">{{ item.rankingPoints }}</td>
               </tr>
             </tbody>
-          </template>
-        </v-data-table>
+          </table>
+        </div>
       </v-card-text>
     </v-card>
-    <v-col cols="12" md="3" v-if="false">
-      <v-card tile>
-        <v-card-title>Stats</v-card-title>
-        <v-list class="transparent">
-          <v-list-item v-for="(stat, index) in stats" :key="index">
-            <v-list-item-title>{{ stat.name }}</v-list-item-title>
-            <v-list-item-subtitle class="text-right">{{
-              stat.value
-            }}</v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-      </v-card>
-    </v-col>
+    <v-row>
+      <v-col cols="12" md="3" v-if="false">
+        <v-card tile>
+          <v-card-title>Stats</v-card-title>
+          <v-list class="transparent">
+            <v-list-item v-for="(stat, index) in stats" :key="index">
+              <v-list-item-title>{{ stat.name }}</v-list-item-title>
+              <v-list-item-subtitle class="text-right">{{
+                stat.value
+              }}</v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+
   </v-container>
 </template>
 
 <script lang="ts">
-  import Vue from "vue";
-  import {Component, Watch} from "vue-property-decorator";
-  import {League, Ranking} from "@/store/ranking/types";
-  import {DataTableOptions, EGameMode} from "@/store/typings";
-  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-  import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
-  import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-  import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import Vue from "vue";
+import {Component, Watch} from "vue-property-decorator";
+import {League, Ranking} from "@/store/ranking/types";
+import {DataTableOptions, EGameMode} from "@/store/typings";
+import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
+import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
+import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
-  @Component({
+@Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }
 })
 export default class RankingsView extends Vue {
@@ -223,7 +223,7 @@ export default class RankingsView extends Vue {
       width: "25px"
     },
     {
-      text: "Ranking",
+      text: "RP",
       align: "end",
       sortable: false,
       width: "25px"
@@ -242,10 +242,14 @@ export default class RankingsView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search(newValue.toLowerCase());
+      this.$store.direct.dispatch.rankings.search({ searchText: newValue.toLowerCase(), gameMode: this.selectedGameMode });
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
+  }
+
+  public isDuplicateName(name: string) {
+    return this.searchRanks.filter(r => r.player.name === name).length > 1
   }
 
   public async goToRank(rank: Ranking) {
@@ -286,6 +290,10 @@ export default class RankingsView extends Vue {
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
+  }
+
+  get selectedGameMode() {
+    return this.$store.direct.state.rankings.gameMode;
   }
 
   get selectedLeague(): League {

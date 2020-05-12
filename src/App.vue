@@ -149,7 +149,9 @@ export default class App extends Vue {
 
   private async init() {
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
-    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
+    if (this.authCode) {
+      await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
+    }
   }
 
   created() {

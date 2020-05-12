@@ -59,7 +59,7 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
     }
   }
 
-  .v-data-table {
+  .v-data-table, .custom-table {
     tr:hover {
       box-shadow: 0 0 6px black;
     }
