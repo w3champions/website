@@ -27,6 +27,8 @@ export type PlayerProfile = {
 
 export type RaceStat  = {
   race: ERaceEnum;
+  gateWay: Gateways;
+  season: number;
   wins: number;
   losses: number;
   games: number;

@@ -95,7 +95,7 @@
                     <v-data-table
                       hide-default-footer
                       :headers="raceHeaders"
-                      :items="profile.raceStats"
+                      :items="selectedRaceStats"
                     >
                       <template v-slot:item.race="{ item }">
                         <span>{{ $t("races." + raceEnums[item.race]) }}</span>
@@ -332,6 +332,10 @@ export default class PlayerView extends Vue {
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
       (r) => r.race !== ERaceEnum.RANDOM
     );
+  }
+
+  get selectedRaceStats() {
+    return this.profile.raceStats.filter(r => r.gateWay === this.selectedGateWay && r.season === this.selectedSeason.id)
   }
 
   public selectSeason(season: Season) {
