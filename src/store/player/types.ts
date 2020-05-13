@@ -1,4 +1,5 @@
 import { EGameMode, ERaceEnum, Match } from "../typings";
+import {Season, Gateways} from "@/store/ranking/types";
 
 export type PlayerState = {
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
@@ -10,6 +11,9 @@ export type PlayerState = {
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
   opponentTag: string;
+  selectedSeason: Season;
+  gateway: Gateways;
+  gameMode: EGameMode;
 };
 
 export type PlayerProfile = {
@@ -23,6 +27,8 @@ export type PlayerProfile = {
 
 export type RaceStat  = {
   race: ERaceEnum;
+  gateWay: Gateways;
+  season: number;
   wins: number;
   losses: number;
   games: number;
@@ -40,11 +46,13 @@ export type ModeStat = {
   leagueOrder: number;
   division: number;
   rank: number;
+  season: number;
   rankingPoints: number;
 };
 
 export type GateWayStats = {
   gateWay: number;
+  season: number;
   gameModeStats: ModeStat[];
 };
 

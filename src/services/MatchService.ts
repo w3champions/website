@@ -1,5 +1,6 @@
 import {EGameMode, Match, MatchDetail} from "@/store/typings";
 import {API_URL} from "@/main";
+import { Gateways } from '@/store/ranking/types';
 
 export default class MatchService {
   private pageSize: number;
@@ -33,9 +34,10 @@ export default class MatchService {
     battleTag: string,
     opponentTag: string,
     gameMode: EGameMode,
+    gateway: Gateways
   ): Promise<{count: number, matches: Match[]}> {
     const offset = page * 50;
-    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}`;
+    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
 
     if (opponentTag.length) {
       url += `&opponentId=${(encodeURIComponent(opponentTag))}`;

@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
 
@@ -58,7 +58,7 @@ export default class GateWaySelect extends Vue {
 
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
-    this.$store.direct.dispatch.rankings.setLeague(0);
+    this.$store.direct.dispatch.player.setGateway(gateway);
   }
 }
 </script>
