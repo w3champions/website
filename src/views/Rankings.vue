@@ -411,6 +411,7 @@ export default class RankingsView extends Vue {
 
   public async selectSeason(season: Season) {
     this.$store.direct.dispatch.rankings.setSeason(season);
+    this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
   }
 
   public setLeague(league: number) {

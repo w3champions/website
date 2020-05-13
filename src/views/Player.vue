@@ -340,6 +340,7 @@ export default class PlayerView extends Vue {
 
   public selectSeason(season: Season) {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
+    this.$store.direct.commit.rankings.SET_SELECTED_SEASON(season);
   }
 
   get seasons() {
