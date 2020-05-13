@@ -1,4 +1,5 @@
 import {Match, MatchDetail} from "../typings";
+import { Gateways } from '../ranking/types';
 
 export type MatchState = {
   matches: Match[];
@@ -6,4 +7,5 @@ export type MatchState = {
   page: number;
   totalMatches: number;
   loadingMatchDetail: boolean;
+  gateWay: Gateways;
 };

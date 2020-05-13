@@ -2,7 +2,7 @@ import { moduleActionContext } from "..";
 import {PlayerState, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "./types";
 import {EGameMode, Match, RootState} from "../typings";
 import { ActionContext } from "vuex";
-import {Season} from "@/store/ranking/types";
+import {Season, Gateways} from "@/store/ranking/types";
 
 const mod = {
   namespaced: true,
@@ -16,7 +16,9 @@ const mod = {
     loadingProfile: false,
     loadingRecentMatches: false,
     opponentTag: "",
-    selectedSeason: {} as Season
+    selectedSeason: {} as Season,
+    gateway: 20 as Gateways,
+    gameMode: 0 as EGameMode
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -55,18 +57,32 @@ const mod = {
       if (search.page != null && !isNaN(search.page)) {
         commit.SET_PAGE(search.page - 1);
       }
-
+      
+      commit.SET_GAMEMODE(search.gameMode);
       commit.SET_LOADING_RECENT_MATCHES(true);
       const response = await rootGetters.matchService.retrievePlayerMatches(
         state.page,
         state.battleTag,
         state.opponentTag,
-        search.gameMode
+        state.gameMode,
+        state.gateway
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
       commit.SET_LOADING_RECENT_MATCHES(false);
-    }
+    },
+    async setGateway(
+      context: ActionContext<PlayerState, RootState>,
+      gateway: Gateways
+    ) {
+      const { commit, dispatch, state } = moduleActionContext(context, mod);
+      commit.SET_GATEWAY(gateway);
+      commit.SET_PAGE(0);
+
+      if (state.battleTag) {
+        await dispatch.loadMatches({page: 1, gameMode: state.gameMode});
+      }
+    },
   },
   mutations: {
     SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
@@ -98,6 +114,12 @@ const mod = {
     },
     SET_SELECTED_SEASON(state: PlayerState, season: Season) {
       state.selectedSeason = season;
+    },
+    SET_GATEWAY(state: PlayerState, gateway: Gateways) {
+      state.gateway = gateway;
+    },
+    SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
+      state.gameMode = gameMode;
     },
   }
 } as const;
