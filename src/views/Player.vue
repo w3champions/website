@@ -163,17 +163,16 @@
               <v-card-text v-if="searchModel && searchModel.player">
                 <v-row align="center">
                   <v-col cols="12">
+                    <div>
+                      vs. {{ searchModel.player.name }}
+                    </div>
                     <span class="won">Wins: {{ opponentWins }}</span>
                     /
                     <span class="lost">
                       Losses: {{ matches.length - opponentWins }}
                     </span>
-                    /
                     <span>
-                      Winrate:
-                      {{ ((opponentWins / matches.length) * 100).toFixed(1) }}%
-                      VS
-                      {{ searchModel.player.name }}
+                      ({{ winRateVsOpponent }}%)
                     </span>
                   </v-col>
                 </v-row>
@@ -293,6 +292,7 @@ export default class PlayerView extends Vue {
       this.$store.direct.dispatch.rankings.search({searchText: newValue.toLowerCase(), gameMode: this.selectedGameModeForSearch});
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
+      this.onSearchModelChanged(null as any);
     }
   }
 
@@ -353,6 +353,14 @@ export default class PlayerView extends Vue {
 
   onPageChanged(page: number) {
     this.getMatches(page);
+  }
+
+  get winRateVsOpponent() {
+    if (this.opponentWins == 0) {
+      return 0;
+    }
+
+    return ((this.opponentWins / this.matches.length) * 100).toFixed(1)
   }
 
   get totalMatches(): number {
