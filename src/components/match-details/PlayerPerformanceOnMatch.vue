@@ -8,7 +8,7 @@
       <v-col
         :class="unitsKilledComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ unitScore.map(r => r.unitsKilled).join(" + ") }}
@@ -22,7 +22,7 @@
       <v-col
         :class="unitsProducedComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ unitScore.map(r => r.unitsProduced).join(" + ") }}
@@ -36,7 +36,7 @@
       <v-col
         :class="goldComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ resourceScoure.map(r => r.goldCollected).join(" + ")  }}
@@ -50,7 +50,7 @@
       <v-col
         :class="woodComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ resourceScoure.map(r => r.lumberCollected).join(" + ") }}
@@ -64,7 +64,7 @@
       <v-col
         :class="upkeepComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ resourceScoure.map(r => r.goldUpkeepLost).join(" + ") }}
@@ -78,7 +78,7 @@
       <v-col
         :class="armyComparison"
         :order="left ? 2 : 0"
-        cols="2"
+        :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
         {{ unitScore.map(r => r.largestArmy).join(" / ") }}
@@ -100,6 +100,10 @@ export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() unitScoreOpponent!: UnitScore[];
   @Prop() resourceScoure!: ResourceScore[];
   @Prop() resourceScoureOpponent!: ResourceScore[];
+
+  get is2v2() {
+    return this.unitScore.length > 1;
+  }
 
   get goldComparison() {
     return this.comparison(
