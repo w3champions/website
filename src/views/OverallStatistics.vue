@@ -59,8 +59,8 @@
                     />
                     <v-select
                       :items="mmrs"
-                      item-text="mapName"
-                      item-value="mapId"
+                      item-text="league"
+                      item-value="mmr"
                       @change="setSelectedMMR"
                       label="Select MMR"
                       outlined
@@ -190,9 +190,8 @@ import {
   GameLength,
   PlayedHero,
   PopularGameHour,
-  RaceWinLoss,
   Ratio,
-  StatsPerMapAndRace, StatsPerWinrate
+  StatsPerWinrate
 } from "@/store/overallStats/types";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
@@ -215,7 +214,7 @@ export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
-  public selectedMmr = -1;
+  public selectedMmr = 0;
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
@@ -297,7 +296,9 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get mmrs() {
-    return this.statsPerRaceAndMap.map(r => r.mmrRange)
+    const mmrsSorted = this.statsPerRaceAndMap.map(r => r.mmrRange).sort().reverse();
+    const mapped = mmrsSorted.map(m => ({ league: this.$t("mmrLeagueRanges.MMR_" + m), mmr: m }));
+    return mapped;
   }
 
   public setSelectedMMR(mmr: number) {
