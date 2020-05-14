@@ -27,26 +27,26 @@
             </v-card-subtitle>
           </v-card-title>
           <match-detail-hero-row
-            v-if="isIncompleteGame"
+            v-if="isCompleteGame"
             :heroes-of-winner="scoresOfWinners[0].heroes"
             :heroes-of-looser="scoresOfLoosers[0].heroes"
             :scores-of-looser="scoresOfLoosers[0].heroScore"
             :scores-of-winner="scoresOfWinners[0].heroScore"
           />
           <match-detail-hero-row
-            v-if="matchIs2v2 && isIncompleteGame"
+            v-if="matchIs2v2 && isCompleteGame"
             :heroes-of-winner="scoresOfWinners[1].heroes"
             :heroes-of-looser="scoresOfLoosers[1].heroes"
             :scores-of-looser="scoresOfLoosers[1].heroScore"
             :scores-of-winner="scoresOfWinners[1].heroScore"
           />
-          <v-row v-if="!isIncompleteGame" class="justify-center">
+          <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               Sorry, but this games seems to have incomplete data
             </v-card-subtitle>
           </v-row>
-          <v-row v-if="isIncompleteGame">
-            <v-col cols="1"> </v-col>
+          <v-row v-if="isCompleteGame">
+            <v-col :cols="matchIs2v2 ? 2 : 1 "> </v-col>
             <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfWinners.map(h => h.unitScore)"
@@ -105,10 +105,10 @@ export default class MatchDetailView extends Vue {
   }
 
   get matchDuration() {
-    const format = this.match.durationInSeconds >= 6000 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
+    const format = this.match.durationInSeconds <= 3600 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
     return moment
-            .utc(moment.duration(this.match.durationInSeconds, "seconds").asMilliseconds())
-            .format(format.toString()).toString();
+      .utc(moment.duration(this.match.durationInSeconds, "seconds").asMilliseconds())
+      .format(format.toString()).toString();
   }
 
   get playedDate() {
@@ -126,7 +126,7 @@ export default class MatchDetailView extends Vue {
     );
   }
 
-  get isIncompleteGame() {
+  get isCompleteGame() {
     return this.$store.direct.state.matches.matchDetail.playerScores;
   }
 
