@@ -1,7 +1,7 @@
 import {API_URL} from "@/main";
 import {
   GameDay,
-  GameLength,
+  GameLength, MmrDistribution,
   PlayedHero, PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
@@ -77,6 +77,19 @@ export default class StatisticService {
 
   public async retrievePopularGameHours(): Promise<PopularGameHour[]> {
     const url = `${API_URL}api/w3c-stats/play-hours`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    return await response.json();
+  }
+
+  public async retrieveMmrDistribution(season: number): Promise<MmrDistribution> {
+    const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

@@ -2,14 +2,16 @@
 import { Component, Prop, Mixins } from "vue-property-decorator";
 
 import { Bar, mixins } from "vue-chartjs";
-import { ChartData } from "chart.js";
+import {ChartData, ChartOptions} from "chart.js";
 
 @Component({
   mixins: [mixins.reactiveProp]
 })
 export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
-  private options = {
+  @Prop() public chartOptions!: ChartOptions;
+
+  private options = this.chartOptions ?? {
     legend: {
       display: true
     },

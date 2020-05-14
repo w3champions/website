@@ -14,6 +14,9 @@
             <v-tab class="profileTab" :href="`#tab-players-per-day`"
               >Players Per Day</v-tab
             >
+            <v-tab class="profileTab" :href="`#tab-mmr-distribution`"
+              >MMR Distribution</v-tab
+            >
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
               >Winrates</v-tab
             >
@@ -44,6 +47,28 @@
                   :game-days="playersPerDay"
                 />
               </v-card-text>
+            </v-tab-item>
+            <v-tab-item :value="'tab-mmr-distribution'">
+              <v-row>
+                <v-col cols="md-2">
+                  <v-card-text v-if="!loadingMapAndRaceStats">
+                    <v-select
+                      :items="seasons"
+                      item-text="id"
+                      @change="setSelectedSeason"
+                      label="Select Season"
+                      return-object
+                      outlined
+                    />
+                  </v-card-text>
+                  <v-card-text>
+                    Pink bars mark top 3%, 5%, 10%, 25% and 50% of players, green is you
+                  </v-card-text>
+                </v-col>
+                <v-col cols="md-10">
+                  <mmr-distribution-chart :mmr-distribution="mmrDistribution"/>
+                </v-col>
+              </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-winrates-per-race-and-map'">
               <v-row>
@@ -199,9 +224,12 @@ import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTime
 import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import {Season} from "@/store/ranking/types";
+import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 
 @Component({
   components: {
+    MmrDistributionChart,
     HeroWinrate,
     PlayedHeroesChart,
     PopularGameTimeChart,
@@ -215,6 +243,7 @@ export default class OverallStatisticsView extends Vue {
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
+  public selectedSeason = this.seasons[0];
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
@@ -238,6 +267,19 @@ export default class OverallStatisticsView extends Vue {
 
   public setSelectedModeGameHour(mode: EGameMode) {
     this.selectedPopularHourMode = mode;
+  }
+
+  get seasons() {
+    return this.$store.direct.state.rankings.seasons;
+  }
+
+  public async setSelectedSeason(season: Season) {
+    this.selectedSeason = season;
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(season.id);
+  }
+
+  get mmrDistribution() {
+    return this.$store.direct.state.overallStatistics.mmrDistribution;
   }
 
   get loadingMapAndRaceStats(): boolean {
@@ -366,6 +408,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(this.$store.direct.state.rankings.selectedSeason.id);
   }
 
   public headers = [
