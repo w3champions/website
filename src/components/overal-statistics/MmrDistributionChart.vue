@@ -26,7 +26,7 @@ export default class MmrDistributionChart extends Vue {
        || i === this.mmrDistribution.top10PercentIndex
        || i === this.mmrDistribution.top25ercentIndex
        || i === this.mmrDistribution.top50PercentIndex) {
-        colors.push("rgb(66,23,63)");
+        colors.push("rgb(66,23,63, 0.7)");
       }
       else {
         colors.push("rgba(54, 162, 235, 0.2)");
@@ -34,7 +34,7 @@ export default class MmrDistributionChart extends Vue {
 
       if (this.isYou(i)) {
         colors.pop()
-        colors.push("rgb(28,95,47)");
+        colors.push("rgb(28,95,47, 0.7)");
       }
     }
     return colors;
