@@ -40,10 +40,11 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, state, rootGetters } = moduleActionContext(context, mod);
 
       const profile = await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
-        battleTag
+        battleTag,
+        state.selectedSeason.id
       );
 
       commit.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
@@ -57,7 +58,7 @@ const mod = {
       if (search.page != null && !isNaN(search.page)) {
         commit.SET_PAGE(search.page - 1);
       }
-      
+
       commit.SET_GAMEMODE(search.gameMode);
       commit.SET_LOADING_RECENT_MATCHES(true);
       const response = await rootGetters.matchService.retrievePlayerMatches(

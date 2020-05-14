@@ -101,7 +101,8 @@ export default class PlayerMatchInfo extends Vue {
 
   private async lazyLoadWinrate() {
     this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
-      this.player.battleTag
+      this.player.battleTag,
+      this.$store.direct.state.rankings.selectedSeason.id
     );
   }
 
