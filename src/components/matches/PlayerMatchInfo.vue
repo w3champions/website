@@ -91,7 +91,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   private getPlayerPath() {
-    return "/player/" + this.player.battleTag;
+    return "/player/" + encodeURIComponent(this.player.battleTag);
   }
 
   public openProfileInNewTab() {

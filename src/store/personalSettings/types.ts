@@ -1,4 +1,5 @@
 import {ERaceEnum} from "@/store/typings";
+import {RaceStat} from "@/store/player/types";
 
 export type PersonalSettingsState = {
   personalSettings: PersonalSetting;
@@ -25,5 +26,6 @@ export type PersonalSetting = {
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];
+  winLosses: RaceStat[]
   id: string;
 }

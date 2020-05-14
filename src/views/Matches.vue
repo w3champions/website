@@ -24,7 +24,7 @@ import MatchesGrid from "../components/matches/MatchesGrid.vue";
 
 @Component({
   components: {
-    MatchesGrid
+    MatchesGrid,
   }
 })
 export default class MatchesView extends Vue {
