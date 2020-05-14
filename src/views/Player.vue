@@ -335,6 +335,10 @@ export default class PlayerView extends Vue {
   }
 
   get selectedRaceStats() {
+    if (!this.profile.raceStats) {
+      return [];
+    }
+
     return this.profile.raceStats.filter(r => r.gateWay === this.selectedGateWay && r.season === this.selectedSeason.id)
   }
 
