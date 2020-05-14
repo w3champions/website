@@ -5,7 +5,7 @@ import {
   PlayedHero, PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace, WinLoss
+  StatsPerMapAndRace, StatsPerWinrate, WinLoss
 } from "@/store/overallStats/types";
 
 export default class StatisticService {
@@ -35,7 +35,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public async retrieveMapAndRaceStats(): Promise<StatsPerMapAndRace[]> {
+  public async retrieveMapAndRaceStats(): Promise<StatsPerWinrate[]> {
     const url = `${API_URL}api/w3c-stats/map-race-wins`;
     const response = await fetch(url, {
       method: "GET",

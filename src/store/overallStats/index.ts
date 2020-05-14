@@ -6,7 +6,7 @@ import {
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace,
+  StatsPerMapAndRace, StatsPerWinrate,
   WinLoss
 } from "./types";
 import { RootState } from "../typings";
@@ -20,7 +20,7 @@ const mod = {
     loadingPlayersPerDayStats: true,
     gamesPerDay: [] as GameDay[],
     playersPerDay: [] as GameDay[],
-    statsPerMapAndRace: [] as StatsPerMapAndRace[],
+    statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
@@ -129,7 +129,7 @@ const mod = {
     SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
       state.loadingMapAndRaceStats = loading;
     },
-    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerMapAndRace[]) {
+    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerWinrate[]) {
       state.statsPerMapAndRace = stats
     },
     SET_GAME_LENGTH_STATS(state: OveralStatisticState, stats: GameLength[]) {

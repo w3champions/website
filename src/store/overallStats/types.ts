@@ -22,7 +22,7 @@ export type OveralStatisticState = {
   loadingGamesPerDayStats: boolean;
   playersPerDay: GameDay[];
   loadingPlayersPerDayStats: boolean;
-  statsPerMapAndRace: StatsPerMapAndRace[];
+  statsPerMapAndRace: StatsPerWinrate[];
   gameLengths: GameLength[];
   popularGameHours: PopularGameHour[];
   playedHeroes: PlayedHeroByMode[];
@@ -61,6 +61,11 @@ export type Ratio = {
 export type StatsPerMapAndRace = {
   mapName: string;
   ratio: Ratio[];
+}
+
+export type StatsPerWinrate = {
+  mmrRange: number;
+  statsPerModes: StatsPerMapAndRace[];
 }
 
 export interface Length {
