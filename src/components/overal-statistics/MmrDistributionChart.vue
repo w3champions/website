@@ -9,15 +9,16 @@
   import Vue from "vue";
   import BarChart from "@/components/overal-statistics/BarChart.vue";
   import {EGameMode} from "@/store/typings";
+  import {Season} from "@/store/ranking/types";
 
   @Component({
   components: { BarChart }
 })
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
+  @Prop() public selectedSeason!: Season;
 
   get colors() {
-    console.log(this.yourMmr)
     const colors = [];
     for (let i = 0; i < this.mmrDistribution.distributedMmrs.length; i++) {
       if (i === this.mmrDistribution.top2PercentIndex
@@ -41,11 +42,16 @@ export default class MmrDistributionChart extends Vue {
 
   get mmrOfLoggedInPlayer() {
     if (!this.$store.direct.state.player.playerProfile.gateWayStats) {
-      this.$store.direct.dispatch.player.loadProfile(this.$store.direct.state.oauth.blizzardVerifiedBtag);
+      if (this.$store.direct.state.oauth.blizzardVerifiedBtag) {
+        this.$store.direct.dispatch.player.loadProfile(this.$store.direct.state.oauth.blizzardVerifiedBtag);
+      }
       return 0;
     }
-    const maxMmr = this.$store.direct.state.player.playerProfile.gateWayStats.map((s) => s.gameModeStats.filter(g => g.mode === EGameMode.GM_1ON1)[0].mmr);
-    return Math.max(...maxMmr);
+    const gateWayStat = this.$store.direct.state.player.playerProfile.gateWayStats.filter(g => g.season === this.selectedSeason.id);
+
+    if (!gateWayStat) return 0;
+    const mmrs = gateWayStat.map(f => f.gameModeStats.filter(g => g.mode === EGameMode.GM_1ON1)[0].mmr)
+    return Math.max(...mmrs);
   }
 
   public isYou(index: number) {

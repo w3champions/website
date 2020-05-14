@@ -66,7 +66,7 @@
                   </v-card-text>
                 </v-col>
                 <v-col cols="md-10">
-                  <mmr-distribution-chart :mmr-distribution="mmrDistribution"/>
+                  <mmr-distribution-chart :mmr-distribution="mmrDistribution" :selected-season="selectedSeason"/>
                 </v-col>
               </v-row>
             </v-tab-item>
