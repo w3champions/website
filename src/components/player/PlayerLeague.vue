@@ -4,9 +4,10 @@
       {{ leagueMode }} {{ leagueName }} {{modeStat.division !== 0 ? this.modeStat.division : null}}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
-      <span v-if="isRanked"
-        >Rank <span class="number-text">{{ modeStat.rank }} | {{ modeStat.wins }} -
-        {{ modeStat.losses }}</span>
+      <span v-if="isRanked">
+        Rank <span class="number-text">{{ modeStat.rank }} | 
+          <span class="won">{{ modeStat.wins }}</span> - <span class="lost">{{ modeStat.losses }}</span>
+      </span>
       </span>
       <span v-if="!isRanked"
         > <span class="number-text">{{modeStat.games}} / 5</span>
