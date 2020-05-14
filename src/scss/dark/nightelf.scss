@@ -45,3 +45,11 @@ $w3-nightelf-glass: inset 0 0 0 3000px rgba(13, 7, 24, 0.9) !important;
     box-shadow: $w3-nightelf-glass;
   }
 }
+
+.nightelf {
+  header.v-app-bar--is-scrolled + main {
+        .search-bar {
+            background-color: rgba(18, 13, 39, 0.9);
+        }
+  }
+}

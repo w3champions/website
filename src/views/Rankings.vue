@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-card class="mt-2" tile>
-      <v-card-title>
+    <v-card class="mt-2 search-bar-container" tile>
+      <v-card-title class="search-bar">
         <gate-way-select />
         <v-menu offset-x>
           <template v-slot:activator="{ on }">

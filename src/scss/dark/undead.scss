@@ -111,3 +111,11 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 .v-app-bar.v-toolbar.v-sheet.darkmode {
   background-color: #292b2f !important;
 }
+
+.undead {
+  header.v-app-bar--is-scrolled + main {
+        .search-bar {
+             background: rgba(0,0,0,0.9);
+        }
+  }
+}
