@@ -74,3 +74,12 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
     box-shadow: $w3-human-glass;
   }
 }
+
+
+.human {
+  header.v-app-bar--is-scrolled + main {
+        .search-bar {
+            background-color: rgba(223, 229, 233, 0.9);
+        }
+  }
+}
