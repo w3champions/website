@@ -89,7 +89,14 @@
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row class="filter-none">
+                <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                  <v-card-text
+                    class="text-center"
+                  >
+                    This noble person was part of our beta, therefore we hide his buggy stats and thank him for all eternity ;)
+                  </v-card-text>
+                </v-row>
+                <v-row class="filter-none" v-if="selectedSeason.id != 0">
                   <v-col cols="12" md="6">
                     <h4>Stats by race</h4>
                     <v-data-table
@@ -217,7 +224,14 @@
             </v-tab-item>
             <v-tab-item :value="'tab-statistics'">
               <v-card-title>Statistics</v-card-title>
-              <player-stats-race-versus-race-on-map
+              <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                <v-card-text
+                        class="text-center"
+                >
+                  This noble person was part of our beta, therefore we hide his buggy stats and thank him for all eternity ;)
+                </v-card-text>
+              </v-row>
+              <player-stats-race-versus-race-on-map  v-if="selectedSeason.id != 0"
                 :stats="raceWithoutRandom"
               />
             </v-tab-item>
