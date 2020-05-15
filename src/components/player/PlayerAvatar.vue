@@ -229,8 +229,8 @@ export default class PlayerAvatar extends Vue {
 
     this.dialogOpened = false;
   }
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
   }
 
   async init() {

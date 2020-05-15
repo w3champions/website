@@ -15,7 +15,10 @@ const mod = {
       const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
       commit.SET_PERSONAL_SETTING({} as PersonalSetting);
 
-      const response = await rootGetters.personalSettingsService.retrievePersonalSetting(rootState.player.battleTag);
+      const battleTag = rootState.player.battleTag;
+      if (!battleTag) return;
+
+      const response = await rootGetters.personalSettingsService.retrievePersonalSetting(battleTag);
 
       commit.SET_PERSONAL_SETTING(response);
     },
