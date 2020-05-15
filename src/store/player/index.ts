@@ -30,11 +30,11 @@ const mod = {
       commit.SET_LOADING_PROFILE(true);
 
       const profile = await rootGetters.profileService.retrieveProfile(
-        battleTag,
-        state.selectedSeason.id
+        battleTag
       );
 
       commit.SET_PROFILE(profile);
+      commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(

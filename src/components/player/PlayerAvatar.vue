@@ -10,7 +10,6 @@
         />
       </v-col>
     </v-row>
-
     <v-dialog v-model="dialogOpened" max-width="1400px">
       <v-card>
         <v-row

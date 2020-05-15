@@ -358,11 +358,10 @@ export default class PlayerView extends Vue {
 
   public selectSeason(season: Season) {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
-    this.$store.direct.commit.rankings.SET_SELECTED_SEASON(season);
   }
 
   get seasons() {
-    return this.$store.direct.state.rankings.seasons;
+    return this.$store.direct.state.player.playerProfile.participatedInSeasons;
   }
 
   get profile(): PlayerProfile {
@@ -509,8 +508,6 @@ export default class PlayerView extends Vue {
   }
 
   private async init() {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
     this.getMatches();
 
