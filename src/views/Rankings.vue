@@ -394,11 +394,13 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.searchRanks;
   }
 
-  mounted() {
+  async mounted() {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
-    this.getRankings();
-    this.getLadders();
+
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.getRankings();
+    await this.getLadders();
   }
 
   public getRankings(options?: DataTableOptions) {
