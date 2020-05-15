@@ -13,6 +13,7 @@ export type OveralStatisticState = {
   heroWinrate: WinLoss;
   loadingMapAndRaceStats: boolean;
   mmrDistribution: MmrDistribution;
+  heroPicks: HeroPick[];
 };
 
 export interface PlayedHeroPick {
@@ -39,6 +40,12 @@ export type GameDay = {
 export type MmrCount = {
   mmr: number,
   count: number
+}
+
+export interface HeroPick {
+  name: string,
+  heroId: string,
+  disabled: boolean
 }
 
 export type MmrDistribution = {

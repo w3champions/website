@@ -1,12 +1,13 @@
 import { moduleActionContext } from "..";
 import {
   GameDay,
-  GameLength, MmrDistribution,
+  GameLength,
+  MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace, StatsPerWinrate,
+  StatsPerWinrate,
   WinLoss
 } from "./types";
 import { RootState } from "../typings";
@@ -25,7 +26,14 @@ const mod = {
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
     heroWinrate: {} as WinLoss,
-    mmrDistribution: {} as MmrDistribution
+    mmrDistribution: {} as MmrDistribution,
+    heroPicks: [
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false }]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -98,17 +106,16 @@ const mod = {
     },
     async loadHeroWinrates(
         context: ActionContext<OveralStatisticState, RootState>,
-        heroSelectOptions: { first: string, second: string, third: string, opFirst: string, opSecond: string, opThird: string }
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrieveHeroWinrates(
-        heroSelectOptions.first,
-        heroSelectOptions.second,
-        heroSelectOptions.third,
-        heroSelectOptions.opFirst,
-        heroSelectOptions.opSecond,
-        heroSelectOptions.opThird
+        state.heroPicks[0].heroId,
+        state.heroPicks[1].heroId,
+        state.heroPicks[2].heroId,
+        state.heroPicks[3].heroId,
+        state.heroPicks[4].heroId,
+        state.heroPicks[5].heroId
       );
 
       commit.SET_HERO_WINRATES(stats);
