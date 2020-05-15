@@ -243,7 +243,7 @@ export default class OverallStatisticsView extends Vue {
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
-  public selectedSeason: Season = null as any;
+  public selectedSeason: Season = {id: 0};
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
