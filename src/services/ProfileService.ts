@@ -16,8 +16,8 @@ export default class ProfileService {
     return data.stats;
   }
 
-  public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+  public async retrieveProfile(battleTag: string, season: number): Promise<PlayerProfile> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}?season=${season}`;
 
     const response = await fetch(url, {
       method: "GET",
