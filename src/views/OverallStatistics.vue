@@ -243,7 +243,7 @@ export default class OverallStatisticsView extends Vue {
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
-  public selectedSeason = this.seasons[0];
+  public selectedSeason: Season = null as any;
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
@@ -402,6 +402,9 @@ export default class OverallStatisticsView extends Vue {
   }
 
   private async init() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    this.selectedSeason = this.seasons[0];
+
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();

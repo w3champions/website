@@ -490,11 +490,13 @@ export default class PlayerView extends Vue {
     ];
   }
 
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
   }
 
   private async init() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
     this.getMatches();
 
