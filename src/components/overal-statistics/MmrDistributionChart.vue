@@ -2,17 +2,17 @@
   <bar-chart :chart-data="gameHourChartData" :chart-options="chartOptions" />
 </template>
 <script lang="ts">
-  import {Component, Prop} from "vue-property-decorator";
+import {Component, Prop} from "vue-property-decorator";
 
-  import {MmrDistribution} from "@/store/overallStats/types";
-  import {ChartData, ChartOptions} from "chart.js";
-  import Vue from "vue";
-  import BarChart from "@/components/overal-statistics/BarChart.vue";
-  import {EGameMode} from "@/store/typings";
-  import {Season} from "@/store/ranking/types";
+import {MmrDistribution} from "@/store/overallStats/types";
+import {ChartData, ChartOptions} from "chart.js";
+import Vue from "vue";
+import BarChart from "@/components/overal-statistics/BarChart.vue";
+import {EGameMode} from "@/store/typings";
+import {Season} from "@/store/ranking/types";
 
-  @Component({
-  components: { BarChart }
+@Component({
+components: { BarChart }
 })
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
@@ -41,12 +41,14 @@ export default class MmrDistributionChart extends Vue {
   }
 
   get mmrOfLoggedInPlayer() {
+    if (!this.$store.direct.state.oauth.blizzardVerifiedBtag) return 0
+
+    this.$store.direct.dispatch.player.loadProfile(this.$store.direct.state.oauth.blizzardVerifiedBtag);
+
     if (!this.$store.direct.state.player.playerProfile.gateWayStats) {
-      if (this.$store.direct.state.oauth.blizzardVerifiedBtag) {
-        this.$store.direct.dispatch.player.loadProfile(this.$store.direct.state.oauth.blizzardVerifiedBtag);
-      }
       return 0;
     }
+
     const gateWayStat = this.$store.direct.state.player.playerProfile.gateWayStats.filter(g => g.season === this.selectedSeason.id);
 
     if (!gateWayStat) return 0;
