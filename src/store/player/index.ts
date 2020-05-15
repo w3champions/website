@@ -25,7 +25,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag: string
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 

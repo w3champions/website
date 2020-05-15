@@ -24,7 +24,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       options?: DataTableOptions
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (options && options.page != null) {
         commit.SET_PAGE(options.page - 1);
@@ -34,7 +34,7 @@ const mod = {
         state.league,
         state.gateway,
         state.gameMode,
-        state.selectedSeason.id
+        state.selectedSeason.id ?? rootState.player.selectedSeason.id
       );
 
       commit.SET_TOTAL_RANKS(response.length);
