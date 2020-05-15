@@ -9,6 +9,7 @@ import { ChartData } from "chart.js";
 })
 export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
+
   private options = {
     legend: {
       display: true

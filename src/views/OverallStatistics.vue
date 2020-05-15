@@ -14,6 +14,9 @@
             <v-tab class="profileTab" :href="`#tab-players-per-day`"
               >Players Per Day</v-tab
             >
+            <v-tab class="profileTab" :href="`#tab-mmr-distribution`"
+              >MMR Distribution</v-tab
+            >
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
               >Winrates</v-tab
             >
@@ -45,6 +48,28 @@
                 />
               </v-card-text>
             </v-tab-item>
+            <v-tab-item :value="'tab-mmr-distribution'">
+              <v-row>
+                <v-col cols="md-2">
+                  <v-card-text v-if="!loadingMapAndRaceStats">
+                    <v-select
+                      :items="seasons"
+                      item-text="id"
+                      @change="setSelectedSeason"
+                      label="Select Season"
+                      return-object
+                      outlined
+                    />
+                  </v-card-text>
+                  <v-card-text>
+                    Pink bars mark top 3%, 5%, 10%, 25% and 50% of players, green is you
+                  </v-card-text>
+                </v-col>
+                <v-col cols="md-10">
+                  <mmr-distribution-chart :mmr-distribution="mmrDistribution" :selected-season="selectedSeason"/>
+                </v-col>
+              </v-row>
+            </v-tab-item>
             <v-tab-item :value="'tab-winrates-per-race-and-map'">
               <v-row>
                 <v-col cols="md-3">
@@ -55,6 +80,14 @@
                       item-value="mapId"
                       @change="setSelectedMap"
                       label="Select Map"
+                      outlined
+                    />
+                    <v-select
+                      :items="mmrs"
+                      item-text="league"
+                      item-value="mmr"
+                      @change="setSelectedMMR"
+                      label="Select MMR"
                       outlined
                     />
                   </v-card-text>
@@ -88,27 +121,27 @@
                 <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
-                            :items="gameModes"
-                            item-text="modeName"
-                            item-value="modeId"
-                            @change="setSelectedHeroesPlayedMode"
-                            label="Mode"
-                            outlined
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedHeroesPlayedMode"
+                      label="Mode"
+                      outlined
                     />
                     <v-select
-                            :items="picks"
-                            item-text="pickName"
-                            item-value="pickId"
-                            @change="setSelectedHeroesPlayedPick"
-                            label="Pick"
-                            outlined
+                      :items="picks"
+                      item-text="pickName"
+                      item-value="pickId"
+                      @change="setSelectedHeroesPlayedPick"
+                      label="Pick"
+                      outlined
                     />
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" md="10">
-                    <v-card-text>
-                        <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
-                    </v-card-text>
+                  <v-card-text>
+                    <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
+                  </v-card-text>
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -124,20 +157,20 @@
                 <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
-                            :items="gameModes"
-                            item-text="modeName"
-                            item-value="modeId"
-                            @change="setSelectedLengthMode"
-                            label="Select Mode"
-                            outlined
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedLengthMode"
+                      label="Select Mode"
+                      outlined
                     />
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" md="10">
                   <v-card-text>
                     <game-length-chart
-                            class="ammount-per-day-chart"
-                            :game-length="selectedGameLength"
+                      class="ammount-per-day-chart"
+                      :game-length="selectedGameLength"
                     />
                   </v-card-text>
                 </v-col>
@@ -148,19 +181,19 @@
                 <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
-                            :items="gameModes"
-                            item-text="modeName"
-                            item-value="modeId"
-                            @change="setSelectedModeGameHour"
-                            label="Select Mode"
-                            outlined
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedModeGameHour"
+                      label="Select Mode"
+                      outlined
                     />
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" md="10">
                   <v-card-text>
                     <popular-game-time-chart
-                            :popular-game-hour="selectedGameHours"
+                      :popular-game-hour="selectedGameHours"
                     />
                   </v-card-text>
                 </v-col>
@@ -182,9 +215,8 @@ import {
   GameLength,
   PlayedHero,
   PopularGameHour,
-  RaceWinLoss,
   Ratio,
-  StatsPerMapAndRace
+  StatsPerWinrate
 } from "@/store/overallStats/types";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
@@ -192,9 +224,12 @@ import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTime
 import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import {Season} from "@/store/ranking/types";
+import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 
 @Component({
   components: {
+    MmrDistributionChart,
     HeroWinrate,
     PlayedHeroesChart,
     PopularGameTimeChart,
@@ -207,6 +242,8 @@ export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
+  public selectedMmr = 0;
+  public selectedSeason = this.seasons[0];
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
@@ -230,6 +267,19 @@ export default class OverallStatisticsView extends Vue {
 
   public setSelectedModeGameHour(mode: EGameMode) {
     this.selectedPopularHourMode = mode;
+  }
+
+  get seasons() {
+    return this.$store.direct.state.rankings.seasons;
+  }
+
+  public async setSelectedSeason(season: Season) {
+    this.selectedSeason = season;
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(season.id);
+  }
+
+  get mmrDistribution() {
+    return this.$store.direct.state.overallStatistics.mmrDistribution;
   }
 
   get loadingMapAndRaceStats(): boolean {
@@ -276,18 +326,31 @@ export default class OverallStatisticsView extends Vue {
     return heroes.filter(g => g.gameMode == this.selectedHeroesPlayedMode)[0].orderedPicks[this.selectedHeroesPlayedPick].stats ?? [];
   }
 
-  get statsPerRaceAndMap(): StatsPerMapAndRace[] {
+  get statsPerRaceAndMap(): StatsPerWinrate[] {
     return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
   }
 
   get raceWinrateWithoutRandom(): Ratio[] {
     return this.statsPerRaceAndMap
-      .filter(r => r.mapName == this.selectedMap)[0]
+      .filter(r => r.mmrRange === this.selectedMmr)[0]
+      .statsPerModes.filter(r => r.mapName === this.selectedMap)[0]
       .ratio.slice(1, 5);
   }
 
+  get mmrs() {
+    const mmrsSorted = this.statsPerRaceAndMap.map(r => r.mmrRange).sort().reverse();
+    const mapped = mmrsSorted.map(m => ({ league: this.$t("mmrLeagueRanges.MMR_" + m), mmr: m }));
+    return mapped;
+  }
+
+  public setSelectedMMR(mmr: number) {
+    this.selectedMmr = mmr;
+  }
+
   get maps() {
-    return this.statsPerRaceAndMap.map(r => {
+    const stats = this.statsPerRaceAndMap[0];
+    if (!stats) return []
+    return stats.statsPerModes.map(r => {
       return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
     });
   }
@@ -345,6 +408,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(this.$store.direct.state.rankings.selectedSeason.id);
   }
 
   public headers = [

@@ -42,3 +42,11 @@ $w3-orc-glass: inset 0 0 0 3000px rgba(199, 186, 161, 0.9) !important;
     box-shadow: $w3-orc-glass;
   }
 }
+
+.orc {
+  header.v-app-bar--is-scrolled + main {
+        .search-bar {
+            background-color: rgba(199, 183, 159, 0.9);
+        }
+  }
+}

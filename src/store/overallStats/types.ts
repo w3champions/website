@@ -1,6 +1,19 @@
 import { Moment } from 'moment';
 import {EGameMode, EPick, ERaceEnum} from "@/store/typings";
 
+export type OveralStatisticState = {
+  gamesPerDay: GameDay[];
+  loadingGamesPerDayStats: boolean;
+  playersPerDay: GameDay[];
+  loadingPlayersPerDayStats: boolean;
+  statsPerMapAndRace: StatsPerWinrate[];
+  gameLengths: GameLength[];
+  popularGameHours: PopularGameHour[];
+  playedHeroes: PlayedHeroByMode[];
+  heroWinrate: WinLoss;
+  loadingMapAndRaceStats: boolean;
+  mmrDistribution: MmrDistribution;
+};
 
 export interface PlayedHeroPick {
   pick: EPick;
@@ -17,23 +30,24 @@ export interface PlayedHero {
   count: number;
 }
 
-export type OveralStatisticState = {
-  gamesPerDay: GameDay[];
-  loadingGamesPerDayStats: boolean;
-  playersPerDay: GameDay[];
-  loadingPlayersPerDayStats: boolean;
-  statsPerMapAndRace: StatsPerMapAndRace[];
-  gameLengths: GameLength[];
-  popularGameHours: PopularGameHour[];
-  playedHeroes: PlayedHeroByMode[];
-  heroWinrate: WinLoss;
-  loadingMapAndRaceStats: boolean;
-};
-
 export type GameDay = {
   date: Moment,
   gamesPlayed: number,
   id: string
+}
+
+export type MmrCount = {
+  mmr: number,
+  count: number
+}
+
+export type MmrDistribution = {
+  top2PercentIndex: number,
+  top5PercentIndex: number,
+  top10PercentIndex: number,
+  top25ercentIndex: number,
+  top50PercentIndex: number,
+  distributedMmrs: MmrCount[]
 }
 
 export type PlayersPerDay = {
@@ -61,6 +75,11 @@ export type Ratio = {
 export type StatsPerMapAndRace = {
   mapName: string;
   ratio: Ratio[];
+}
+
+export type StatsPerWinrate = {
+  mmrRange: number;
+  statsPerModes: StatsPerMapAndRace[];
 }
 
 export interface Length {

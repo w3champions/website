@@ -1,11 +1,11 @@
 import {API_URL} from "@/main";
 import {
   GameDay,
-  GameLength,
+  GameLength, MmrDistribution,
   PlayedHero, PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace, WinLoss
+  StatsPerMapAndRace, StatsPerWinrate, WinLoss
 } from "@/store/overallStats/types";
 
 export default class StatisticService {
@@ -35,7 +35,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public async retrieveMapAndRaceStats(): Promise<StatsPerMapAndRace[]> {
+  public async retrieveMapAndRaceStats(): Promise<StatsPerWinrate[]> {
     const url = `${API_URL}api/w3c-stats/map-race-wins`;
     const response = await fetch(url, {
       method: "GET",
@@ -77,6 +77,19 @@ export default class StatisticService {
 
   public async retrievePopularGameHours(): Promise<PopularGameHour[]> {
     const url = `${API_URL}api/w3c-stats/play-hours`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    return await response.json();
+  }
+
+  public async retrieveMmrDistribution(season: number): Promise<MmrDistribution> {
+    const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

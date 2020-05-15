@@ -1,12 +1,12 @@
 import { moduleActionContext } from "..";
 import {
   GameDay,
-  GameLength,
+  GameLength, MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace,
+  StatsPerMapAndRace, StatsPerWinrate,
   WinLoss
 } from "./types";
 import { RootState } from "../typings";
@@ -20,11 +20,12 @@ const mod = {
     loadingPlayersPerDayStats: true,
     gamesPerDay: [] as GameDay[],
     playersPerDay: [] as GameDay[],
-    statsPerMapAndRace: [] as StatsPerMapAndRace[],
+    statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
-    heroWinrate: {} as WinLoss
+    heroWinrate: {} as WinLoss,
+    mmrDistribution: {} as MmrDistribution
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -111,6 +112,16 @@ const mod = {
       );
 
       commit.SET_HERO_WINRATES(stats);
+    },
+    async loadMmrDistribution(
+        context: ActionContext<OveralStatisticState, RootState>,
+        season: number
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const stats = await rootGetters.statisticService.retrieveMmrDistribution(season);
+
+      commit.SET_MMR_DISTRIBUTION(stats);
     }
   },
   mutations: {
@@ -129,7 +140,7 @@ const mod = {
     SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
       state.loadingMapAndRaceStats = loading;
     },
-    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerMapAndRace[]) {
+    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerWinrate[]) {
       state.statsPerMapAndRace = stats
     },
     SET_GAME_LENGTH_STATS(state: OveralStatisticState, stats: GameLength[]) {
@@ -143,6 +154,9 @@ const mod = {
     },
     SET_HERO_WINRATES(state: OveralStatisticState, winLoss: WinLoss) {
       state.heroWinrate = winLoss
+    },
+    SET_MMR_DISTRIBUTION(state: OveralStatisticState, mmrDistribution: MmrDistribution) {
+      state.mmrDistribution = mmrDistribution
     }
   }
 } as const;
