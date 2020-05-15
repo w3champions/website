@@ -210,8 +210,9 @@ export default class HomeView extends Vue {
     return this.$store.direct.state.rankings.topFive;
   }
 
-  mounted() {
-    this.$store.direct.dispatch.rankings.getTopFive();
+  async mounted() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.$store.direct.dispatch.rankings.getTopFive();
   }
 
   public goToProfile(rank: Ranking) {
