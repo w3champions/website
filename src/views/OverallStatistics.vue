@@ -9,44 +9,79 @@
           <v-tabs>
             <v-tabs-slider />
             <v-tab class="profileTab" :href="`#tab-games-per-day`"
-              >Games Per Day</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-players-per-day`"
-              >Players Per Day</v-tab
+              >Player Activity</v-tab
             >
             <v-tab class="profileTab" :href="`#tab-mmr-distribution`"
-              >MMR Distribution</v-tab
+              >MMR</v-tab
             >
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
               >Winrates</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-heroes`"
+            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"
               >Heroes</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"
-              >Heroe Winrates</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-gametimes`"
-              >Gamelengths</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-popular-game-hours`"
-              >Popular Hours</v-tab
-            >
             <v-tab-item :value="'tab-games-per-day'">
+              <v-card-title>Games per Day</v-card-title>
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart
                   class="ammount-per-day-chart"
                   :game-days="gameDays"
                 />
               </v-card-text>
-            </v-tab-item>
-            <v-tab-item :value="'tab-players-per-day'">
+              <v-card-title>Players per Day</v-card-title>
+
               <v-card-text v-if="!loadingPlayersPerDayStats">
-                <amount-per-day-chart
-                  class="ammount-per-day-chart"
-                  :game-days="playersPerDay"
+              <amount-per-day-chart
+                      class="ammount-per-day-chart"
+                      :game-days="playersPerDay"
                 />
               </v-card-text>
+
+              <v-card-title>Popular Hours</v-card-title>
+              <v-row>
+                <v-col cols="12" md="2">
+                  <v-card-text>
+                    <v-select
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedModeGameHour"
+                            label="Select Mode"
+                            outlined
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="12" md="10">
+                  <v-card-text>
+                    <popular-game-time-chart
+                            :popular-game-hour="selectedGameHours"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
+
+              <v-card-title>Game Lengths</v-card-title>
+              <v-row>
+                <v-col cols="12" md="2">
+                  <v-card-text>
+                    <v-select
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedModeGameHour"
+                            label="Select Mode"
+                            outlined
+                    />
+                  </v-card-text>
+                </v-col>
+                <v-col cols="12" md="10">
+                  <v-card-text>
+                    <popular-game-time-chart
+                            :popular-game-hour="selectedGameHours"
+                    />
+                  </v-card-text>
+                </v-col>
+              </v-row>
             </v-tab-item>
             <v-tab-item :value="'tab-mmr-distribution'">
               <v-row>
@@ -116,85 +151,37 @@
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :value="'tab-heroes'">
-              <v-row>
-                <v-col cols="12" md="2">
-                  <v-card-text>
-                    <v-select
-                      :items="gameModes"
-                      item-text="modeName"
-                      item-value="modeId"
-                      @change="setSelectedHeroesPlayedMode"
-                      label="Mode"
-                      outlined
-                    />
-                    <v-select
-                      :items="picks"
-                      item-text="pickName"
-                      item-value="pickId"
-                      @change="setSelectedHeroesPlayedPick"
-                      label="Pick"
-                      outlined
-                    />
-                  </v-card-text>
-                </v-col>
-                <v-col cols="12" md="10">
-                  <v-card-text>
-                    <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
-                  </v-card-text>
-                </v-col>
-              </v-row>
-            </v-tab-item>
             <v-tab-item :value="'tab-heroes-winrates'">
               <v-row>
                 <v-col cols="12">
                   <hero-winrate />
                 </v-col>
               </v-row>
-            </v-tab-item>
-            <v-tab-item :value="'tab-gametimes'">
+              <v-card-title>Picked Heroes</v-card-title>
               <v-row>
                 <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
-                      :items="gameModes"
-                      item-text="modeName"
-                      item-value="modeId"
-                      @change="setSelectedLengthMode"
-                      label="Select Mode"
-                      outlined
+                            :items="gameModes"
+                            item-text="modeName"
+                            item-value="modeId"
+                            @change="setSelectedHeroesPlayedMode"
+                            label="Mode"
+                            outlined
+                    />
+                    <v-select
+                            :items="picks"
+                            item-text="pickName"
+                            item-value="pickId"
+                            @change="setSelectedHeroesPlayedPick"
+                            label="Pick"
+                            outlined
                     />
                   </v-card-text>
                 </v-col>
                 <v-col cols="12" md="10">
                   <v-card-text>
-                    <game-length-chart
-                      class="ammount-per-day-chart"
-                      :game-length="selectedGameLength"
-                    />
-                  </v-card-text>
-                </v-col>
-              </v-row>
-            </v-tab-item>
-            <v-tab-item :value="'tab-popular-game-hours'">
-              <v-row>
-                <v-col cols="12" md="2">
-                  <v-card-text>
-                    <v-select
-                      :items="gameModes"
-                      item-text="modeName"
-                      item-value="modeId"
-                      @change="setSelectedModeGameHour"
-                      label="Select Mode"
-                      outlined
-                    />
-                  </v-card-text>
-                </v-col>
-                <v-col cols="12" md="10">
-                  <v-card-text>
-                    <popular-game-time-chart
-                      :popular-game-hour="selectedGameHours"
-                    />
+                    <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
                   </v-card-text>
                 </v-col>
               </v-row>
