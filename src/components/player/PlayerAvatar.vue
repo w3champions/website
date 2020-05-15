@@ -10,7 +10,6 @@
         />
       </v-col>
     </v-row>
-
     <v-dialog v-model="dialogOpened" max-width="1400px">
       <v-card>
         <v-row
@@ -31,16 +30,13 @@
                     'background-image': 'url(' + picture(race, number) + ')'
                   }"
                 />
-
               </template>
               <span>{{ winsOf(winsOfRace(race), number) }}</span>
             </v-tooltip>
-
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
-
     <h3>
       Homepage:
       <template>
@@ -229,8 +225,8 @@ export default class PlayerAvatar extends Vue {
 
     this.dialogOpened = false;
   }
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
   }
 
   async init() {

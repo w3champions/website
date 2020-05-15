@@ -25,16 +25,16 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag: string
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 
       const profile = await rootGetters.profileService.retrieveProfile(
-        battleTag,
-        state.selectedSeason.id
+        battleTag
       );
 
       commit.SET_PROFILE(profile);
+      commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(

@@ -20,6 +20,7 @@ export type PlayerProfile = {
   id: string;
   name: string;
   battleTag: string;
+  participatedInSeasons: Season[];
   raceStats: RaceStat[];
   gateWayStats: GateWayStats[]
   ranks: RankStat[];
