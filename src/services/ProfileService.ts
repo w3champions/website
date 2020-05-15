@@ -2,8 +2,8 @@ import {PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/
 import {API_URL} from "@/main";
 
 export default class ProfileService {
-  public async retrieveWinRate(battleTag: string): Promise<RaceStat> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/winrate`;
+  public async retrieveWinRate(battleTag: string, season: number): Promise<RaceStat> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/winrate?season=${season}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -30,8 +30,8 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrievePlayerStatsRaceVersusRaceOnMap(battleTag: string): Promise<PlayerStatsRaceOnMapVersusRace> {
-    const url = `${API_URL}api/player-stats/${encodeURIComponent(battleTag)}/race-on-map-versus-race`;
+  public async retrievePlayerStatsRaceVersusRaceOnMap(battleTag: string, season: number): Promise<PlayerStatsRaceOnMapVersusRace> {
+    const url = `${API_URL}api/player-stats/${encodeURIComponent(battleTag)}/race-on-map-versus-race?season=${season}`;
 
     const response = await fetch(url, {
       method: "GET",
