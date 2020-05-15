@@ -31,16 +31,13 @@
                     'background-image': 'url(' + picture(race, number) + ')'
                   }"
                 />
-
               </template>
               <span>{{ winsOf(winsOfRace(race), number) }}</span>
             </v-tooltip>
-
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
-
     <h3>
       Homepage:
       <template>
