@@ -1,14 +1,15 @@
 <template>
   <v-row justify="space-between">
     <v-col cols="1"> </v-col>
+    <v-col :cols="this.heroesOfWinner.length - 1"> </v-col>
     <v-col cols="1">
-      <hero-icon :hero="heroesOfWinner[2]" />
+      <hero-icon :first-hero="true" :hero="this.heroesOfWinner[0]" v-if="heroesOfWinner.length >= 1" />
     </v-col>
-    <v-col cols="1">
-      <hero-icon :hero="heroesOfWinner[1]" />
+    <v-col cols="1" v-if="heroesOfWinner.length >= 2">
+      <hero-icon :hero="this.heroesOfWinner[1]" />
     </v-col>
-    <v-col cols="1">
-      <hero-icon :first-hero="true" :hero="heroesOfWinner[0]" />
+    <v-col cols="1" v-if="heroesOfWinner.length === 3">
+      <hero-icon :hero="this.heroesOfWinner[2]" />
     </v-col>
     <v-col cols="2">
       <match-higlights
