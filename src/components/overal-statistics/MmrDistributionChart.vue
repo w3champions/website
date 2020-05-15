@@ -18,7 +18,7 @@ export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
 
-  get colors() {
+  private colors() {
     const colors = [];
     for (let i = 0; i < this.mmrDistribution.distributedMmrs.length; i++) {
       if (
