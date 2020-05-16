@@ -29,12 +29,12 @@ const mod = {
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
-      { index: 0, name: "all", heroId: "all", disabled: false },
-      { index: 1,name: "all", heroId: "all", disabled: false },
-      { index: 2,name: "all", heroId: "all", disabled: false },
-      { index: 3,name: "all", heroId: "all", disabled: false },
-      { index: 4,name: "all", heroId: "all", disabled: false },
-      { index: 5,name: "all", heroId: "all", disabled: false }] as HeroPick[]
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false },
+      { name: "all", heroId: "all", disabled: false }] as HeroPick[]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
