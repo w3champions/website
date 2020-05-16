@@ -45,7 +45,7 @@ export type MmrCount = {
 export interface HeroPick {
   name: string,
   heroId: string,
-  disabled: boolean
+  race: ERaceEnum
 }
 
 export type MmrDistribution = {

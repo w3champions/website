@@ -3,7 +3,7 @@
     <v-card-text
       class="hero-icon"
       :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
-      @click="openDialog"
+      @click="() => { if (isEnabledForChange) openDialog()}"
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
     <v-dialog v-model="dialogOpened" max-width="400px">
@@ -17,7 +17,7 @@
             <v-card-text
               class="hero-icon hero-icon-select"
               :class="isEnabledForSelect ? '' : 'hero-icon-disabled'"
-              @click="pickHero(heroPick)"
+              @click="() => { if (isEnabledForSelect) pickHero(heroPick)}"
               :style="{ 'background-image': 'url(' + parsePicture(heroPick) + ')' }"
             />
           </v-col>
@@ -44,51 +44,6 @@ export default class HeroPicture extends Vue {
   }
 
   public pickHero(hero: HeroPick) {
-    // // if (this.heroIndex < 3) {
-    // //   this.heroesHome.forEach(h => h.disabled = false);
-    // //   this.heroesHome.filter(h => h.heroId == this.firstPickHome.heroId)[0].disabled = true
-    // //   this.heroesHome.filter(h => h.heroId == this.secondPickHome.heroId)[0].disabled = true
-    // //   this.heroesHome.filter(h => h.heroId == this.thirdPickHome.heroId)[0].disabled = true
-    // // } else {
-    // //   this.heroesOpponent.forEach(h => h.disabled = false);
-    // //   this.heroesOpponent.filter(h => h.heroId == this.firstPickOpponent.heroId)[0].disabled = true
-    // //   this.heroesOpponent.filter(h => h.heroId == this.secondPickOpponent.heroId)[0].disabled = true
-    // //   this.heroesOpponent.filter(h => h.heroId == this.thirdPickOpponent.heroId)[0].disabled = true
-    // // }
-    //
-    // // this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
-    // // this.heroesHome.filter(h => h.heroId == "none")[0].disabled = false
-    // // this.heroesOpponent.filter(h => h.heroId == "all")[0].disabled = false
-    // // this.heroesOpponent.filter(h => h.heroId == "none")[0].disabled = false
-    //
-    // // make all selections equal depending on the higher order one and not allowing hero selections after non/all
-    // if (hero.heroId === "none" || hero.heroId === "all") {
-    //   if (this.heroIndex == 0) {
-    //     this.heroPicks[1] = { name: hero.name, heroId: hero.heroId };
-    //     this.heroPicks[2] = { name: hero.name, heroId: hero.heroId };
-    //   }
-    //   if (this.heroIndex == 1) {
-    //     this.thirdPickHome = { name: hero.name, heroId: hero.heroId };
-    //   }
-    //   if (this.heroIndex == 3) {
-    //     this.secondPickOpponent = { name: hero.name, heroId: hero.heroId };
-    //     this.thirdPickOpponent = { name: hero.name, heroId: hero.heroId, disabled: false };
-    //   }
-    //   if (this.heroIndex == 4) {
-    //     this.thirdPickOpponent = { name: hero.name, heroId: hero.heroId, disabled: false };
-    //   }
-    // }
-    //
-    // // for not allowing none as first hero
-    // if (this.heroPick.heroId === "none") {
-    //   if (this.heroIndex == 0) {
-    //     this.heroPicks[1] = { name: "all", heroId: "all", disabled: false };
-    //   }
-    //   if (this.heroIndex == 3) {
-    //     this.heroPicks[3] = { name: "all", heroId: "all", disabled: false };
-    //   }
-    // }
-
     const newPick = {index: this.heroIndex, heroPick: hero};
 
     this.$store.direct.commit.overallStatistics.SET_HIRO_PICK(newPick);
@@ -99,7 +54,7 @@ export default class HeroPicture extends Vue {
   public parsePicture(hero: HeroPick) {
     if (this.previousHero?.heroId === "all") hero.heroId = "all"
     if (this.previousHero?.heroId === "none") hero.heroId = "none"
-    
+
     try {
       return require("../../assets/heroes/" + hero.heroId + ".png");
     } catch (e) {
@@ -119,7 +74,10 @@ export default class HeroPicture extends Vue {
   }
 
   get isEnabledForSelect() {
-    return true
+    const previousHeroRace = this.possibleHeroPicks.filter(h => h.heroId === this.previousHero?.heroId)[0]?.race
+    if (this.heroPick.race === ERaceEnum.RANDOM) return true;
+    if (this.heroPick.race === ERaceEnum.TOTAL) return true;
+    return this.heroPick.race === previousHeroRace;
   }
 
   get heroPicture() {
@@ -146,40 +104,40 @@ export default class HeroPicture extends Vue {
     ]
   }
 
-  get possibleHeroPicks() {
+  get possibleHeroPicks(): HeroPick[] {
     return [
-      { name: this.$t(`heroNames.none`), heroId: "none", race: ERaceEnum.TOTAL },
-      { name: this.$t(`heroNames.all`), heroId: "all", race: ERaceEnum.TOTAL },
+      { name: this.$t(`heroNames.none`).toString(), heroId: "none", race: ERaceEnum.TOTAL },
+      { name: this.$t(`heroNames.all`).toString(), heroId: "all", race: ERaceEnum.TOTAL },
 
-      { name: this.$t(`heroNames.archmage`), heroId: "archmage", race: ERaceEnum.HUMAN },
-      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking", race: ERaceEnum.HUMAN },
-      { name: this.$t(`heroNames.paladin`), heroId: "paladin", race: ERaceEnum.HUMAN },
-      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.archmage`).toString(), heroId: "archmage", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.mountainking`).toString(), heroId: "mountainking", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.paladin`).toString(), heroId: "paladin", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.sorceror`).toString(), heroId: "sorceror", race: ERaceEnum.HUMAN },
 
-      { name: this.$t(`heroNames.farseer`), heroId: "farseer", race: ERaceEnum.ORC },
-      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster", race: ERaceEnum.ORC },
-      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter", race: ERaceEnum.ORC },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.farseer`).toString(), heroId: "farseer", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.blademaster`).toString(), heroId: "blademaster", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.shadowhunter`).toString(), heroId: "shadowhunter", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.taurenchieftain`).toString(), heroId: "taurenchieftain", race: ERaceEnum.ORC },
 
-      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight", race: ERaceEnum.UNDEAD },
-      { name: this.$t(`heroNames.lich`), heroId: "lich", race: ERaceEnum.UNDEAD },
-      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
-      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.deathknight`).toString(), heroId: "deathknight", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.lich`).toString(), heroId: "lich", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.dreadlord`).toString(), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.cryptlord`).toString(), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
 
-      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
-      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
-      { name: this.$t(`heroNames.warden`), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
-      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.demonhunter`).toString(), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.keeperofthegrove`).toString(), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.warden`).toString(), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.priestessofthemoon`).toString(), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
 
-      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.tinker`), heroId: "tinker", race: ERaceEnum.RANDOM },
-      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.avatarofflame`).toString(), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.bansheeranger`).toString(), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.beastmaster`).toString(), heroId: "beastmaster", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.pandarenbrewmaster`).toString(), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.pitlord`).toString(), heroId: "pitlord", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.seawitch`).toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.taurenchieftain`).toString(), heroId: "taurenchieftain", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.tinker`).toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.alchemist`).toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
     ];
   }
 }
