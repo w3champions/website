@@ -42,6 +42,7 @@ export default class HeroPicture extends Vue {
 
   public pickHero(pick: HeroPick) {
     this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex, heroPick: pick});
+    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
     this.dialogOpened = false;
   }
 

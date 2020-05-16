@@ -111,9 +111,9 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrieveHeroWinrates(
-        state.heroPicks[0].heroId,
-        state.heroPicks[1].heroId,
         state.heroPicks[2].heroId,
+        state.heroPicks[1].heroId,
+        state.heroPicks[0].heroId,
         state.heroPicks[3].heroId,
         state.heroPicks[4].heroId,
         state.heroPicks[5].heroId
