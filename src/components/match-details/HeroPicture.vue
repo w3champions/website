@@ -2,7 +2,8 @@
   <v-card-text>
     <v-card-text
       class="hero-icon"
-      @click.stop="openDialog"
+      :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
+      @click.stop="isEnabledForChange ? openDialog : null"
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
     <v-dialog v-model="dialogOpened" max-width="400px">
@@ -15,7 +16,8 @@
           <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
             <v-card-text
               class="hero-icon hero-icon-select"
-              @click.stop="pickHero(heroPick)"
+              :class="isEnabledForSelect ? '' : 'hero-icon-disabled'"
+              @click.stop="isEnabledForSelect ? pickHero(heroPick) : null"
               :style="{ 'background-image': 'url(' + parsePicture(heroPick) + ')' }"
             />
           </v-col>
@@ -52,6 +54,14 @@ export default class HeroPicture extends Vue {
     } catch (e) {
       return null;
     }
+  }
+
+  get isEnabledForChange() {
+    return this.heroPicks[this.heroIndex % 3 - 1]?.heroId !== "all" && this.heroPicks[this.heroIndex - 1]?.heroId !== "none"
+  }
+
+  get isEnabledForSelect() {
+    return true
   }
 
   get heroPicture() {
@@ -117,5 +127,10 @@ export default class HeroPicture extends Vue {
 .hero-icon-select {
   height: 48px;
   width: 48px;
+}
+
+.hero-icon-disabled {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
 }
 </style>
