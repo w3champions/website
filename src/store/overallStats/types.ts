@@ -43,6 +43,7 @@ export type MmrCount = {
 };
 
 export interface HeroPick {
+  index: number,
   name: string,
   heroId: string,
   disabled: boolean

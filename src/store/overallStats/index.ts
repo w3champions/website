@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import {
   GameDay,
-  GameLength,
+  GameLength, HeroPick,
   MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
@@ -29,12 +29,12 @@ const mod = {
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false }]
+      { index: 0, name: "all", heroId: "all", disabled: false },
+      { index: 1,name: "all", heroId: "all", disabled: false },
+      { index: 2,name: "all", heroId: "all", disabled: false },
+      { index: 3,name: "all", heroId: "all", disabled: false },
+      { index: 4,name: "all", heroId: "all", disabled: false },
+      { index: 5,name: "all", heroId: "all", disabled: false }] as HeroPick[]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
@@ -165,6 +165,12 @@ const mod = {
     },
     SET_MMR_DISTRIBUTION(state: OveralStatisticState, mmrDistribution: MmrDistribution) {
       state.mmrDistribution = mmrDistribution
+    },
+    SET_HIRO_PICK(state: OveralStatisticState, pick: {index: number, heroPick: HeroPick}) {
+      state.heroPicks = [
+        ...state.heroPicks.filter(h => h.index !== pick.index),
+        pick.heroPick
+      ]
     }
   }
 } as const;

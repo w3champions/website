@@ -5,19 +5,18 @@
       @click.stop="openDialog"
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
-    <v-dialog v-model="dialogOpened" max-width="500px">
+    <v-dialog v-model="dialogOpened" max-width="400px">
       <v-card>
         <v-row
-          style="padding-left: 25px; padding-right: 25px"
           v-for="heroPickPerRace in possibleHeroPicks"
           :key="heroPickPerRace.map(m => m.heroId).join('-')"
           justify="space-between"
         >
           <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
             <v-card-text
-              class="hero-icon"
+              class="hero-icon hero-icon-select"
               @click.stop="pickHero(heroPick)"
-              :style="{ 'background-image': 'url(' + parsePicture(heroPick.heroId) + ')' }"
+              :style="{ 'background-image': 'url(' + parsePicture(heroPick) + ')' }"
             />
           </v-col>
         </v-row>
@@ -29,8 +28,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Hero } from "@/store/typings";
-import {HeroPick} from "@/store/overallStats/types";
+import { HeroPick } from "@/store/overallStats/types";
 
 @Component({})
 export default class HeroPicture extends Vue {
@@ -39,13 +37,11 @@ export default class HeroPicture extends Vue {
   public dialogOpened = false;
 
   openDialog() {
-    console.log("cloc");
     this.dialogOpened = true;
   }
 
   public pickHero(pick: HeroPick) {
-    console.log(pick.heroId);
-
+    this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex, heroPick: pick});
     this.dialogOpened = false;
   }
 
@@ -115,5 +111,10 @@ export default class HeroPicture extends Vue {
   margin-bottom: -2px !important;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.hero-icon-select {
+  height: 48px;
+  width: 48px;
 }
 </style>
