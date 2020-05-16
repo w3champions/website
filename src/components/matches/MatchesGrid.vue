@@ -15,7 +15,7 @@
       <span>{{ $t("mapNames." + item.map) }}</span>
     </template>
     <template v-slot:item.startTime="{ item }">
-      {{ item.startTime | moment($t('dateFormats.dateTime').toString()) }}
+      {{ item.startTime | moment($t("dateFormats.dateTime").toString()) }}
     </template>
     <template class="number-text" v-slot:item.duration="{ item }">
       <span class="number-text">{{ getDuration(item) }}</span>
@@ -52,8 +52,8 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 @Component({
   components: {
     TeamMatchInfo,
-    PlayerMatchInfo
-  }
+    PlayerMatchInfo,
+  },
 })
 export default class MatchesGrid extends Vue {
   @Prop() public value!: Match[];
@@ -66,7 +66,7 @@ export default class MatchesGrid extends Vue {
   }
 
   public options = {
-    itemsPerPage: 100
+    itemsPerPage: 100,
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
@@ -80,7 +80,7 @@ export default class MatchesGrid extends Vue {
 
   public gotToMatchDetailPage(match: Match) {
     this.$router.push({
-      path: `/match/${match.id}`
+      path: `/match/${match.id}`,
     });
   }
 
@@ -113,10 +113,14 @@ export default class MatchesGrid extends Vue {
       return "ongoing";
     }
 
-    const format = match.durationInSeconds <= 3600 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
+    const format =
+      match.durationInSeconds <= 3600
+        ? this.$t("dateFormats.timeShort")
+        : this.$t("dateFormats.timeLong");
     return moment
       .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
-      .format(format.toString()).toString();
+      .format(format.toString())
+      .toString();
   }
 
   mounted() {
@@ -129,28 +133,28 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      width: "600px"
+      width: "600px",
     },
     {
       text: "Map",
       align: "start",
       sortable: false,
-      value: "map"
+      value: "map",
     },
     {
       text: "Start Time",
       align: "end",
       sortable: false,
       value: "startTime",
-      width: "180px"
+      width: "180px",
     },
     {
       text: "Duration",
       align: "center",
       sortable: false,
       value: "duration",
-      width: "120px"
-    }
+      width: "120px",
+    },
   ];
 }
 </script>

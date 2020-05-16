@@ -82,7 +82,8 @@ export default class ImprintView extends Vue {}
 </script>
 
 <style type="text/css" scoped>
-  .v-card__title, .v-card__text {
-    filter:blur(0)!important;
-  }
+.v-card__title,
+.v-card__text {
+  filter: blur(0) !important;
+}
 </style>

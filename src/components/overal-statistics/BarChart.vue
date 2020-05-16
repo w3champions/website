@@ -5,39 +5,39 @@ import { Bar, mixins } from "vue-chartjs";
 import { ChartData } from "chart.js";
 
 @Component({
-  mixins: [mixins.reactiveProp]
+  mixins: [mixins.reactiveProp],
 })
 export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
 
   private options = {
     legend: {
-      display: true
+      display: true,
     },
     tooltips: {
-      custom: function(tooltip: { displayColors: boolean; }) {
+      custom: function (tooltip: { displayColors: boolean }) {
         if (!tooltip) return;
         tooltip.displayColors = false;
       },
       callbacks: {
-        label: function(tooltipItem: { xLabel: any; yLabel: any; }) {
+        label: function (tooltipItem: { xLabel: any; yLabel: any }) {
           return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
         },
-        title: function() {
+        title: function () {
           return "";
-        }
-      }
+        },
+      },
     },
     maintainAspectRatio: false,
     scales: {
       yAxes: [
         {
           ticks: {
-            beginAtZero: true
-          }
-        }
-      ]
-    }
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
   };
 
   mounted() {

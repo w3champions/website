@@ -25,7 +25,7 @@ import MatchesGrid from "../components/matches/MatchesGrid.vue";
 @Component({
   components: {
     MatchesGrid,
-  }
+  },
 })
 export default class MatchesView extends Vue {
   onPageChanged(page: number) {

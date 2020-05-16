@@ -1,5 +1,5 @@
 import { EGameMode, ERaceEnum, Match } from "../typings";
-import {Season, Gateways} from "@/store/ranking/types";
+import { Season, Gateways } from "@/store/ranking/types";
 
 export type PlayerState = {
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
@@ -22,11 +22,11 @@ export type PlayerProfile = {
   battleTag: string;
   participatedInSeasons: Season[];
   raceStats: RaceStat[];
-  gateWayStats: GateWayStats[]
+  gateWayStats: GateWayStats[];
   ranks: RankStat[];
 };
 
-export type RaceStat  = {
+export type RaceStat = {
   race: ERaceEnum;
   gateWay: Gateways;
   season: number;

@@ -3,7 +3,11 @@
     <v-col cols="1"> </v-col>
     <v-col :cols="this.heroesOfWinner.length - 1"> </v-col>
     <v-col cols="1">
-      <hero-icon :first-hero="true" :hero="this.heroesOfWinner[0]" v-if="heroesOfWinner.length >= 1" />
+      <hero-icon
+        :first-hero="true"
+        :hero="this.heroesOfWinner[0]"
+        v-if="heroesOfWinner.length >= 1"
+      />
     </v-col>
     <v-col cols="1" v-if="heroesOfWinner.length >= 2">
       <hero-icon :hero="this.heroesOfWinner[1]" />
@@ -53,7 +57,7 @@ import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
 
 @Component({
-  components: { MatchHiglights, HeroIcon }
+  components: { MatchHiglights, HeroIcon },
 })
 export default class MatchDetailHeroRow extends Vue {
   @Prop() public heroesOfWinner!: Hero[];

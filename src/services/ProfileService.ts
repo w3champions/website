@@ -1,15 +1,24 @@
-import {PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
-import {API_URL} from "@/main";
+import {
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+  RaceStat,
+} from "@/store/player/types";
+import { API_URL } from "@/main";
 
 export default class ProfileService {
-  public async retrieveWinRate(battleTag: string, season: number): Promise<RaceStat> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/winrate?season=${season}`;
+  public async retrieveWinRate(
+    battleTag: string,
+    season: number
+  ): Promise<RaceStat> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/winrate?season=${season}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();
@@ -23,22 +32,27 @@ export default class ProfileService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
   }
 
-  public async retrievePlayerStatsRaceVersusRaceOnMap(battleTag: string, season: number): Promise<PlayerStatsRaceOnMapVersusRace> {
-    const url = `${API_URL}api/player-stats/${encodeURIComponent(battleTag)}/race-on-map-versus-race?season=${season}`;
+  public async retrievePlayerStatsRaceVersusRaceOnMap(
+    battleTag: string,
+    season: number
+  ): Promise<PlayerStatsRaceOnMapVersusRace> {
+    const url = `${API_URL}api/player-stats/${encodeURIComponent(
+      battleTag
+    )}/race-on-map-versus-race?season=${season}`;
 
     const response = await fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();

@@ -1,26 +1,31 @@
 <template>
   <div class="LadderSummaryShowcase-card mt-1" :class="leagueName">
     <h2 class="LadderSummaryShowcase-title">
-      {{ leagueMode }} {{ leagueName }} {{modeStat.division !== 0 ? this.modeStat.division : null}}
+      {{ leagueMode }} {{ leagueName }}
+      {{ modeStat.division !== 0 ? this.modeStat.division : null }}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <span v-if="isRanked">
-        Rank <span class="number-text">{{ modeStat.rank }} | 
-          <span class="won">{{ modeStat.wins }}</span> - <span class="lost">{{ modeStat.losses }}</span>
+        Rank
+        <span class="number-text"
+          >{{ modeStat.rank }} | <span class="won">{{ modeStat.wins }}</span> -
+          <span class="lost">{{ modeStat.losses }}</span>
+        </span>
       </span>
-      </span>
-      <span v-if="!isRanked"
-        > <span class="number-text">{{modeStat.games}} / 5</span>
+      <span v-if="!isRanked">
+        <span class="number-text">{{ modeStat.games }} / 5</span>
       </span>
     </div>
-    <div >
+    <div>
       <img
         class="LadderSummaryShowcase-divider"
         src="https://static.starcraft2.com/dist/images/ladder/profile-ladders-summary-small-divider.png"
       />
       <div class="text-center" v-if="isRanked">
-        <span>MMR: <span class="number-text">{{ modeStat.mmr }}</span></span>
-        <span class="ml-2" style="font-size:13px">
+        <span
+          >MMR: <span class="number-text">{{ modeStat.mmr }}</span></span
+        >
+        <span class="ml-2" style="font-size: 13px;">
           RP: <span class="number-text">{{ modeStat.rankingPoints }}</span>
         </span>
       </div>
@@ -78,8 +83,6 @@ export default class PlayerLeague extends Vue {
     return this.modeStat.rank > 0;
   }
 }
-
-
 </script>
 
 <style lang="scss" scoped>

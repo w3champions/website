@@ -1,8 +1,8 @@
 import { moduleActionContext } from "..";
 import { MatchState } from "./types";
-import {Match, MatchDetail, RootState} from "../typings";
+import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { Gateways } from '../ranking/types';
+import { Gateways } from "../ranking/types";
 
 const mod = {
   namespaced: true,
@@ -12,12 +12,12 @@ const mod = {
     loadingMatchDetail: true,
     matches: [] as Match[],
     matchDetail: {} as MatchDetail,
-    gateWay: 20 as Gateways
+    gateWay: 20 as Gateways,
   } as MatchState,
   actions: {
     async loadMatches(
       context: ActionContext<MatchState, RootState>,
-      page?: number,
+      page?: number
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
@@ -34,8 +34,8 @@ const mod = {
       commit.SET_MATCHES(response.matches);
     },
     async loadMatchDetail(
-        context: ActionContext<MatchState, RootState>,
-        id: string
+      context: ActionContext<MatchState, RootState>,
+      id: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -74,7 +74,7 @@ const mod = {
     SET_GATEWAY(state: MatchState, gateway: Gateways) {
       state.gateWay = gateway;
     },
-  }
+  },
 } as const;
 
 export default mod;

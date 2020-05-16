@@ -11,7 +11,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.map(r => r.unitsKilled).join(" + ") }}
+        {{ unitScore.map((r) => r.unitsKilled).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -25,7 +25,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.map(r => r.unitsProduced).join(" + ") }}
+        {{ unitScore.map((r) => r.unitsProduced).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -39,7 +39,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.map(r => r.goldCollected).join(" + ")  }}
+        {{ resourceScoure.map((r) => r.goldCollected).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -53,7 +53,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.map(r => r.lumberCollected).join(" + ") }}
+        {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -67,7 +67,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ resourceScoure.map(r => r.goldUpkeepLost).join(" + ") }}
+        {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") }}
       </v-col>
     </v-row>
     <v-row dense>
@@ -81,7 +81,7 @@
         :cols="is2v2 ? 3 : 2"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.map(r => r.largestArmy).join(" / ") }}
+        {{ unitScore.map((r) => r.largestArmy).join(" / ") }}
       </v-col>
     </v-row>
   </div>
@@ -107,43 +107,59 @@ export default class PlayerPerformanceOnMatch extends Vue {
 
   get goldComparison() {
     return this.comparison(
-      this.resourceScoureOpponent.map(s => s.goldCollected).reduce((a, b) => a + b, 0),
-      this.resourceScoure.map(s => s.goldCollected).reduce((a, b) => a + b, 0)
+      this.resourceScoureOpponent
+        .map((s) => s.goldCollected)
+        .reduce((a, b) => a + b, 0),
+      this.resourceScoure.map((s) => s.goldCollected).reduce((a, b) => a + b, 0)
     );
   }
 
   get woodComparison() {
     return this.comparison(
-      this.resourceScoureOpponent.map(s => s.lumberCollected).reduce((a, b) => a + b, 0),
-      this.resourceScoure.map(s => s.lumberCollected).reduce((a, b) => a + b, 0)
+      this.resourceScoureOpponent
+        .map((s) => s.lumberCollected)
+        .reduce((a, b) => a + b, 0),
+      this.resourceScoure
+        .map((s) => s.lumberCollected)
+        .reduce((a, b) => a + b, 0)
     );
   }
 
   get upkeepComparison() {
     return this.comparison(
-      this.resourceScoure.map(s => s.goldUpkeepLost).reduce((a, b) => a + b, 0),
-      this.resourceScoureOpponent.map(s => s.goldUpkeepLost).reduce((a, b) => a + b, 0)
+      this.resourceScoure
+        .map((s) => s.goldUpkeepLost)
+        .reduce((a, b) => a + b, 0),
+      this.resourceScoureOpponent
+        .map((s) => s.goldUpkeepLost)
+        .reduce((a, b) => a + b, 0)
     );
   }
 
   get armyComparison() {
     return this.comparison(
-      this.unitScoreOpponent.map(s => s.largestArmy).reduce((a, b) => a + b, 0),
-      this.unitScore.map(s => s.largestArmy).reduce((a, b) => a + b, 0)
+      this.unitScoreOpponent
+        .map((s) => s.largestArmy)
+        .reduce((a, b) => a + b, 0),
+      this.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0)
     );
   }
 
   get unitsKilledComparison() {
     return this.comparison(
-      this.unitScoreOpponent.map(s => s.unitsKilled).reduce((a, b) => a + b, 0),
-      this.unitScore.map(s => s.unitsKilled).reduce((a, b) => a + b, 0)
+      this.unitScoreOpponent
+        .map((s) => s.unitsKilled)
+        .reduce((a, b) => a + b, 0),
+      this.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0)
     );
   }
 
   get unitsProducedComparison() {
     return this.comparison(
-      this.unitScoreOpponent.map(s => s.unitsProduced).reduce((a, b) => a + b, 0),
-      this.unitScore.map(s => s.unitsProduced).reduce((a, b) => a + b, 0)
+      this.unitScoreOpponent
+        .map((s) => s.unitsProduced)
+        .reduce((a, b) => a + b, 0),
+      this.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0)
     );
   }
 

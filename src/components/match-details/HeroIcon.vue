@@ -14,7 +14,7 @@ import { Hero } from "@/store/typings";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
 @Component({
-  components: {HeroPicture}
+  components: { HeroPicture },
 })
 export default class HeroIcon extends Vue {
   @Prop() hero!: Hero;
@@ -29,7 +29,6 @@ export default class HeroIcon extends Vue {
 </script>
 
 <style type="text/css" scoped>
-
 .theme--light .hero-level-flag {
   background: rgba(52, 122, 154, 0.5);
 }
