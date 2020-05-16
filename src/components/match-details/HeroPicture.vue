@@ -3,21 +3,21 @@
     <v-card-text
       class="hero-icon"
       :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
-      @click.stop="isEnabledForChange ? openDialog : null"
+      @click="openDialog"
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
     <v-dialog v-model="dialogOpened" max-width="400px">
       <v-card>
         <v-row
-          v-for="heroPickPerRace in possibleHeroPicks"
-          :key="heroPickPerRace.map(m => m.heroId).join('-')"
+          v-for="heroPickPerRace in possibleHeroPickRows"
+          :key="heroPickPerRace.map(h => h.heroId).join('_')"
           justify="space-between"
         >
           <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
             <v-card-text
               class="hero-icon hero-icon-select"
               :class="isEnabledForSelect ? '' : 'hero-icon-disabled'"
-              @click.stop="isEnabledForSelect ? pickHero(heroPick) : null"
+              @click="pickHero(heroPick)"
               :style="{ 'background-image': 'url(' + parsePicture(heroPick) + ')' }"
             />
           </v-col>
@@ -31,6 +31,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { HeroPick } from "@/store/overallStats/types";
+import {ERaceEnum} from "@/store/typings";
 
 @Component({})
 export default class HeroPicture extends Vue {
@@ -72,40 +73,52 @@ export default class HeroPicture extends Vue {
     return this.$store.direct.state.overallStatistics.heroPicks;
   }
 
+  get possibleHeroPickRows() {
+    return [
+      this.possibleHeroPicks.slice(0, 2),
+      this.possibleHeroPicks.slice(2, 6),
+      this.possibleHeroPicks.slice(6, 10),
+      this.possibleHeroPicks.slice(10, 14),
+      this.possibleHeroPicks.slice(14, 18),
+      this.possibleHeroPicks.slice(18, 23),
+      this.possibleHeroPicks.slice(23, 27),
+    ]
+  }
+
   get possibleHeroPicks() {
     return [
-      [{ name: this.$t(`heroNames.none`), heroId: "none", disabled: false },
-      { name: this.$t(`heroNames.all`), heroId: "all", disabled: false }],
+      { name: this.$t(`heroNames.none`), heroId: "none", race: ERaceEnum.TOTAL },
+      { name: this.$t(`heroNames.all`), heroId: "all", race: ERaceEnum.TOTAL },
 
-      [{ name: this.$t(`heroNames.archmage`), heroId: "archmage", disabled: false },
-      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking", disabled: false },
-      { name: this.$t(`heroNames.paladin`), heroId: "paladin", disabled: false },
-      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror", disabled: false }],
+      { name: this.$t(`heroNames.archmage`), heroId: "archmage", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.mountainking`), heroId: "mountainking", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.paladin`), heroId: "paladin", race: ERaceEnum.HUMAN },
+      { name: this.$t(`heroNames.sorceror`), heroId: "sorceror", race: ERaceEnum.HUMAN },
 
-      [{ name: this.$t(`heroNames.farseer`), heroId: "farseer", disabled: false },
-      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster", disabled: false },
-      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter", disabled: false },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false }],
+      { name: this.$t(`heroNames.farseer`), heroId: "farseer", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.blademaster`), heroId: "blademaster", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.shadowhunter`), heroId: "shadowhunter", race: ERaceEnum.ORC },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", race: ERaceEnum.ORC },
 
-      [{ name: this.$t(`heroNames.deathknight`), heroId: "deathknight", disabled: false },
-      { name: this.$t(`heroNames.lich`), heroId: "lich", disabled: false },
-      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord", disabled: false },
-      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord", disabled: false }],
+      { name: this.$t(`heroNames.deathknight`), heroId: "deathknight", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.lich`), heroId: "lich", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.dreadlord`), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
+      { name: this.$t(`heroNames.cryptlord`), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
 
-      [{ name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter", disabled: false },
-      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove", disabled: false },
-      { name: this.$t(`heroNames.warden`), heroId: "warden", disabled: false },
-      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon", disabled: false }],
+      { name: this.$t(`heroNames.demonhunter`), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.keeperofthegrove`), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.warden`), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
+      { name: this.$t(`heroNames.priestessofthemoon`), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
 
-      [{ name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame", disabled: false },
-      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger", disabled: false },
-      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster", disabled: false },
-      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster", disabled: false },
-      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord", disabled: false }],
-      [{ name: this.$t(`heroNames.seawitch`), heroId: "seawitch", disabled: false },
-      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", disabled: false },
-      { name: this.$t(`heroNames.tinker`), heroId: "tinker", disabled: false },
-      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", disabled: false }],
+      { name: this.$t(`heroNames.avatarofflame`), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.bansheeranger`), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.beastmaster`), heroId: "beastmaster", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.pandarenbrewmaster`), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.pitlord`), heroId: "pitlord", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.seawitch`), heroId: "seawitch", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.taurenchieftain`), heroId: "taurenchieftain", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.tinker`), heroId: "tinker", race: ERaceEnum.RANDOM },
+      { name: this.$t(`heroNames.alchemist`), heroId: "alchemist", race: ERaceEnum.RANDOM },
     ];
   }
 }

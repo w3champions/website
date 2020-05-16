@@ -5,13 +5,13 @@
     </v-card-title>
     <v-row>
       <v-col cols="2">
-        <hero-picture :hero-index="0" />
+        <hero-picture :hero-index="2" />
       </v-col>
       <v-col cols="2">
         <hero-picture :hero-index="1" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="2" />
+        <hero-picture :hero-index="0" />
       </v-col>
       <v-col cols="2">
         <hero-picture :hero-index="3" />
