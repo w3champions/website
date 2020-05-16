@@ -7,12 +7,12 @@ pr:
   - master
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: "ubuntu-18.04"
 
 steps:
   - task: PowerShell@2
     inputs:
-      targetType: 'inline'
+      targetType: "inline"
       script: |
         if(!("$(Build.Reason)".Equals("PullRequest"))){
           Write-Host "##vso[task.setvariable variable=BuildVersioning]$(Build.BuildID)"
@@ -26,11 +26,11 @@ steps:
 
   - task: Docker@2
     inputs:
-      containerRegistry: 'official-docker-modmoto'
-      repository: 'modmoto/w3champions-ui'
-      command: 'buildAndPush'
-      Dockerfile: '**/Dockerfile'
-      buildContext: '.'
+      containerRegistry: "official-docker-modmoto"
+      repository: "modmoto/w3champions-ui"
+      command: "buildAndPush"
+      Dockerfile: "**/Dockerfile"
+      buildContext: "."
       tags: |
         $(BuildVersioning)
         $(IsLatest)

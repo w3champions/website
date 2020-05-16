@@ -113,9 +113,7 @@
         </v-card>
       </v-dialog>
     </h3>
-    <div>
-      {{ savedMessageValue ? savedMessageValue : "-" }}
-    </div>
+    <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
   </div>
 </template>
 
@@ -274,9 +272,6 @@ export default class PlayerAvatar extends Vue {
 
 .player-league {
   width: 182px;
-
-  .league-image {
-  }
 
   .player-league-rank {
     font-size: 20px;
