@@ -142,7 +142,7 @@
                 <a href="https://discord.gg/uJmQxG2" target="_blank">
                   <img
                     src="../assets/discord-small.png"
-                    style="margin-left: -8px"
+                    style="margin-left: -8px;"
                     height="50px"
                   />
                 </a>
@@ -186,7 +186,9 @@
                       v-text="rank.player.name"
                     ></v-list-item-title>
                     <v-list-item-subtitle
-                      >Win/Loss/Total: {{ rank.player.wins }}/{{ rank.player.losses }}/{{rank.player.games}}</v-list-item-subtitle
+                      >Win/Loss/Total: {{ rank.player.wins }}/{{
+                        rank.player.losses
+                      }}/{{ rank.player.games }}</v-list-item-subtitle
                     >
                   </v-list-item-content>
                 </v-list-item>
@@ -217,7 +219,7 @@ export default class HomeView extends Vue {
 
   public goToProfile(rank: Ranking) {
     this.$router.push({
-      path: "/player/" + encodeURIComponent(rank.player.playerIds[0].battleTag)
+      path: "/player/" + encodeURIComponent(rank.player.playerIds[0].battleTag),
     });
   }
 }

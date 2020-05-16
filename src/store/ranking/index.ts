@@ -1,7 +1,7 @@
-import {moduleActionContext} from "..";
-import {Gateways, Ladder, Ranking, RankingState, Season} from "./types";
-import {DataTableOptions, EGameMode, RootState} from "../typings";
-import {ActionContext} from "vuex";
+import { moduleActionContext } from "..";
+import { Gateways, Ladder, Ranking, RankingState, Season } from "./types";
+import { DataTableOptions, EGameMode, RootState } from "../typings";
+import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
@@ -17,14 +17,17 @@ const mod = {
     searchRanks: [],
     gameMode: EGameMode.GM_1ON1,
     seasons: [] as Season[],
-    selectedSeason: {} as Season
+    selectedSeason: {} as Season,
   } as RankingState,
   actions: {
     async retrieveRankings(
       context: ActionContext<RankingState, RootState>,
       options?: DataTableOptions
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       if (options && options.page != null) {
         commit.SET_PAGE(options.page - 1);
@@ -34,7 +37,7 @@ const mod = {
         state.league,
         state.gateway,
         state.gameMode,
-        state.selectedSeason.id
+        state.selectedSeason.id ?? rootState.player.selectedSeason.id
       );
 
       commit.SET_TOTAL_RANKS(response.length);
@@ -53,7 +56,7 @@ const mod = {
     },
     async search(
       context: ActionContext<RankingState, RootState>,
-      search: { searchText: string, gameMode: EGameMode}
+      search: { searchText: string; gameMode: EGameMode }
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
@@ -81,51 +84,50 @@ const mod = {
       await dispatch.retrieveRankings(undefined);
     },
     async setLeague(
-        context: ActionContext<RankingState, RootState>,
-        league: number
+      context: ActionContext<RankingState, RootState>,
+      league: number
     ) {
-      const { commit, dispatch  } = moduleActionContext(context, mod);
+      const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_LEAGUE(league);
       await dispatch.retrieveRankings(undefined);
     },
     async setSeason(
-        context: ActionContext<RankingState, RootState>,
-        season: Season
+      context: ActionContext<RankingState, RootState>,
+      season: Season
     ) {
-      const { commit, dispatch  } = moduleActionContext(context, mod);
+      const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_SELECTED_SEASON(season);
 
       await dispatch.retrieveLeagueConstellation();
       await dispatch.retrieveRankings(undefined);
     },
     async setGameMode(
-        context: ActionContext<RankingState, RootState>,
-        gameMode: EGameMode
+      context: ActionContext<RankingState, RootState>,
+      gameMode: EGameMode
     ) {
-      const { commit, dispatch  } = moduleActionContext(context, mod);
+      const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_GAME_MODE(gameMode);
       await dispatch.retrieveRankings(undefined);
     },
     async retrieveLeagueConstellation(
-        context: ActionContext<RankingState, RootState>
+      context: ActionContext<RankingState, RootState>
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
-      const ladders = await rootGetters.rankingService.retrieveLadders(state.selectedSeason.id);
+      const ladders = await rootGetters.rankingService.retrieveLadders(
+        state.selectedSeason.id
+      );
 
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },
-    async retrieveSeasons(
-        context: ActionContext<RankingState, RootState>
-    ) {
-      const { commit, rootGetters, rootCommit } = moduleActionContext(context, mod);
+    async retrieveSeasons(context: ActionContext<RankingState, RootState>) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const seasons = await rootGetters.rankingService.retrieveSeasons();
 
       commit.SET_SEASONS(seasons);
       commit.SET_SELECTED_SEASON(seasons[0]);
-      rootCommit.player.SET_SELECTED_SEASON(seasons[0]);
-    }
+    },
   },
   mutations: {
     SET_RANKINGS(state: RankingState, rankings: Ranking[]) {
@@ -160,8 +162,8 @@ const mod = {
     },
     SET_SELECTED_SEASON(state: RankingState, season: Season) {
       state.selectedSeason = season;
-    }
-  }
+    },
+  },
 } as const;
 
 export default mod;

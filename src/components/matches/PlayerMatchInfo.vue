@@ -25,7 +25,8 @@
     <div v-if="winrate">
       <p>{{ battleTag }}</p>
       <p></p>
-      Wins: <span class="number-text">{{ winrate.wins }}</span> | Losses: <span class="number-text">{{ winrate.losses }}</span> | Total:
+      Wins: <span class="number-text">{{ winrate.wins }}</span> | Losses:
+      <span class="number-text">{{ winrate.losses }}</span> | Total:
       <span class="number-text">{{ winrate.games }}</span>
     </div>
     <div v-else>
@@ -40,10 +41,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
-import {RaceStat} from "@/store/player/types";
+import { RaceStat } from "@/store/player/types";
 
 @Component({
-  components: { PlayerIcon }
+  components: { PlayerIcon },
 })
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: PlayerInTeam;
@@ -109,9 +110,9 @@ export default class PlayerMatchInfo extends Vue {
   public goToPlayer() {
     this.$router
       .push({
-        path: "/player/" + encodeURIComponent(this.player.battleTag)
+        path: "/player/" + encodeURIComponent(this.player.battleTag),
       })
-      .catch(err => {
+      .catch((err) => {
         return err;
       });
   }

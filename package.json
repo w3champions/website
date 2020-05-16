@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve --mode development",
     "build:test": "vue-cli-service build --mode development",
     "build:prod": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "format": "node_modules/.bin/prettier --write ."
   },
   "dependencies": {
     "@types/chart.js": "^2.9.20",

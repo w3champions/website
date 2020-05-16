@@ -10,16 +10,16 @@ import { ChartData } from "chart.js";
 import Vue from "vue";
 
 @Component({
-  components: { BarChart }
+  components: { BarChart },
 })
 export default class PlayedHeroesChart extends Vue {
   @Prop() public playedHeroes!: PlayedHero[];
 
   get orderedHeroes(): PlayedHero[] {
     return this.playedHeroes
-      .map(h => ({
+      .map((h) => ({
         icon: this.$t("heroNames." + h.icon).toString(),
-        count: h.count
+        count: h.count,
       }))
       .sort(this.compare);
   }
@@ -33,16 +33,16 @@ export default class PlayedHeroesChart extends Vue {
 
   get gameHourChartData(): ChartData {
     return {
-      labels: this.orderedHeroes.map(p => p.icon),
+      labels: this.orderedHeroes.map((p) => p.icon),
       datasets: [
         {
           label: "played heroes",
-          data: this.orderedHeroes.map(p => p.count),
+          data: this.orderedHeroes.map((p) => p.count),
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1
-        }
-      ]
+          borderWidth: 1,
+        },
+      ],
     };
   }
 }

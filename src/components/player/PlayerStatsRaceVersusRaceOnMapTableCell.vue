@@ -14,11 +14,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { RaceWinLoss } from '@/store/overallStats/types';
-import { ERaceEnum } from '@/store/typings';
+import { RaceWinLoss } from "@/store/overallStats/types";
+import { ERaceEnum } from "@/store/typings";
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
   @Prop() public stats!: RaceWinLoss;
@@ -28,7 +28,7 @@ export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
 
   get toWinText() {
     if (this.isComparingSameRace || this.stats.games == 0) {
-      return '-';
+      return "-";
     }
 
     return `${(this.stats.winrate * 100).toFixed(1)}%`;
@@ -38,15 +38,15 @@ export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
     const classes: string[] = [];
 
     if (this.stats.games == 0 || this.isComparingSameRace) {
-      classes.push('stats-empty');
+      classes.push("stats-empty");
       return classes;
-    };
+    }
 
     if (this.stats.winrate > (this.winThreshold || 0.6)) {
-      classes.push('won');
+      classes.push("won");
     }
-    if (this.stats.winrate < (this.lossThreshold || 0.4)){
-      classes.push('lost');
+    if (this.stats.winrate < (this.lossThreshold || 0.4)) {
+      classes.push("lost");
     }
 
     return classes;
@@ -67,7 +67,7 @@ export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .stats-empty {
-    padding-left: 30px;
-  }
+.stats-empty {
+  padding-left: 30px;
+}
 </style>

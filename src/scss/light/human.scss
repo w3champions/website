@@ -59,7 +59,8 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
     }
   }
 
-  .v-data-table, .custom-table {
+  .v-data-table,
+  .custom-table {
     tr:hover {
       box-shadow: 0 0 6px black;
     }
@@ -75,11 +76,10 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
   }
 }
 
-
 .human {
   header.v-app-bar--is-scrolled + main {
-        .search-bar {
-            background-color: rgba(223, 229, 233, 0.9);
-        }
+    .search-bar {
+      background-color: rgba(223, 229, 233, 0.9);
+    }
   }
 }

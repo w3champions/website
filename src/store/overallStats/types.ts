@@ -1,5 +1,5 @@
-import { Moment } from 'moment';
-import {EGameMode, EPick, ERaceEnum} from "@/store/typings";
+import { Moment } from "moment";
+import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
 
 export type OveralStatisticState = {
   gamesPerDay: GameDay[];
@@ -32,15 +32,15 @@ export interface PlayedHero {
 }
 
 export type GameDay = {
-  date: Moment,
-  gamesPlayed: number,
-  id: string
-}
+  date: Moment;
+  gamesPlayed: number;
+  id: string;
+};
 
 export type MmrCount = {
-  mmr: number,
-  count: number
-}
+  mmr: number;
+  count: number;
+};
 
 export interface HeroPick {
   name: string,
@@ -49,19 +49,18 @@ export interface HeroPick {
 }
 
 export type MmrDistribution = {
-  top2PercentIndex: number,
-  top5PercentIndex: number,
-  top10PercentIndex: number,
-  top25ercentIndex: number,
-  top50PercentIndex: number,
-  distributedMmrs: MmrCount[]
-}
+  top2PercentIndex: number;
+  top5PercentIndex: number;
+  top10PercentIndex: number;
+  top25ercentIndex: number;
+  top50PercentIndex: number;
+  distributedMmrs: MmrCount[];
+};
 
 export type PlayersPerDay = {
-  date: Moment,
-  distinctPlayers: number
-}
-
+  date: Moment;
+  distinctPlayers: number;
+};
 
 export interface WinLoss {
   wins: number;
@@ -77,17 +76,17 @@ export interface RaceWinLoss extends WinLoss {
 export type Ratio = {
   race: ERaceEnum;
   winLosses: RaceWinLoss[];
-}
+};
 
 export type StatsPerMapAndRace = {
   mapName: string;
   ratio: Ratio[];
-}
+};
 
 export type StatsPerWinrate = {
   mmrRange: number;
   statsPerModes: StatsPerMapAndRace[];
-}
+};
 
 export interface Length {
   passedTimeInSeconds: number;

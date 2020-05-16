@@ -1,9 +1,9 @@
 const en = {
   dateFormats: {
-    date: 'DD-MMM-YYYY',
-    dateTime: 'DD-MMM-YYYY HH:mm',
-    timeShort: 'mm:ss',
-    timeLong: 'H:mm:ss'
+    date: "DD-MMM-YYYY",
+    dateTime: "DD-MMM-YYYY HH:mm",
+    timeShort: "mm:ss",
+    timeLong: "H:mm:ss",
   },
 
   races: {
@@ -12,7 +12,7 @@ const en = {
     UNDEAD: "Undead",
     NIGHT_ELF: "Night Elf",
     RANDOM: "Random",
-    TOTAL: "Total"
+    TOTAL: "Total",
   },
 
   gameModes: {
@@ -50,7 +50,7 @@ const en = {
     gnollwood: "Gnoll Wood",
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
-    hillsbradcreek: "Hillsbrad Creek"
+    hillsbradcreek: "Hillsbrad Creek",
   },
 
   heroNames: {
@@ -80,7 +80,7 @@ const en = {
     taurenchieftain: "Tauren Chieftain",
     tinker: "Goblin Tinker",
     warden: "Warden",
-  }
+  },
 };
 
 export default en;

@@ -11,7 +11,7 @@ import BarChart from "@/components/overal-statistics/BarChart.vue";
 import Vue from "vue";
 
 @Component({
-  components: { BarChart }
+  components: { BarChart },
 })
 export default class PopularGameTimeChart extends Vue {
   @Prop() public popularGameHour!: PopularGameHour;
@@ -26,7 +26,7 @@ export default class PopularGameTimeChart extends Vue {
   }
 
   get passedTime() {
-    return this.getTrimmedTimes().map(g =>
+    return this.getTrimmedTimes().map((g) =>
       moment
         .utc(
           moment
@@ -39,7 +39,7 @@ export default class PopularGameTimeChart extends Vue {
   }
 
   get gamesCount() {
-    return this.getTrimmedTimes().map(g => g.games);
+    return this.getTrimmedTimes().map((g) => g.games);
   }
   get gameHourChartData(): ChartData {
     return {
@@ -50,9 +50,9 @@ export default class PopularGameTimeChart extends Vue {
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1
-        }
-      ]
+          borderWidth: 1,
+        },
+      ],
     };
   }
 }

@@ -7,8 +7,9 @@ import {
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
+  StatsPerMapAndRace,
   StatsPerWinrate,
-  WinLoss
+  WinLoss,
 } from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
