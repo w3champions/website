@@ -5,18 +5,6 @@
     </v-card-title>
     <v-row>
       <v-col cols="2">
-<!--        <v-select-->
-<!--          :items="heroesHome"-->
-<!--          item-text="name"-->
-<!--          item-value="heroId"-->
-<!--          v-model="thirdPickHome"-->
-<!--          label="3"-->
-<!--          return-object-->
-<!--          @change="(v) => setSelectedHero(2, v)"-->
-<!--          :disabled="secondPickHome.heroId === 'none' || secondPickHome.heroId === 'all'"-->
-<!--          outlined-->
-<!--          dense-->
-<!--        />-->
         <hero-picture :hero-index="0" />
       </v-col>
       <v-col cols="2">

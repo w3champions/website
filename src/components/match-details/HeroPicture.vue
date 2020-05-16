@@ -1,28 +1,28 @@
 <template>
   <v-card-text>
-  <v-card-text
-    class="hero-icon"
-    @click.stop="openDialog"
-    :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-  />
-  <v-dialog v-model="dialogOpened" max-width="500px">
-    <v-card>
-      <v-row
-        style="padding-left: 25px; padding-right: 25px"
-        v-for="heroPickPerRace in possibleHeroPicks"
-        :key="heroPickPerRace.map(m => m.heroId).join('-')"
-        justify="space-between"
-      >
-        <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
-          <v-card-text
-            class="hero-icon"
-            @click.stop="openDialog"
-            :style="{ 'background-image': 'url(' + parsePicture(heroPick.heroId) + ')' }"
-          />
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-dialog>
+    <v-card-text
+      class="hero-icon"
+      @click.stop="openDialog"
+      :style="{ 'background-image': 'url(' + heroPicture + ')' }"
+    />
+    <v-dialog v-model="dialogOpened" max-width="500px">
+      <v-card>
+        <v-row
+          style="padding-left: 25px; padding-right: 25px"
+          v-for="heroPickPerRace in possibleHeroPicks"
+          :key="heroPickPerRace.map(m => m.heroId).join('-')"
+          justify="space-between"
+        >
+          <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
+            <v-card-text
+              class="hero-icon"
+              @click.stop="pickHero(heroPick)"
+              :style="{ 'background-image': 'url(' + parsePicture(heroPick.heroId) + ')' }"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-card-text>
 </template>
 
@@ -45,6 +45,8 @@ export default class HeroPicture extends Vue {
 
   public pickHero(pick: HeroPick) {
     console.log(pick.heroId);
+
+    this.dialogOpened = false;
   }
 
   public parsePicture(hero: HeroPick) {

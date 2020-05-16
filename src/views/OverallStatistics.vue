@@ -162,20 +162,20 @@
                 <v-col cols="12" md="2">
                   <v-card-text>
                     <v-select
-                            :items="gameModes"
-                            item-text="modeName"
-                            item-value="modeId"
-                            @change="setSelectedHeroesPlayedMode"
-                            label="Mode"
-                            outlined
+                      :items="gameModes"
+                      item-text="modeName"
+                      item-value="modeId"
+                      @change="setSelectedHeroesPlayedMode"
+                      label="Mode"
+                      outlined
                     />
                     <v-select
-                            :items="picks"
-                            item-text="pickName"
-                            item-value="pickId"
-                            @change="setSelectedHeroesPlayedPick"
-                            label="Pick"
-                            outlined
+                      :items="picks"
+                      item-text="pickName"
+                      item-value="pickId"
+                      @change="setSelectedHeroesPlayedPick"
+                      label="Pick"
+                      outlined
                     />
                   </v-card-text>
                 </v-col>
