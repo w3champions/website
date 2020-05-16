@@ -167,10 +167,9 @@ const mod = {
       state.mmrDistribution = mmrDistribution
     },
     SET_HIRO_PICK(state: OveralStatisticState, pick: {index: number, heroPick: HeroPick}) {
-      state.heroPicks = [
-        ...state.heroPicks.filter(h => h.index !== pick.index),
-        pick.heroPick
-      ]
+      const newPicks = [...state.heroPicks]
+      newPicks[pick.index] = pick.heroPick;
+      state.heroPicks = newPicks;
     }
   }
 } as const;
