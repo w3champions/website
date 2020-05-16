@@ -43,13 +43,63 @@ export default class HeroPicture extends Vue {
     this.dialogOpened = true;
   }
 
-  public pickHero(pick: HeroPick) {
-    this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex, heroPick: pick});
+  public pickHero(hero: HeroPick) {
+    // // if (this.heroIndex < 3) {
+    // //   this.heroesHome.forEach(h => h.disabled = false);
+    // //   this.heroesHome.filter(h => h.heroId == this.firstPickHome.heroId)[0].disabled = true
+    // //   this.heroesHome.filter(h => h.heroId == this.secondPickHome.heroId)[0].disabled = true
+    // //   this.heroesHome.filter(h => h.heroId == this.thirdPickHome.heroId)[0].disabled = true
+    // // } else {
+    // //   this.heroesOpponent.forEach(h => h.disabled = false);
+    // //   this.heroesOpponent.filter(h => h.heroId == this.firstPickOpponent.heroId)[0].disabled = true
+    // //   this.heroesOpponent.filter(h => h.heroId == this.secondPickOpponent.heroId)[0].disabled = true
+    // //   this.heroesOpponent.filter(h => h.heroId == this.thirdPickOpponent.heroId)[0].disabled = true
+    // // }
+    //
+    // // this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
+    // // this.heroesHome.filter(h => h.heroId == "none")[0].disabled = false
+    // // this.heroesOpponent.filter(h => h.heroId == "all")[0].disabled = false
+    // // this.heroesOpponent.filter(h => h.heroId == "none")[0].disabled = false
+    //
+    // // make all selections equal depending on the higher order one and not allowing hero selections after non/all
+    // if (hero.heroId === "none" || hero.heroId === "all") {
+    //   if (this.heroIndex == 0) {
+    //     this.heroPicks[1] = { name: hero.name, heroId: hero.heroId };
+    //     this.heroPicks[2] = { name: hero.name, heroId: hero.heroId };
+    //   }
+    //   if (this.heroIndex == 1) {
+    //     this.thirdPickHome = { name: hero.name, heroId: hero.heroId };
+    //   }
+    //   if (this.heroIndex == 3) {
+    //     this.secondPickOpponent = { name: hero.name, heroId: hero.heroId };
+    //     this.thirdPickOpponent = { name: hero.name, heroId: hero.heroId, disabled: false };
+    //   }
+    //   if (this.heroIndex == 4) {
+    //     this.thirdPickOpponent = { name: hero.name, heroId: hero.heroId, disabled: false };
+    //   }
+    // }
+    //
+    // // for not allowing none as first hero
+    // if (this.heroPick.heroId === "none") {
+    //   if (this.heroIndex == 0) {
+    //     this.heroPicks[1] = { name: "all", heroId: "all", disabled: false };
+    //   }
+    //   if (this.heroIndex == 3) {
+    //     this.heroPicks[3] = { name: "all", heroId: "all", disabled: false };
+    //   }
+    // }
+
+    const newPick = {index: this.heroIndex, heroPick: hero};
+
+    this.$store.direct.commit.overallStatistics.SET_HIRO_PICK(newPick);
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
     this.dialogOpened = false;
   }
 
   public parsePicture(hero: HeroPick) {
+    if (this.previousHero?.heroId === "all") hero.heroId = "all"
+    if (this.previousHero?.heroId === "none") hero.heroId = "none"
+    
     try {
       return require("../../assets/heroes/" + hero.heroId + ".png");
     } catch (e) {
@@ -58,7 +108,14 @@ export default class HeroPicture extends Vue {
   }
 
   get isEnabledForChange() {
-    return this.heroPicks[this.heroIndex % 3 - 1]?.heroId !== "all" && this.heroPicks[this.heroIndex - 1]?.heroId !== "none"
+    return this.previousHero?.heroId !== "all" && this.previousHero?.heroId !== "none"
+  }
+
+  get previousHero() {
+    if (this.heroIndex === 3 || this.heroIndex === 0) {
+      return null
+    }
+    return this.heroPicks[this.heroIndex - 1]
   }
 
   get isEnabledForSelect() {
@@ -71,6 +128,10 @@ export default class HeroPicture extends Vue {
 
   get heroPicks() {
     return this.$store.direct.state.overallStatistics.heroPicks;
+  }
+
+  get heroPick() {
+    return this.heroPicks[this.heroIndex];
   }
 
   get possibleHeroPickRows() {

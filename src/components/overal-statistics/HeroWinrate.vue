@@ -53,55 +53,6 @@ export default class HeroWinrate extends Vue {
     return this.$store.direct.state.overallStatistics.heroWinrate.losses;
   }
 
-  setSelectedHero(index: number, selection: { heroId: string, name: string }) {
-    // if (index < 3) {
-    //   this.heroesHome.forEach(h => h.disabled = false);
-    //   this.heroesHome.filter(h => h.heroId == this.firstPickHome.heroId)[0].disabled = true
-    //   this.heroesHome.filter(h => h.heroId == this.secondPickHome.heroId)[0].disabled = true
-    //   this.heroesHome.filter(h => h.heroId == this.thirdPickHome.heroId)[0].disabled = true
-    // } else {
-    //   this.heroesOpponent.forEach(h => h.disabled = false);
-    //   this.heroesOpponent.filter(h => h.heroId == this.firstPickOpponent.heroId)[0].disabled = true
-    //   this.heroesOpponent.filter(h => h.heroId == this.secondPickOpponent.heroId)[0].disabled = true
-    //   this.heroesOpponent.filter(h => h.heroId == this.thirdPickOpponent.heroId)[0].disabled = true
-    // }
-    //
-    // this.heroesHome.filter(h => h.heroId == "all")[0].disabled = false
-    // this.heroesHome.filter(h => h.heroId == "none")[0].disabled = false
-    // this.heroesOpponent.filter(h => h.heroId == "all")[0].disabled = false
-    // this.heroesOpponent.filter(h => h.heroId == "none")[0].disabled = false
-    //
-    // // make all selections equal depending on the higher order one and not allowing hero selections after non/all
-    // if (selection.heroId === "none" || selection.heroId === "all") {
-    //   if (index == 0) {
-    //     this.secondPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //     this.thirdPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //   }
-    //   if (index == 1) {
-    //     this.thirdPickHome = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //   }
-    //   if (index == 3) {
-    //     this.secondPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //     this.thirdPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //   }
-    //   if (index == 4) {
-    //     this.thirdPickOpponent = { name: selection.name, heroId: selection.heroId, disabled: false };
-    //   }
-    // }
-    //
-    // // for not allowing none as first hero
-    // if (selection.heroId === "none") {
-    //   if (index == 0) {
-    //     this.heroPicks[1] = { name: "all", heroId: "all", disabled: false };
-    //   }
-    //   if (index == 3) {
-    //     this.heroPicks[3] = { name: "all", heroId: "all", disabled: false };
-    //   }
-    // }
-
-    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
-  }
-
   mounted() {
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
   }
