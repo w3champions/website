@@ -30,7 +30,7 @@ import RaceToMapStat from "@/components/overal-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
-  components: { RaceToMapStat }
+  components: { RaceToMapStat },
 })
 export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   @Prop() public stats!: RaceWinsOnMap[];
@@ -42,11 +42,11 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
     let maxRace = ERaceEnum.RANDOM;
     let maxGames = 0;
     this.stats
-      .filter(s => s.race !== ERaceEnum.TOTAL)
-      .forEach(s =>
-        s.winLossesOnMap.forEach(w => {
+      .filter((s) => s.race !== ERaceEnum.TOTAL)
+      .forEach((s) =>
+        s.winLossesOnMap.forEach((w) => {
           const gamesOfRace = w.winLosses
-            .map(wl => wl.games)
+            .map((wl) => wl.games)
             .reduce((a, b) => a + b, 0);
           if (maxGames < gamesOfRace) {
             maxRace = s.race;

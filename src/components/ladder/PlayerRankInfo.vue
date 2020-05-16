@@ -2,7 +2,7 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div
-        style="display: inline"
+        style="display: inline;"
         class="pointer"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openProfileInNewTab(playerId.battleTag)"
@@ -28,7 +28,7 @@ export default class PlayerRankInfo extends Vue {
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({
-      path: this.getPlayerPath(playerId)
+      path: this.getPlayerPath(playerId),
     });
   }
 

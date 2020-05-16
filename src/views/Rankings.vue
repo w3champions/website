@@ -36,7 +36,10 @@
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
               <league-icon :league="selectedLeageueOrder" />
-              {{ selectedLeagueName }} {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
+              {{ selectedLeagueName }}
+              {{
+                selectedLeague.division !== 0 ? selectedLeague.division : null
+              }}
             </v-btn>
           </template>
           <v-card>
@@ -56,7 +59,8 @@
                   <v-list-item-content>
                     <v-list-item-title>
                       <league-icon :league="item.order" />
-                      {{ item.name }} {{ item.division !== 0 ? item.division : null }}
+                      {{ item.name }}
+                      {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -87,8 +91,14 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
-                  <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
+                  <span v-if="!isDuplicateName(data.item.player.name)">{{
+                    data.item.player.name
+                  }}</span>
+                  <span v-if="isDuplicateName(data.item.player.name)">{{
+                    data.item.player.playerIds
+                      .map((p) => p.battleTag)
+                      .join(" & ")
+                  }}</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -102,7 +112,12 @@
       </v-card-title>
       <v-menu offset-x>
         <template v-slot:activator="{ on }">
-          <v-btn tile v-on="on" class="ma-4" style="background-color: transparent;">
+          <v-btn
+            tile
+            v-on="on"
+            class="ma-4"
+            style="background-color: transparent;"
+          >
             <h2 class="pa-0">Season {{ currentSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
@@ -121,9 +136,7 @@
                 @click="selectSeason(item)"
               >
                 <v-list-item-content>
-                  <v-list-item-title>
-                    Season {{ item.id }}
-                  </v-list-item-title>
+                  <v-list-item-title> Season {{ item.id }} </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -135,8 +148,12 @@
           <table class="custom-table">
             <thead>
               <tr>
-                <td v-for="header in headers" :key="header.text" v-bind:style="{ width: header.width }">
-                  {{header.text}}
+                <td
+                  v-for="header in headers"
+                  :key="header.text"
+                  v-bind:style="{ width: header.width }"
+                >
+                  {{ header.text }}
                 </td>
               </tr>
             </thead>
@@ -146,7 +163,7 @@
                 v-for="item in rankings"
                 :key="item.player.id"
                 :class="{
-                  searchedItem: item.player.id === searchModelBattleTag
+                  searchedItem: item.player.id === searchModelBattleTag,
                 }"
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
@@ -156,7 +173,12 @@
                     :key="playerId.battleTag"
                   >
                     <player-rank-info :player-id="playerId" />
-                    <span v-if="item.player.playerIds.indexOf(playerId) !== item.player.playerIds.length - 1">
+                    <span
+                      v-if="
+                        item.player.playerIds.indexOf(playerId) !==
+                        item.player.playerIds.length - 1
+                      "
+                    >
                       &
                     </span>
                   </span>
@@ -192,22 +214,21 @@
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import {Component, Watch} from "vue-property-decorator";
-import {League, Ranking, Season} from "@/store/ranking/types";
-import {DataTableOptions, EGameMode} from "@/store/typings";
+import { Component, Watch } from "vue-property-decorator";
+import { League, Ranking, Season } from "@/store/ranking/types";
+import { DataTableOptions, EGameMode } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
 @Component({
-  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect }
+  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect },
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -215,49 +236,49 @@ export default class RankingsView extends Vue {
       text: "Rank",
       align: "start",
       sortable: false,
-      width: "25px"
+      width: "25px",
     },
     {
       text: "Player",
       align: "start",
-      sortable: false
+      sortable: false,
     },
     {
       text: "Wins",
       align: "end",
       sortable: false,
-      width: "50px"
+      width: "50px",
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
-      width: "50px"
+      width: "50px",
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
-      width: "50px"
+      width: "50px",
     },
     {
       text: "Winrate",
       align: "end",
       sortable: false,
-      width: "50px"
+      width: "50px",
     },
     {
       text: "MMR",
       align: "end",
       sortable: false,
-      width: "25px"
+      width: "25px",
     },
     {
       text: "RP",
       align: "end",
       sortable: false,
-      width: "25px"
-    }
+      width: "25px",
+    },
   ];
 
   public search = "";
@@ -272,14 +293,17 @@ export default class RankingsView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search({ searchText: newValue.toLowerCase(), gameMode: this.selectedGameMode });
+      this.$store.direct.dispatch.rankings.search({
+        searchText: newValue.toLowerCase(),
+        gameMode: this.selectedGameMode,
+      });
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
     }
   }
 
   public isDuplicateName(name: string) {
-    return this.searchRanks.filter(r => r.player.name === name).length > 1
+    return this.searchRanks.filter((r) => r.player.name === name).length > 1;
   }
 
   public async goToRank(rank: Ranking) {
@@ -301,7 +325,7 @@ export default class RankingsView extends Vue {
       if (offset > window.innerHeight) {
         window.scrollTo({
           top: offset - window.innerHeight + 150,
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }
     }, 200);
@@ -309,7 +333,7 @@ export default class RankingsView extends Vue {
 
   public options = {
     page: 1,
-    itemsPerPage: this.selectedLeagueMaxParticipantCount
+    itemsPerPage: this.selectedLeagueMaxParticipantCount,
   } as DataTableOptions;
 
   @Watch("options", { deep: true })
@@ -327,7 +351,7 @@ export default class RankingsView extends Vue {
 
   get gameMode() {
     const gameMode = this.$store.direct.state.rankings.gameMode;
-    return this.gameModes.filter(g => g.gameMode == gameMode)[0].modeName;
+    return this.gameModes.filter((g) => g.gameMode == gameMode)[0].modeName;
   }
 
   get selectedGameMode() {
@@ -340,11 +364,12 @@ export default class RankingsView extends Vue {
     const gameMode = this.$store.direct.state.rankings.gameMode;
     const season = this.$store.direct.state.rankings.selectedSeason;
     const ladder = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway == gw && l.gameMode === gameMode && l.season === season.id
+      (l) =>
+        l.gateway == gw && l.gameMode === gameMode && l.season === season.id
     )[0];
     if (!ladder) return {} as League;
 
-    return ladder.leagues.filter(l => l.id == league)[0] || {};
+    return ladder.leagues.filter((l) => l.id == league)[0] || {};
   }
 
   get selectedLeagueName(): string {
@@ -385,7 +410,10 @@ export default class RankingsView extends Vue {
     const gateway = this.$store.direct.state.rankings.gateway;
     const gameMode = this.$store.direct.state.rankings.gameMode;
     const league = this.$store.direct.state.rankings.ladders.filter(
-      l => l.gateway === gateway && l.gameMode === gameMode && l.season === this.currentSeason.id
+      (l) =>
+        l.gateway === gateway &&
+        l.gameMode === gameMode &&
+        l.season === this.currentSeason.id
     )[0];
     return league?.leagues;
   }
@@ -428,24 +456,26 @@ export default class RankingsView extends Vue {
     return [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        gameMode: EGameMode.GM_1ON1
+        gameMode: EGameMode.GM_1ON1,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        gameMode: EGameMode.GM_2ON2_AT
-      }
+        gameMode: EGameMode.GM_2ON2_AT,
+      },
     ];
   }
 }
 </script>
 <style lang="scss" scoped>
 .theme--light {
-  tr.searchedItem, tr.searchedItem:hover {
+  tr.searchedItem,
+  tr.searchedItem:hover {
     background-color: lightblue !important;
   }
 }
 .theme--dark {
-  tr.searchedItem, tr.searchedItem:hover {
+  tr.searchedItem,
+  tr.searchedItem:hover {
     background-color: #310e6f !important;
   }
 }

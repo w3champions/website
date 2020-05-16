@@ -1,11 +1,15 @@
-import {API_URL} from "@/main";
+import { API_URL } from "@/main";
 import {
   GameDay,
-  GameLength, MmrDistribution,
-  PlayedHero, PlayedHeroByMode,
+  GameLength,
+  MmrDistribution,
+  PlayedHero,
+  PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace, StatsPerWinrate, WinLoss
+  StatsPerMapAndRace,
+  StatsPerWinrate,
+  WinLoss,
 } from "@/store/overallStats/types";
 
 export default class StatisticService {
@@ -15,8 +19,8 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
@@ -28,8 +32,8 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
@@ -41,8 +45,8 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
@@ -54,8 +58,8 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();
@@ -68,8 +72,8 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
@@ -81,44 +85,45 @@ export default class StatisticService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
   }
 
-  public async retrieveMmrDistribution(season: number): Promise<MmrDistribution> {
+  public async retrieveMmrDistribution(
+    season: number
+  ): Promise<MmrDistribution> {
     const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
   }
 
   public async retrieveHeroWinrates(
-      first: string,
-      second: string,
-      third: string,
-      opFirst: string,
-      opSecond: string,
-      opThird: string,
+    first: string,
+    second: string,
+    third: string,
+    opFirst: string,
+    opSecond: string,
+    opThird: string
   ): Promise<WinLoss> {
     const url = `${API_URL}api/w3c-stats/heroes-winrate?first=${first}&second=${second}&third=${third}&opFirst=${opFirst}&opSecond=${opSecond}&opThird=${opThird}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
   }
-
 }

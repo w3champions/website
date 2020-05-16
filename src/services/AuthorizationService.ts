@@ -1,8 +1,8 @@
-import { BlizzardToken} from "@/store/oauth/types";
-import {API_URL, REDIRECT_URL} from "@/main";
-import Vue from 'vue';
+import { BlizzardToken } from "@/store/oauth/types";
+import { API_URL, REDIRECT_URL } from "@/main";
+import Vue from "vue";
 
-const BnetCookieKey = 'BnetAuth';
+const BnetCookieKey = "BnetAuth";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<BlizzardToken> {
@@ -11,20 +11,22 @@ export default class AuthorizationService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     return await response.json();
   }
 
   public async loadAuthCookie(): Promise<string> {
-    const cookie =  Vue.cookies.get(BnetCookieKey);
-    return cookie as string ?? "";
+    const cookie = Vue.cookies.get(BnetCookieKey);
+    return (cookie as string) ?? "";
   }
 
   public async saveAuthToken(token: BlizzardToken) {
-    Vue.cookies.set(BnetCookieKey, token.access_token, { expires: token.expires_in });
+    Vue.cookies.set(BnetCookieKey, token.access_token, {
+      expires: token.expires_in,
+    });
   }
 
   public deleteAuthCookie() {
@@ -37,8 +39,8 @@ export default class AuthorizationService {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     const data = await response.json();

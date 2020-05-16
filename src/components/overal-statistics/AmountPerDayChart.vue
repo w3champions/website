@@ -20,48 +20,48 @@ export default class AmountPerDayChart extends Mixins(Line) {
             backgroundColor: ["rgba(54, 162, 235, 0.2)"],
             pointBackgroundColor: "#ffffff",
             borderColor: ["rgba(54, 162, 235, 1)"],
-            borderWidth: 1
-          }
-        ]
+            borderWidth: 1,
+          },
+        ],
       },
       {
         legend: {
-          display: false
+          display: false,
         },
         tooltips: {
-          custom: function(tooltip) {
+          custom: function (tooltip) {
             if (!tooltip) return;
             tooltip.displayColors = false;
           },
           callbacks: {
-            label: function(tooltipItem) {
+            label: function (tooltipItem) {
               return `${tooltipItem.xLabel}: ${tooltipItem.yLabel}`;
             },
-            title: function() {
+            title: function () {
               return "";
-            }
-          }
+            },
+          },
         },
         maintainAspectRatio: false,
         scales: {
           yAxes: [
             {
               ticks: {
-                beginAtZero: true
-              }
-            }
-          ]
-        }
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
       }
     );
   }
 
   get gameDayDates() {
-    return this.gameDays.map(g => moment(g.date).format("LL"));
+    return this.gameDays.map((g) => moment(g.date).format("LL"));
   }
 
   get gameDayCounts() {
-    return this.gameDays.map(g => g.gamesPlayed);
+    return this.gameDays.map((g) => g.gamesPlayed);
   }
 }
 </script>

@@ -11,8 +11,12 @@ export default class LeagueIcon extends Vue {
   @Prop() league!: number;
 
   leagueIcon() {
-    const images = require.context('../../assets/leagueIcons/', false, /\.png$/);
-    return images('./' + this.league + ".png")
+    const images = require.context(
+      "../../assets/leagueIcons/",
+      false,
+      /\.png$/
+    );
+    return images("./" + this.league + ".png");
   }
 }
 </script>
@@ -22,6 +26,5 @@ export default class LeagueIcon extends Vue {
   width: 24px;
   margin-right: 10px;
   vertical-align: middle;
-};
-
+}
 </style>

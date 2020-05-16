@@ -11,7 +11,7 @@ import { ChartData } from "chart.js";
 import Vue from "vue";
 
 @Component({
-  components: { BarChart }
+  components: { BarChart },
 })
 export default class GameLengthChart extends Vue {
   @Prop() public gameLength!: GameLength;
@@ -23,7 +23,7 @@ export default class GameLengthChart extends Vue {
   }
 
   get passedTime() {
-    return this.getTrimmedTimes().map(g =>
+    return this.getTrimmedTimes().map((g) =>
       moment
         .utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds())
         .format("mm:ss")
@@ -31,7 +31,7 @@ export default class GameLengthChart extends Vue {
   }
 
   get gamesCount() {
-    return this.getTrimmedTimes().map(g => g.games);
+    return this.getTrimmedTimes().map((g) => g.games);
   }
 
   get gameHourChartData(): ChartData {
@@ -43,9 +43,9 @@ export default class GameLengthChart extends Vue {
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1
-        }
-      ]
+          borderWidth: 1,
+        },
+      ],
     };
   }
 }

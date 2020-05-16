@@ -1,12 +1,10 @@
 @import "./undead.scss";
 @import "./nightelf.scss";
 
-
 .theme--dark {
-    .custom-table{
-    
-        td {
-          border-bottom: thin solid hsla(0,0%,100%,.12);
-        }
-      }
+  .custom-table {
+    td {
+      border-bottom: thin solid hsla(0, 0%, 100%, 0.12);
+    }
+  }
 }

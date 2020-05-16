@@ -104,7 +104,8 @@ h3 {
   transform: translateZ(0);
 }
 
-.v-data-table, .custom-table {
+.v-data-table,
+.custom-table {
   background-color: transparent !important;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
@@ -123,10 +124,9 @@ h3 {
 }
 
 .v-card__title {
-  filter:blur(0)!important;
+  filter: blur(0) !important;
 }
 
 .row {
-  filter:blur(0);
+  filter: blur(0);
 }
-

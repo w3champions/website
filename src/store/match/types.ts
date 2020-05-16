@@ -1,5 +1,5 @@
-import {Match, MatchDetail} from "../typings";
-import { Gateways } from '../ranking/types';
+import { Match, MatchDetail } from "../typings";
+import { Gateways } from "../ranking/types";
 
 export type MatchState = {
   matches: Match[];

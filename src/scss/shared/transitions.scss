@@ -20,7 +20,7 @@
 @keyframes wc3enter {
   1% {
     @include ballb(-2000px);
-    opacity: 0.0;
+    opacity: 0;
   }
   30% {
     @include ballb(-2000px);
@@ -52,8 +52,8 @@
     @include ballb(0px);
   }
   40% {
-    @include ballb(20px)
-  }  
+    @include ballb(20px);
+  }
   100% {
     @include ballb(-2000px);
     opacity: 0;

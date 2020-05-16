@@ -1,5 +1,5 @@
-import {WinLoss} from "@/store/overallStats/types";
-import {EGameMode} from "@/store/typings";
+import { WinLoss } from "@/store/overallStats/types";
+import { EGameMode } from "@/store/typings";
 
 export type RankingState = {
   gateway: Gateways;
@@ -28,12 +28,12 @@ export type Season = {
 };
 
 export type League = {
-  id: number,
-  name: string,
-  order: number,
-  division: number,
-  maxParticipantCount: number
-}
+  id: number;
+  name: string;
+  order: number;
+  division: number;
+  maxParticipantCount: number;
+};
 
 export type Ranking = {
   gateway: number;
@@ -48,16 +48,16 @@ export interface PlayerId {
   battleTag: string;
 }
 
-export interface PlayerOverview extends WinLoss{
+export interface PlayerOverview extends WinLoss {
   id: string;
   name: string;
   mmr: number;
   gateWay: number;
-  playerIds: PlayerId[]
+  playerIds: PlayerId[];
 }
 
 export enum Gateways {
   America = 10,
   Europe = 20,
-  Asia = 30
+  Asia = 30,
 }

@@ -35,16 +35,16 @@ const mod = {
     matches,
     overallStatistics,
     oauth,
-    personalSettings
+    personalSettings,
   },
   state: {
-    darkMode: false
+    darkMode: false,
   } as RootState,
   actions: {},
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
       state.darkMode = darkMode;
-    }
+    },
   },
   getters: {
     rankingService() {
@@ -64,8 +64,8 @@ const mod = {
     },
     personalSettingsService() {
       return services.personalSettingsService;
-    }
-  }
+    },
+  },
 } as const;
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore(

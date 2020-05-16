@@ -5,17 +5,29 @@
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
       >
-        <span class="d-none d-md-inline">W3Champions - your Ladder for Warcraft III</span>
+        <span class="d-none d-md-inline"
+          >W3Champions - your Ladder for Warcraft III</span
+        >
       </div>
       <v-spacer></v-spacer>
 
-      <v-btn class="button-margin" v-for="item in items" :key="item.title" text tile :to="item.to" :class="item.class">
+      <v-btn
+        class="button-margin"
+        v-for="item in items"
+        :key="item.title"
+        text
+        tile
+        :to="item.to"
+        :class="item.class"
+      >
         <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="!authCode" class="mr-2"
+          >mdi-account-circle-outline</v-icon
+        >
       </v-btn>
 
       <v-menu offset-y v-if="authCode">
@@ -25,12 +37,12 @@
             <span class="mr-2 hidden-xs-only">{{ loginName }}</span>
           </v-btn>
         </template>
-        <v-list >
+        <v-list>
           <v-list-item @click="openPlayerProfile">
-            <v-list-item-title >View Profile</v-list-item-title>
+            <v-list-item-title>View Profile</v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout">
-            <v-list-item-title >Logout</v-list-item-title>
+            <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -78,7 +90,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import {REDIRECT_URL} from "@/main";
+import { REDIRECT_URL } from "@/main";
 
 @Component({})
 export default class App extends Vue {
@@ -86,26 +98,34 @@ export default class App extends Vue {
     { title: "Home", icon: "mdi-home-city", to: "/" },
     { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
-    { title: "Statistics", icon: "mdi-chart-areaspline", to: "/OverallStatistics" },
-    { title: "FAQ", icon: "mdi-help-circle-outline", to: "/Faq", class:'d-none d-md-flex' },
+    {
+      title: "Statistics",
+      icon: "mdi-chart-areaspline",
+      to: "/OverallStatistics",
+    },
+    {
+      title: "FAQ",
+      icon: "mdi-help-circle-outline",
+      to: "/Faq",
+      class: "d-none d-md-flex",
+    },
   ];
 
   loginOrGoToProfile() {
     if (this.authCode) {
       this.openPlayerProfile();
     } else {
-      location.href =
-        `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
+      location.href = `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
     }
   }
 
   logout() {
-     this.$store.direct.dispatch.oauth.logout();
+    this.$store.direct.dispatch.oauth.logout();
   }
 
   public openPlayerProfile() {
     this.$router.push({
-      path: this.getPlayerPath(this.battleTag)
+      path: this.getPlayerPath(this.battleTag),
     });
   }
 
@@ -203,5 +223,4 @@ export default class App extends Vue {
 .theme--light.v-badge .v-badge__badge::after {
   border-color: #36393f !important;
 }
-
 </style>
