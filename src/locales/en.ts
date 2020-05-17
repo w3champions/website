@@ -80,6 +80,11 @@ const en = {
     taurenchieftain: "Tauren Chieftain",
     tinker: "Goblin Tinker",
     warden: "Warden",
+  },
+
+  matchStatuses: {
+    onGoing: "On Going",
+    past: "Past"
   }
 };
 

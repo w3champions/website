@@ -51,10 +51,15 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public left!: boolean;
   @Prop() public bigRaceIcon!: boolean;
   @Prop() public notClickable!: boolean;
+  @Prop() public unfinishedMatch!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
   get won() {
+    if (this.unfinishedMatch) {
+      return "";
+    }
+
     if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
       return this.player.won ? "won" : "lost";
     }
@@ -75,6 +80,10 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get currentRating() {
+    if (this.unfinishedMatch) {
+      return Math.floor(this.player.oldMmr);
+    }
+    
     return Math.floor(this.player.currentMmr);
   }
 

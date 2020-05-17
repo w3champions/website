@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import { MatchState } from "./types";
+import { MatchState, MatchStatus } from "./types";
 import {Match, MatchDetail, RootState} from "../typings";
 import { ActionContext } from "vuex";
 import { Gateways } from '../ranking/types';
@@ -12,7 +12,8 @@ const mod = {
     loadingMatchDetail: true,
     matches: [] as Match[],
     matchDetail: {} as MatchDetail,
-    gateWay: 20 as Gateways
+    gateWay: 20 as Gateways,
+    status: MatchStatus.onGoing
   } as MatchState,
   actions: {
     async loadMatches(
@@ -25,10 +26,19 @@ const mod = {
         commit.SET_PAGE(page - 1);
       }
 
-      const response = await rootGetters.matchService.retrieveMatches(
-        state.page,
-        state.gateWay
-      );
+      let response: {count: number, matches: Match[]};
+
+      if (state.status == MatchStatus.onGoing) {
+        response = await rootGetters.matchService.retrieveOnGoingMatches(
+          state.page,
+          state.gateWay
+        );
+      } else {
+       response = await rootGetters.matchService.retrieveMatches(
+          state.page,
+          state.gateWay
+        );
+      }
 
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -54,6 +64,16 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+
+    async setStatus(
+      context: ActionContext<MatchState, RootState>,
+      matchStatus: MatchStatus
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_STATUS(matchStatus);
+      commit.SET_PAGE(0);
+      await dispatch.loadMatches(undefined);
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -73,6 +93,9 @@ const mod = {
     },
     SET_GATEWAY(state: MatchState, gateway: Gateways) {
       state.gateWay = gateway;
+    },
+    SET_STATUS(state: MatchState, status: MatchStatus) {
+      state.status = status;
     },
   }
 } as const;

@@ -24,16 +24,18 @@
       <v-row>
         <v-col cols="5.5">
           <team-match-info
-            :not-clickable="true"
+            :not-clickable="!unfinished"
             :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
+            :unfinishedMatch="unfinished"
             left="true"
           ></team-match-info>
         </v-col>
         <v-col cols="1">VS</v-col>
         <v-col cols="5.5">
           <team-match-info
-            :not-clickable="true"
+            :not-clickable="!unfinished"
             :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
+            :unfinishedMatch="unfinished"
           ></team-match-info>
         </v-col>
       </v-row>
@@ -60,6 +62,7 @@ export default class MatchesGrid extends Vue {
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
   @Prop() public alwaysLeftName!: string;
+  @Prop() public unfinished!: boolean;
 
   get matches(): Match[] {
     return this.value;
@@ -79,6 +82,10 @@ export default class MatchesGrid extends Vue {
   }
 
   public gotToMatchDetailPage(match: Match) {
+    if (this.unfinished) {
+      return true;
+    }
+
     this.$router.push({
       path: `/match/${match.id}`
     });
@@ -106,10 +113,7 @@ export default class MatchesGrid extends Vue {
   }
 
   public getDuration(match: Match) {
-    if (
-      !Object.prototype.hasOwnProperty.call(match, "endTime") ||
-      !match.endTime
-    ) {
+    if (this.unfinished) {
       return "ongoing";
     }
 

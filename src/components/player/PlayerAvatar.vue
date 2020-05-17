@@ -275,8 +275,4 @@ export default class PlayerAvatar extends Vue {
     font-size: 13px;
   }
 }
-
-.float-clear {
-  clear:both;
-}
 </style>
