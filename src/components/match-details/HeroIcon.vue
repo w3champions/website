@@ -11,7 +11,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Hero } from "@/store/typings";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
+import HeroPicture from "@/components/overal-statistics/HeroPicture.vue";
 
 @Component({
   components: { HeroPicture },

@@ -1,18 +1,18 @@
-import { moduleActionContext } from "..";
+import {moduleActionContext} from "..";
 import {
   GameDay,
-  GameLength, HeroPick,
+  GameLength,
+  HeroPick,
   MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace,
   StatsPerWinrate,
   WinLoss,
 } from "./types";
-import { RootState } from "../typings";
-import { ActionContext } from "vuex";
+import {ERaceEnum, RootState} from "../typings";
+import {ActionContext} from "vuex";
 
 const mod = {
   namespaced: true,
@@ -29,12 +29,12 @@ const mod = {
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false },
-      { name: "all", heroId: "all", disabled: false }] as HeroPick[]
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "all", heroId: "all", race: ERaceEnum.TOTAL }] as HeroPick[]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(

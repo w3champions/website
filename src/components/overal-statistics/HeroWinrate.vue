@@ -34,7 +34,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
+import HeroPicture from "@/components/overal-statistics/HeroPicture.vue";
 
 @Component({
   components: { HeroPicture },

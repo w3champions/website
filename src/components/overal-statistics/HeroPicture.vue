@@ -16,8 +16,8 @@
           <v-col cols="1" v-for="heroPick in heroPickPerRace" :key="heroPick.heroId">
             <v-card-text
               class="hero-icon hero-icon-select"
-              :class="isEnabledForSelect ? '' : 'hero-icon-disabled'"
-              @click="() => { if (isEnabledForSelect) pickHero(heroPick)}"
+              :class="isEnabledForSelect(heroPick) ? '' : 'hero-icon-disabled'"
+              @click="() => { if (isEnabledForSelect(heroPick)) pickHero(heroPick)}"
               :style="{ 'background-image': 'url(' + parsePicture(heroPick) + ')' }"
             />
           </v-col>
@@ -28,12 +28,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { HeroPick } from "@/store/overallStats/types";
-import {ERaceEnum} from "@/store/typings";
+  import Vue from "vue";
+  import {Component, Prop} from "vue-property-decorator";
+  import {HeroPick} from "@/store/overallStats/types";
+  import {ERaceEnum} from "@/store/typings";
 
-@Component({})
+  @Component({})
 export default class HeroPicture extends Vue {
   @Prop() heroIndex!: number;
 
@@ -52,9 +52,6 @@ export default class HeroPicture extends Vue {
   }
 
   public parsePicture(hero: HeroPick) {
-    if (this.previousHero?.heroId === "all") hero.heroId = "all"
-    if (this.previousHero?.heroId === "none") hero.heroId = "none"
-
     try {
       return require("../../assets/heroes/" + hero.heroId + ".png");
     } catch (e) {
@@ -73,11 +70,24 @@ export default class HeroPicture extends Vue {
     return this.heroPicks[this.heroIndex - 1]
   }
 
-  get isEnabledForSelect() {
-    const previousHeroRace = this.possibleHeroPicks.filter(h => h.heroId === this.previousHero?.heroId)[0]?.race
-    if (this.heroPick.race === ERaceEnum.RANDOM) return true;
-    if (this.heroPick.race === ERaceEnum.TOTAL) return true;
-    return this.heroPick.race === previousHeroRace;
+  get previousPreviousHero() {
+    if (this.heroIndex === 4 || this.heroIndex === 1) {
+      return null
+    }
+    return this.heroPicks[this.heroIndex - 2]
+  }
+
+  isEnabledForSelect(heroPick: HeroPick) {
+    if (this.heroIndex === 0 && heroPick.heroId === "none") return false;
+    if (this.heroIndex === 3 && heroPick.heroId === "none") return false;
+
+    const previousHeroRace1 = this.possibleHeroPicks.filter(h => h.heroId === this.previousHero?.heroId)[0]?.race ?? ERaceEnum.TOTAL;
+    const previousHeroRace2 = this.possibleHeroPicks.filter(h => h.heroId === this.previousPreviousHero?.heroId)[0]?.race ?? ERaceEnum.TOTAL;
+    if (previousHeroRace1 === ERaceEnum.TOTAL && previousHeroRace2 === ERaceEnum.TOTAL) return true;
+
+    if (heroPick.race === ERaceEnum.RANDOM) return true;
+    if (heroPick.race === ERaceEnum.TOTAL) return true;
+    return heroPick.race === previousHeroRace1;
   }
 
   get heroPicture() {
