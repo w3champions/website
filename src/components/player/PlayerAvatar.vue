@@ -3,20 +3,18 @@
     <v-row>
       <v-col cols="5" md="12">
         <v-card-text
-          style="cursor: pointer;"
+          style="cursor: pointer"
           @click.stop="openDialog"
           class="player-avatar text-center"
-          :style="{
-            'background-image':
-              'url(' + picture(personalRace, personalRaceIcon) + ')',
-          }"
+          :style="{ 'background-image': 'url(' + picture(personalRace, personalRaceIcon) + ')' }"
         />
       </v-col>
     </v-row>
+
     <v-dialog v-model="dialogOpened" max-width="1400px">
       <v-card>
         <v-row
-          style="padding-left: 25px; padding-right: 25px;"
+          style="padding-left: 25px; padding-right: 25px"
           v-for="race in races"
           :key="race"
           align="center"
@@ -30,16 +28,19 @@
                   :class="getCorrectClasses(race, number)"
                   @click="isLoggedInPlayer ? savePicture(race, number) : null"
                   :style="{
-                    'background-image': 'url(' + picture(race, number) + ')',
+                    'background-image': 'url(' + picture(race, number) + ')'
                   }"
                 />
+
               </template>
               <span>{{ winsOf(winsOfRace(race), number) }}</span>
             </v-tooltip>
+
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
+
     <h3>
       Homepage:
       <template>
@@ -113,7 +114,9 @@
         </v-card>
       </v-dialog>
     </h3>
-    <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
+    <div>
+      {{ savedMessageValue ? savedMessageValue : "-" }}
+    </div>
   </div>
 </template>
 
@@ -132,7 +135,7 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.ORC,
     ERaceEnum.NIGHT_ELF,
     ERaceEnum.UNDEAD,
-    ERaceEnum.RANDOM,
+    ERaceEnum.RANDOM
   ];
   public PicNumbers = Array.from(Array(11).keys());
 
@@ -149,28 +152,19 @@ export default class PlayerAvatar extends Vue {
   }
 
   public rules = {
-    maxLength: (len: number) => (v: string) =>
-      (v || "").length < len || `Can not exceed ${len} characters`,
+    maxLength: (len: number) => (v: string) => (v || '').length < len || `Can not exceed ${len} characters`,
   };
 
   public homepageEdit = { opened: false, text: this.homePage, savable: true };
-  public additonalInfoEdit = {
-    opened: false,
-    text: this.savedMessageValue,
-    savable: true,
-  };
+  public additonalInfoEdit = { opened: false, text: this.savedMessageValue, savable: true };
 
   async saveAdditionalInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(
-      this.additonalInfoEdit.text
-    );
+    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(this.additonalInfoEdit.text);
     this.additonalInfoEdit.opened = false;
   }
 
   async saveHomepageInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(
-      this.homepageEdit.text
-    );
+    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(this.homepageEdit.text);
     this.homepageEdit.opened = false;
   }
 
@@ -195,16 +189,13 @@ export default class PlayerAvatar extends Vue {
 
   enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
     return (
-      this.personalSetting.pickablePictures?.filter((r) => r.race == race)[0]
+      this.personalSetting.pickablePictures?.filter(r => r.race == race)[0]
         .max >= iconId
     );
   }
 
   winsOfRace(race: ERaceEnum) {
-    return (
-      this.personalSetting.winLosses?.filter((w) => w.race == race)[0]?.wins ??
-      0
-    );
+    return this.personalSetting.winLosses?.filter(w => w.race == race)[0]?.wins ?? 0;
   }
 
   winsOf(wins: number, iconId: number) {
@@ -213,7 +204,7 @@ export default class PlayerAvatar extends Vue {
 
   winsTransformed(iconId: number) {
     return this.personalSetting.pictureRange?.filter(
-      (p) => p.pictureId == iconId
+      p => p.pictureId == iconId
     )[0]?.neededWins;
   }
 
@@ -233,13 +224,13 @@ export default class PlayerAvatar extends Vue {
     if (!this.enabledIfEnoughWins(race, picture)) return;
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
       race: race,
-      pictureId: picture,
+      pictureId: picture
     });
 
     this.dialogOpened = false;
   }
-  async mounted() {
-    await this.init();
+  mounted() {
+    this.init();
   }
 
   async init() {
@@ -273,6 +264,9 @@ export default class PlayerAvatar extends Vue {
 .player-league {
   width: 182px;
 
+  .league-image {
+  }
+
   .player-league-rank {
     font-size: 20px;
   }
@@ -280,9 +274,5 @@ export default class PlayerAvatar extends Vue {
   .player-league-points {
     font-size: 13px;
   }
-}
-
-.float-clear {
-  clear: both;
 }
 </style>

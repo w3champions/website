@@ -26,17 +26,16 @@
 }
 
 .custom-table {
-  width: 100%;
-  border-spacing: 0;
+    width: 100%;
+    border-spacing: 0;
 
-  td,
-  th {
-    padding: 0 16px;
-  }
+    td, th {
+      padding: 0 16px;
+    }
 
-  td {
-    font-size: 0.875rem;
-    height: 48px;
+    td {
+      font-size: .875rem;
+      height: 48px;
   }
 }
 
@@ -54,12 +53,16 @@
 
 header.v-app-bar--is-scrolled + main {
   .search-bar-container {
-    overflow: unset !important;
+      overflow: unset!important;
 
-    .search-bar {
-      position: sticky;
-      top: 50px;
-      z-index: 10;
-    }
+      .search-bar {
+        position: sticky;
+        top: 50px;
+        z-index: 10;
+      }
   }
+}
+
+.float-clear {
+  clear:both;
 }
