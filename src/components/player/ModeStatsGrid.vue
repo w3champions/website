@@ -1,5 +1,10 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="stats" mobile-breakpoint="400">
+  <v-data-table
+    hide-default-footer
+    :headers="headers"
+    :items="stats"
+    mobile-breakpoint="400"
+  >
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.mode">
@@ -7,7 +12,9 @@
           <td class="number-text text-end won">{{ item.wins }}</td>
           <td class="number-text text-end lost">{{ item.losses }}</td>
           <td class="number-text text-end">{{ item.wins + item.losses }}</td>
-          <td class="number-text text-end">{{ (item.winrate * 100).toFixed(1) }}%</td>
+          <td class="number-text text-end">
+            {{ (item.winrate * 100).toFixed(1) }}%
+          </td>
           <td class="number-text text-end">{{ item.mmr }}</td>
           <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
@@ -64,7 +71,7 @@ export default class ModeStatsGrid extends Vue {
       text: "RP",
       align: "end",
       sortable: false,
-    }
+    },
   ];
 }
 </script>

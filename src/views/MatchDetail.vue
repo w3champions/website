@@ -46,22 +46,26 @@
             </v-card-subtitle>
           </v-row>
           <v-row v-if="isCompleteGame">
-            <v-col :cols="matchIs2v2 ? 2 : 1 "> </v-col>
+            <v-col :cols="matchIs2v2 ? 2 : 1"> </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfWinners.map(h => h.unitScore)"
-                :resource-scoure="scoresOfWinners.map(h => h.resourceScore)"
-                :unit-score-opponent="scoresOfLoosers.map(h => h.unitScore)"
-                :resource-scoure-opponent="scoresOfLoosers.map(h => h.resourceScore)"
+                :unit-score="scoresOfWinners.map((h) => h.unitScore)"
+                :resource-scoure="scoresOfWinners.map((h) => h.resourceScore)"
+                :unit-score-opponent="scoresOfLoosers.map((h) => h.unitScore)"
+                :resource-scoure-opponent="
+                  scoresOfLoosers.map((h) => h.resourceScore)
+                "
                 :left="true"
               />
             </v-col>
             <v-col cols="5">
               <player-performance-on-match
-                :unit-score="scoresOfLoosers.map(h => h.unitScore)"
-                :resource-scoure="scoresOfLoosers.map(h => h.resourceScore)"
-                :unit-score-opponent="scoresOfWinners.map(h => h.unitScore)"
-                :resource-scoure-opponent="scoresOfWinners.map(h => h.resourceScore)"
+                :unit-score="scoresOfLoosers.map((h) => h.unitScore)"
+                :resource-scoure="scoresOfLoosers.map((h) => h.resourceScore)"
+                :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
+                :resource-scoure-opponent="
+                  scoresOfWinners.map((h) => h.resourceScore)
+                "
               />
             </v-col>
             <v-col cols="1"> </v-col>
@@ -89,8 +93,8 @@ import { EGameMode } from "@/store/typings";
     PlayerPerformanceOnMatch,
     HeroIcon,
     MatchHiglights,
-    TeamMatchInfo
-  }
+    TeamMatchInfo,
+  },
 })
 export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
@@ -105,14 +109,24 @@ export default class MatchDetailView extends Vue {
   }
 
   get matchDuration() {
-    const format = this.match.durationInSeconds <= 3600 ? this.$t('dateFormats.timeShort') : this.$t('dateFormats.timeLong');
+    const format =
+      this.match.durationInSeconds <= 3600
+        ? this.$t("dateFormats.timeShort")
+        : this.$t("dateFormats.timeLong");
     return moment
-      .utc(moment.duration(this.match.durationInSeconds, "seconds").asMilliseconds())
-      .format(format.toString()).toString();
+      .utc(
+        moment
+          .duration(this.match.durationInSeconds, "seconds")
+          .asMilliseconds()
+      )
+      .format(format.toString())
+      .toString();
   }
 
   get playedDate() {
-    return moment(this.match.startTime).format(this.$t('dateFormats.date').toString());
+    return moment(this.match.startTime).format(
+      this.$t("dateFormats.date").toString()
+    );
   }
 
   get match() {
@@ -132,7 +146,7 @@ export default class MatchDetailView extends Vue {
 
   get scoresOfWinners() {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
-      s =>
+      (s) =>
         this.match.teams[0].players[0].battleTag.startsWith(s.battleTag) ||
         this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag)
     );
@@ -140,7 +154,7 @@ export default class MatchDetailView extends Vue {
 
   get scoresOfLoosers() {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
-      s =>
+      (s) =>
         this.match.teams[1].players[0].battleTag.startsWith(s.battleTag) ||
         this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag)
     );

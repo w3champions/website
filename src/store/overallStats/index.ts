@@ -1,13 +1,15 @@
 import { moduleActionContext } from "..";
 import {
   GameDay,
-  GameLength, MmrDistribution,
+  GameLength,
+  MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace, StatsPerWinrate,
-  WinLoss
+  StatsPerMapAndRace,
+  StatsPerWinrate,
+  WinLoss,
 } from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -25,11 +27,11 @@ const mod = {
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
     heroWinrate: {} as WinLoss,
-    mmrDistribution: {} as MmrDistribution
+    mmrDistribution: {} as MmrDistribution,
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -41,7 +43,7 @@ const mod = {
       commit.SET_LOADING_GAMES_PER_DAY(false);
     },
     async loadPlayersPerDayStatistics(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -50,15 +52,15 @@ const mod = {
       const games = await rootGetters.statisticService.retrievePlayersPerDay();
 
       function mapToGameDay(r: PlayersPerDay): GameDay {
-        return { date: r.date, gamesPlayed: r.distinctPlayers } as GameDay
+        return { date: r.date, gamesPlayed: r.distinctPlayers } as GameDay;
       }
 
-      const playersPerDay = games.map(r => mapToGameDay(r));
+      const playersPerDay = games.map((r) => mapToGameDay(r));
       commit.SET_PLAYERS_PER_DAY(playersPerDay);
       commit.SET_LOADING_PLAYERS_PER_DAY(false);
     },
     async loadMapAndRaceStatistics(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -70,7 +72,7 @@ const mod = {
       commit.SET_LOADING_MAP_AND_RACE_STATS(false);
     },
     async loadGameLengthStatistics(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -79,7 +81,7 @@ const mod = {
       commit.SET_GAME_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -88,7 +90,7 @@ const mod = {
       commit.SET_PLAYED_HEROES(stats);
     },
     async loadpopularGameHours(
-        context: ActionContext<OveralStatisticState, RootState>
+      context: ActionContext<OveralStatisticState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -97,8 +99,15 @@ const mod = {
       commit.SET_POPULAR_GAME_HOURS(stats);
     },
     async loadHeroWinrates(
-        context: ActionContext<OveralStatisticState, RootState>,
-        heroSelectOptions: { first: string, second: string, third: string, opFirst: string, opSecond: string, opThird: string }
+      context: ActionContext<OveralStatisticState, RootState>,
+      heroSelectOptions: {
+        first: string;
+        second: string;
+        third: string;
+        opFirst: string;
+        opSecond: string;
+        opThird: string;
+      }
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -114,15 +123,17 @@ const mod = {
       commit.SET_HERO_WINRATES(stats);
     },
     async loadMmrDistribution(
-        context: ActionContext<OveralStatisticState, RootState>,
-        season: number
+      context: ActionContext<OveralStatisticState, RootState>,
+      season: number
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrieveMmrDistribution(season);
+      const stats = await rootGetters.statisticService.retrieveMmrDistribution(
+        season
+      );
 
       commit.SET_MMR_DISTRIBUTION(stats);
-    }
+    },
   },
   mutations: {
     SET_LOADING_GAMES_PER_DAY(state: OveralStatisticState, loading: boolean) {
@@ -137,28 +148,43 @@ const mod = {
     SET_PLAYERS_PER_DAY(state: OveralStatisticState, games: GameDay[]) {
       state.playersPerDay = games;
     },
-    SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
+    SET_LOADING_MAP_AND_RACE_STATS(
+      state: OveralStatisticState,
+      loading: boolean
+    ) {
       state.loadingMapAndRaceStats = loading;
     },
-    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerWinrate[]) {
-      state.statsPerMapAndRace = stats
+    SET_MAP_AND_RACE_STATS(
+      state: OveralStatisticState,
+      stats: StatsPerWinrate[]
+    ) {
+      state.statsPerMapAndRace = stats;
     },
     SET_GAME_LENGTH_STATS(state: OveralStatisticState, stats: GameLength[]) {
-      state.gameLengths = stats
+      state.gameLengths = stats;
     },
-    SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
-      state.popularGameHours = stats
+    SET_POPULAR_GAME_HOURS(
+      state: OveralStatisticState,
+      stats: PopularGameHour[]
+    ) {
+      state.popularGameHours = stats;
     },
-    SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHeroByMode[]) {
-      state.playedHeroes = playedHeroes
+    SET_PLAYED_HEROES(
+      state: OveralStatisticState,
+      playedHeroes: PlayedHeroByMode[]
+    ) {
+      state.playedHeroes = playedHeroes;
     },
     SET_HERO_WINRATES(state: OveralStatisticState, winLoss: WinLoss) {
-      state.heroWinrate = winLoss
+      state.heroWinrate = winLoss;
     },
-    SET_MMR_DISTRIBUTION(state: OveralStatisticState, mmrDistribution: MmrDistribution) {
-      state.mmrDistribution = mmrDistribution
-    }
-  }
+    SET_MMR_DISTRIBUTION(
+      state: OveralStatisticState,
+      mmrDistribution: MmrDistribution
+    ) {
+      state.mmrDistribution = mmrDistribution;
+    },
+  },
 } as const;
 
 export default mod;

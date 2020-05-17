@@ -1,8 +1,12 @@
 import { moduleActionContext } from "..";
-import {PlayerState, PlayerProfile, PlayerStatsRaceOnMapVersusRace} from "./types";
-import {EGameMode, Match, RootState} from "../typings";
+import {
+  PlayerState,
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+} from "./types";
+import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import {Season, Gateways} from "@/store/ranking/types";
+import { Season, Gateways } from "@/store/ranking/types";
 
 const mod = {
   namespaced: true,
@@ -18,7 +22,7 @@ const mod = {
     opponentTag: "",
     selectedSeason: {} as Season,
     gateway: 20 as Gateways,
-    gameMode: 0 as EGameMode
+    gameMode: 0 as EGameMode,
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -34,6 +38,7 @@ const mod = {
       );
 
       commit.SET_PROFILE(profile);
+      commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(
@@ -51,7 +56,7 @@ const mod = {
     },
     async loadMatches(
       context: ActionContext<PlayerState, RootState>,
-      search: {page?: number, gameMode: EGameMode}
+      search: { page?: number; gameMode: EGameMode }
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
@@ -81,7 +86,7 @@ const mod = {
       commit.SET_PAGE(0);
 
       if (state.battleTag) {
-        await dispatch.loadMatches({page: 1, gameMode: state.gameMode});
+        await dispatch.loadMatches({ page: 1, gameMode: state.gameMode });
       }
     },
   },
@@ -110,7 +115,10 @@ const mod = {
     SET_OPPONENT_TAG(state: PlayerState, opponentTag: string) {
       state.opponentTag = opponentTag;
     },
-    SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(state: PlayerState, stats: PlayerStatsRaceOnMapVersusRace) {
+    SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(
+      state: PlayerState,
+      stats: PlayerStatsRaceOnMapVersusRace
+    ) {
       state.playerStatsRaceVersusRaceOnMap = stats;
     },
     SET_SELECTED_SEASON(state: PlayerState, season: Season) {
@@ -122,7 +130,7 @@ const mod = {
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;
     },
-  }
+  },
 } as const;
 
 export default mod;

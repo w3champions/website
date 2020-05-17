@@ -8,47 +8,49 @@ const mod = {
   state: {
     code: "",
     blizzardVerifiedBtag: "",
-    token: ""
+    token: "",
   } as OauthState,
   actions: {
     async authorizeWithCode(
-        context: ActionContext<OauthState, RootState>,
-        code: string
+      context: ActionContext<OauthState, RootState>,
+      code: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
       commit.SET_BEARER(bearer.access_token);
 
-      const profileName = await rootGetters.oauthService.getProfileName(bearer.access_token);
+      const profileName = await rootGetters.oauthService.getProfileName(
+        bearer.access_token
+      );
       commit.SET_PROFILE_NAME(profileName);
 
       await rootGetters.oauthService.saveAuthToken(bearer);
     },
-    async loadAuthCodeToState(
-        context: ActionContext<OauthState, RootState>
-    ) {
+    async loadAuthCodeToState(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.loadAuthCookie();
       commit.SET_BEARER(bearer);
     },
     async loadBlizzardBtag(
-        context: ActionContext<OauthState, RootState>,
-        bearerToken: string
+      context: ActionContext<OauthState, RootState>,
+      bearerToken: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const profileName = await rootGetters.oauthService.getProfileName(bearerToken);
+      const profileName = await rootGetters.oauthService.getProfileName(
+        bearerToken
+      );
       commit.SET_PROFILE_NAME(profileName);
     },
-    logout(context: ActionContext<OauthState, RootState>){
+    logout(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-       rootGetters.oauthService.deleteAuthCookie();
-       commit.SET_PROFILE_NAME('');
-       commit.SET_BEARER('');
-    }
+      rootGetters.oauthService.deleteAuthCookie();
+      commit.SET_PROFILE_NAME("");
+      commit.SET_BEARER("");
+    },
   },
   mutations: {
     SET_BEARER(state: OauthState, token: string) {
@@ -56,8 +58,8 @@ const mod = {
     },
     SET_PROFILE_NAME(state: OauthState, btag: string) {
       state.blizzardVerifiedBtag = btag;
-    }
-  }
+    },
+  },
 } as const;
 
 export default mod;

@@ -9,7 +9,12 @@
               <gate-way-select />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
-                  <v-btn tile v-on="on" class="ma-2" style="background-color: transparent;">
+                  <v-btn
+                    tile
+                    v-on="on"
+                    class="ma-2"
+                    style="background-color: transparent;"
+                  >
                     <span class="pa-0">Season {{ selectedSeason.id }}</span>
                   </v-btn>
                 </template>
@@ -52,9 +57,7 @@
                 <v-row class="mt-4 filter-none">
                   <v-col cols="12" md="4" lg="3">
                     <v-card-text style="padding-top: 0 !important;">
-                      <player-avatar
-                        :is-logged-in-player="isLoggedInPlayer"
-                      />
+                      <player-avatar :is-logged-in-player="isLoggedInPlayer" />
                     </v-card-text>
                   </v-col>
                   <v-col md="12" lg="9">
@@ -89,7 +92,13 @@
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row class="filter-none">
+                <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                  <v-card-text class="text-center">
+                    This noble person was part of our beta, therefore we hide
+                    his buggy stats and thank him for all eternity ;)
+                  </v-card-text>
+                </v-row>
+                <v-row class="filter-none" v-if="selectedSeason.id != 0">
                   <v-col cols="12" md="6">
                     <h4>Stats by race</h4>
                     <v-data-table
@@ -163,8 +172,18 @@
                         <template v-else>
                           <v-list-item-content>
                             <v-list-item-title>
-                              <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
-                              <span v-if="isDuplicateName(data.item.player.name)">{{ data.item.player.playerIds.map(p => p.battleTag).join(" & ") }}</span>
+                              <span
+                                v-if="!isDuplicateName(data.item.player.name)"
+                                >{{ data.item.player.name }}</span
+                              >
+                              <span
+                                v-if="isDuplicateName(data.item.player.name)"
+                                >{{
+                                  data.item.player.playerIds
+                                    .map((p) => p.battleTag)
+                                    .join(" & ")
+                                }}</span
+                              >
                             </v-list-item-title>
                             <v-list-item-subtitle>
                               Wins: {{ data.item.player.wins }} | Losses:
@@ -192,17 +211,13 @@
               <v-card-text v-if="searchModel && searchModel.player">
                 <v-row align="center">
                   <v-col cols="12">
-                    <div>
-                      vs. {{ searchModel.player.name }}
-                    </div>
+                    <div>vs. {{ searchModel.player.name }}</div>
                     <span class="won">Wins: {{ opponentWins }}</span>
                     /
                     <span class="lost">
                       Losses: {{ matches.length - opponentWins }}
                     </span>
-                    <span>
-                      ({{ winRateVsOpponent }}%)
-                    </span>
+                    <span> ({{ winRateVsOpponent }}%) </span>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -217,7 +232,14 @@
             </v-tab-item>
             <v-tab-item :value="'tab-statistics'">
               <v-card-title>Statistics</v-card-title>
+              <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                <v-card-text class="text-center">
+                  This noble person was part of our beta, therefore we hide his
+                  buggy stats and thank him for all eternity ;)
+                </v-card-text>
+              </v-row>
               <player-stats-race-versus-race-on-map
+                v-if="selectedSeason.id != 0"
                 :stats="raceWithoutRandom"
               />
             </v-tab-item>
@@ -249,7 +271,7 @@ import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import {Ranking, Season} from "@/store/ranking/types";
+import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 
 @Component({
@@ -318,7 +340,10 @@ export default class PlayerView extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string) {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search({searchText: newValue.toLowerCase(), gameMode: this.selectedGameModeForSearch});
+      this.$store.direct.dispatch.rankings.search({
+        searchText: newValue.toLowerCase(),
+        gameMode: this.selectedGameModeForSearch,
+      });
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
       this.onSearchModelChanged(null as any);
@@ -339,16 +364,19 @@ export default class PlayerView extends Vue {
       return [];
     }
 
-    return this.profile.raceStats.filter(r => r.gateWay === this.selectedGateWay && r.season === this.selectedSeason.id)
+    return this.profile.raceStats.filter(
+      (r) =>
+        r.gateWay === this.selectedGateWay &&
+        r.season === this.selectedSeason.id
+    );
   }
 
   public selectSeason(season: Season) {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
-    this.$store.direct.commit.rankings.SET_SELECTED_SEASON(season);
   }
 
   get seasons() {
-    return this.$store.direct.state.rankings.seasons;
+    return this.$store.direct.state.player.playerProfile.participatedInSeasons;
   }
 
   get profile(): PlayerProfile {
@@ -378,7 +406,7 @@ export default class PlayerView extends Vue {
   get supportedGameModes(): ModeStat[] {
     if (this.profile && this.profile.gateWayStats) {
       return this.gameModesByGateway.filter(
-        (g) => (g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT)
+        (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
       );
     }
 
@@ -406,7 +434,7 @@ export default class PlayerView extends Vue {
       return 0;
     }
 
-    return ((this.opponentWins / this.matches.length) * 100).toFixed(1)
+    return ((this.opponentWins / this.matches.length) * 100).toFixed(1);
   }
 
   get totalMatches(): number {
@@ -414,7 +442,7 @@ export default class PlayerView extends Vue {
   }
 
   get isLoggedInPlayer(): boolean {
-    if (this.verifiedBtag === '') return false;
+    if (this.verifiedBtag === "") return false;
     return this.battleTag.startsWith(this.verifiedBtag);
   }
 
@@ -431,7 +459,9 @@ export default class PlayerView extends Vue {
       (g) => g.gateWay == this.selectedGateWay
     );
 
-    const gameModeStats = gateWayStats.find(g => g.season === this.selectedSeason.id)
+    const gameModeStats = gateWayStats.find(
+      (g) => g.season === this.selectedSeason.id
+    );
 
     return gameModeStats?.gameModeStats || [];
   }
@@ -442,7 +472,10 @@ export default class PlayerView extends Vue {
   }
 
   public async getMatches(page?: number) {
-    await this.$store.direct.dispatch.player.loadMatches({ page: page, gameMode: this.selectedGameModeForSearch });
+    await this.$store.direct.dispatch.player.loadMatches({
+      page: page,
+      gameMode: this.selectedGameModeForSearch,
+    });
     this.opponentWins = 0;
     if (this.$store.direct.state.player.opponentTag.length) {
       this.opponentWins = this.matches.filter((match: Match) =>
@@ -457,7 +490,7 @@ export default class PlayerView extends Vue {
   }
 
   public isDuplicateName(name: string) {
-    return this.searchRanks.filter(r => r.player.name === name).length > 1
+    return this.searchRanks.filter((r) => r.player.name === name).length > 1;
   }
 
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
@@ -490,8 +523,8 @@ export default class PlayerView extends Vue {
     ];
   }
 
-  mounted() {
-    this.init();
+  async mounted() {
+    await this.init();
   }
 
   private async init() {

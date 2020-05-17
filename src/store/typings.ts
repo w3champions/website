@@ -1,4 +1,4 @@
-import { Moment } from 'moment';
+import { Moment } from "moment";
 
 export type RootState = {
   darkMode: boolean;
@@ -19,11 +19,11 @@ export type PlayerInTeam = {
   mmrGain: number;
   race: ERaceEnum;
   won: boolean;
-}
+};
 
 export type Team = {
   players: PlayerInTeam[];
-}
+};
 
 export type Match = {
   map: string;
@@ -34,12 +34,12 @@ export type Match = {
   gameMode: EGameMode;
   teams: Team[];
   gateWay: number;
-}
+};
 
 export type MatchDetail = {
   match: Match;
   playerScores: PlayerScore[];
-}
+};
 
 export interface Player {
   race: number;
@@ -89,14 +89,14 @@ export enum EGameMode {
   GM_1ON1 = 1,
   GM_2ON2_AT = 6,
   GM_4ON4 = 3,
-  GM_FFA = 4
+  GM_FFA = 4,
 }
 
 export enum EPick {
   OVERALL,
   FIRST = 1,
   SECOND = 2,
-  THIRD = 3
+  THIRD = 3,
 }
 
 export enum ERaceEnum {
@@ -105,5 +105,5 @@ export enum ERaceEnum {
   ORC = 2,
   NIGHT_ELF = 4,
   UNDEAD = 8,
-  TOTAL = 16
+  TOTAL = 16,
 }

@@ -1,10 +1,10 @@
-@import './vars.scss';
-@import '../shared/index.scss';
+@import "./vars.scss";
+@import "../shared/index.scss";
 
 $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
 .w3-yellow-text {
-  font-family: 'Friz Quadrata Regular OS' !important;
+  font-family: "Friz Quadrata Regular OS" !important;
   color: rgb(255, 212, 40) !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
@@ -14,7 +14,7 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 .theme--dark.v-application {
   @font-face {
     * {
-      font-family: 'Friz Quadrata Regular OS';
+      font-family: "Friz Quadrata Regular OS";
       color: $w3-dark-color;
     }
   }
@@ -96,7 +96,8 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
     background-color: transparent !important;
   }
 
-  .v-data-table, .custom-table {
+  .v-data-table,
+  .custom-table {
     tr:hover {
       box-shadow: 0 0 17px grey;
     }
@@ -114,8 +115,8 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
 .undead {
   header.v-app-bar--is-scrolled + main {
-        .search-bar {
-             background: rgba(0,0,0,0.9);
-        }
+    .search-bar {
+      background: rgba(0, 0, 0, 0.9);
+    }
   }
 }

@@ -40,7 +40,7 @@ export default class LoginView extends Vue {
 
   public openPlayerProfile(playerName: string) {
     this.$router.push({
-      path: this.getPlayerPath(playerName)
+      path: this.getPlayerPath(playerName),
     });
   }
 

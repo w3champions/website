@@ -20,12 +20,10 @@
             <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
               >Winrates</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-heroes`"
-              >Heroes</v-tab
-            >
-<!--            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"-->
-<!--              >Heroe Winrates</v-tab-->
-<!--            >-->
+            <v-tab class="profileTab" :href="`#tab-heroes`">Heroes</v-tab>
+            <!--            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"-->
+            <!--              >Heroe Winrates</v-tab-->
+            <!--            >-->
             <v-tab class="profileTab" :href="`#tab-gametimes`"
               >Gamelengths</v-tab
             >
@@ -62,11 +60,15 @@
                     />
                   </v-card-text>
                   <v-card-text>
-                    Pink bars mark top 3%, 5%, 10%, 25% and 50% of players, green is you
+                    Pink bars mark top 3%, 5%, 10%, 25% and 50% of players,
+                    green is you
                   </v-card-text>
                 </v-col>
                 <v-col cols="md-10">
-                  <mmr-distribution-chart :mmr-distribution="mmrDistribution" :selected-season="selectedSeason"/>
+                  <mmr-distribution-chart
+                    :mmr-distribution="mmrDistribution"
+                    :selected-season="selectedSeason"
+                  />
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -104,10 +106,30 @@
                         <tbody>
                           <tr v-for="item in items" :key="item.race">
                             <td>{{ $t("races." + raceEnums[item.race]) }}</td>
-                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
-                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
-                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
-                            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" :compareRace="item.race" :winThreshold="0.51" :lossThreshold="0.49" />
+                            <player-stats-race-versus-race-on-map-table-cell
+                              :stats="item.winLosses[1]"
+                              :compareRace="item.race"
+                              :winThreshold="0.51"
+                              :lossThreshold="0.49"
+                            />
+                            <player-stats-race-versus-race-on-map-table-cell
+                              :stats="item.winLosses[2]"
+                              :compareRace="item.race"
+                              :winThreshold="0.51"
+                              :lossThreshold="0.49"
+                            />
+                            <player-stats-race-versus-race-on-map-table-cell
+                              :stats="item.winLosses[3]"
+                              :compareRace="item.race"
+                              :winThreshold="0.51"
+                              :lossThreshold="0.49"
+                            />
+                            <player-stats-race-versus-race-on-map-table-cell
+                              :stats="item.winLosses[4]"
+                              :compareRace="item.race"
+                              :winThreshold="0.51"
+                              :lossThreshold="0.49"
+                            />
                           </tr>
                         </tbody>
                       </template>
@@ -140,18 +162,20 @@
                 </v-col>
                 <v-col cols="12" md="10">
                   <v-card-text>
-                    <played-heroes-chart :played-heroes="selectedPlayedHeroes"/>
+                    <played-heroes-chart
+                      :played-heroes="selectedPlayedHeroes"
+                    />
                   </v-card-text>
                 </v-col>
               </v-row>
             </v-tab-item>
-<!--            <v-tab-item :value="'tab-heroes-winrates'">-->
-<!--              <v-row>-->
-<!--                <v-col cols="12">-->
-<!--                  <hero-winrate />-->
-<!--                </v-col>-->
-<!--              </v-row>-->
-<!--            </v-tab-item>-->
+            <!--            <v-tab-item :value="'tab-heroes-winrates'">-->
+            <!--              <v-row>-->
+            <!--                <v-col cols="12">-->
+            <!--                  <hero-winrate />-->
+            <!--                </v-col>-->
+            <!--              </v-row>-->
+            <!--            </v-tab-item>-->
             <v-tab-item :value="'tab-gametimes'">
               <v-row>
                 <v-col cols="12" md="2">
@@ -216,7 +240,7 @@ import {
   PlayedHero,
   PopularGameHour,
   Ratio,
-  StatsPerWinrate
+  StatsPerWinrate,
 } from "@/store/overallStats/types";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
@@ -224,7 +248,7 @@ import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTime
 import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import {Season} from "@/store/ranking/types";
+import { Season } from "@/store/ranking/types";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 
 @Component({
@@ -235,15 +259,15 @@ import MmrDistributionChart from "@/components/overal-statistics/MmrDistribution
     PopularGameTimeChart,
     AmountPerDayChart,
     GameLengthChart,
-    PlayerStatsRaceVersusRaceOnMapTableCell
-  }
+    PlayerStatsRaceVersusRaceOnMapTableCell,
+  },
 })
 export default class OverallStatisticsView extends Vue {
   public raceEnums = ERaceEnum;
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
-  public selectedSeason = this.seasons[0];
+  public selectedSeason: Season = { id: 0 };
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
@@ -275,7 +299,9 @@ export default class OverallStatisticsView extends Vue {
 
   public async setSelectedSeason(season: Season) {
     this.selectedSeason = season;
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(season.id);
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
+      season.id
+    );
   }
 
   get mmrDistribution() {
@@ -311,19 +337,24 @@ export default class OverallStatisticsView extends Vue {
   }
 
   get selectedGameLength(): GameLength {
-    return this.gameLength.filter(g => g.gameMode == this.selectedLengthMode)[0];
+    return this.gameLength.filter(
+      (g) => g.gameMode == this.selectedLengthMode
+    )[0];
   }
 
   get selectedGameHours(): PopularGameHour {
     return this.popularGameHours.filter(
-      g => g.gameMode == this.selectedPopularHourMode
+      (g) => g.gameMode == this.selectedPopularHourMode
     )[0];
   }
 
   get selectedPlayedHeroes(): PlayedHero[] {
     const heroes = this.$store.direct.state.overallStatistics.playedHeroes;
     if (heroes.length === 0) return [];
-    return heroes.filter(g => g.gameMode == this.selectedHeroesPlayedMode)[0].orderedPicks[this.selectedHeroesPlayedPick].stats ?? [];
+    return (
+      heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
+        .orderedPicks[this.selectedHeroesPlayedPick].stats ?? []
+    );
   }
 
   get statsPerRaceAndMap(): StatsPerWinrate[] {
@@ -332,14 +363,20 @@ export default class OverallStatisticsView extends Vue {
 
   get raceWinrateWithoutRandom(): Ratio[] {
     return this.statsPerRaceAndMap
-      .filter(r => r.mmrRange === this.selectedMmr)[0]
-      .statsPerModes.filter(r => r.mapName === this.selectedMap)[0]
+      .filter((r) => r.mmrRange === this.selectedMmr)[0]
+      .statsPerModes.filter((r) => r.mapName === this.selectedMap)[0]
       .ratio.slice(1, 5);
   }
 
   get mmrs() {
-    const mmrsSorted = this.statsPerRaceAndMap.map(r => r.mmrRange).sort().reverse();
-    const mapped = mmrsSorted.map(m => ({ league: this.$t("mmrLeagueRanges.MMR_" + m), mmr: m }));
+    const mmrsSorted = this.statsPerRaceAndMap
+      .map((r) => r.mmrRange)
+      .sort()
+      .reverse();
+    const mapped = mmrsSorted.map((m) => ({
+      league: this.$t("mmrLeagueRanges.MMR_" + m),
+      mmr: m,
+    }));
     return mapped;
   }
 
@@ -349,8 +386,8 @@ export default class OverallStatisticsView extends Vue {
 
   get maps() {
     const stats = this.statsPerRaceAndMap[0];
-    if (!stats) return []
-    return stats.statsPerModes.map(r => {
+    if (!stats) return [];
+    return stats.statsPerModes.map((r) => {
       return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
     });
   }
@@ -359,11 +396,11 @@ export default class OverallStatisticsView extends Vue {
     return [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1
+        modeId: EGameMode.GM_1ON1,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        modeId: EGameMode.GM_2ON2_AT
+        modeId: EGameMode.GM_2ON2_AT,
       },
       // {
       //   modeName: "4vs4",
@@ -380,19 +417,19 @@ export default class OverallStatisticsView extends Vue {
     return [
       {
         pickName: "overall",
-        pickId: EPick.OVERALL
+        pickId: EPick.OVERALL,
       },
       {
         pickName: "first",
-        pickId: EPick.FIRST
+        pickId: EPick.FIRST,
       },
       {
         pickName: "second",
-        pickId: EPick.SECOND
+        pickId: EPick.SECOND,
       },
       {
         pickName: "third",
-        pickId: EPick.THIRD
+        pickId: EPick.THIRD,
       },
     ];
   }
@@ -402,13 +439,18 @@ export default class OverallStatisticsView extends Vue {
   }
 
   private async init() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    this.selectedSeason = this.seasons[0];
+
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(this.$store.direct.state.rankings.selectedSeason.id);
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
+      this.$store.direct.state.rankings.selectedSeason.id
+    );
   }
 
   public headers = [
@@ -416,28 +458,28 @@ export default class OverallStatisticsView extends Vue {
       text: "",
       align: "start",
       sortable: false,
-      value: "race"
+      value: "race",
     },
     {
       text: "VS Human",
       align: "start",
-      sortable: false
+      sortable: false,
     },
     {
       text: "VS Orc",
       align: "start",
-      sortable: false
+      sortable: false,
     },
     {
       text: "VS Undead",
       align: "start",
-      sortable: false
+      sortable: false,
     },
     {
       text: "VS Night Elf",
       align: "start",
-      sortable: false
-    }
+      sortable: false,
+    },
   ];
 }
 </script>
