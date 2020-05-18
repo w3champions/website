@@ -691,35 +691,4 @@ export default class PlayerView extends Vue {
       }
     }
 }
-
-@keyframes up-right {
-    0% {
-        transform: scale(1);
-        opacity: .25
-    }
-    50% {
-        transform: scale (1, 5);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1);
-        opacity: .25;
-    }
-}
-.circle {
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    opacity: 0.25;
-}
-.red {
-    background-color: red;
-    position: absolute;
-    top: 5px;
-    left: 28px;
-    -webkit-animation: up-right 1s infinite;
-    -moz-animation: up-right 1s infinite;
-    -o-animation: up-right 1s infinite;
-    animation: up-right 1s infinite;
-}
 </style>

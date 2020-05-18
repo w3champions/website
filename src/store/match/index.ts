@@ -11,6 +11,7 @@ const mod = {
     totalMatches: 0,
     loadingMatchDetail: true,
     matches: [] as Match[],
+    allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
     gateWay: 20 as Gateways,
     status: MatchStatus.onGoing
@@ -29,7 +30,7 @@ const mod = {
       let response: {count: number, matches: Match[]};
 
       if (state.status == MatchStatus.onGoing) {
-        response = await rootGetters.matchService.retrieveOnGoingMatches(
+        response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
           state.page,
           state.gateWay
         );
@@ -42,6 +43,19 @@ const mod = {
 
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
+    },
+    async loadAllOngoingMatches(
+      context: ActionContext<MatchState, RootState>
+    ) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.matchService.retrieveOnGoingMatches(
+        0,
+        200,
+        state.gateWay
+      );
+
+      commit.SET_ALL_ONGOING_MATCHES(response.matches);
     },
     async loadMatchDetail(
         context: ActionContext<MatchState, RootState>,
@@ -84,6 +98,9 @@ const mod = {
     },
     SET_MATCHES(state: MatchState, matches: Match[]) {
       state.matches = matches;
+    },
+    SET_ALL_ONGOING_MATCHES(state: MatchState, matches: Match[]) {
+      state.allOngoingMatches = matches;
     },
     SET_MATCH_DETAIL(state: MatchState, matchDetail: MatchDetail) {
       state.matchDetail = matchDetail;
