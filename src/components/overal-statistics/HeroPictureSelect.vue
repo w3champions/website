@@ -12,7 +12,7 @@
         </div>
       </template>
       <div>
-        {{ $t(`heroNames.${heroPickName}`) }}
+        {{ heroPickName }}
       </div>
     </v-tooltip>
     <div class="text-center hero-level-flag">

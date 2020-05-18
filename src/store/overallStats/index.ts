@@ -29,12 +29,12 @@ const mod = {
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "all", heroId: "all", race: ERaceEnum.TOTAL }] as HeroPick[]
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL }] as HeroPick[]
   } as OveralStatisticState,
   actions: {
     async loadGamesPerDayStatistics(
