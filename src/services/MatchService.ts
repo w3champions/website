@@ -20,12 +20,21 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrieveOnGoingMatches(
+  public async retrieveOnGoingMatchesPaged(
     page: number,
     gateway: number
   ): Promise<{count: number, matches: Match[]}> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
+    
+    return this.retrieveOnGoingMatches(offset, this.pageSize, gateway);
+  }
+
+  public async retrieveOnGoingMatches(
+    offset: number,
+    pageSize: number,
+    gateway: number
+  ): Promise<{count: number, matches: Match[]}> {
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}`;
 
     const response = await fetch(url);
     return await response.json();

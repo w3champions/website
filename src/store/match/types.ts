@@ -3,6 +3,7 @@ import { Gateways } from "../ranking/types";
 
 export type MatchState = {
   matches: Match[];
+  allOngoingMatches: Match[];
   matchDetail: MatchDetail;
   page: number;
   totalMatches: number;

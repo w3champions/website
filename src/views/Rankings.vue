@@ -182,6 +182,22 @@
                       &
                     </span>
                   </span>
+                  <span style="position:relative" v-if="isCurrentlyLive(item.player.playerIds)">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                          <span
+                            style="display: inline;"
+                            class="pointer"
+                            v-on="on"
+                          >
+                              <div class="circle red filter-blur"></div>
+                          </span>
+                        </template>
+                        <div>
+                          Now playing
+                        </div>
+                      </v-tooltip>
+                  </span>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
                 <td class="number-text text-end lost">
@@ -220,7 +236,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { League, Ranking, Season } from "@/store/ranking/types";
+import { League, Ranking, Season, PlayerId } from "@/store/ranking/types";
 import { DataTableOptions, EGameMode } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
@@ -284,6 +300,7 @@ export default class RankingsView extends Vue {
   public search = "";
   public searchModel = {} as Ranking;
   public isLoading = false;
+  private _ongoingMatchesMap: any = {};
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
@@ -429,6 +446,19 @@ export default class RankingsView extends Vue {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.getRankings();
     await this.getLadders();
+
+    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+
+    this._ongoingMatchesMap = {};
+    this.$store.direct.state.matches.allOngoingMatches.forEach(x => {
+      x.teams.forEach(t => {
+        t.players.forEach(p => {
+          const playerTag = p.battleTag;
+          this._ongoingMatchesMap[playerTag] = t.players.map(y => y.battleTag);
+        });
+      });
+      
+    });
   }
 
   public getRankings(options?: DataTableOptions) {
@@ -450,6 +480,26 @@ export default class RankingsView extends Vue {
   public selectGameMode(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
     this.$store.direct.dispatch.rankings.setLeague(0);
+  }
+
+  public isCurrentlyLive(playerIds: PlayerId[]) {
+    if (!this._ongoingMatchesMap) {
+      return false;
+    }
+
+    const firstPlayer = playerIds[0].battleTag;
+    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as string[];
+    if (foundByFirstPlayer) {
+
+      let allMatch = true;
+      playerIds.forEach(p => {
+        allMatch = allMatch && foundByFirstPlayer.includes(p.battleTag);
+      });
+
+      return allMatch;
+    }
+
+    return false;
   }
 
   get gameModes() {
@@ -478,5 +528,9 @@ export default class RankingsView extends Vue {
   tr.searchedItem:hover {
     background-color: #310e6f !important;
   }
+}
+
+.red {
+  left: 10px;
 }
 </style>
