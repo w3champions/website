@@ -196,7 +196,6 @@ export default class HeroPictureSelect extends Vue {
       this.possibleHeroPicks.slice(14, 18),
       this.possibleHeroPicks.slice(18, 22),
       this.possibleHeroPicks.slice(22, 26),
-      this.possibleHeroPicks.slice(26, 27),
     ];
   }
 
@@ -325,11 +324,6 @@ export default class HeroPictureSelect extends Vue {
       {
         name: this.$t(`heroNames.seawitch`).toString(),
         heroId: "seawitch",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.taurenchieftain`).toString(),
-        heroId: "taurenchieftain",
         race: ERaceEnum.RANDOM,
       },
       {
