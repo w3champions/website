@@ -60,6 +60,16 @@ export default class HeroPictureSelect extends Vue {
   public pickHero(hero: HeroPick) {
     const newPick = { index: this.heroIndex, heroPick: hero };
 
+    if (hero.heroId === "none" || hero.heroId === "all") {
+      if (this.heroIndex === 0 || this.heroIndex === 3) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: hero});
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: hero});
+      }
+      if (this.heroIndex === 1 || this.heroIndex === 4) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: hero});
+      }
+    }
+
     this.$store.direct.commit.overallStatistics.SET_HIRO_PICK(newPick);
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
     this.dialogOpened = false;
