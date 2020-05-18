@@ -98,24 +98,24 @@ export default class HeroPictureSelect extends Vue {
     if (this.heroIndex === 0 && heroPick.heroId === "none") return false;
     if (this.heroIndex === 3 && heroPick.heroId === "none") return false;
 
-    const previousHeroRace1 =
+    const previousHeroRaces = [
       this.possibleHeroPicks.filter(
         (h) => h.heroId === this.previousHero?.heroId
-      )[0]?.race ?? ERaceEnum.TOTAL;
-    const previousHeroRace2 =
+      )[0]?.race ?? ERaceEnum.TOTAL,
       this.possibleHeroPicks.filter(
         (h) => h.heroId === this.previousPreviousHero?.heroId
-      )[0]?.race ?? ERaceEnum.TOTAL;
-    if (
-      previousHeroRace1 === ERaceEnum.TOTAL &&
-      previousHeroRace2 === ERaceEnum.TOTAL
-    ) {
-      return true;
-    }
+      )[0]?.race ?? ERaceEnum.TOTAL,
+    ];
+
+    const raceWithoutRandom = previousHeroRaces.filter(
+      (r) => r !== ERaceEnum.TOTAL && r !== ERaceEnum.RANDOM
+    )[0];
 
     if (heroPick.race === ERaceEnum.RANDOM) return true;
     if (heroPick.race === ERaceEnum.TOTAL) return true;
-    return heroPick.race === previousHeroRace1;
+    if (!raceWithoutRandom) return true;
+
+    return heroPick.race === raceWithoutRandom;
   }
 
   get heroPicture() {
