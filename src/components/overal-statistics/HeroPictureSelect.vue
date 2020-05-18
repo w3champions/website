@@ -10,15 +10,14 @@
       "
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
-    <v-dialog v-model="dialogOpened" max-width="400px">
+    <v-dialog v-model="dialogOpened" max-width="300px">
       <v-card>
         <v-row
+          class="ml-2 mr-1"
           v-for="heroPickPerRace in possibleHeroPickRows"
           :key="heroPickPerRace.map((h) => h.heroId).join('_')"
-          justify="space-between"
         >
           <v-col
-            cols="1"
             v-for="heroPick in heroPickPerRace"
             :key="heroPick.heroId"
           >
@@ -163,8 +162,9 @@ export default class HeroPictureSelect extends Vue {
       this.possibleHeroPicks.slice(6, 10),
       this.possibleHeroPicks.slice(10, 14),
       this.possibleHeroPicks.slice(14, 18),
-      this.possibleHeroPicks.slice(18, 23),
-      this.possibleHeroPicks.slice(23, 27),
+      this.possibleHeroPicks.slice(18, 22),
+      this.possibleHeroPicks.slice(22, 26),
+      this.possibleHeroPicks.slice(26, 27),
     ];
   }
 
@@ -319,7 +319,6 @@ export default class HeroPictureSelect extends Vue {
 .hero-picture-select {
   z-index: 1;
   position: relative;
-  margin-top: 12px;
   padding-top: 100%;
   width: 100%;
   padding-bottom: 0 !important;
@@ -332,7 +331,6 @@ export default class HeroPictureSelect extends Vue {
   width: 48px;
   background-repeat: no-repeat;
   background-size: contain;
-  padding: 0 !important;
 }
 
 .hero-icon-disabled {
