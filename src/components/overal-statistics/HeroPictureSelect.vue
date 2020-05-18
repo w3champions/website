@@ -80,6 +80,23 @@ export default class HeroPictureSelect extends Vue {
       }
     }
 
+    if (this.heroIndex === 0 || this.heroIndex === 3) {
+      const allPickedRaces = [
+        this.heroPicks[0 + this.heroIndex % 3].race,
+        this.heroPicks[1 + this.heroIndex % 3].race,
+        this.heroPicks[2 + this.heroIndex % 3].race,
+      ]
+
+      if (allPickedRaces[1] !== hero.race && allPickedRaces[1] !== ERaceEnum.RANDOM) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
+      }
+
+      if (allPickedRaces[2] !== hero.race && allPickedRaces[2] !== ERaceEnum.RANDOM) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
+      }
+    }
+
     this.$store.direct.commit.overallStatistics.SET_HIRO_PICK(newPick);
     this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
     this.dialogOpened = false;
