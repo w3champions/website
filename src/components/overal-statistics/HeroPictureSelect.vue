@@ -161,7 +161,11 @@ export default class HeroPictureSelect extends Vue {
       (r) => r !== "all" && r !== "none"
     );
 
-    if (heroPick.race === ERaceEnum.RANDOM) return true;
+    if (heroPick.race === ERaceEnum.RANDOM) {
+      const wasHeroPicked = picksWithoutAll.filter(p => p === heroPick.heroId)[0]
+      return !wasHeroPicked;
+    }
+
     if (heroPick.race === ERaceEnum.TOTAL) return true;
     if (!raceWithoutRandom) return true;
     if (!picksWithoutAll) return true;
