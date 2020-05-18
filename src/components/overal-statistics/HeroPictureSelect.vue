@@ -23,7 +23,7 @@
             :key="heroPick.heroId"
           >
             <v-card-text
-              class="hero-picture-select hero-icon-select"
+              class="hero-icon-select"
               :class="isEnabledForSelect(heroPick) ? '' : 'hero-icon-disabled'"
               @click="
                 () => {
@@ -313,7 +313,6 @@ export default class HeroPictureSelect extends Vue {
   padding-top: 100%;
   width: 100%;
   padding-bottom: 0 !important;
-  margin-bottom: -2px !important;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -321,6 +320,9 @@ export default class HeroPictureSelect extends Vue {
 .hero-icon-select {
   height: 48px;
   width: 48px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 0 !important;
 }
 
 .hero-icon-disabled {
