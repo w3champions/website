@@ -34,10 +34,10 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import HeroPicture from "@/components/overal-statistics/HeroPicture.vue";
+import HeroPictureSelect from "@/components/overal-statistics/HeroPictureSelect.vue";
 
 @Component({
-  components: { HeroPicture },
+  components: { HeroPicture: HeroPictureSelect },
 })
 export default class HeroWinrate extends Vue {
 
