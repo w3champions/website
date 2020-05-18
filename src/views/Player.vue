@@ -43,6 +43,27 @@
               </v-menu>
             </div>
           </v-card-title>
+          <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
+              <div class="live-match__indicator">Live <span class="circle red"></span></div>
+              <div class="live-match__team1">
+                  <team-match-info
+                  :not-clickable="true"
+                  :team="getPlayerTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  left="true"
+                  ></team-match-info>
+              </div>
+              <div class="live-match__vstext">VS</div>
+              <div class="live-match__team2">
+                <team-match-info
+                  :not-clickable="false"
+                  :team="getOpponentTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  right="true"
+                ></team-match-info>
+              </div>
+              <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
+          </div>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
@@ -273,6 +294,7 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 
 @Component({
   components: {
@@ -282,6 +304,7 @@ import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
     MatchesGrid,
     ModeStatsGrid,
     GateWaySelect,
+    TeamMatchInfo
   },
 })
 export default class PlayerView extends Vue {
@@ -471,6 +494,33 @@ export default class PlayerView extends Vue {
     return gateway || 20;
   }
 
+  get ongoingMatch() {
+    return this.$store.direct.state.player.ongoingMatch;
+  }
+
+  get ongoingMatchGameModeClass() {
+    if (!this.ongoingMatch.id){
+      return "";
+    }
+
+    switch(this.ongoingMatch.gameMode) {
+      case EGameMode.GM_1ON1: {
+        return "one-v-one"
+      }
+      case EGameMode.GM_2ON2_AT: {
+        return "two-v-two-at"
+      }
+      case EGameMode.GM_4ON4: {
+        return "four-v-four"
+      }
+      case EGameMode.GM_FFA: {
+        return "ffa"
+      }
+    }
+
+    return "";
+  }
+
   public async getMatches(page?: number) {
     await this.$store.direct.dispatch.player.loadMatches({
       page: page,
@@ -523,6 +573,31 @@ export default class PlayerView extends Vue {
     ];
   }
 
+  public getPlayerTeam(match: Match) {
+    if(!match.teams) {
+      return {} as Match;
+    }
+
+    return match.teams.find((team: Team) =>
+      team.players.some(
+        (player: PlayerInTeam) => player.battleTag === this.battleTag
+      )
+    );
+  }
+
+  public getOpponentTeam(match: Match) {
+    if(!match.teams) {
+      return {} as Match;
+    }
+
+    return match.teams.find(
+      (team: Team) =>
+        !team.players.some(
+          (player: PlayerInTeam) => player.battleTag === this.battleTag
+        )
+    );
+  }
+
   async mounted() {
     await this.init();
   }
@@ -536,7 +611,13 @@ export default class PlayerView extends Vue {
       this.battleTag
     );
 
+    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+
     window.scrollTo(0, 0);
+  }
+
+  destroyed() {
+    this.$store.direct.commit.player.SET_ONGOING_MATCH({} as Match);
   }
 }
 </script>
@@ -555,5 +636,90 @@ export default class PlayerView extends Vue {
 .playerTag {
   margin-left: 10px;
   text-transform: none;
+}
+
+.live-match__container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    height: 40px;
+
+    .live-match__indicator {
+      position: absolute;
+      left: calc(50% - 13px);
+      top: -25px;
+      font-size: 13px;
+    }
+
+    .live-match__team1 {
+      position: absolute;
+      left: 0;
+      width:45%;
+      overflow-x: hidden;
+    }
+
+    .live-match__team2 {
+      position: absolute;
+      right: 0; 
+      width:45%;
+      overflow-x: hidden;
+    }
+
+    .live-match__vstext {
+      position: absolute;
+      left: calc(50% - 10px);
+      top: calc(50% - 20px);
+    }
+
+    .live-match__map {
+      position: absolute;
+      top: 28px;
+      font-size: 12px;
+      left: calc(50% - 60px);
+      text-align: center; width:120px
+    }
+
+    &.one-v-one {
+      .live-match__map {
+        top: 28px;
+      }
+    }
+    &.two-v-two-at {
+      height: 60px;
+      .live-match__map {
+        top: 50px;
+      }
+    }
+}
+
+@keyframes up-right {
+    0% {
+        transform: scale(1);
+        opacity: .25
+    }
+    50% {
+        transform: scale (1, 5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: .25;
+    }
+}
+.circle {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    opacity: 0.25;
+}
+.red {
+    background-color: red;
+    position: absolute;
+    top: 5px;
+    left: 28px;
+    -webkit-animation: up-right 1s infinite;
+    -moz-animation: up-right 1s infinite;
+    -o-animation: up-right 1s infinite;
+    animation: up-right 1s infinite;
 }
 </style>

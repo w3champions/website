@@ -83,8 +83,8 @@ const en = {
   },
 
   matchStatuses: {
-    onGoing: "On Going",
-    past: "Past"
+    onGoing: "Now Playing",
+    past: "Finished"
   }
 };
 
