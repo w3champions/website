@@ -54,8 +54,8 @@ const en = {
   },
 
   heroNames: {
-    all: "All",
-    none: "None",
+    all: "Any hero selection",
+    none: "No hero selection",
     archmage: "Archmage",
     alchemist: "Goblin Alchemist",
     avatarofflame: "Firelord",

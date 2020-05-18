@@ -8,18 +8,22 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Hero } from "@/store/typings";
 
 @Component({})
 export default class HeroPicture extends Vue {
   @Prop() heroIcon!: string;
 
+  public parsePicture(hero: string) {
+    return require("../../assets/heroes/" + hero + ".png");
+    // try {
+    //   return require("../../assets/heroes/" + hero + ".png");
+    // } catch (e) {
+    //   return null;
+    // }
+  }
+
   get heroPicture() {
-    try {
-      return require("../../assets/heroes/" + this.heroIcon + ".png");
-    } catch (e) {
-      return null;
-    }
+    return this.parsePicture(this.heroIcon);
   }
 }
 </script>
@@ -28,10 +32,9 @@ export default class HeroPicture extends Vue {
 .hero-icon {
   z-index: 1;
   position: relative;
-  margin-top: 12px;
   padding-top: 100%;
+  padding-bottom: 0;
   width: 100%;
-  padding-bottom: 0 !important;
   margin-bottom: -2px !important;
   background-repeat: no-repeat;
   background-size: contain;

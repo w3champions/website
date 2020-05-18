@@ -6,7 +6,9 @@
           <v-card-title>
             Matches
           </v-card-title>
-          <matches-status-select></matches-status-select>
+          <v-card-text>
+            <matches-status-select />
+          </v-card-text>
           <matches-grid
             v-model="matches"
             :totalMatches="totalMatches"

@@ -17,7 +17,10 @@ export default class PopularGameTimeChart extends Vue {
   @Prop() public popularGameHour!: PopularGameHour;
 
   getTrimmedTimes() {
-    const times = this.popularGameHour.playTimePerHour.slice(4);
+    const gameHour = this.popularGameHour;
+    if (!gameHour) return [];
+    
+    const times = gameHour?.playTimePerHour.slice(4);
     times.pop();
     return times;
   }
