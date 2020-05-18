@@ -443,10 +443,6 @@ export default class RankingsView extends Vue {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
 
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    await this.getRankings();
-    await this.getLadders();
-
     await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
 
     this._ongoingMatchesMap = {};
@@ -459,6 +455,10 @@ export default class RankingsView extends Vue {
       });
       
     });
+
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.getRankings();
+    await this.getLadders();
   }
 
   public getRankings(options?: DataTableOptions) {
