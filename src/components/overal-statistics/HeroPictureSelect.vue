@@ -125,9 +125,15 @@ export default class HeroPictureSelect extends Vue {
   }
 
   get previousPreviousHero() {
-    if (this.heroIndex === 4 || this.heroIndex === 1) {
+    if (
+      this.heroIndex === 4 ||
+      this.heroIndex === 1 ||
+      this.heroIndex === 3 ||
+      this.heroIndex === 0
+    ) {
       return null;
     }
+
     return this.heroPicks[this.heroIndex - 2];
   }
 
