@@ -23,6 +23,7 @@ const mod = {
     selectedSeason: {} as Season,
     gateway: 20 as Gateways,
     gameMode: 0 as EGameMode,
+    ongoingMatch: {} as Match
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -77,6 +78,15 @@ const mod = {
       commit.SET_MATCHES(response.matches);
       commit.SET_LOADING_RECENT_MATCHES(false);
     },
+    async loadOngoingPlayerMatch(
+      context: ActionContext<PlayerState, RootState>,
+      playerId: string
+    ) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.matchService.retrieveOnGoingPlayerMatch(playerId);
+      commit.SET_ONGOING_MATCH(response || {});
+    },
     async setGateway(
       context: ActionContext<PlayerState, RootState>,
       gateway: Gateways
@@ -129,6 +139,9 @@ const mod = {
     },
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;
+    },
+    SET_ONGOING_MATCH(state: PlayerState, match: Match) {
+      state.ongoingMatch = match;
     },
   },
 } as const;

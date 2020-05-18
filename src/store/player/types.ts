@@ -14,6 +14,7 @@ export type PlayerState = {
   selectedSeason: Season;
   gateway: Gateways;
   gameMode: EGameMode;
+  ongoingMatch: Match;
 };
 
 export type PlayerProfile = {
