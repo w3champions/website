@@ -1,15 +1,20 @@
 <template>
   <v-card-text>
-    <v-card-text
-      class="hero-picture-select"
-      :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
-      @click="
-        () => {
-          if (isEnabledForChange) openDialog();
-        }
-      "
-      :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-    />
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <div v-on="on">
+          <v-card-text
+            class="hero-picture-select"
+            :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
+            @click="() => { if (isEnabledForChange) openDialog(); }"
+            :style="{ 'background-image': 'url(' + heroPicture + ')' }"
+          />
+        </div>
+      </template>
+      <div>
+        {{ $t(`heroNames.${heroPickName}`) }}
+      </div>
+    </v-tooltip>
     <div class="text-center hero-level-flag">
       <span>{{ (heroIndex % 3) + 1 }}</span>
     </div>
@@ -21,21 +26,24 @@
           :key="heroPickPerRace.map((h) => h.heroId).join('_')"
         >
           <v-col
-            v-for="heroPick in heroPickPerRace"
-            :key="heroPick.heroId"
+            v-for="heroPickSelection in heroPickPerRace"
+            :key="heroPickSelection.heroId"
           >
-            <v-card-text
-              class="hero-icon-select"
-              :class="isEnabledForSelect(heroPick) ? '' : 'hero-icon-disabled'"
-              @click="
-                () => {
-                  if (isEnabledForSelect(heroPick)) pickHero(heroPick);
-                }
-              "
-              :style="{
-                'background-image': 'url(' + parsePicture(heroPick) + ')',
-              }"
-            />
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <div v-on="on">
+                  <v-card-text
+                    class="hero-icon-select"
+                    :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
+                    @click="() => { if (isEnabledForSelect(heroPickSelection)) pickHero(heroPickSelection); }"
+                    :style="{ 'background-image': 'url(' + parsePicture(heroPickSelection) + ')',}"
+                  />
+                </div>
+              </template>
+              <div>
+                {{ heroPickSelection.name }}
+              </div>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-card>
@@ -154,8 +162,8 @@ export default class HeroPictureSelect extends Vue {
     return this.$store.direct.state.overallStatistics.heroPicks;
   }
 
-  get heroPick() {
-    return this.heroPicks[this.heroIndex];
+  get heroPickName() {
+    return this.heroPicks[this.heroIndex].name;
   }
 
   get possibleHeroPickRows() {
