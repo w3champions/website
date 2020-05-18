@@ -28,6 +28,7 @@
       <br />
       <span class="won">{{ wins }}</span> - <span class="lost">{{ losses }}</span>
     </h2>
+    <br />
   </v-card-text>
 </template>
 
