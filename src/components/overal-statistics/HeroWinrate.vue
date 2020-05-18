@@ -1,33 +1,33 @@
 <template>
   <v-card-text>
-    <v-card-title class="justify-center">
-      Pick a hero
+    <v-card-title>
+      Winrates of hero matchups
     </v-card-title>
     <v-row>
       <v-col cols="2">
-        <hero-picture :hero-index="2" />
+        <hero-picture-select :hero-index="2" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="1" />
+        <hero-picture-select :hero-index="1" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="0" />
+        <hero-picture-select :hero-index="0" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="3" />
+        <hero-picture-select :hero-index="3" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="4" />
+        <hero-picture-select :hero-index="4" />
       </v-col>
       <v-col cols="2">
-        <hero-picture :hero-index="5" />
+        <hero-picture-select :hero-index="5" />
       </v-col>
     </v-row>
-    <v-card-title class="justify-center text-center">
-      {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
+    <h2 class="justify-center text-center" v-if="wins !== 0 && losses !== 0">
+      <span :class="winrateClass">{{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}</span>
       <br />
-      {{ wins }} / {{ losses }}
-    </v-card-title>
+      <span class="won">{{ wins }}</span> - <span class="lost">{{ losses }}</span>
+    </h2>
   </v-card-text>
 </template>
 
@@ -37,9 +37,15 @@ import { Component } from "vue-property-decorator";
 import HeroPictureSelect from "@/components/overal-statistics/HeroPictureSelect.vue";
 
 @Component({
-  components: { HeroPicture: HeroPictureSelect },
+  components: { HeroPictureSelect },
 })
 export default class HeroWinrate extends Vue {
+
+  get winrateClass() {
+    if (this.winrate > 0.55) return "won"
+    if (this.winrate < 0.45) return "lost"
+    return ""
+  }
 
   get winrate() {
     return this.$store.direct.state.overallStatistics.heroWinrate.winrate;

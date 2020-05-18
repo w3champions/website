@@ -10,6 +10,9 @@
       "
       :style="{ 'background-image': 'url(' + heroPicture + ')' }"
     />
+    <div class="text-center hero-level-flag">
+      <span>{{ (heroIndex % 3) + 1 }}</span>
+    </div>
     <v-dialog v-model="dialogOpened" max-width="300px">
       <v-card>
         <v-row
@@ -337,4 +340,19 @@ export default class HeroPictureSelect extends Vue {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
+
+.theme--light .hero-level-flag {
+  background: rgba(52, 122, 154, 0.5);
+}
+
+.theme--dark .hero-level-flag {
+  background: rgba(50, 194, 165, 0.4);
+}
+
+.hero-level-flag {
+  padding-bottom: 5px;
+  font-size: 1.3em;
+  clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
+}
+
 </style>
