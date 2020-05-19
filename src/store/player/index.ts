@@ -125,6 +125,8 @@ const mod = {
 
       if (state.battleTag) {
         await dispatch.loadMatches({ page: 1, gameMode: state.gameMode });
+        await dispatch.loadRaceStats();
+        await dispatch.loadGameModeStats();
       }
     },
   },
