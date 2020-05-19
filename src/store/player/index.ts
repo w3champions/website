@@ -2,7 +2,7 @@ import { moduleActionContext } from "..";
 import {
   PlayerState,
   PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace,
+  PlayerStatsRaceOnMapVersusRace, ModeStat,
 } from "./types";
 import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -23,7 +23,8 @@ const mod = {
     selectedSeason: {} as Season,
     gateway: 20 as Gateways,
     gameMode: 0 as EGameMode,
-    ongoingMatch: {} as Match
+    ongoingMatch: {} as Match,
+    gameModeStats: [] as ModeStat[]
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -41,6 +42,19 @@ const mod = {
       commit.SET_PROFILE(profile);
       commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
+    },
+    async loadGameModeStats(
+        context: ActionContext<PlayerState, RootState>
+    ) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      const modeStats = await rootGetters.profileService.retrieveGameModeStats(
+          state.battleTag,
+          state.gateway,
+          state.selectedSeason.id
+      );
+
+      commit.SET_MODE_STATS(modeStats);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(
       context: ActionContext<PlayerState, RootState>,
@@ -142,6 +156,9 @@ const mod = {
     },
     SET_ONGOING_MATCH(state: PlayerState, match: Match) {
       state.ongoingMatch = match;
+    },
+    SET_MODE_STATS(state: PlayerState, stats: ModeStat[]) {
+      state.gameModeStats = stats;
     },
   },
 } as const;

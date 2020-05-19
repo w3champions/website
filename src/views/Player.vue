@@ -610,6 +610,7 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadGameModeStats(this.battleTag);
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
@@ -668,7 +669,7 @@ export default class PlayerView extends Vue {
 
     .live-match__team2 {
       position: absolute;
-      right: 0; 
+      right: 0;
       width:45%;
       overflow-x: hidden;
     }
