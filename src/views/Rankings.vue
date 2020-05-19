@@ -168,20 +168,18 @@
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
-                  <span
-                    v-for="playerId in item.player.playerIds"
+                  <div class="d-inline-block" v-bind:class="{'ml-3': index > 0}"
+                    v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
+                    <player-icon :race="item.playersInfo[index].calculatedRace"></player-icon>
                     <player-rank-info :player-id="playerId" />
                     <span
-                      v-if="
-                        item.player.playerIds.indexOf(playerId) !==
-                        item.player.playerIds.length - 1
-                      "
+                      v-if="index !== item.player.playerIds.length - 1"
                     >
                       &
                     </span>
-                  </span>
+                  </div>
                   <span style="position:relative" v-if="isCurrentlyLive(item.player.playerIds)">
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
@@ -242,10 +240,11 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import AppConstants from "../constants";
 
 @Component({
-  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect },
+  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect, PlayerIcon },
 })
 export default class RankingsView extends Vue {
   public headers = [
