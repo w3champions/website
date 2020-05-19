@@ -24,7 +24,7 @@ export type PlayerProfile = {
   name: string;
   battleTag: string;
   participatedInSeasons: Season[];
-  ranks: RankStat[];
+  winLosses: RaceStat[];
 };
 
 export type RaceStat = {
@@ -51,19 +51,6 @@ export type ModeStat = {
   rank: number;
   season: number;
   rankingPoints: number;
-};
-
-export type GateWayStats = {
-  gateWay: number;
-  season: number;
-  gameModeStats: ModeStat[];
-};
-
-export type RankStat = {
-  title: string;
-  level: number;
-  xp: number;
-  rank: number;
 };
 
 export interface WinLossesOnMap {
