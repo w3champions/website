@@ -295,6 +295,7 @@ import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
+import AppConstants from "../constants";
 
 @Component({
   components: {
@@ -342,6 +343,8 @@ export default class PlayerView extends Vue {
       value: "percentage",
     },
   ];
+
+  private _intervalRefreshHandle: any = {};
 
   @Watch("battleTag")
   onBattleTagChanged() {
@@ -613,11 +616,16 @@ export default class PlayerView extends Vue {
 
     await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
 
+    this._intervalRefreshHandle = setInterval(async ()=> {
+      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+    }, AppConstants.ongoingMatchesRefreshInterval);
+
     window.scrollTo(0, 0);
   }
 
   destroyed() {
     this.$store.direct.commit.player.SET_ONGOING_MATCH({} as Match);
+    clearInterval(this._intervalRefreshHandle);
   }
 }
 </script>

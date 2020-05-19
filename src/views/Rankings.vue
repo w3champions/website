@@ -194,7 +194,7 @@
                           </span>
                         </template>
                         <div>
-                          Now playing
+                          Now playing vs {{getLiveOpponent(item.player.playerIds)}}
                         </div>
                       </v-tooltip>
                   </span>
@@ -242,6 +242,7 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import AppConstants from "../constants";
 
 @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect },
@@ -300,7 +301,9 @@ export default class RankingsView extends Vue {
   public search = "";
   public searchModel = {} as Ranking;
   public isLoading = false;
+
   private _ongoingMatchesMap: any = {};
+  private _intervalRefreshHandle: any = {};
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
@@ -443,18 +446,19 @@ export default class RankingsView extends Vue {
     this.search = "";
     this.options.page = this.$store.direct.state.rankings.page + 1;
 
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+    await this.refreshRankings();
 
-    this._ongoingMatchesMap = {};
-    this.$store.direct.state.matches.allOngoingMatches.forEach(x => {
-      x.teams.forEach(t => {
-        t.players.forEach(p => {
-          const playerTag = p.battleTag;
-          this._ongoingMatchesMap[playerTag] = t.players.map(y => y.battleTag);
-        });
-      });
-      
-    });
+    this._intervalRefreshHandle = setInterval(async ()=> {
+      await this.refreshRankings();
+    }, AppConstants.ongoingMatchesRefreshInterval);
+  }
+
+  destroyed() {
+    clearInterval(this._intervalRefreshHandle);
+  }
+
+  public async refreshRankings() {
+    await this.loadOngoingMatches();
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.getRankings();
@@ -467,6 +471,28 @@ export default class RankingsView extends Vue {
 
   public getLadders() {
     this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
+  }
+
+  public async loadOngoingMatches() {
+    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+
+    this._ongoingMatchesMap = {};
+    this.$store.direct.state.matches.allOngoingMatches.forEach(x => {
+      x.teams.forEach(t => {
+        t.players.forEach(p => {
+          const playerTag = p.battleTag;
+          const opponentTeams = x.teams.filter(et => et != t);
+          const opponents = opponentTeams.flatMap(ot => {
+            return ot.players.map(y => y.battleTag);
+          });
+
+          this._ongoingMatchesMap[playerTag] = {
+            players: t.players.map(y => y.battleTag),
+            opponents: opponents
+          };
+        });
+      });
+    });
   }
 
   public async selectSeason(season: Season) {
@@ -488,18 +514,32 @@ export default class RankingsView extends Vue {
     }
 
     const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as string[];
+    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {players: string[]};
     if (foundByFirstPlayer) {
 
       let allMatch = true;
       playerIds.forEach(p => {
-        allMatch = allMatch && foundByFirstPlayer.includes(p.battleTag);
+        allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
       });
 
       return allMatch;
     }
 
     return false;
+  }
+
+  public getLiveOpponent(playerIds: PlayerId[]) {
+        if (!this._ongoingMatchesMap) {
+      return false;
+    }
+
+    const firstPlayer = playerIds[0].battleTag;
+    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {players: string[], opponents: string[]};
+    if (foundByFirstPlayer) {
+      return foundByFirstPlayer.opponents.join(',');
+    }
+
+    return '';
   }
 
   get gameModes() {
