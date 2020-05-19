@@ -272,32 +272,21 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  ModeStat,
-  PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace,
-  RaceWinsOnMap,
-} from "@/store/player/types";
-import {
-  EGameMode,
-  ERaceEnum,
-  Match,
-  Team,
-  PlayerInTeam,
-} from "@/store/typings";
-import MatchesGrid from "../components/matches/MatchesGrid.vue";
-import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
-import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
-import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
-import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Ranking, Season } from "@/store/ranking/types";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-import AppConstants from "../constants";
+  import Vue from "vue";
+  import {Component, Prop, Watch} from "vue-property-decorator";
+  import {ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap,} from "@/store/player/types";
+  import {EGameMode, ERaceEnum, Match, PlayerInTeam, Team,} from "@/store/typings";
+  import MatchesGrid from "../components/matches/MatchesGrid.vue";
+  import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
+  import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
+  import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
+  import PlayerLeague from "@/components/player/PlayerLeague.vue";
+  import {Ranking, Season} from "@/store/ranking/types";
+  import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+  import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
+  import AppConstants from "../constants";
 
-@Component({
+  @Component({
   components: {
     PlayerAvatar,
     PlayerLeague,
@@ -385,12 +374,20 @@ export default class PlayerView extends Vue {
     );
   }
 
+  get raceStats() {
+    return this.$store.direct.state.player.raceStats;
+  }
+
+  get gameModeStats() {
+    return this.$store.direct.state.player.gameModeStats;
+  }
+
   get selectedRaceStats() {
-    if (!this.profile.raceStats) {
+    if (!this.raceStats) {
       return [];
     }
 
-    return this.profile.raceStats.filter(
+    return this.raceStats.filter(
       (r) =>
         r.gateWay === this.selectedGateWay &&
         r.season === this.selectedSeason.id
@@ -430,8 +427,8 @@ export default class PlayerView extends Vue {
   }
 
   get supportedGameModes(): ModeStat[] {
-    if (this.profile && this.profile.gateWayStats) {
-      return this.gameModesByGateway.filter(
+    if (this.profile && this.gameModeStats) {
+      return this.gameModeStats.filter(
         (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
       );
     }
@@ -474,22 +471,6 @@ export default class PlayerView extends Vue {
 
   get matches(): Match[] {
     return this.$store.direct.state.player.matches;
-  }
-
-  get gameModesByGateway(): ModeStat[] {
-    if (!this.profile || !this.profile.gateWayStats) {
-      return [];
-    }
-
-    const gateWayStats = this.profile.gateWayStats.filter(
-      (g) => g.gateWay == this.selectedGateWay
-    );
-
-    const gameModeStats = gateWayStats.find(
-      (g) => g.season === this.selectedSeason.id
-    );
-
-    return gameModeStats?.gameModeStats || [];
   }
 
   get selectedGateWay() {
@@ -610,7 +591,8 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
-    await this.$store.direct.dispatch.player.loadGameModeStats(this.battleTag);
+    await this.$store.direct.dispatch.player.loadGameModeStats();
+    await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );

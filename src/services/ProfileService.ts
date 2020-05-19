@@ -56,6 +56,20 @@ export default class ProfileService {
     return await response.json();
   }
 
+  public async retrieveRaceStats(battleTag: string, gateWay: Gateways, season: number): Promise<RaceStat[]> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/race-stats?gateWay=${gateWay}&season=${season}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  }
+
   public async retrievePlayerStatsRaceVersusRaceOnMap(
     battleTag: string,
     season: number

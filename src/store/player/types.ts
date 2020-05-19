@@ -14,6 +14,7 @@ export type PlayerState = {
   selectedSeason: Season;
   gateway: Gateways;
   gameMode: EGameMode;
+  raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
 };
@@ -23,7 +24,6 @@ export type PlayerProfile = {
   name: string;
   battleTag: string;
   participatedInSeasons: Season[];
-  raceStats: RaceStat[];
   ranks: RankStat[];
 };
 
@@ -39,6 +39,7 @@ export type RaceStat = {
 
 export type ModeStat = {
   mode: EGameMode;
+  gateWay: Gateways;
   wins: number;
   losses: number;
   games: number;
