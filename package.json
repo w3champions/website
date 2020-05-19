@@ -10,6 +10,7 @@
     "format": "node_modules/.bin/prettier --write ."
   },
   "dependencies": {
+    "@aspnet/signalr": "^1.1.4",
     "@types/chart.js": "^2.9.20",
     "@types/moment": "^2.13.0",
     "@types/vue-moment": "^4.0.0",
