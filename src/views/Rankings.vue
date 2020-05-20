@@ -172,11 +172,9 @@
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <player-icon :race="item.playersInfo[index].calculatedRace"></player-icon>
+                    <player-icon :race="calculatedRace(item)" />
                     <player-rank-info :player-id="playerId" />
-                    <span
-                      v-if="index !== item.player.playerIds.length - 1"
-                    >
+                    <span v-if="index !== item.player.playerIds.length - 1">
                       &
                     </span>
                   </div>
@@ -188,7 +186,7 @@
                           class="pointer"
                           v-on="on"
                         >
-                            <div class="circle red filter-blur"></div>
+                          <div class="circle red filter-blur"></div>
                         </span>
                       </template>
                       <div>
@@ -232,16 +230,16 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { League, Ranking, Season, PlayerId } from "@/store/ranking/types";
-import { DataTableOptions, EGameMode } from "@/store/typings";
-import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
-import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
-import AppConstants from "../constants";
+  import Vue from "vue";
+  import {Component, Watch} from "vue-property-decorator";
+  import {League, PlayerId, Ranking, Season} from "@/store/ranking/types";
+  import {DataTableOptions, EGameMode, ERaceEnum} from "@/store/typings";
+  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+  import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
+  import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
+  import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+  import PlayerIcon from "@/components/matches/PlayerIcon.vue";
+  import AppConstants from "../constants";
 
 @Component({
   components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect, PlayerIcon },
@@ -528,7 +526,7 @@ export default class RankingsView extends Vue {
   }
 
   public getLiveOpponent(playerIds: PlayerId[]) {
-    if (!this._ongoingMatchesMap) {
+        if (!this._ongoingMatchesMap) {
       return false;
     }
 
