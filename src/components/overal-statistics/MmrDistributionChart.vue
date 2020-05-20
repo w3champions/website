@@ -57,7 +57,7 @@ export default class MmrDistributionChart extends Vue {
     const gateWayStat = this.$store.direct.state.player.gameModeStats;
 
     if (!gateWayStat) return 0;
-    return gateWayStat.filter((g) => g.mode === EGameMode.GM_1ON1)[0].mmr;
+    return gateWayStat.filter((g) => g.gameMode === EGameMode.GM_1ON1)[0].mmr;
   }
 
   public isYou(index: number) {
