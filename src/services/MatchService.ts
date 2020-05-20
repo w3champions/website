@@ -42,7 +42,7 @@ export default class MatchService {
 
   public async retrieveOnGoingPlayerMatch(playerId: string)
     : Promise<Match> {
-    const url = `${API_URL}api/matches/ongoing/${playerId}`;
+    const url = `${API_URL}api/matches/ongoing/${encodeURIComponent(playerId)}`;
 
     const response = await fetch(url);
 
