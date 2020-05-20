@@ -181,20 +181,20 @@
                     </span>
                   </div>
                   <span style="position:relative" v-if="isCurrentlyLive(item.player.playerIds)">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                          <span
-                            style="display: inline;"
-                            class="pointer"
-                            v-on="on"
-                          >
-                              <div class="circle red filter-blur"></div>
-                          </span>
-                        </template>
-                        <div>
-                          Now playing vs {{getLiveOpponent(item.player.playerIds)}}
-                        </div>
-                      </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span
+                          style="display: inline;"
+                          class="pointer"
+                          v-on="on"
+                        >
+                            <div class="circle red filter-blur"></div>
+                        </span>
+                      </template>
+                      <div>
+                        Now playing vs {{getLiveOpponent(item.player.playerIds)}}
+                      </div>
+                    </v-tooltip>
                   </span>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
@@ -528,7 +528,7 @@ export default class RankingsView extends Vue {
   }
 
   public getLiveOpponent(playerIds: PlayerId[]) {
-        if (!this._ongoingMatchesMap) {
+    if (!this._ongoingMatchesMap) {
       return false;
     }
 
