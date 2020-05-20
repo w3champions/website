@@ -86,28 +86,28 @@
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="gameModesByGateway && gameModesByGateway[1]"
+                        v-if="oneVersusOneStat"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[0]"
+                          :modeStat="oneVersusOneStat"
                         ></player-league>
                       </v-col>
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="gameModesByGateway && gameModesByGateway[1]"
+                        v-if="best2versus2Stat"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[1]"
+                          :modeStat="best2versus2Stat"
                         ></player-league>
                       </v-col>
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="profile.gameModeStats && gameModesByGateway[2]"
+                        v-if="ffaStats"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[2]"
+                          :modeStat="ffaStats"
                         ></player-league>
                       </v-col>
                     </v-row>
@@ -372,6 +372,20 @@ export default class PlayerView extends Vue {
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
       (r) => r.race !== ERaceEnum.RANDOM
     );
+  }
+
+  get ffaStats() {
+    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_FFA)[0];
+  }
+
+  get best2versus2Stat() {
+    const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
+    const sorted = atStats.sort(a => a.leagueId);
+    return sorted[0];
+  }
+
+  get oneVersusOneStat() {
+    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_1ON1)[0];
   }
 
   get raceStats() {
