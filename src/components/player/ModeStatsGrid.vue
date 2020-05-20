@@ -7,8 +7,8 @@
   >
     <template v-slot:body="{ items }">
       <tbody>
-        <tr v-for="item in items" :key="item.mode">
-          <td>{{ $t("gameModes." + gameModeEnums[item.mode]) }}</td>
+        <tr v-for="item in items" :key="item.gameMode">
+          <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</td>
           <td class="number-text text-end won">{{ item.wins }}</td>
           <td class="number-text text-end lost">{{ item.losses }}</td>
           <td class="number-text text-end">{{ item.wins + item.losses }}</td>

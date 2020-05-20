@@ -145,7 +145,7 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <h4>Stats by game mode</h4>
-                    <mode-stats-grid :stats="supportedGameModes" />
+                    <mode-stats-grid :stats="gameModeStats" />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -272,21 +272,21 @@
 </template>
 
 <script lang="ts">
-  import Vue from "vue";
-  import {Component, Prop, Watch} from "vue-property-decorator";
-  import {ModeStat, PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap,} from "@/store/player/types";
-  import {EGameMode, ERaceEnum, Match, PlayerInTeam, Team,} from "@/store/typings";
-  import MatchesGrid from "../components/matches/MatchesGrid.vue";
-  import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
-  import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
-  import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
-  import PlayerLeague from "@/components/player/PlayerLeague.vue";
-  import {Ranking, Season} from "@/store/ranking/types";
-  import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-  import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-  import AppConstants from "../constants";
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap,} from "@/store/player/types";
+import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
+import MatchesGrid from "../components/matches/MatchesGrid.vue";
+import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
+import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
+import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
+import PlayerLeague from "@/components/player/PlayerLeague.vue";
+import { Ranking, Season} from "@/store/ranking/types";
+import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
+import AppConstants from "../constants";
 
-  @Component({
+@Component({
   components: {
     PlayerAvatar,
     PlayerLeague,
@@ -426,16 +426,6 @@ export default class PlayerView extends Vue {
     }
 
     return "No player found";
-  }
-
-  get supportedGameModes(): ModeStat[] {
-    if (this.profile && this.gameModeStats) {
-      return this.gameModeStats.filter(
-        (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
-      );
-    }
-
-    return [];
   }
 
   get loadingProfile(): boolean {

@@ -47,7 +47,7 @@ export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
 
   get leagueMode() {
-    return this.$t(`gameModes.${EGameMode[this.modeStat.mode]}`);
+    return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
   }
 
   get leagueName(): string {
