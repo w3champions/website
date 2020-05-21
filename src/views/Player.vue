@@ -280,6 +280,7 @@
                       :mode-stat="atPartner"
                       :show-at-partner="true"
                     />
+                    <br/>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -399,13 +400,12 @@ export default class PlayerView extends Vue {
   }
 
   get gameModeStatsAt() {
-    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
+    const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
+    return atStats.sort((a, b) => b.leagueId - a.leagueId || b.rank - a.rank)
   }
 
   get best2versus2Stat() {
-    const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
-    const sorted = atStats.sort((a, b) => b.leagueId - a.leagueId || b.rank - a.rank);
-    return sorted[0];
+    return this.gameModeStatsAt[0];
   }
 
   get oneVersusOneStat() {
