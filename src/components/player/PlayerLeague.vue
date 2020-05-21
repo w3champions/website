@@ -5,6 +5,12 @@
       {{ modeStat.division !== 0 ? this.modeStat.division : null }}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
+      <div v-if="showAtPartner">
+        <span class="text-center pointer" @click="navigateToPartner(atPartner.battleTag)">
+          {{ atPartner.name }}
+        </span>
+        <br v-if="showAtPartner"/>
+      </div>
       <span v-if="isRanked">
         Rank
         <span class="number-text"
@@ -41,13 +47,23 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
+import {PlayerId} from "@/store/ranking/types";
 
 @Component({})
 export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
+  @Prop() showAtPartner!: boolean;
 
   get leagueMode() {
-    return this.$t(`gameModes.${EGameMode[this.modeStat.mode]}`);
+    return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
+  }
+
+  get atPartner() {
+    return this.modeStat.playerIds.filter(id => this.$store.direct.state.player.battleTag !== id.battleTag)[0];
+  }
+
+  public navigateToPartner() {
+    this.$router.push({ path: `/player/${encodeURIComponent(this.atPartner.battleTag)}` });
   }
 
   get leagueName(): string {

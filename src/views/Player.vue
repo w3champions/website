@@ -44,25 +44,25 @@
             </div>
           </v-card-title>
           <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
-              <div class="live-match__indicator">Live <span class="circle red"></span></div>
-              <div class="live-match__team1">
-                  <team-match-info
-                  :not-clickable="true"
-                  :team="getPlayerTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  left="true"
-                  ></team-match-info>
-              </div>
-              <div class="live-match__vstext">VS</div>
-              <div class="live-match__team2">
-                <team-match-info
-                  :not-clickable="false"
-                  :team="getOpponentTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  right="true"
-                ></team-match-info>
-              </div>
-              <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
+            <div class="live-match__indicator">Live <span class="circle red"></span></div>
+            <div class="live-match__team1">
+              <team-match-info
+                :not-clickable="true"
+                :team="getPlayerTeam(ongoingMatch)"
+                :unfinishedMatch="true"
+                left="true"
+              ></team-match-info>
+            </div>
+            <div class="live-match__vstext">VS</div>
+            <div class="live-match__team2">
+              <team-match-info
+                :not-clickable="false"
+                :team="getOpponentTeam(ongoingMatch)"
+                :unfinishedMatch="true"
+                right="true"
+              ></team-match-info>
+            </div>
+            <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
           </div>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -70,7 +70,9 @@
             <v-tab class="profileTab" :href="`#tab-matches`"
               >Match History</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-statistics`"
+            <v-tab class="profileTab" :href="`#tab-at-teams`"
+              >AT-Teams</v-tab
+            ><v-tab class="profileTab" :href="`#tab-statistics`"
               >Statistics</v-tab
             >
             <v-tab-item :value="'tab-profile'">
@@ -86,28 +88,28 @@
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="gameModesByGateway && gameModesByGateway[1]"
+                        v-if="oneVersusOneStat"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[0]"
+                          :modeStat="oneVersusOneStat"
                         ></player-league>
                       </v-col>
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="gameModesByGateway && gameModesByGateway[1]"
+                        v-if="best2versus2Stat"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[1]"
+                          :modeStat="best2versus2Stat"
                         ></player-league>
                       </v-col>
                       <v-col
                         cols="12"
                         md="4"
-                        v-if="profile.gameModeStats && gameModesByGateway[2]"
+                        v-if="ffaStats"
                       >
                         <player-league
-                          :modeStat="gameModesByGateway[2]"
+                          :modeStat="ffaStats"
                         ></player-league>
                       </v-col>
                     </v-row>
@@ -145,7 +147,7 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <h4>Stats by game mode</h4>
-                    <mode-stats-grid :stats="supportedGameModes" />
+                    <mode-stats-grid :stats="gameModeStats" />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -264,6 +266,25 @@
                 :stats="raceWithoutRandom"
               />
             </v-tab-item>
+            <v-tab-item :value="'tab-at-teams'">
+              <v-card-title>AT Teams</v-card-title>
+              <br />
+              <v-card-text>
+                <v-row>
+                  <v-col
+                    cols="3"
+                    v-for="atPartner in gameModeStatsAt"
+                    :key="atPartner.id"
+                  >
+                    <player-league
+                      :mode-stat="atPartner"
+                      :show-at-partner="true"
+                    />
+                    <br/>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-tab-item>
           </v-tabs>
         </v-card>
       </v-col>
@@ -274,25 +295,14 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  ModeStat,
-  PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace,
-  RaceWinsOnMap,
-} from "@/store/player/types";
-import {
-  EGameMode,
-  ERaceEnum,
-  Match,
-  Team,
-  PlayerInTeam,
-} from "@/store/typings";
+import { PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap,} from "@/store/player/types";
+import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Ranking, Season } from "@/store/ranking/types";
+import { Ranking, Season} from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
@@ -385,12 +395,37 @@ export default class PlayerView extends Vue {
     );
   }
 
+  get ffaStats() {
+    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_FFA)[0];
+  }
+
+  get gameModeStatsAt() {
+    const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
+    return atStats.sort((a, b) => b.leagueId - a.leagueId || b.rank - a.rank)
+  }
+
+  get best2versus2Stat() {
+    return this.gameModeStatsAt[0];
+  }
+
+  get oneVersusOneStat() {
+    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_1ON1)[0];
+  }
+
+  get raceStats() {
+    return this.$store.direct.state.player.raceStats;
+  }
+
+  get gameModeStats() {
+    return this.$store.direct.state.player.gameModeStats;
+  }
+
   get selectedRaceStats() {
-    if (!this.profile.raceStats) {
+    if (!this.raceStats) {
       return [];
     }
 
-    return this.profile.raceStats.filter(
+    return this.raceStats.filter(
       (r) =>
         r.gateWay === this.selectedGateWay &&
         r.season === this.selectedSeason.id
@@ -399,6 +434,8 @@ export default class PlayerView extends Vue {
 
   public selectSeason(season: Season) {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
+    this.$store.direct.dispatch.player.loadGameModeStats();
+    this.$store.direct.dispatch.player.loadRaceStats();
   }
 
   get seasons() {
@@ -427,16 +464,6 @@ export default class PlayerView extends Vue {
     }
 
     return "No player found";
-  }
-
-  get supportedGameModes(): ModeStat[] {
-    if (this.profile && this.profile.gateWayStats) {
-      return this.gameModesByGateway.filter(
-        (g) => g.mode === EGameMode.GM_1ON1 || g.mode === EGameMode.GM_2ON2_AT
-      );
-    }
-
-    return [];
   }
 
   get loadingProfile(): boolean {
@@ -474,22 +501,6 @@ export default class PlayerView extends Vue {
 
   get matches(): Match[] {
     return this.$store.direct.state.player.matches;
-  }
-
-  get gameModesByGateway(): ModeStat[] {
-    if (!this.profile || !this.profile.gateWayStats) {
-      return [];
-    }
-
-    const gateWayStats = this.profile.gateWayStats.filter(
-      (g) => g.gateWay == this.selectedGateWay
-    );
-
-    const gameModeStats = gateWayStats.find(
-      (g) => g.season === this.selectedSeason.id
-    );
-
-    return gameModeStats?.gameModeStats || [];
   }
 
   get selectedGateWay() {
@@ -610,6 +621,8 @@ export default class PlayerView extends Vue {
     this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadGameModeStats();
+    await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
@@ -647,56 +660,56 @@ export default class PlayerView extends Vue {
 }
 
 .live-match__container {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
-    height: 40px;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  height: 40px;
 
-    .live-match__indicator {
-      position: absolute;
-      left: calc(50% - 13px);
-      top: -25px;
-      font-size: 13px;
-    }
+  .live-match__indicator {
+    position: absolute;
+    left: calc(50% - 13px);
+    top: -25px;
+    font-size: 13px;
+  }
 
-    .live-match__team1 {
-      position: absolute;
-      left: 0;
-      width:45%;
-      overflow-x: hidden;
-    }
+  .live-match__team1 {
+    position: absolute;
+    left: 0;
+    width:45%;
+    overflow-x: hidden;
+  }
 
-    .live-match__team2 {
-      position: absolute;
-      right: 0; 
-      width:45%;
-      overflow-x: hidden;
-    }
+  .live-match__team2 {
+    position: absolute;
+    right: 0;
+    width:45%;
+    overflow-x: hidden;
+  }
 
-    .live-match__vstext {
-      position: absolute;
-      left: calc(50% - 10px);
-      top: calc(50% - 20px);
-    }
+  .live-match__vstext {
+    position: absolute;
+    left: calc(50% - 10px);
+    top: calc(50% - 20px);
+  }
 
+  .live-match__map {
+    position: absolute;
+    top: 28px;
+    font-size: 12px;
+    left: calc(50% - 60px);
+    text-align: center; width:120px
+  }
+
+  &.one-v-one {
     .live-match__map {
-      position: absolute;
       top: 28px;
-      font-size: 12px;
-      left: calc(50% - 60px);
-      text-align: center; width:120px
     }
-
-    &.one-v-one {
-      .live-match__map {
-        top: 28px;
-      }
+  }
+  &.two-v-two-at {
+    height: 60px;
+    .live-match__map {
+      top: 50px;
     }
-    &.two-v-two-at {
-      height: 60px;
-      .live-match__map {
-        top: 50px;
-      }
-    }
+  }
 }
 </style>

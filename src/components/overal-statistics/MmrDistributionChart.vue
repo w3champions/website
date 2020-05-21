@@ -2,16 +2,16 @@
   <bar-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+  import {Component, Prop} from "vue-property-decorator";
 
-import { MmrDistribution } from "@/store/overallStats/types";
-import { ChartData } from "chart.js";
-import Vue from "vue";
-import BarChart from "@/components/overal-statistics/BarChart.vue";
-import { EGameMode } from "@/store/typings";
-import { Season } from "@/store/ranking/types";
+  import {MmrDistribution} from "@/store/overallStats/types";
+  import {ChartData} from "chart.js";
+  import Vue from "vue";
+  import BarChart from "@/components/overal-statistics/BarChart.vue";
+  import {EGameMode} from "@/store/typings";
+  import {Season} from "@/store/ranking/types";
 
-@Component({
+  @Component({
   components: { BarChart },
 })
 export default class MmrDistributionChart extends Vue {
@@ -48,19 +48,16 @@ export default class MmrDistributionChart extends Vue {
       this.$store.direct.state.oauth.blizzardVerifiedBtag
     );
 
-    if (!this.$store.direct.state.player.playerProfile.gateWayStats) {
+    this.$store.direct.dispatch.player.loadGameModeStats();
+
+    if (!this.$store.direct.state.player.gameModeStats) {
       return 0;
     }
 
-    const gateWayStat = this.$store.direct.state.player.playerProfile.gateWayStats.filter(
-      (g) => g.season === this.selectedSeason.id
-    );
+    const gateWayStat = this.$store.direct.state.player.gameModeStats;
 
     if (!gateWayStat) return 0;
-    const mmrs = gateWayStat.map(
-      (f) => f.gameModeStats.filter((g) => g.mode === EGameMode.GM_1ON1)[0].mmr
-    );
-    return Math.max(...mmrs);
+    return gateWayStat.filter((g) => g.gameMode === EGameMode.GM_1ON1)[0].mmr;
   }
 
   public isYou(index: number) {
