@@ -172,29 +172,27 @@
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <player-icon :race="item.playersInfo[index].calculatedRace"></player-icon>
+                    <player-icon :race="calculatedRace(item)" />
                     <player-rank-info :player-id="playerId" />
-                    <span
-                      v-if="index !== item.player.playerIds.length - 1"
-                    >
+                    <span v-if="index !== item.player.playerIds.length - 1">
                       &
                     </span>
                   </div>
                   <span style="position:relative" v-if="isCurrentlyLive(item.player.playerIds)">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                          <span
-                            style="display: inline;"
-                            class="pointer"
-                            v-on="on"
-                          >
-                              <div class="circle red filter-blur"></div>
-                          </span>
-                        </template>
-                        <div>
-                          Now playing vs {{getLiveOpponent(item.player.playerIds)}}
-                        </div>
-                      </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span
+                          style="display: inline;"
+                          class="pointer"
+                          v-on="on"
+                        >
+                          <div class="circle red filter-blur"></div>
+                        </span>
+                      </template>
+                      <div>
+                        Now playing vs {{getLiveOpponent(item.player.playerIds)}}
+                      </div>
+                    </v-tooltip>
                   </span>
                 </td>
                 <td class="number-text text-end won">{{ item.player.wins }}</td>
@@ -233,9 +231,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { League, Ranking, Season, PlayerId } from "@/store/ranking/types";
-import { DataTableOptions, EGameMode } from "@/store/typings";
+import {Component, Watch} from "vue-property-decorator";
+import {League, PlayerId, Ranking, Season} from "@/store/ranking/types";
+import {DataTableOptions, EGameMode, ERaceEnum} from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -389,6 +387,14 @@ export default class RankingsView extends Vue {
     if (!ladder) return {} as League;
 
     return ladder.leagues.filter((l) => l.id == league)[0] || {};
+  }
+
+  public calculatedRace(ranking: Ranking) {
+    const playersInfo = ranking.playersInfo;
+    if (!playersInfo) return ERaceEnum.RANDOM;
+    const playerInfo = playersInfo[0];
+    if (!playerInfo) return ERaceEnum.RANDOM;
+    return playerInfo.calculatedRace;
   }
 
   get selectedLeagueName(): string {

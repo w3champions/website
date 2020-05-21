@@ -1,5 +1,5 @@
 import { WinLoss } from "@/store/overallStats/types";
-import { EGameMode } from "@/store/typings";
+import {EGameMode, ERaceEnum} from "@/store/typings";
 
 export type RankingState = {
   gateway: Gateways;
@@ -41,7 +41,12 @@ export type Ranking = {
   rankNumber: number;
   rankingPoints: number;
   player: PlayerOverview;
+  playersInfo: PlayerInfo[];
 };
+
+export interface PlayerInfo {
+  calculatedRace: ERaceEnum
+}
 
 export interface PlayerId {
   name: string;

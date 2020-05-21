@@ -2,7 +2,7 @@ import { moduleActionContext } from "..";
 import {
   PlayerState,
   PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace,
+  PlayerStatsRaceOnMapVersusRace, ModeStat, RaceStat,
 } from "./types";
 import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -23,7 +23,9 @@ const mod = {
     selectedSeason: {} as Season,
     gateway: 20 as Gateways,
     gameMode: 0 as EGameMode,
-    ongoingMatch: {} as Match
+    ongoingMatch: {} as Match,
+    gameModeStats: [] as ModeStat[],
+    raceStats: [] as RaceStat[]
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -41,6 +43,32 @@ const mod = {
       commit.SET_PROFILE(profile);
       commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
+    },
+    async loadGameModeStats(
+        context: ActionContext<PlayerState, RootState>
+    ) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      const modeStats = await rootGetters.profileService.retrieveGameModeStats(
+          state.battleTag,
+          state.gateway,
+          state.selectedSeason.id
+      );
+
+      commit.SET_MODE_STATS(modeStats);
+    },
+    async loadRaceStats(
+        context: ActionContext<PlayerState, RootState>
+    ) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      const raceStats = await rootGetters.profileService.retrieveRaceStats(
+          state.battleTag,
+          state.gateway,
+          state.selectedSeason.id
+      );
+
+      commit.SET_RACE_STATS(raceStats);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(
       context: ActionContext<PlayerState, RootState>,
@@ -82,7 +110,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       playerId: string
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.matchService.retrieveOnGoingPlayerMatch(playerId);
       commit.SET_ONGOING_MATCH(response || {});
@@ -97,6 +125,8 @@ const mod = {
 
       if (state.battleTag) {
         await dispatch.loadMatches({ page: 1, gameMode: state.gameMode });
+        await dispatch.loadRaceStats();
+        await dispatch.loadGameModeStats();
       }
     },
   },
@@ -142,6 +172,12 @@ const mod = {
     },
     SET_ONGOING_MATCH(state: PlayerState, match: Match) {
       state.ongoingMatch = match;
+    },
+    SET_MODE_STATS(state: PlayerState, stats: ModeStat[]) {
+      state.gameModeStats = stats;
+    },
+    SET_RACE_STATS(state: PlayerState, stats: RaceStat[]) {
+      state.raceStats = stats;
     },
   },
 } as const;
