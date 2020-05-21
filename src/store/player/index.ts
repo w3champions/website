@@ -2,7 +2,9 @@ import { moduleActionContext } from "..";
 import {
   PlayerState,
   PlayerProfile,
-  PlayerStatsRaceOnMapVersusRace, ModeStat, RaceStat,
+  PlayerStatsRaceOnMapVersusRace,
+  ModeStat,
+  RaceStat,
 } from "./types";
 import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -25,7 +27,7 @@ const mod = {
     gameMode: 0 as EGameMode,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
-    raceStats: [] as RaceStat[]
+    raceStats: [] as RaceStat[],
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -44,28 +46,24 @@ const mod = {
       commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
     },
-    async loadGameModeStats(
-        context: ActionContext<PlayerState, RootState>
-    ) {
+    async loadGameModeStats(context: ActionContext<PlayerState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
-          state.battleTag,
-          state.gateway,
-          state.selectedSeason.id
+        state.battleTag,
+        state.gateway,
+        state.selectedSeason.id
       );
 
       commit.SET_MODE_STATS(modeStats);
     },
-    async loadRaceStats(
-        context: ActionContext<PlayerState, RootState>
-    ) {
+    async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
-          state.battleTag,
-          state.gateway,
-          state.selectedSeason.id
+        state.battleTag,
+        state.gateway,
+        state.selectedSeason.id
       );
 
       commit.SET_RACE_STATS(raceStats);
@@ -112,7 +110,9 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.matchService.retrieveOnGoingPlayerMatch(playerId);
+      const response = await rootGetters.matchService.retrieveOnGoingPlayerMatch(
+        playerId
+      );
       commit.SET_ONGOING_MATCH(response || {});
     },
     async setGateway(

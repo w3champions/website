@@ -24,9 +24,12 @@
       </v-col>
     </v-row>
     <h2 class="justify-center text-center">
-      <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">{{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}</span>
+      <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">{{
+        wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%"
+      }}</span>
       <br />
-      <span class="won">{{ wins }}</span> - <span class="lost">{{ losses }}</span>
+      <span class="won">{{ wins }}</span> -
+      <span class="lost">{{ losses }}</span>
     </h2>
     <br />
   </v-card-text>
@@ -41,11 +44,10 @@ import HeroPictureSelect from "@/components/overal-statistics/HeroPictureSelect.
   components: { HeroPictureSelect },
 })
 export default class HeroWinrate extends Vue {
-
   get winrateClass() {
-    if (this.winrate > 0.55) return "won"
-    if (this.winrate < 0.45) return "lost"
-    return ""
+    if (this.winrate > 0.55) return "won";
+    if (this.winrate < 0.45) return "lost";
+    return "";
   }
 
   get winrate() {

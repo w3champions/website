@@ -168,7 +168,9 @@
               >
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
-                  <div class="d-inline-block" v-bind:class="{'ml-3': index > 0}"
+                  <div
+                    class="d-inline-block"
+                    v-bind:class="{ 'ml-3': index > 0 }"
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
@@ -178,7 +180,10 @@
                       &
                     </span>
                   </div>
-                  <span style="position:relative" v-if="isCurrentlyLive(item.player.playerIds)">
+                  <span
+                    style="position: relative;"
+                    v-if="isCurrentlyLive(item.player.playerIds)"
+                  >
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <span
@@ -190,7 +195,8 @@
                         </span>
                       </template>
                       <div>
-                        Now playing vs {{getLiveOpponent(item.player.playerIds)}}
+                        Now playing vs
+                        {{ getLiveOpponent(item.player.playerIds) }}
                       </div>
                     </v-tooltip>
                   </span>
@@ -231,9 +237,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {Component, Watch} from "vue-property-decorator";
-import {League, PlayerId, Ranking, Season} from "@/store/ranking/types";
-import {DataTableOptions, EGameMode, ERaceEnum} from "@/store/typings";
+import { Component, Watch } from "vue-property-decorator";
+import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
+import { DataTableOptions, EGameMode, ERaceEnum } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -242,7 +248,13 @@ import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import AppConstants from "../constants";
 
 @Component({
-  components: { PlayerRankInfo, PlayerMatchInfo, LeagueIcon, GateWaySelect, PlayerIcon },
+  components: {
+    PlayerRankInfo,
+    PlayerMatchInfo,
+    LeagueIcon,
+    GateWaySelect,
+    PlayerIcon,
+  },
 })
 export default class RankingsView extends Vue {
   public headers = [
@@ -453,7 +465,7 @@ export default class RankingsView extends Vue {
 
     await this.refreshRankings();
 
-    this._intervalRefreshHandle = setInterval(async ()=> {
+    this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
     }, AppConstants.ongoingMatchesRefreshInterval);
   }
@@ -482,18 +494,18 @@ export default class RankingsView extends Vue {
     await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
 
     this._ongoingMatchesMap = {};
-    this.$store.direct.state.matches.allOngoingMatches.forEach(x => {
-      x.teams.forEach(t => {
-        t.players.forEach(p => {
+    this.$store.direct.state.matches.allOngoingMatches.forEach((x) => {
+      x.teams.forEach((t) => {
+        t.players.forEach((p) => {
           const playerTag = p.battleTag;
-          const opponentTeams = x.teams.filter(et => et != t);
-          const opponents = opponentTeams.flatMap(ot => {
-            return ot.players.map(y => y.battleTag);
+          const opponentTeams = x.teams.filter((et) => et != t);
+          const opponents = opponentTeams.flatMap((ot) => {
+            return ot.players.map((y) => y.battleTag);
           });
 
           this._ongoingMatchesMap[playerTag] = {
-            players: t.players.map(y => y.battleTag),
-            opponents: opponents
+            players: t.players.map((y) => y.battleTag),
+            opponents: opponents,
           };
         });
       });
@@ -519,11 +531,12 @@ export default class RankingsView extends Vue {
     }
 
     const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {players: string[]};
+    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {
+      players: string[];
+    };
     if (foundByFirstPlayer) {
-
       let allMatch = true;
-      playerIds.forEach(p => {
+      playerIds.forEach((p) => {
         allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
       });
 
@@ -534,17 +547,20 @@ export default class RankingsView extends Vue {
   }
 
   public getLiveOpponent(playerIds: PlayerId[]) {
-        if (!this._ongoingMatchesMap) {
+    if (!this._ongoingMatchesMap) {
       return false;
     }
 
     const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {players: string[], opponents: string[]};
+    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {
+      players: string[];
+      opponents: string[];
+    };
     if (foundByFirstPlayer) {
-      return foundByFirstPlayer.opponents.join(',');
+      return foundByFirstPlayer.opponents.join(",");
     }
 
-    return '';
+    return "";
   }
 
   get gameModes() {

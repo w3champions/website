@@ -1,8 +1,8 @@
 import { moduleActionContext } from "..";
 import { MatchState, MatchStatus } from "./types";
-import {Match, MatchDetail, RootState} from "../typings";
+import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { Gateways } from '../ranking/types';
+import { Gateways } from "../ranking/types";
 
 const mod = {
   namespaced: true,
@@ -14,12 +14,12 @@ const mod = {
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
     gateWay: 20 as Gateways,
-    status: MatchStatus.onGoing
+    status: MatchStatus.onGoing,
   } as MatchState,
   actions: {
     async loadMatches(
       context: ActionContext<MatchState, RootState>,
-      page?: number,
+      page?: number
     ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
@@ -27,7 +27,7 @@ const mod = {
         commit.SET_PAGE(page - 1);
       }
 
-      let response: {count: number, matches: Match[]};
+      let response: { count: number; matches: Match[] };
 
       if (state.status == MatchStatus.onGoing) {
         response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
@@ -35,7 +35,7 @@ const mod = {
           state.gateWay
         );
       } else {
-       response = await rootGetters.matchService.retrieveMatches(
+        response = await rootGetters.matchService.retrieveMatches(
           state.page,
           state.gateWay
         );
@@ -44,9 +44,7 @@ const mod = {
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
     },
-    async loadAllOngoingMatches(
-      context: ActionContext<MatchState, RootState>
-    ) {
+    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const response = await rootGetters.matchService.retrieveOnGoingMatches(
@@ -58,8 +56,8 @@ const mod = {
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
     },
     async loadMatchDetail(
-        context: ActionContext<MatchState, RootState>,
-        id: string
+      context: ActionContext<MatchState, RootState>,
+      id: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
@@ -114,7 +112,7 @@ const mod = {
     SET_STATUS(state: MatchState, status: MatchStatus) {
       state.status = status;
     },
-  }
+  },
 } as const;
 
 export default mod;
