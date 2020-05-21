@@ -6,7 +6,11 @@
           <v-card-text
             class="hero-picture-select"
             :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
-            @click="() => { if (isEnabledForChange) openDialog(); }"
+            @click="
+              () => {
+                if (isEnabledForChange) openDialog();
+              }
+            "
             :style="{ 'background-image': 'url(' + heroPicture + ')' }"
           />
         </div>
@@ -34,9 +38,21 @@
                 <div v-on="on">
                   <v-card-text
                     class="hero-icon-select"
-                    :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
-                    @click="() => { if (isEnabledForSelect(heroPickSelection)) pickHero(heroPickSelection); }"
-                    :style="{ 'background-image': 'url(' + parsePicture(heroPickSelection) + ')',}"
+                    :class="
+                      isEnabledForSelect(heroPickSelection)
+                        ? ''
+                        : 'hero-icon-disabled'
+                    "
+                    @click="
+                      () => {
+                        if (isEnabledForSelect(heroPickSelection))
+                          pickHero(heroPickSelection);
+                      }
+                    "
+                    :style="{
+                      'background-image':
+                        'url(' + parsePicture(heroPickSelection) + ')',
+                    }"
                   />
                 </div>
               </template>
@@ -72,28 +88,64 @@ export default class HeroPictureSelect extends Vue {
 
     if (hero.heroId === "none" || hero.heroId === "all") {
       if (this.heroIndex === 0 || this.heroIndex === 3) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: hero});
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: hero});
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 1,
+          heroPick: hero,
+        });
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 2,
+          heroPick: hero,
+        });
       }
       if (this.heroIndex === 1 || this.heroIndex === 4) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: hero});
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 1,
+          heroPick: hero,
+        });
       }
     }
 
     if (this.heroIndex === 0 || this.heroIndex === 3) {
       const allPickedRaces = [
-        this.heroPicks[0 + this.heroIndex % 3].race,
-        this.heroPicks[1 + this.heroIndex % 3].race,
-        this.heroPicks[2 + this.heroIndex % 3].race,
-      ]
+        this.heroPicks[0 + (this.heroIndex % 3)].race,
+        this.heroPicks[1 + (this.heroIndex % 3)].race,
+        this.heroPicks[2 + (this.heroIndex % 3)].race,
+      ];
 
-      if (allPickedRaces[1] !== hero.race && allPickedRaces[1] !== ERaceEnum.RANDOM) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 1, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
+      if (
+        allPickedRaces[1] !== hero.race &&
+        allPickedRaces[1] !== ERaceEnum.RANDOM
+      ) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 1,
+          heroPick: {
+            name: "Any hero selection",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
+          },
+        });
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 2,
+          heroPick: {
+            name: "Any hero selection",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
+          },
+        });
       }
 
-      if (allPickedRaces[2] !== hero.race && allPickedRaces[2] !== ERaceEnum.RANDOM) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({index: this.heroIndex + 2, heroPick: { name: "Any hero selection" , heroId: "all", race: ERaceEnum.TOTAL}});
+      if (
+        allPickedRaces[2] !== hero.race &&
+        allPickedRaces[2] !== ERaceEnum.RANDOM
+      ) {
+        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+          index: this.heroIndex + 2,
+          heroPick: {
+            name: "Any hero selection",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
+          },
+        });
       }
     }
 
@@ -168,7 +220,9 @@ export default class HeroPictureSelect extends Vue {
     );
 
     if (heroPick.race === ERaceEnum.RANDOM) {
-      const wasHeroPicked = picksWithoutAll.filter(p => p === heroPick.heroId)[0]
+      const wasHeroPicked = picksWithoutAll.filter(
+        (p) => p === heroPick.heroId
+      )[0];
       return !wasHeroPicked;
     }
 
@@ -383,5 +437,4 @@ export default class HeroPictureSelect extends Vue {
   font-size: 1.3em;
   clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
 }
-
 </style>
