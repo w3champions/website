@@ -44,25 +44,25 @@
             </div>
           </v-card-title>
           <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
-              <div class="live-match__indicator">Live <span class="circle red"></span></div>
-              <div class="live-match__team1">
-                  <team-match-info
-                  :not-clickable="true"
-                  :team="getPlayerTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  left="true"
-                  ></team-match-info>
-              </div>
-              <div class="live-match__vstext">VS</div>
-              <div class="live-match__team2">
-                <team-match-info
-                  :not-clickable="false"
-                  :team="getOpponentTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  right="true"
-                ></team-match-info>
-              </div>
-              <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
+            <div class="live-match__indicator">Live <span class="circle red"></span></div>
+            <div class="live-match__team1">
+              <team-match-info
+                :not-clickable="true"
+                :team="getPlayerTeam(ongoingMatch)"
+                :unfinishedMatch="true"
+                left="true"
+              ></team-match-info>
+            </div>
+            <div class="live-match__vstext">VS</div>
+            <div class="live-match__team2">
+              <team-match-info
+                :not-clickable="false"
+                :team="getOpponentTeam(ongoingMatch)"
+                :unfinishedMatch="true"
+                right="true"
+              ></team-match-info>
+            </div>
+            <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
           </div>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -70,7 +70,9 @@
             <v-tab class="profileTab" :href="`#tab-matches`"
               >Match History</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-statistics`"
+            <v-tab class="profileTab" :href="`#tab-at-teams`"
+              >AT-Teams</v-tab
+            ><v-tab class="profileTab" :href="`#tab-statistics`"
               >Statistics</v-tab
             >
             <v-tab-item :value="'tab-profile'">
@@ -264,6 +266,24 @@
                 :stats="raceWithoutRandom"
               />
             </v-tab-item>
+            <v-tab-item :value="'tab-at-teams'">
+              <v-card-title>AT Teams</v-card-title>
+              <br />
+              <v-card-text>
+                <v-row>
+                  <v-col
+                    cols="3"
+                    v-for="atPartner in gameModeStatsAt"
+                    :key="atPartner.id"
+                  >
+                    <player-league
+                      :mode-stat="atPartner"
+                      :show-at-partner="true"
+                    />
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-tab-item>
           </v-tabs>
         </v-card>
       </v-col>
@@ -376,6 +396,10 @@ export default class PlayerView extends Vue {
 
   get ffaStats() {
     return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_FFA)[0];
+  }
+
+  get gameModeStatsAt() {
+    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
   }
 
   get best2versus2Stat() {
@@ -636,56 +660,56 @@ export default class PlayerView extends Vue {
 }
 
 .live-match__container {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
-    height: 40px;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  height: 40px;
 
-    .live-match__indicator {
-      position: absolute;
-      left: calc(50% - 13px);
-      top: -25px;
-      font-size: 13px;
-    }
+  .live-match__indicator {
+    position: absolute;
+    left: calc(50% - 13px);
+    top: -25px;
+    font-size: 13px;
+  }
 
-    .live-match__team1 {
-      position: absolute;
-      left: 0;
-      width:45%;
-      overflow-x: hidden;
-    }
+  .live-match__team1 {
+    position: absolute;
+    left: 0;
+    width:45%;
+    overflow-x: hidden;
+  }
 
-    .live-match__team2 {
-      position: absolute;
-      right: 0;
-      width:45%;
-      overflow-x: hidden;
-    }
+  .live-match__team2 {
+    position: absolute;
+    right: 0;
+    width:45%;
+    overflow-x: hidden;
+  }
 
-    .live-match__vstext {
-      position: absolute;
-      left: calc(50% - 10px);
-      top: calc(50% - 20px);
-    }
+  .live-match__vstext {
+    position: absolute;
+    left: calc(50% - 10px);
+    top: calc(50% - 20px);
+  }
 
+  .live-match__map {
+    position: absolute;
+    top: 28px;
+    font-size: 12px;
+    left: calc(50% - 60px);
+    text-align: center; width:120px
+  }
+
+  &.one-v-one {
     .live-match__map {
-      position: absolute;
       top: 28px;
-      font-size: 12px;
-      left: calc(50% - 60px);
-      text-align: center; width:120px
     }
-
-    &.one-v-one {
-      .live-match__map {
-        top: 28px;
-      }
+  }
+  &.two-v-two-at {
+    height: 60px;
+    .live-match__map {
+      top: 50px;
     }
-    &.two-v-two-at {
-      height: 60px;
-      .live-match__map {
-        top: 50px;
-      }
-    }
+  }
 }
 </style>
