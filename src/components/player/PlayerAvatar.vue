@@ -78,7 +78,19 @@
         </v-card>
       </v-dialog>
     </h3>
-    <div>{{ homePage ? homePage : "-" }}</div>
+    <div>
+      <a
+        :style="{
+          display: 'block',
+        }"
+        v-for="homePageLink in homePageLinks"
+        rel="noopener noreferrer nofollow"
+        target="_blank"
+        :href="homePageLink"
+        :key="homePageLink"
+        >{{ homePageLink }}</a
+      >
+    </div>
     <h3>
       About:
       <template>
@@ -142,6 +154,10 @@ export default class PlayerAvatar extends Vue {
 
   get homePage(): string {
     return this.personalSetting.homePage;
+  }
+
+  get homePageLinks(): Array<string> {
+    return this.personalSetting.homePage.split(" ").map((url) => url.trim());
   }
 
   get savedMessageValue(): string {
