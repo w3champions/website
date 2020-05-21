@@ -380,7 +380,7 @@ export default class PlayerView extends Vue {
 
   get best2versus2Stat() {
     const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
-    const sorted = atStats.sort(a => a.leagueId);
+    const sorted = atStats.sort((a, b) => b.leagueId - a.leagueId || b.rank - a.rank);
     return sorted[0];
   }
 
