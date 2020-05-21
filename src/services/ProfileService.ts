@@ -5,7 +5,6 @@ import {
   RaceStat,
 } from "@/store/player/types";
 import { API_URL } from "@/main";
-import { EGameMode } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 
 export default class ProfileService {

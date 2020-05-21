@@ -50,7 +50,6 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
-import { PlayerId } from "@/store/ranking/types";
 
 @Component({})
 export default class PlayerLeague extends Vue {
