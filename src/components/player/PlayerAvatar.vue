@@ -49,8 +49,7 @@
           v-if="isLoggedInPlayer"
           class="float-lg-right"
           @click="homepageEdit.opened = !homepageEdit.opened"
-          >mdi-pencil</v-icon
-        >
+        >mdi-pencil</v-icon>
       </template>
       <v-dialog v-model="homepageEdit.opened" max-width="500px">
         <v-card>
@@ -72,24 +71,20 @@
               text
               color="primary"
               @click="saveHomepageInfo"
-              >Save</v-btn
-            >
+            >Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </h3>
     <div>
       <a
-        :style="{
-          display: 'block',
-        }"
+        class="d-block"
         v-for="homePageLink in homePageLinks"
         rel="noopener noreferrer nofollow"
         target="_blank"
         :href="homePageLink"
         :key="homePageLink"
-        >{{ homePageLink }}</a
-      >
+      >{{ homePageLink }}</a>
     </div>
     <h3>
       About:
@@ -98,8 +93,7 @@
           v-if="isLoggedInPlayer"
           class="float-lg-right"
           @click="additonalInfoEdit.opened = !additonalInfoEdit.opened"
-          >mdi-pencil</v-icon
-        >
+        >mdi-pencil</v-icon>
       </template>
       <v-dialog v-model="additonalInfoEdit.opened" max-width="500px">
         <v-card>
@@ -121,15 +115,12 @@
               text
               color="primary"
               @click="saveAdditionalInfo"
-              >Save</v-btn
-            >
+            >Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </h3>
-    <div>
-      {{ savedMessageValue ? savedMessageValue : "-" }}
-    </div>
+    <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
   </div>
 </template>
 
