@@ -28,13 +28,13 @@ import { Component } from "vue-property-decorator";
 import { Match } from "@/store/typings";
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
-import { MatchStatus } from '../store/match/types';
+import { MatchStatus } from "../store/match/types";
 
 @Component({
   components: {
     MatchesGrid,
-    MatchesStatusSelect
-  }
+    MatchesStatusSelect,
+  },
 })
 export default class MatchesView extends Vue {
   onPageChanged(page: number) {

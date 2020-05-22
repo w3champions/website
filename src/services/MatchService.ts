@@ -1,6 +1,6 @@
-import {EGameMode, Match, MatchDetail} from "@/store/typings";
-import {API_URL} from "@/main";
-import { Gateways } from '@/store/ranking/types';
+import { EGameMode, Match, MatchDetail } from "@/store/typings";
+import { API_URL } from "@/main";
+import { Gateways } from "@/store/ranking/types";
 
 export default class MatchService {
   private pageSize: number;
@@ -12,7 +12,7 @@ export default class MatchService {
   public async retrieveMatches(
     page: number,
     gateway: number
-  ): Promise<{count: number, matches: Match[]}> {
+  ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
 
@@ -23,9 +23,9 @@ export default class MatchService {
   public async retrieveOnGoingMatchesPaged(
     page: number,
     gateway: number
-  ): Promise<{count: number, matches: Match[]}> {
+  ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    
+
     return this.retrieveOnGoingMatches(offset, this.pageSize, gateway);
   }
 
@@ -33,15 +33,14 @@ export default class MatchService {
     offset: number,
     pageSize: number,
     gateway: number
-  ): Promise<{count: number, matches: Match[]}> {
+  ): Promise<{ count: number; matches: Match[] }> {
     const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
-  public async retrieveOnGoingPlayerMatch(playerId: string)
-    : Promise<Match> {
+  public async retrieveOnGoingPlayerMatch(playerId: string): Promise<Match> {
     const url = `${API_URL}api/matches/ongoing/${encodeURIComponent(playerId)}`;
 
     const response = await fetch(url);
@@ -53,9 +52,7 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrieveMatchDetail(
-    matchId: string
-  ): Promise<MatchDetail> {
+  public async retrieveMatchDetail(matchId: string): Promise<MatchDetail> {
     const url = `${API_URL}api/matches/${matchId}`;
 
     const response = await fetch(url);
@@ -68,12 +65,14 @@ export default class MatchService {
     opponentTag: string,
     gameMode: EGameMode,
     gateway: Gateways
-  ): Promise<{count: number, matches: Match[]}> {
+  ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
-    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
+    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(
+      battleTag
+    )}&gateway=${gateway}`;
 
     if (opponentTag.length) {
-      url += `&opponentId=${(encodeURIComponent(opponentTag))}`;
+      url += `&opponentId=${encodeURIComponent(opponentTag)}`;
     } else {
       url += `&pageSize=${this.pageSize}`;
     }
@@ -85,8 +84,8 @@ export default class MatchService {
     const response = await fetch(url, {
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
     return await response.json();
   }

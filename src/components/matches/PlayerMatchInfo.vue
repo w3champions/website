@@ -84,7 +84,7 @@ export default class PlayerMatchInfo extends Vue {
     if (this.unfinishedMatch) {
       return Math.floor(this.player.oldMmr);
     }
-    
+
     return Math.floor(this.player.currentMmr);
   }
 

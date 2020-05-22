@@ -43,9 +43,9 @@ export type MmrCount = {
 };
 
 export interface HeroPick {
-  name: string,
-  heroId: string,
-  race: ERaceEnum
+  name: string;
+  heroId: string;
+  race: ERaceEnum;
 }
 
 export type MmrDistribution = {

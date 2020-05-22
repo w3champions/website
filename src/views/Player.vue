@@ -43,8 +43,14 @@
               </v-menu>
             </div>
           </v-card-title>
-          <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
-            <div class="live-match__indicator">Live <span class="circle red"></span></div>
+          <div
+            class="live-match__container"
+            v-if="ongoingMatch.id"
+            :class="ongoingMatchGameModeClass"
+          >
+            <div class="live-match__indicator">
+              Live <span class="circle red"></span>
+            </div>
             <div class="live-match__team1">
               <team-match-info
                 :not-clickable="true"
@@ -62,7 +68,9 @@
                 right="true"
               ></team-match-info>
             </div>
-            <span class="live-match__map">{{$t("mapNames." + ongoingMatch.map)}}</span>
+            <span class="live-match__map">{{
+              $t("mapNames." + ongoingMatch.map)
+            }}</span>
           </div>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
@@ -70,8 +78,7 @@
             <v-tab class="profileTab" :href="`#tab-matches`"
               >Match History</v-tab
             >
-            <v-tab class="profileTab" :href="`#tab-at-teams`"
-              >AT-Teams</v-tab
+            <v-tab class="profileTab" :href="`#tab-at-teams`">AT-Teams</v-tab
             ><v-tab class="profileTab" :href="`#tab-statistics`"
               >Statistics</v-tab
             >
@@ -85,32 +92,18 @@
                   </v-col>
                   <v-col md="12" lg="9">
                     <v-row>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="oneVersusOneStat"
-                      >
+                      <v-col cols="12" md="4" v-if="oneVersusOneStat">
                         <player-league
                           :modeStat="oneVersusOneStat"
                         ></player-league>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="best2versus2Stat"
-                      >
+                      <v-col cols="12" md="4" v-if="best2versus2Stat">
                         <player-league
                           :modeStat="best2versus2Stat"
                         ></player-league>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="4"
-                        v-if="ffaStats"
-                      >
-                        <player-league
-                          :modeStat="ffaStats"
-                        ></player-league>
+                      <v-col cols="12" md="4" v-if="ffaStats">
+                        <player-league :modeStat="ffaStats"></player-league>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -280,7 +273,7 @@
                       :mode-stat="atPartner"
                       :show-at-partner="true"
                     />
-                    <br/>
+                    <br />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -295,14 +288,24 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap,} from "@/store/player/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
+import {
+  PlayerProfile,
+  PlayerStatsRaceOnMapVersusRace,
+  RaceWinsOnMap,
+} from "@/store/player/types";
+import {
+  EGameMode,
+  ERaceEnum,
+  Match,
+  PlayerInTeam,
+  Team,
+} from "@/store/typings";
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Ranking, Season} from "@/store/ranking/types";
+import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
@@ -315,7 +318,7 @@ import AppConstants from "../constants";
     MatchesGrid,
     ModeStatsGrid,
     GateWaySelect,
-    TeamMatchInfo
+    TeamMatchInfo,
   },
 })
 export default class PlayerView extends Vue {
@@ -396,12 +399,16 @@ export default class PlayerView extends Vue {
   }
 
   get ffaStats() {
-    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_FFA)[0];
+    return this.gameModeStats.filter((m) => m.gameMode === EGameMode.GM_FFA)[0];
   }
 
   get gameModeStatsAt() {
-    const atStats = this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_2ON2_AT);
-    return atStats.sort((a, b) => b.leagueId - a.leagueId || b.rank - a.rank)
+    const atStats = this.gameModeStats.filter(
+      (m) => m.gameMode === EGameMode.GM_2ON2_AT
+    );
+    return atStats.sort(
+      (a, b) => b.leagueId * 1000 - b.rank - a.leagueId * 1000 - a.rank
+    );
   }
 
   get best2versus2Stat() {
@@ -409,7 +416,9 @@ export default class PlayerView extends Vue {
   }
 
   get oneVersusOneStat() {
-    return this.gameModeStats.filter(m => m.gameMode === EGameMode.GM_1ON1)[0];
+    return this.gameModeStats.filter(
+      (m) => m.gameMode === EGameMode.GM_1ON1
+    )[0];
   }
 
   get raceStats() {
@@ -513,22 +522,22 @@ export default class PlayerView extends Vue {
   }
 
   get ongoingMatchGameModeClass() {
-    if (!this.ongoingMatch.id){
+    if (!this.ongoingMatch.id) {
       return "";
     }
 
-    switch(this.ongoingMatch.gameMode) {
+    switch (this.ongoingMatch.gameMode) {
       case EGameMode.GM_1ON1: {
-        return "one-v-one"
+        return "one-v-one";
       }
       case EGameMode.GM_2ON2_AT: {
-        return "two-v-two-at"
+        return "two-v-two-at";
       }
       case EGameMode.GM_4ON4: {
-        return "four-v-four"
+        return "four-v-four";
       }
       case EGameMode.GM_FFA: {
-        return "ffa"
+        return "ffa";
       }
     }
 
@@ -588,7 +597,7 @@ export default class PlayerView extends Vue {
   }
 
   public getPlayerTeam(match: Match) {
-    if(!match.teams) {
+    if (!match.teams) {
       return {} as Match;
     }
 
@@ -600,7 +609,7 @@ export default class PlayerView extends Vue {
   }
 
   public getOpponentTeam(match: Match) {
-    if(!match.teams) {
+    if (!match.teams) {
       return {} as Match;
     }
 
@@ -627,10 +636,14 @@ export default class PlayerView extends Vue {
       this.battleTag
     );
 
-    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
+      this.battleTag
+    );
 
-    this._intervalRefreshHandle = setInterval(async ()=> {
-      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+    this._intervalRefreshHandle = setInterval(async () => {
+      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
+        this.battleTag
+      );
     }, AppConstants.ongoingMatchesRefreshInterval);
 
     window.scrollTo(0, 0);
@@ -675,14 +688,14 @@ export default class PlayerView extends Vue {
   .live-match__team1 {
     position: absolute;
     left: 0;
-    width:45%;
+    width: 45%;
     overflow-x: hidden;
   }
 
   .live-match__team2 {
     position: absolute;
     right: 0;
-    width:45%;
+    width: 45%;
     overflow-x: hidden;
   }
 
@@ -697,7 +710,8 @@ export default class PlayerView extends Vue {
     top: 28px;
     font-size: 12px;
     left: calc(50% - 60px);
-    text-align: center; width:120px
+    text-align: center;
+    width: 120px;
   }
 
   &.one-v-one {

@@ -2,16 +2,16 @@
   <bar-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-  import {Component, Prop} from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
-  import {MmrDistribution} from "@/store/overallStats/types";
-  import {ChartData} from "chart.js";
-  import Vue from "vue";
-  import BarChart from "@/components/overal-statistics/BarChart.vue";
-  import {EGameMode} from "@/store/typings";
-  import {Season} from "@/store/ranking/types";
+import { MmrDistribution } from "@/store/overallStats/types";
+import { ChartData } from "chart.js";
+import Vue from "vue";
+import BarChart from "@/components/overal-statistics/BarChart.vue";
+import { EGameMode } from "@/store/typings";
+import { Season } from "@/store/ranking/types";
 
-  @Component({
+@Component({
   components: { BarChart },
 })
 export default class MmrDistributionChart extends Vue {

@@ -9,10 +9,10 @@ export type MatchState = {
   totalMatches: number;
   loadingMatchDetail: boolean;
   gateWay: Gateways;
-  status: MatchStatus
+  status: MatchStatus;
 };
 
 export enum MatchStatus {
   onGoing = "onGoing",
-  past = 'past',
+  past = "past",
 }
