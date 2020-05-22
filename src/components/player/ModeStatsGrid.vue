@@ -13,14 +13,16 @@
           <td class="number-text text-end lost">{{ item.losses }}</td>
           <td class="number-text text-end">{{ item.wins + item.losses }}</td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span
-            >{{ (item.winrate * 100).toFixed(1) }}%
+            <span v-if="is2v2(item)">~</span>
+            {{ (item.winrate * 100).toFixed(1) }}%
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span>{{ item.mmr }}
+            <span v-if="is2v2(item)">~</span>
+            {{ item.mmr }}
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span>{{ item.rankingPoints }}
+            <span v-if="is2v2(item)">~</span>
+            {{ item.rankingPoints }}
           </td>
         </tr>
       </tbody>

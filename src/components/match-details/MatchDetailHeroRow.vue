@@ -1,6 +1,6 @@
 <template>
   <v-row justify="space-between">
-    <v-col cols="1"> </v-col>
+    <v-col cols="1"></v-col>
     <v-col v-if="heroesOfWinner.length <= 2" cols="1" />
     <v-col v-if="heroesOfWinner.length <= 1" cols="1" />
     <v-col cols="1">
@@ -46,7 +46,7 @@
     <v-col cols="1">
       <hero-icon :hero="heroesOfLooser[2]" />
     </v-col>
-    <v-col cols="1"> </v-col>
+    <v-col cols="1"></v-col>
   </v-row>
 </template>
 

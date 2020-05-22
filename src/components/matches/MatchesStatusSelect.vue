@@ -1,10 +1,10 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent;"
-        ><v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon
-        >{{ status }}</v-btn
-      >
+      <v-btn tile v-on="on" style="background-color: transparent;">
+        <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
+        {{ status }}
+      </v-btn>
     </template>
     <v-card>
       <v-card-text>
