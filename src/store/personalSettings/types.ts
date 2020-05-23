@@ -22,7 +22,7 @@ export type WinsToPictureId = {
 
 export type PersonalSetting = {
   profileMessage: string;
-  homePage: string;
+  homePage?: string;
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];
