@@ -10,7 +10,8 @@
                 Finally your Warcraft III 1on1 Ladder is available, crafted by
                 and for the community!
                 <br />
-                <br />The ladder contains:
+                <br />
+                The ladder contains:
                 <ul>
                   <li>Improved Pings by non-global ladder</li>
                   <li>Matchmaking (based on W3Arena)</li>
@@ -21,7 +22,8 @@
                 </ul>
                 <br />
                 <b>Current Map Pool</b>
-                <br />TM,EI,TSLV,CH,NIS,AZ and LR
+                <br />
+                TM,EI,TSLV,CH,NIS,AZ and LR
               </v-col>
               <v-col cols="12" md="6">
                 <img
@@ -90,7 +92,8 @@
                 </p>
                 <p>
                   <b>Issues with the download link?</b>
-                  <br />Some Antivir-Software has falsely detected our setup as
+                  <br />
+                  Some Antivir-Software has falsely detected our setup as
                   malicious. We contacted them and some already corrected their
                   databases. If thats not the case for you, use the following
                   link and unpack the setup with the
@@ -106,9 +109,9 @@
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only"
-                      >Windows installer zipped</span
-                    >
+                    <span class="mr-2 hidden-xs-only">
+                      Windows installer zipped
+                    </span>
                   </v-btn>
                 </p>
               </v-col>
@@ -146,12 +149,14 @@
                     height="50px"
                   />
                 </a>
-                <br />Social Media
+                <br />
+                Social Media
                 <br />
                 <a href="https://twitter.com/W3Pad" target="_blank">
                   <img src="../assets/twitter.svg" height="24" />
                 </a>
-                <br />Support us
+                <br />
+                Support us
                 <br />
                 <a href="https://www.patreon.com/w3pad" target="_blank">
                   <img src="../assets/patreon.png" height="24" />

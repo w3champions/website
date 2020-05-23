@@ -46,7 +46,7 @@
             </v-card-subtitle>
           </v-row>
           <v-row v-if="isCompleteGame">
-            <v-col :cols="matchIs2v2 ? 2 : 1"> </v-col>
+            <v-col :cols="matchIs2v2 ? 2 : 1"></v-col>
             <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
@@ -68,7 +68,7 @@
                 "
               />
             </v-col>
-            <v-col cols="1"> </v-col>
+            <v-col cols="1"></v-col>
           </v-row>
         </v-card>
       </v-col>

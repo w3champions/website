@@ -13,7 +13,7 @@
             @click.right="openProfileInNewTab()"
           >
             {{ nameWithoutBtag }}
-            <span class="number-text">({{ currentRating }}) </span>
+            <span class="number-text">({{ currentRating }})</span>
             <span class="number-text" v-if="mmrChange !== 0" :class="won">
               <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
               <span v-else>{{ mmrChange }}</span>
@@ -25,8 +25,11 @@
     <div v-if="winrate">
       <p>{{ battleTag }}</p>
       <p></p>
-      Wins: <span class="number-text">{{ winrate.wins }}</span> | Losses:
-      <span class="number-text">{{ winrate.losses }}</span> | Total:
+      Wins:
+      <span class="number-text">{{ winrate.wins }}</span>
+      | Losses:
+      <span class="number-text">{{ winrate.losses }}</span>
+      | Total:
       <span class="number-text">{{ winrate.games }}</span>
     </div>
     <div v-else>
