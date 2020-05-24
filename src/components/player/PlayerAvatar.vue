@@ -80,7 +80,7 @@
         </v-card>
       </v-dialog>
     </h3>
-    <div>
+    <div v-if="homePageLinks && homePageLinks.length > 0">
       <a
         class="d-block"
         v-for="homePageLink in homePageLinks"
@@ -92,6 +92,7 @@
         {{ homePageLink }}
       </a>
     </div>
+    <div v-else>{{ homePage }}</div>
     <h3>
       About:
       <template>
@@ -154,11 +155,18 @@ export default class PlayerAvatar extends Vue {
   public PicNumbers = Array.from(Array(11).keys());
 
   get homePage(): string {
-    return this.personalSetting.homePage;
+    return this.personalSetting.homePage || "-";
   }
 
   get homePageLinks(): Array<string> {
-    return this.personalSetting.homePage.split(" ").map((url) => url.trim());
+    if (!this.homePage || !this.homePage.includes("http")) {
+      return [];
+    }
+
+    return this.homePage
+      .split(" ")
+      .filter((url) => !!url)
+      .map((url) => url.trim());
   }
 
   get savedMessageValue(): string {
@@ -293,9 +301,6 @@ export default class PlayerAvatar extends Vue {
 
 .player-league {
   width: 182px;
-
-  .league-image {
-  }
 
   .player-league-rank {
     font-size: 20px;
