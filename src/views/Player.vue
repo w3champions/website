@@ -258,7 +258,7 @@
                 </v-card-text>
               </v-row>
               <player-stats-race-versus-race-on-map
-                v-if="selectedSeason.id != 0"
+                v-if="selectedSeason.id !== 0"
                 :stats="raceWithoutRandom"
               />
             </v-tab-item>
