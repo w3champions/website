@@ -5,7 +5,14 @@
         <v-card tile>
           <v-card-title class="justify-center">
             <v-row justify="space-around">
-              <v-col>
+              <v-col cols="1" class="pl-0 pr-0">
+                <v-card-subtitle class="pa-0">
+                  {{ $t(`gatewayNames.${gateWay}`) }}
+                  <br/>
+                  Season: {{ season }}
+                </v-card-subtitle>
+              </v-col>
+              <v-col cols="4">
                 <team-match-info
                   :big-race-icon="true"
                   :left="true"
@@ -15,9 +22,10 @@
               <v-col cols="1" class="text-center">
                 <span>VS</span>
               </v-col>
-              <v-col>
+              <v-col cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
+              <v-col cols="1" />
             </v-row>
           </v-card-title>
           <v-card-title class="justify-center small-title">
@@ -86,6 +94,7 @@ import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import { EGameMode } from "@/store/typings";
+import { Gateways } from "@/store/ranking/types";
 
 @Component({
   components: {
@@ -131,6 +140,14 @@ export default class MatchDetailView extends Vue {
 
   get match() {
     return this.$store.direct.state.matches.matchDetail.match;
+  }
+
+  get gateWay() {
+    return Gateways[this.$store.direct.state.matches.matchDetail.match.gateWay];
+  }
+
+  get season() {
+    return this.$store.direct.state.matches.matchDetail.match.season ?? 0;
   }
 
   get matchIs2v2() {
