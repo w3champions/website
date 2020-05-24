@@ -115,7 +115,7 @@
                     his buggy stats and thank him for all eternity ;)
                   </v-card-text>
                 </v-row>
-                <v-row class="filter-none" v-if="selectedSeason.id != 0">
+                <v-row class="filter-none" v-if="selectedSeason.id !== 0">
                   <v-col cols="12" md="6">
                     <h4>Stats by race</h4>
                     <v-data-table
