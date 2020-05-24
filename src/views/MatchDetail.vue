@@ -8,7 +8,7 @@
               <v-col cols="1" class="pl-0 pr-0">
                 <v-card-subtitle class="pa-0">
                   {{ $t(`gatewayNames.${gateWay}`) }}
-                  <br/>
+                  <br />
                   Season: {{ season }}
                 </v-card-subtitle>
               </v-col>
@@ -147,7 +147,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get season() {
-    return this.$store.direct.state.matches.matchDetail.match.season ?? 0;
+    return this.$store.direct.state.matches.matchDetail.match.season ?? 1;
   }
 
   get matchIs2v2() {
