@@ -79,7 +79,7 @@
             <v-tab class="profileTab" :href="`#tab-matches`">
               Match History
             </v-tab>
-            <v-tab class="profileTab" :href="`#tab-at-teams`">AT-Teams</v-tab>
+            <v-tab class="profileTab" :href="`#tab-at-teams`">Teams</v-tab>
             <v-tab class="profileTab" :href="`#tab-statistics`">
               Statistics
             </v-tab>
@@ -263,7 +263,7 @@
               />
             </v-tab-item>
             <v-tab-item :value="'tab-at-teams'">
-              <v-card-title>AT Teams</v-card-title>
+              <v-card-title>Teams</v-card-title>
               <br />
               <v-card-text>
                 <v-row>
