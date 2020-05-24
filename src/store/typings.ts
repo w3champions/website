@@ -34,6 +34,7 @@ export type Match = {
   gameMode: EGameMode;
   teams: Team[];
   gateWay: number;
+  season: number;
 };
 
 export type MatchDetail = {

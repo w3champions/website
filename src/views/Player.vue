@@ -415,8 +415,10 @@ export default class PlayerView extends Vue {
     );
 
     return [
-      ...atStats.sort((a, b) => (a.leagueId * 1000 + a.rank) - (b.leagueId * 1000 + b.rank) ),
-      ...atStatsUnranked
+      ...atStats.sort(
+        (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank)
+      ),
+      ...atStatsUnranked,
     ];
   }
 
