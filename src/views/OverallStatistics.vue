@@ -129,6 +129,9 @@
                       label="Select MMR"
                       outlined
                     />
+                    <div>
+                      Games with more than 200 MMR difference are ignored, MMR is always averaged between the two players
+                    </div>
                   </v-card-text>
                 </v-col>
                 <v-col cols="md-9">
