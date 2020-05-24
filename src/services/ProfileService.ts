@@ -5,8 +5,7 @@ import {
   RaceStat,
 } from "@/store/player/types";
 import { API_URL } from "@/main";
-import {EGameMode} from "@/store/typings";
-import {Gateways} from "@/store/ranking/types";
+import { Gateways } from "@/store/ranking/types";
 
 export default class ProfileService {
   public async retrieveWinRate(
@@ -42,8 +41,14 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrieveGameModeStats(battleTag: string, gateWay: Gateways, season: number): Promise<ModeStat[]> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/game-mode-stats?gateWay=${gateWay}&season=${season}`;
+  public async retrieveGameModeStats(
+    battleTag: string,
+    gateWay: Gateways,
+    season: number
+  ): Promise<ModeStat[]> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/game-mode-stats?gateWay=${gateWay}&season=${season}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -56,8 +61,14 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrieveRaceStats(battleTag: string, gateWay: Gateways, season: number): Promise<RaceStat[]> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/race-stats?gateWay=${gateWay}&season=${season}`;
+  public async retrieveRaceStats(
+    battleTag: string,
+    gateWay: Gateways,
+    season: number
+  ): Promise<RaceStat[]> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/race-stats?gateWay=${gateWay}&season=${season}`;
 
     const response = await fetch(url, {
       method: "GET",

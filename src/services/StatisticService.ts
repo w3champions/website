@@ -3,11 +3,9 @@ import {
   GameDay,
   GameLength,
   MmrDistribution,
-  PlayedHero,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
-  StatsPerMapAndRace,
   StatsPerWinrate,
   WinLoss,
 } from "@/store/overallStats/types";
