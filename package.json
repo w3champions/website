@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
-    "@types/chart.js": "^2.9.20",
+    "@types/chart.js": "^2.9.21",
     "@types/moment": "^2.13.0",
     "@types/vue-moment": "^4.0.0",
     "chart.js": "^2.9.3",
