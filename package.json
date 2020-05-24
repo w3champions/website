@@ -27,7 +27,7 @@
     "vue-moment": "^4.1.0",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.1.6",
-    "vuetify": "^2.2.27",
+    "vuetify": "^2.2.29",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
