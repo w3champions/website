@@ -49,8 +49,9 @@
           v-if="isLoggedInPlayer"
           class="float-lg-right"
           @click="homepageEdit.opened = !homepageEdit.opened"
-          >mdi-pencil</v-icon
         >
+          mdi-pencil
+        </v-icon>
       </template>
       <v-dialog v-model="homepageEdit.opened" max-width="500px">
         <v-card>
@@ -72,13 +73,25 @@
               text
               color="primary"
               @click="saveHomepageInfo"
-              >Save</v-btn
             >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </h3>
-    <div>{{ homePage ? homePage : "-" }}</div>
+    <div>
+      <a
+        class="d-block"
+        v-for="homePageLink in homePageLinks"
+        rel="noopener noreferrer nofollow"
+        target="_blank"
+        :href="homePageLink"
+        :key="homePageLink"
+      >
+        {{ homePageLink }}
+      </a>
+    </div>
     <h3>
       About:
       <template>
@@ -86,8 +99,9 @@
           v-if="isLoggedInPlayer"
           class="float-lg-right"
           @click="additonalInfoEdit.opened = !additonalInfoEdit.opened"
-          >mdi-pencil</v-icon
         >
+          mdi-pencil
+        </v-icon>
       </template>
       <v-dialog v-model="additonalInfoEdit.opened" max-width="500px">
         <v-card>
@@ -109,15 +123,14 @@
               text
               color="primary"
               @click="saveAdditionalInfo"
-              >Save</v-btn
             >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </h3>
-    <div>
-      {{ savedMessageValue ? savedMessageValue : "-" }}
-    </div>
+    <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
   </div>
 </template>
 
@@ -142,6 +155,10 @@ export default class PlayerAvatar extends Vue {
 
   get homePage(): string {
     return this.personalSetting.homePage;
+  }
+
+  get homePageLinks(): Array<string> {
+    return this.personalSetting.homePage.split(" ").map((url) => url.trim());
   }
 
   get savedMessageValue(): string {

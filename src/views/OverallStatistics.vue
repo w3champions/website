@@ -8,18 +8,18 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :href="`#tab-games-per-day`"
-              >Player Activity</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-mmr-distribution`"
-              >MMR</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`"
-              >Winrates</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-heroes-winrates`"
-              >Heroes</v-tab
-            >
+            <v-tab class="profileTab" :href="`#tab-games-per-day`">
+              Player Activity
+            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-mmr-distribution`">
+              MMR
+            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">
+              Winrates
+            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-heroes-winrates`">
+              Heroes
+            </v-tab>
             <v-tab-item :value="'tab-games-per-day'">
               <v-card-title>Games per Day</v-card-title>
               <v-card-text v-if="!loadingGamesPerDayStats">

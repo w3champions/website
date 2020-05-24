@@ -5,10 +5,10 @@
         <gate-way-select />
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent;"
-              ><v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon
-              >{{ gameMode }}</v-btn
-            >
+            <v-btn tile v-on="on" style="background-color: transparent;">
+              <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
+              {{ gameMode }}
+            </v-btn>
           </template>
           <v-card>
             <v-card-text>
@@ -91,14 +91,16 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">{{
-                    data.item.player.name
-                  }}</span>
-                  <span v-if="isDuplicateName(data.item.player.name)">{{
-                    data.item.player.playerIds
-                      .map((p) => p.battleTag)
-                      .join(" & ")
-                  }}</span>
+                  <span v-if="!isDuplicateName(data.item.player.name)">
+                    {{ data.item.player.name }}
+                  </span>
+                  <span v-if="isDuplicateName(data.item.player.name)">
+                    {{
+                      data.item.player.playerIds
+                        .map((p) => p.battleTag)
+                        .join(" & ")
+                    }}
+                  </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -136,7 +138,7 @@
                 @click="selectSeason(item)"
               >
                 <v-list-item-content>
-                  <v-list-item-title> Season {{ item.id }} </v-list-item-title>
+                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -224,9 +226,9 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{
-                stat.value
-              }}</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">
+                {{ stat.value }}
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>

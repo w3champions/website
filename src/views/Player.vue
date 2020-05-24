@@ -49,7 +49,8 @@
             :class="ongoingMatchGameModeClass"
           >
             <div class="live-match__indicator">
-              Live <span class="circle red"></span>
+              Live
+              <span class="circle red"></span>
             </div>
             <div class="live-match__team1">
               <team-match-info
@@ -68,20 +69,20 @@
                 right="true"
               ></team-match-info>
             </div>
-            <span class="live-match__map">{{
-              $t("mapNames." + ongoingMatch.map)
-            }}</span>
+            <span class="live-match__map">
+              {{ $t("mapNames." + ongoingMatch.map) }}
+            </span>
           </div>
           <v-tabs>
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
-            <v-tab class="profileTab" :href="`#tab-matches`"
-              >Match History</v-tab
-            >
-            <v-tab class="profileTab" :href="`#tab-at-teams`">AT-Teams</v-tab
-            ><v-tab class="profileTab" :href="`#tab-statistics`"
-              >Statistics</v-tab
-            >
+            <v-tab class="profileTab" :href="`#tab-matches`">
+              Match History
+            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-at-teams`">AT-Teams</v-tab>
+            <v-tab class="profileTab" :href="`#tab-statistics`">
+              Statistics
+            </v-tab>
             <v-tab-item :value="'tab-profile'">
               <v-card-text v-if="!loadingProfile">
                 <v-row class="mt-4 filter-none">
@@ -131,10 +132,10 @@
                       <template v-slot:item.losses="{ item }">
                         <span class="lost number-text">{{ item.losses }}</span>
                       </template>
-                      <template v-slot:item.percentage="{ item }"
-                        ><span class="number-text"
-                          >{{ (item.winrate * 100).toFixed(1) }}%</span
-                        >
+                      <template v-slot:item.percentage="{ item }">
+                        <span class="number-text">
+                          {{ (item.winrate * 100).toFixed(1) }}%
+                        </span>
                       </template>
                     </v-data-table>
                   </v-col>
@@ -190,16 +191,18 @@
                             <v-list-item-title>
                               <span
                                 v-if="!isDuplicateName(data.item.player.name)"
-                                >{{ data.item.player.name }}</span
                               >
+                                {{ data.item.player.name }}
+                              </span>
                               <span
                                 v-if="isDuplicateName(data.item.player.name)"
-                                >{{
+                              >
+                                {{
                                   data.item.player.playerIds
                                     .map((p) => p.battleTag)
                                     .join(" & ")
-                                }}</span
-                              >
+                                }}
+                              </span>
                             </v-list-item-title>
                             <v-list-item-subtitle>
                               Wins: {{ data.item.player.wins }} | Losses:
@@ -233,7 +236,7 @@
                     <span class="lost">
                       Losses: {{ matches.length - opponentWins }}
                     </span>
-                    <span> ({{ winRateVsOpponent }}%) </span>
+                    <span>({{ winRateVsOpponent }}%)</span>
                   </v-col>
                 </v-row>
               </v-card-text>
