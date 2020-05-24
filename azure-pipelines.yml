@@ -13,9 +13,9 @@ steps:
           Write-Host "##vso[task.setvariable variable=IsLatest]latest"
           Write-Host "Masterversion: $(Build.BuildID)"
         } else {
-          Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestId)"
+          Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IsLatest]"
-          Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestId)"
+          Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
         }
 
   - task: Docker@2
