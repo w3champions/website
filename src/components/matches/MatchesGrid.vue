@@ -213,7 +213,7 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      minWidth: "500px",
+      minWidth: "400px",
     },
     {
       text: "Map",

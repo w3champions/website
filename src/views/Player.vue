@@ -711,7 +711,7 @@ export default class PlayerView extends Vue {
   position: relative;
   max-width: 500px;
   margin: 0 auto;
-  height: 40px;
+  height: 44px;
 
   .live-match__indicator {
     position: absolute;
@@ -757,7 +757,7 @@ export default class PlayerView extends Vue {
   &.two-v-two-at {
     height: 60px;
     .live-match__map {
-      top: 50px;
+      top: 56px;
     }
   }
 }
