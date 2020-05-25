@@ -44,7 +44,7 @@
     </v-row>
     <v-row dense>
       <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Lumber harversted
+        Lumber harvested
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
