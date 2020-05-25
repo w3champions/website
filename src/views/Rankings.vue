@@ -153,7 +153,7 @@
                 <td
                   v-for="header in headers"
                   :key="header.text"
-                  v-bind:style="{ width: header.width }"
+                  v-bind:style="{ width: header.width, 'min-width': header.minWidth }"
                 >
                   {{ header.text }}
                 </td>
@@ -176,7 +176,7 @@
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <player-icon :race="calculatedRace(item)" />
+                    <player-icon :race="calculatedRace(item)" class="mr-1" />
                     <player-rank-info :player-id="playerId" />
                     <span v-if="index !== item.player.playerIds.length - 1">
                       &
@@ -270,6 +270,7 @@ export default class RankingsView extends Vue {
       text: "Player",
       align: "start",
       sortable: false,
+      minWidth: '170px'
     },
     {
       text: "Wins",

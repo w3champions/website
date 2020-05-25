@@ -1,46 +1,84 @@
 <template>
-  <v-data-table
-    dense
-    class="hide-footer pointer"
-    :options.sync="options"
-    :server-items-length="totalMatches"
-    :headers="headers"
-    :items="matches"
-    item-key="id"
-    @click:row="gotToMatchDetailPage"
-    no-data-text="no matches found"
-    :footer-props="{ showFirstLastPage: true }"
-  >
-    <template v-slot:item.map="{ item }">
-      <span>{{ $t("mapNames." + item.map) }}</span>
-    </template>
-    <template v-slot:item.startTime="{ item }">
-      {{ item.startTime | moment($t("dateFormats.dateTime").toString()) }}
-    </template>
-    <template class="number-text" v-slot:item.duration="{ item }">
-      <span class="number-text">{{ getDuration(item) }}</span>
-    </template>
-    <template v-slot:item.players="{ item }">
-      <v-row>
-        <v-col cols="5.5">
-          <team-match-info
-            :not-clickable="!unfinished"
-            :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
-            :unfinishedMatch="unfinished"
-            left="true"
-          ></team-match-info>
-        </v-col>
-        <v-col cols="1">VS</v-col>
-        <v-col cols="5.5">
-          <team-match-info
-            :not-clickable="!unfinished"
-            :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
-            :unfinishedMatch="unfinished"
-          ></team-match-info>
-        </v-col>
-      </v-row>
-    </template>
-  </v-data-table>
+  <div>
+    <div class="custom-table-wrapper elevation-1">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <td
+                v-for="header in headers"
+                :key="header.text"
+                v-bind:style="{ width: header.width, 'min-width': header.minWidth, 'text-align': header.align }"
+              >
+                {{ header.text }}
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              v-for="item in matches"
+              :key="item.id"
+              @click="gotToMatchDetailPage(item)">
+              <td>
+                <v-row v-if="item.gameMode === 5">
+                  <v-col cols="3" >
+                    <team-match-info  
+                          :not-clickable="!unfinished"
+                          :team="getPlayerTeam(item)"
+                          :unfinishedMatch="unfinished"
+                        ></team-match-info>
+                  </v-col>
+                  <v-col cols="3" v-for="(team, index) in getOpponentTeams(item)" :key="index">
+                    <team-match-info
+                          :not-clickable="!unfinished"
+                          :team="team"
+                          :unfinishedMatch="unfinished"
+                        ></team-match-info>
+                  </v-col>
+                </v-row>
+                <v-row v-if="item.gameMode !== 5">
+                  <v-col cols="5.5">
+                    <team-match-info
+                      :not-clickable="!unfinished"
+                      :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
+                      :unfinishedMatch="unfinished"
+                      left="true"
+                    ></team-match-info>
+                  </v-col>
+                  <v-col cols="1">VS</v-col>
+                  <v-col cols="5.5">
+                    <team-match-info
+                      :not-clickable="!unfinished"
+                      :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
+                      :unfinishedMatch="unfinished"
+                    ></team-match-info>
+                  </v-col>
+                </v-row>
+              </td>
+              <td>
+                <span>{{ $t("mapNames." + item.map) }}</span>
+              </td>
+              <td>
+                {{ item.startTime | moment($t("dateFormats.dateTime").toString()) }}
+              </td>
+              <td>
+                <span class="number-text">{{ getDuration(item) }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="filter-blur">
+        <div class="text-center font-regular mt-2">
+          {{currentMatchesLowRange}} - {{currentMatchesHighRange}} of {{totalMatches}}
+        </div>
+        <v-pagination
+          v-model="page"
+          :length="getTotalPages()"
+          :total-visible="5"
+          @input="onPageChanged"
+        ></v-pagination>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -64,21 +102,40 @@ export default class MatchesGrid extends Vue {
   @Prop() public alwaysLeftName!: string;
   @Prop() public unfinished!: boolean;
 
+  data() {
+    return {
+      page: 1
+    };
+  }
+
   get matches(): Match[] {
     return this.value;
   }
 
-  public options = {
-    itemsPerPage: 100,
-  } as DataTableOptions;
+  get currentMatchesLowRange() {
+    return (this.$data.page * 50) - 49;
+  }
 
-  @Watch("options", { deep: true })
-  public onOptionsChanged() {
-    this.$emit("pageChanged", this.options.page);
+  get currentMatchesHighRange() {
+    const highRange = (this.$data.page * 50);
+
+    return highRange > this.totalMatches ? this.totalMatches : highRange;
+  }
+
+  public onPageChanged(page: number) {
+    this.$emit("pageChanged", page);
   }
 
   public getWinner(match: Match) {
     return match.teams[0];
+  }
+
+  public getTotalPages() {
+    if (!this.totalMatches){
+      return 1;
+    }
+
+    return Math.round(this.totalMatches / 50);
   }
 
   public gotToMatchDetailPage(match: Match) {
@@ -112,6 +169,13 @@ export default class MatchesGrid extends Vue {
     );
   }
 
+  public getOpponentTeams(match: Match) {
+    const playerTeam = this.getPlayerTeam(match);
+    const opponentTeams = match.teams.filter(x => x != playerTeam);
+
+    return opponentTeams;
+  }
+
   public getDuration(match: Match) {
     if (this.unfinished) {
       return "ongoing";
@@ -127,17 +191,13 @@ export default class MatchesGrid extends Vue {
       .toString();
   }
 
-  mounted() {
-    this.options.itemsPerPage = this.itemsPerPage;
-  }
-
   public headers = [
     {
       text: "Players",
       align: "center",
       sortable: false,
       value: "players",
-      width: "600px",
+      minWidth: "500px"
     },
     {
       text: "Map",
@@ -147,17 +207,16 @@ export default class MatchesGrid extends Vue {
     },
     {
       text: "Start Time",
-      align: "end",
+      align: "start",
       sortable: false,
       value: "startTime",
-      width: "180px",
+      minWidth: "170px"
     },
     {
       text: "Duration",
-      align: "center",
+      align: "start",
       sortable: false,
       value: "duration",
-      width: "120px",
     },
   ];
 }
@@ -166,5 +225,9 @@ export default class MatchesGrid extends Vue {
 <style lang="scss">
 .playerCol {
   max-width: 500px;
+}
+
+.pager__current-matches {
+  text-align: center;
 }
 </style>
