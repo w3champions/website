@@ -79,11 +79,11 @@
               <span class="number-text">{{ getDuration(item) }}</span>
             </td>
           </tr>
-            <tr v-if="!matches || matches.length == 0">
-              <td colspan="4" class="text-center">
-                no matches found
-              </td>
-            </tr>
+          <tr v-if="!matches || matches.length == 0">
+            <td colspan="4" class="text-center">
+              no matches found
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

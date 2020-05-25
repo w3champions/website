@@ -591,10 +591,10 @@ export default class PlayerView extends Vue {
               player.battleTag === this.battleTag && player.won
           );
 
-          const otherTeams = match.teams.filter(x => x != team);
+          const otherTeams = match.teams.filter((x) => x != team);
 
-          const opponentIsOnTheOtherTeam = otherTeams.some(otherTeam => {
-           return otherTeam.players.some(
+          const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
+            return otherTeam.players.some(
               (player: PlayerInTeam) =>
                 player.battleTag === this.$store.direct.state.player.opponentTag
             );
@@ -624,26 +624,25 @@ export default class PlayerView extends Vue {
     }
 
     const totalMatchesAgainstOpponent = this.matches.filter((match: Match) =>
-        match.teams.some((team: Team) => {
-          const playerTeamMatch = team.players.some(
+      match.teams.some((team: Team) => {
+        const playerTeamMatch = team.players.some(
+          (player: PlayerInTeam) => player.battleTag === this.battleTag
+        );
+
+        const otherTeams = match.teams.filter((x) => x != team);
+
+        const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
+          return otherTeam.players.some(
             (player: PlayerInTeam) =>
-              player.battleTag === this.battleTag
+              player.battleTag === this.$store.direct.state.player.opponentTag
           );
+        });
 
-          const otherTeams = match.teams.filter(x => x != team);
+        return playerTeamMatch && opponentIsOnTheOtherTeam;
+      })
+    ).length;
 
-          const opponentIsOnTheOtherTeam = otherTeams.some(otherTeam => {
-           return otherTeam.players.some(
-              (player: PlayerInTeam) =>
-                player.battleTag === this.$store.direct.state.player.opponentTag
-            );
-          });
-
-          return playerTeamMatch && opponentIsOnTheOtherTeam;
-        })
-      ).length
-
-      return totalMatchesAgainstOpponent;
+    return totalMatchesAgainstOpponent;
   }
 
   get gameModes() {
