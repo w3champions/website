@@ -150,15 +150,17 @@ export default class PlayerMatchInfo extends Vue {
   font-size: 18px !important;
 }
 
-.player-info{
+.player-info {
   display: flex;
 }
 
 .player-info__right {
   justify-content: flex-end;
+  text-align: right;
 }
 
 .player-info__left {
   justify-content: flex-start;
+  text-align: left;
 }
 </style>
