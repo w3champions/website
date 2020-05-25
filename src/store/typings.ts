@@ -5,7 +5,6 @@ export type RootState = {
 };
 
 export type DataTableOptions = {
-  sortBy: object;
   sortDest: boolean;
   page: number;
   itemsPerPage: number;
