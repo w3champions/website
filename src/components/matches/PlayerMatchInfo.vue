@@ -2,7 +2,12 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div :class="textClass">
-        <player-icon v-if="!left" :race="race" :big="bigRaceIcon" class="mr-1" />
+        <player-icon
+          v-if="!left"
+          :race="race"
+          :big="bigRaceIcon"
+          class="mr-1"
+        />
         <span>
           <a
             :class="won"
@@ -19,8 +24,8 @@
               <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
-        </span> 
-        <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2"/>
+        </span>
+        <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
     </template>
     <div v-if="winrate">

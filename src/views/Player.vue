@@ -74,7 +74,7 @@
             </span>
           </div>
           <v-tabs v-model="tabsModel">
-            <v-tabs-slider ></v-tabs-slider>
+            <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
             <v-tab class="profileTab" :href="`#tab-matches`">
               Match History
@@ -89,7 +89,9 @@
                   <v-row class="mt-4 filter-none">
                     <v-col cols="12" md="4" lg="3">
                       <v-card-text style="padding-top: 0 !important;">
-                        <player-avatar :is-logged-in-player="isLoggedInPlayer" />
+                        <player-avatar
+                          :is-logged-in-player="isLoggedInPlayer"
+                        />
                       </v-card-text>
                     </v-col>
                     <v-col md="12" lg="9">
@@ -131,7 +133,9 @@
                           <span class="won number-text">{{ item.wins }}</span>
                         </template>
                         <template v-slot:item.losses="{ item }">
-                          <span class="lost number-text">{{ item.losses }}</span>
+                          <span class="lost number-text">
+                            {{ item.losses }}
+                          </span>
                         </template>
                         <template v-slot:item.percentage="{ item }">
                           <span class="number-text">
@@ -254,8 +258,8 @@
                 <v-card-title>Statistics</v-card-title>
                 <v-row class="filter-none" v-if="selectedSeason.id === 0">
                   <v-card-text class="text-center">
-                    This noble person was part of our beta, therefore we hide his
-                    buggy stats and thank him for all eternity ;)
+                    This noble person was part of our beta, therefore we hide
+                    his buggy stats and thank him for all eternity ;)
                   </v-card-text>
                 </v-row>
                 <player-stats-race-versus-race-on-map
@@ -270,7 +274,8 @@
                   <v-card-text>
                     <v-row>
                       <v-col
-                        cols="12" md="3"
+                        cols="12"
+                        md="3"
                         v-for="atPartner in gameModeStatsAt"
                         :key="atPartner.id"
                       >
@@ -333,8 +338,8 @@ export default class PlayerView extends Vue {
 
   data() {
     return {
-        tabsModel: null,
-      }
+      tabsModel: null,
+    };
   }
 
   public raceEnums = ERaceEnum;

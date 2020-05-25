@@ -153,7 +153,10 @@
                 <td
                   v-for="header in headers"
                   :key="header.text"
-                  v-bind:style="{ width: header.width, 'min-width': header.minWidth }"
+                  v-bind:style="{
+                    width: header.width,
+                    'min-width': header.minWidth,
+                  }"
                 >
                   {{ header.text }}
                 </td>
@@ -270,7 +273,7 @@ export default class RankingsView extends Vue {
       text: "Player",
       align: "start",
       sortable: false,
-      minWidth: '170px'
+      minWidth: "170px",
     },
     {
       text: "Wins",
