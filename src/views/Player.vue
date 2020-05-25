@@ -219,7 +219,7 @@
                         </template>
                       </v-autocomplete>
                     </v-col>
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="2" class="pb-0">
                       <v-select
                         class="over-chart-select-box"
                         :items="gameModes"
@@ -239,7 +239,7 @@
                       <span class="won">Wins: {{ opponentWins }}</span>
                       /
                       <span class="lost">
-                        Losses: {{ matches.length - opponentWins }}
+                        Losses: {{ totalMatchesAgainstOpponent - opponentWins }}
                       </span>
                       <span>({{ winRateVsOpponent }}%)</span>
                     </v-col>
@@ -586,10 +586,21 @@ export default class PlayerView extends Vue {
     if (this.$store.direct.state.player.opponentTag.length) {
       this.opponentWins = this.matches.filter((match: Match) =>
         match.teams.some((team: Team) => {
-          return team.players.some(
+          const playerHasWin = team.players.some(
             (player: PlayerInTeam) =>
               player.battleTag === this.battleTag && player.won
           );
+
+          const otherTeams = match.teams.filter(x => x != team);
+
+          const opponentIsOnTheOtherTeam = otherTeams.some(otherTeam => {
+           return otherTeam.players.some(
+              (player: PlayerInTeam) =>
+                player.battleTag === this.$store.direct.state.player.opponentTag
+            );
+          });
+
+          return playerHasWin && opponentIsOnTheOtherTeam;
         })
       ).length;
     }
@@ -604,6 +615,35 @@ export default class PlayerView extends Vue {
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
     this.selectedGameModeForSearch = gameMode;
     this.getMatches();
+  }
+
+  get totalMatchesAgainstOpponent() {
+    const opponentTag = this.$store.direct.state.player.opponentTag;
+    if (!opponentTag || !this.matches) {
+      return 0;
+    }
+
+    const totalMatchesAgainstOpponent = this.matches.filter((match: Match) =>
+        match.teams.some((team: Team) => {
+          const playerTeamMatch = team.players.some(
+            (player: PlayerInTeam) =>
+              player.battleTag === this.battleTag
+          );
+
+          const otherTeams = match.teams.filter(x => x != team);
+
+          const opponentIsOnTheOtherTeam = otherTeams.some(otherTeam => {
+           return otherTeam.players.some(
+              (player: PlayerInTeam) =>
+                player.battleTag === this.$store.direct.state.player.opponentTag
+            );
+          });
+
+          return playerTeamMatch && opponentIsOnTheOtherTeam;
+        })
+      ).length
+
+      return totalMatchesAgainstOpponent;
   }
 
   get gameModes() {
