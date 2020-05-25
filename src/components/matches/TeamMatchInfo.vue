@@ -7,30 +7,38 @@
       :big-race-icon="bigRaceIcon"
       :not-clickable="notClickable"
     />
-    <player-match-info
-      v-if="team.players.length > 1"
-      :unfinishedMatch="unfinishedMatch"
-      :player="team.players[1]"
-      :left="left"
-      :big-race-icon="bigRaceIcon"
-      :not-clickable="notClickable"
-    />
-    <player-match-info
-      v-if="team.players.length > 2"
-      :unfinishedMatch="unfinishedMatch"
-      :player="team.players[2]"
-      :left="left"
-      :big-race-icon="bigRaceIcon"
-      :not-clickable="notClickable"
-    />
-    <player-match-info
-      v-if="team.players.length > 3"
-      :unfinishedMatch="unfinishedMatch"
-      :player="team.players[3]"
-      :left="left"
-      :big-race-icon="bigRaceIcon"
-      :not-clickable="notClickable"
-    />
+    <div class="mt-2">
+      <player-match-info
+        v-if="team.players.length > 1"
+        :unfinishedMatch="unfinishedMatch"
+        :player="team.players[1]"
+        :left="left"
+        :big-race-icon="bigRaceIcon"
+        :not-clickable="notClickable"
+      />
+    </div>
+
+    <div class="mt-2">
+      <player-match-info
+        v-if="team.players.length > 2"
+        :unfinishedMatch="unfinishedMatch"
+        :player="team.players[2]"
+        :left="left"
+        :big-race-icon="bigRaceIcon"
+        :not-clickable="notClickable"
+      />
+    </div>
+
+    <div class="mt-2">
+      <player-match-info
+        v-if="team.players.length > 3"
+        :unfinishedMatch="unfinishedMatch"
+        :player="team.players[3]"
+        :left="left"
+        :big-race-icon="bigRaceIcon"
+        :not-clickable="notClickable"
+      />
+    </div>
   </div>
 </template>
 

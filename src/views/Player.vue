@@ -73,7 +73,7 @@
               {{ $t("mapNames." + ongoingMatch.map) }}
             </span>
           </div>
-          <v-tabs>
+          <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
             <v-tab class="profileTab" :href="`#tab-matches`">
@@ -83,204 +83,213 @@
             <v-tab class="profileTab" :href="`#tab-statistics`">
               Statistics
             </v-tab>
-            <v-tab-item :value="'tab-profile'">
-              <v-card-text v-if="!loadingProfile">
-                <v-row class="mt-4 filter-none">
-                  <v-col cols="12" md="4" lg="3">
-                    <v-card-text style="padding-top: 0 !important;">
-                      <player-avatar :is-logged-in-player="isLoggedInPlayer" />
+            <v-tabs-items v-model="tabsModel" touchless>
+              <v-tab-item :value="'tab-profile'">
+                <v-card-text v-if="!loadingProfile">
+                  <v-row class="mt-4 filter-none">
+                    <v-col cols="12" md="4" lg="3">
+                      <v-card-text style="padding-top: 0 !important;">
+                        <player-avatar
+                          :is-logged-in-player="isLoggedInPlayer"
+                        />
+                      </v-card-text>
+                    </v-col>
+                    <v-col md="12" lg="9">
+                      <v-row>
+                        <v-col cols="12" md="4" v-if="oneVersusOneStat">
+                          <player-league
+                            :modeStat="oneVersusOneStat"
+                          ></player-league>
+                        </v-col>
+                        <v-col cols="12" md="4" v-if="best2versus2Stat">
+                          <player-league
+                            :modeStat="best2versus2Stat"
+                          ></player-league>
+                        </v-col>
+                        <v-col cols="12" md="4" v-if="ffaStats">
+                          <player-league :modeStat="ffaStats"></player-league>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                  <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                    <v-card-text class="text-center">
+                      This noble person was part of our beta, therefore we hide
+                      his buggy stats and thank him for all eternity ;)
                     </v-card-text>
-                  </v-col>
-                  <v-col md="12" lg="9">
-                    <v-row>
-                      <v-col cols="12" md="4" v-if="oneVersusOneStat">
-                        <player-league
-                          :modeStat="oneVersusOneStat"
-                        ></player-league>
-                      </v-col>
-                      <v-col cols="12" md="4" v-if="best2versus2Stat">
-                        <player-league
-                          :modeStat="best2versus2Stat"
-                        ></player-league>
-                      </v-col>
-                      <v-col cols="12" md="4" v-if="ffaStats">
-                        <player-league :modeStat="ffaStats"></player-league>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
+                  </v-row>
+                  <v-row class="filter-none" v-if="selectedSeason.id !== 0">
+                    <v-col cols="12" md="6">
+                      <h4>Stats by race</h4>
+                      <v-data-table
+                        hide-default-footer
+                        :headers="raceHeaders"
+                        :items="selectedRaceStats"
+                      >
+                        <template v-slot:item.race="{ item }">
+                          <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                        </template>
+                        <template v-slot:item.wins="{ item }">
+                          <span class="won number-text">{{ item.wins }}</span>
+                        </template>
+                        <template v-slot:item.losses="{ item }">
+                          <span class="lost number-text">
+                            {{ item.losses }}
+                          </span>
+                        </template>
+                        <template v-slot:item.percentage="{ item }">
+                          <span class="number-text">
+                            {{ (item.winrate * 100).toFixed(1) }}%
+                          </span>
+                        </template>
+                      </v-data-table>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <h4>Stats by game mode</h4>
+                      <mode-stats-grid :stats="gameModeStats" />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+                <v-card-text
+                  v-if="loadingProfile"
+                  style="min-height: 500px;"
+                  class="text-center"
+                >
+                  <v-progress-circular
+                    style="margin-top: 180px;"
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-card-text>
+              </v-tab-item>
+              <v-tab-item :value="'tab-matches'">
+                <v-card-title>
+                  <v-row align="center">
+                    <v-col cols="12" md="5">
+                      Match History
+                    </v-col>
+                    <v-col cols="12" md="5">
+                      <v-autocomplete
+                        v-model="searchModel"
+                        append-icon="mdi-magnify"
+                        label="Search"
+                        single-line
+                        clearable
+                        :items="searchRanks"
+                        :loading="isLoading"
+                        :search-input.sync="search"
+                        :no-data-text="noDataText"
+                        item-text="player.name"
+                        item-value="player.id"
+                        placeholder="Search an opponent"
+                        return-object
+                      >
+                        <template v-slot:item="data">
+                          <template v-if="typeof data.item !== 'object'">
+                            <v-list-item-content
+                              v-text="data.item"
+                            ></v-list-item-content>
+                          </template>
+                          <template v-else>
+                            <v-list-item-content>
+                              <v-list-item-title>
+                                <span
+                                  v-if="!isDuplicateName(data.item.player.name)"
+                                >
+                                  {{ data.item.player.name }}
+                                </span>
+                                <span
+                                  v-if="isDuplicateName(data.item.player.name)"
+                                >
+                                  {{
+                                    data.item.player.playerIds
+                                      .map((p) => p.battleTag)
+                                      .join(" & ")
+                                  }}
+                                </span>
+                              </v-list-item-title>
+                              <v-list-item-subtitle>
+                                Wins: {{ data.item.player.wins }} | Losses:
+                                {{ data.item.player.losses }} | Total:
+                                {{ data.item.player.games }}
+                              </v-list-item-subtitle>
+                            </v-list-item-content>
+                          </template>
+                        </template>
+                      </v-autocomplete>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <v-select
+                        class="over-chart-select-box"
+                        :items="gameModes"
+                        item-text="modeName"
+                        item-value="modeId"
+                        @change="setSelectedGameModeForSearch"
+                        label="Mode"
+                        outlined
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card-title>
+                <v-card-text v-if="searchModel && searchModel.player">
+                  <v-row align="center">
+                    <v-col cols="12">
+                      <div>vs. {{ searchModel.player.name }}</div>
+                      <span class="won">Wins: {{ opponentWins }}</span>
+                      /
+                      <span class="lost">
+                        Losses: {{ matches.length - opponentWins }}
+                      </span>
+                      <span>({{ winRateVsOpponent }}%)</span>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+                <matches-grid
+                  v-model="matches"
+                  :totalMatches="totalMatches"
+                  @pageChanged="onPageChanged"
+                  :itemsPerPage="50"
+                  :alwaysLeftName="battleTag"
+                  :only-show-enemy="true"
+                ></matches-grid>
+              </v-tab-item>
+              <v-tab-item :value="'tab-statistics'">
+                <v-card-title>Statistics</v-card-title>
                 <v-row class="filter-none" v-if="selectedSeason.id === 0">
                   <v-card-text class="text-center">
                     This noble person was part of our beta, therefore we hide
                     his buggy stats and thank him for all eternity ;)
                   </v-card-text>
                 </v-row>
-                <v-row class="filter-none" v-if="selectedSeason.id !== 0">
-                  <v-col cols="12" md="6">
-                    <h4>Stats by race</h4>
-                    <v-data-table
-                      hide-default-footer
-                      :headers="raceHeaders"
-                      :items="selectedRaceStats"
-                    >
-                      <template v-slot:item.race="{ item }">
-                        <span>{{ $t("races." + raceEnums[item.race]) }}</span>
-                      </template>
-                      <template v-slot:item.wins="{ item }">
-                        <span class="won number-text">{{ item.wins }}</span>
-                      </template>
-                      <template v-slot:item.losses="{ item }">
-                        <span class="lost number-text">{{ item.losses }}</span>
-                      </template>
-                      <template v-slot:item.percentage="{ item }">
-                        <span class="number-text">
-                          {{ (item.winrate * 100).toFixed(1) }}%
-                        </span>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <h4>Stats by game mode</h4>
-                    <mode-stats-grid :stats="gameModeStats" />
-                  </v-col>
-                </v-row>
-              </v-card-text>
-              <v-card-text
-                v-if="loadingProfile"
-                style="min-height: 500px;"
-                class="text-center"
-              >
-                <v-progress-circular
-                  style="margin-top: 180px;"
-                  :size="50"
-                  color="primary"
-                  indeterminate
-                ></v-progress-circular>
-              </v-card-text>
-            </v-tab-item>
-            <v-tab-item :value="'tab-matches'">
-              <v-card-title>
-                <v-row align="center">
-                  <v-col cols="12" md="5">
-                    Match History
-                  </v-col>
-                  <v-col cols="12" md="5">
-                    <v-autocomplete
-                      v-model="searchModel"
-                      append-icon="mdi-magnify"
-                      label="Search"
-                      single-line
-                      clearable
-                      :items="searchRanks"
-                      :loading="isLoading"
-                      :search-input.sync="search"
-                      :no-data-text="noDataText"
-                      item-text="player.name"
-                      item-value="player.id"
-                      placeholder="Search an opponent"
-                      return-object
-                    >
-                      <template v-slot:item="data">
-                        <template v-if="typeof data.item !== 'object'">
-                          <v-list-item-content
-                            v-text="data.item"
-                          ></v-list-item-content>
-                        </template>
-                        <template v-else>
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              <span
-                                v-if="!isDuplicateName(data.item.player.name)"
-                              >
-                                {{ data.item.player.name }}
-                              </span>
-                              <span
-                                v-if="isDuplicateName(data.item.player.name)"
-                              >
-                                {{
-                                  data.item.player.playerIds
-                                    .map((p) => p.battleTag)
-                                    .join(" & ")
-                                }}
-                              </span>
-                            </v-list-item-title>
-                            <v-list-item-subtitle>
-                              Wins: {{ data.item.player.wins }} | Losses:
-                              {{ data.item.player.losses }} | Total:
-                              {{ data.item.player.games }}
-                            </v-list-item-subtitle>
-                          </v-list-item-content>
-                        </template>
-                      </template>
-                    </v-autocomplete>
-                  </v-col>
-                  <v-col cols="12" md="2">
-                    <v-select
-                      class="over-chart-select-box"
-                      :items="gameModes"
-                      item-text="modeName"
-                      item-value="modeId"
-                      @change="setSelectedGameModeForSearch"
-                      label="Mode"
-                      outlined
-                    />
-                  </v-col>
-                </v-row>
-              </v-card-title>
-              <v-card-text v-if="searchModel && searchModel.player">
-                <v-row align="center">
-                  <v-col cols="12">
-                    <div>vs. {{ searchModel.player.name }}</div>
-                    <span class="won">Wins: {{ opponentWins }}</span>
-                    /
-                    <span class="lost">
-                      Losses: {{ matches.length - opponentWins }}
-                    </span>
-                    <span>({{ winRateVsOpponent }}%)</span>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-              <matches-grid
-                v-model="matches"
-                :totalMatches="totalMatches"
-                @pageChanged="onPageChanged"
-                :itemsPerPage="50"
-                :alwaysLeftName="battleTag"
-                :only-show-enemy="true"
-              ></matches-grid>
-            </v-tab-item>
-            <v-tab-item :value="'tab-statistics'">
-              <v-card-title>Statistics</v-card-title>
-              <v-row class="filter-none" v-if="selectedSeason.id === 0">
-                <v-card-text class="text-center">
-                  This noble person was part of our beta, therefore we hide his
-                  buggy stats and thank him for all eternity ;)
-                </v-card-text>
-              </v-row>
-              <player-stats-race-versus-race-on-map
-                v-if="selectedSeason.id !== 0"
-                :stats="raceWithoutRandom"
-              />
-            </v-tab-item>
-            <v-tab-item :value="'tab-at-teams'">
-              <v-card-title>Teams</v-card-title>
-              <br />
-              <v-card-text>
-                <v-row>
-                  <v-col
-                    cols="3"
-                    v-for="atPartner in gameModeStatsAt"
-                    :key="atPartner.id"
-                  >
-                    <player-league
-                      :mode-stat="atPartner"
-                      :show-at-partner="true"
-                    />
-                    <br />
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-tab-item>
+                <player-stats-race-versus-race-on-map
+                  v-if="selectedSeason.id !== 0"
+                  :stats="raceWithoutRandom"
+                />
+              </v-tab-item>
+              <v-tab-item :value="'tab-at-teams'">
+                <v-card :loading="isLoadingMatches">
+                  <v-card-title>Teams</v-card-title>
+                  <br />
+                  <v-card-text>
+                    <v-row>
+                      <v-col
+                        cols="12"
+                        md="3"
+                        v-for="atPartner in gameModeStatsAt"
+                        :key="atPartner.id"
+                      >
+                        <player-league
+                          :mode-stat="atPartner"
+                          :show-at-partner="true"
+                        />
+                        <br />
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs-items>
           </v-tabs>
         </v-card>
       </v-col>
@@ -327,6 +336,12 @@ import AppConstants from "../constants";
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
+  data() {
+    return {
+      tabsModel: null,
+    };
+  }
+
   public raceEnums = ERaceEnum;
   public search = "";
   public searchModel = {} as Ranking;
@@ -361,6 +376,7 @@ export default class PlayerView extends Vue {
   ];
 
   private _intervalRefreshHandle: any = {};
+  public isLoadingMatches = false;
 
   @Watch("battleTag")
   onBattleTagChanged() {
@@ -556,6 +572,12 @@ export default class PlayerView extends Vue {
   }
 
   public async getMatches(page?: number) {
+    if (this.isLoadingMatches) {
+      return;
+    }
+
+    this.isLoadingMatches = true;
+
     await this.$store.direct.dispatch.player.loadMatches({
       page: page,
       gameMode: this.selectedGameModeForSearch,
@@ -571,6 +593,8 @@ export default class PlayerView extends Vue {
         })
       ).length;
     }
+
+    this.isLoadingMatches = false;
   }
 
   public isDuplicateName(name: string) {
@@ -687,7 +711,7 @@ export default class PlayerView extends Vue {
   position: relative;
   max-width: 500px;
   margin: 0 auto;
-  height: 40px;
+  height: 44px;
 
   .live-match__indicator {
     position: absolute;
@@ -733,7 +757,7 @@ export default class PlayerView extends Vue {
   &.two-v-two-at {
     height: 60px;
     .live-match__map {
-      top: 50px;
+      top: 56px;
     }
   }
 }

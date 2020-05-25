@@ -56,5 +56,9 @@ export default class MatchesView extends Vue {
   public getMatches(page?: number) {
     this.$store.direct.dispatch.matches.loadMatches(page);
   }
+
+  mounted() {
+    this.getMatches(1);
+  }
 }
 </script>

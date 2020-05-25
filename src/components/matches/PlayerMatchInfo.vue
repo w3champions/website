@@ -1,9 +1,14 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <div :class="textClass">
-        <player-icon :left="left" :race="race" :big="bigRaceIcon" />
-        <span>
+      <div class="player-info" :class="textClass">
+        <player-icon
+          v-if="!left"
+          :race="race"
+          :big="bigRaceIcon"
+          class="mr-1"
+        />
+        <div>
           <a
             :class="won"
             v-on="on"
@@ -19,7 +24,8 @@
               <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
-        </span>
+        </div>
+        <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
     </template>
     <div v-if="winrate">
@@ -92,10 +98,14 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get textClass() {
-    return this.left ? "text-end" : "text-start";
+    return this.left ? "player-info__right" : "player-info__left";
   }
 
   get battleTag() {
+    if (!this.player) {
+      return "";
+    }
+
     return this.player.battleTag;
   }
 
@@ -138,5 +148,17 @@ export default class PlayerMatchInfo extends Vue {
 
 .mmr {
   font-size: 18px !important;
+}
+
+.player-info{
+  display: flex;
+}
+
+.player-info__right {
+  justify-content: flex-end;
+}
+
+.player-info__left {
+  justify-content: flex-start;
 }
 </style>

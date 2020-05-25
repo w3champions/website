@@ -1,5 +1,5 @@
 <template>
-  <div :class="[raceIcon(), alignment(), raceIconSize()]"></div>
+  <span :class="[raceIcon(), alignment(), raceIconSize()]"></span>
 </template>
 
 <script lang="ts">
@@ -34,6 +34,8 @@ export default class PlayerIcon extends Vue {
   height: 24px;
   background-position: center;
   background-size: cover;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .race-icon-big {
@@ -61,15 +63,5 @@ export default class PlayerIcon extends Vue {
 
 .race-icon-RANDOM {
   background-image: url("../../assets/raceIcons/RANDOM.jpg");
-}
-
-.alignRight {
-  float: left;
-  margin-right: 5px;
-}
-
-.alignLeft {
-  float: right;
-  margin-left: 5px;
 }
 </style>
