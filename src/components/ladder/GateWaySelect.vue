@@ -35,6 +35,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
+import GatewaysService from '../../services/GatewaysService';
 
 @Component({})
 export default class GateWaySelect extends Vue {
@@ -59,6 +60,7 @@ export default class GateWaySelect extends Vue {
   public setGateway(gateway: Gateways) {
     this.$store.direct.dispatch.rankings.setGateway(gateway);
     this.$store.direct.dispatch.player.setGateway(gateway);
+    GatewaysService.setGateway(gateway);
   }
 }
 </script>
