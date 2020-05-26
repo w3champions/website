@@ -2,7 +2,7 @@ import { moduleActionContext } from "..";
 import { Gateways, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import GatewaysService from '@/services/GatewaysService';
+import GatewaysService from "@/services/GatewaysService";
 
 const mod = {
   namespaced: true,

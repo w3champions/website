@@ -9,7 +9,7 @@ import {
 import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season, Gateways } from "@/store/ranking/types";
-import GatewaysService from '@/services/GatewaysService';
+import GatewaysService from "@/services/GatewaysService";
 
 const mod = {
   namespaced: true,

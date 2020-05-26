@@ -321,7 +321,7 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import GatewaysService from '../services/GatewaysService';
+import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
