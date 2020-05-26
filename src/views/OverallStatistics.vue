@@ -293,10 +293,10 @@ export default class OverallStatisticsView extends Vue {
   public async setSelectedSeason(season: Season) {
     this.selectedSeason = season;
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile(
+      await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
+      await this.$store.direct.dispatch.player.loadGameModeStats(
         this.verifiedBtag
       );
-      await this.$store.direct.dispatch.player.loadGameModeStats(this.verifiedBtag);
     }
 
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
