@@ -6,7 +6,7 @@
           <v-card-title class="justify-space-between">
             <span>Profile of {{ profile.battleTag }}</span>
             <div>
-              <gate-way-select />
+              <gate-way-select @gatewayChanged="gatewayChanged" />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -464,7 +464,7 @@ export default class PlayerView extends Vue {
 
     return this.raceStats.filter(
       (r) =>
-        r.gateWay === this.selectedGateWay &&
+        r.gateWay === this.$store.direct.state.gateway &&
         r.season === this.selectedSeason.id
     );
   }
@@ -538,10 +538,6 @@ export default class PlayerView extends Vue {
 
   get matches(): Match[] {
     return this.$store.direct.state.player.matches;
-  }
-
-  get selectedGateWay() {
-    return GatewaysService.getGateway();
   }
 
   get ongoingMatch() {
@@ -693,6 +689,10 @@ export default class PlayerView extends Vue {
           (player: PlayerInTeam) => player.battleTag === this.battleTag
         )
     );
+  }
+
+  public gatewayChanged() {
+    this.$store.direct.dispatch.player.reloadPlayer();
   }
 
   async mounted() {

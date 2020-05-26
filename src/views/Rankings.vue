@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gate-way-select />
+        <gate-way-select @gatewayChanged="gatewayChanged" />
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
@@ -251,6 +251,7 @@ import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import AppConstants from "../constants";
+import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
@@ -395,7 +396,7 @@ export default class RankingsView extends Vue {
 
   get selectedLeague(): League {
     const league = this.$store.direct.state.rankings.league;
-    const gw = this.$store.direct.state.rankings.gateway;
+    const gw = this.$store.direct.state.gateway;
     const gameMode = this.$store.direct.state.rankings.gameMode;
     const season = this.$store.direct.state.rankings.selectedSeason;
     const ladder = this.$store.direct.state.rankings.ladders.filter(
@@ -450,11 +451,10 @@ export default class RankingsView extends Vue {
   }
 
   get ladders(): League[] {
-    const gateway = this.$store.direct.state.rankings.gateway;
     const gameMode = this.$store.direct.state.rankings.gameMode;
     const league = this.$store.direct.state.rankings.ladders.filter(
       (l) =>
-        l.gateway === gateway &&
+        l.gateway === this.$store.direct.state.gateway &&
         l.gameMode === gameMode &&
         l.season === this.currentSeason.id
     )[0];
@@ -463,6 +463,11 @@ export default class RankingsView extends Vue {
 
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
+  }
+
+  gatewayChanged() {
+    this.$store.direct.commit.rankings.SET_PAGE(0);
+    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   async mounted() {

@@ -24,7 +24,6 @@ const mod = {
     loadingRecentMatches: false,
     opponentTag: "",
     selectedSeason: {} as Season,
-    gateway: GatewaysService.getGateway(),
     gameMode: 0 as EGameMode,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
@@ -51,22 +50,28 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag?: string
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         battleTag ?? state.battleTag,
-        state.gateway,
+        rootState.gateway,
         state.selectedSeason.id
       );
 
       commit.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
-        state.gateway,
+        rootState.gateway,
         state.selectedSeason.id
       );
 
@@ -89,7 +94,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       search: { page?: number; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       if (search.page != null && !isNaN(search.page)) {
         commit.SET_PAGE(search.page - 1);
@@ -102,7 +110,7 @@ const mod = {
         state.battleTag,
         state.opponentTag,
         state.gameMode,
-        state.gateway
+        rootState.gateway
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -119,12 +127,8 @@ const mod = {
       );
       commit.SET_ONGOING_MATCH(response || {});
     },
-    async setGateway(
-      context: ActionContext<PlayerState, RootState>,
-      gateway: Gateways
-    ) {
+    async reloadPlayer(context: ActionContext<PlayerState, RootState>) {
       const { commit, dispatch, state } = moduleActionContext(context, mod);
-      commit.SET_GATEWAY(gateway);
       commit.SET_PAGE(0);
 
       if (state.battleTag) {
@@ -167,9 +171,6 @@ const mod = {
     },
     SET_SELECTED_SEASON(state: PlayerState, season: Season) {
       state.selectedSeason = season;
-    },
-    SET_GATEWAY(state: PlayerState, gateway: Gateways) {
-      state.gateway = gateway;
     },
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;

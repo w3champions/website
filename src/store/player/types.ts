@@ -12,7 +12,6 @@ export type PlayerState = {
   loadingProfile: boolean;
   opponentTag: string;
   selectedSeason: Season;
-  gateway: Gateways;
   gameMode: EGameMode;
   raceStats: RaceStat[];
   ongoingMatch: Match;

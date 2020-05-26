@@ -3,6 +3,7 @@ import { MatchState, MatchStatus } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Gateways } from "../ranking/types";
+import GatewaysService from "@/services/GatewaysService";
 
 const mod = {
   namespaced: true,
@@ -13,7 +14,6 @@ const mod = {
     matches: [] as Match[],
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
-    gateWay: 20 as Gateways,
     status: MatchStatus.onGoing,
   } as MatchState,
   actions: {
@@ -21,7 +21,10 @@ const mod = {
       context: ActionContext<MatchState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
@@ -32,12 +35,12 @@ const mod = {
       if (state.status == MatchStatus.onGoing) {
         response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
           state.page,
-          state.gateWay
+          rootState.gateway
         );
       } else {
         response = await rootGetters.matchService.retrieveMatches(
           state.page,
-          state.gateWay
+          rootState.gateway
         );
       }
 
@@ -45,12 +48,15 @@ const mod = {
       commit.SET_MATCHES(response.matches);
     },
     async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.matchService.retrieveOnGoingMatches(
         0,
         200,
-        state.gateWay
+        rootState.gateway
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
@@ -67,16 +73,6 @@ const mod = {
       commit.SET_MATCH_DETAIL(response);
       commit.SET_LOADING_MATCH_DETAIL(false);
     },
-    async setGateway(
-      context: ActionContext<MatchState, RootState>,
-      gateway: Gateways
-    ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
-      commit.SET_GATEWAY(gateway);
-      commit.SET_PAGE(0);
-      await dispatch.loadMatches(undefined);
-    },
-
     async setStatus(
       context: ActionContext<MatchState, RootState>,
       matchStatus: MatchStatus
@@ -105,9 +101,6 @@ const mod = {
     },
     SET_LOADING_MATCH_DETAIL(state: MatchState, loading: boolean) {
       state.loadingMatchDetail = loading;
-    },
-    SET_GATEWAY(state: MatchState, gateway: Gateways) {
-      state.gateWay = gateway;
     },
     SET_STATUS(state: MatchState, status: MatchStatus) {
       state.status = status;
