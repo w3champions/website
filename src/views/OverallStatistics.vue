@@ -292,7 +292,7 @@ export default class OverallStatisticsView extends Vue {
 
   public async setSelectedSeason(season: Season) {
     this.selectedSeason = season;
-    if (this.verifiedBtag) {
+    if (this.verifiedBtag !== "") {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
       await this.$store.direct.dispatch.player.loadGameModeStats(
         this.verifiedBtag
@@ -452,9 +452,11 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
-    await this.$store.direct.dispatch.player.loadProfile(
-      this.$store.direct.state.oauth.blizzardVerifiedBtag
-    );
+    if (this.verifiedBtag) {
+      await this.$store.direct.dispatch.player.loadProfile(
+        this.verifiedBtag
+      );
+    }
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       this.$store.direct.state.rankings.selectedSeason.id
     );
