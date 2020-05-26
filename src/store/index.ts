@@ -16,6 +16,8 @@ import { RootState } from "./typings";
 import StatisticService from "@/services/StatisticService";
 import AuthorizationService from "@/services/AuthorizationService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
+import { Gateways } from './ranking/types';
+import GatewaysService from '@/services/GatewaysService';
 
 Vue.use(Vuex);
 
@@ -39,12 +41,17 @@ const mod = {
   },
   state: {
     darkMode: false,
+    gateway: GatewaysService.getGateway()
   } as RootState,
   actions: {},
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
       state.darkMode = darkMode;
     },
+    SET_GATEWAY(state: RootState, gateway: Gateways) {
+      state.gateway = gateway;
+      GatewaysService.setGateway(gateway);
+    }
   },
   getters: {
     rankingService() {

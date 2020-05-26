@@ -50,22 +50,22 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag?: string
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         battleTag ?? state.battleTag,
-        GatewaysService.getGateway(),
+        rootState.gateway,
         state.selectedSeason.id
       );
 
       commit.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
-        GatewaysService.getGateway(),
+        rootState.gateway,
         state.selectedSeason.id
       );
 
@@ -88,7 +88,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       search: { page?: number; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (search.page != null && !isNaN(search.page)) {
         commit.SET_PAGE(search.page - 1);
@@ -101,7 +101,7 @@ const mod = {
         state.battleTag,
         state.opponentTag,
         state.gameMode,
-        GatewaysService.getGateway()
+        rootState.gateway
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);

@@ -35,7 +35,7 @@ const mod = {
 
       const response = await rootGetters.rankingService.retrieveRankings(
         state.league,
-        GatewaysService.getGateway(),
+        rootState.gateway,
         state.gameMode,
         state.selectedSeason.id ?? rootState.player.selectedSeason.id
       );
@@ -44,11 +44,11 @@ const mod = {
       commit.SET_RANKINGS(response);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
-        GatewaysService.getGateway(),
+        rootState.gateway,
         EGameMode.GM_1ON1,
         state.selectedSeason.id
       );
@@ -58,11 +58,11 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       search: { searchText: string; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,
-        GatewaysService.getGateway(),
+        rootState.gateway,
         search.gameMode,
         state.selectedSeason.id
       );

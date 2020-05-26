@@ -21,7 +21,7 @@ const mod = {
       context: ActionContext<MatchState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
@@ -32,12 +32,12 @@ const mod = {
       if (state.status == MatchStatus.onGoing) {
         response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
           state.page,
-          GatewaysService.getGateway()
+          rootState.gateway
         );
       } else {
         response = await rootGetters.matchService.retrieveMatches(
           state.page,
-          GatewaysService.getGateway()
+          rootState.gateway
         );
       }
 
@@ -45,12 +45,12 @@ const mod = {
       commit.SET_MATCHES(response.matches);
     },
     async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const response = await rootGetters.matchService.retrieveOnGoingMatches(
         0,
         200,
-        GatewaysService.getGateway()
+        rootState.gateway
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);

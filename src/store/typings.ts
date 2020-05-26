@@ -1,7 +1,9 @@
 import { Moment } from "moment";
+import { Gateways } from './ranking/types';
 
 export type RootState = {
   darkMode: boolean;
+  gateway: Gateways;
 };
 
 export type DataTableOptions = {
