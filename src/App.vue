@@ -168,6 +168,13 @@ export default class App extends Vue {
   }
 
   private async init() {
+    const selectedGw = window.localStorage.getItem("selectedGateway");
+    if (selectedGw) {
+      const gwParsed = parseInt(selectedGw);
+      this.$store.direct.dispatch.rankings.setGateway(gwParsed);
+      this.$store.direct.dispatch.player.setGateway(gwParsed);
+    }
+
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
