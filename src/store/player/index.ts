@@ -9,6 +9,7 @@ import {
 import { EGameMode, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season, Gateways } from "@/store/ranking/types";
+import GatewaysService from "@/services/GatewaysService";
 
 const mod = {
   namespaced: true,
@@ -23,7 +24,7 @@ const mod = {
     loadingRecentMatches: false,
     opponentTag: "",
     selectedSeason: {} as Season,
-    gateway: 20 as Gateways,
+    gateway: GatewaysService.getGateway(),
     gameMode: 0 as EGameMode,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],

@@ -321,6 +321,7 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
+import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
@@ -540,8 +541,7 @@ export default class PlayerView extends Vue {
   }
 
   get selectedGateWay() {
-    const gateway = this.$store.direct.state.rankings.gateway;
-    return gateway || 20;
+    return GatewaysService.getGateway();
   }
 
   get ongoingMatch() {
