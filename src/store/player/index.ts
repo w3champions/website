@@ -47,11 +47,14 @@ const mod = {
       commit.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       commit.SET_LOADING_PROFILE(false);
     },
-    async loadGameModeStats(context: ActionContext<PlayerState, RootState>) {
+    async loadGameModeStats(
+      context: ActionContext<PlayerState, RootState>,
+      battleTag?: string
+    ) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
-        state.battleTag,
+        battleTag ?? state.battleTag,
         state.gateway,
         state.selectedSeason.id
       );
