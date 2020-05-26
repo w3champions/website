@@ -21,7 +21,9 @@ export default class MmrDistributionChart extends Vue {
   private colors() {
     const colors = [];
     for (let i = 0; i < this.mmrDistribution.distributedMmrs.length; i++) {
-      if (
+      if (this.isYou(i)) {
+        colors.push("rgb(28,95,47, 0.7)");
+      } else if (
         i === this.mmrDistribution.top2PercentIndex ||
         i === this.mmrDistribution.top5PercentIndex ||
         i === this.mmrDistribution.top10PercentIndex ||
@@ -32,32 +34,24 @@ export default class MmrDistributionChart extends Vue {
       } else {
         colors.push("rgba(54, 162, 235, 0.2)");
       }
-
-      if (this.isYou(i)) {
-        colors.pop();
-        colors.push("rgb(28,95,47, 0.7)");
-      }
     }
     return colors;
   }
 
   get mmrOfLoggedInPlayer() {
-    if (!this.$store.direct.state.oauth.blizzardVerifiedBtag) return 0;
+    if (!this.gameModeStats) return 0;
 
-    this.$store.direct.dispatch.player.loadProfile(
-      this.$store.direct.state.oauth.blizzardVerifiedBtag
+    return (
+      this.gameModeStats.filter(
+        (g) =>
+          g.gameMode === EGameMode.GM_1ON1 &&
+          g.season === this.selectedSeason.id
+      )[0]?.mmr ?? 0
     );
+  }
 
-    this.$store.direct.dispatch.player.loadGameModeStats();
-
-    if (!this.$store.direct.state.player.gameModeStats) {
-      return 0;
-    }
-
-    const gateWayStat = this.$store.direct.state.player.gameModeStats;
-
-    if (!gateWayStat) return 0;
-    return gateWayStat.filter((g) => g.gameMode === EGameMode.GM_1ON1)[0].mmr;
+  get gameModeStats() {
+    return this.$store.direct.state.player.gameModeStats;
   }
 
   public isYou(index: number) {
