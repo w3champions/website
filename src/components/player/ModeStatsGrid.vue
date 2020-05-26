@@ -17,11 +17,11 @@
             {{ (item.winrate * 100).toFixed(1) }}%
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span>
+            <span v-if="is2v2(item) && item.rank !== 0">~</span>
             {{ item.rank !== 0 ? item.mmr : "-" }}
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span>
+            <span v-if="is2v2(item) && item.rank !== 0">~</span>
             {{ item.rank !== 0 ? item.rankingPoints : "-" }}
           </td>
         </tr>
