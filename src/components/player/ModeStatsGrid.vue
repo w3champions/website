@@ -18,11 +18,11 @@
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item)">~</span>
-            {{ item.mmr }}
+            {{ item.rank !== 0 ? item.mmr : "-" }}
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item)">~</span>
-            {{ item.rankingPoints }}
+            {{ item.rank !== 0 ? item.rankingPoints : "-" }}
           </td>
         </tr>
       </tbody>
