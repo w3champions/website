@@ -76,9 +76,7 @@
                 </v-col>
                 <v-col cols="12" md="10">
                   <v-card-text>
-                    <game-length-chart
-                      :game-length="selectedGameLength"
-                    />
+                    <game-length-chart :game-length="selectedGameLength" />
                   </v-card-text>
                 </v-col>
               </v-row>
@@ -224,20 +222,27 @@
 </template>
 
 <script lang="ts">
-  import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
-  import Vue from "vue";
-  import { Component } from "vue-property-decorator";
-  import { GameDay, GameLength, PlayedHero, PopularGameHour, Ratio, StatsPerWinrate } from "@/store/overallStats/types";
-  import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
-  import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
-  import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
-  import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
-  import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
-  import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-  import { Season } from "@/store/ranking/types";
-  import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
+import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
+import {
+  GameDay,
+  GameLength,
+  PlayedHero,
+  PopularGameHour,
+  Ratio,
+  StatsPerWinrate,
+} from "@/store/overallStats/types";
+import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
+import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
+import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
+import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
+import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
+import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import { Season } from "@/store/ranking/types";
+import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 
-  @Component({
+@Component({
   components: {
     MmrDistributionChart,
     HeroWinrate,
@@ -336,7 +341,8 @@ export default class OverallStatisticsView extends Vue {
   get selectedGameLength(): GameLength {
     return (
       this.gameLength?.filter(
-      (g) => g.gameMode == this.selectedLengthMode)[0] ?? { lengths: [] }
+        (g) => g.gameMode == this.selectedLengthMode
+      )[0] ?? { lengths: [] }
     );
   }
 

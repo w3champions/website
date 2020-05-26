@@ -118,9 +118,7 @@ const mod = {
       );
       commit.SET_ONGOING_MATCH(response || {});
     },
-    async reloadPlayer(
-      context: ActionContext<PlayerState, RootState>,
-    ) {
+    async reloadPlayer(context: ActionContext<PlayerState, RootState>) {
       const { commit, dispatch, state } = moduleActionContext(context, mod);
       commit.SET_PAGE(0);
 
