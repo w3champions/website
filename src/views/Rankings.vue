@@ -174,12 +174,12 @@
                 <td class="number-text">{{ item.rankNumber }}.</td>
                 <td>
                   <div
-                    class="d-inline-block"
+                    class="d-inline-block rank-icon-container"
                     v-bind:class="{ 'ml-3': index > 0 }"
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <player-icon :race="calculatedRace(item)" class="mr-1" />
+                    <player-icon :race="calculatedRace(item, index)" class="mr-1" />
                     <player-rank-info :player-id="playerId" />
                     <span v-if="index !== item.player.playerIds.length - 1">
                       &
@@ -408,10 +408,10 @@ export default class RankingsView extends Vue {
     return ladder.leagues.filter((l) => l.id == league)[0] || {};
   }
 
-  public calculatedRace(ranking: Ranking) {
+  public calculatedRace(ranking: Ranking, playerIndex: number) {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return ERaceEnum.RANDOM;
-    const playerInfo = playersInfo[0];
+    const playerInfo = playersInfo[playerIndex];
     if (!playerInfo) return ERaceEnum.RANDOM;
     return playerInfo.calculatedRace;
   }
@@ -605,4 +605,12 @@ export default class RankingsView extends Vue {
 .red {
   left: 10px;
 }
+
+@media (max-width: 768px) {
+  .rank-icon-container{
+    margin-top: 5px;
+    margin-left: 0px !important;
+  }
+}
+
 </style>
