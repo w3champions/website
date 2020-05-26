@@ -6,7 +6,7 @@
           <v-card-title class="justify-space-between">
             <span>Profile of {{ profile.battleTag }}</span>
             <div>
-              <gate-way-select />
+              <gate-way-select @gatewayChanged="gatewayChanged" />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -693,6 +693,10 @@ export default class PlayerView extends Vue {
           (player: PlayerInTeam) => player.battleTag === this.battleTag
         )
     );
+  }
+
+  public gatewayChanged() {
+    this.$store.direct.dispatch.player.reloadPlayer();
   }
 
   async mounted() {

@@ -8,7 +8,6 @@ export type MatchState = {
   page: number;
   totalMatches: number;
   loadingMatchDetail: boolean;
-  gateWay: Gateways;
   status: MatchStatus;
 };
 

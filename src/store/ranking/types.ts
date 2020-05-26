@@ -2,7 +2,6 @@ import { WinLoss } from "@/store/overallStats/types";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 
 export type RankingState = {
-  gateway: Gateways;
   league: number;
   working: boolean;
   page: number;

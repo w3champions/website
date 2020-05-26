@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import { Gateways, Ladder, Ranking, RankingState, Season } from "./types";
+import { Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import GatewaysService from "@/services/GatewaysService";
@@ -7,7 +7,6 @@ import GatewaysService from "@/services/GatewaysService";
 const mod = {
   namespaced: true,
   state: {
-    gateway: GatewaysService.getGateway(),
     league: 0,
     page: 0,
     totalRanks: 0,
@@ -36,7 +35,7 @@ const mod = {
 
       const response = await rootGetters.rankingService.retrieveRankings(
         state.league,
-        state.gateway,
+        GatewaysService.getGateway(),
         state.gameMode,
         state.selectedSeason.id ?? rootState.player.selectedSeason.id
       );
@@ -49,7 +48,7 @@ const mod = {
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
-        state.gateway,
+        GatewaysService.getGateway(),
         EGameMode.GM_1ON1,
         state.selectedSeason.id
       );
@@ -63,7 +62,7 @@ const mod = {
 
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,
-        state.gateway,
+        GatewaysService.getGateway(),
         search.gameMode,
         state.selectedSeason.id
       );
@@ -73,16 +72,6 @@ const mod = {
     async clearSearch(context: ActionContext<RankingState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
-    },
-    async setGateway(
-      context: ActionContext<RankingState, RootState>,
-      gateway: Gateways
-    ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
-      commit.SET_GATEWAY(gateway);
-      commit.SET_LEAGUE(0);
-      commit.SET_PAGE(0);
-      await dispatch.retrieveRankings(undefined);
     },
     async setLeague(
       context: ActionContext<RankingState, RootState>,
@@ -145,9 +134,6 @@ const mod = {
     },
     SET_SEARCH_RANKINGS(state: RankingState, rankings: Ranking[]) {
       state.searchRanks = rankings;
-    },
-    SET_GATEWAY(state: RankingState, gateway: Gateways) {
-      state.gateway = gateway;
     },
     SET_LEAGUE(state: RankingState, league: number) {
       state.league = league;

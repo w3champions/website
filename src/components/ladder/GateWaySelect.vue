@@ -39,8 +39,10 @@ import GatewaysService from "../../services/GatewaysService";
 
 @Component({})
 export default class GateWaySelect extends Vue {
+  public selectedGateWay = GatewaysService.getGateway();
+
   get gateway() {
-    const gateway = this.$store.direct.state.rankings.gateway;
+    const gateway = this.selectedGateWay;
     return this.gateWays.filter((g) => g.gateway == gateway)[0].name;
   }
 
@@ -58,9 +60,10 @@ export default class GateWaySelect extends Vue {
   }
 
   public setGateway(gateway: Gateways) {
-    this.$store.direct.dispatch.rankings.setGateway(gateway);
-    this.$store.direct.dispatch.player.setGateway(gateway);
     GatewaysService.setGateway(gateway);
+    this.selectedGateWay = gateway;
+
+    this.$emit("gatewayChanged", gateway);
   }
 }
 </script>

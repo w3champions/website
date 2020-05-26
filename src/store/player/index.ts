@@ -24,7 +24,6 @@ const mod = {
     loadingRecentMatches: false,
     opponentTag: "",
     selectedSeason: {} as Season,
-    gateway: GatewaysService.getGateway(),
     gameMode: 0 as EGameMode,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
@@ -55,7 +54,7 @@ const mod = {
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         battleTag ?? state.battleTag,
-        state.gateway,
+        GatewaysService.getGateway(),
         state.selectedSeason.id
       );
 
@@ -66,7 +65,7 @@ const mod = {
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
-        state.gateway,
+        GatewaysService.getGateway(),
         state.selectedSeason.id
       );
 
@@ -102,7 +101,7 @@ const mod = {
         state.battleTag,
         state.opponentTag,
         state.gameMode,
-        state.gateway
+        GatewaysService.getGateway()
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
@@ -119,12 +118,10 @@ const mod = {
       );
       commit.SET_ONGOING_MATCH(response || {});
     },
-    async setGateway(
+    async reloadPlayer(
       context: ActionContext<PlayerState, RootState>,
-      gateway: Gateways
     ) {
       const { commit, dispatch, state } = moduleActionContext(context, mod);
-      commit.SET_GATEWAY(gateway);
       commit.SET_PAGE(0);
 
       if (state.battleTag) {
@@ -167,9 +164,6 @@ const mod = {
     },
     SET_SELECTED_SEASON(state: PlayerState, season: Season) {
       state.selectedSeason = season;
-    },
-    SET_GATEWAY(state: PlayerState, gateway: Gateways) {
-      state.gateway = gateway;
     },
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;
