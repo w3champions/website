@@ -179,7 +179,10 @@
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <player-icon :race="calculatedRace(item, index)" class="mr-1" />
+                    <player-icon
+                      :race="calculatedRace(item, index)"
+                      class="mr-1"
+                    />
                     <player-rank-info :player-id="playerId" />
                     <span v-if="index !== item.player.playerIds.length - 1">
                       &
@@ -607,10 +610,9 @@ export default class RankingsView extends Vue {
 }
 
 @media (max-width: 768px) {
-  .rank-icon-container{
+  .rank-icon-container {
     margin-top: 5px;
     margin-left: 0px !important;
   }
 }
-
 </style>
