@@ -251,7 +251,7 @@ import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import AppConstants from "../constants";
-import GatewaysService from '../services/GatewaysService';
+import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
