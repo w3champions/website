@@ -44,7 +44,10 @@ const mod = {
       commit.SET_RANKINGS(response);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
@@ -58,7 +61,10 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       search: { searchText: string; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,

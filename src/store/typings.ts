@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { Gateways } from './ranking/types';
+import { Gateways } from "./ranking/types";
 
 export type RootState = {
   darkMode: boolean;

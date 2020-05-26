@@ -50,7 +50,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag?: string
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         battleTag ?? state.battleTag,
@@ -61,7 +64,10 @@ const mod = {
       commit.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
@@ -88,7 +94,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       search: { page?: number; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       if (search.page != null && !isNaN(search.page)) {
         commit.SET_PAGE(search.page - 1);
