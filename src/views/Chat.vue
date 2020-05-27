@@ -17,13 +17,16 @@
           autofocus
           v-model="editChatMessage"
           @keydown.enter="sendMessage"
-          :disabled="chatApiKey"
+          :disabled="!chatApiKey"
         />
       </v-card>
       <v-card v-if="!chatApiKey" class="text-center">
         <v-list-item style="height: 600px;">
           Sorry, but you have to be logged in to chat
         </v-list-item>
+        <v-btn @click="creatApiKey">
+          Create Api Key
+        </v-btn>
       </v-card>
     </v-col>
     <v-col cols="3">
@@ -51,6 +54,7 @@ import { API_URL } from "@/main";
 @Component({})
 export default class ChatView extends Vue {
   public connection!: HubConnection;
+  public editChatMessage = "Connecting...";
 
   async mounted() {
     this.connection = new HubConnectionBuilder()
@@ -70,14 +74,13 @@ export default class ChatView extends Vue {
     );
     await this.$store.direct.dispatch.chat.loadChatApiKey();
     await this.connection.invoke("LoginAs", this.chatApiKey);
+    if (this.chatApiKey) {
+      this.editChatMessage = "";
+    }
   }
 
   get chatApiKey(): string {
     return this.$store.direct.state.chat.apiKey;
-  }
-
-  get editChatMessage() {
-    return this.$store.direct.state.chat.editChatMessage;
   }
 
   get messages() {
@@ -86,6 +89,10 @@ export default class ChatView extends Vue {
 
   get otherUsers() {
     return this.$store.direct.state.chat.otherUsers;
+  }
+
+  public creatApiKey() {
+    this.$store.direct.dispatch.chat.createApiKey();
   }
 
   public openProfile(battleTag: string) {
@@ -127,7 +134,7 @@ export default class ChatView extends Vue {
     if (chatBox) {
       chatBox.scrollTop = chatBox.scrollHeight;
     }
-    this.$store.direct.commit.chat.SET_EDIT_MESSAGE("");
+    this.editChatMessage = "";
   }
 
   private handleClose() {

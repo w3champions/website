@@ -1,5 +1,4 @@
 export interface ChatState {
-  editChatMessage: string;
   apiKey: string;
   canNotSend: boolean;
   isLoggedIn: boolean;

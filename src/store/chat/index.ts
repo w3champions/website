@@ -1,12 +1,11 @@
 import { moduleActionContext } from "..";
 import { ChatMessage, ChatState, ChatUser } from "./types";
-import { Match, MatchDetail, RootState } from "../typings";
+import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
   state: {
-    editChatMessage: "Connecting...",
     apiKey: "",
     canNotSend: true,
     isLoggedIn: false,
@@ -28,20 +27,27 @@ const mod = {
 
       if (response?.apiKey) {
         commit.SET_CHAT_API_KEY(response.apiKey);
-        commit.SET_EDIT_MESSAGE("");
-      } else {
-        commit.SET_EDIT_MESSAGE(
-          "Sorry, you need to be logged in to be able to chat"
-        );
+      }
+    },
+    async createApiKey(context: ActionContext<ChatState, RootState>) {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const response = await rootGetters.chatService.createApiKey(
+        rootState.oauth.blizzardVerifiedBtag,
+        rootState.oauth.token
+      );
+
+      if (response?.apiKey) {
+        commit.SET_CHAT_API_KEY(response.apiKey);
       }
     },
   },
   mutations: {
     SET_CHAT_API_KEY(state: ChatState, key: string) {
       state.apiKey = key;
-    },
-    SET_EDIT_MESSAGE(state: ChatState, message: string) {
-      state.editChatMessage = message;
     },
     POP_USER(state: ChatState, battleTag: string) {
       state.otherUsers = [
