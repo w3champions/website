@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="1" />
     <v-col cols="7">
-      <v-card v-if="isLoggedIn" class="pt-4">
+      <v-card v-if="chatApiKey" class="pt-4">
         <div class="overflow-y-auto" id="chatBox" style="height: 546px;">
           <v-list-item
             style="min-height: 25px !important;"
@@ -17,10 +17,10 @@
           autofocus
           v-model="editChatMessage"
           @keydown.enter="sendMessage"
-          :disabled="canNotSend"
+          :disabled="chatApiKey"
         />
       </v-card>
-      <v-card v-if="!isLoggedIn" class="text-center">
+      <v-card v-if="!chatApiKey" class="text-center">
         <v-list-item style="height: 600px;">
           Sorry, but you have to be logged in to chat
         </v-list-item>
@@ -51,16 +51,6 @@ import { API_URL } from "@/main";
 @Component({})
 export default class ChatView extends Vue {
   public connection!: HubConnection;
-  public editChatMessage = "connecting...";
-  public canNotSend = true;
-  public isLoggedIn = false;
-  public messages = [] as {
-    user: string;
-    name: string;
-    message: string;
-    index: number;
-  }[];
-  public users = [] as { name: string; battleTag: string }[];
 
   async mounted() {
     this.connection = new HubConnectionBuilder()
@@ -75,14 +65,20 @@ export default class ChatView extends Vue {
     this.connection.on("LoginFailed", this.loginFailed);
     this.connection.onclose(this.handleClose);
 
-    await this.connection.invoke("LoginAs", this.authCode);
-
-    this.canNotSend = false;
-    this.editChatMessage = "";
+    await this.$store.direct.dispatch.chat.loadChatApiKey();
+    await this.connection.invoke("LoginAs", this.chatApiKey);
   }
 
-  get authCode(): string {
-    return this.$store.direct.state.oauth.token;
+  get chatApiKey(): string {
+    return this.$store.direct.state.chat.apiKey;
+  }
+
+  get editChatMessage() {
+    return this.$store.direct.state.chat.editChatMessage;
+  }
+
+  get messages() {
+    return this.$store.direct.state.chat.messages;
   }
 
   public openProfile(battleTag: string) {
@@ -90,43 +86,40 @@ export default class ChatView extends Vue {
   }
 
   public pushMessage(user: string, name: string, message: string) {
-    this.messages.push({ user, name, message, index: this.messages.length });
+    this.$store.direct.commit.chat.PUSH_MESSAGE({ user, name, message, index: this.messages.length });
   }
 
   public pushUser(name: string, battleTag: string) {
-    this.users.push({ name, battleTag });
+    this.$store.direct.commit.chat.PUSH_USER({name, battleTag});
   }
 
   public pushInitialUsers(users: { name: string; battleTag: string }[]) {
-    this.users = users;
-    this.isLoggedIn = true;
+    this.$store.direct.commit.chat.PUSH_USERS(users);
   }
 
   public async loginFailed() {
-    this.editChatMessage = "Sorry, you need to be logged in to be able to chat";
     await this.connection.stop();
   }
 
   public removeUser(battleTag: string) {
-    this.users = this.users.filter((u) => u.battleTag !== battleTag);
+    this.$store.direct.commit.chat.POP_USER(battleTag);
   }
 
   public async sendMessage() {
     await this.connection.invoke(
       "SendMessage",
       this.editChatMessage,
-      this.authCode
+      this.chatApiKey
     );
     const chatBox = this.$el.querySelector("#chatBox");
     if (chatBox) {
       chatBox.scrollTop = chatBox.scrollHeight;
     }
-    this.editChatMessage = "";
+    this.$store.direct.commit.chat.SET_EDIT_MESSAGE("");
   }
 
   private handleClose() {
-    this.canNotSend = true;
-    this.isLoggedIn = false;
+    this.$store.direct.commit.chat.SET_CHAT_API_KEY("");
   }
 }
 </script>

@@ -8,6 +8,7 @@ import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
+import chat from "./chat/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -18,6 +19,7 @@ import AuthorizationService from "@/services/AuthorizationService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
+import ChatService from "@/services/ChatService";
 
 Vue.use(Vuex);
 
@@ -28,6 +30,7 @@ const services = {
   statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
+  chatService: new ChatService(),
 };
 
 const mod = {
@@ -38,6 +41,7 @@ const mod = {
     overallStatistics,
     oauth,
     personalSettings,
+    chat,
   },
   state: {
     darkMode: false,
@@ -71,6 +75,9 @@ const mod = {
     },
     personalSettingsService() {
       return services.personalSettingsService;
+    },
+    chatService() {
+      return services.chatService;
     },
   },
 } as const;
