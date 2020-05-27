@@ -24,7 +24,7 @@
     "vue-chartjs": "^3.5.0",
     "vue-class-component": "^7.2.3",
     "vue-cookies-ts": "^1.5.19",
-    "vue-i18n": "^8.17.7",
+    "vue-i18n": "^8.18.0",
     "vue-moment": "^4.1.0",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
