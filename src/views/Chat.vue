@@ -40,8 +40,8 @@
         </div>
       </v-card>
       <br />
-      <v-card v-if="!chatApiKey">
-        <v-btn class="ma-4" @click="copyChatApiKey">
+      <v-card >
+        <v-btn v-if="chatApiKey" class="ma-4" @click="copyChatApiKey">
           Copy new ApiKey to Clipboard
         </v-btn>
       </v-card>
