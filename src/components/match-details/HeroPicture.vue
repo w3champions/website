@@ -1,8 +1,14 @@
 <template>
-  <v-card-text
-    class="hero-icon"
-    :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-  />
+<v-tooltip top>
+    <template v-slot:activator="{ on }">
+      <v-card-text v-on="on"
+      class="hero-icon"
+      :style="{ 'background-image': 'url(' + heroPicture + ')' }"
+    /> 
+    </template>
+    <div>{{getName(heroIcon)}}</div>
+  </v-tooltip>
+  
 </template>
 
 <script lang="ts">
@@ -25,7 +31,12 @@ export default class HeroPicture extends Vue {
   get heroPicture() {
     return this.parsePicture(this.heroIcon);
   }
+
+  public getName(hero: string){
+    return this.$t(`heroNames.${hero}`);
+  }
 }
+
 </script>
 
 <style type="text/css" scoped>
