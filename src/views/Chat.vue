@@ -31,7 +31,7 @@
         <div class="overflow-y-auto">
           <v-list-item
             style="min-height: 25px !important;"
-            v-for="user in users"
+            v-for="user in otherUsers"
             :key="user.battleTag"
             @click="openProfile(user.battleTag)"
           >
@@ -65,6 +65,7 @@ export default class ChatView extends Vue {
     this.connection.on("LoginFailed", this.loginFailed);
     this.connection.onclose(this.handleClose);
 
+    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.$store.direct.state.oauth.token);
     await this.$store.direct.dispatch.chat.loadChatApiKey();
     await this.connection.invoke("LoginAs", this.chatApiKey);
   }
@@ -79,6 +80,10 @@ export default class ChatView extends Vue {
 
   get messages() {
     return this.$store.direct.state.chat.messages;
+  }
+
+  get otherUsers() {
+    return this.$store.direct.state.chat.otherUsers;
   }
 
   public openProfile(battleTag: string) {
