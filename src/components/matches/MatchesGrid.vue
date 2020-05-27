@@ -156,7 +156,7 @@ export default class MatchesGrid extends Vue {
       return 1;
     }
 
-    return Math.round(this.totalMatches / 50);
+    return Math.ceil(this.totalMatches / 50);
   }
 
   public gotToMatchDetailPage(match: Match) {
