@@ -14,7 +14,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="2" v-if="userProfile.twitch != ''" style="padding-top: 0px;">
+      <v-col cols="2" v-if="userProfile.twitch != ''" style="padding-top: 0px; padding-left: 2px">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -32,7 +32,7 @@
       <v-col
         cols="2"
         v-if="userProfile.youtube != ''"
-        style="padding-top: 0px;"
+        style="padding-top: 0px; padding-left: 2px"
       >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -51,7 +51,7 @@
       <v-col
         cols="2"
         v-if="userProfile.twitter != ''"
-        style="padding-top: 0px;"
+        style="padding-top: 0px; padding-left: 2px"
       >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
