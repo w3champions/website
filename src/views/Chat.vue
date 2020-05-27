@@ -65,7 +65,9 @@ export default class ChatView extends Vue {
     this.connection.on("LoginFailed", this.loginFailed);
     this.connection.onclose(this.handleClose);
 
-    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.$store.direct.state.oauth.token);
+    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(
+      this.$store.direct.state.oauth.token
+    );
     await this.$store.direct.dispatch.chat.loadChatApiKey();
     await this.connection.invoke("LoginAs", this.chatApiKey);
   }

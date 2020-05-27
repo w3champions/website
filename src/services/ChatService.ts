@@ -29,6 +29,6 @@ export default class ChatService {
         "Content-Type": "application/json",
       },
     });
-    return await response?.json() ?? {};
+    return (await response?.json()) ?? {};
   }
 }
