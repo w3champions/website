@@ -86,11 +86,16 @@ export default class ChatView extends Vue {
   }
 
   public pushMessage(user: string, name: string, message: string) {
-    this.$store.direct.commit.chat.PUSH_MESSAGE({ user, name, message, index: this.messages.length });
+    this.$store.direct.commit.chat.PUSH_MESSAGE({
+      user,
+      name,
+      message,
+      index: this.messages.length,
+    });
   }
 
   public pushUser(name: string, battleTag: string) {
-    this.$store.direct.commit.chat.PUSH_USER({name, battleTag});
+    this.$store.direct.commit.chat.PUSH_USER({ name, battleTag });
   }
 
   public pushInitialUsers(users: { name: string; battleTag: string }[]) {

@@ -3,9 +3,9 @@ export interface ChatState {
   apiKey: string;
   canNotSend: boolean;
   isLoggedIn: boolean;
-  messages: ChatMessage[]
-  currentUser: ChatUser
-  otherUsers: ChatUser[]
+  messages: ChatMessage[];
+  currentUser: ChatUser;
+  otherUsers: ChatUser[];
 }
 
 export interface ChatMessage {
@@ -15,7 +15,7 @@ export interface ChatMessage {
   index: number;
 }
 
-export interface  ChatUser {
+export interface ChatUser {
   battleTag: string;
   name: string;
   apiKey?: string;

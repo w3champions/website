@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import { ChatMessage, ChatState, ChatUser } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
-import { ActionContext } from "vuex";;
+import { ActionContext } from "vuex";
 
 const mod = {
   namespaced: true,
@@ -12,21 +12,27 @@ const mod = {
     isLoggedIn: false,
     messages: [] as ChatMessage[],
     otherUsers: [] as ChatUser[],
-    currentUser: {} as ChatUser
+    currentUser: {} as ChatUser,
   } as ChatState,
   actions: {
-    async loadChatApiKey(
-      context: ActionContext<ChatState, RootState>
-    ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+    async loadChatApiKey(context: ActionContext<ChatState, RootState>) {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
-      const response = await rootGetters.chatService.retrieveChatUser(rootState.oauth.blizzardVerifiedBtag, rootState.oauth.token);
+      const response = await rootGetters.chatService.retrieveChatUser(
+        rootState.oauth.blizzardVerifiedBtag,
+        rootState.oauth.token
+      );
 
       if (response?.apiKey) {
         commit.SET_CHAT_API_KEY(response.apiKey);
         commit.SET_EDIT_MESSAGE("");
       } else {
-        commit.SET_EDIT_MESSAGE("Sorry, you need to be logged in to be able to chat");
+        commit.SET_EDIT_MESSAGE(
+          "Sorry, you need to be logged in to be able to chat"
+        );
       }
     },
   },
@@ -38,7 +44,9 @@ const mod = {
       state.editChatMessage = message;
     },
     POP_USER(state: ChatState, battleTag: string) {
-      state.otherUsers = [...state.otherUsers.filter((u) => u.battleTag !== battleTag)];
+      state.otherUsers = [
+        ...state.otherUsers.filter((u) => u.battleTag !== battleTag),
+      ];
     },
     PUSH_USER(state: ChatState, user: ChatUser) {
       state.otherUsers = [...state.otherUsers, user];
@@ -48,7 +56,7 @@ const mod = {
     },
     PUSH_MESSAGE(state: ChatState, message: ChatMessage) {
       state.messages = [...state.messages, message];
-    }
+    },
   },
 } as const;
 
