@@ -8,7 +8,7 @@ export default class ChatService {
   ): Promise<ChatUser> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/api-key?authentication=${bearer}`;
+    )}/api-key?authorization=${bearer}`;
 
     const response = await fetch(url);
     return (await response?.json()) ?? {};
@@ -20,7 +20,7 @@ export default class ChatService {
   ): Promise<ChatUser> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/api-key?authentication=${bearer}`;
+    )}/api-key?authorization=${bearer}`;
 
     const response = await fetch(url, {
       method: "PUT",

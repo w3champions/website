@@ -24,7 +24,7 @@ export default class PersonalSettingsService {
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/profile-message?authentication=${authToken}`;
+    )}/profile-message?authorization=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);
@@ -46,7 +46,7 @@ export default class PersonalSettingsService {
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/home-page?authentication=${authToken}`;
+    )}/home-page?authorization=${authToken}`;
 
     const post = { Value: value };
     const data = JSON.stringify(post);
@@ -68,7 +68,7 @@ export default class PersonalSettingsService {
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/profile-picture?authentication=${authToken}`;
+    )}/profile-picture?authorization=${authToken}`;
 
     const post = { PictureId: value.pictureId, Race: value.race };
     const data = JSON.stringify(post);
