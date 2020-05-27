@@ -24,9 +24,6 @@
         <v-list-item style="height: 600px;">
           Sorry, but you have to be logged in to chat
         </v-list-item>
-        <v-btn @click="creatApiKey">
-          Create Api Key
-        </v-btn>
       </v-card>
     </v-col>
     <v-col cols="3">
@@ -41,6 +38,12 @@
             {{ user.name }}
           </v-list-item>
         </div>
+      </v-card>
+      <br />
+      <v-card v-if="!chatApiKey">
+        <v-btn class="ma-4" @click="copyChatApiKey">
+          Copy new ApiKey to Clipboard
+        </v-btn>
       </v-card>
     </v-col>
   </v-row>
@@ -69,11 +72,15 @@ export default class ChatView extends Vue {
     this.connection.on("LoginFailed", this.loginFailed);
     this.connection.onclose(this.handleClose);
 
-    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(
-      this.$store.direct.state.oauth.token
-    );
-    await this.$store.direct.dispatch.chat.loadChatApiKey();
-    await this.connection.invoke("LoginAs", this.chatApiKey);
+    if (this.$store.direct.state.oauth.token) {
+      await this.$store.direct.dispatch.oauth.loadBlizzardBtag(
+        this.$store.direct.state.oauth.token
+      );
+
+      await this.$store.direct.dispatch.chat.loadChatApiKey();
+      await this.connection.invoke("LoginAs", this.chatApiKey);
+    }
+
     if (this.chatApiKey) {
       this.editChatMessage = "";
     }
@@ -91,8 +98,9 @@ export default class ChatView extends Vue {
     return this.$store.direct.state.chat.otherUsers;
   }
 
-  public creatApiKey() {
-    this.$store.direct.dispatch.chat.createApiKey();
+  public async copyChatApiKey() {
+    await this.$store.direct.dispatch.chat.createApiKey();
+    await navigator.clipboard.writeText(this.chatApiKey);
   }
 
   public openProfile(battleTag: string) {
