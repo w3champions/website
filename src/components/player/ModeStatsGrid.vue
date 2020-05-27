@@ -15,12 +15,6 @@
             <span class="lost">{{ item.losses }}</span>
             ({{ (item.winrate * 100).toFixed(1) }}%)
           </td>
-          <!-- <td class="number-text text-end lost">{{ item.losses }}</td> -->
-          <!-- <td class="number-text text-end">{{ item.wins + item.losses }}</td> -->
-          <!-- <td class="number-text text-end">
-            <span v-if="is2v2(item)"></span>
-            {{ (item.winrate * 100).toFixed(1) }}%
-          </td> -->
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
             {{ item.rank !== 0 ? item.mmr : "-" }}
@@ -98,22 +92,6 @@ export default class ModeStatsGrid extends Vue {
       align: "end",
       sortable: false,
     },
-    // {
-    //   text: "Losses",
-    //   align: "end",
-    //   sortable: false,
-    // },
-    // {
-    //   text: "Total",
-    //   align: "end",
-    //   sortable: false,
-    // },
-    // {
-    //   text: "Winrate",
-    //   align: "end",
-    //   sortable: false,
-    //   value: "percentage",
-    // },
     {
       text: "MMR",
       align: "end",
