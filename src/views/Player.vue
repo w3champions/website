@@ -9,7 +9,12 @@
               <gate-way-select @gatewayChanged="gatewayChanged" />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
-                  <v-btn tile v-on="on" class="ma-2" style="background-color: transparent;">
+                  <v-btn
+                    tile
+                    v-on="on"
+                    class="ma-2"
+                    style="background-color: transparent;"
+                  >
                     <span class="pa-0">Season {{ selectedSeason.id }}</span>
                   </v-btn>
                 </template>
@@ -27,7 +32,9 @@
                         @click="selectSeason(item)"
                       >
                         <v-list-item-content>
-                          <v-list-item-title>Season {{ item.id }}</v-list-item-title>
+                          <v-list-item-title>
+                            Season {{ item.id }}
+                          </v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -62,30 +69,42 @@
                 right="true"
               ></team-match-info>
             </div>
-            <span class="live-match__map">{{ $t("mapNames." + ongoingMatch.map) }}</span>
+            <span class="live-match__map">
+              {{ $t("mapNames." + ongoingMatch.map) }}
+            </span>
           </div>
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
-            <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
+            <v-tab class="profileTab" :href="`#tab-matches`">
+              Match History
+            </v-tab>
             <v-tab class="profileTab" :href="`#tab-at-teams`">Teams</v-tab>
-            <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
+            <v-tab class="profileTab" :href="`#tab-statistics`">
+              Statistics
+            </v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
                   <v-row class="mt-4 filter-none">
                     <v-col cols="12" md="4" lg="3">
                       <v-card-text style="padding-top: 0 !important;">
-                        <player-avatar :is-logged-in-player="isLoggedInPlayer" />
+                        <player-avatar
+                          :is-logged-in-player="isLoggedInPlayer"
+                        />
                       </v-card-text>
                     </v-col>
                     <v-col md="12" lg="9">
                       <v-row>
                         <v-col cols="12" md="4" v-if="oneVersusOneStat">
-                          <player-league :modeStat="oneVersusOneStat"></player-league>
+                          <player-league
+                            :modeStat="oneVersusOneStat"
+                          ></player-league>
                         </v-col>
                         <v-col cols="12" md="4" v-if="best2versus2Stat">
-                          <player-league :modeStat="best2versus2Stat"></player-league>
+                          <player-league
+                            :modeStat="best2versus2Stat"
+                          ></player-league>
                         </v-col>
                         <v-col cols="12" md="4" v-if="ffaStats">
                           <player-league :modeStat="ffaStats"></player-league>
@@ -93,8 +112,8 @@
                       </v-row>
                       <v-row class="filter-none" v-if="selectedSeason.id === 0">
                         <v-card-text class="text-center">
-                          This noble person was part of our beta, therefore we hide
-                          his buggy stats and thank him for all eternity ;)
+                          This noble person was part of our beta, therefore we
+                          hide his buggy stats and thank him for all eternity ;)
                         </v-card-text>
                       </v-row>
                       <v-row class="filter-none" v-if="selectedSeason.id !== 0">
@@ -106,11 +125,14 @@
                             :items="selectedRaceStats"
                           >
                             <template v-slot:item.race="{ item }">
-                              <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                              <span>
+                                {{ $t("races." + raceEnums[item.race]) }}
+                              </span>
                             </template>
                             <template v-slot:item.wins="{ item }">
                               <span class="number-text">
-                                <span class="won">{{ item.wins }}</span> -
+                                <span class="won">{{ item.wins }}</span>
+                                -
                                 <span class="lost">{{ item.losses }}</span>
                                 ({{ (item.winrate * 100).toFixed(1) }}%)
                               </span>
@@ -131,7 +153,11 @@
                     </v-col>
                   </v-row>
                 </v-card-text>
-                <v-card-text v-if="loadingProfile" style="min-height: 500px;" class="text-center">
+                <v-card-text
+                  v-if="loadingProfile"
+                  style="min-height: 500px;"
+                  class="text-center"
+                >
                   <v-progress-circular
                     style="margin-top: 180px;"
                     :size="50"
@@ -162,19 +188,25 @@
                       >
                         <template v-slot:item="data">
                           <template v-if="typeof data.item !== 'object'">
-                            <v-list-item-content v-text="data.item"></v-list-item-content>
+                            <v-list-item-content
+                              v-text="data.item"
+                            ></v-list-item-content>
                           </template>
                           <template v-else>
                             <v-list-item-content>
                               <v-list-item-title>
                                 <span
                                   v-if="!isDuplicateName(data.item.player.name)"
-                                >{{ data.item.player.name }}</span>
-                                <span v-if="isDuplicateName(data.item.player.name)">
+                                >
+                                  {{ data.item.player.name }}
+                                </span>
+                                <span
+                                  v-if="isDuplicateName(data.item.player.name)"
+                                >
                                   {{
-                                  data.item.player.playerIds
-                                  .map((p) => p.battleTag)
-                                  .join(" & ")
+                                    data.item.player.playerIds
+                                      .map((p) => p.battleTag)
+                                      .join(" & ")
                                   }}
                                 </span>
                               </v-list-item-title>
@@ -207,9 +239,9 @@
                       <div>vs. {{ searchModel.player.name }}</div>
                       <span class="won">Wins: {{ opponentWins }}</span>
                       /
-                      <span
-                        class="lost"
-                      >Losses: {{ totalMatchesAgainstOpponent - opponentWins }}</span>
+                      <span class="lost">
+                        Losses: {{ totalMatchesAgainstOpponent - opponentWins }}
+                      </span>
                       <span>({{ winRateVsOpponent }}%)</span>
                     </v-col>
                   </v-row>
@@ -248,7 +280,10 @@
                         v-for="atPartner in gameModeStatsAt"
                         :key="atPartner.id"
                       >
-                        <player-league :mode-stat="atPartner" :show-at-partner="true" />
+                        <player-league
+                          :mode-stat="atPartner"
+                          :show-at-partner="true"
+                        />
                         <br />
                       </v-col>
                     </v-row>

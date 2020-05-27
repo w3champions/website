@@ -7,9 +7,14 @@
   >
     <template v-slot:body="{ items }">
       <tbody>
-        <tr  v-for="item in items" :key="item.gameMode">
+        <tr v-for="item in items" :key="item.gameMode">
           <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</td>
-          <td class="number-text text-end"><span class="won">{{ item.wins }}</span> - <span class="lost">{{item.losses}}</span> ({{ (item.winrate * 100).toFixed(1) }}%)</td>
+          <td class="number-text text-end">
+            <span class="won">{{ item.wins }}</span>
+            -
+            <span class="lost">{{ item.losses }}</span>
+            ({{ (item.winrate * 100).toFixed(1) }}%)
+          </td>
           <!-- <td class="number-text text-end lost">{{ item.losses }}</td> -->
           <!-- <td class="number-text text-end">{{ item.wins + item.losses }}</td> -->
           <!-- <td class="number-text text-end">
