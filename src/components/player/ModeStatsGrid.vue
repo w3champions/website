@@ -45,6 +45,7 @@ export default class ModeStatsGrid extends Vue {
   public is2v2(stats: ModeStat) {
     return stats.gameMode === EGameMode.GM_2ON2_AT;
   }
+
   get gameModeStatsCombined() {
     const gm2v2s = this.stats.filter(
       (g) => g.gameMode === EGameMode.GM_2ON2_AT
