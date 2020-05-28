@@ -77,9 +77,12 @@ export default class ModeStatsGrid extends Vue {
       }
     );
 
-    combindes2v2.winrate = combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
+    combindes2v2.winrate =
+      combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
     combindes2v2.mmr = Math.round(combindes2v2.mmr / gm2v2s.length);
-    combindes2v2.rankingPoints = Math.round(combindes2v2.rankingPoints / gm2v2s.length);
+    combindes2v2.rankingPoints = Math.round(
+      combindes2v2.rankingPoints / gm2v2s.length
+    );
     const not2v2s = this.stats.filter(
       (g) => g.gameMode !== EGameMode.GM_2ON2_AT
     );
