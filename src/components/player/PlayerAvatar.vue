@@ -14,17 +14,30 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="2" v-if="userProfile.twitch != ''" style="padding-top: 0px; padding-left: 2px;">
+      <v-col
+        cols="2"
+        v-if="userProfile.twitch != ''"
+        style="padding-top: 0px; padding-left: 2px;"
+      >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on" :href="'http://twitch.tv/' + userProfile.twitch" target="_blank">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'http://twitch.tv/' + userProfile.twitch"
+              target="_blank"
+            >
               <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
           </template>
           <span>{{ userProfile.twitch }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" v-if="userProfile.youtube != ''" style="padding-top: 0px; padding-left: 2px;">
+      <v-col
+        cols="2"
+        v-if="userProfile.youtube != ''"
+        style="padding-top: 0px; padding-left: 2px;"
+      >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -39,7 +52,11 @@
           <span>{{ userProfile.youtube }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" v-if="userProfile.twitter != ''" style="padding-top: 0px; padding-left: 2px;">
+      <v-col
+        cols="2"
+        v-if="userProfile.twitter != ''"
+        style="padding-top: 0px; padding-left: 2px;"
+      >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -95,7 +112,9 @@
             target="_blank"
             :href="homePageLink"
             :key="homePageLink"
-          >{{ homePage }}</a>
+          >
+            {{ homePage }}
+          </a>
         </div>
         <div v-else>{{ homePage }}</div>
       </v-col>
@@ -109,7 +128,11 @@
     <template>
       <v-row v-if="isLoggedInPlayer">
         <v-col>
-          <v-dialog v-model="userProfile.editDialogOpened" persistent max-width="600px">
+          <v-dialog
+            v-model="userProfile.editDialogOpened"
+            persistent
+            max-width="600px"
+          >
             <template v-slot:activator="{ on }">
               <v-btn
                 @click="userProfile.editDialogOpened = true"
@@ -119,7 +142,8 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>mdi-pencil</v-icon>Edit Profile
+                <v-icon left>mdi-pencil</v-icon>
+                Edit Profile
               </v-btn>
             </template>
             <v-card>
@@ -193,8 +217,12 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="resetUserProfile">Close</v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">Save</v-btn>
+                <v-btn color="blue darken-1" text @click="resetUserProfile">
+                  Close
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="saveUserProfile">
+                  Save
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

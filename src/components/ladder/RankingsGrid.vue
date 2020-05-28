@@ -1,6 +1,6 @@
 <template>
   <div class="custom-table-wrapper elevation-1">
-    <table class="custom-table" v-if="sortedRankings">
+    <table class="custom-table">
       <thead>
         <tr>
           <td
@@ -170,7 +170,7 @@ export default class RankingsGrid extends Vue {
     },
   ];
 
-  public sortedRankings: Ranking[] = [];
+  public sortedRankings: Ranking[] = this.rankings;
 
   public sortColumn = "Rank";
   public isSortedAsc = true;
