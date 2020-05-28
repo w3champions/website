@@ -17,38 +17,16 @@ export default class PersonalSettingsService {
     return await response.json();
   }
 
-  public async setPersonalSettingMessage(
+  public async savePersonalSettings(
     battleTag: string,
-    value: string,
+    value: PersonalSetting,
     authToken: string
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/profile-message?authentication=${authToken}`;
+    )}/?authentication=${authToken}`;
 
-    const post = { Value: value };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "PUT",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    return response.ok;
-  }
-
-  public async setPersonalSettingHomepage(
-    battleTag: string,
-    value: string,
-    authToken: string
-  ): Promise<boolean> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(
-      battleTag
-    )}/home-page?authentication=${authToken}`;
-
-    const post = { Value: value };
+    const post = value;
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "PUT",
