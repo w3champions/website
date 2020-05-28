@@ -110,43 +110,40 @@
                           <player-league :modeStat="ffaStats"></player-league>
                         </v-col>
                       </v-row>
-                    </v-col>
-                  </v-row>
-                  <v-row class="filter-none" v-if="selectedSeason.id === 0">
-                    <v-card-text class="text-center">
-                      This noble person was part of our beta, therefore we hide
-                      his buggy stats and thank him for all eternity ;)
-                    </v-card-text>
-                  </v-row>
-                  <v-row class="filter-none" v-if="selectedSeason.id !== 0">
-                    <v-col cols="12" md="6">
-                      <h4>Stats by race</h4>
-                      <v-data-table
-                        hide-default-footer
-                        :headers="raceHeaders"
-                        :items="selectedRaceStats"
-                      >
-                        <template v-slot:item.race="{ item }">
-                          <span>{{ $t("races." + raceEnums[item.race]) }}</span>
-                        </template>
-                        <template v-slot:item.wins="{ item }">
-                          <span class="won number-text">{{ item.wins }}</span>
-                        </template>
-                        <template v-slot:item.losses="{ item }">
-                          <span class="lost number-text">
-                            {{ item.losses }}
-                          </span>
-                        </template>
-                        <template v-slot:item.percentage="{ item }">
-                          <span class="number-text">
-                            {{ (item.winrate * 100).toFixed(1) }}%
-                          </span>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <h4>Stats by game mode</h4>
-                      <mode-stats-grid :stats="gameModeStats" />
+                      <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                        <v-card-text class="text-center">
+                          This noble person was part of our beta, therefore we
+                          hide his buggy stats and thank him for all eternity ;)
+                        </v-card-text>
+                      </v-row>
+                      <v-row class="filter-none" v-if="selectedSeason.id !== 0">
+                        <v-col cols="12" md="6">
+                          <h4>Stats by race</h4>
+                          <v-data-table
+                            hide-default-footer
+                            :headers="raceHeaders"
+                            :items="selectedRaceStats"
+                          >
+                            <template v-slot:item.race="{ item }">
+                              <span>
+                                {{ $t("races." + raceEnums[item.race]) }}
+                              </span>
+                            </template>
+                            <template v-slot:item.wins="{ item }">
+                              <span class="number-text">
+                                <span class="won">{{ item.wins }}</span>
+                                -
+                                <span class="lost">{{ item.losses }}</span>
+                                ({{ (item.winrate * 100).toFixed(1) }}%)
+                              </span>
+                            </template>
+                          </v-data-table>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <h4>Stats by game mode</h4>
+                          <mode-stats-grid :stats="gameModeStats" />
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-card-text>
@@ -166,9 +163,7 @@
               <v-tab-item :value="'tab-matches'">
                 <v-card-title>
                   <v-row align="center">
-                    <v-col cols="12" md="5">
-                      Match History
-                    </v-col>
+                    <v-col cols="12" md="5">Match History</v-col>
                     <v-col cols="12" md="5">
                       <v-autocomplete
                         v-model="searchModel"
@@ -354,22 +349,10 @@ export default class PlayerView extends Vue {
       value: "race",
     },
     {
-      text: "Wins",
+      text: "Win/Loss",
       align: "start",
       sortable: false,
       value: "wins",
-    },
-    {
-      text: "Losses",
-      align: "start",
-      sortable: false,
-      value: "losses",
-    },
-    {
-      text: "Winrate",
-      align: "start",
-      sortable: false,
-      value: "percentage",
     },
   ];
 
