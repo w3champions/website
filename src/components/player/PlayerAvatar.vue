@@ -43,7 +43,7 @@
             <v-btn
               icon
               v-on="on"
-              :href="'http://youtube.com/user/' + userProfile.youtube"
+              :href="'http://youtube.com/' + userProfile.youtube"
               target="_blank"
             >
               <v-icon color="red darken-2">mdi-youtube</v-icon>
@@ -172,7 +172,7 @@
                       single-line
                       shaped
                       hint="Enter your YouTube username!"
-                      prefix="https://www.youtube.com/user/"
+                      prefix="https://www.youtube.com/"
                       v-model="userProfile.youtube"
                     ></v-text-field>
                     <v-text-field
