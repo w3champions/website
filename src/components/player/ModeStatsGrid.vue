@@ -98,7 +98,7 @@ export default class ModeStatsGrid extends Vue {
     },
     {
       text: "Win/Loss",
-      align: "end",
+      align: "center",
       sortable: false,
     },
     {

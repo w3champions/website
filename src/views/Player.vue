@@ -137,12 +137,6 @@
                                 ({{ (item.winrate * 100).toFixed(1) }}%)
                               </span>
                             </template>
-                            <!-- <template v-slot:item.losses="{ item }">
-                              <span class="lost number-text">{{ item.losses }}</span>
-                            </template>
-                            <template v-slot:item.percentage="{ item }">
-                              <span class="number-text">{{ (item.winrate * 100).toFixed(1) }}%</span>
-                            </template>-->
                           </v-data-table>
                         </v-col>
                         <v-col cols="12" md="6">
@@ -360,18 +354,6 @@ export default class PlayerView extends Vue {
       sortable: false,
       value: "wins",
     },
-    // {
-    //   text: "Losses",
-    //   align: "start",
-    //   sortable: false,
-    //   value: "losses",
-    // },
-    // {
-    //   text: "Winrate",
-    //   align: "start",
-    //   sortable: false,
-    //   value: "percentage",
-    // },
   ];
 
   private _intervalRefreshHandle: any = {};

@@ -33,7 +33,7 @@ const mod = {
     },
     async saveUserProfile(
       context: ActionContext<PersonalSettingsState, RootState>,
-      message: PersonalSetting
+      setting: PersonalSetting
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
@@ -42,10 +42,10 @@ const mod = {
 
       const success = await rootGetters.personalSettingsService.savePersonalSettings(
         rootState.player.battleTag,
-        message,
+        setting,
         rootState.oauth.token
       );
-      if (success) commit.SET_PERSONAL_SETTING(message);
+      if (success) commit.SET_PERSONAL_SETTING(setting);
     },
     async saveAvatar(
       context: ActionContext<PersonalSettingsState, RootState>,
