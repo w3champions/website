@@ -192,13 +192,13 @@ export default class RankingsGrid extends Vue {
     }
 
     if (newVal == this.sortedRankings) {
-        return;
+      return;
     }
-    
+
     this.sortedRankings = newVal;
 
     if (this._lastSortFunction) {
-     this._lastSortFunction();
+      this._lastSortFunction();
     }
   }
 
@@ -293,9 +293,9 @@ export default class RankingsGrid extends Vue {
         this.sortedRankings.sort(sortFunction);
 
         if (this.isSortedAsc) {
-            this.sortedRankings = this.sortedRankings.reverse();
+          this.sortedRankings = this.sortedRankings.reverse();
         }
-      }
+      };
       this._lastSortFunction = sortFn;
       sortFn();
     }
