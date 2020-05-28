@@ -14,30 +14,17 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col
-        cols="2"
-        v-if="userProfile.twitch != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.twitch != ''" style="padding-top: 0px; padding-left: 2px;">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              v-on="on"
-              :href="'http://twitch.tv/' + userProfile.twitch"
-              target="_blank"
-            >
-              <v-icon color="purple darken-2">mdi-twitch</v-icon>
+            <v-btn icon v-on="on" :href="'http://twitch.tv/' + userProfile.twitch" target="_blank">
+              <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
           </template>
           <span>{{ userProfile.twitch }}</span>
         </v-tooltip>
       </v-col>
-      <v-col
-        cols="2"
-        v-if="userProfile.youtube != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.youtube != ''" style="padding-top: 0px; padding-left: 2px;">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -52,11 +39,7 @@
           <span>{{ userProfile.youtube }}</span>
         </v-tooltip>
       </v-col>
-      <v-col
-        cols="2"
-        v-if="userProfile.twitter != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.twitter != ''" style="padding-top: 0px; padding-left: 2px;">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -112,9 +95,7 @@
             target="_blank"
             :href="homePageLink"
             :key="homePageLink"
-          >
-            {{ homePage }}
-          </a>
+          >{{ homePage }}</a>
         </div>
         <div v-else>{{ homePage }}</div>
       </v-col>
@@ -128,22 +109,17 @@
     <template>
       <v-row v-if="isLoggedInPlayer">
         <v-col>
-          <v-dialog
-            v-model="userProfile.editDialogOpened"
-            persistent
-            max-width="600px"
-          >
+          <v-dialog v-model="userProfile.editDialogOpened" persistent max-width="600px">
             <template v-slot:activator="{ on }">
               <v-btn
                 @click="userProfile.editDialogOpened = true"
                 small
-                class="ma-2"
+                class="ma-0"
                 outlined
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>mdi-pencil</v-icon>
-                Edit Profile
+                <v-icon left>mdi-pencil</v-icon>Edit Profile
               </v-btn>
             </template>
             <v-card>
@@ -157,6 +133,7 @@
                       prepend-icon="mdi-twitch"
                       color="purple darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       prefix="https://twitch.tv/"
@@ -167,6 +144,7 @@
                       prepend-icon="mdi-youtube"
                       color="red darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your YouTube username!"
@@ -177,6 +155,7 @@
                       prepend-icon="mdi-twitter"
                       color="blue darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your Twitter handle!"
@@ -189,6 +168,7 @@
                       dense
                       :rules="[rules.maxLength(50)]"
                       single-line
+                      clearable
                       v-model="userProfile.homePage"
                       shaped
                       hint="Enter a custom homepage"
@@ -201,6 +181,7 @@
                         outlined
                         name="input-7-1"
                         label="About"
+                        clearable
                         :rules="[rules.maxLength(300)]"
                         value
                         v-model="userProfile.about"
@@ -209,7 +190,6 @@
                     </v-col>
                   </v-row>
                 </v-container>
-                <small>*indicates required field</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -217,12 +197,8 @@
                   color="blue darken-1"
                   text
                   @click="userProfile.editDialogOpened = false"
-                >
-                  Close
-                </v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">
-                  Save
-                </v-btn>
+                >Close</v-btn>
+                <v-btn color="blue darken-1" text @click="saveUserProfile">Save</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

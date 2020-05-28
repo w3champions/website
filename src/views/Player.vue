@@ -117,7 +117,7 @@
                         </v-card-text>
                       </v-row>
                       <v-row class="filter-none" v-if="selectedSeason.id !== 0">
-                        <v-col cols="12" md="6">
+                        <v-col cols="12" md="4">
                           <h4>Stats by race</h4>
                           <v-data-table
                             hide-default-footer
