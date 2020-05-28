@@ -269,26 +269,24 @@
                 />
               </v-tab-item>
               <v-tab-item :value="'tab-at-teams'">
-                <v-card :loading="isLoadingMatches">
-                  <v-card-title>Teams</v-card-title>
-                  <br />
-                  <v-card-text>
-                    <v-row>
-                      <v-col
-                        cols="12"
-                        md="3"
-                        v-for="atPartner in gameModeStatsAt"
-                        :key="atPartner.id"
-                      >
-                        <player-league
-                          :mode-stat="atPartner"
-                          :show-at-partner="true"
-                        />
-                        <br />
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
+                <v-card-title>Teams</v-card-title>
+                <br />
+                <v-card-text>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      md="3"
+                      v-for="atPartner in gameModeStatsAt"
+                      :key="atPartner.id"
+                    >
+                      <player-league
+                        :mode-stat="atPartner"
+                        :show-at-partner="true"
+                      />
+                      <br />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
@@ -322,7 +320,6 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {

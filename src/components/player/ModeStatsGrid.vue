@@ -44,6 +44,7 @@ export default class ModeStatsGrid extends Vue {
   public is2v2(stats: ModeStat) {
     return stats.gameMode === EGameMode.GM_2ON2_AT;
   }
+
   get gameModeStatsCombined() {
     const gm2v2s = this.stats.filter(
       (g) => g.gameMode === EGameMode.GM_2ON2_AT
@@ -56,23 +57,31 @@ export default class ModeStatsGrid extends Vue {
         wins: b.wins + a.wins,
         losses: b.losses + a.losses,
         games: b.games + a.games,
-        winrate: (b.winrate + a.winrate) / 2,
-        mmr: Math.floor((b.mmr + a.mmr) / 2),
-        rankingPoints: Math.floor((b.rankingPoints + a.rankingPoints) / 2),
+        winrate: 0,
+        mmr: b.mmr + a.mmr,
+        rankingPoints: b.rankingPoints + a.rankingPoints,
         leagueId: 0,
         leagueOrder: 0,
         division: 0,
-        rank: 0,
+        rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
       }),
       {
         wins: 0,
         losses: 0,
         games: 0,
-        winrate: gm2v2s[0]?.winrate ?? 0,
-        mmr: gm2v2s[0]?.mmr ?? 0,
-        rankingPoints: gm2v2s[0]?.rankingPoints ?? 0,
+        winrate: 0,
+        mmr: 0,
+        rank: 0,
+        rankingPoints: 0,
       }
+    );
+
+    combindes2v2.winrate =
+      combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
+    combindes2v2.mmr = Math.round(combindes2v2.mmr / gm2v2s.length);
+    combindes2v2.rankingPoints = Math.round(
+      combindes2v2.rankingPoints / gm2v2s.length
     );
     const not2v2s = this.stats.filter(
       (g) => g.gameMode !== EGameMode.GM_2ON2_AT
