@@ -1,96 +1,89 @@
 <template>
-    <div class="custom-table-wrapper elevation-1">
+  <div class="custom-table-wrapper elevation-1">
     <table class="custom-table">
-        <thead>
+      <thead>
         <tr>
-            <td
+          <td
             v-for="header in headers"
             :key="header.text"
             v-bind:style="{
-                width: header.width,
-                'min-width': header.minWidth,
+              width: header.width,
+              'min-width': header.minWidth,
             }"
-            >
+          >
             {{ header.text }}
-            </td>
+          </td>
         </tr>
-        </thead>
-        <tbody>
+      </thead>
+      <tbody>
         <tr
-            :id="`listitem_${item.rankNumber}`"
-            v-for="item in rankings"
-            :key="item.player.id"
-            :class="{
-                searchedItem: item.player.id === selectedRankBattleTag,
-            }"
+          :id="`listitem_${item.rankNumber}`"
+          v-for="item in rankings"
+          :key="item.player.id"
+          :class="{
+            searchedItem: item.player.id === selectedRankBattleTag,
+          }"
         >
-            <td class="number-text">{{ item.rankNumber }}.</td>
-            <td>
+          <td class="number-text">{{ item.rankNumber }}.</td>
+          <td>
             <div
-                class="d-inline-block rank-icon-container"
-                v-bind:class="{ 'ml-3': index > 0 }"
-                v-for="(playerId, index) in item.player.playerIds"
-                :key="playerId.battleTag"
+              class="d-inline-block rank-icon-container"
+              v-bind:class="{ 'ml-3': index > 0 }"
+              v-for="(playerId, index) in item.player.playerIds"
+              :key="playerId.battleTag"
             >
-                <player-icon
-                :race="calculatedRace(item, index)"
-                class="mr-1"
-                />
-                <player-rank-info :player-id="playerId" />
-                <span v-if="index !== item.player.playerIds.length - 1">
+              <player-icon :race="calculatedRace(item, index)" class="mr-1" />
+              <player-rank-info :player-id="playerId" />
+              <span v-if="index !== item.player.playerIds.length - 1">
                 &
-                </span>
+              </span>
             </div>
             <span
-                style="position: relative;"
-                v-if="isCurrentlyLive(item.player.playerIds)"
+              style="position: relative;"
+              v-if="isCurrentlyLive(item.player.playerIds)"
             >
-                <v-tooltip bottom>
+              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                    <span
-                    style="display: inline;"
-                    class="pointer"
-                    v-on="on"
-                    >
+                  <span style="display: inline;" class="pointer" v-on="on">
                     <div class="circle red filter-blur"></div>
-                    </span>
+                  </span>
                 </template>
                 <div>
-                    Now playing vs
-                    {{ getLiveOpponent(item.player.playerIds) }}
+                  Now playing vs
+                  {{ getLiveOpponent(item.player.playerIds) }}
                 </div>
-                </v-tooltip>
+              </v-tooltip>
             </span>
-            </td>
-            <td class="number-text text-end won">{{ item.player.wins }}</td>
-            <td class="number-text text-end lost">
+          </td>
+          <td class="number-text text-end won">{{ item.player.wins }}</td>
+          <td class="number-text text-end lost">
             {{ item.player.losses }}
-            </td>
-            <td class="number-text text-end">{{ item.player.games }}</td>
-            <td class="number-text text-end">
+          </td>
+          <td class="number-text text-end">{{ item.player.games }}</td>
+          <td class="number-text text-end">
             {{ (item.player.winrate * 100).toFixed(1) }}%
-            </td>
-            <td class="number-text text-end">{{ item.player.mmr }}</td>
-            <td class="number-text text-end">{{ item.rankingPoints }}</td>
+          </td>
+          <td class="number-text text-end">{{ item.player.mmr }}</td>
+          <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
-        </tbody>
+      </tbody>
     </table>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Ranking, PlayerId } from '@/store/ranking/types';
-import { ERaceEnum, Match } from '@/store/typings';
+import { Ranking, PlayerId } from "@/store/ranking/types";
+import { ERaceEnum, Match } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 
 @Component({
-    components: {
-      PlayerIcon,
-      PlayerRankInfo,
-    }
+  components: {
+    PlayerIcon,
+    PlayerRankInfo,
+  },
 })
 export default class RankingsGrid extends Vue {
   @Prop() rankings!: Ranking[];
@@ -151,9 +144,9 @@ export default class RankingsGrid extends Vue {
   @Watch("selectedRank")
   public onSearchModelChanged(newVal: Ranking) {
     if (!newVal) {
-        return;
+      return;
     }
-    
+
     this.goToRank(newVal);
   }
 
@@ -197,7 +190,7 @@ export default class RankingsGrid extends Vue {
     return playerInfo.calculatedRace;
   }
 
-    public isCurrentlyLive(playerIds: PlayerId[]) {
+  public isCurrentlyLive(playerIds: PlayerId[]) {
     if (!this.ongoingMatches) {
       return false;
     }

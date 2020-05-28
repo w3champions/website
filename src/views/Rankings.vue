@@ -146,11 +146,11 @@
         </v-card>
       </v-menu>
       <v-card-text>
-        <rankings-grid 
-          :rankings="rankings" 
+        <rankings-grid
+          :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
-          :selectedRank="searchModel">
-        </rankings-grid>
+          :selectedRank="searchModel"
+        ></rankings-grid>
       </v-card-text>
     </v-card>
     <v-row>
@@ -186,7 +186,7 @@ import GatewaysService from "../services/GatewaysService";
   components: {
     LeagueIcon,
     GateWaySelect,
-    RankingsGrid
+    RankingsGrid,
   },
 })
 export default class RankingsView extends Vue {
@@ -375,6 +375,4 @@ export default class RankingsView extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
