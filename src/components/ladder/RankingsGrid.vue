@@ -5,19 +5,20 @@
         <tr>
           <td
             class="header"
-            v-bind:class="{ clickable: header.sortFunction !== undefined}"
+            v-bind:class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
             :key="header.text"
             v-bind:style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
-            v-on:click="sortRankings(header.text, header.sortFunction)">
+            v-on:click="sortRankings(header.text, header.sortFunction)"
+          >
             {{ header.text }}
 
             <div v-if="header.text == sortColumn" class="sort-icon">
-                <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
-                <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
+              <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
+              <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
             </div>
           </td>
         </tr>
@@ -261,19 +262,18 @@ export default class RankingsGrid extends Vue {
 
   public sortRankings(columnName: string, sortFunction: any) {
     if (sortFunction) {
-            
-        if (this.sortColumn === columnName) {
-            this.isSortedAsc = !this.isSortedAsc;
-        } else {
-            this.isSortedAsc = true;
-        }
-        this.sortColumn = columnName;
-        
-        this.rankings.sort(sortFunction);
+      if (this.sortColumn === columnName) {
+        this.isSortedAsc = !this.isSortedAsc;
+      } else {
+        this.isSortedAsc = true;
+      }
+      this.sortColumn = columnName;
 
-        if (this.isSortedAsc) {
-            this.rankings = this.rankings.reverse();
-        }
+      this.rankings.sort(sortFunction);
+
+      if (this.isSortedAsc) {
+        this.rankings = this.rankings.reverse();
+      }
     }
   }
 }
@@ -305,16 +305,16 @@ export default class RankingsGrid extends Vue {
 }
 
 td.header {
-    position: relative;
+  position: relative;
 
-    .sort-icon {
-        position: absolute;
-        top: 10px;
-        right: -7px;
-    }
+  .sort-icon {
+    position: absolute;
+    top: 10px;
+    right: -7px;
+  }
 }
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
 </style>
