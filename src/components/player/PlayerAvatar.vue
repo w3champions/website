@@ -27,7 +27,7 @@
               :href="'http://twitch.tv/' + userProfile.twitch"
               target="_blank"
             >
-              <v-icon color="purple darken-2">mdi-twitch</v-icon>
+              <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
           </template>
           <span>{{ userProfile.twitch }}</span>
@@ -137,7 +137,7 @@
               <v-btn
                 @click="userProfile.editDialogOpened = true"
                 small
-                class="ma-2"
+                class="ma-0"
                 outlined
                 v-on="on"
                 color="primary"
@@ -155,8 +155,9 @@
                   <v-row>
                     <v-text-field
                       prepend-icon="mdi-twitch"
-                      color="purple darken-2"
+                      color="purple accent-4"
                       dense
+                      clearable
                       single-line
                       shaped
                       prefix="https://twitch.tv/"
@@ -167,6 +168,7 @@
                       prepend-icon="mdi-youtube"
                       color="red darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your YouTube username!"
@@ -177,6 +179,7 @@
                       prepend-icon="mdi-twitter"
                       color="blue darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your Twitter handle!"
@@ -189,6 +192,7 @@
                       dense
                       :rules="[rules.maxLength(50)]"
                       single-line
+                      clearable
                       v-model="userProfile.homePage"
                       shaped
                       hint="Enter a custom homepage"
@@ -201,6 +205,7 @@
                         outlined
                         name="input-7-1"
                         label="About"
+                        clearable
                         :rules="[rules.maxLength(300)]"
                         value
                         v-model="userProfile.about"
@@ -209,7 +214,6 @@
                     </v-col>
                   </v-row>
                 </v-container>
-                <small>*indicates required field</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
