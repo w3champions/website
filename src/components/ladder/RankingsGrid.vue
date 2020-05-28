@@ -1,6 +1,6 @@
 <template>
   <div class="custom-table-wrapper elevation-1">
-    <table class="custom-table">
+    <table class="custom-table" v-if="sortedRankings">
       <thead>
         <tr>
           <td
@@ -26,7 +26,7 @@
       <tbody>
         <tr
           :id="`listitem_${item.rankNumber}`"
-          v-for="item in rankings"
+          v-for="item in sortedRankings"
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag,
@@ -170,16 +170,36 @@ export default class RankingsGrid extends Vue {
     },
   ];
 
+  public sortedRankings: Ranking[] = [];
+
   public sortColumn = "Rank";
   public isSortedAsc = true;
+  private _lastSortFunction: any = null;
 
   @Watch("selectedRank")
-  public onSearchModelChanged(newVal: Ranking) {
+  public onSelectedRankChanged(newVal: Ranking) {
     if (!newVal) {
       return;
     }
 
     this.goToRank(newVal);
+  }
+
+  @Watch("rankings")
+  public onRankingsChanged(newVal: Ranking[]) {
+    if (!newVal) {
+      return;
+    }
+
+    if (newVal == this.sortedRankings) {
+        return;
+    }
+    
+    this.sortedRankings = newVal;
+
+    if (this._lastSortFunction) {
+     this._lastSortFunction();
+    }
   }
 
   // get properties
@@ -267,13 +287,17 @@ export default class RankingsGrid extends Vue {
       } else {
         this.isSortedAsc = true;
       }
-      this.sortColumn = columnName;
 
-      this.rankings.sort(sortFunction);
+      const sortFn = () => {
+        this.sortColumn = columnName;
+        this.sortedRankings.sort(sortFunction);
 
-      if (this.isSortedAsc) {
-        this.rankings = this.rankings.reverse();
+        if (this.isSortedAsc) {
+            this.sortedRankings = this.sortedRankings.reverse();
+        }
       }
+      this._lastSortFunction = sortFn;
+      sortFn();
     }
   }
 }
