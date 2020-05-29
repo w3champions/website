@@ -284,8 +284,7 @@
                 </v-card-text>
               </v-tab-item>
               <v-tab-item :value="'tab-clan'">
-                <v-card-title>Clan</v-card-title>
-                <v-card-text>Clan infos</v-card-text>
+                <clan-overview :player-battle-tag="id" />
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
@@ -319,9 +318,11 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
+import ClanOverview from "@/components/clans/ClanOverview.vue";
 
 @Component({
   components: {
+    ClanOverview,
     PlayerAvatar,
     PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,

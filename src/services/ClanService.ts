@@ -1,12 +1,21 @@
-import { Match } from "@/store/typings";
 import { API_URL } from "@/main";
+import { Clan } from "@/store/clan/types";
 
 export default class ClanService {
 
   public async retrieveClan(
       clanId: string
-  ): Promise<{ count: number; matches: Match[] }> {
+  ): Promise<Clan> {
     const url = `${API_URL}api/clans/${clanId}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async retrieveClanForPlayer(
+      battleTag: string
+  ): Promise<Clan> {
+    const url = `${API_URL}api/clans?battleTag=${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -18,7 +27,8 @@ export default class ClanService {
   ): Promise<string> {
     const url = `${API_URL}api/clans/?authorization=${authToken}`;
 
-    const post = { clanName };
+    const post = { ClanName: clanName };
+    console.log(post)
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "POST",
@@ -28,6 +38,6 @@ export default class ClanService {
         "Content-Type": "application/json",
       },
     });
-    return response.ok ? "" : "Could not create clan";
+    return response.ok ? "" : (await response.json()).error;
   }
 }

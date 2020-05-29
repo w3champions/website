@@ -7,6 +7,7 @@ const mod = {
   namespaced: true,
   state: {
     selectedClan: {},
+    playersClan: {},
     clanValidationError: "",
     loading: true,
   } as ClanState,
@@ -44,10 +45,28 @@ const mod = {
 
       commit.SET_SELECTED_CLAN(response);
     },
+
+    async retrievePlayersClan(
+      context: ActionContext<ClanState, RootState>,
+      battleTagId: string) {
+      const { commit, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const response = await rootGetters.clanService.retrieveClanForPlayer(
+        battleTagId
+      );
+
+      commit.SET_PLAYERS_CLAN(response);
+    },
   },
   mutations: {
     SET_SELECTED_CLAN(state: ClanState, clan: Clan) {
       state.selectedClan = clan;
+    },
+    SET_PLAYERS_CLAN(state: ClanState, clan: Clan) {
+      state.playersClan = clan;
     },
     SET_CLAN_ERROR(state: ClanState, error: string) {
       state.clanValidationError = error;
