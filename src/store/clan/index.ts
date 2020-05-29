@@ -30,7 +30,7 @@ const mod = {
       commit.SET_CLAN_ERROR(response);
     },
 
-    async retreiveClan(
+    async retrieveClan(
         context: ActionContext<ClanState, RootState>,
         clanId: string) {
       const { commit, rootGetters } = moduleActionContext(
