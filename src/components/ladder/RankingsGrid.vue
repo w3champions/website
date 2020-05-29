@@ -4,21 +4,29 @@
       <thead>
         <tr>
           <td
+            class="header"
+            v-bind:class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
             :key="header.text"
             v-bind:style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
+            v-on:click="sortRankings(header.text, header.sortFunction)"
           >
             {{ header.text }}
+
+            <div v-if="header.text == sortColumn" class="sort-icon">
+              <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
+              <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
+            </div>
           </td>
         </tr>
       </thead>
       <tbody>
         <tr
           :id="`listitem_${item.rankNumber}`"
-          v-for="item in rankings"
+          v-for="item in sortedRankings"
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag,
@@ -96,6 +104,9 @@ export default class RankingsGrid extends Vue {
       align: "start",
       sortable: false,
       width: "25px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.rankNumber - a.rankNumber;
+      },
     },
     {
       text: "Player",
@@ -108,46 +119,87 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.player.wins - a.player.wins;
+      },
     },
     {
       text: "Losses",
       align: "end",
       sortable: false,
       width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.player.losses - a.player.losses;
+      },
     },
     {
       text: "Total",
       align: "end",
       sortable: false,
       width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.player.games - a.player.games;
+      },
     },
     {
       text: "Winrate",
       align: "end",
       sortable: false,
       width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.player.winrate - a.player.winrate;
+      },
     },
     {
       text: "MMR",
       align: "end",
       sortable: false,
       width: "25px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.player.mmr - a.player.mmr;
+      },
     },
     {
       text: "RP",
       align: "end",
       sortable: false,
       width: "25px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.rankingPoints - a.rankingPoints;
+      },
     },
   ];
 
+  public sortedRankings: Ranking[] = this.rankings;
+
+  public sortColumn = "Rank";
+  public isSortedAsc = true;
+  private _lastSortFunction: any = null;
+
   @Watch("selectedRank")
-  public onSearchModelChanged(newVal: Ranking) {
+  public onSelectedRankChanged(newVal: Ranking) {
     if (!newVal) {
       return;
     }
 
     this.goToRank(newVal);
+  }
+
+  @Watch("rankings")
+  public onRankingsChanged(newVal: Ranking[]) {
+    if (!newVal) {
+      return;
+    }
+
+    if (newVal == this.sortedRankings) {
+      return;
+    }
+
+    this.sortedRankings = newVal;
+
+    if (this._lastSortFunction) {
+      this._lastSortFunction();
+    }
   }
 
   // get properties
@@ -227,6 +279,27 @@ export default class RankingsGrid extends Vue {
 
     return "";
   }
+
+  public sortRankings(columnName: string, sortFunction: any) {
+    if (sortFunction) {
+      if (this.sortColumn === columnName) {
+        this.isSortedAsc = !this.isSortedAsc;
+      } else {
+        this.isSortedAsc = true;
+      }
+
+      const sortFn = () => {
+        this.sortColumn = columnName;
+        this.sortedRankings.sort(sortFunction);
+
+        if (this.isSortedAsc) {
+          this.sortedRankings = this.sortedRankings.reverse();
+        }
+      };
+      this._lastSortFunction = sortFn;
+      sortFn();
+    }
+  }
 }
 </script>
 
@@ -253,5 +326,19 @@ export default class RankingsGrid extends Vue {
     margin-top: 5px;
     margin-left: 0px !important;
   }
+}
+
+td.header {
+  position: relative;
+
+  .sort-icon {
+    position: absolute;
+    top: 10px;
+    right: -7px;
+  }
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

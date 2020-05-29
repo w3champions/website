@@ -27,7 +27,7 @@
               :href="'http://twitch.tv/' + userProfile.twitch"
               target="_blank"
             >
-              <v-icon color="purple darken-2">mdi-twitch</v-icon>
+              <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
           </template>
           <span>{{ userProfile.twitch }}</span>
@@ -43,7 +43,7 @@
             <v-btn
               icon
               v-on="on"
-              :href="'http://youtube.com/user/' + userProfile.youtube"
+              :href="'http://youtube.com/' + userProfile.youtube"
               target="_blank"
             >
               <v-icon color="red darken-2">mdi-youtube</v-icon>
@@ -137,7 +137,7 @@
               <v-btn
                 @click="userProfile.editDialogOpened = true"
                 small
-                class="ma-2"
+                class="ma-0"
                 outlined
                 v-on="on"
                 color="primary"
@@ -155,8 +155,9 @@
                   <v-row>
                     <v-text-field
                       prepend-icon="mdi-twitch"
-                      color="purple darken-2"
+                      color="purple accent-4"
                       dense
+                      clearable
                       single-line
                       shaped
                       prefix="https://twitch.tv/"
@@ -167,16 +168,18 @@
                       prepend-icon="mdi-youtube"
                       color="red darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your YouTube username!"
-                      prefix="https://www.youtube.com/user/"
+                      prefix="https://www.youtube.com/"
                       v-model="userProfile.youtube"
                     ></v-text-field>
                     <v-text-field
                       prepend-icon="mdi-twitter"
                       color="blue darken-2"
                       dense
+                      clearable
                       single-line
                       shaped
                       hint="Enter your Twitter handle!"
@@ -189,6 +192,7 @@
                       dense
                       :rules="[rules.maxLength(50)]"
                       single-line
+                      clearable
                       v-model="userProfile.homePage"
                       shaped
                       hint="Enter a custom homepage"
@@ -201,6 +205,7 @@
                         outlined
                         name="input-7-1"
                         label="About"
+                        clearable
                         :rules="[rules.maxLength(300)]"
                         value
                         v-model="userProfile.about"
@@ -209,15 +214,10 @@
                     </v-col>
                   </v-row>
                 </v-container>
-                <small>*indicates required field</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="userProfile.editDialogOpened = false"
-                >
+                <v-btn color="blue darken-1" text @click="resetUserProfile">
                   Close
                 </v-btn>
                 <v-btn color="blue darken-1" text @click="saveUserProfile">
@@ -307,6 +307,18 @@ export default class PlayerAvatar extends Vue {
     homePage: this.homePage,
     editDialogOpened: false,
   };
+
+  async resetUserProfile() {
+    this.userProfile = {
+      editDialogOpened: false,
+
+      twitch: this.twitch,
+      homePage: this.homePage,
+      about: this.savedMessageValue,
+      youtube: this.youtube,
+      twitter: this.twitter,
+    };
+  }
 
   async saveUserProfile() {
     let personalSetting = this.personalSetting;
