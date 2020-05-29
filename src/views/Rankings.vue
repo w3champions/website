@@ -2,36 +2,11 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gate-way-select @gatewayChanged="gatewayChanged" />
-        <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent;">
-              <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
-              {{ gameMode }}
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Select a gamemode:</v-list-item-title>
-                </v-list-item-content>
-              </v-list>
-              <v-divider></v-divider>
-              <v-list dense>
-                <v-list-item
-                  v-for="mode in gameModes"
-                  :key="mode.gameMode"
-                  @click="selectGameMode(mode.gameMode)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
+        <gateway-select @gatewayChanged="gatewayChanged" />
+        <game-mode-select
+          :gameMode="selectedGameMode"
+          @gameModeChanged="gameModeChanged">
+        </game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
@@ -177,15 +152,16 @@ import { Component, Watch } from "vue-property-decorator";
 import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
 import { DataTableOptions, EGameMode, ERaceEnum } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import GatewaySelect from "@/components/common/GatewaySelect.vue";
+import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import AppConstants from "../constants";
-import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
     LeagueIcon,
-    GateWaySelect,
+    GatewaySelect,
+    GameModeSelect,
     RankingsGrid,
   },
 })
@@ -225,11 +201,6 @@ export default class RankingsView extends Vue {
 
   get seasons() {
     return this.$store.direct.state.rankings.seasons;
-  }
-
-  get gameMode() {
-    const gameMode = this.$store.direct.state.rankings.gameMode;
-    return this.gameModes.filter((g) => g.gameMode == gameMode)[0].modeName;
   }
 
   get selectedGameMode() {
@@ -296,6 +267,11 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
+  gameModeChanged(gameMode: EGameMode) {
+    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    this.$store.direct.dispatch.rankings.setLeague(0);
+  }
+
   async mounted() {
     this.search = "";
 
@@ -354,24 +330,6 @@ export default class RankingsView extends Vue {
 
   public setLeague(league: number) {
     this.$store.direct.dispatch.rankings.setLeague(league);
-  }
-
-  public selectGameMode(gameMode: EGameMode) {
-    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    this.$store.direct.dispatch.rankings.setLeague(0);
-  }
-
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        gameMode: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        gameMode: EGameMode.GM_2ON2_AT,
-      },
-    ];
   }
 }
 </script>
