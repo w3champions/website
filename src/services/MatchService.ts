@@ -11,10 +11,11 @@ export default class MatchService {
 
   public async retrieveMatches(
     page: number,
-    gateway: number
+    gateway: number,
+    gameMode: EGameMode
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -22,19 +23,21 @@ export default class MatchService {
 
   public async retrieveOnGoingMatchesPaged(
     page: number,
-    gateway: number
+    gateway: number,
+    gameMode: EGameMode
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
 
-    return this.retrieveOnGoingMatches(offset, this.pageSize, gateway);
+    return this.retrieveOnGoingMatches(offset, this.pageSize, gateway, gameMode);
   }
 
   public async retrieveOnGoingMatches(
     offset: number,
     pageSize: number,
-    gateway: number
+    gateway: number,
+    gameMode: EGameMode
   ): Promise<{ count: number; matches: Match[] }> {
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}`;
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();

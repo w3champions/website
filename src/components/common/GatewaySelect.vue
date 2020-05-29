@@ -35,10 +35,10 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
-import GatewaysService from "../../services/GatewaysService";
+import GatewaysService from "@/services/GatewaysService";
 
 @Component({})
-export default class GateWaySelect extends Vue {
+export default class GatewaySelect extends Vue {
   get gateway() {
     const gateway = this.$store.direct.state.gateway;
     return this.gateWays.filter((g) => g.gateway == gateway)[0].name;
