@@ -1,40 +1,40 @@
 <template>
-    <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-        <v-btn tile v-on="on" style="background-color: transparent;">
-            <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
-            {{ gameModeName }}
-        </v-btn>
-        </template>
-        <v-card>
-        <v-card-text>
-            <v-list>
+  <v-menu offset-x>
+    <template v-slot:activator="{ on }">
+      <v-btn tile v-on="on" style="background-color: transparent;">
+        <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
+        {{ gameModeName }}
+      </v-btn>
+    </template>
+    <v-card>
+      <v-card-text>
+        <v-list>
+          <v-list-item-content>
+            <v-list-item-title>Select a gamemode:</v-list-item-title>
+          </v-list-item-content>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list dense>
+          <v-list-item
+            v-for="mode in gameModes"
+            :key="mode.gameMode"
+            @click="selectGameMode(mode.gameMode)"
+          >
             <v-list-item-content>
-                <v-list-item-title>Select a gamemode:</v-list-item-title>
+              <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
             </v-list-item-content>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list dense>
-            <v-list-item
-                v-for="mode in gameModes"
-                :key="mode.gameMode"
-                @click="selectGameMode(mode.gameMode)"
-            >
-                <v-list-item-content>
-                <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-            </v-list>
-        </v-card-text>
-        </v-card>
-    </v-menu>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
+  </v-menu>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
-import { EGameMode } from '../../store/typings';
+import { EGameMode } from "../../store/typings";
 
 @Component({})
 export default class GameModeSelect extends Vue {
@@ -55,12 +55,13 @@ export default class GameModeSelect extends Vue {
 
   get gameModeName() {
     if (!this.gameMode) {
-        return "";
+      return "";
     }
 
-    return this.gameModes.filter((g) => g.gameMode == this.gameMode)[0].modeName;
+    return this.gameModes.filter((g) => g.gameMode == this.gameMode)[0]
+      .modeName;
   }
-  
+
   public selectGameMode(gameMode: EGameMode) {
     this.$emit("gameModeChanged", gameMode);
   }

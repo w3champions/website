@@ -1,4 +1,4 @@
-import { EGameMode } from '@/store/typings';
+import { EGameMode } from "@/store/typings";
 import { moduleActionContext } from "..";
 import { MatchState, MatchStatus } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
@@ -16,7 +16,7 @@ const mod = {
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
     status: MatchStatus.onGoing,
-    gameMode: EGameMode.GM_1ON1
+    gameMode: EGameMode.GM_1ON1,
   } as MatchState,
   actions: {
     async loadMatches(
