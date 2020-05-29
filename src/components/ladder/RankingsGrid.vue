@@ -53,7 +53,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <span style="display: inline;" class="pointer" v-on="on">
-                    <div class="circle red filter-blur"></div>
+                    <div class="circle red blinker filter-blur"></div>
                   </span>
                 </template>
                 <div>

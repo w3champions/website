@@ -8,12 +8,11 @@
           </v-card-title>
           <v-card-text>
             <matches-status-select />
-            <gateway-select 
-              @gatewayChanged="gatewayChanged" />
+            <gateway-select @gatewayChanged="gatewayChanged" />
             <game-mode-select
               :gameMode="gameMode"
-              @gameModeChanged="gameModeChanged">
-          </game-mode-select>
+              @gameModeChanged="gameModeChanged"
+            ></game-mode-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -40,13 +39,12 @@ import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 
-
 @Component({
   components: {
     MatchesGrid,
     MatchesStatusSelect,
     GatewaySelect,
-    GameModeSelect
+    GameModeSelect,
   },
 })
 export default class MatchesView extends Vue {

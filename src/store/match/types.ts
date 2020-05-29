@@ -1,4 +1,4 @@
-import { EGameMode } from '@/store/typings';
+import { EGameMode } from "@/store/typings";
 import { Match, MatchDetail } from "../typings";
 import { Gateways } from "../ranking/types";
 

@@ -28,7 +28,12 @@ export default class MatchService {
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
 
-    return this.retrieveOnGoingMatches(offset, this.pageSize, gateway, gameMode);
+    return this.retrieveOnGoingMatches(
+      offset,
+      this.pageSize,
+      gateway,
+      gameMode
+    );
   }
 
   public async retrieveOnGoingMatches(
