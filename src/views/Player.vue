@@ -83,6 +83,7 @@
             <v-tab class="profileTab" :href="`#tab-statistics`">
               Statistics
             </v-tab>
+            <v-tab class="profileTab" :href="`#tab-clan`">Clan</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
@@ -281,6 +282,10 @@
                     </v-col>
                   </v-row>
                 </v-card-text>
+              </v-tab-item>
+              <v-tab-item :value="'tab-clan'">
+                <v-card-title>Clan</v-card-title>
+                <v-card-text>Clan infos</v-card-text>
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
