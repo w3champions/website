@@ -25,7 +25,6 @@ export default class ClanService {
     const url = `${API_URL}api/clans/?authorization=${authToken}`;
 
     const post = { ClanName: clanName };
-    console.log(post);
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "POST",

@@ -9,7 +9,12 @@
       <v-btn @click="createClan">Create a clan!</v-btn>
     </div>
     <div v-if="!hasNoClan">
-      <v-card-title>{{ playersClan.clanName }}</v-card-title>
+      <v-card-title>
+        {{ playersClan.clanName }}
+      </v-card-title>
+      <v-btn v-if="loggedInPlayerIsChiefTain">
+        Invite Players to sign Petition
+      </v-btn>
       <v-card-subtitle
         class="pointer"
         @click="gotToChiefTain"
@@ -66,9 +71,6 @@
             {{ member.split("#")[0] }}
           </v-list-item>
         </v-list>
-        <v-btn v-if="loggedInPlayerIsChiefTain">
-          Invite Players to sign Petition
-        </v-btn>
       </div>
     </div>
   </v-card-text>
