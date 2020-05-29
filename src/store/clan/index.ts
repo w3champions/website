@@ -11,7 +11,7 @@ const mod = {
     loading: true,
   } as ClanState,
   actions: {
-    async creatClan(
+    async createClan(
         context: ActionContext<ClanState, RootState>,
         clanName: string) {
       const { commit, rootGetters, rootState } = moduleActionContext(
@@ -28,6 +28,21 @@ const mod = {
 
       commit.SET_LOADING(true);
       commit.SET_CLAN_ERROR(response);
+    },
+
+    async retreiveClan(
+        context: ActionContext<ClanState, RootState>,
+        clanId: string) {
+      const { commit, rootGetters } = moduleActionContext(
+          context,
+          mod
+      );
+
+      const response = await rootGetters.clanService.retrieveClan(
+          clanId
+      );
+
+      commit.SET_SELECTED_CLAN(response);
     },
   },
   mutations: {
