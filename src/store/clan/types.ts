@@ -1,8 +1,8 @@
 export interface ClanState {
-  selectedClan: Clan,
-  playersClan: Clan,
-  clanValidationError: string
-  loading: boolean
+  selectedClan: Clan;
+  playersClan: Clan;
+  clanValidationError: string;
+  loading: boolean;
 }
 
 export interface Clan {

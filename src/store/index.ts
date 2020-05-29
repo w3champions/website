@@ -45,7 +45,7 @@ const mod = {
     oauth,
     personalSettings,
     chat,
-    clan
+    clan,
   },
   state: {
     darkMode: false,

@@ -5,8 +5,8 @@
         <gateway-select @gatewayChanged="gatewayChanged" />
         <game-mode-select
           :gameMode="selectedGameMode"
-          @gameModeChanged="gameModeChanged">
-        </game-mode-select>
+          @gameModeChanged="gameModeChanged"
+        ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">

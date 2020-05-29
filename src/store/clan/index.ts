@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import {Clan, ClanState} from "./types";
+import { Clan, ClanState } from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -13,8 +13,9 @@ const mod = {
   } as ClanState,
   actions: {
     async createClan(
-        context: ActionContext<ClanState, RootState>,
-        clanName: string) {
+      context: ActionContext<ClanState, RootState>,
+      clanName: string
+    ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
         mod
@@ -32,27 +33,21 @@ const mod = {
     },
 
     async retrieveClan(
-        context: ActionContext<ClanState, RootState>,
-        clanId: string) {
-      const { commit, rootGetters } = moduleActionContext(
-          context,
-          mod
-      );
+      context: ActionContext<ClanState, RootState>,
+      clanId: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.clanService.retrieveClan(
-          clanId
-      );
+      const response = await rootGetters.clanService.retrieveClan(clanId);
 
       commit.SET_SELECTED_CLAN(response);
     },
 
     async retrievePlayersClan(
       context: ActionContext<ClanState, RootState>,
-      battleTagId: string) {
-      const { commit, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      battleTagId: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.retrieveClanForPlayer(
         battleTagId
@@ -73,7 +68,7 @@ const mod = {
     },
     SET_LOADING(state: ClanState, loading: boolean) {
       state.loading = loading;
-    }
+    },
   },
 } as const;
 

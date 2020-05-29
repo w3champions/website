@@ -1,12 +1,20 @@
 <template>
   <v-card-text>
     <div v-if="hasNoClan">
-      <v-text-field :v-model="clanNameToCreate" @change="changeInsertedClanName" hint="enter clan name" />
+      <v-text-field
+        :v-model="clanNameToCreate"
+        @change="changeInsertedClanName"
+        hint="enter clan name"
+      />
       <v-btn @click="createClan">Create a clan!</v-btn>
     </div>
     <div v-if="!hasNoClan">
       <v-card-title>{{ playersClan.clanName }}</v-card-title>
-      <v-card-subtitle class="pointer" @click="gotToChiefTain" v-if="playersClan.isSuccesfullyFounded">
+      <v-card-subtitle
+        class="pointer"
+        @click="gotToChiefTain"
+        v-if="playersClan.isSuccesfullyFounded"
+      >
         Chieftain: {{ playersClan.chiefTain.split("#")[0] }}
       </v-card-subtitle>
       <v-card-subtitle v-if="!playersClan.isSuccesfullyFounded">
@@ -16,8 +24,13 @@
         <v-card-title>
           Members:
         </v-card-title>
-        <v-list >
-          <v-list-item class="pointer" @click="goToPlayer(member)" v-for="member in playersClan.members" :key="member">
+        <v-list>
+          <v-list-item
+            class="pointer"
+            @click="goToPlayer(member)"
+            v-for="member in playersClan.members"
+            :key="member"
+          >
             {{ member.split("#")[0] }}
           </v-list-item>
         </v-list>
@@ -28,7 +41,12 @@
           Signees:
         </v-card-title>
         <v-list>
-          <v-list-item class="pointer" @click="goToPlayer(member)" v-for="member in playersClan.foundingFathers" :key="member">
+          <v-list-item
+            class="pointer"
+            @click="goToPlayer(member)"
+            v-for="member in playersClan.foundingFathers"
+            :key="member"
+          >
             {{ member.split("#")[0] }}
           </v-list-item>
         </v-list>
@@ -39,7 +57,12 @@
           None pending
         </v-card-subtitle>
         <v-list v-if="playersClan.pendingInvites.length !== 0">
-          <v-list-item class="pointer" @click="goToPlayer(member)" v-for="member in playersClan.pendingInvites" :key="member">
+          <v-list-item
+            class="pointer"
+            @click="goToPlayer(member)"
+            v-for="member in playersClan.pendingInvites"
+            :key="member"
+          >
             {{ member.split("#")[0] }}
           </v-list-item>
         </v-list>
@@ -73,7 +96,10 @@ export default class ClanOverview extends Vue {
   }
 
   get loggedInPlayerIsChiefTain() {
-    return this.playersClan.chiefTain === this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return (
+      this.playersClan.chiefTain ===
+      this.$store.direct.state.oauth.blizzardVerifiedBtag
+    );
   }
 
   public goToPlayer(battleTag: string) {
@@ -82,7 +108,9 @@ export default class ClanOverview extends Vue {
 
   public async createClan() {
     await this.$store.direct.dispatch.clan.createClan(this.clanNameToCreate);
-    await this.$store.direct.dispatch.clan.retrievePlayersClan(this.playerBattleTag);
+    await this.$store.direct.dispatch.clan.retrievePlayersClan(
+      this.playerBattleTag
+    );
   }
 
   get hasNoClan() {
@@ -94,7 +122,9 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted() {
-    await this.$store.direct.dispatch.clan.retrievePlayersClan(this.playerBattleTag);
+    await this.$store.direct.dispatch.clan.retrievePlayersClan(
+      this.playerBattleTag
+    );
   }
 }
 </script>
