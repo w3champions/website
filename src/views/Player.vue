@@ -6,7 +6,7 @@
           <v-card-title class="justify-space-between">
             <span>Profile of {{ profile.battleTag }}</span>
             <div>
-              <gate-way-select @gatewayChanged="gatewayChanged" />
+              <gateway-select @gatewayChanged="gatewayChanged" />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -311,7 +311,7 @@ import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceV
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking, Season } from "@/store/ranking/types";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 
@@ -322,7 +322,7 @@ import AppConstants from "../constants";
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid,
-    GateWaySelect,
+    GatewaySelect,
     TeamMatchInfo,
   },
 })
