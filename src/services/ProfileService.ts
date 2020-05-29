@@ -37,7 +37,11 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async invitePlayer(battleTag: string, clanId: string, token: string): Promise<string> {
+  public async invitePlayer(
+    battleTag: string,
+    clanId: string,
+    token: string
+  ): Promise<string> {
     const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
 
     const post = { PlayerBattleTag: battleTag };

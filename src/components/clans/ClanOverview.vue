@@ -67,11 +67,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="closeDialog"
-                >
+                <v-btn color="blue darken-1" text @click="closeDialog">
                   Close
                 </v-btn>
                 <v-btn
@@ -188,11 +184,15 @@ export default class ClanOverview extends Vue {
   }
 
   public async invitePlayer() {
-    await this.$store.direct.dispatch.clan.invitePlayer(this.searchModel.battleTag);
+    await this.$store.direct.dispatch.clan.invitePlayer(
+      this.searchModel.battleTag
+    );
     if (this.$store.direct.state.clan.clanValidationError) {
       this.isValidationError = true;
     } else {
-      await this.$store.direct.dispatch.clan.retrievePlayersClan(this.playerBattleTag);
+      await this.$store.direct.dispatch.clan.retrievePlayersClan(
+        this.playerBattleTag
+      );
       this.search = "";
       this.invitePlayerDialog = false;
     }
@@ -223,7 +223,7 @@ export default class ClanOverview extends Vue {
   }
 
   get hasNoPendingInvites() {
-    return this.playersClan?.pendingInvites?.length === 0
+    return this.playersClan?.pendingInvites?.length === 0;
   }
 
   get searchPlayers() {

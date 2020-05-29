@@ -64,9 +64,7 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.profileService.searchPlayer(
-        search
-      );
+      const response = await rootGetters.profileService.searchPlayer(search);
 
       commit.SET_PLAYERS_SEARCH(response);
     },
@@ -75,7 +73,10 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.profileService.invitePlayer(
         battleTag,
@@ -84,7 +85,7 @@ const mod = {
       );
 
       commit.SET_CLAN_ERROR(response);
-    }
+    },
   },
   mutations: {
     SET_SELECTED_CLAN(state: ClanState, clan: Clan) {
