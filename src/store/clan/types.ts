@@ -1,6 +1,9 @@
+import { PlayerProfile } from "@/store/player/types";
+
 export interface ClanState {
   selectedClan: Clan;
   playersClan: Clan;
+  searchPlayers: PlayerProfile[];
   clanValidationError: string;
   loading: boolean;
 }

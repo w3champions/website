@@ -1,6 +1,5 @@
 import { EGameMode } from "@/store/typings";
 import { Match, MatchDetail } from "../typings";
-import { Gateways } from "../ranking/types";
 
 export type MatchState = {
   matches: Match[];

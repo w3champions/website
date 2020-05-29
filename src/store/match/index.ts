@@ -3,8 +3,6 @@ import { moduleActionContext } from "..";
 import { MatchState, MatchStatus } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { Gateways } from "../ranking/types";
-import GatewaysService from "@/services/GatewaysService";
 
 const mod = {
   namespaced: true,

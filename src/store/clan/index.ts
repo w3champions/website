@@ -2,6 +2,7 @@ import { moduleActionContext } from "..";
 import { Clan, ClanState } from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
+import { PlayerProfile } from "@/store/player/types";
 
 const mod = {
   namespaced: true,
@@ -10,6 +11,7 @@ const mod = {
     playersClan: {},
     clanValidationError: "",
     loading: true,
+    searchPlayers: [] as PlayerProfile[],
   } as ClanState,
   actions: {
     async createClan(
@@ -55,6 +57,34 @@ const mod = {
 
       commit.SET_PLAYERS_CLAN(response);
     },
+
+    async searchPlayers(
+      context: ActionContext<ClanState, RootState>,
+      search: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.profileService.searchPlayer(
+        search
+      );
+
+      commit.SET_PLAYERS_SEARCH(response);
+    },
+
+    async invitePlayer(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { commit, state, rootGetters, rootState } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.profileService.invitePlayer(
+        battleTag,
+        state.playersClan.id,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
+    }
   },
   mutations: {
     SET_SELECTED_CLAN(state: ClanState, clan: Clan) {
@@ -68,6 +98,9 @@ const mod = {
     },
     SET_LOADING(state: ClanState, loading: boolean) {
       state.loading = loading;
+    },
+    SET_PLAYERS_SEARCH(state: ClanState, players: PlayerProfile[]) {
+      state.searchPlayers = players;
     },
   },
 } as const;
