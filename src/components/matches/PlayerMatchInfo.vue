@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip top :disabled="!showPlayerInfo">
     <template v-slot:activator="{ on }">
       <div class="player-info" :class="textClass">
         <player-icon
@@ -28,21 +28,19 @@
         <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
     </template>
-    <div v-if="showPlayerInfo">
-      <div v-if="winrate">
-        <p>{{ battleTag }}</p>
-        <p></p>
-        Wins:
-        <span class="number-text">{{ winrate.wins }}</span>
-        | Losses:
-        <span class="number-text">{{ winrate.losses }}</span>
-        | Total:
-        <span class="number-text">{{ winrate.games }}</span>
-      </div>
-      <div v-else>
-        <p>{{ battleTag }}</p>
-        <p>Wins: ... | Losses: ... | Total: ...</p>
-      </div>
+    <div v-if="winrate">
+      <p>{{ battleTag }}</p>
+      <p></p>
+      Wins:
+      <span class="number-text">{{ winrate.wins }}</span>
+      | Losses:
+      <span class="number-text">{{ winrate.losses }}</span>
+      | Total:
+      <span class="number-text">{{ winrate.games }}</span>
+    </div>
+    <div v-else>
+      <p>{{ battleTag }}</p>
+      <p>Wins: ... | Losses: ... | Total: ...</p>
     </div>
   </v-tooltip>
 </template>
@@ -125,7 +123,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public openProfileInNewTab() {
-    if(this.isAnonymous) {
+    if(!this.showPlayerInfo) {
       return;
     }
 
@@ -134,7 +132,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   private async lazyLoadWinrate() {
-    if (this.showPlayerInfo) {
+    if (!this.showPlayerInfo) {
       return;
     }
 
@@ -145,7 +143,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public goToPlayer() {
-    if(this.showPlayerInfo) {
+    if(!this.showPlayerInfo) {
       return;
     }
 
