@@ -34,7 +34,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
-import { EGameMode } from '../../store/typings';
+import { EGameMode } from "../../store/typings";
 
 @Component({})
 export default class GameModeSelect extends Vue {
