@@ -92,6 +92,9 @@
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">Download MAPS archive</span>
                   </v-btn>
+                  <li>
+                    The folder structure after unpacking should be Maps/W3Champions/v1/FFA
+                  </li>
                 </ol>
               </v-col>
             </v-row>
