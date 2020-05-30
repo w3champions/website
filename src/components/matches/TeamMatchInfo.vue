@@ -9,7 +9,7 @@
         :left="left"
         :big-race-icon="bigRaceIcon"
         :not-clickable="notClickable"
-        :no-profile-linking="noProfileLinking"
+        :is-anonymous="isAnonymous"
       />
     </div>
   </div>
@@ -30,6 +30,6 @@ export default class TeamMatchInfo extends Vue {
   @Prop() public bigRaceIcon!: boolean;
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
-  @Prop() public noProfileLinking!: boolean;
+  @Prop() public isAnonymous!: boolean;
 }
 </script>

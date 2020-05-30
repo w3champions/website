@@ -28,9 +28,9 @@
                 <v-col cols="3" v-if="alwaysLeftName">
                   <team-match-info
                     :not-clickable="!unfinished"
-                    :no-profile-linking="true"
                     :team="getPlayerTeam(item)"
                     :unfinishedMatch="unfinished"
+                    :is-anonymous="true"
                   ></team-match-info>
                 </v-col>
                 <v-col
@@ -42,7 +42,7 @@
                     :not-clickable="!unfinished"
                     :team="team"
                     :unfinishedMatch="unfinished"
-                    :no-profile-linking="true"
+                    :is-anonymous="true"
                   ></team-match-info>
                 </v-col>
               </v-row>
