@@ -8,7 +8,7 @@
     "build:prod": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
-    "update": "npm install -g npm-check-updates && ncu --upgrade && npm install"
+    "update": "npm install -g npm-check-updates && ncu --upgrade && npm install "
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
