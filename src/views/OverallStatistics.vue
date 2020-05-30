@@ -408,8 +408,8 @@ export default class OverallStatisticsView extends Vue {
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA
-      }
+        modeId: EGameMode.GM_FFA,
+      },
     ];
   }
 

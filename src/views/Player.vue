@@ -51,7 +51,9 @@
             <div class="live-match__indicator">
               Live
               <span class="circle red blinker"></span>
-              <span class="live-match__duration">{{getDuration(ongoingMatch)}}'</span>
+              <span class="live-match__duration">
+                {{ getDuration(ongoingMatch) }}'
+              </span>
             </div>
             <div class="live-match__team1">
               <team-match-info
@@ -645,7 +647,8 @@ export default class PlayerView extends Vue {
 
   public getDuration(match: Match) {
     var today = new Date();
-    var diffMs = (today.getTime() - new Date(match.startTime.toString()).getTime()); // milliseconds between now & Christmas
+    var diffMs =
+      today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
     var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
 
     return diffMins;
@@ -775,7 +778,7 @@ export default class PlayerView extends Vue {
 
   .live-match__duration {
     position: absolute;
-    left:44px;
+    left: 44px;
   }
 
   &.one-v-one {
