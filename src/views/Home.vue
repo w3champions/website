@@ -66,14 +66,14 @@
                     Installation folder
                   </li>
                   <v-btn
-                    class="w3-background ma-4"
+                    class="w3-background mt-4 mb-4"
                     color="primary"
                     href="./MAC-W3Champions.zip"
                     target="_blank"
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac Archive</span>
+                    <span class="mt-2 mb hidden-xs-only">Mac Archive</span>
                   </v-btn>
                   <li>
                     Make sure to have a directory structure like Warcraft
@@ -83,7 +83,7 @@
                     Download the Maps Archive and unpack it to your Warcraft III Maps Folder
                   </li>
                   <v-btn
-                    class="w3-background ma-4"
+                    class="w3-background mt-4 mb-4"
                     color="primary"
                     href="./W3Champions-Maps-V1.zip"
                     target="_blank"
