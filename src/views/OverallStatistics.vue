@@ -357,7 +357,7 @@ export default class OverallStatisticsView extends Vue {
     if (heroes.length === 0) return [];
     return (
       heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
-        .orderedPicks[this.selectedHeroesPlayedPick].stats ?? []
+        ?.orderedPicks[this.selectedHeroesPlayedPick]?.stats ?? []
     );
   }
 
