@@ -50,7 +50,10 @@
           >
             <div class="live-match__indicator">
               Live
-              <span class="circle red"></span>
+              <span class="circle red blinker"></span>
+              <span class="live-match__duration">
+                {{ getDuration(ongoingMatch) }}'
+              </span>
             </div>
             <div class="live-match__team1">
               <team-match-info
@@ -641,15 +644,20 @@ export default class PlayerView extends Vue {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
         modeId: EGameMode.GM_2ON2_AT,
       },
-      // {
-      //   modeName: "4vs4",
-      //   modeId: EGameMode.GM_4ON4
-      // },
-      // {
-      //   modeName: "FFA",
-      //   modeId: EGameMode.GM_FFA
-      // }
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
+        modeId: EGameMode.GM_FFA,
+      },
     ];
+  }
+
+  public getDuration(match: Match) {
+    var today = new Date();
+    var diffMs =
+      today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
+    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+    return diffMins;
   }
 
   public getPlayerTeam(match: Match) {
@@ -740,7 +748,7 @@ export default class PlayerView extends Vue {
 
   .live-match__indicator {
     position: absolute;
-    left: calc(50% - 13px);
+    left: calc(50% - 28px);
     top: -25px;
     font-size: 13px;
   }
@@ -772,6 +780,11 @@ export default class PlayerView extends Vue {
     left: calc(50% - 60px);
     text-align: center;
     width: 120px;
+  }
+
+  .live-match__duration {
+    position: absolute;
+    left: 44px;
   }
 
   &.one-v-one {
