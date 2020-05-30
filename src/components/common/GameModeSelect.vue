@@ -50,6 +50,10 @@ export default class GameModeSelect extends Vue {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
         gameMode: EGameMode.GM_2ON2_AT,
       },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
+        gameMode: EGameMode.GM_FFA,
+      },
     ];
   }
 
