@@ -85,7 +85,7 @@
                   <v-btn
                     class="w3-background ma-4"
                     color="primary"
-                    href="./W3Champions.msi"
+                    href="./W3Champions-Maps-V1.zip"
                     target="_blank"
                     outlined
                   >
