@@ -28,7 +28,7 @@
         <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
     </template>
-    <div v-if="!noProfileLinking">
+    <div v-if="showPlayerInfo">
       <div v-if="winrate">
         <p>{{ battleTag }}</p>
         <p></p>
@@ -64,7 +64,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public bigRaceIcon!: boolean;
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
-  @Prop() public noProfileLinking!: boolean;
+  @Prop() public isAnonymous!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
@@ -116,12 +116,16 @@ export default class PlayerMatchInfo extends Vue {
     return this.player.name;
   }
 
+  get showPlayerInfo() {
+    return !this.unfinishedMatch || !this.isAnonymous;
+  }
+
   private getPlayerPath() {
     return "/player/" + encodeURIComponent(this.player.battleTag);
   }
 
   public openProfileInNewTab() {
-    if(this.noProfileLinking) {
+    if(this.isAnonymous) {
       return;
     }
 
@@ -130,7 +134,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   private async lazyLoadWinrate() {
-    if (this.noProfileLinking) {
+    if (this.showPlayerInfo) {
       return;
     }
 
@@ -141,7 +145,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public goToPlayer() {
-    if(this.noProfileLinking) {
+    if(this.showPlayerInfo) {
       return;
     }
 
