@@ -28,19 +28,21 @@
         <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
     </template>
-    <div v-if="winrate">
-      <p>{{ battleTag }}</p>
-      <p></p>
-      Wins:
-      <span class="number-text">{{ winrate.wins }}</span>
-      | Losses:
-      <span class="number-text">{{ winrate.losses }}</span>
-      | Total:
-      <span class="number-text">{{ winrate.games }}</span>
-    </div>
-    <div v-else>
-      <p>{{ battleTag }}</p>
-      <p>Wins: ... | Losses: ... | Total: ...</p>
+    <div v-if="!noProfileLinking">
+      <div v-if="winrate">
+        <p>{{ battleTag }}</p>
+        <p></p>
+        Wins:
+        <span class="number-text">{{ winrate.wins }}</span>
+        | Losses:
+        <span class="number-text">{{ winrate.losses }}</span>
+        | Total:
+        <span class="number-text">{{ winrate.games }}</span>
+      </div>
+      <div v-else>
+        <p>{{ battleTag }}</p>
+        <p>Wins: ... | Losses: ... | Total: ...</p>
+      </div>
     </div>
   </v-tooltip>
 </template>
@@ -62,6 +64,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public bigRaceIcon!: boolean;
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
+  @Prop() public noProfileLinking!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
@@ -118,11 +121,19 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public openProfileInNewTab() {
+    if(this.noProfileLinking) {
+      return;
+    }
+
     const path = this.getPlayerPath();
     window.open(path, "_blank");
   }
 
   private async lazyLoadWinrate() {
+    if (this.noProfileLinking) {
+      return;
+    }
+
     this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
       this.player.battleTag,
       this.$store.direct.state.rankings.selectedSeason.id
@@ -130,6 +141,10 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public goToPlayer() {
+    if(this.noProfileLinking) {
+      return;
+    }
+
     this.$router
       .push({
         path: "/player/" + encodeURIComponent(this.player.battleTag),

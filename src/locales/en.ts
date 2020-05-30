@@ -52,6 +52,17 @@ const en = {
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
     hillsbradcreek: "Hillsbrad Creek",
+    "_ffa_marketsquare_anon": "Market Square",
+    "_ffa_deathrose_anon": "Deathrose",
+    "_ffa_fountain_of_manipulation_anon": "Fountain Of Manipulation",
+    "_ffa_anarchy_castle_anon": "Anarchy Castle",
+    "_ffa_silverpine_forest_anon": "Silverpine Forest",
+    "_ffa_neon_city_anon": "Neon City",
+    "_ffa_harvest_of_sorrow_anon": "Harvest Of Sorrow",
+    "_ffa_twilight_ruins_anon": "Twilight Ruins",
+    "_ffa_deadlock_lv_anon": "Deadlock LV",
+    "_ffa_sanctuary_lv_anon": "Sanctuary LV",
+    "_ffa_rockslide_anon": "Rocketslide",
   },
 
   heroNames: {
