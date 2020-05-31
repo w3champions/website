@@ -54,6 +54,7 @@
           />
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
+            :not-color-winner="true"
             :heroes-of-winner="ffaWinner.heroes"
             :heroes-of-looser="ffaLooser1.heroes"
             :scores-of-winner="ffaWinner.heroScore"
@@ -61,6 +62,7 @@
           />
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
+            :not-color-winner="true"
             :heroes-of-winner="ffaLooser2.heroes"
             :heroes-of-looser="ffaLooser3.heroes"
             :scores-of-winner="ffaLooser2.heroScore"
@@ -97,6 +99,24 @@
             <v-col cols="1"></v-col>
           </v-row>
           <v-row v-if="isCompleteGame && matchIsFFA">
+            <v-col cols="2"/>
+            <v-col>
+              <v-row dense v-for="(label, index) in rowLabels" :key="label">
+                <v-col>
+                  {{ label }}
+                </v-col>
+                <v-col v-for="player in ffaPlayers" :key="player.battleTag">
+                  <div v-if="index === 0">{{ player.battleTag.split("#")[0] }}</div>
+                  <div v-if="index === 1">{{ player.unitScore.unitsKilled }}</div>
+                  <div v-if="index === 2">{{ player.unitScore.unitsProduced }}</div>
+                  <div v-if="index === 3">{{ player.resourceScore.goldCollected }}</div>
+                  <div v-if="index === 4">{{ player.resourceScore.lumberCollected }}</div>
+                  <div v-if="index === 5">{{ player.resourceScore.goldUpkeepLost }}</div>
+                  <div v-if="index === 6">{{ player.unitScore.largestArmy }}</div>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="2"/>
           </v-row>
         </v-card>
       </v-col>
@@ -135,6 +155,25 @@ export default class MatchDetailView extends Vue {
 
   mounted() {
     this.init();
+  }
+
+  get rowLabels() {
+    return [
+      "",
+      "Units killed",
+      "Units produced",
+      "Gold mined",
+      "Lumber harvested",
+      "Upkeep lost",
+      "Largest army",
+    ];
+  }
+
+  get ffaPlayers() {
+    return [
+      this.ffaWinner,
+      ...this.ffaLoosers
+    ];
   }
 
   get matchDuration() {
