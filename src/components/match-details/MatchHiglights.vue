@@ -54,6 +54,7 @@ import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class MatchHiglight extends Vue {
+  @Prop() notColorWinner!: boolean;
   @Prop() experience!: number;
   @Prop() experienceOpponent!: number;
   @Prop() left!: boolean;
@@ -75,6 +76,7 @@ export default class MatchHiglight extends Vue {
   }
 
   public comparison(opponent: number, me: number) {
+    if (this.notColorWinner) return "";
     const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
     if (!percentageDiff || percentageDiff < 0.25) return "";
     return opponent > me ? "lost" : "won";

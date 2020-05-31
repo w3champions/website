@@ -20,12 +20,11 @@ export default class HeroPicture extends Vue {
   @Prop() heroIcon!: string;
 
   public parsePicture(hero: string) {
-    return require("../../assets/heroes/" + hero + ".png");
-    // try {
-    //   return require("../../assets/heroes/" + hero + ".png");
-    // } catch (e) {
-    //   return null;
-    // }
+    try {
+      return require("../../assets/heroes/" + hero + ".png");
+    } catch (e) {
+      return null;
+    }
   }
 
   get heroPicture() {
