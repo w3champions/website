@@ -28,11 +28,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
-@Component({
-  components: { HeroPicture },
-})
+@Component({})
 export default class ClanCreationPanel extends Vue {
   public clanNameToCreate = "";
 

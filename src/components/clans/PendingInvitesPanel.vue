@@ -31,12 +31,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 
 @Component({
-  components: { InvitePlayerModal, ClanCreationPanel, HeroPicture },
+  components: { InvitePlayerModal, ClanCreationPanel },
 })
 export default class PendingInvitesPanel extends Vue {
   public search = "";

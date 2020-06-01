@@ -9,9 +9,8 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="hasNoClan && isLoggedInPlayer">
-      <clan-creation-panel />
-    </div>
+    <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
+    <clan-creation-panel v-if="hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
@@ -66,80 +65,22 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
-import { PlayerProfile } from "@/store/player/types";
+import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
+import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 
 @Component({
-  components: { PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel, HeroPicture },
+  components: { AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 export default class ClanOverview extends Vue {
-  public searchModel = {} as PlayerProfile;
-
-  public clanNameToCreate = "";
-  public search = "";
-  public invitePlayerDialog = false;
-  public isValidationError = false;
-
-  public isDuplicateName(name: string) {
-    return this.searchPlayers.filter((r) => r.name === name).length > 1;
-  }
-
-  get noDataText(): string {
-    if (!this.search || this.search.length < 3) {
-      return "Type at lease 3 letters";
-    }
-
-    return "No player found";
-  }
-
-  public async invitePlayer() {
-    await this.$store.direct.dispatch.clan.invitePlayer(
-      this.searchModel.battleTag
-    );
-    if (this.$store.direct.state.clan.clanValidationError) {
-      this.isValidationError = true;
-    } else {
-      await this.$store.direct.dispatch.clan.retrievePlayersClan();
-      this.search = "";
-      this.invitePlayerDialog = false;
-    }
-  }
-
-  public closeDialog() {
-    this.invitePlayerDialog = false;
-    this.isValidationError = false;
-    this.search = "";
-  }
-
-  @Watch("search")
-  public onSearchChanged(newValue: string) {
-    if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.clan.searchPlayers(newValue.toLowerCase());
-    } else {
-      this.$store.direct.commit.clan.SET_PLAYERS_SEARCH([]);
-      this.isValidationError = false;
-    }
-  }
-
-  public async revokeInvite(member: string) {
-    await this.$store.direct.dispatch.clan.revokeInvite(member);
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
-  }
-
-  public changeInsertedClanName(newName: string) {
-    this.clanNameToCreate = newName;
-  }
-
   get clanValidationError() {
     return this.$store.direct.state.clan.clanValidationError;
   }
 
-  get hasNoPendingInvites() {
-    return this.playersClan?.pendingInvites?.length === 0;
+  get hasPendingInvite() {
+    return this.$store.direct.state.clan.selectedMemberShip.pendingInviteFromClan !== null;
   }
 
   get searchPlayers() {
@@ -183,6 +124,7 @@ export default class ClanOverview extends Vue {
 
   async mounted() {
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
   }
 }
 </script>

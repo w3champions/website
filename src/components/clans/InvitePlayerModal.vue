@@ -82,12 +82,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import HeroPicture from "@/components/match-details/HeroPicture.vue";
 import { PlayerProfile } from "@/store/player/types";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 
 @Component({
-  components: { ClanCreationPanel, HeroPicture },
+  components: { ClanCreationPanel },
 })
 export default class ClanOverview extends Vue {
   public searchModel = {} as PlayerProfile;

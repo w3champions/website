@@ -6,6 +6,14 @@ export interface ClanState {
   searchPlayers: PlayerProfile[];
   clanValidationError: string;
   loading: boolean;
+  selectedMemberShip: ClanMembership;
+}
+
+export interface ClanMembership {
+  battleTag: string;
+  clanId: string;
+  clanName: string;
+  pendingInviteFromClan: string;
 }
 
 export interface Clan {

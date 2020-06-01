@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { Clan } from "@/store/clan/types";
+import { Clan, ClanMembership } from "@/store/clan/types";
 
 export default class ClanService {
   public async retrieveClan(clanId: string): Promise<Clan> {
@@ -13,6 +13,31 @@ export default class ClanService {
     const url = `${API_URL}api/clans?battleTag=${encodeURIComponent(
       battleTag
     )}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async acceptInvite(clanId: string, battleTag: string, token: string): Promise<Clan> {
+    const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+    });
+    return await response.json();
+  }
+
+  public async rejectInvite(clanId: string, battleTag: string, token: string): Promise<Clan> {
+    const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
+    return await response.json();
+  }
+
+  public async retrievePlayerMembership(battleTag: string): Promise<ClanMembership> {
+    const url = `${API_URL}api/memberships/${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url);
     return await response.json();
