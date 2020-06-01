@@ -6,7 +6,6 @@
           <v-card-title class="justify-space-between">
             <div style="position-relative">
               <span>Profile of {{ profile.battleTag }}</span>
-              <country-flag class="countryFlag" :country="countryCode" size="small" />
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
@@ -285,7 +284,6 @@ import {
   PlayerInTeam,
   Team,
 } from "@/store/typings";
-import { ECountries } from "@/store/countries";
 
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
@@ -304,7 +302,6 @@ import ClanOverview from "@/components/clans/ClanOverview.vue";
   components: {
     ClanOverview,
     PlayerAvatar,
-    CountryFlag,
     PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
@@ -448,18 +445,6 @@ export default class PlayerView extends Vue {
 
   get seasons() {
     return this.$store.direct.state.player.playerProfile.participatedInSeasons;
-  }
-
-  get country(): string {
-    return this.personalSetting.country || "-";
-  }
-
-  get countryCode(): string {
-    return (ECountries as any)[this.country] || "-";
-  }
-
-  get personalSetting() {
-    return this.$store.direct.state.personalSettings.personalSettings;
   }
 
   get profile(): PlayerProfile {
@@ -725,13 +710,6 @@ export default class PlayerView extends Vue {
 <style lang="scss" scoped>
 .profileTab {
   background-color: #f5f5f5;
-}
-
-.countryFlag {
-  position: absolute;
-  margin-top: -6px;
-  margin-left: -15px;
-  -webkit-transform: scale(0.35) !important;
 }
 
 .theme--dark {
