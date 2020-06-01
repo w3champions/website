@@ -47,12 +47,11 @@ const mod = {
 
     async retrievePlayersClan(
       context: ActionContext<ClanState, RootState>,
-      battleTagId: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.retrieveClanForPlayer(
-        battleTagId
+        rootState.player.battleTag
       );
 
       commit.SET_PLAYERS_CLAN(response);

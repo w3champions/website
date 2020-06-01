@@ -1,12 +1,16 @@
 <template>
   <v-card-text>
-    <div v-if="hasNoClan">
-      <v-text-field
-        :v-model="clanNameToCreate"
-        @change="changeInsertedClanName"
-        hint="enter clan name"
-      />
-      <v-btn @click="createClan">Create a clan!</v-btn>
+    <div v-if="hasNoClan && !isLoggedInPlayer">
+      <v-row class="justify-center">
+        <v-col class="text-center">
+          <v-card-subtitle>
+            This player is not part of a clan
+          </v-card-subtitle>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-if="hasNoClan && isLoggedInPlayer">
+      <clan-creation-panel />
     </div>
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
@@ -122,7 +126,7 @@
         <v-card-title>
           Signees:
         </v-card-title>
-        <table class="custom-table" v-if="!hasNoPendingInvites">
+        <table class="custom-table">
           <tr
             v-for="member in playersClan.foundingFathers"
             :key="member"
@@ -170,12 +174,12 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 import { PlayerProfile } from "@/store/player/types";
+import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 
 @Component({
-  components: { HeroPicture },
+  components: { ClanCreationPanel, HeroPicture },
 })
 export default class ClanOverview extends Vue {
-  @Prop() playerBattleTag!: string;
   public searchModel = {} as PlayerProfile;
 
   public clanNameToCreate = "";
@@ -202,9 +206,7 @@ export default class ClanOverview extends Vue {
     if (this.$store.direct.state.clan.clanValidationError) {
       this.isValidationError = true;
     } else {
-      await this.$store.direct.dispatch.clan.retrievePlayersClan(
-        this.playerBattleTag
-      );
+      await this.$store.direct.dispatch.clan.retrievePlayersClan();
       this.search = "";
       this.invitePlayerDialog = false;
     }
@@ -228,7 +230,7 @@ export default class ClanOverview extends Vue {
 
   public async revokeInvite(member: string) {
     await this.$store.direct.dispatch.clan.revokeInvite(member);
-    await this.$store.direct.dispatch.clan.retrievePlayersClan(this.playerBattleTag);
+    await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
 
   public changeInsertedClanName(newName: string) {
@@ -254,7 +256,7 @@ export default class ClanOverview extends Vue {
   get loggedInPlayerIsChiefTain() {
     return (
       this.playersClan.chiefTain ===
-      this.$store.direct.state.oauth.blizzardVerifiedBtag
+      this.verifiedBtag
     );
   }
 
@@ -262,15 +264,20 @@ export default class ClanOverview extends Vue {
     this.$router.push({ path: "/player/" + encodeURIComponent(battleTag) });
   }
 
-  public async createClan() {
-    await this.$store.direct.dispatch.clan.createClan(this.clanNameToCreate);
-    await this.$store.direct.dispatch.clan.retrievePlayersClan(
-      this.playerBattleTag
-    );
+  get verifiedBtag() {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag
   }
 
   get hasNoClan() {
     return !this.playersClan?.id;
+  }
+
+  get isLoggedInPlayer() {
+    return this.verifiedBtag === this.selectedPlayer;
+  }
+
+  get selectedPlayer() {
+    return this.$store.direct.state.player.battleTag
   }
 
   get playersClan() {
@@ -278,9 +285,7 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted() {
-    await this.$store.direct.dispatch.clan.retrievePlayersClan(
-      this.playerBattleTag
-    );
+    await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
 }
 </script>
