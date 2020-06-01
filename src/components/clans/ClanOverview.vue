@@ -44,7 +44,7 @@
 
       <div v-if="!playersClan.isSuccesfullyFounded">
         <v-card-title>
-          Signees:
+          Signees ({{playersClan.foundingFathers.length}} / 7):
         </v-card-title>
         <table class="custom-table">
           <tr
