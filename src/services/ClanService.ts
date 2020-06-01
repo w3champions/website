@@ -15,25 +15,26 @@ export default class ClanService {
     )}`;
 
     const response = await fetch(url);
+    if (!response) return { id: "", pendingInvites: [], foundingFathers: [], chiefTain: "", clanName: "", isSuccesfullyFounded: false, members: [], shamans: [] };
     return await response.json();
   }
 
-  public async acceptInvite(clanId: string, battleTag: string, token: string): Promise<Clan> {
+  public async acceptInvite(clanId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "PUT",
     });
-    return await response.json();
+    return response.ok;
   }
 
-  public async rejectInvite(clanId: string, battleTag: string, token: string): Promise<Clan> {
+  public async rejectInvite(clanId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "DELETE",
     });
-    return await response.json();
+    return response.ok;
   }
 
   public async retrievePlayerMembership(battleTag: string): Promise<ClanMembership> {

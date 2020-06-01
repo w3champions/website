@@ -123,8 +123,8 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted() {
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
+    await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
 }
 </script>

@@ -51,7 +51,7 @@ const mod = {
     ) {
       const { rootGetters, state, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.clanService.acceptInvite(state.selectedMemberShip.clanId, state.selectedMemberShip.battleTag, rootState.oauth.token);
+      await rootGetters.clanService.acceptInvite(state.selectedMemberShip.pendingInviteFromClan, state.selectedMemberShip.battleTag, rootState.oauth.token);
     },
 
     async rejectInvite(
@@ -59,7 +59,7 @@ const mod = {
     ) {
       const { rootGetters, state, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.clanService.rejectInvite(state.selectedMemberShip.clanId, state.selectedMemberShip.battleTag, rootState.oauth.token);
+      await rootGetters.clanService.rejectInvite(state.selectedMemberShip.pendingInviteFromClan, state.selectedMemberShip.battleTag, rootState.oauth.token);
     },
 
     async retrievePlayersClan(
