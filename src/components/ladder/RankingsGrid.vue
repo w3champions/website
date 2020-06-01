@@ -42,15 +42,15 @@
             >
               <player-icon :race="calculatedRace(item, index)" class="mr-1" />
               <player-rank-info :player-id="playerId" />
-              <span v-if="index !== item.player.playerIds.length - 1">
-                &
-              </span>
               <div class="country-flag__container" v-if="item.playersInfo && item.playersInfo[index].country">
                 <country-flag
                   class="country-flag" 
                   :country="getCountryCode(item.playersInfo[index].country)" 
                   size="small" />
               </div>
+              <span v-if="index !== item.player.playerIds.length - 1">
+                &
+              </span>
             </div>
             <span
               style="position: relative;"
