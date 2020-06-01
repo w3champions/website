@@ -142,7 +142,7 @@
                                 <span class="won">{{ item.wins }}</span>
                                 -
                                 <span class="lost">{{ item.losses }}</span>
-                                ({{ (item.winrate * 100).toFixed(1) }}%)
+                                <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                               </span>
                             </template>
                           </v-data-table>
