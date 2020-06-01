@@ -13,7 +13,7 @@
         />
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <div v-on="on" style="position:relative">
+            <div v-on="on" class="country__container">
               <country-flag
                 v-if="selectedCountry != ''"
                 class="player-country"
@@ -478,11 +478,16 @@ export default class PlayerAvatar extends Vue {
 
 .player-country {
   position: absolute;
-  margin-top: -45px;
-  margin-left: 125px;
   border-color: white;
   border-style: solid;
   border-width: thin;
+  bottom: 0px;
+  right: -5px;
+}
+
+.country__container {
+  position: relative;
+  max-width: 120px;
 }
 
 .socialIcon {
@@ -494,9 +499,19 @@ export default class PlayerAvatar extends Vue {
   margin-top: 2px;
 }
 
+@media (min-width: 960px) {
+  .player-avatar {
+    height: 185px !important;
+  }
+
+  .country__container {
+    max-width: 185px!important;
+  }
+}
+
 .player-avatar {
   max-width: 185px;
-  height: 185px;
+  height: 120px;
   background-repeat: no-repeat;
   background-size: contain;
 }
