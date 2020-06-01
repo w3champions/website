@@ -275,6 +275,7 @@ export default class RankingsView extends Vue {
   async mounted() {
     this.search = "";
 
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();
 
     this._intervalRefreshHandle = setInterval(async () => {
@@ -289,7 +290,6 @@ export default class RankingsView extends Vue {
   public async refreshRankings() {
     await this.loadOngoingMatches();
 
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.getRankings();
     await this.getLadders();
   }

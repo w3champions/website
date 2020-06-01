@@ -42,6 +42,12 @@
             >
               <player-icon :race="calculatedRace(item, index)" class="mr-1" />
               <player-rank-info :player-id="playerId" />
+              <div class="country-flag__container" v-if="item.playersInfo && item.playersInfo[index].country">
+                <country-flag
+                  class="country-flag" 
+                  :country="getCountryCode(item.playersInfo[index].country)" 
+                  size="small" />
+              </div>
               <span v-if="index !== item.player.playerIds.length - 1">
                 &
               </span>
@@ -86,11 +92,14 @@ import { Ranking, PlayerId } from "@/store/ranking/types";
 import { ERaceEnum, Match } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
+import CountryFlag from "vue-country-flag";
+import { ECountries } from '@/store/countries';
 
 @Component({
   components: {
     PlayerIcon,
     PlayerRankInfo,
+    CountryFlag
   },
 })
 export default class RankingsGrid extends Vue {
@@ -300,6 +309,10 @@ export default class RankingsGrid extends Vue {
       sortFn();
     }
   }
+
+  getCountryCode(country: string): string {
+    return (ECountries as any)[country] || "";
+  }
 }
 </script>
 
@@ -336,6 +349,19 @@ td.header {
     top: 10px;
     right: -7px;
   }
+}
+
+.country-flag__container {
+  position: relative;
+  width: 15px;
+  height: 10px;
+  display: inline-block;
+}
+
+.country-flag {
+  position: absolute;
+  top: -15px;
+  left: -20px;
 }
 
 .clickable {
