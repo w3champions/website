@@ -91,7 +91,7 @@
             <v-tab class="profileTab" :href="`#tab-statistics`">
               Statistics
             </v-tab>
-            <v-tab class="profileTab" :href="`#tab-clan`">Clan</v-tab>
+            <v-tab v-if="clansEnabled" class="profileTab" :href="`#tab-clan`">Clan</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
@@ -327,6 +327,7 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
+import { FEATURE_FLAG_CLANS } from "@/main";
 
 @Component({
   components: {
@@ -431,6 +432,10 @@ export default class PlayerView extends Vue {
       ),
       ...atStatsUnranked,
     ];
+  }
+
+  get clansEnabled() {
+    return FEATURE_FLAG_CLANS;
   }
 
   get best2versus2Stat() {
