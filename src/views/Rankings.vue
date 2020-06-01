@@ -2,36 +2,11 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gate-way-select @gatewayChanged="gatewayChanged" />
-        <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent;">
-              <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
-              {{ gameMode }}
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Select a gamemode:</v-list-item-title>
-                </v-list-item-content>
-              </v-list>
-              <v-divider></v-divider>
-              <v-list dense>
-                <v-list-item
-                  v-for="mode in gameModes"
-                  :key="mode.gameMode"
-                  @click="selectGameMode(mode.gameMode)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
+        <gateway-select @gatewayChanged="gatewayChanged" />
+        <game-mode-select
+          :gameMode="selectedGameMode"
+          @gameModeChanged="gameModeChanged"
+        ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
@@ -146,83 +121,11 @@
         </v-card>
       </v-menu>
       <v-card-text>
-        <div class="custom-table-wrapper elevation-1">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <td
-                  v-for="header in headers"
-                  :key="header.text"
-                  v-bind:style="{
-                    width: header.width,
-                    'min-width': header.minWidth,
-                  }"
-                >
-                  {{ header.text }}
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                :id="`listitem_${item.rankNumber}`"
-                v-for="item in rankings"
-                :key="item.player.id"
-                :class="{
-                  searchedItem: item.player.id === searchModelBattleTag,
-                }"
-              >
-                <td class="number-text">{{ item.rankNumber }}.</td>
-                <td>
-                  <div
-                    class="d-inline-block rank-icon-container"
-                    v-bind:class="{ 'ml-3': index > 0 }"
-                    v-for="(playerId, index) in item.player.playerIds"
-                    :key="playerId.battleTag"
-                  >
-                    <player-icon
-                      :race="calculatedRace(item, index)"
-                      class="mr-1"
-                    />
-                    <player-rank-info :player-id="playerId" />
-                    <span v-if="index !== item.player.playerIds.length - 1">
-                      &
-                    </span>
-                  </div>
-                  <span
-                    style="position: relative;"
-                    v-if="isCurrentlyLive(item.player.playerIds)"
-                  >
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span
-                          style="display: inline;"
-                          class="pointer"
-                          v-on="on"
-                        >
-                          <div class="circle red filter-blur"></div>
-                        </span>
-                      </template>
-                      <div>
-                        Now playing vs
-                        {{ getLiveOpponent(item.player.playerIds) }}
-                      </div>
-                    </v-tooltip>
-                  </span>
-                </td>
-                <td class="number-text text-end won">{{ item.player.wins }}</td>
-                <td class="number-text text-end lost">
-                  {{ item.player.losses }}
-                </td>
-                <td class="number-text text-end">{{ item.player.games }}</td>
-                <td class="number-text text-end">
-                  {{ (item.player.winrate * 100).toFixed(1) }}%
-                </td>
-                <td class="number-text text-end">{{ item.player.mmr }}</td>
-                <td class="number-text text-end">{{ item.rankingPoints }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <rankings-grid
+          :rankings="rankings"
+          :ongoingMatches="ongoingMatchesMap"
+          :selectedRank="searchModel"
+        ></rankings-grid>
       </v-card-text>
     </v-card>
     <v-row>
@@ -249,84 +152,31 @@ import { Component, Watch } from "vue-property-decorator";
 import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
 import { DataTableOptions, EGameMode, ERaceEnum } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
-import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
+import GatewaySelect from "@/components/common/GatewaySelect.vue";
+import GameModeSelect from "@/components/common/GameModeSelect.vue";
+import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import AppConstants from "../constants";
-import GatewaysService from "../services/GatewaysService";
 
 @Component({
   components: {
-    PlayerRankInfo,
-    PlayerMatchInfo,
     LeagueIcon,
-    GateWaySelect,
-    PlayerIcon,
+    GatewaySelect,
+    GameModeSelect,
+    RankingsGrid,
   },
 })
 export default class RankingsView extends Vue {
-  public headers = [
-    {
-      text: "Rank",
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: "Player",
-      align: "start",
-      sortable: false,
-      minWidth: "170px",
-    },
-    {
-      text: "Wins",
-      align: "end",
-      sortable: false,
-      width: "50px",
-    },
-    {
-      text: "Losses",
-      align: "end",
-      sortable: false,
-      width: "50px",
-    },
-    {
-      text: "Total",
-      align: "end",
-      sortable: false,
-      width: "50px",
-    },
-    {
-      text: "Winrate",
-      align: "end",
-      sortable: false,
-      width: "50px",
-    },
-    {
-      text: "MMR",
-      align: "end",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: "RP",
-      align: "end",
-      sortable: false,
-      width: "25px",
-    },
-  ];
-
   public search = "";
   public searchModel = {} as Ranking;
   public isLoading = false;
+  public ongoingMatchesMap: any = {};
 
-  private _ongoingMatchesMap: any = {};
   private _intervalRefreshHandle: any = {};
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: Ranking) {
-    this.goToRank(newVal);
+  public onSearchModelChanged(rank: Ranking) {
+    if (!rank) return;
+    this.setLeague(rank.league);
   }
 
   @Watch("search")
@@ -345,52 +195,12 @@ export default class RankingsView extends Vue {
     return this.searchRanks.filter((r) => r.player.name === name).length > 1;
   }
 
-  public async goToRank(rank: Ranking) {
-    if (!rank) return;
-    this.setLeague(rank.league);
-
-    setTimeout(() => {
-      const listItemOfPlayer = document.getElementById(
-        `listitem_${rank.rankNumber}`
-      );
-
-      if (!listItemOfPlayer) return;
-
-      const offset =
-        listItemOfPlayer.offsetHeight +
-        listItemOfPlayer.offsetTop +
-        200 -
-        window.screenTop;
-      if (offset > window.innerHeight) {
-        window.scrollTo({
-          top: offset - window.innerHeight + 150,
-          behavior: "smooth",
-        });
-      }
-    }, 200);
-  }
-
-  public options = {
-    page: 1,
-    itemsPerPage: this.selectedLeagueMaxParticipantCount,
-  } as DataTableOptions;
-
-  @Watch("options", { deep: true })
-  onOptionsChanged(options: DataTableOptions) {
-    this.getRankings(options);
-  }
-
   get currentSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
   }
 
   get seasons() {
     return this.$store.direct.state.rankings.seasons;
-  }
-
-  get gameMode() {
-    const gameMode = this.$store.direct.state.rankings.gameMode;
-    return this.gameModes.filter((g) => g.gameMode == gameMode)[0].modeName;
   }
 
   get selectedGameMode() {
@@ -411,14 +221,6 @@ export default class RankingsView extends Vue {
     return ladder.leagues.filter((l) => l.id == league)[0] || {};
   }
 
-  public calculatedRace(ranking: Ranking, playerIndex: number) {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return ERaceEnum.RANDOM;
-    const playerInfo = playersInfo[playerIndex];
-    if (!playerInfo) return ERaceEnum.RANDOM;
-    return playerInfo.calculatedRace;
-  }
-
   get selectedLeagueName(): string {
     return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
   }
@@ -431,14 +233,6 @@ export default class RankingsView extends Vue {
 
   get selectedLeageueOrder(): number {
     return !this.selectedLeague?.order ? 0 : this.selectedLeague?.order;
-  }
-
-  get searchModelBattleTag() {
-    if (!this.searchModel || !this.searchModel.player) {
-      return "";
-    }
-
-    return this.searchModel.player.id;
   }
 
   get noDataText(): string {
@@ -473,9 +267,13 @@ export default class RankingsView extends Vue {
     this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
+  gameModeChanged(gameMode: EGameMode) {
+    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    this.$store.direct.dispatch.rankings.setLeague(0);
+  }
+
   async mounted() {
     this.search = "";
-    this.options.page = this.$store.direct.state.rankings.page + 1;
 
     await this.refreshRankings();
 
@@ -496,8 +294,8 @@ export default class RankingsView extends Vue {
     await this.getLadders();
   }
 
-  public getRankings(options?: DataTableOptions) {
-    this.$store.direct.dispatch.rankings.retrieveRankings(options);
+  public getRankings() {
+    this.$store.direct.dispatch.rankings.retrieveRankings();
   }
 
   public getLadders() {
@@ -507,7 +305,7 @@ export default class RankingsView extends Vue {
   public async loadOngoingMatches() {
     await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
 
-    this._ongoingMatchesMap = {};
+    this.ongoingMatchesMap = {};
     this.$store.direct.state.matches.allOngoingMatches.forEach((x) => {
       x.teams.forEach((t) => {
         t.players.forEach((p) => {
@@ -517,7 +315,7 @@ export default class RankingsView extends Vue {
             return ot.players.map((y) => y.battleTag);
           });
 
-          this._ongoingMatchesMap[playerTag] = {
+          this.ongoingMatchesMap[playerTag] = {
             players: t.players.map((y) => y.battleTag),
             opponents: opponents,
           };
@@ -533,86 +331,6 @@ export default class RankingsView extends Vue {
   public setLeague(league: number) {
     this.$store.direct.dispatch.rankings.setLeague(league);
   }
-
-  public selectGameMode(gameMode: EGameMode) {
-    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    this.$store.direct.dispatch.rankings.setLeague(0);
-  }
-
-  public isCurrentlyLive(playerIds: PlayerId[]) {
-    if (!this._ongoingMatchesMap) {
-      return false;
-    }
-
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {
-      players: string[];
-    };
-    if (foundByFirstPlayer) {
-      let allMatch = true;
-      playerIds.forEach((p) => {
-        allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
-      });
-
-      return allMatch;
-    }
-
-    return false;
-  }
-
-  public getLiveOpponent(playerIds: PlayerId[]) {
-    if (!this._ongoingMatchesMap) {
-      return false;
-    }
-
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this._ongoingMatchesMap[firstPlayer] as {
-      players: string[];
-      opponents: string[];
-    };
-    if (foundByFirstPlayer) {
-      return foundByFirstPlayer.opponents.join(",");
-    }
-
-    return "";
-  }
-
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        gameMode: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        gameMode: EGameMode.GM_2ON2_AT,
-      },
-    ];
-  }
 }
 </script>
-<style lang="scss" scoped>
-.theme--light {
-  tr.searchedItem,
-  tr.searchedItem:hover {
-    background-color: lightblue !important;
-  }
-}
-.theme--dark {
-  tr.searchedItem,
-  tr.searchedItem:hover {
-    background-color: #310e6f !important;
-  }
-}
-
-.red {
-  left: 10px;
-}
-
-@media (max-width: 768px) {
-  .rank-icon-container {
-    margin-top: 5px;
-    margin-left: 0px !important;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

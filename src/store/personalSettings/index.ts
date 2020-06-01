@@ -31,37 +31,21 @@ const mod = {
 
       commit.SET_PERSONAL_SETTING(response);
     },
-    async saveAditionalInfo(
+    async saveUserProfile(
       context: ActionContext<PersonalSettingsState, RootState>,
-      message: string
+      setting: PersonalSetting
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
         mod
       );
 
-      const success = await rootGetters.personalSettingsService.setPersonalSettingMessage(
+      const success = await rootGetters.personalSettingsService.savePersonalSettings(
         rootState.player.battleTag,
-        message,
+        setting,
         rootState.oauth.token
       );
-      if (success) commit.SET_MESSAGE(message);
-    },
-    async saveHomepageInfo(
-      context: ActionContext<PersonalSettingsState, RootState>,
-      message: string
-    ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
-
-      const success = await rootGetters.personalSettingsService.setPersonalSettingHomepage(
-        rootState.player.battleTag,
-        message,
-        rootState.oauth.token
-      );
-      if (success) commit.SET_WEBSITE(message);
+      if (success) commit.SET_PERSONAL_SETTING(setting);
     },
     async saveAvatar(
       context: ActionContext<PersonalSettingsState, RootState>,
@@ -86,18 +70,6 @@ const mod = {
       setting: PersonalSetting
     ) {
       state.personalSettings = setting;
-    },
-    SET_MESSAGE(state: PersonalSettingsState, profileMessage: string) {
-      state.personalSettings = {
-        ...state.personalSettings,
-        profileMessage,
-      };
-    },
-    SET_WEBSITE(state: PersonalSettingsState, homePage: string) {
-      state.personalSettings = {
-        ...state.personalSettings,
-        homePage,
-      };
     },
     SET_PICTURE(state: PersonalSettingsState, profilePicture: ProfilePicture) {
       state.personalSettings = {

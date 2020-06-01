@@ -1,3 +1,4 @@
+import { EGameMode } from "@/store/typings";
 import { moduleActionContext } from "..";
 import { MatchState, MatchStatus } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
@@ -15,6 +16,7 @@ const mod = {
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
     status: MatchStatus.onGoing,
+    gameMode: EGameMode.GM_1ON1,
   } as MatchState,
   actions: {
     async loadMatches(
@@ -35,12 +37,14 @@ const mod = {
       if (state.status == MatchStatus.onGoing) {
         response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
           state.page,
-          rootState.gateway
+          rootState.gateway,
+          state.gameMode
         );
       } else {
         response = await rootGetters.matchService.retrieveMatches(
           state.page,
-          rootState.gateway
+          rootState.gateway,
+          state.gameMode
         );
       }
 
@@ -56,7 +60,8 @@ const mod = {
       const response = await rootGetters.matchService.retrieveOnGoingMatches(
         0,
         200,
-        rootState.gateway
+        rootState.gateway,
+        state.gameMode
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
@@ -82,6 +87,15 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+    async setGameMode(
+      context: ActionContext<MatchState, RootState>,
+      gameMode: EGameMode
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_GAME_MODE(gameMode);
+      commit.SET_PAGE(0);
+      await dispatch.loadMatches(undefined);
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -104,6 +118,9 @@ const mod = {
     },
     SET_STATUS(state: MatchState, status: MatchStatus) {
       state.status = status;
+    },
+    SET_GAME_MODE(state: MatchState, gameMode: EGameMode) {
+      state.gameMode = gameMode;
     },
   },
 } as const;

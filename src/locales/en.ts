@@ -18,7 +18,7 @@ const en = {
   gameModes: {
     GM_1ON1: "1 vs 1",
     GM_2ON2_AT: "2 vs 2 AT",
-    FFA: "FFA",
+    GM_FFA: "FFA",
   },
 
   gatewayNames: {
@@ -52,6 +52,17 @@ const en = {
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
     hillsbradcreek: "Hillsbrad Creek",
+    "_ffa_marketsquare_anon": "Market Square",
+    "_ffa_deathrose_anon": "Deathrose",
+    "_ffa_fountainofmanipulation_anon": "Fountain Of Manipulation",
+    "_ffa_anarchycastle_anon": "Anarchy Castle",
+    "_ffa_silverpineforest_anon": "Silverpine Forest",
+    "_ffa_neoncity_anon": "Neon City",
+    "_ffa_harvestofsorrow_anon": "Harvest Of Sorrow",
+    "_ffa_twilightruins_anon": "Twilight Ruins",
+    "_ffa_deadlock lv_anon": "Deadlock LV",
+    "_ffa_sanctuary lv_anon": "Sanctuary LV",
+    "_ffa_rockslide_anon": "Rocketslide",
   },
 
   heroNames: {
