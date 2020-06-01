@@ -461,15 +461,12 @@ export default class PlayerAvatar extends Vue {
       };
 
       if (this.country && this.country == key) {
-        console.log(country);
         this.selectedCountry = country.country;
         this.selectedCountryCode = country.countryCode;
       }
 
       this.countries.push(country);
     });
-
-    console.log(this.selectedCountry);
   }
 }
 </script>
