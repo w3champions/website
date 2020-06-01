@@ -9,11 +9,11 @@
       <tbody>
         <tr v-for="item in items" :key="item.gameMode">
           <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</td>
-          <td class="number-text text-end">
+          <td class="number-text text-start">
             <span class="won">{{ item.wins }}</span>
             -
             <span class="lost">{{ item.losses }}</span>
-            ({{ (item.winrate * 100).toFixed(1) }}%)
+            <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
@@ -98,7 +98,7 @@ export default class ModeStatsGrid extends Vue {
     },
     {
       text: "Win/Loss",
-      align: "center",
+      align: "start",
       sortable: false,
     },
     {

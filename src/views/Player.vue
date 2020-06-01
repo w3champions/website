@@ -55,22 +55,27 @@
                 {{ getDuration(ongoingMatch) }}'
               </span>
             </div>
-            <div class="live-match__team1">
-              <team-match-info
-                :not-clickable="true"
-                :team="getPlayerTeam(ongoingMatch)"
-                :unfinishedMatch="true"
-                left="true"
-              ></team-match-info>
+            <div  v-if="!isOngoingMatchFFA">
+              <div class="live-match__team1">
+                <team-match-info
+                  :not-clickable="true"
+                  :team="getPlayerTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  left="true"
+                ></team-match-info>
+              </div>
+              <div class="live-match__vstext">VS</div>
+              <div class="live-match__team2">
+                <team-match-info
+                  :not-clickable="false"
+                  :team="getOpponentTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  right="true"
+                ></team-match-info>
+              </div>
             </div>
-            <div class="live-match__vstext">VS</div>
-            <div class="live-match__team2">
-              <team-match-info
-                :not-clickable="false"
-                :team="getOpponentTeam(ongoingMatch)"
-                :unfinishedMatch="true"
-                right="true"
-              ></team-match-info>
+            <div v-if="isOngoingMatchFFA" class="live-match__ffa">
+              Playing FFA
             </div>
             <span class="live-match__map">
               {{ $t("mapNames." + ongoingMatch.map) }}
@@ -138,7 +143,7 @@
                                 <span class="won">{{ item.wins }}</span>
                                 -
                                 <span class="lost">{{ item.losses }}</span>
-                                ({{ (item.winrate * 100).toFixed(1) }}%)
+                                <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                               </span>
                             </template>
                           </v-data-table>
@@ -533,6 +538,10 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.ongoingMatch;
   }
 
+  get isOngoingMatchFFA() {
+    return this.ongoingMatch && this.ongoingMatch.gameMode == EGameMode.GM_FFA;
+  }
+
   get ongoingMatchGameModeClass() {
     if (!this.ongoingMatch.id) {
       return "";
@@ -771,6 +780,11 @@ export default class PlayerView extends Vue {
     position: absolute;
     left: calc(50% - 10px);
     top: calc(50% - 20px);
+  }
+
+  .live-match__ffa {
+    position: absolute;
+    left: calc(50% - 41px);
   }
 
   .live-match__map {

@@ -382,7 +382,7 @@ export default class PlayerAvatar extends Vue {
       ERaceEnum[race] +
       "_" +
       picId +
-      ".png");
+      ".jpg");
   }
 
   openDialog() {

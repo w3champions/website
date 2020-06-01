@@ -25,11 +25,12 @@
           >
             <td>
               <v-row v-if="item.gameMode === 5">
-                <v-col cols="3">
+                <v-col cols="3" v-if="alwaysLeftName">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="getPlayerTeam(item)"
                     :unfinishedMatch="unfinished"
+                    :is-anonymous="true"
                   ></team-match-info>
                 </v-col>
                 <v-col
@@ -41,6 +42,7 @@
                     :not-clickable="!unfinished"
                     :team="team"
                     :unfinishedMatch="unfinished"
+                    :is-anonymous="true"
                   ></team-match-info>
                 </v-col>
               </v-row>
@@ -174,11 +176,13 @@ export default class MatchesGrid extends Vue {
   }
 
   public getPlayerTeam(match: Match) {
-    return match.teams.find((team: Team) =>
+    const playerTeam = match.teams.find((team: Team) =>
       team.players.some(
         (player: PlayerInTeam) => player.battleTag === this.alwaysLeftName
       )
     );
+
+    return playerTeam;
   }
 
   public getOpponentTeam(match: Match) {
