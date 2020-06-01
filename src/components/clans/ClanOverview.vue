@@ -133,31 +133,33 @@
             </td>
           </tr>
         </table>
-        <v-card-title>
-          Invites Pending:
-        </v-card-title>
-        <v-card-subtitle v-if="hasNoPendingInvites">
-          None pending
-        </v-card-subtitle>
-        <table class="custom-table" v-if="!hasNoPendingInvites">
-          <tr
-            v-for="member in playersClan.pendingInvites"
-            :key="member"
-          >
-            <td>
-              <v-row class="justify-space-between align-center ma-0">
-                <v-col class="pa-0">
-                  <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
-                </v-col>
-                <v-col class="text-right pa-0">
-                  <v-btn @click="revokeInvite(member)">
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </td>
-          </tr>
-        </table>
+        <div v-if="loggedInPlayerIsChiefTain">
+          <v-card-title>
+            Invites Pending:
+          </v-card-title>
+          <v-card-subtitle v-if="hasNoPendingInvites">
+            None pending
+          </v-card-subtitle>
+          <table class="custom-table" v-if="!hasNoPendingInvites">
+            <tr
+                    v-for="member in playersClan.pendingInvites"
+                    :key="member"
+            >
+              <td>
+                <v-row class="justify-space-between align-center ma-0">
+                  <v-col class="pa-0">
+                    <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                  </v-col>
+                  <v-col class="text-right pa-0">
+                    <v-btn @click="revokeInvite(member)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   </v-card-text>
