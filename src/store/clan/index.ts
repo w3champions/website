@@ -74,6 +74,18 @@ const mod = {
       commit.SET_PLAYERS_CLAN(response);
     },
 
+    async leaveClan(
+      context: ActionContext<ClanState, RootState>,
+    ) {
+      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.leaveClan(
+        state.playersClan.id,
+        state.selectedMemberShip.battleTag,
+        rootState.oauth.token
+      );
+    },
+
     async retrievePlayersMembership(
       context: ActionContext<ClanState, RootState>,
     ) {

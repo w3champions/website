@@ -59,6 +59,7 @@
         </table>
         <pending-invites-panel v-if="loggedInPlayerIsChiefTain"/>
       </div>
+      <leave-clan-modal v-if="isLoggedInPlayer" />
     </div>
   </v-card-text>
 </template>
@@ -70,9 +71,10 @@ import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
+import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
 
 @Component({
-  components: { AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
