@@ -4,13 +4,9 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="justify-space-between">
-            <div>
+            <div style="position-relative">
               <span>Profile of {{ profile.battleTag }}</span>
-              <country-flag
-                style="float:right; margin-top: -6px; margin-left: -15px; -webkit-transform:scale(0.35)"
-                :country="countryCode"
-                size="small"
-              />
+              <country-flag class="countryFlag" :country="countryCode" size="small" />
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
@@ -52,11 +48,9 @@
             <div class="live-match__indicator">
               Live
               <span class="circle red blinker"></span>
-              <span class="live-match__duration">
-                {{ getDuration(ongoingMatch) }}'
-              </span>
+              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}'</span>
             </div>
-            <div  v-if="!isOngoingMatchFFA">
+            <div v-if="!isOngoingMatchFFA">
               <div class="live-match__team1">
                 <team-match-info
                   :not-clickable="true"
@@ -75,9 +69,7 @@
                 ></team-match-info>
               </div>
             </div>
-            <div v-if="isOngoingMatchFFA" class="live-match__ffa">
-              Playing FFA
-            </div>
+            <div v-if="isOngoingMatchFFA" class="live-match__ffa">Playing FFA</div>
             <span class="live-match__map">{{ $t("mapNames." + ongoingMatch.map) }}</span>
           </div>
           <v-tabs v-model="tabsModel">
@@ -128,7 +120,9 @@
                               <span class="number-text">
                                 <span class="won">{{ item.wins }}</span>
                                 -
-                                <span class="lost">{{ item.losses }}</span>
+                                <span
+                                  class="lost"
+                                >{{ item.losses }}</span>
                                 <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                               </span>
                             </template>
@@ -285,10 +279,11 @@ import {
   EGameMode,
   ERaceEnum,
   Match,
-  ECountries,
   PlayerInTeam,
   Team,
 } from "@/store/typings";
+import { ECountries } from "@/store/countries";
+
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
@@ -720,6 +715,13 @@ export default class PlayerView extends Vue {
 <style lang="scss" scoped>
 .profileTab {
   background-color: #f5f5f5;
+}
+
+.countryFlag {
+  position: absolute;
+  margin-top: -6px;
+  margin-left: -15px;
+  -webkit-transform: scale(0.35) !important;
 }
 
 .theme--dark {
