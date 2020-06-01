@@ -253,7 +253,7 @@ export default class ClanOverview extends Vue {
   }
 
   get hasNoClan() {
-    return this.playersClan?.id === null;
+    return !this.playersClan?.id;
   }
 
   get playersClan() {
