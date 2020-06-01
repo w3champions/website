@@ -38,7 +38,6 @@
               </v-menu>
             </div>
           </v-card-title>
-
           <div
             class="live-match__container"
             v-if="ongoingMatch.id"
@@ -77,6 +76,7 @@
             <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
             <v-tab class="profileTab" :href="`#tab-at-teams`">Teams</v-tab>
             <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
+            <v-tab v-if="clanFlagEnabled" class="profileTab" :href="`#tab-clan`">Clan</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
@@ -257,6 +257,9 @@
                   </v-row>
                 </v-card-text>
               </v-tab-item>
+              <v-tab-item :value="'tab-clan'">
+                <clan-overview />
+              </v-tab-item>
             </v-tabs-items>
           </v-tabs>
         </v-card>
@@ -291,9 +294,13 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
+import CountryFlag from "vue-country-flag";
+import { FEATURE_FLAG_CLANS } from "@/main";
+import ClanOverview from "@/components/clans/ClanOverview.vue";
 
 @Component({
   components: {
+    ClanOverview,
     PlayerAvatar,
     PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,
@@ -364,6 +371,10 @@ export default class PlayerView extends Vue {
       this.$store.direct.dispatch.rankings.clearSearch();
       this.onSearchModelChanged(null as any);
     }
+  }
+
+  get clanFlagEnabled() {
+    return FEATURE_FLAG_CLANS;
   }
 
   public selectedGameModeForSearch = EGameMode.UNDEFINED;

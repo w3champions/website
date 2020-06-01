@@ -16,9 +16,11 @@ Vue.config.productionTip = false;
 
 const _apiUrl = (window as any)._env_.BASE_URL;
 const _redirectUrl = (window as any)._env_.REDIRECT_URL;
+const _clanFeature = (window as any)._env_.FEATURE_FLAG_CLANS;
 
 export const API_URL = _apiUrl;
 export const REDIRECT_URL = _redirectUrl;
+export const FEATURE_FLAG_CLANS = _clanFeature;
 
 const i18n = new VueI18n({
   locale: "en",
