@@ -17,7 +17,13 @@
       <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on" :href="'http://twitch.tv/' + userProfile.twitch" target="_blank">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'http://twitch.tv/' + userProfile.twitch"
+              target="_blank"
+              class="twitchIcon"
+            >
               <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
           </template>
@@ -449,6 +455,10 @@ export default class PlayerAvatar extends Vue {
 .socialIcon {
   padding-top: 0px;
   padding-left: 2px;
+}
+
+.twitchIcon {
+  margin-top: 2px;
 }
 
 .player-avatar {
