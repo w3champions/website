@@ -20,7 +20,7 @@ const _clanFeature = (window as any)._env_.FEATURE_FLAG_CLANS;
 
 export const API_URL = _apiUrl;
 export const REDIRECT_URL = _redirectUrl;
-export const FEATURE_FLAG_CLANS = _clanFeature;
+export const FEATURE_FLAG_CLANS = _clanFeature === "true";
 
 const i18n = new VueI18n({
   locale: "en",
