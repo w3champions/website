@@ -74,6 +74,7 @@ import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 @Component({
   components: { AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
+
 export default class ClanOverview extends Vue {
   get clanValidationError() {
     return this.$store.direct.state.clan.clanValidationError;
