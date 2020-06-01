@@ -29,11 +29,15 @@ export default class AcceptInvitePanel extends Vue {
   }
 
   public async joinClan() {
-    this.$store.direct.dispatch.clan.acceptInvite();
+    await this.$store.direct.dispatch.clan.acceptInvite();
+    await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
   }
 
   public async rejectClan() {
-    this.$store.direct.dispatch.clan.rejectInvite();
+    await this.$store.direct.dispatch.clan.rejectInvite();
+    await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
   }
 }
 </script>

@@ -10,7 +10,7 @@
       </v-row>
     </div>
     <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
-    <clan-creation-panel v-if="hasNoClan && isLoggedInPlayer" />
+    <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
@@ -81,7 +81,7 @@ export default class ClanOverview extends Vue {
   }
 
   get hasPendingInvite() {
-    return this.$store.direct.state.clan.selectedMemberShip.pendingInviteFromClan !== null;
+    return this.$store.direct.state.clan.selectedMemberShip?.pendingInviteFromClan;
   }
 
   get searchPlayers() {
