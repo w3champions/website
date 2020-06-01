@@ -140,12 +140,14 @@
         </v-card-subtitle>
         <v-list v-if="!hasNoPendingInvites">
           <v-list-item
-            class="pointer"
-            @click="goToPlayer(member)"
+            class="justify-space-between"
             v-for="member in playersClan.pendingInvites"
             :key="member"
           >
-            {{ member.split("#")[0] }}
+            <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            <v-btn @click="revokeInvite(member)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
           </v-list-item>
         </v-list>
       </div>
@@ -212,6 +214,11 @@ export default class ClanOverview extends Vue {
       this.$store.direct.commit.clan.SET_PLAYERS_SEARCH([]);
       this.isValidationError = false;
     }
+  }
+
+  public async revokeInvite(member: string) {
+    await this.$store.direct.dispatch.clan.revokeInvite(member);
+    await this.$store.direct.dispatch.clan.retrievePlayersClan(this.playerBattleTag);
   }
 
   public changeInsertedClanName(newName: string) {

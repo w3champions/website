@@ -1,5 +1,5 @@
 window._env_ = {
-  BASE_URL: "https://statistic-service-test.w3champions.com/",
+  BASE_URL: "http://localhost:5000/",
   FEATURE_FLAG_CLANS: true,
   REDIRECT_URL: "http://localhost:8080/login",
 };

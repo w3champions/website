@@ -58,6 +58,19 @@ const mod = {
       commit.SET_PLAYERS_CLAN(response);
     },
 
+    async revokeInvite(
+      context: ActionContext<ClanState, RootState>,
+      battleTagId: string
+    ) {
+      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.revokeInvite(
+        battleTagId,
+        state.playersClan.id,
+        rootState.oauth.token
+      );
+    },
+
     async searchPlayers(
       context: ActionContext<ClanState, RootState>,
       search: string
@@ -78,7 +91,7 @@ const mod = {
         mod
       );
 
-      const response = await rootGetters.profileService.invitePlayer(
+      const response = await rootGetters.clanService.invitePlayer(
         battleTag,
         state.playersClan.id,
         rootState.oauth.token

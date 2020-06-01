@@ -18,6 +18,48 @@ export default class ClanService {
     return await response.json();
   }
 
+  public async revokeInvite(
+    battleTag: string,
+    clanId: string,
+    token: string
+  ): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
+
+    const post = { PlayerBattleTag: battleTag };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "DELETE",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok ? "" : (await response.json()).error;
+  }
+
+  public async invitePlayer(
+    battleTag: string,
+    clanId: string,
+    token: string
+  ): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
+
+    const post = { PlayerBattleTag: battleTag };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok ? "" : (await response.json()).error;
+  }
+
   public async createClan(
     clanName: string,
     authToken: string
