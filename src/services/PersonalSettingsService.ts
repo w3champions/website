@@ -24,7 +24,7 @@ export default class PersonalSettingsService {
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/?authentication=${authToken}`;
+    )}/?authorization=${authToken}`;
 
     const post = value;
     const data = JSON.stringify(post);
@@ -46,7 +46,7 @@ export default class PersonalSettingsService {
   ): Promise<boolean> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
       battleTag
-    )}/profile-picture?authentication=${authToken}`;
+    )}/profile-picture?authorization=${authToken}`;
 
     const post = { PictureId: value.pictureId, Race: value.race };
     const data = JSON.stringify(post);
