@@ -11,6 +11,19 @@
               'url(' + picture(personalRace, personalRaceIcon) + ')',
           }"
         />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <div v-on="on" style="position:relative">
+              <country-flag
+                v-if="selectedCountry != ''"
+                class="player-country"
+                :country="selectedCountryCode"
+                size="normal"
+              />
+            </div>
+          </template>
+          <span>{{selectedCountry}}</span>
+        </v-tooltip>
       </v-col>
     </v-row>
     <v-row>
@@ -183,13 +196,15 @@
                   </v-row>
                   <v-row no-gutters class="countryInput">
                     <v-col md="12">
-                      <v-select
+                      <v-autocomplete
                         prepend-icon="mdi-flag"
                         clearable
                         :item-value="(obj) => (obj)[country]"
                         :items="countries"
+                        :filter="countryFilter"
                         label="Select your country"
-                        v-model="selectedCountryObject"
+                        item-text="country"
+                        v-model="selectedCountry"
                         :return-object="false"
                       >
                         <template v-slot:item="{ index, item }">
@@ -201,7 +216,7 @@
                           <country-flag :country="item.countryCode" size="normal" />
                           <span class="pr-2">{{ item.country }}</span>
                         </template>
-                      </v-select>
+                      </v-autocomplete>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -308,10 +323,8 @@ export default class PlayerAvatar extends Vue {
     savable: true,
   };
 
-  public selectedCountryObject: { country: string; countryCode: string } = {
-    country: "",
-    countryCode: "",
-  };
+  public selectedCountry = "";
+  public selectedCountryCode = "";
 
   public userProfile = {
     twitch: this.twitch,
@@ -321,6 +334,12 @@ export default class PlayerAvatar extends Vue {
     homePage: this.homePage,
     editDialogOpened: false,
   };
+
+  countryFilter(item: any, queryText: any, itemText: any) {
+    const textOne = item.country.toLowerCase();
+    const searchText = queryText.toLowerCase();
+    return textOne.includes(searchText);
+  }
 
   async resetUserProfile() {
     this.userProfile = {
@@ -340,10 +359,14 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitch = this.userProfile.twitch;
     personalSetting.youTube = this.userProfile.youtube;
     personalSetting.twitter = this.userProfile.twitter;
-    personalSetting.country =
-      this.selectedCountryObject && this.selectedCountryObject.country
-        ? this.selectedCountryObject.country
-        : "";
+    personalSetting.country = this.selectedCountry || "";
+
+    this.countries.map((c) => {
+      if (c.country == this.selectedCountry) {
+        this.selectedCountry = c.country;
+        this.selectedCountryCode = c.countryCode;
+      }
+    });
 
     await this.$store.direct.dispatch.personalSettings.saveUserProfile(
       personalSetting
@@ -438,7 +461,8 @@ export default class PlayerAvatar extends Vue {
       };
 
       if (this.country && this.country == key) {
-        this.selectedCountryObject = country;
+        this.selectedCountry = country.country;
+        this.selectedCountryCode = country.countryCode;
       }
 
       this.countries.push(country);
@@ -450,6 +474,15 @@ export default class PlayerAvatar extends Vue {
 <style lang="scss" scoped>
 .countryInput {
   margin-left: -11px;
+}
+
+.player-country {
+  position: absolute;
+  margin-top: -45px;
+  margin-left: 125px;
+  border-color: white;
+  border-style: solid;
+  border-width: thin;
 }
 
 .socialIcon {
