@@ -122,34 +122,42 @@
         <v-card-title>
           Signees:
         </v-card-title>
-        <v-list>
-          <v-list-item
-            class="pointer"
-            @click="goToPlayer(member)"
+        <table class="custom-table" v-if="!hasNoPendingInvites">
+          <tr
             v-for="member in playersClan.foundingFathers"
             :key="member"
+            @click="goToPlayer(member)"
           >
-            {{ member.split("#")[0] }}
-          </v-list-item>
-        </v-list>
+            <td>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            </td>
+          </tr>
+        </table>
         <v-card-title>
           Invites Pending:
         </v-card-title>
         <v-card-subtitle v-if="hasNoPendingInvites">
           None pending
         </v-card-subtitle>
-        <v-list v-if="!hasNoPendingInvites">
-          <v-list-item
-            class="justify-space-between"
+        <table class="custom-table" v-if="!hasNoPendingInvites">
+          <tr
             v-for="member in playersClan.pendingInvites"
             :key="member"
           >
-            <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
-            <v-btn @click="revokeInvite(member)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-list-item>
-        </v-list>
+            <td>
+              <v-row class="justify-space-between align-center ma-0">
+                <v-col class="pa-0">
+                  <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                </v-col>
+                <v-col class="text-right pa-0">
+                  <v-btn @click="revokeInvite(member)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </v-card-text>
