@@ -199,6 +199,29 @@
                       label="Homepage"
                     ></v-text-field>
                   </v-row>
+                  <v-row no-gutters style="margin-left:-11px">
+                    <v-col md="12">
+                      <v-select
+                        prepend-icon="mdi-flag"
+                        clearable
+                        :item-value="(obj) => (obj)[country]"
+                        :items="countries"
+                        label="Select your country"
+                        v-model="selectedCountryObject"
+                        :return-object="false"
+                      >
+                        <template v-slot:item="{ index, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          {{ item.country }}
+                          <v-spacer></v-spacer>
+                        </template>
+                        <template v-slot:selection="{ attrs, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          <span class="pr-2">{{ item.country }}</span>
+                        </template>
+                      </v-select>
+                    </v-col>
+                  </v-row>
                   <v-row>
                     <v-col>
                       <v-textarea
@@ -235,10 +258,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum, ECountries } from "@/store/typings";
 import { PersonalSetting } from "../../store/personalSettings/types";
+import CountryFlag from "vue-country-flag";
 
-@Component({})
+@Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
 
@@ -250,10 +274,16 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.UNDEAD,
     ERaceEnum.RANDOM,
   ];
+
+  public countries: { country: string; countryCode: string }[] = [];
   public PicNumbers = Array.from(Array(11).keys());
 
   get homePage(): string {
     return this.personalSetting.homePage || "-";
+  }
+
+  get country(): string {
+    return this.personalSetting.country || "-";
   }
 
   get twitch(): string {
@@ -299,6 +329,11 @@ export default class PlayerAvatar extends Vue {
     savable: true,
   };
 
+  public selectedCountryObject: { country: string; countryCode: string } = {
+    country: "",
+    countryCode: "",
+  };
+
   public userProfile = {
     twitch: this.twitch,
     youtube: this.youtube,
@@ -311,7 +346,6 @@ export default class PlayerAvatar extends Vue {
   async resetUserProfile() {
     this.userProfile = {
       editDialogOpened: false,
-
       twitch: this.twitch,
       homePage: this.homePage,
       about: this.savedMessageValue,
@@ -327,6 +361,7 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitch = this.userProfile.twitch;
     personalSetting.youTube = this.userProfile.youtube;
     personalSetting.twitter = this.userProfile.twitter;
+    personalSetting.country = this.selectedCountryObject && this.selectedCountryObject.country ? this.selectedCountryObject.country : "";
 
     await this.$store.direct.dispatch.personalSettings.saveUserProfile(
       personalSetting
@@ -404,7 +439,6 @@ export default class PlayerAvatar extends Vue {
 
   async init() {
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
-
     this.userProfile = {
       twitch: this.twitch,
       homePage: this.homePage,
@@ -413,6 +447,20 @@ export default class PlayerAvatar extends Vue {
       twitter: this.twitter,
       editDialogOpened: false,
     };
+
+    // populate countries dropdown for combobox
+    Object.keys(ECountries).map((key) => {
+      let country = {
+        country: key,
+        countryCode: (ECountries as any)[key] as string,
+      };
+
+      if (this.country && this.country == key) {
+        this.selectedCountryObject = country;
+      }
+
+      this.countries.push(country);
+    });
   }
 }
 </script>

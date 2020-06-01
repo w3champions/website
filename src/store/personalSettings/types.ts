@@ -26,6 +26,7 @@ export type PersonalSetting = {
   twitch: string;
   youTube: string;
   twitter: string;
+  country: string;
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];
