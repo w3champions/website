@@ -25,8 +25,7 @@
             single-line
             clearable
             :items="members"
-            :search-input.sync="search"
-            :no-data-text="noDataText"
+            no-data-text="no player found"
             item-text="name"
             item-value="id"
             placeholder="Start typing to Search"
@@ -84,7 +83,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 
 @Component({
@@ -93,17 +92,8 @@ import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 export default class ShamanManagementModal extends Vue {
   public searchModel = "";
 
-  public search = "";
   public dialog = false;
   public isValidationError = false;
-
-  get noDataText(): string {
-    if (!this.search || this.search.length < 3) {
-      return "Type at lease 3 letters";
-    }
-
-    return "No player found";
-  }
 
   public async promoteShaman() {
     await this.$store.direct.dispatch.clan.addShaman(
@@ -124,24 +114,13 @@ export default class ShamanManagementModal extends Vue {
       this.isValidationError = true;
     } else {
       await this.$store.direct.dispatch.clan.retrievePlayersClan();
-      this.search = "";
+      this.searchModel = "";
     }
   }
 
   public closeDialog() {
     this.dialog = false;
     this.isValidationError = false;
-    this.search = "";
-  }
-
-  @Watch("search")
-  public onSearchChanged(newValue: string) {
-    if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.clan.searchPlayers(newValue.toLowerCase());
-    } else {
-      this.$store.direct.commit.clan.SET_PLAYERS_SEARCH([]);
-      this.isValidationError = false;
-    }
   }
 
   get clanValidationError() {

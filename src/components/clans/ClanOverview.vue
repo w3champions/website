@@ -31,23 +31,37 @@
       </v-card-subtitle>
       <div v-if="playersClan.isSuccesfullyFounded">
         <v-card-title>
+          Shamans:
+        </v-card-title>
+        <table class="custom-table">
+          <tr
+            v-for="member in shamans"
+            :key="member"
+            @click="goToPlayer(member)"
+          >
+            <td>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            </td>
+          </tr>
+        </table>
+        <v-card-title>
           Members:
         </v-card-title>
-        <v-list>
-          <v-list-item
-            class="pointer"
-            @click="goToPlayer(member)"
-            v-for="member in playersClan.members"
+        <table class="custom-table">
+          <tr
+            v-for="member in membersWithoutShamans"
             :key="member"
+            @click="goToPlayer(member)"
           >
-            {{ member.split("#")[0] }}
-          </v-list-item>
-        </v-list>
+            <td>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            </td>
+          </tr>
+        </table>
       </div>
-
       <div v-if="!playersClan.isSuccesfullyFounded">
         <v-card-title>
-          Signees ({{playersClan.foundingFathers.length}} / 7):
+          Signees ({{ playersClan.foundingFathers.length }} / 7):
         </v-card-title>
         <table class="custom-table">
           <tr
@@ -127,6 +141,14 @@ export default class ClanOverview extends Vue {
 
   get playersClan() {
     return this.$store.direct.state.clan.playersClan;
+  }
+
+  get shamans() {
+    return this.$store.direct.state.clan.playersClan.shamans;
+  }
+
+  get membersWithoutShamans() {
+    return this.$store.direct.state.clan.playersClan.members.filter(m => !this.shamans.find(s => s === m));
   }
 
   async mounted() {
