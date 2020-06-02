@@ -15,7 +15,7 @@
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
         <span>
-          <invite-player-modal v-if="loggedInPlayerIsChiefTain" />
+          <invite-player-modal v-if="loggedInPlayerIsShaman" />
           <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
         </span>
       </v-card-title>
@@ -74,8 +74,8 @@
             </td>
           </tr>
         </table>
-        <pending-invites-panel v-if="loggedInPlayerIsChiefTain"/>
       </div>
+      <pending-invites-panel v-if="loggedInPlayerIsShaman"/>
       <leave-clan-modal v-if="isLoggedInPlayer" />
     </div>
   </v-card-text>
@@ -117,6 +117,10 @@ export default class ClanOverview extends Vue {
       this.playersClan.chiefTain ===
       this.verifiedBtag
     );
+  }
+
+  get loggedInPlayerIsShaman() {
+    return this.playersClan.shamans.find(s => s === this.verifiedBtag) || this.loggedInPlayerIsChiefTain
   }
 
   public goToPlayer(battleTag: string) {
