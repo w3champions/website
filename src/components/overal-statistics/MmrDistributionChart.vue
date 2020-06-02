@@ -65,6 +65,10 @@ export default class MmrDistributionChart extends Vue {
   }
 
   get gameHourChartData(): ChartData {
+    if(!this.mmrDistribution.distributedMmrs){
+      return {};
+    }
+
     return {
       labels: this.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
       datasets: [
