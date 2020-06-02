@@ -37,6 +37,31 @@ export default class ClanService {
     return response.ok;
   }
 
+  public async addShaman(clanId: string, battleTag: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/clans/${clanId}/shamans/?authorization=${token}`;
+
+    const post = { PlayerBattleTag: battleTag };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.ok;
+  }
+
+  public async removeShaman(clanId: string, battleTag: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
+    return response.ok;
+  }
+
   public async leaveClan(clanId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`;
 

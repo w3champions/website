@@ -46,6 +46,32 @@ const mod = {
       commit.SET_SELECTED_CLAN(response);
     },
 
+    async addShaman(
+      context: ActionContext<ClanState, RootState>,
+      clanId: string
+    ) {
+      const { state, rootState, rootGetters } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.addShaman(
+        state.playersClan.id,
+        state.selectedMemberShip.battleTag,
+        rootState.oauth.token
+      );
+    },
+
+    async removeShaman(
+      context: ActionContext<ClanState, RootState>,
+      clanId: string
+    ) {
+      const { state, rootState, rootGetters } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.removeShaman(
+        state.playersClan.id,
+        state.selectedMemberShip.battleTag,
+        rootState.oauth.token
+      );
+    },
+
     async acceptInvite(
       context: ActionContext<ClanState, RootState>
     ) {
