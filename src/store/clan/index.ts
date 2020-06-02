@@ -47,8 +47,7 @@ const mod = {
     },
 
     async addShaman(
-      context: ActionContext<ClanState, RootState>,
-      clanId: string
+      context: ActionContext<ClanState, RootState>
     ) {
       const { state, rootState, rootGetters } = moduleActionContext(context, mod);
 
@@ -60,8 +59,7 @@ const mod = {
     },
 
     async removeShaman(
-      context: ActionContext<ClanState, RootState>,
-      clanId: string
+      context: ActionContext<ClanState, RootState>
     ) {
       const { state, rootState, rootGetters } = moduleActionContext(context, mod);
 
