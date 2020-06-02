@@ -11,14 +11,23 @@
               'url(' + picture(personalRace, personalRaceIcon) + ')',
           }"
         />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <div v-on="on" class="country__container">
+              <country-flag
+                v-if="selectedCountry != ''"
+                class="player-country"
+                :country="selectedCountryCode"
+                size="normal"
+              />
+            </div>
+          </template>
+          <span>{{selectedCountry}}</span>
+        </v-tooltip>
       </v-col>
     </v-row>
     <v-row>
-      <v-col
-        cols="2"
-        v-if="userProfile.twitch != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -26,6 +35,7 @@
               v-on="on"
               :href="'http://twitch.tv/' + userProfile.twitch"
               target="_blank"
+              class="twitchIcon"
             >
               <v-icon color="purple accent-4">mdi-twitch</v-icon>
             </v-btn>
@@ -33,11 +43,7 @@
           <span>{{ userProfile.twitch }}</span>
         </v-tooltip>
       </v-col>
-      <v-col
-        cols="2"
-        v-if="userProfile.youtube != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.youtube != ''" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -52,11 +58,7 @@
           <span>{{ userProfile.youtube }}</span>
         </v-tooltip>
       </v-col>
-      <v-col
-        cols="2"
-        v-if="userProfile.twitter != ''"
-        style="padding-top: 0px; padding-left: 2px;"
-      >
+      <v-col cols="2" v-if="userProfile.twitter != ''" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -112,9 +114,7 @@
             target="_blank"
             :href="homePageLink"
             :key="homePageLink"
-          >
-            {{ homePage }}
-          </a>
+          >{{ homePage }}</a>
         </div>
         <div v-else>{{ homePage }}</div>
       </v-col>
@@ -128,11 +128,7 @@
     <template>
       <v-row v-if="isLoggedInPlayer">
         <v-col>
-          <v-dialog
-            v-model="userProfile.editDialogOpened"
-            persistent
-            max-width="600px"
-          >
+          <v-dialog v-model="userProfile.editDialogOpened" persistent max-width="600px">
             <template v-slot:activator="{ on }">
               <v-btn
                 @click="userProfile.editDialogOpened = true"
@@ -142,8 +138,7 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>mdi-pencil</v-icon>
-                Edit Profile
+                <v-icon left>mdi-pencil</v-icon>Edit Profile
               </v-btn>
             </template>
             <v-card>
@@ -199,6 +194,31 @@
                       label="Homepage"
                     ></v-text-field>
                   </v-row>
+                  <v-row no-gutters class="countryInput">
+                    <v-col md="12">
+                      <v-autocomplete
+                        prepend-icon="mdi-flag"
+                        clearable
+                        :item-value="(obj) => (obj)[country]"
+                        :items="countries"
+                        :filter="countryFilter"
+                        label="Select your country"
+                        item-text="country"
+                        v-model="selectedCountry"
+                        :return-object="false"
+                      >
+                        <template v-slot:item="{ index, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          {{ item.country }}
+                          <v-spacer></v-spacer>
+                        </template>
+                        <template v-slot:selection="{ attrs, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          <span class="pr-2">{{ item.country }}</span>
+                        </template>
+                      </v-autocomplete>
+                    </v-col>
+                  </v-row>
                   <v-row>
                     <v-col>
                       <v-textarea
@@ -217,12 +237,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="resetUserProfile">
-                  Close
-                </v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">
-                  Save
-                </v-btn>
+                <v-btn color="blue darken-1" text @click="resetUserProfile">Close</v-btn>
+                <v-btn color="blue darken-1" text @click="saveUserProfile">Save</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -236,9 +252,11 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import { ECountries } from "@/store/countries";
 import { PersonalSetting } from "../../store/personalSettings/types";
+import CountryFlag from "vue-country-flag";
 
-@Component({})
+@Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
 
@@ -250,10 +268,16 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.UNDEAD,
     ERaceEnum.RANDOM,
   ];
+
+  public countries: { country: string; countryCode: string }[] = [];
   public PicNumbers = Array.from(Array(11).keys());
 
   get homePage(): string {
     return this.personalSetting.homePage || "-";
+  }
+
+  get country(): string {
+    return this.personalSetting.country || "-";
   }
 
   get twitch(): string {
@@ -299,6 +323,9 @@ export default class PlayerAvatar extends Vue {
     savable: true,
   };
 
+  public selectedCountry = "";
+  public selectedCountryCode = "";
+
   public userProfile = {
     twitch: this.twitch,
     youtube: this.youtube,
@@ -308,10 +335,15 @@ export default class PlayerAvatar extends Vue {
     editDialogOpened: false,
   };
 
+  countryFilter(item: any, queryText: any, itemText: any) {
+    const textOne = item.country.toLowerCase();
+    const searchText = queryText.toLowerCase();
+    return textOne.includes(searchText);
+  }
+
   async resetUserProfile() {
     this.userProfile = {
       editDialogOpened: false,
-
       twitch: this.twitch,
       homePage: this.homePage,
       about: this.savedMessageValue,
@@ -327,6 +359,14 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitch = this.userProfile.twitch;
     personalSetting.youTube = this.userProfile.youtube;
     personalSetting.twitter = this.userProfile.twitter;
+    personalSetting.country = this.selectedCountry || "";
+
+    this.countries.map((c) => {
+      if (c.country == this.selectedCountry) {
+        this.selectedCountry = c.country;
+        this.selectedCountryCode = c.countryCode;
+      }
+    });
 
     await this.$store.direct.dispatch.personalSettings.saveUserProfile(
       personalSetting
@@ -404,7 +444,6 @@ export default class PlayerAvatar extends Vue {
 
   async init() {
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
-
     this.userProfile = {
       twitch: this.twitch,
       homePage: this.homePage,
@@ -413,14 +452,66 @@ export default class PlayerAvatar extends Vue {
       twitter: this.twitter,
       editDialogOpened: false,
     };
+
+    // populate countries dropdown for combobox
+    Object.keys(ECountries).map((key) => {
+      let country = {
+        country: key,
+        countryCode: (ECountries as any)[key] as string,
+      };
+
+      if (this.country && this.country == key) {
+        this.selectedCountry = country.country;
+        this.selectedCountryCode = country.countryCode;
+      }
+
+      this.countries.push(country);
+    });
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.countryInput {
+  margin-left: -11px;
+}
+
+.player-country {
+  position: absolute;
+  border-color: white;
+  border-style: solid;
+  border-width: thin;
+  bottom: 0px;
+  right: -5px;
+}
+
+.country__container {
+  position: relative;
+  max-width: 120px;
+}
+
+.socialIcon {
+  padding-top: 0px;
+  padding-left: 2px;
+}
+
+.twitchIcon {
+  margin-top: 2px;
+}
+
+@media (min-width: 960px) {
+  .player-avatar {
+    height: 185px !important;
+  }
+
+  .country__container {
+    max-width: 185px!important;
+  }
+}
+
 .player-avatar {
   max-width: 185px;
-  height: 185px;
+  height: 120px;
   background-repeat: no-repeat;
   background-size: contain;
 }
