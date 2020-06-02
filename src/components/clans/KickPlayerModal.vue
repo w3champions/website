@@ -10,12 +10,12 @@
           color="primary"
         >
           <v-icon left>mdi-pencil</v-icon>
-          <span>Manage Members</span>
+          <span>Kick Members</span>
         </v-btn>
       </template>
       <v-card>
         <v-card-title>
-          <span class="headline">Manage Members</span>
+          <span class="headline">Kick Members</span>
         </v-card-title>
         <v-card-text>
           <v-autocomplete
