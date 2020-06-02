@@ -2,12 +2,6 @@ import { API_URL } from "@/main";
 import { Clan, ClanMembership } from "@/store/clan/types";
 
 export default class ClanService {
-  public async retrieveClan(clanId: string): Promise<Clan> {
-    const url = `${API_URL}api/clans/${clanId}`;
-
-    const response = await fetch(url);
-    return await response.json();
-  }
 
   public async retrieveClanForPlayer(battleTag: string): Promise<Clan> {
     const url = `${API_URL}api/clans?battleTag=${encodeURIComponent(
@@ -37,7 +31,7 @@ export default class ClanService {
     return response.ok;
   }
 
-  public async addShaman(clanId: string, battleTag: string, token: string): Promise<boolean> {
+  public async addShaman(clanId: string, battleTag: string, token: string): Promise<string> {
     const url = `${API_URL}api/clans/${clanId}/shamans/?authorization=${token}`;
 
     const post = { PlayerBattleTag: battleTag };
@@ -50,16 +44,16 @@ export default class ClanService {
         "Content-Type": "application/json",
       },
     });
-    return response.ok;
+    return response.ok ? "" : (await response.json()).error;
   }
 
-  public async removeShaman(clanId: string, battleTag: string, token: string): Promise<boolean> {
+  public async removeShaman(clanId: string, battleTag: string, token: string): Promise<string> {
     const url = `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "DELETE",
     });
-    return response.ok;
+    return response.ok ? "" : (await response.json()).error;
   }
 
   public async leaveClan(clanId: string, battleTag: string, token: string): Promise<boolean> {

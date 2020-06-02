@@ -14,7 +14,10 @@
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
-        <invite-player-modal v-if="loggedInPlayerIsChiefTain"/>
+        <span>
+          <invite-player-modal v-if="loggedInPlayerIsChiefTain" />
+          <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
+        </span>
       </v-card-title>
       <v-card-subtitle
         class="pointer"
@@ -72,9 +75,10 @@ import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
+import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
 
 @Component({
-  components: { LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { ShamanManagementModal, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
