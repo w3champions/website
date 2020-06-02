@@ -14,7 +14,10 @@
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
-        <invite-player-modal v-if="loggedInPlayerIsChiefTain"/>
+        <span>
+          <invite-player-modal v-if="loggedInPlayerIsChiefTain" />
+          <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
+        </span>
       </v-card-title>
       <v-card-subtitle
         class="pointer"
@@ -28,23 +31,37 @@
       </v-card-subtitle>
       <div v-if="playersClan.isSuccesfullyFounded">
         <v-card-title>
+          Shamans:
+        </v-card-title>
+        <table class="custom-table">
+          <tr
+            v-for="member in shamans"
+            :key="member"
+            @click="goToPlayer(member)"
+          >
+            <td>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            </td>
+          </tr>
+        </table>
+        <v-card-title>
           Members:
         </v-card-title>
-        <v-list>
-          <v-list-item
-            class="pointer"
-            @click="goToPlayer(member)"
-            v-for="member in playersClan.members"
+        <table class="custom-table">
+          <tr
+            v-for="member in membersWithoutShamans"
             :key="member"
+            @click="goToPlayer(member)"
           >
-            {{ member.split("#")[0] }}
-          </v-list-item>
-        </v-list>
+            <td>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+            </td>
+          </tr>
+        </table>
       </div>
-
       <div v-if="!playersClan.isSuccesfullyFounded">
         <v-card-title>
-          Signees ({{playersClan.foundingFathers.length}} / 7):
+          Signees ({{ playersClan.foundingFathers.length }} / 7):
         </v-card-title>
         <table class="custom-table">
           <tr
@@ -72,9 +89,10 @@ import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
+import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
 
 @Component({
-  components: { LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { ShamanManagementModal, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
@@ -123,6 +141,14 @@ export default class ClanOverview extends Vue {
 
   get playersClan() {
     return this.$store.direct.state.clan.playersClan;
+  }
+
+  get shamans() {
+    return this.$store.direct.state.clan.playersClan.shamans;
+  }
+
+  get membersWithoutShamans() {
+    return this.$store.direct.state.clan.playersClan.members.filter(m => !this.shamans.find(s => s === m));
   }
 
   async mounted() {
