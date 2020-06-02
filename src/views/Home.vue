@@ -147,25 +147,29 @@
           <v-col cols="12" class>
             <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
-              <v-list dense>
-                <v-list-item
+              <table class="custom-table" dense>
+                <tr
                   v-for="(rank, i) in topFive"
                   :key="i"
                   @click="goToProfile(rank)"
                 >
-                  <v-list-item-icon>{{ i + 1 }}.</v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      v-text="rank.player.name"
-                    ></v-list-item-title>
-                    <v-list-item-subtitle>
-                      Win/Loss/Total: {{ rank.player.wins }}/{{
-                        rank.player.losses
-                      }}/{{ rank.player.games }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+                  <td>
+                    <v-row class="justify-space-between">
+                      <v-col cols="2">
+                        <span style="font-size: 15px">{{ i + 1 }}.</span>
+                      </v-col>
+                      <v-col cols="10">
+                        {{rank.player.name}}
+                        <div style="font-size: 11px">
+                          Win/Loss/Total: {{ rank.player.wins }}/{{
+                            rank.player.losses
+                          }}/{{ rank.player.games }}
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </td>
+                </tr>
+              </table>
             </v-card>
           </v-col>
         </v-row>

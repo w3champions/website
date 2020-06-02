@@ -157,6 +157,24 @@ const mod = {
 
       commit.SET_CLAN_ERROR(response);
     },
+
+    async kickPlayer(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { commit, state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const response = await rootGetters.clanService.kickPlayer(
+        battleTag,
+        state.playersClan.id,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
+    },
   },
   mutations: {
     SET_PLAYERS_CLAN(state: ClanState, clan: Clan) {

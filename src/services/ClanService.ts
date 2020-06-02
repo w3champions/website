@@ -114,6 +114,20 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
+  public async kickPlayer(
+    battleTag: string,
+    clanId: string,
+    token: string
+  ): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+    });
+
+    return response.ok ? "" : (await response.json()).error;
+  }
+
   public async createClan(
     clanName: string,
     authToken: string

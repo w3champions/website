@@ -83,11 +83,15 @@ export default class ModeStatsGrid extends Vue {
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
-    const not2v2s = this.stats.filter(
-      (g) => g.gameMode !== EGameMode.GM_2ON2_AT
+    const gm1v1 = this.stats.find(
+      (g) => g.gameMode === EGameMode.GM_1ON1
     );
 
-    return [...not2v2s, combindes2v2];
+    const ffa = this.stats.find(
+      (g) => g.gameMode === EGameMode.GM_FFA
+    );
+
+    return [gm1v1, combindes2v2, ffa];
   }
 
   public headers = [

@@ -12,12 +12,13 @@
     <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
     <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
+      <div style="position: absolute; right:20px; top: 20px">
+        <invite-player-modal v-if="loggedInPlayerIsShaman" />
+        <kick-player-modal class="mt-3" v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded" />
+        <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
+      </div>
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }}</span>
-        <span>
-          <invite-player-modal v-if="loggedInPlayerIsShaman" />
-          <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
-        </span>
       </v-card-title>
       <v-card-subtitle
         class="pointer"
@@ -90,9 +91,10 @@ import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
 import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
+import KickPlayerModal from "@/components/clans/KickPlayerModal.vue";
 
 @Component({
-  components: { ShamanManagementModal, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { KickPlayerModal, ShamanManagementModal, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
