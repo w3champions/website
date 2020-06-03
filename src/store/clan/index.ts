@@ -15,7 +15,7 @@ const mod = {
   actions: {
     async createClan(
       context: ActionContext<ClanState, RootState>,
-      clanName: string
+      clanOptions: { clanName: string, abbreviation: string }
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
@@ -23,7 +23,8 @@ const mod = {
       );
 
       const response = await rootGetters.clanService.createClan(
-        clanName,
+        clanOptions.clanName,
+        clanOptions.abbreviation,
         rootState.oauth.token
       );
 
