@@ -17,6 +17,7 @@ export interface ClanMembership {
 export interface Clan {
   id: string;
   clanName: string;
+  clanAbbrevation: string;
   chiefTain: string;
   isSuccesfullyFounded: boolean;
   members: string[];
