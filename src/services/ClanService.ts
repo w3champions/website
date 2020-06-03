@@ -56,6 +56,23 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
+  public async switchChieftain(clanId: string, battleTag: string, token: string): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/chieftain/?authorization=${token}`;
+
+    const post = { PlayerBattleTag: battleTag };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "PUT",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok ? "" : (await response.json()).error;
+  }
+
   public async leaveClan(clanId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`;
 

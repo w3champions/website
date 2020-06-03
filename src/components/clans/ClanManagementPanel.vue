@@ -18,8 +18,15 @@
           Clan Management
         </v-card-title>
         <invite-player-modal v-if="loggedInPlayerIsShaman" />
-        <kick-player-modal class="mt-3" v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded" />
-        <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
+        <kick-player-modal
+          v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded"
+        />
+        <shaman-management-modal
+          v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded"
+        />
+        <switch-chieftain-panel
+          v-if="loggedInPlayerIsChiefTain"
+        />
         <v-alert
           v-model="isValidationError"
           type="warning"
@@ -40,9 +47,15 @@ import { Component } from "vue-property-decorator";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import KickPlayerModal from "@/components/clans/KickPlayerModal.vue";
 import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
+import SwitchChieftainPanel from "@/components/clans/SwitchChieftainPanel.vue";
 
 @Component({
-  components: { ShamanManagementModal, KickPlayerModal, InvitePlayerModal }
+  components: {
+    SwitchChieftainPanel,
+    ShamanManagementModal,
+    KickPlayerModal,
+    InvitePlayerModal,
+  },
 })
 export default class ClanManagementPanel extends Vue {
   public dialog = false;
@@ -52,11 +65,14 @@ export default class ClanManagementPanel extends Vue {
   }
 
   get loggedInPlayerIsShaman() {
-    return this.playersClan.shamans.find(s => s === this.verifiedBtag) || this.loggedInPlayerIsChiefTain
+    return (
+      this.playersClan.shamans.find((s) => s === this.verifiedBtag) ||
+      this.loggedInPlayerIsChiefTain
+    );
   }
 
   get verifiedBtag() {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
   get playersClan() {

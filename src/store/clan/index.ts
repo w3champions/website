@@ -64,6 +64,21 @@ const mod = {
       commit.SET_CLAN_ERROR(response);
     },
 
+    async switchChieftain(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.clanService.switchChieftain(
+        state.playersClan.id,
+        battleTag,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
+    },
+
     async acceptInvite(
       context: ActionContext<ClanState, RootState>
     ) {
