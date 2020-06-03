@@ -42,7 +42,7 @@
       <v-btn
         color="blue darken-1"
         text
-        :disabled="!searchModel.id"
+        :disabled="!search"
         @click="invitePlayer"
       >
         Invite
@@ -59,7 +59,6 @@ import { PlayerProfile } from "@/store/player/types";
 @Component({})
 export default class InvitePlayerPanel extends Vue {
   public searchModel = {} as PlayerProfile;
-
   public search = "";
 
   public isDuplicateName(name: string) {

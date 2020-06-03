@@ -18,10 +18,7 @@
         return-object
       >
         <template v-slot:item="data">
-          <template v-if="typeof data.item !== 'object'">
-            <v-list-item-content v-text="data.item"></v-list-item-content>
-          </template>
-          <template v-else>
+          <template>
             <v-list-item-content>
               <v-list-item-title>
                 {{ data.item.split("#")[0] }}

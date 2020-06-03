@@ -9,7 +9,6 @@ const mod = {
   state: {
     playersClan: {},
     clanValidationError: "",
-    loading: true,
     searchPlayers: [] as PlayerProfile[],
     selectedMemberShip: {},
   } as ClanState,
@@ -23,14 +22,11 @@ const mod = {
         mod
       );
 
-      commit.SET_LOADING(true);
-
       const response = await rootGetters.clanService.createClan(
         clanName,
         rootState.oauth.token
       );
 
-      commit.SET_LOADING(true);
       commit.SET_CLAN_ERROR(response);
     },
 
@@ -208,9 +204,6 @@ const mod = {
     },
     SET_CLAN_ERROR(state: ClanState, error: string) {
       state.clanValidationError = error;
-    },
-    SET_LOADING(state: ClanState, loading: boolean) {
-      state.loading = loading;
     },
     SET_PLAYERS_SEARCH(state: ClanState, players: PlayerProfile[]) {
       state.searchPlayers = players;
