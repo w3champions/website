@@ -45,6 +45,7 @@ export type Ranking = {
 
 export interface PlayerInfo {
   calculatedRace: ERaceEnum;
+  twitchName: string;
 }
 
 export interface PlayerId {

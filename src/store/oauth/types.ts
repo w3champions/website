@@ -2,6 +2,7 @@ export type OauthState = {
   code: string;
   token: string;
   blizzardVerifiedBtag: string;
+  twitch_token: TwitchToken
 };
 
 export type BlizzardToken = {
@@ -9,3 +10,9 @@ export type BlizzardToken = {
   token_type: string;
   expires_in: number;
 };
+
+export interface TwitchToken {
+  access_token: string;
+  expires_in: number;
+  token_type: string;
+}

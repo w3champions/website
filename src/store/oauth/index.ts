@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { OauthState } from "@/store/oauth/types";
+import { OauthState, TwitchToken } from "@/store/oauth/types";
 
 const mod = {
   namespaced: true,
@@ -9,6 +9,7 @@ const mod = {
     code: "",
     blizzardVerifiedBtag: "",
     token: "",
+    twitch_token: {} as TwitchToken,
   } as OauthState,
   actions: {
     async authorizeWithCode(
@@ -26,6 +27,12 @@ const mod = {
       commit.SET_PROFILE_NAME(profileName);
 
       await rootGetters.oauthService.saveAuthToken(bearer);
+    },
+    async authorizeWithTwitch(context: ActionContext<OauthState, RootState>) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const token = await rootGetters.oauthService.authorizeWithTwitch();
+      commit.SET_TWITCH_TOKEN(token);
     },
     async loadAuthCodeToState(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
@@ -55,6 +62,9 @@ const mod = {
   mutations: {
     SET_BEARER(state: OauthState, token: string) {
       state.token = token;
+    },
+    SET_TWITCH_TOKEN(state: OauthState, token: TwitchToken) {
+      state.twitch_token = token;
     },
     SET_PROFILE_NAME(state: OauthState, btag: string) {
       state.blizzardVerifiedBtag = btag;

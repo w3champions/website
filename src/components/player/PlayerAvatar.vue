@@ -498,7 +498,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   .country__container {
-    max-width: 185px!important;
+    max-width: 185px !important;
   }
 }
 
