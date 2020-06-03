@@ -9,7 +9,7 @@ export default class ClanService {
     )}`;
 
     const response = await fetch(url);
-    if (response.status === 204) return { id: "", pendingInvites: [], foundingFathers: [], chiefTain: "", clanName: "", isSuccesfullyFounded: false, members: [], shamans: [] };
+    if (response.status === 204) return {} as Clan ;
     return await response.json();
   }
 
