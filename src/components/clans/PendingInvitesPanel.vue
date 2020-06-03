@@ -7,10 +7,7 @@
       None pending
     </v-card-subtitle>
     <table class="custom-table" v-if="!hasNoPendingInvites">
-      <tr
-              v-for="member in playersClan.pendingInvites"
-              :key="member"
-      >
+      <tr v-for="member in playersClan.pendingInvites" :key="member">
         <td>
           <v-row class="justify-space-between align-center ma-0">
             <v-col class="pa-0">

@@ -7,7 +7,6 @@ import { PlayerProfile } from "@/store/player/types";
 const mod = {
   namespaced: true,
   state: {
-    selectedClan: {},
     playersClan: {},
     clanValidationError: "",
     loading: true,
@@ -35,15 +34,34 @@ const mod = {
       commit.SET_CLAN_ERROR(response);
     },
 
-    async retrieveClan(
+    async addShaman(
       context: ActionContext<ClanState, RootState>,
-      clanId: string
+      battleTag: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.clanService.retrieveClan(clanId);
+      const response = await rootGetters.clanService.addShaman(
+        state.playersClan.id,
+        battleTag,
+        rootState.oauth.token
+      );
 
-      commit.SET_SELECTED_CLAN(response);
+      commit.SET_CLAN_ERROR(response);
+    },
+
+    async removeShaman(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.clanService.removeShaman(
+        state.playersClan.id,
+        battleTag,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
     },
 
     async acceptInvite(
@@ -139,11 +157,26 @@ const mod = {
 
       commit.SET_CLAN_ERROR(response);
     },
+
+    async kickPlayer(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { commit, state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const response = await rootGetters.clanService.kickPlayer(
+        battleTag,
+        state.playersClan.id,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
+    },
   },
   mutations: {
-    SET_SELECTED_CLAN(state: ClanState, clan: Clan) {
-      state.selectedClan = clan;
-    },
     SET_PLAYERS_CLAN(state: ClanState, clan: Clan) {
       state.playersClan = clan;
     },

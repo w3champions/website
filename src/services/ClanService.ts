@@ -2,12 +2,6 @@ import { API_URL } from "@/main";
 import { Clan, ClanMembership } from "@/store/clan/types";
 
 export default class ClanService {
-  public async retrieveClan(clanId: string): Promise<Clan> {
-    const url = `${API_URL}api/clans/${clanId}`;
-
-    const response = await fetch(url);
-    return await response.json();
-  }
 
   public async retrieveClanForPlayer(battleTag: string): Promise<Clan> {
     const url = `${API_URL}api/clans?battleTag=${encodeURIComponent(
@@ -35,6 +29,31 @@ export default class ClanService {
       method: "DELETE",
     });
     return response.ok;
+  }
+
+  public async addShaman(clanId: string, battleTag: string, token: string): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/shamans/?authorization=${token}`;
+
+    const post = { PlayerBattleTag: battleTag };
+    const data = JSON.stringify(post);
+    const response = await fetch(url, {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.ok ? "" : (await response.json()).error;
+  }
+
+  public async removeShaman(clanId: string, battleTag: string, token: string): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
+    return response.ok ? "" : (await response.json()).error;
   }
 
   public async leaveClan(clanId: string, battleTag: string, token: string): Promise<boolean> {
@@ -90,6 +109,20 @@ export default class ClanService {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+    });
+
+    return response.ok ? "" : (await response.json()).error;
+  }
+
+  public async kickPlayer(
+    battleTag: string,
+    clanId: string,
+    token: string
+  ): Promise<string> {
+    const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
     });
 
     return response.ok ? "" : (await response.json()).error;
