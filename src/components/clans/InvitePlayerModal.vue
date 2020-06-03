@@ -1,81 +1,67 @@
 <template>
   <div>
-    <v-dialog v-model="invitePlayerDialog" persistent max-width="600px">
-      <template v-slot:activator="{ on }">
-        <v-btn
-          @click="invitePlayerDialog = true"
-          class="ma-0"
-          outlined
-          v-on="on"
-          color="primary"
+    <v-card>
+      <v-card-title>
+        <span class="headline">Invite Player</span>
+      </v-card-title>
+      <v-card-text>
+        <v-autocomplete
+          v-model="searchModel"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          clearable
+          :items="searchPlayers"
+          :search-input.sync="search"
+          :no-data-text="noDataText"
+          item-text="name"
+          item-value="id"
+          placeholder="Start typing to Search"
+          return-object
         >
-          <v-icon left>mdi-pencil</v-icon>
-          <span>Invite Player</span>
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <span class="headline">Invite Player</span>
-        </v-card-title>
-        <v-card-text>
-          <v-autocomplete
-            v-model="searchModel"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            clearable
-            :items="searchPlayers"
-            :search-input.sync="search"
-            :no-data-text="noDataText"
-            item-text="name"
-            item-value="id"
-            placeholder="Start typing to Search"
-            return-object
-          >
-            <template v-slot:item="data">
-              <template v-if="typeof data.item !== 'object'">
-                <v-list-item-content v-text="data.item"></v-list-item-content>
-              </template>
-              <template v-else>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <span v-if="!isDuplicateName(data.item.name)">
-                      {{ data.item.name }}
-                    </span>
-                    <span v-if="isDuplicateName(data.item.name)">
-                      {{ data.item.battleTag }}
-                    </span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </template>
+          <template v-slot:item="data">
+            <template v-if="typeof data.item !== 'object'">
+              <v-list-item-content v-text="data.item"></v-list-item-content>
             </template>
-          </v-autocomplete>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialog">
-            Close
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            :disabled="!searchModel"
-            @click="invitePlayer"
-          >
-            Invite
-          </v-btn>
-        </v-card-actions>
-        <v-alert
-          v-model="isValidationError"
-          type="warning"
-          dense
-          class="ml-4 mr-4"
-          dismissible
+            <template v-else>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="!isDuplicateName(data.item.name)">
+                    {{ data.item.name }}
+                  </span>
+                  <span v-if="isDuplicateName(data.item.name)">
+                    {{ data.item.battleTag }}
+                  </span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </template>
+        </v-autocomplete>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="closeDialog">
+          Close
+        </v-btn>
+        <v-btn
+          color="blue darken-1"
+          text
+          :disabled="!searchModel"
+          @click="invitePlayer"
         >
-          {{ clanValidationError }}
-        </v-alert>
-      </v-card>
-    </v-dialog>
+          Invite
+        </v-btn>
+      </v-card-actions>
+      <v-alert
+        v-model="isValidationError"
+        type="warning"
+        dense
+        class="ml-4 mr-4"
+        dismissible
+      >
+        {{ clanValidationError }}
+      </v-alert>
+    </v-card>
   </div>
 </template>
 
