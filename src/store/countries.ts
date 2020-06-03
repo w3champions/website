@@ -116,6 +116,7 @@ export enum ECountries {
     Kenya = "KE",
     Kiribati = "KI",
     Korea = "KR",
+    Kosovo = "XK",
     Kuwait = "KW",
     Kyrgyzstan = "KG",
     "Lao Peoples Democratic Republic" = "LA",
