@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on }">
         <v-btn
           @click="dialog = true"
@@ -20,6 +20,15 @@
         <invite-player-modal v-if="loggedInPlayerIsShaman" />
         <kick-player-modal class="mt-3" v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded" />
         <shaman-management-modal class="mt-3" v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded" />
+        <v-alert
+          v-model="isValidationError"
+          type="warning"
+          dense
+          class="ml-4 mr-4"
+          dismissible
+        >
+          {{ clanValidationError }}
+        </v-alert>
       </v-card>
     </v-dialog>
   </div>
@@ -36,12 +45,10 @@ import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue"
   components: { ShamanManagementModal, KickPlayerModal, InvitePlayerModal }
 })
 export default class ClanManagementPanel extends Vue {
+  public dialog = false;
 
   get loggedInPlayerIsChiefTain() {
-    return (
-            this.playersClan.chiefTain ===
-            this.verifiedBtag
-    );
+    return this.playersClan.chiefTain === this.verifiedBtag;
   }
 
   get loggedInPlayerIsShaman() {
@@ -54,6 +61,14 @@ export default class ClanManagementPanel extends Vue {
 
   get playersClan() {
     return this.$store.direct.state.clan.playersClan;
+  }
+
+  get clanValidationError() {
+    return this.$store.direct.state.clan.clanValidationError;
+  }
+
+  get isValidationError() {
+    return this.$store.direct.state.clan.clanValidationError !== "";
   }
 }
 </script>
