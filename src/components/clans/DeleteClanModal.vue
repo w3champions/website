@@ -1,9 +1,7 @@
 <template>
   <v-card-text>
-    <br />
-    <br />
     <v-row class="justify-center">
-      <v-col class="text-center">
+      <v-col class="text-end">
         <v-dialog v-model="dialog" persistent max-width="400px">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" outlined color="error">
