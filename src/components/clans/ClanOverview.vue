@@ -17,14 +17,10 @@
         <invite-player-modal v-if="loggedInPlayerIsShaman" />
       </v-card-title>
       <v-card-subtitle
-        class="pointer"
+        class="pointer mt-2"
         @click="gotToChiefTain"
-        v-if="playersClan.isSuccesfullyFounded"
       >
         Chieftain: {{ playersClan.chiefTain.split("#")[0] }}
-      </v-card-subtitle>
-      <v-card-subtitle v-if="!playersClan.isSuccesfullyFounded">
-        This clan is not founded yet
       </v-card-subtitle>
       <div v-if="playersClan.isSuccesfullyFounded">
         <v-card-title>
