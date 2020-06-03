@@ -194,6 +194,7 @@ export enum ECountries {
     "San Marino" = "SM",
     "Sao Tome And Principe" = "ST",
     "Saudi Arabia" = "SA",
+    "Scotland" = "gb-sct",
     Senegal = "SN",
     Serbia = "RS",
     Seychelles = "SC",

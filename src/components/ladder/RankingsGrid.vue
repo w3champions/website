@@ -80,7 +80,6 @@
                   <div v-if="!isCurrentlyLive(item.player.playerIds)">Stream is live!</div>
                 </v-tooltip>
               </div>
-              <!-- <span v-if="index !== item.player.playerIds.length - 1">&</span> -->
             </div>
             <span
               style="position: relative;"
