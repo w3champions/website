@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span>Kick Members</span>
+      <span>Promote to shaman</span>
     </v-card-title>
     <v-card-text>
       <v-autocomplete
@@ -37,9 +37,17 @@
         color="blue darken-1"
         text
         :disabled="!searchModel"
-        @click="kickPlayer"
+        @click="promoteShaman"
       >
-        Kick
+        Promote
+      </v-btn>
+      <v-btn
+        color="blue darken-1"
+        text
+        :disabled="!searchModel"
+        @click="demoteShaman"
+      >
+        Demote
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -50,16 +58,28 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 @Component({})
-export default class KickPlayerModal extends Vue {
+export default class ShamanManagementPanel extends Vue {
   public searchModel = "";
 
-  public async kickPlayer() {
-    await this.$store.direct.dispatch.clan.kickPlayer(
+  public async promoteShaman() {
+    await this.$store.direct.dispatch.clan.addShaman(
       this.searchModel
     );
 
+    await this.refreshPage();
+  }
+
+  private async refreshPage() {
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
     this.searchModel = "";
+  }
+
+  public async demoteShaman() {
+    await this.$store.direct.dispatch.clan.removeShaman(
+      this.searchModel
+    );
+
+    await this.refreshPage();
   }
 
   get members() {

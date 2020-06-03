@@ -107,6 +107,17 @@ const mod = {
       commit.SET_PLAYERS_CLAN(response);
     },
 
+    async deleteClan(
+      context: ActionContext<ClanState, RootState>,
+    ) {
+      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.deleteClan(
+        state.playersClan.id,
+        rootState.oauth.token
+      );
+    },
+
     async leaveClan(
       context: ActionContext<ClanState, RootState>,
     ) {

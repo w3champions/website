@@ -57,7 +57,7 @@ import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 
 @Component({})
-export default class ClanOverview extends Vue {
+export default class InvitePlayerPanel extends Vue {
   public searchModel = {} as PlayerProfile;
 
   public search = "";

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="900px">
       <template v-slot:activator="{ on }">
         <v-btn
           @click="dialog = true"
@@ -13,20 +13,35 @@
           <span>Clan Management</span>
         </v-btn>
       </template>
-      <v-card>
+      <v-card class="pa-4">
         <v-card-title>
           Clan Management
         </v-card-title>
-        <invite-player-modal v-if="loggedInPlayerIsShaman" />
-        <kick-player-modal
-          v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded"
-        />
-        <shaman-management-modal
-          v-if="loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded"
-        />
-        <switch-chieftain-panel
-          v-if="loggedInPlayerIsChiefTain"
-        />
+        <v-row>
+          <v-col>
+            <invite-player-panel v-if="loggedInPlayerIsShaman" />
+          </v-col>
+          <v-col>
+            <kick-player-panel
+              v-if="loggedInPlayerIsShaman && playersClan.isSuccesfullyFounded"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <shaman-management-panel
+              v-if="
+                loggedInPlayerIsChiefTain && playersClan.isSuccesfullyFounded
+              "
+            />
+          </v-col>
+          <v-col>
+            <switch-chieftain-panel v-if="loggedInPlayerIsChiefTain" />
+          </v-col>
+        </v-row>
+
+        <delete-clan-modal v-if="loggedInPlayerIsChiefTain" />
+
         <v-alert
           v-model="isValidationError"
           type="warning"
@@ -44,17 +59,19 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
-import KickPlayerModal from "@/components/clans/KickPlayerModal.vue";
-import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
+import KickPlayerPanel from "@/components/clans/KickPlayerPanel.vue";
+import ShamanManagementPanel from "@/components/clans/ShamanManagementPanel.vue";
 import SwitchChieftainPanel from "@/components/clans/SwitchChieftainPanel.vue";
+import InvitePlayerPanel from "@/components/clans/InvitePlayerPanel.vue";
+import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
 
 @Component({
   components: {
+    DeleteClanModal,
+    InvitePlayerPanel,
     SwitchChieftainPanel,
-    ShamanManagementModal,
-    KickPlayerModal,
-    InvitePlayerModal,
+    ShamanManagementPanel,
+    KickPlayerPanel,
   },
 })
 export default class ClanManagementPanel extends Vue {

@@ -82,6 +82,15 @@ export default class ClanService {
     return response.ok;
   }
 
+  public async deleteClan(clanId: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/clans/${clanId}/?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
+    return response.ok;
+  }
+
   public async retrievePlayerMembership(battleTag: string): Promise<ClanMembership> {
     const url = `${API_URL}api/memberships/${encodeURIComponent(battleTag)}`;
 

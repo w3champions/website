@@ -82,16 +82,16 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
-import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
+import InvitePlayerModal from "@/components/clans/InvitePlayerPanel.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
-import ShamanManagementModal from "@/components/clans/ShamanManagementModal.vue";
-import KickPlayerModal from "@/components/clans/KickPlayerModal.vue";
+import ShamanManagementPanel from "@/components/clans/ShamanManagementPanel.vue";
+import KickPlayerPanel from "@/components/clans/KickPlayerPanel.vue";
 import ClanManagementPanel from "@/components/clans/ClanManagementPanel.vue";
 
 @Component({
-  components: { ClanManagementPanel, KickPlayerModal, ShamanManagementModal, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { ClanManagementPanel, KickPlayerModal: KickPlayerPanel, ShamanManagementModal: ShamanManagementPanel, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
