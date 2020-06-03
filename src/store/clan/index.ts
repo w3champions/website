@@ -9,7 +9,6 @@ const mod = {
   state: {
     playersClan: {},
     clanValidationError: "",
-    loading: true,
     searchPlayers: [] as PlayerProfile[],
     selectedMemberShip: {},
   } as ClanState,
@@ -23,14 +22,11 @@ const mod = {
         mod
       );
 
-      commit.SET_LOADING(true);
-
       const response = await rootGetters.clanService.createClan(
         clanName,
         rootState.oauth.token
       );
 
-      commit.SET_LOADING(true);
       commit.SET_CLAN_ERROR(response);
     },
 
@@ -56,6 +52,21 @@ const mod = {
       const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.removeShaman(
+        state.playersClan.id,
+        battleTag,
+        rootState.oauth.token
+      );
+
+      commit.SET_CLAN_ERROR(response);
+    },
+
+    async switchChieftain(
+      context: ActionContext<ClanState, RootState>,
+      battleTag: string
+    ) {
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+
+      const response = await rootGetters.clanService.switchChieftain(
         state.playersClan.id,
         battleTag,
         rootState.oauth.token
@@ -90,6 +101,17 @@ const mod = {
       );
 
       commit.SET_PLAYERS_CLAN(response);
+    },
+
+    async deleteClan(
+      context: ActionContext<ClanState, RootState>,
+    ) {
+      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.clanService.deleteClan(
+        state.playersClan.id,
+        rootState.oauth.token
+      );
     },
 
     async leaveClan(
@@ -182,9 +204,6 @@ const mod = {
     },
     SET_CLAN_ERROR(state: ClanState, error: string) {
       state.clanValidationError = error;
-    },
-    SET_LOADING(state: ClanState, loading: boolean) {
-      state.loading = loading;
     },
     SET_PLAYERS_SEARCH(state: ClanState, players: PlayerProfile[]) {
       state.searchPlayers = players;

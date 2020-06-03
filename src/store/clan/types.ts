@@ -4,7 +4,6 @@ export interface ClanState {
   playersClan: Clan;
   searchPlayers: PlayerProfile[];
   clanValidationError: string;
-  loading: boolean;
   selectedMemberShip: ClanMembership;
 }
 

@@ -29,7 +29,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
-import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
+import InvitePlayerModal from "@/components/clans/InvitePlayerPanel.vue";
 
 @Component({
   components: { InvitePlayerModal, ClanCreationPanel },
