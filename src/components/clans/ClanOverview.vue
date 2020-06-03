@@ -13,18 +13,14 @@
     <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
-        <span>{{ playersClan.clanName }}</span>
-        <clan-management-panel v-if="loggedInPlayerIsShaman" />
+        <span>{{ playersClan.clanName }} ({{ playersClan.clanAbbrevation }})</span>
+        <invite-player-modal v-if="loggedInPlayerIsShaman" />
       </v-card-title>
       <v-card-subtitle
-        class="pointer"
+        class="pointer mt-2"
         @click="gotToChiefTain"
-        v-if="playersClan.isSuccesfullyFounded"
       >
         Chieftain: {{ playersClan.chiefTain.split("#")[0] }}
-      </v-card-subtitle>
-      <v-card-subtitle v-if="!playersClan.isSuccesfullyFounded">
-        This clan is not founded yet
       </v-card-subtitle>
       <div v-if="playersClan.isSuccesfullyFounded">
         <v-card-title>
@@ -37,7 +33,19 @@
             @click="goToPlayer(member)"
           >
             <td>
-              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+              <v-row class="justify-space-between align-center ma-0">
+                <v-col class="pa-0">
+                  <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                </v-col>
+                <v-col class="text-right pa-0">
+                  <member-management-menu
+                    v-if="loggedInPlayerIsChiefTain"
+                    :battle-tag="member"
+                    :role="defineRole(member)"
+                    :logged-in-user-role="loggedInRole"
+                  />
+                </v-col>
+              </v-row>
             </td>
           </tr>
         </table>
@@ -46,12 +54,24 @@
         </v-card-title>
         <table class="custom-table">
           <tr
-            v-for="member in membersWithoutShamans"
+            v-for="member in members"
             :key="member"
             @click="goToPlayer(member)"
           >
             <td>
-              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+              <v-row class="justify-space-between align-center ma-0">
+                <v-col class="pa-0">
+                  <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                </v-col>
+                <v-col class="text-right pa-0">
+                  <member-management-menu
+                    v-if="loggedInPlayerIsShaman"
+                    :battle-tag="member"
+                    :role="defineRole(member)"
+                    :logged-in-user-role="loggedInRole"
+                  />
+                </v-col>
+              </v-row>
             </td>
           </tr>
         </table>
@@ -74,6 +94,7 @@
       </div>
       <pending-invites-panel v-if="loggedInPlayerIsShaman"/>
       <leave-clan-modal v-if="isLoggedInPlayer" />
+      <delete-clan-modal v-if="loggedInPlayerIsChiefTain" />
     </div>
   </v-card-text>
 </template>
@@ -82,16 +103,16 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
-import InvitePlayerModal from "@/components/clans/InvitePlayerPanel.vue";
+import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
 import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
 import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
-import ShamanManagementPanel from "@/components/clans/ShamanManagementPanel.vue";
-import KickPlayerPanel from "@/components/clans/KickPlayerPanel.vue";
-import ClanManagementPanel from "@/components/clans/ClanManagementPanel.vue";
+import MemberManagementMenu from "@/components/clans/MemberManagementMenu.vue";
+import { EClanRole } from "@/store/clan/types";
+import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
 
 @Component({
-  components: { ClanManagementPanel, KickPlayerModal: KickPlayerPanel, ShamanManagementModal: ShamanManagementPanel, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  components: { DeleteClanModal, MemberManagementMenu, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
@@ -109,6 +130,16 @@ export default class ClanOverview extends Vue {
 
   public gotToChiefTain() {
     this.goToPlayer(this.playersClan.chiefTain);
+  }
+
+  public defineRole(member: string) {
+    if (member === this.playersClan.chiefTain) return EClanRole.ChiefTain;
+    if (this.playersClan.shamans.find(s => s === member)) return EClanRole.Shaman;
+    return EClanRole.Member;
+  }
+
+  get loggedInRole() {
+    return this.defineRole(this.verifiedBtag);
   }
 
   get loggedInPlayerIsChiefTain() {
@@ -150,8 +181,8 @@ export default class ClanOverview extends Vue {
     return this.$store.direct.state.clan.playersClan.shamans;
   }
 
-  get membersWithoutShamans() {
-    return this.$store.direct.state.clan.playersClan.members.filter(m => !this.shamans.find(s => s === m));
+  get members() {
+    return this.$store.direct.state.clan.playersClan.members;
   }
 
   async mounted() {

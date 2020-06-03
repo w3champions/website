@@ -9,7 +9,7 @@ export default class ClanService {
     )}`;
 
     const response = await fetch(url);
-    if (!response) return { id: "", pendingInvites: [], foundingFathers: [], chiefTain: "", clanName: "", isSuccesfullyFounded: false, members: [], shamans: [] };
+    if (response.status === 204) return {} as Clan ;
     return await response.json();
   }
 
@@ -151,16 +151,19 @@ export default class ClanService {
       method: "PUT",
     });
 
-    return response.ok ? "" : (await response.json()).error;
+    if (response.ok) return ""
+
+    return (await response.json()).error;
   }
 
   public async createClan(
     clanName: string,
+    abbreviation: string,
     authToken: string
   ): Promise<string> {
     const url = `${API_URL}api/clans/?authorization=${authToken}`;
 
-    const post = { ClanName: clanName };
+    const post = { ClanName: clanName, ClanAbbrevation: abbreviation };
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "POST",
@@ -170,6 +173,11 @@ export default class ClanService {
         "Content-Type": "application/json",
       },
     });
-    return response.ok ? "" : (await response.json()).error;
+
+    if (response.ok) return ""
+
+    const errors = (await response.json()).errors;
+    if (errors.ClanName) return errors.ClanName[0]
+    else return errors.ClanAbbrevation[0] ;
   }
 }

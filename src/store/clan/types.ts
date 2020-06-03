@@ -17,10 +17,17 @@ export interface ClanMembership {
 export interface Clan {
   id: string;
   clanName: string;
+  clanAbbrevation: string;
   chiefTain: string;
   isSuccesfullyFounded: boolean;
   members: string[];
   foundingFathers: string[];
   shamans: string[];
   pendingInvites: string[];
+}
+
+export enum EClanRole {
+  ChiefTain= 2,
+  Shaman = 1,
+  Member = 0
 }
