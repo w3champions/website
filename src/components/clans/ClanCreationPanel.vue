@@ -11,16 +11,16 @@
     <v-row class="justify-center">
       <v-col cols="6">
         <v-text-field
-          style="text-align: center"
           :v-model="clanNameToCreate"
           @change="changeInsertedClanName"
+          :rules="[mustBeBetween(3, 30, ' ')]"
           label="Clan name"
           hint="enter clan name"
         />
         <v-text-field
-          style="text-align: center"
           :v-model="clanAbbreviationToCreate"
           @change="changeInsertedClanAbbreviation"
+          :rules="[mustBeBetween(2, 5, '')]"
           label="Clan abbreviation"
           hint="enter clan abbreviation"
         />
@@ -50,6 +50,13 @@ import { Component } from "vue-property-decorator";
 export default class ClanCreationPanel extends Vue {
   public clanNameToCreate = "";
   public clanAbbreviationToCreate = "";
+
+  public mustBeBetween(min: number, max: number, space: string) {
+    return function (v: string) {
+      if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`)) return `Must be between ${min} and ${max} numerical characters`;
+      return undefined
+    }
+  }
 
   public changeInsertedClanName(newName: string) {
     this.clanNameToCreate = newName;
