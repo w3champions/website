@@ -316,13 +316,6 @@ export default class PlayerAvatar extends Vue {
       (v || "").length < len || `Can not exceed ${len} characters`,
   };
 
-  public homepageEdit = { opened: false, text: this.homePage, savable: true };
-  public additonalInfoEdit = {
-    opened: false,
-    text: this.savedMessageValue,
-    savable: true,
-  };
-
   public selectedCountry = "";
   public selectedCountryCode = "";
 
