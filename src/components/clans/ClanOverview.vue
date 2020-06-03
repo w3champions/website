@@ -93,7 +93,7 @@
         </table>
       </div>
       <pending-invites-panel v-if="loggedInPlayerIsShaman"/>
-      <leave-clan-modal v-if="isLoggedInPlayer" />
+      <leave-clan-modal v-if="isLoggedInPlayer" :is-chieftain="loggedInPlayerIsChiefTain" />
       <delete-clan-modal v-if="loggedInPlayerIsChiefTain" />
     </div>
   </v-card-text>

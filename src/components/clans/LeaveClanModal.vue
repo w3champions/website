@@ -6,9 +6,12 @@
       <v-col class="text-end">
         <v-dialog v-model="invitePlayerDialog" persistent max-width="600px">
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" outlined color="error">
+            <v-btn :disabled="isChieftain" v-on="on" outlined color="error">
               Leave {{ clanName }}
             </v-btn>
+            <v-card-subtitle class="pr-0" v-if="isChieftain">
+              Promote a Shaman first to leave the clan
+            </v-card-subtitle>
           </template>
           <v-card>
             <v-card-title>
@@ -31,11 +34,12 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class LeaveClanModal extends Vue {
   public invitePlayerDialog = false;
+  @Prop() isChieftain!: boolean;
 
   public closeDialog() {
     this.invitePlayerDialog = false;
