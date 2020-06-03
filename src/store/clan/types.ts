@@ -24,3 +24,9 @@ export interface Clan {
   shamans: string[];
   pendingInvites: string[];
 }
+
+export enum EClanRole {
+  ChiefTain= 2,
+  Shaman = 1,
+  Member = 0
+}

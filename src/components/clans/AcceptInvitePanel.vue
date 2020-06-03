@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col class="text-center">
         <v-card-subtitle>
-          You where invited by {{ clanName }} to join their ranks!
+          You were invited by {{ clanName }} to join their ranks!
         </v-card-subtitle>
       </v-col>
     </v-row>
