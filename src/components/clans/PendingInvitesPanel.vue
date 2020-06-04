@@ -41,7 +41,9 @@ export default class PendingInvitesPanel extends Vue {
   public search = "";
 
   public getLeagueOrder(battleTag: string) {
-    return this.playersClan.ranks?.find(r => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag))?.leagueOrder;
+    const ranks = this.playersClan.ranks?.filter(r => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag))
+    ranks.sort((a, b) => b.rankingPoints - a.rankingPoints);
+    return ranks[0]?.leagueOrder;
   }
 
   public async revokeInvite(member: string) {
