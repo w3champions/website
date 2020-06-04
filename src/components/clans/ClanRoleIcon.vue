@@ -1,5 +1,5 @@
 <template>
-  <img :src="icon()" class="league-icon" :alt="league" />
+  <img :src="icon()" class="league-icon" alt="league" />
 </template>
 
 <script lang="ts">
@@ -24,8 +24,8 @@ export default class ClanRoleIcon extends Vue {
 
 <style lang="scss" scoped>
 .league-icon {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   margin-right: 10px;
   vertical-align: middle;
 }

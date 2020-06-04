@@ -15,13 +15,13 @@
         <br v-if="showAtPartner" />
       </div>
       <span v-if="isRanked">
-        Rank
-        <span class="number-text">
+        <span v-if="!smallMode">Rank</span>
+        <span v-if="!smallMode" class="number-text">
           {{ modeStat.rank }} |
-          <span class="won">{{ modeStat.wins }}</span>
-          -
-          <span class="lost">{{ modeStat.losses }}</span>
         </span>
+        <span class="won">{{ modeStat.wins }}</span>
+        -
+        <span class="lost">{{ modeStat.losses }}</span>
       </span>
       <span v-if="!isRanked">
         <span class="number-text">{{ modeStat.games }} / 5</span>
@@ -32,7 +32,7 @@
         class="LadderSummaryShowcase-divider"
         src="https://static.starcraft2.com/dist/images/ladder/profile-ladders-summary-small-divider.png"
       />
-      <div class="text-center" v-if="isRanked">
+      <div class="text-center" v-if="isRanked && !smallMode">
         <span>
           MMR:
           <span class="number-text">{{ modeStat.mmr }}</span>
@@ -42,7 +42,7 @@
           <span class="number-text">{{ modeStat.rankingPoints }}</span>
         </span>
       </div>
-      <div class="text-center" v-if="!isRanked">
+      <div class="text-center" v-if="!isRanked && !smallMode">
         <span>Placement matches played</span>
       </div>
     </div>
@@ -59,6 +59,7 @@ import { ModeStat } from "@/store/player/types";
 export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
   @Prop() showAtPartner!: boolean;
+  @Prop() smallMode!: boolean;
 
   get leagueMode() {
     return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
