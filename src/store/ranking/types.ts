@@ -45,6 +45,8 @@ export type Ranking = {
 
 export interface PlayerInfo {
   calculatedRace: ERaceEnum;
+  selectedRace: number;
+  pictureId: number;
 }
 
 export interface PlayerId {
