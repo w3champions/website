@@ -32,7 +32,6 @@ import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import { EGameMode } from "@/store/typings";
 
 @Component({
   components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
@@ -41,7 +40,7 @@ export default class PendingInvitesPanel extends Vue {
   public search = "";
 
   public getLeagueOrder(battleTag: string) {
-    const ranks = this.playersClan.ranks?.filter(r => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag))
+    const ranks = this.playersClan.ranks?.filter(r => r.id.includes(battleTag))
     ranks.sort((a, b) => b.rankingPoints - a.rankingPoints);
     return ranks[0]?.leagueOrder;
   }
