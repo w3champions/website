@@ -154,7 +154,7 @@
                     v-for="(playerId, index) in item.player.playerIds"
                     :key="playerId.battleTag"
                   >
-                    <v-card-text 
+                    <v-card-text
                       class="player-avatar mr-1 alignRight race-icon"
                       :title="getTitleRace(item, index)"
                       :style="{
@@ -231,7 +231,11 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
-import { DataTableOptions, EGameMode, ERaceEnum, ERaceEnumPretty } from "@/store/typings";
+import {
+  DataTableOptions,
+  EGameMode,
+  ERaceEnum,
+} from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -306,34 +310,36 @@ export default class RankingsView extends Vue {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
-    if(playerInfo.selectedRace && playerInfo.pictureId) {
+    if (playerInfo.selectedRace && playerInfo.pictureId) {
       return this.selectedAvatar(playerInfo.selectedRace, playerInfo.pictureId);
-   }
-   else{
-     return this.raceIcon(playerInfo.calculatedRace);
-   }
+    } else {
+      return this.raceIcon(playerInfo.calculatedRace);
+    }
   }
 
   public getTitleRace(ranking: Ranking, playerIndex: number) {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
-    if(playerInfo.selectedRace && playerInfo.pictureId) {
-      return ERaceEnumPretty[playerInfo.selectedRace];
-   }
-   else{
-     return ERaceEnumPretty[playerInfo.calculatedRace];
-   }
+    if (playerInfo.selectedRace && playerInfo.pictureId) {
+      return ERaceEnum[playerInfo.selectedRace];
+    } else {
+      debugger;
+      return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
+    }
   }
   selectedAvatar(race: ERaceEnum, picId: number) {
-    return require("../assets/raceAvatars/" + ERaceEnum[race] + "_" + picId + ".jpg");
+    return require("../assets/raceAvatars/" +
+      ERaceEnum[race] +
+      "_" +
+      picId +
+      ".jpg");
   }
 
-  raceIcon(race: ERaceEnum)
-  {
+  raceIcon(race: ERaceEnum) {
     return require("../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
   }
-  
+
   get selectedLeagueName(): string {
     return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
   }

@@ -109,11 +109,3 @@ export enum ERaceEnum {
   UNDEAD = 8,
   TOTAL = 16,
 }
-
-export enum ERaceEnumPretty {
-  Random = 0,
-  Human = 1,
-  Orc = 2,
-  'Night elf' = 4,
-  Undead = 8
-}
