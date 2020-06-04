@@ -159,7 +159,7 @@
                       :title="getTitleRace(item, index)"
                       :style="{
                         'background-image':
-                          'url(' + calculatedRace(item, index) + ')',
+                          'url(' + getRaceIcon(item, index) + ')',
                       }"
                     />
                     <player-rank-info :player-id="playerId" />
@@ -306,7 +306,7 @@ export default class RankingsView extends Vue {
     return ladder.leagues.filter((l) => l.id == league)[0] || {};
   }
 
-  public calculatedRace(ranking: Ranking, playerIndex: number) {
+  public getRaceIcon(ranking: Ranking, playerIndex: number) {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
