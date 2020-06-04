@@ -35,10 +35,15 @@ export type League = {
 };
 
 export type Ranking = {
+  id: string;
   gateway: number;
   league: number;
+  leagueDivision: number;
+  leagueOrder: number;
+  leagueName: string;
   rankNumber: number;
   rankingPoints: number;
+  gameMode: EGameMode;
   player: PlayerOverview;
   playersInfo: PlayerInfo[];
 };
@@ -46,6 +51,7 @@ export type Ranking = {
 export interface PlayerInfo {
   calculatedRace: ERaceEnum;
   twitchName: string;
+  clanId: string;
 }
 
 export interface PlayerId {
