@@ -38,7 +38,7 @@ const mod = {
       const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.addShaman(
-        state.playersClan.id,
+        state.playersClan.clanId,
         battleTag,
         rootState.oauth.token
       );
@@ -53,7 +53,7 @@ const mod = {
       const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.removeShaman(
-        state.playersClan.id,
+        state.playersClan.clanId,
         battleTag,
         rootState.oauth.token
       );
@@ -68,7 +68,7 @@ const mod = {
       const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.clanService.switchChieftain(
-        state.playersClan.id,
+        state.playersClan.clanId,
         battleTag,
         rootState.oauth.token
       );
@@ -110,7 +110,7 @@ const mod = {
       const { state, rootGetters, rootState } = moduleActionContext(context, mod);
 
       await rootGetters.clanService.deleteClan(
-        state.playersClan.id,
+        state.playersClan.clanId,
         rootState.oauth.token
       );
     },
@@ -121,7 +121,7 @@ const mod = {
       const { state, rootGetters, rootState } = moduleActionContext(context, mod);
 
       await rootGetters.clanService.leaveClan(
-        state.playersClan.id,
+        state.playersClan.clanId,
         state.selectedMemberShip.battleTag,
         rootState.oauth.token
       );
@@ -147,7 +147,7 @@ const mod = {
 
       await rootGetters.clanService.revokeInvite(
         battleTagId,
-        state.playersClan.id,
+        state.playersClan.clanId,
         rootState.oauth.token
       );
     },
@@ -174,7 +174,7 @@ const mod = {
 
       const response = await rootGetters.clanService.invitePlayer(
         battleTag,
-        state.playersClan.id,
+        state.playersClan.clanId,
         rootState.oauth.token
       );
 
@@ -192,7 +192,7 @@ const mod = {
 
       const response = await rootGetters.clanService.kickPlayer(
         battleTag,
-        state.playersClan.id,
+        state.playersClan.clanId,
         rootState.oauth.token
       );
 

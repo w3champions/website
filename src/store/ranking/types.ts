@@ -37,6 +37,9 @@ export type League = {
 export type Ranking = {
   gateway: number;
   league: number;
+  leagueDivision: number;
+  leagueOrder: number;
+  leagueName: string;
   rankNumber: number;
   rankingPoints: number;
   player: PlayerOverview;

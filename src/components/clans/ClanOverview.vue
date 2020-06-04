@@ -13,7 +13,7 @@
     <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
-        <span>{{ playersClan.clanName }} ({{ playersClan.clanAbbrevation }})</span>
+        <span>{{ playersClan.clanName }} ({{ playersClan.clanId }})</span>
         <invite-player-modal v-if="loggedInPlayerIsShaman" />
       </v-card-title>
       <v-card-subtitle
@@ -162,7 +162,7 @@ export default class ClanOverview extends Vue {
   }
 
   get hasNoClan() {
-    return !this.playersClan?.id;
+    return !this.playersClan?.clanId;
   }
 
   get isLoggedInPlayer() {
