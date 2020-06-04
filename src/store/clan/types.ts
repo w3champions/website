@@ -28,7 +28,8 @@ export interface Clan {
 }
 
 export enum EClanRole {
-  ChiefTain= 2,
-  Shaman = 1,
-  Member = 0
+  ChiefTain = 3,
+  Shaman = 2,
+  Member = 1,
+  Undefined = 0
 }

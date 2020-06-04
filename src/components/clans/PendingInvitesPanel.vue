@@ -12,7 +12,6 @@
           <v-row class="justify-space-between align-center ma-0">
             <v-col class="pa-0">
               <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
-              <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" />
             </v-col>
             <v-col class="text-right pa-0">
               <v-btn @click="revokeInvite(member)">
@@ -38,12 +37,6 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 })
 export default class PendingInvitesPanel extends Vue {
   public search = "";
-
-  public getLeagueOrder(battleTag: string) {
-    const ranks = this.playersClan.ranks?.filter(r => r.id.includes(battleTag))
-    ranks.sort((a, b) => b.rankingPoints - a.rankingPoints);
-    return ranks[0]?.leagueOrder;
-  }
 
   public async revokeInvite(member: string) {
     await this.$store.direct.dispatch.clan.revokeInvite(member);
