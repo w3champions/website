@@ -26,9 +26,21 @@
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
               <v-col v-if="matchIsFFA" cols="4">
-                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[1]" />
-                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[2]" />
-                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[3]" />
+                <team-match-info
+                  class="ma-1"
+                  :big-race-icon="true"
+                  :team="match.teams[1]"
+                />
+                <team-match-info
+                  class="ma-1"
+                  :big-race-icon="true"
+                  :team="match.teams[2]"
+                />
+                <team-match-info
+                  class="ma-1"
+                  :big-race-icon="true"
+                  :team="match.teams[3]"
+                />
               </v-col>
               <v-col cols="1" />
             </v-row>
@@ -40,7 +52,7 @@
             </v-card-subtitle>
           </v-card-title>
           <match-detail-hero-row
-            v-if="isCompleteGame && !matchIsFFA"
+            v-if="!matchIsFFA && isCompleteGame"
             :heroes-of-winner="scoresOfWinners[0].heroes"
             :heroes-of-looser="scoresOfLoosers[0].heroes"
             :scores-of-winner="scoresOfWinners[0].heroScore"
@@ -49,8 +61,9 @@
           <match-detail-hero-row
             v-if="matchIs2v2 && isCompleteGame"
             :heroes-of-winner="scoresOfWinners[1].heroes"
-            :scores-of-winner="scoresOfWinners[1].heroScore"
             :heroes-of-looser="scoresOfLoosers[1].heroes"
+            :scores-of-winner="scoresOfWinners[1].heroScore"
+            :scores-of-looser="scoresOfLoosers[1].heroScore"
           />
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
@@ -99,24 +112,38 @@
             <v-col cols="1"></v-col>
           </v-row>
           <v-row v-if="isCompleteGame && matchIsFFA">
-            <v-col cols="2"/>
+            <v-col cols="2" />
             <v-col>
               <v-row dense v-for="(label, index) in rowLabels" :key="label">
                 <v-col>
                   {{ label }}
                 </v-col>
                 <v-col v-for="player in ffaPlayers" :key="player.battleTag">
-                  <div v-if="index === 0">{{ player.battleTag.split("#")[0] }}</div>
-                  <div v-if="index === 1">{{ player.unitScore.unitsKilled }}</div>
-                  <div v-if="index === 2">{{ player.unitScore.unitsProduced }}</div>
-                  <div v-if="index === 3">{{ player.resourceScore.goldCollected }}</div>
-                  <div v-if="index === 4">{{ player.resourceScore.lumberCollected }}</div>
-                  <div v-if="index === 5">{{ player.resourceScore.goldUpkeepLost }}</div>
-                  <div v-if="index === 6">{{ player.unitScore.largestArmy }}</div>
+                  <div v-if="index === 0">
+                    {{ player.battleTag.split("#")[0] }}
+                  </div>
+                  <div v-if="index === 1">
+                    {{ player.unitScore.unitsKilled }}
+                  </div>
+                  <div v-if="index === 2">
+                    {{ player.unitScore.unitsProduced }}
+                  </div>
+                  <div v-if="index === 3">
+                    {{ player.resourceScore.goldCollected }}
+                  </div>
+                  <div v-if="index === 4">
+                    {{ player.resourceScore.lumberCollected }}
+                  </div>
+                  <div v-if="index === 5">
+                    {{ player.resourceScore.goldUpkeepLost }}
+                  </div>
+                  <div v-if="index === 6">
+                    {{ player.unitScore.largestArmy }}
+                  </div>
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="2"/>
+            <v-col cols="2" />
           </v-row>
         </v-card>
       </v-col>
@@ -170,10 +197,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get ffaPlayers() {
-    return [
-      this.ffaWinner,
-      ...this.ffaLoosers
-    ];
+    return [this.ffaWinner, ...this.ffaLoosers];
   }
 
   get matchDuration() {
@@ -211,14 +235,14 @@ export default class MatchDetailView extends Vue {
 
   get matchIs2v2() {
     return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ==
+      this.$store.direct.state.matches.matchDetail.match.gameMode ===
       EGameMode.GM_2ON2_AT
     );
   }
 
   get matchIsFFA() {
     return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ==
+      this.$store.direct.state.matches.matchDetail.match.gameMode ===
       EGameMode.GM_FFA
     );
   }
@@ -244,23 +268,33 @@ export default class MatchDetailView extends Vue {
   }
 
   get ffaWinner() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(s => s.battleTag === this.match.teams[0].players[0].battleTag);
+    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+      (s) => s.battleTag === this.match.teams[0].players[0].battleTag
+    );
   }
 
   get ffaLoosers() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(s => s.battleTag !== this.match.teams[0].players[0].battleTag);
+    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+      (s) => s.battleTag !== this.match.teams[0].players[0].battleTag
+    );
   }
 
   get ffaLooser1() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(s => s.battleTag === this.match.teams[1].players[0].battleTag);
+    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+      (s) => s.battleTag === this.match.teams[1].players[0].battleTag
+    );
   }
 
   get ffaLooser2() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(s => s.battleTag === this.match.teams[2].players[0].battleTag);
+    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+      (s) => s.battleTag === this.match.teams[2].players[0].battleTag
+    );
   }
 
   get ffaLooser3() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(s => s.battleTag === this.match.teams[3].players[0].battleTag);
+    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+      (s) => s.battleTag === this.match.teams[3].players[0].battleTag
+    );
   }
 
   get loading() {
