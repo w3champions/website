@@ -20,7 +20,7 @@
         class="pointer mt-2"
         @click="gotToChiefTain"
       >
-        Chieftain: {{ playersClan.chiefTain.split("#")[0] }}
+        Chieftain: {{ playersClan.chiefTain.split("#")[0] }} <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
       </v-card-subtitle>
       <div v-if="playersClan.isSuccesfullyFounded">
         <v-card-title>
@@ -36,6 +36,7 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                  <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" />
                 </v-col>
                 <v-col class="text-right pa-0">
                   <member-management-menu
@@ -62,6 +63,7 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+                  <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" />
                 </v-col>
                 <v-col class="text-right pa-0">
                   <member-management-menu
@@ -100,22 +102,28 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
-import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
-import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
-import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
-import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
-import MemberManagementMenu from "@/components/clans/MemberManagementMenu.vue";
-import { EClanRole } from "@/store/clan/types";
-import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
+  import Vue from "vue";
+  import { Component } from "vue-property-decorator";
+  import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
+  import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
+  import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
+  import AcceptInvitePanel from "@/components/clans/AcceptInvitePanel.vue";
+  import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
+  import MemberManagementMenu from "@/components/clans/MemberManagementMenu.vue";
+  import { EClanRole } from "@/store/clan/types";
+  import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
+  import { EGameMode } from "@/store/typings";
+  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 
-@Component({
-  components: { DeleteClanModal, MemberManagementMenu, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
+  @Component({
+  components: { LeagueIcon, DeleteClanModal, MemberManagementMenu, LeaveClanModal, AcceptInvitePanel, PendingInvitesPanel, InvitePlayerModal, ClanCreationPanel },
 })
 
 export default class ClanOverview extends Vue {
+  public getLeagueOrder(battleTag: string) {
+    return this.playersClan.ranks?.find(r => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag))?.leagueOrder;
+  }
+
   get clanValidationError() {
     return this.$store.direct.state.clan.clanValidationError;
   }

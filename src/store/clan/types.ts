@@ -24,7 +24,7 @@ export interface Clan {
   foundingFathers: string[];
   shamans: string[];
   pendingInvites: string[];
-  rankings: Ranking[];
+  ranks: Ranking[];
 }
 
 export enum EClanRole {

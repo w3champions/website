@@ -12,6 +12,7 @@
           <v-row class="justify-space-between align-center ma-0">
             <v-col class="pa-0">
               <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+              <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" />
             </v-col>
             <v-col class="text-right pa-0">
               <v-btn @click="revokeInvite(member)">
@@ -30,13 +31,18 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
+import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+import { EGameMode } from "@/store/typings";
 
 @Component({
-  components: { InvitePlayerModal, ClanCreationPanel },
+  components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
 })
 export default class PendingInvitesPanel extends Vue {
   public search = "";
 
+  public getLeagueOrder(battleTag: string) {
+    return this.playersClan.ranks?.find(r => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag))?.leagueOrder;
+  }
 
   public async revokeInvite(member: string) {
     await this.$store.direct.dispatch.clan.revokeInvite(member);
