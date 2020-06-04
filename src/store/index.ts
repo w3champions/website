@@ -8,6 +8,9 @@ import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
+import chat from "./chat/index";
+import clan from "./clan/index";
+import twitch from "./twitch/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -18,6 +21,9 @@ import AuthorizationService from "@/services/AuthorizationService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
+import ChatService from "@/services/ChatService";
+import ClanService from "@/services/ClanService";
+import TwitchService from '@/services/TwitchService';
 
 Vue.use(Vuex);
 
@@ -28,6 +34,9 @@ const services = {
   statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
+  chatService: new ChatService(),
+  clanService: new ClanService(),
+  twitchService: new TwitchService(),
 };
 
 const mod = {
@@ -38,6 +47,9 @@ const mod = {
     overallStatistics,
     oauth,
     personalSettings,
+    chat,
+    clan,
+    twitch
   },
   state: {
     darkMode: false,
@@ -71,6 +83,15 @@ const mod = {
     },
     personalSettingsService() {
       return services.personalSettingsService;
+    },
+    chatService() {
+      return services.chatService;
+    },
+    clanService() {
+      return services.clanService;
+    },
+    twitchService() {
+      return services.twitchService;
     },
   },
 } as const;

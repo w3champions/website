@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip top :disabled="!showPlayerInfo">
     <template v-slot:activator="{ on }">
       <div class="player-info" :class="textClass">
         <player-icon
@@ -62,6 +62,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public bigRaceIcon!: boolean;
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
+  @Prop() public isAnonymous!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
@@ -113,16 +114,28 @@ export default class PlayerMatchInfo extends Vue {
     return this.player.name;
   }
 
+  get showPlayerInfo() {
+    return !this.unfinishedMatch || !this.isAnonymous;
+  }
+
   private getPlayerPath() {
     return "/player/" + encodeURIComponent(this.player.battleTag);
   }
 
   public openProfileInNewTab() {
+    if(!this.showPlayerInfo) {
+      return;
+    }
+
     const path = this.getPlayerPath();
     window.open(path, "_blank");
   }
 
   private async lazyLoadWinrate() {
+    if (!this.showPlayerInfo) {
+      return;
+    }
+
     this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
       this.player.battleTag,
       this.$store.direct.state.rankings.selectedSeason.id
@@ -130,6 +143,10 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public goToPlayer() {
+    if(!this.showPlayerInfo) {
+      return;
+    }
+
     this.$router
       .push({
         path: "/player/" + encodeURIComponent(this.player.battleTag),

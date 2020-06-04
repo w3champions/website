@@ -11,6 +11,67 @@
               'url(' + picture(personalRace, personalRaceIcon) + ')',
           }"
         />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <div v-on="on" class="country__container">
+              <country-flag
+                v-if="selectedCountry != ''"
+                class="player-country"
+                :country="selectedCountryCode"
+                size="normal"
+              />
+            </div>
+          </template>
+          <span>{{selectedCountry}}</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'http://twitch.tv/' + userProfile.twitch"
+              target="_blank"
+              class="twitchIcon"
+            >
+              <v-icon color="purple accent-4">mdi-twitch</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ userProfile.twitch }}</span>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="2" v-if="userProfile.youtube != ''" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'http://youtube.com/' + userProfile.youtube"
+              target="_blank"
+            >
+              <v-icon color="red darken-2">mdi-youtube</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ userProfile.youtube }}</span>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="2" v-if="userProfile.twitter != ''" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'http://twitter.com/' + userProfile.twitter"
+              target="_blank"
+            >
+              <v-icon color="blue darken-2">mdi-twitter</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ userProfile.twitter }}</span>
+        </v-tooltip>
       </v-col>
     </v-row>
 
@@ -42,96 +103,148 @@
       </v-card>
     </v-dialog>
 
-    <h3>
-      Homepage:
-      <template>
-        <v-icon
-          v-if="isLoggedInPlayer"
-          class="float-lg-right"
-          @click="homepageEdit.opened = !homepageEdit.opened"
-        >
-          mdi-pencil
-        </v-icon>
-      </template>
-      <v-dialog v-model="homepageEdit.opened" max-width="500px">
-        <v-card>
-          <v-card-text>
-            <v-form v-model="homepageEdit.savable">
-              <v-text-field
-                counter="50"
-                :rules="[rules.maxLength(50)]"
-                label="Homepage"
-                placeholder="Homepage"
-                v-model="homepageEdit.text"
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!homepageEdit.savable"
-              text
-              color="primary"
-              @click="saveHomepageInfo"
-            >
-              Save
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </h3>
-    <div v-if="homePageLinks && homePageLinks.length > 0">
-      <a
-        class="d-block"
-        v-for="homePageLink in homePageLinks"
-        rel="noopener noreferrer nofollow"
-        target="_blank"
-        :href="homePageLink"
-        :key="homePageLink"
-      >
-        {{ homePageLink }}
-      </a>
-    </div>
-    <div v-else>{{ homePage }}</div>
-    <h3>
-      About:
-      <template>
-        <v-icon
-          v-if="isLoggedInPlayer"
-          class="float-lg-right"
-          @click="additonalInfoEdit.opened = !additonalInfoEdit.opened"
-        >
-          mdi-pencil
-        </v-icon>
-      </template>
-      <v-dialog v-model="additonalInfoEdit.opened" max-width="500px">
-        <v-card>
-          <v-card-text>
-            <v-form v-model="additonalInfoEdit.savable">
-              <v-textarea
-                counter="300"
-                :rules="[rules.maxLength(300)]"
-                label="Additional Info"
-                placeholder="Additional Info"
-                v-model="additonalInfoEdit.text"
-              ></v-textarea>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!additonalInfoEdit.savable"
-              text
-              color="primary"
-              @click="saveAdditionalInfo"
-            >
-              Save
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </h3>
-    <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
+    <v-row>
+      <v-col>
+        <h3>Homepage:</h3>
+        <div v-if="homePageLinks && homePageLinks.length > 0">
+          <a
+            class="d-block"
+            v-for="homePageLink in homePageLinks"
+            rel="noopener noreferrer nofollow"
+            target="_blank"
+            :href="homePageLink"
+            :key="homePageLink"
+          >{{ homePage }}</a>
+        </div>
+        <div v-else>{{ homePage }}</div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <h3>About:</h3>
+        <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
+      </v-col>
+    </v-row>
+    <template>
+      <v-row v-if="isLoggedInPlayer">
+        <v-col>
+          <v-dialog v-model="userProfile.editDialogOpened" persistent max-width="600px">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                @click="userProfile.editDialogOpened = true"
+                small
+                class="ma-0"
+                outlined
+                v-on="on"
+                color="primary"
+              >
+                <v-icon left>mdi-pencil</v-icon>Edit Profile
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">User Profile</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-text-field
+                      prepend-icon="mdi-twitch"
+                      color="purple accent-4"
+                      dense
+                      clearable
+                      single-line
+                      shaped
+                      prefix="https://twitch.tv/"
+                      hint="Enter your Twitch username!"
+                      v-model="userProfile.twitch"
+                    ></v-text-field>
+                    <v-text-field
+                      prepend-icon="mdi-youtube"
+                      color="red darken-2"
+                      dense
+                      clearable
+                      single-line
+                      shaped
+                      hint="Enter your YouTube username!"
+                      prefix="https://www.youtube.com/"
+                      v-model="userProfile.youtube"
+                    ></v-text-field>
+                    <v-text-field
+                      prepend-icon="mdi-twitter"
+                      color="blue darken-2"
+                      dense
+                      clearable
+                      single-line
+                      shaped
+                      hint="Enter your Twitter handle!"
+                      prefix="https://www.twitter.com/"
+                      v-model="userProfile.twitter"
+                    ></v-text-field>
+                    <v-text-field
+                      prepend-icon="mdi-home"
+                      color="blue darken-2"
+                      dense
+                      :rules="[rules.maxLength(50)]"
+                      single-line
+                      clearable
+                      v-model="userProfile.homePage"
+                      shaped
+                      hint="Enter a custom homepage"
+                      label="Homepage"
+                    ></v-text-field>
+                  </v-row>
+                  <v-row no-gutters class="countryInput">
+                    <v-col md="12">
+                      <v-autocomplete
+                        prepend-icon="mdi-flag"
+                        clearable
+                        :item-value="(obj) => (obj)[country]"
+                        :items="countries"
+                        :filter="countryFilter"
+                        label="Select your country"
+                        item-text="country"
+                        v-model="selectedCountry"
+                        :return-object="false"
+                      >
+                        <template v-slot:item="{ index, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          {{ item.country }}
+                          <v-spacer></v-spacer>
+                        </template>
+                        <template v-slot:selection="{ attrs, item }">
+                          <country-flag :country="item.countryCode" size="normal" />
+                          <span class="pr-2">{{ item.country }}</span>
+                        </template>
+                      </v-autocomplete>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-textarea
+                        outlined
+                        name="input-7-1"
+                        label="About"
+                        clearable
+                        :rules="[rules.maxLength(300)]"
+                        value
+                        v-model="userProfile.about"
+                        hint="Write something about yourself!"
+                      ></v-textarea>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="resetUserProfile">Close</v-btn>
+                <v-btn color="blue darken-1" text @click="saveUserProfile">Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-col>
+      </v-row>
+    </template>
   </div>
 </template>
 
@@ -139,8 +252,11 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import { ECountries } from "@/store/countries";
+import { PersonalSetting } from "../../store/personalSettings/types";
+import CountryFlag from "vue-country-flag";
 
-@Component({})
+@Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
 
@@ -152,10 +268,28 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.UNDEAD,
     ERaceEnum.RANDOM,
   ];
+
+  public countries: { country: string; countryCode: string }[] = [];
   public PicNumbers = Array.from(Array(11).keys());
 
   get homePage(): string {
     return this.personalSetting.homePage || "-";
+  }
+
+  get country(): string {
+    return this.personalSetting.country || "-";
+  }
+
+  get twitch(): string {
+    return this.personalSetting.twitch || "";
+  }
+
+  get youtube(): string {
+    return this.personalSetting.youTube || "";
+  }
+
+  get twitter(): string {
+    return this.personalSetting.twitter || "";
   }
 
   get homePageLinks(): Array<string> {
@@ -182,25 +316,55 @@ export default class PlayerAvatar extends Vue {
       (v || "").length < len || `Can not exceed ${len} characters`,
   };
 
-  public homepageEdit = { opened: false, text: this.homePage, savable: true };
-  public additonalInfoEdit = {
-    opened: false,
-    text: this.savedMessageValue,
-    savable: true,
+  public selectedCountry = "";
+  public selectedCountryCode = "";
+
+  public userProfile = {
+    twitch: this.twitch,
+    youtube: this.youtube,
+    twitter: this.twitter,
+    about: this.savedMessageValue,
+    homePage: this.homePage,
+    editDialogOpened: false,
   };
 
-  async saveAdditionalInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveAditionalInfo(
-      this.additonalInfoEdit.text
-    );
-    this.additonalInfoEdit.opened = false;
+  countryFilter(item: any, queryText: any, itemText: any) {
+    const textOne = item.country.toLowerCase();
+    const searchText = queryText.toLowerCase();
+    return textOne.includes(searchText);
   }
 
-  async saveHomepageInfo() {
-    await this.$store.direct.dispatch.personalSettings.saveHomepageInfo(
-      this.homepageEdit.text
+  async resetUserProfile() {
+    this.userProfile = {
+      editDialogOpened: false,
+      twitch: this.twitch,
+      homePage: this.homePage,
+      about: this.savedMessageValue,
+      youtube: this.youtube,
+      twitter: this.twitter,
+    };
+  }
+
+  async saveUserProfile() {
+    let personalSetting = this.personalSetting;
+    personalSetting.profileMessage = this.userProfile.about;
+    personalSetting.homePage = this.userProfile.homePage;
+    personalSetting.twitch = this.userProfile.twitch;
+    personalSetting.youTube = this.userProfile.youtube;
+    personalSetting.twitter = this.userProfile.twitter;
+    personalSetting.country = this.selectedCountry || "";
+
+    this.countries.map((c) => {
+      if (c.country == this.selectedCountry) {
+        this.selectedCountry = c.country;
+        this.selectedCountryCode = c.countryCode;
+      }
+    });
+
+    await this.$store.direct.dispatch.personalSettings.saveUserProfile(
+      personalSetting
     );
-    this.homepageEdit.opened = false;
+    this.userProfile.editDialogOpened = false;
   }
 
   getCorrectClasses(race: ERaceEnum, iconId: number) {
@@ -273,16 +437,74 @@ export default class PlayerAvatar extends Vue {
 
   async init() {
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
-    this.homepageEdit.text = this.homePage;
-    this.additonalInfoEdit.text = this.savedMessageValue;
+    this.userProfile = {
+      twitch: this.twitch,
+      homePage: this.homePage,
+      about: this.savedMessageValue,
+      youtube: this.youtube,
+      twitter: this.twitter,
+      editDialogOpened: false,
+    };
+
+    // populate countries dropdown for combobox
+    Object.keys(ECountries).map((key) => {
+      let country = {
+        country: key,
+        countryCode: (ECountries as any)[key] as string,
+      };
+
+      if (this.country && this.country == key) {
+        this.selectedCountry = country.country;
+        this.selectedCountryCode = country.countryCode;
+      }
+
+      this.countries.push(country);
+    });
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.countryInput {
+  margin-left: -11px;
+}
+
+.player-country {
+  position: absolute;
+  border-color: white;
+  border-style: solid;
+  border-width: thin;
+  bottom: 0px;
+  right: -5px;
+}
+
+.country__container {
+  position: relative;
+  max-width: 120px;
+}
+
+.socialIcon {
+  padding-top: 0px;
+  padding-left: 2px;
+}
+
+.twitchIcon {
+  margin-top: 2px;
+}
+
+@media (min-width: 960px) {
+  .player-avatar {
+    height: 185px !important;
+  }
+
+  .country__container {
+    max-width: 185px !important;
+  }
+}
+
 .player-avatar {
   max-width: 185px;
-  height: 185px;
+  height: 120px;
   background-repeat: no-repeat;
   background-size: contain;
 }

@@ -42,16 +42,17 @@
                   We created a setup tool that automatically does all steps
                   needed.
                 </p>
-                <ol>
-                  <li>
-                    Download the installer, execute it and select your Warcraft
-                    III installation folder.
-                  </li>
-                  <li>
-                    You are ready to go. Start Warcraft III and you should see
-                    the new button in the Versus-screen.
-                  </li>
-                </ol>
+                <v-btn
+                  color="primary"
+                  href="./W3Champions.msi"
+                  target="_blank"
+                  value
+                  outlined
+                  class="w3-background"
+                >
+                  <v-icon>mdi-download</v-icon>
+                  <span class="mr-2 hidden-xs-only">Windows launcher</span>
+                </v-btn>
               </v-col>
               <v-col cols="6" md="6">
                 <h3>Installation Guide Mac OS</h3>
@@ -64,70 +65,37 @@
                     Download the archive file and unpack it in your Warcraft
                     Installation folder
                   </li>
+                  <v-btn
+                    class="w3-background ma-4"
+                    color="primary"
+                    href="./MAC-W3Champions.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Mac Archive</span>
+                  </v-btn>
                   <li>
                     Make sure to have a directory structure like Warcraft
                     III\webui\index.html
                   </li>
                   <li>
-                    You are ready to go. Start Warcraft III and you should see
-                    the new button in the Versus-screen.
+                    Download the Maps Archive and unpack it to your Warcraft III Maps Folder
+                  </li>
+                  <v-btn
+                    class="w3-background ma-4"
+                    color="primary"
+                    href="./W3Champions-Maps-V1.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Download MAPS archive</span>
+                  </v-btn>
+                  <li>
+                    The folder structure after unpacking should be Maps/W3Champions/v1/FFA
                   </li>
                 </ol>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <p>
-                  <v-btn
-                    color="primary"
-                    href="./w3champions-setup.exe"
-                    target="_blank"
-                    value
-                    outlined
-                    class="w3-background"
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Windows installer</span>
-                  </v-btn>
-                </p>
-                <p>
-                  <b>Issues with the download link?</b>
-                  <br />
-                  Some Antivir-Software has falsely detected our setup as
-                  malicious. We contacted them and some already corrected their
-                  databases. If thats not the case for you, use the following
-                  link and unpack the setup with the
-                  <b style="white-space: nowrap;">password WC3</b>
-                </p>
-                <p>
-                  <v-btn
-                    class="w3-background"
-                    color="secondary"
-                    href="./w3champions-setup.zip"
-                    target="_blank"
-                    value
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      Windows installer zipped
-                    </span>
-                  </v-btn>
-                </p>
-              </v-col>
-              <v-col cols="6">
-                <p>
-                  <v-btn
-                    class="w3-background"
-                    color="primary"
-                    href="./webui.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac archive</span>
-                  </v-btn>
-                </p>
               </v-col>
             </v-row>
           </v-card-text>
@@ -179,25 +147,29 @@
           <v-col cols="12" class>
             <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
-              <v-list dense>
-                <v-list-item
+              <table class="custom-table" dense>
+                <tr
                   v-for="(rank, i) in topFive"
                   :key="i"
                   @click="goToProfile(rank)"
                 >
-                  <v-list-item-icon>{{ i + 1 }}.</v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      v-text="rank.player.name"
-                    ></v-list-item-title>
-                    <v-list-item-subtitle>
-                      Win/Loss/Total: {{ rank.player.wins }}/{{
-                        rank.player.losses
-                      }}/{{ rank.player.games }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+                  <td>
+                    <v-row class="justify-space-between">
+                      <v-col cols="2">
+                        <span style="font-size: 15px">{{ i + 1 }}.</span>
+                      </v-col>
+                      <v-col cols="10">
+                        {{rank.player.name}}
+                        <div style="font-size: 11px">
+                          Win/Loss/Total: {{ rank.player.wins }}/{{
+                            rank.player.losses
+                          }}/{{ rank.player.games }}
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </td>
+                </tr>
+              </table>
             </v-card>
           </v-col>
         </v-row>

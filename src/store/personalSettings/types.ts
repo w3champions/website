@@ -23,6 +23,10 @@ export type WinsToPictureId = {
 export type PersonalSetting = {
   profileMessage: string;
   homePage?: string;
+  twitch: string;
+  youTube: string;
+  twitter: string;
+  country: string;
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];

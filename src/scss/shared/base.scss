@@ -80,6 +80,9 @@ header.v-app-bar--is-scrolled + main {
   position: absolute;
   top: 5px;
   left: 28px;
+}
+
+.blinker {
   -webkit-animation: up-right 1s infinite;
   -moz-animation: up-right 1s infinite;
   -o-animation: up-right 1s infinite;

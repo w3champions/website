@@ -19,6 +19,7 @@
     <v-col cols="2">
       <match-higlights
         :left="true"
+        :not-color-winner="notColorWinner"
         :experience="scoresOfWinner.expGained"
         :hero-kills="scoresOfWinner.heroesKilled"
         :items-collected="scoresOfWinner.itemsObtained"
@@ -29,6 +30,7 @@
     </v-col>
     <v-col cols="2">
       <match-higlights
+        :not-color-winner="notColorWinner"
         :experience="scoresOfLooser.expGained"
         :hero-kills="scoresOfLooser.heroesKilled"
         :items-collected="scoresOfLooser.itemsObtained"
@@ -61,6 +63,7 @@ import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
   components: { MatchHiglights, HeroIcon },
 })
 export default class MatchDetailHeroRow extends Vue {
+  @Prop() public notColorWinner!: boolean;
   @Prop() public heroesOfWinner!: Hero[];
   @Prop() public heroesOfLooser!: Hero[];
   @Prop() public scoresOfWinner!: HeroScore;

@@ -9,19 +9,18 @@
       <tbody>
         <tr v-for="item in items" :key="item.gameMode">
           <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</td>
-          <td class="number-text text-end won">{{ item.wins }}</td>
-          <td class="number-text text-end lost">{{ item.losses }}</td>
-          <td class="number-text text-end">{{ item.wins + item.losses }}</td>
-          <td class="number-text text-end">
-            <span v-if="is2v2(item)">~</span>
-            {{ (item.winrate * 100).toFixed(1) }}%
+          <td class="number-text text-start">
+            <span class="won">{{ item.wins }}</span>
+            -
+            <span class="lost">{{ item.losses }}</span>
+            <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item) && item.rank !== 0">~</span>
+            <span v-if="is2v2(item) && item.rank !== 0"></span>
             {{ item.rank !== 0 ? item.mmr : "-" }}
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item) && item.rank !== 0">~</span>
+            <span v-if="is2v2(item) && item.rank !== 0"></span>
             {{ item.rank !== 0 ? item.rankingPoints : "-" }}
           </td>
         </tr>
@@ -45,6 +44,7 @@ export default class ModeStatsGrid extends Vue {
   public is2v2(stats: ModeStat) {
     return stats.gameMode === EGameMode.GM_2ON2_AT;
   }
+
   get gameModeStatsCombined() {
     const gm2v2s = this.stats.filter(
       (g) => g.gameMode === EGameMode.GM_2ON2_AT
@@ -57,29 +57,41 @@ export default class ModeStatsGrid extends Vue {
         wins: b.wins + a.wins,
         losses: b.losses + a.losses,
         games: b.games + a.games,
-        winrate: (b.winrate + a.winrate) / 2,
-        mmr: Math.floor((b.mmr + a.mmr) / 2),
-        rankingPoints: Math.floor((b.rankingPoints + a.rankingPoints) / 2),
+        winrate: 0,
+        mmr: b.mmr + a.mmr,
+        rankingPoints: b.rankingPoints + a.rankingPoints,
         leagueId: 0,
         leagueOrder: 0,
         division: 0,
-        rank: 0,
+        rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
       }),
       {
         wins: 0,
         losses: 0,
         games: 0,
-        winrate: gm2v2s[0]?.winrate ?? 0,
-        mmr: gm2v2s[0]?.mmr ?? 0,
-        rankingPoints: gm2v2s[0]?.rankingPoints ?? 0,
+        winrate: 0,
+        mmr: 0,
+        rank: 0,
+        rankingPoints: 0,
       }
     );
-    const not2v2s = this.stats.filter(
-      (g) => g.gameMode !== EGameMode.GM_2ON2_AT
+
+    combindes2v2.winrate =
+      combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
+    combindes2v2.mmr = Math.round(combindes2v2.mmr / gm2v2s.length);
+    combindes2v2.rankingPoints = Math.round(
+      combindes2v2.rankingPoints / gm2v2s.length
+    );
+    const gm1v1 = this.stats.find(
+      (g) => g.gameMode === EGameMode.GM_1ON1
     );
 
-    return [...not2v2s, combindes2v2];
+    const ffa = this.stats.find(
+      (g) => g.gameMode === EGameMode.GM_FFA
+    );
+
+    return [gm1v1, combindes2v2, ffa];
   }
 
   public headers = [
@@ -89,25 +101,9 @@ export default class ModeStatsGrid extends Vue {
       sortable: false,
     },
     {
-      text: "Wins",
-      align: "end",
+      text: "Win/Loss",
+      align: "start",
       sortable: false,
-    },
-    {
-      text: "Losses",
-      align: "end",
-      sortable: false,
-    },
-    {
-      text: "Total",
-      align: "end",
-      sortable: false,
-    },
-    {
-      text: "Winrate",
-      align: "end",
-      sortable: false,
-      value: "percentage",
     },
     {
       text: "MMR",

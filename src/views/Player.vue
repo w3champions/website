@@ -4,17 +4,14 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="justify-space-between">
-            <span>Profile of {{ profile.battleTag }}</span>
+            <div style="position-relative">
+              <span>Profile of {{ profile.battleTag }}</span>
+            </div>
             <div>
-              <gate-way-select @gatewayChanged="gatewayChanged" />
+              <gateway-select @gatewayChanged="gatewayChanged" />
               <v-menu offset-x>
                 <template v-slot:activator="{ on }">
-                  <v-btn
-                    tile
-                    v-on="on"
-                    class="ma-2"
-                    style="background-color: transparent;"
-                  >
+                  <v-btn tile v-on="on" class="ma-2" style="background-color: transparent;">
                     <span class="pa-0">Season {{ selectedSeason.id }}</span>
                   </v-btn>
                 </template>
@@ -32,9 +29,7 @@
                         @click="selectSeason(item)"
                       >
                         <v-list-item-content>
-                          <v-list-item-title>
-                            Season {{ item.id }}
-                          </v-list-item-title>
+                          <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -50,111 +45,97 @@
           >
             <div class="live-match__indicator">
               Live
-              <span class="circle red"></span>
+              <span class="circle red blinker"></span>
+              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}'</span>
             </div>
-            <div class="live-match__team1">
-              <team-match-info
-                :not-clickable="true"
-                :team="getPlayerTeam(ongoingMatch)"
-                :unfinishedMatch="true"
-                left="true"
-              ></team-match-info>
+            <div v-if="!isOngoingMatchFFA">
+              <div class="live-match__team1">
+                <team-match-info
+                  :not-clickable="true"
+                  :team="getPlayerTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  left="true"
+                ></team-match-info>
+              </div>
+              <div class="live-match__vstext">VS</div>
+              <div class="live-match__team2">
+                <team-match-info
+                  :not-clickable="false"
+                  :team="getOpponentTeam(ongoingMatch)"
+                  :unfinishedMatch="true"
+                  right="true"
+                ></team-match-info>
+              </div>
             </div>
-            <div class="live-match__vstext">VS</div>
-            <div class="live-match__team2">
-              <team-match-info
-                :not-clickable="false"
-                :team="getOpponentTeam(ongoingMatch)"
-                :unfinishedMatch="true"
-                right="true"
-              ></team-match-info>
-            </div>
-            <span class="live-match__map">
-              {{ $t("mapNames." + ongoingMatch.map) }}
-            </span>
+            <div v-if="isOngoingMatchFFA" class="live-match__ffa">Playing FFA</div>
+            <span class="live-match__map">{{ $t("mapNames." + ongoingMatch.map) }}</span>
           </div>
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#tab-profile`">Profile</v-tab>
-            <v-tab class="profileTab" :href="`#tab-matches`">
-              Match History
-            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
             <v-tab class="profileTab" :href="`#tab-at-teams`">Teams</v-tab>
-            <v-tab class="profileTab" :href="`#tab-statistics`">
-              Statistics
-            </v-tab>
+            <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
+            <v-tab v-if="clanFlagEnabled" class="profileTab" :href="`#tab-clan`">Clan</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
                   <v-row class="mt-4 filter-none">
                     <v-col cols="12" md="4" lg="3">
                       <v-card-text style="padding-top: 0 !important;">
-                        <player-avatar
-                          :is-logged-in-player="isLoggedInPlayer"
-                        />
+                        <player-avatar :is-logged-in-player="isLoggedInPlayer" />
                       </v-card-text>
                     </v-col>
                     <v-col md="12" lg="9">
                       <v-row>
                         <v-col cols="12" md="4" v-if="oneVersusOneStat">
-                          <player-league
-                            :modeStat="oneVersusOneStat"
-                          ></player-league>
+                          <player-league :modeStat="oneVersusOneStat"></player-league>
                         </v-col>
                         <v-col cols="12" md="4" v-if="best2versus2Stat">
-                          <player-league
-                            :modeStat="best2versus2Stat"
-                          ></player-league>
+                          <player-league :modeStat="best2versus2Stat"></player-league>
                         </v-col>
                         <v-col cols="12" md="4" v-if="ffaStats">
                           <player-league :modeStat="ffaStats"></player-league>
                         </v-col>
                       </v-row>
-                    </v-col>
-                  </v-row>
-                  <v-row class="filter-none" v-if="selectedSeason.id === 0">
-                    <v-card-text class="text-center">
-                      This noble person was part of our beta, therefore we hide
-                      his buggy stats and thank him for all eternity ;)
-                    </v-card-text>
-                  </v-row>
-                  <v-row class="filter-none" v-if="selectedSeason.id !== 0">
-                    <v-col cols="12" md="6">
-                      <h4>Stats by race</h4>
-                      <v-data-table
-                        hide-default-footer
-                        :headers="raceHeaders"
-                        :items="selectedRaceStats"
-                      >
-                        <template v-slot:item.race="{ item }">
-                          <span>{{ $t("races." + raceEnums[item.race]) }}</span>
-                        </template>
-                        <template v-slot:item.wins="{ item }">
-                          <span class="won number-text">{{ item.wins }}</span>
-                        </template>
-                        <template v-slot:item.losses="{ item }">
-                          <span class="lost number-text">
-                            {{ item.losses }}
-                          </span>
-                        </template>
-                        <template v-slot:item.percentage="{ item }">
-                          <span class="number-text">
-                            {{ (item.winrate * 100).toFixed(1) }}%
-                          </span>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <h4>Stats by game mode</h4>
-                      <mode-stats-grid :stats="gameModeStats" />
+                      <v-row class="filter-none" v-if="selectedSeason.id === 0">
+                        <v-card-text class="text-center">
+                          This noble person was part of our beta, therefore we
+                          hide his buggy stats and thank him for all eternity ;)
+                        </v-card-text>
+                      </v-row>
+                      <v-row class="filter-none" v-if="selectedSeason.id !== 0">
+                        <v-col cols="12" md="4">
+                          <h4>Stats by race</h4>
+                          <v-data-table
+                            hide-default-footer
+                            :headers="raceHeaders"
+                            :items="selectedRaceStats"
+                          >
+                            <template v-slot:item.race="{ item }">
+                              <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                            </template>
+                            <template v-slot:item.wins="{ item }">
+                              <span class="number-text">
+                                <span class="won">{{ item.wins }}</span>
+                                -
+                                <span
+                                  class="lost"
+                                >{{ item.losses }}</span>
+                                <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
+                              </span>
+                            </template>
+                          </v-data-table>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <h4>Stats by game mode</h4>
+                          <mode-stats-grid :stats="gameModeStats" />
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-card-text>
-                <v-card-text
-                  v-if="loadingProfile"
-                  style="min-height: 500px;"
-                  class="text-center"
-                >
+                <v-card-text v-if="loadingProfile" style="min-height: 500px;" class="text-center">
                   <v-progress-circular
                     style="margin-top: 180px;"
                     :size="50"
@@ -166,9 +147,7 @@
               <v-tab-item :value="'tab-matches'">
                 <v-card-title>
                   <v-row align="center">
-                    <v-col cols="12" md="5">
-                      Match History
-                    </v-col>
+                    <v-col cols="12" md="5">Match History</v-col>
                     <v-col cols="12" md="5">
                       <v-autocomplete
                         v-model="searchModel"
@@ -187,25 +166,19 @@
                       >
                         <template v-slot:item="data">
                           <template v-if="typeof data.item !== 'object'">
-                            <v-list-item-content
-                              v-text="data.item"
-                            ></v-list-item-content>
+                            <v-list-item-content v-text="data.item"></v-list-item-content>
                           </template>
                           <template v-else>
                             <v-list-item-content>
                               <v-list-item-title>
                                 <span
                                   v-if="!isDuplicateName(data.item.player.name)"
-                                >
-                                  {{ data.item.player.name }}
-                                </span>
-                                <span
-                                  v-if="isDuplicateName(data.item.player.name)"
-                                >
+                                >{{ data.item.player.name }}</span>
+                                <span v-if="isDuplicateName(data.item.player.name)">
                                   {{
-                                    data.item.player.playerIds
-                                      .map((p) => p.battleTag)
-                                      .join(" & ")
+                                  data.item.player.playerIds
+                                  .map((p) => p.battleTag)
+                                  .join(" & ")
                                   }}
                                 </span>
                               </v-list-item-title>
@@ -238,9 +211,9 @@
                       <div>vs. {{ searchModel.player.name }}</div>
                       <span class="won">Wins: {{ opponentWins }}</span>
                       /
-                      <span class="lost">
-                        Losses: {{ totalMatchesAgainstOpponent - opponentWins }}
-                      </span>
+                      <span
+                        class="lost"
+                      >Losses: {{ totalMatchesAgainstOpponent - opponentWins }}</span>
                       <span>({{ winRateVsOpponent }}%)</span>
                     </v-col>
                   </v-row>
@@ -268,26 +241,24 @@
                 />
               </v-tab-item>
               <v-tab-item :value="'tab-at-teams'">
-                <v-card :loading="isLoadingMatches">
-                  <v-card-title>Teams</v-card-title>
-                  <br />
-                  <v-card-text>
-                    <v-row>
-                      <v-col
-                        cols="12"
-                        md="3"
-                        v-for="atPartner in gameModeStatsAt"
-                        :key="atPartner.id"
-                      >
-                        <player-league
-                          :mode-stat="atPartner"
-                          :show-at-partner="true"
-                        />
-                        <br />
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
+                <v-card-title>Teams</v-card-title>
+                <br />
+                <v-card-text>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      md="3"
+                      v-for="atPartner in gameModeStatsAt"
+                      :key="atPartner.id"
+                    >
+                      <player-league :mode-stat="atPartner" :show-at-partner="true" />
+                      <br />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-tab-item>
+              <v-tab-item :value="'tab-clan'">
+                <clan-overview />
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
@@ -305,6 +276,7 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
 } from "@/store/player/types";
+import { PersonalSetting } from "@/store/personalSettings/types";
 import {
   EGameMode,
   ERaceEnum,
@@ -312,25 +284,29 @@ import {
   PlayerInTeam,
   Team,
 } from "@/store/typings";
+
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Ranking, Season } from "@/store/ranking/types";
-import GateWaySelect from "@/components/ladder/GateWaySelect.vue";
+import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import GatewaysService from "../services/GatewaysService";
+import CountryFlag from "vue-country-flag";
+import { FEATURE_FLAG_CLANS } from "@/main";
+import ClanOverview from "@/components/clans/ClanOverview.vue";
 
 @Component({
   components: {
+    ClanOverview,
     PlayerAvatar,
     PlayerLeague,
     PlayerStatsRaceVersusRaceOnMap,
     MatchesGrid,
     ModeStatsGrid,
-    GateWaySelect,
+    GatewaySelect,
     TeamMatchInfo,
   },
 })
@@ -357,22 +333,10 @@ export default class PlayerView extends Vue {
       value: "race",
     },
     {
-      text: "Wins",
+      text: "Win/Loss",
       align: "start",
       sortable: false,
       value: "wins",
-    },
-    {
-      text: "Losses",
-      align: "start",
-      sortable: false,
-      value: "losses",
-    },
-    {
-      text: "Winrate",
-      align: "start",
-      sortable: false,
-      value: "percentage",
     },
   ];
 
@@ -407,6 +371,10 @@ export default class PlayerView extends Vue {
       this.$store.direct.dispatch.rankings.clearSearch();
       this.onSearchModelChanged(null as any);
     }
+  }
+
+  get clanFlagEnabled() {
+    return FEATURE_FLAG_CLANS;
   }
 
   public selectedGameModeForSearch = EGameMode.UNDEFINED;
@@ -544,6 +512,10 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.ongoingMatch;
   }
 
+  get isOngoingMatchFFA() {
+    return this.ongoingMatch && this.ongoingMatch.gameMode == EGameMode.GM_FFA;
+  }
+
   get ongoingMatchGameModeClass() {
     if (!this.ongoingMatch.id) {
       return "";
@@ -655,15 +627,20 @@ export default class PlayerView extends Vue {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
         modeId: EGameMode.GM_2ON2_AT,
       },
-      // {
-      //   modeName: "4vs4",
-      //   modeId: EGameMode.GM_4ON4
-      // },
-      // {
-      //   modeName: "FFA",
-      //   modeId: EGameMode.GM_FFA
-      // }
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
+        modeId: EGameMode.GM_FFA,
+      },
     ];
+  }
+
+  public getDuration(match: Match) {
+    var today = new Date();
+    var diffMs =
+      today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
+    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+    return diffMins;
   }
 
   public getPlayerTeam(match: Match) {
@@ -754,7 +731,7 @@ export default class PlayerView extends Vue {
 
   .live-match__indicator {
     position: absolute;
-    left: calc(50% - 13px);
+    left: calc(50% - 28px);
     top: -25px;
     font-size: 13px;
   }
@@ -779,6 +756,11 @@ export default class PlayerView extends Vue {
     top: calc(50% - 20px);
   }
 
+  .live-match__ffa {
+    position: absolute;
+    left: calc(50% - 41px);
+  }
+
   .live-match__map {
     position: absolute;
     top: 28px;
@@ -786,6 +768,11 @@ export default class PlayerView extends Vue {
     left: calc(50% - 60px);
     text-align: center;
     width: 120px;
+  }
+
+  .live-match__duration {
+    position: absolute;
+    left: 44px;
   }
 
   &.one-v-one {
