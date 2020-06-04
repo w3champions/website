@@ -121,87 +121,6 @@
         </v-card>
       </v-menu>
       <v-card-text>
-        <div class="custom-table-wrapper elevation-1">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <td
-                  v-for="header in headers"
-                  :key="header.text"
-                  v-bind:style="{
-                    width: header.width,
-                    'min-width': header.minWidth,
-                  }"
-                >
-                  {{ header.text }}
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                :id="`listitem_${item.rankNumber}`"
-                v-for="item in rankings"
-                :key="item.player.id"
-                :class="{
-                  searchedItem: item.player.id === searchModelBattleTag,
-                }"
-              >
-                <td class="number-text">{{ item.rankNumber }}.</td>
-                <td>
-                  <div
-                    class="d-inline-block rank-icon-container"
-                    v-bind:class="{ 'ml-3': index > 0 }"
-                    v-for="(playerId, index) in item.player.playerIds"
-                    :key="playerId.battleTag"
-                  >
-                    <v-card-text
-                      class="player-avatar mr-1 alignRight race-icon"
-                      :title="getTitleRace(item, index)"
-                      :style="{
-                        'background-image':
-                          'url(' + getRaceIcon(item, index) + ')',
-                      }"
-                    />
-                    <player-rank-info :player-id="playerId" />
-                    <span v-if="index !== item.player.playerIds.length - 1">
-                      &
-                    </span>
-                  </div>
-                  <span
-                    style="position: relative;"
-                    v-if="isCurrentlyLive(item.player.playerIds)"
-                  >
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span
-                          style="display: inline;"
-                          class="pointer"
-                          v-on="on"
-                        >
-                          <div class="circle red filter-blur"></div>
-                        </span>
-                      </template>
-                      <div>
-                        Now playing vs
-                        {{ getLiveOpponent(item.player.playerIds) }}
-                      </div>
-                    </v-tooltip>
-                  </span>
-                </td>
-                <td class="number-text text-end won">{{ item.player.wins }}</td>
-                <td class="number-text text-end lost">
-                  {{ item.player.losses }}
-                </td>
-                <td class="number-text text-end">{{ item.player.games }}</td>
-                <td class="number-text text-end">
-                  {{ (item.player.winrate * 100).toFixed(1) }}%
-                </td>
-                <td class="number-text text-end">{{ item.player.mmr }}</td>
-                <td class="number-text text-end">{{ item.rankingPoints }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
         <rankings-grid
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
@@ -304,40 +223,6 @@ export default class RankingsView extends Vue {
     if (!ladder) return {} as League;
 
     return ladder.leagues.filter((l) => l.id == league)[0] || {};
-  }
-
-  public getRaceIcon(ranking: Ranking, playerIndex: number) {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
-    const playerInfo = playersInfo[playerIndex];
-    if (playerInfo.selectedRace && playerInfo.pictureId) {
-      return this.selectedAvatar(playerInfo.selectedRace, playerInfo.pictureId);
-    } else {
-      return this.raceIcon(playerInfo.calculatedRace);
-    }
-  }
-
-  public getTitleRace(ranking: Ranking, playerIndex: number) {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return "Random";
-    const playerInfo = playersInfo[playerIndex];
-    if (playerInfo.selectedRace && playerInfo.pictureId) {
-      return ERaceEnum[playerInfo.selectedRace];
-    } else {
-      debugger;
-      return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
-    }
-  }
-  selectedAvatar(race: ERaceEnum, picId: number) {
-    return require("../assets/raceAvatars/" +
-      ERaceEnum[race] +
-      "_" +
-      picId +
-      ".jpg");
-  }
-
-  raceIcon(race: ERaceEnum) {
-    return require("../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
   }
 
   get selectedLeagueName(): string {
