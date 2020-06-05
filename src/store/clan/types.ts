@@ -1,4 +1,5 @@
 import { PlayerProfile } from "@/store/player/types";
+import { Ranking } from "@/store/ranking/types";
 
 export interface ClanState {
   playersClan: Clan;
@@ -15,19 +16,20 @@ export interface ClanMembership {
 }
 
 export interface Clan {
-  id: string;
+  clanId: string;
   clanName: string;
-  clanAbbrevation: string;
   chiefTain: string;
   isSuccesfullyFounded: boolean;
   members: string[];
   foundingFathers: string[];
   shamans: string[];
   pendingInvites: string[];
+  ranks: Ranking[];
 }
 
 export enum EClanRole {
-  ChiefTain= 2,
-  Shaman = 1,
-  Member = 0
+  ChiefTain = 3,
+  Shaman = 2,
+  Member = 1,
+  Undefined = 0
 }

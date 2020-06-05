@@ -47,6 +47,7 @@
                       'url(' + getRaceIcon(item, index) + ')',
                   }"
                 />
+              <span v-if="item.playersInfo[index].clanId">[{{ item.playersInfo[index].clanId }}]</span>
               <player-rank-info :player-id="playerId" />
               <div
                 class="country-flag__container"

@@ -30,13 +30,13 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
+import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 
 @Component({
-  components: { InvitePlayerModal, ClanCreationPanel },
+  components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
 })
 export default class PendingInvitesPanel extends Vue {
   public search = "";
-
 
   public async revokeInvite(member: string) {
     await this.$store.direct.dispatch.clan.revokeInvite(member);
