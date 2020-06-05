@@ -39,7 +39,14 @@
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag"
             >
-              <player-icon :race="calculatedRace(item, index)" class="mr-1" />
+            <v-card-text
+                  class="player-avatar mr-1 alignRight race-icon"
+                  :title="getTitleRace(item, index)"
+                  :style="{
+                    'background-image':
+                      'url(' + getRaceIcon(item, index) + ')',
+                  }"
+                />
               <span v-if="item.playersInfo[index].clanId">[{{ item.playersInfo[index].clanId }}]</span>
               <player-rank-info :player-id="playerId" />
               <div
@@ -299,12 +306,38 @@ export default class RankingsGrid extends Vue {
     }, 200);
   }
 
-  public calculatedRace(ranking: Ranking, playerIndex: number) {
+  public getRaceIcon(ranking: Ranking, playerIndex: number) {
     const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return ERaceEnum.RANDOM;
+    if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
-    if (!playerInfo) return ERaceEnum.RANDOM;
-    return playerInfo.calculatedRace;
+    if (playerInfo.selectedRace && playerInfo.pictureId) {
+      return this.selectedAvatar(playerInfo.selectedRace, playerInfo.pictureId);
+    } else {
+      return this.raceIcon(playerInfo.calculatedRace);
+    }
+  }
+
+  public getTitleRace(ranking: Ranking, playerIndex: number) {
+    const playersInfo = ranking.playersInfo;
+    if (!playersInfo) return "Random";
+    const playerInfo = playersInfo[playerIndex];
+    if (playerInfo.selectedRace && playerInfo.pictureId) {
+      return ERaceEnum[playerInfo.selectedRace];
+    } else {
+      return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
+    }
+  }
+  
+  selectedAvatar(race: ERaceEnum, picId: number) {
+    return require("../../assets/raceAvatars/" +
+      ERaceEnum[race] +
+      "_" +
+      picId +
+      ".jpg");
+  }
+
+  raceIcon(race: ERaceEnum) {
+    return require("../../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
   }
 
   public isTwitchLive(ranking: Ranking) {
@@ -459,5 +492,9 @@ td.header {
 
 .clickable {
   cursor: pointer;
+}
+
+.race-icon {
+  padding: 0;
 }
 </style>
