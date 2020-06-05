@@ -39,7 +39,7 @@
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag"
             >
-            <v-card-text
+            <div
                   class="player-avatar mr-1 alignRight race-icon"
                   :title="getTitleRace(item, index)"
                   :style="{
@@ -322,7 +322,7 @@ export default class RankingsGrid extends Vue {
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
     if (playerInfo.selectedRace && playerInfo.pictureId) {
-      return ERaceEnum[playerInfo.selectedRace];
+      return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
     }
