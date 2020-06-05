@@ -150,7 +150,11 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
-import { DataTableOptions, EGameMode, ERaceEnum } from "@/store/typings";
+import {
+  DataTableOptions,
+  EGameMode,
+  ERaceEnum,
+} from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
