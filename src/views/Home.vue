@@ -55,10 +55,10 @@
                 </v-btn>
               </v-col>
               <v-col cols="6" md="6">
-                <h3>Installation Guide Mac OS</h3>
+                <h3>Installation Guide Mac OS / Manual installation</h3>
                 <p>
-                  With a Mac you have to place the following files in your WC3
-                  Installation folder manually.
+                  If you are using a MAC or you are having trouble with the launcher
+                  you can install W3Champions manually.
                 </p>
                 <ol>
                   <li>
@@ -98,6 +98,16 @@
                 </ol>
               </v-col>
             </v-row>
+            <div class="filter-blur text-center mt-5">
+              <h3>
+                 If you are having trouble with the launcher. You can use this video to manually install W3C.
+              </h3>
+              <p>
+                The video is shot on Windows but it should work for other operating systems as well.
+              </p>
+
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/l1aRcUL7qEc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
