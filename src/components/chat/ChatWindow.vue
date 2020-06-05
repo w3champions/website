@@ -1,52 +1,29 @@
 <template>
-  <v-row>
-    <v-col cols="1" />
-    <v-col cols="7">
-      <v-card v-if="chatApiKey" class="pt-4">
-        <div class="overflow-y-auto" id="chatBox" style="height: 546px;">
-          <v-list-item
-            style="min-height: 25px !important;"
-            v-for="message in messages"
-            :key="message.index"
-          >
-            {{ message.name }}: {{ message.message }}
-          </v-list-item>
-        </div>
-        <v-text-field
-          class="pl-4 pr-4"
-          autofocus
-          v-model="editChatMessage"
-          @keydown.enter="sendMessage"
-          :disabled="!chatApiKey"
-        />
-      </v-card>
-      <v-card v-if="!chatApiKey" class="text-center">
-        <v-list-item style="height: 600px;">
-          Sorry, but you have to be logged in to chat
+  <div>
+    <v-card v-if="chatApiKey" class="pt-4">
+      <div class="overflow-y-auto" id="chatBox" style="height: 546px;">
+        <v-list-item
+          style="min-height: 25px !important;"
+          v-for="message in messages"
+          :key="message.index"
+        >
+          {{ message.name }}: {{ message.message }}
         </v-list-item>
-      </v-card>
-    </v-col>
-    <v-col cols="3">
-      <v-card class="pt-4" style="height: 630px;">
-        <div class="overflow-y-auto">
-          <v-list-item
-            style="min-height: 25px !important;"
-            v-for="user in otherUsers"
-            :key="user.battleTag"
-            @click="openProfile(user.battleTag)"
-          >
-            {{ user.name }}
-          </v-list-item>
-        </div>
-      </v-card>
-      <br />
-      <v-card>
-        <v-btn v-if="chatApiKey" class="ma-4" @click="copyChatApiKey">
-          Copy new ApiKey to Clipboard
-        </v-btn>
-      </v-card>
-    </v-col>
-  </v-row>
+      </div>
+      <v-text-field
+        class="pl-4 pr-4"
+        autofocus
+        v-model="editChatMessage"
+        @keydown.enter="sendMessage"
+        :disabled="!chatApiKey"
+      />
+    </v-card>
+    <v-card v-if="!chatApiKey" class="text-center">
+      <v-list-item style="height: 600px;">
+        Sorry, but you have to be logged in to chat
+      </v-list-item>
+    </v-card>
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -55,7 +32,7 @@ import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { API_URL } from "@/main";
 
 @Component({})
-export default class ChatView extends Vue {
+export default class ChatWindow extends Vue {
   public connection!: HubConnection;
   public editChatMessage = "Connecting...";
 
@@ -96,15 +73,6 @@ export default class ChatView extends Vue {
 
   get otherUsers() {
     return this.$store.direct.state.chat.otherUsers;
-  }
-
-  public async copyChatApiKey() {
-    await this.$store.direct.dispatch.chat.createApiKey();
-    await navigator.clipboard.writeText(this.chatApiKey);
-  }
-
-  public openProfile(battleTag: string) {
-    this.$router.push({ path: `/player/${encodeURIComponent(battleTag)}` });
   }
 
   public pushMessage(user: string, name: string, message: string) {
