@@ -210,7 +210,7 @@ export default class ClanOverview extends Vue {
       }
     );
 
-    const order = this.playersClan.ranks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder ?? 6 }), { leagueOrder: 0 })
+    const order = this.playersClan.ranks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }), { leagueOrder: 0 })
     reduced.leagueOrder = Math.round(order.leagueOrder / games.length);
 
     return reduced;
