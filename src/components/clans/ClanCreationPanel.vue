@@ -76,7 +76,7 @@ export default class ClanCreationPanel extends Vue {
   }
 
   public async createClan() {
-    await this.$store.direct.dispatch.clan.createClan({ clanName: this.clanNameToCreate, abbreviation: this.clanAbbreviationToCreate });
+    await this.$store.direct.dispatch.clan.createClan({ clanName: this.clanNameToCreate.trim(), abbreviation: this.clanAbbreviationToCreate });
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
 }
