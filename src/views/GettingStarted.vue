@@ -4,36 +4,7 @@
       <v-container>
         <v-card tile>
           <v-card-text>
-            <v-card-title>Come and join us!</v-card-title>
-            <v-card-text>
-              <v-row>
-                <v-col>
-                  Finally your Warcraft III 1on1 Ladder is available, crafted by
-                  and for the community!
-                  <br />
-                  <br />
-                  The ladder contains:
-                  <ul>
-                    <li>Improved Pings by non-global ladder</li>
-                    <li>Matchmaking (based on W3Arena)</li>
-                    <li>Ladder System (Check the RANKINGS tab top right)</li>
-                    <li>Seamless integration in your Warcraft III client</li>
-                    <li>Profiles</li>
-                    <li>Different Mappool</li>
-                  </ul>
-                  <br />
-                  <b>Current Map Pool</b>
-                  <br />
-                  TM,EI,TSLV,CH,NIS,AZ and LR
-                </v-col>
-                <v-col>
-                  <img
-                    src="../assets/reforged.jpg"
-                    style="max-width: 90%; max-height: 320px;"
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
+            <v-card-title>How to Install W3 Champions</v-card-title>
             <v-row>
               <v-col>
                 <v-card-text>
@@ -115,7 +86,7 @@
                 The video is shot on Windows but it should work for other
                 operating systems as well.
               </p>
-
+              <br/>
               <iframe
                 width="560"
                 height="315"
@@ -124,6 +95,11 @@
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
               ></iframe>
+              <v-card-text class="text-center ma-5">
+                <div>
+                  If your still having problems: <a href="https://discord.gg/uJmQxG2">Reach out to us on discord</a>
+                </div>
+              </v-card-text>
             </div>
           </v-card-text>
         </v-card>
