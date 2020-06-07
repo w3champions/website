@@ -15,7 +15,7 @@
                   </p>
                   <v-btn
                     color="primary"
-                    href="./W3Champions.msi"
+                    href="../W3Champions.msi"
                     target="_blank"
                     value
                     outlined
@@ -41,7 +41,7 @@
                     <v-btn
                       class="w3-background ma-4"
                       color="primary"
-                      href="./MAC-W3Champions.zip"
+                      href="../MAC-W3Champions.zip"
                       target="_blank"
                       outlined
                     >
@@ -59,7 +59,7 @@
                     <v-btn
                       class="w3-background ma-4"
                       color="primary"
-                      href="./W3Champions-Maps-V1.zip"
+                      href="../W3Champions-Maps-V1.zip"
                       target="_blank"
                       outlined
                     >
