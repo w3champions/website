@@ -4,15 +4,22 @@
       <v-col cols="12" md="8">
         <v-card tile>
           <v-card-text>
-            <v-card-title v-if="newsContent !== ''">News {{ newsDate }}</v-card-title>
-            <v-row>
+            <v-row class="justify-center">
               <v-col>
+                <v-card-title v-if="newsContent !== ''">
+                  News {{ newsDate }}
+                </v-card-title>
                 <vue-markdown v-if="newsContent !== ''">
                   {{ newsContent }}
                 </vue-markdown>
               </v-col>
             </v-row>
           </v-card-text>
+          <v-row class="justify-center">
+            <v-col class="text-center mb-10">
+              <v-btn @click="goToSetupPage" class="join-button">Join the Battlefield now!</v-btn>
+            </v-col>
+          </v-row>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
             <v-row>
@@ -42,84 +49,6 @@
                 />
               </v-col>
             </v-row>
-          </v-card-text>
-
-          <v-card-text>
-            <v-row>
-              <v-col cols="6" md="6">
-                <h3>Installation Guide Windows</h3>
-                <p>
-                  We created a setup tool that automatically does all steps
-                  needed.
-                </p>
-                <v-btn
-                  color="primary"
-                  href="./W3Champions.msi"
-                  target="_blank"
-                  value
-                  outlined
-                  class="w3-background"
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Windows launcher</span>
-                </v-btn>
-              </v-col>
-              <v-col cols="6" md="6">
-                <h3>Installation Guide Mac OS / Manual installation</h3>
-                <p>
-                  If you are using a MAC or you are having trouble with the launcher
-                  you can install W3Champions manually.
-                </p>
-                <ol>
-                  <li>
-                    Download the archive file and unpack it in your Warcraft
-                    Installation folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./MAC-W3Champions.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac Archive</span>
-                  </v-btn>
-                  <li>
-                    Make sure to have a directory structure like Warcraft
-                    III\webui\index.html
-                  </li>
-                  <li>
-                    Download the Maps Archive and unpack it to your Warcraft III Maps Folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./W3Champions-Maps-V1.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Download MAPS archive</span>
-                  </v-btn>
-                  <li>
-                    The folder structure after unpacking should be Maps/W3Champions/v1/FFA
-                  </li>
-                </ol>
-              </v-col>
-            </v-row>
-            <br />
-            <div class="filter-blur text-center mt-5">
-              <h3>
-                If you are having trouble with the launcher. You can use this
-                video to manually install W3C.
-              </h3>
-              <p>
-                The video is shot on Windows but it should work for other operating systems as well.
-              </p>
-
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/l1aRcUL7qEc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -178,11 +107,11 @@
                   <td>
                     <v-row class="justify-space-between">
                       <v-col cols="2">
-                        <span style="font-size: 15px">{{ i + 1 }}.</span>
+                        <span style="font-size: 15px;">{{ i + 1 }}.</span>
                       </v-col>
                       <v-col cols="10">
-                        {{rank.player.name}}
-                        <div style="font-size: 11px">
+                        {{ rank.player.name }}
+                        <div style="font-size: 11px;">
                           Win/Loss/Total: {{ rank.player.wins }}/{{
                             rank.player.losses
                           }}/{{ rank.player.games }}
@@ -225,14 +154,23 @@ export default class HomeView extends Vue {
     } else {
       await this.setNewsContent("prod");
     }
+  }
 
+  public goToSetupPage() {
+    this.$router.push({
+      path: "/getting-started/"
+    });
   }
 
   private async setNewsContent(stage: string) {
-    const mdNewsResponse = await fetch(`https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`);
+    const mdNewsResponse = await fetch(
+      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`
+    );
     this.newsContent = await mdNewsResponse.text();
 
-    const mdNewsDateResponse = await fetch(`https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-date.md`);
+    const mdNewsDateResponse = await fetch(
+      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-date.md`
+    );
     this.newsDate = await mdNewsDateResponse.text();
   }
 
