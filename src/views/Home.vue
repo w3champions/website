@@ -3,20 +3,11 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
-          <v-card-title>News:</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
-                <vue-markdown>
-                  - [ ] Mercury
-                  - [x] Venus
-                  - [x] Earth (Orbit/Moon)
-                  - [x] Mars
-                  - [ ] Jupiter
-                  - [ ] Saturn
-                  - [ ] Uranus
-                  - [ ] Neptune
-                  - [ ] Comet Haley
+                <vue-markdown v-if="newsContent !== ''">
+                  {{ newsContent }}
                 </vue-markdown>
               </v-col>
             </v-row>
@@ -216,6 +207,8 @@ import VueMarkdown from "vue-markdown";
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
+  public newsContent = "";
+
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
@@ -223,6 +216,10 @@ export default class HomeView extends Vue {
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
+
+    const mdNewsResponse = await fetch("./news.md");
+    const mdNews = await mdNewsResponse.text();
+    this.newsContent = mdNews;
   }
 
   public goToProfile(rank: Ranking) {
