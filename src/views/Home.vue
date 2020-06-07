@@ -199,6 +199,8 @@ export default class HomeView extends Vue {
   box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px, rgba(236, 174, 6, 0.3) 0px 0px 40px 15px, rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset, rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
   text-shadow: rgb(51, 38, 28) 0px 0px;
   height: 76px;
+  margin-top: 26px;
+  margin-bottom: 26px;
   font-size: 20px;
   border-width: 0px;
   border-style: initial;
