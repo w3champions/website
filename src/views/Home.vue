@@ -7,7 +7,7 @@
             <v-row class="justify-center">
               <v-col>
                 <v-card-title v-if="newsContent !== ''">
-                  News {{ newsDate }}
+                  {{ newsHeadline }}
                 </v-card-title>
                 <vue-markdown v-if="newsContent !== ''">
                   {{ newsContent }}
@@ -139,7 +139,7 @@ import { API_URL } from "@/main";
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
   public newsContent = "";
-  public newsDate = "";
+  public newsHeadline = "";
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
@@ -169,9 +169,9 @@ export default class HomeView extends Vue {
     this.newsContent = await mdNewsResponse.text();
 
     const mdNewsDateResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-date.md`
+      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-headline.md`
     );
-    this.newsDate = await mdNewsDateResponse.text();
+    this.newsHeadline = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {
