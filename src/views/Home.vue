@@ -4,17 +4,16 @@
       <v-col cols="12" md="8">
         <v-card tile>
           <v-card-text>
+            <v-card-title v-if="newsContent !== ''">News {{ newsDate }}</v-card-title>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col>
                 <vue-markdown v-if="newsContent !== ''">
                   {{ newsContent }}
                 </vue-markdown>
               </v-col>
             </v-row>
           </v-card-text>
-        </v-card>
-        <v-card tile>
-          <v-card-title>It is finally there</v-card-title>
+          <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
@@ -109,9 +108,11 @@
                 </ol>
               </v-col>
             </v-row>
+            <br />
             <div class="filter-blur text-center mt-5">
               <h3>
-                 If you are having trouble with the launcher. You can use this video to manually install W3C.
+                If you are having trouble with the launcher. You can use this
+                video to manually install W3C.
               </h3>
               <p>
                 The video is shot on Windows but it should work for other operating systems as well.
@@ -208,6 +209,7 @@ import VueMarkdown from "vue-markdown";
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
   public newsContent = "";
+  public newsDate = "";
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
@@ -220,6 +222,10 @@ export default class HomeView extends Vue {
     const mdNewsResponse = await fetch("./news.md");
     const mdNews = await mdNewsResponse.text();
     this.newsContent = mdNews;
+
+    const mdNewsDateResponse = await fetch("./news-date.md");
+    const mdNewsDate = await mdNewsDateResponse.text();
+    this.newsDate = mdNewsDate;
   }
 
   public goToProfile(rank: Ranking) {
