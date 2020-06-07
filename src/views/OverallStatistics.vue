@@ -215,7 +215,7 @@
 <script lang="ts">
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import {
   GameDay,
   GameLength,
@@ -250,8 +250,7 @@ export default class OverallStatisticsView extends Vue {
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
-  public selectedPatch =
-    this.patches.length > 0 ? this.patches[this.patches.length - 1] : "";
+  public selectedPatch = "";
   public selectedSeason: Season = { id: 0 };
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
@@ -388,6 +387,18 @@ export default class OverallStatisticsView extends Vue {
     return mapped;
   }
 
+  @Watch("statsPerRaceAndMap")
+  public onStatsPerRaceAndMapChange(
+    newVal: StatsPerMapAndRace[],
+    oldVal: StatsPerMapAndRace[]
+  ) {
+    if (oldVal.length == 0 && newVal.length > 0) {
+      if (this.selectedPatch == "") {
+        this.setSelectedPatch(this.patches[this.patches.length - 1]);
+      }
+    }
+  }
+
   get patches() {
     if (this.statsPerRaceAndMap[0]) {
       let allowedPatches = [];
@@ -399,10 +410,12 @@ export default class OverallStatisticsView extends Vue {
         let matches = this.getNumberOfMatches(
           this.statsPerRaceAndMap[0].patchToStatsPerModes[patch]
         );
+
         if (matches > 10000) {
           allowedPatches.push(patch);
         }
       }
+
       return allowedPatches;
     }
     return [];
