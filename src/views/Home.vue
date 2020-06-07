@@ -190,8 +190,6 @@ export default class HomeView extends Vue {
 .join-button {
   cursor: pointer;
   line-height: 1;
-  font-family: Lato, sans-serif;
-  font-weight: bold;
   background-color: transparent;
   text-transform: uppercase;
   color: rgb(51, 38, 28);
