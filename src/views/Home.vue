@@ -3,21 +3,28 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
+          <v-card-title>News:</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" md="6">
+                <vue-markdown>
+                  - [ ] Mercury
+                  - [x] Venus
+                  - [x] Earth (Orbit/Moon)
+                  - [x] Mars
+                  - [ ] Jupiter
+                  - [ ] Saturn
+                  - [ ] Uranus
+                  - [ ] Neptune
+                  - [ ] Comet Haley
+                </vue-markdown>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        <v-card tile>
           <v-card-title>It is finally there</v-card-title>
           <v-card-text>
-            <vue-markdown>
-              ### Solar System Exploration, 1950s – 1960s
-
-              - [ ] Mercury
-              - [x] Venus
-              - [x] Earth (Orbit/Moon)
-              - [x] Mars
-              - [ ] Jupiter
-              - [ ] Saturn
-              - [ ] Uranus
-              - [ ] Neptune
-              - [ ] Comet Haley
-            </vue-markdown>
             <v-row>
               <v-col cols="12" md="6">
                 Finally your Warcraft III 1on1 Ladder is available, crafted by
@@ -207,7 +214,7 @@ import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
 
-@Component({ components: { "vue-markdown": VueMarkdown } })
+@Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
