@@ -3,7 +3,24 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
-          <v-card-title>It is finally there</v-card-title>
+          <v-card-text>
+            <v-row class="justify-center">
+              <v-col>
+                <v-card-title v-if="newsContent !== ''">
+                  {{ newsHeadline }}
+                </v-card-title>
+                <vue-markdown v-if="newsContent !== ''">
+                  {{ newsContent }}
+                </vue-markdown>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-row class="justify-center">
+            <v-col class="text-center mb-10">
+              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
+            </v-col>
+          </v-row>
+          <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
@@ -32,82 +49,6 @@
                 />
               </v-col>
             </v-row>
-          </v-card-text>
-
-          <v-card-text>
-            <v-row>
-              <v-col cols="6" md="6">
-                <h3>Installation Guide Windows</h3>
-                <p>
-                  We created a setup tool that automatically does all steps
-                  needed.
-                </p>
-                <v-btn
-                  color="primary"
-                  href="./W3Champions.msi"
-                  target="_blank"
-                  value
-                  outlined
-                  class="w3-background"
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Windows launcher</span>
-                </v-btn>
-              </v-col>
-              <v-col cols="6" md="6">
-                <h3>Installation Guide Mac OS / Manual installation</h3>
-                <p>
-                  If you are using a MAC or you are having trouble with the launcher
-                  you can install W3Champions manually.
-                </p>
-                <ol>
-                  <li>
-                    Download the archive file and unpack it in your Warcraft
-                    Installation folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./MAC-W3Champions.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac Archive</span>
-                  </v-btn>
-                  <li>
-                    Make sure to have a directory structure like Warcraft
-                    III\webui\index.html
-                  </li>
-                  <li>
-                    Download the Maps Archive and unpack it to your Warcraft III Maps Folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./W3Champions-Maps-V1.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Download MAPS archive</span>
-                  </v-btn>
-                  <li>
-                    The folder structure after unpacking should be Maps/W3Champions/v1/FFA
-                  </li>
-                </ol>
-              </v-col>
-            </v-row>
-            <div class="filter-blur text-center mt-5">
-              <h3>
-                 If you are having trouble with the launcher. You can use this video to manually install W3C.
-              </h3>
-              <p>
-                The video is shot on Windows but it should work for other operating systems as well.
-              </p>
-
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/l1aRcUL7qEc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -166,11 +107,11 @@
                   <td>
                     <v-row class="justify-space-between">
                       <v-col cols="2">
-                        <span style="font-size: 15px">{{ i + 1 }}.</span>
+                        <span style="font-size: 15px;">{{ i + 1 }}.</span>
                       </v-col>
                       <v-col cols="10">
-                        {{rank.player.name}}
-                        <div style="font-size: 11px">
+                        {{ rank.player.name }}
+                        <div style="font-size: 11px;">
                           Win/Loss/Total: {{ rank.player.wins }}/{{
                             rank.player.losses
                           }}/{{ rank.player.games }}
@@ -192,9 +133,14 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
+import VueMarkdown from "vue-markdown";
+import { API_URL } from "@/main";
 
-@Component({})
+@Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
+  public newsContent = "";
+  public newsHeadline = "";
+
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
@@ -202,6 +148,30 @@ export default class HomeView extends Vue {
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
+
+    if (API_URL.includes("test")) {
+      await this.setNewsContent("test");
+    } else {
+      await this.setNewsContent("prod");
+    }
+  }
+
+  public goToSetupPage() {
+    this.$router.push({
+      path: "/getting-started/"
+    });
+  }
+
+  private async setNewsContent(stage: string) {
+    const mdNewsResponse = await fetch(
+      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`
+    );
+    this.newsContent = await mdNewsResponse.text();
+
+    const mdNewsDateResponse = await fetch(
+      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-headline.md`
+    );
+    this.newsHeadline = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {
@@ -215,5 +185,32 @@ export default class HomeView extends Vue {
 <style lang="scss" scoped>
 .no-padding {
   padding-top: 0;
+}
+
+.join-button {
+  cursor: pointer;
+  line-height: 1;
+  font-family: Lato, sans-serif;
+  font-weight: bold;
+  background-color: transparent;
+  text-transform: uppercase;
+  color: rgb(51, 38, 28);
+  background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%), linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px, rgba(236, 174, 6, 0.3) 0px 0px 40px 15px, rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset, rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
+  text-shadow: rgb(51, 38, 28) 0px 0px;
+  height: 76px;
+  margin-top: 26px;
+  margin-bottom: 26px;
+  font-size: 20px;
+  border-width: 0px;
+  border-style: initial;
+  border-color: initial;
+  border-image: initial;
+  border-radius: 2px;
+  background-repeat: no-repeat;
+  outline: 0px;
+  text-decoration: none;
+  transition: filter 200ms ease 0s;
+  padding: 0px 45px;
 }
 </style>
