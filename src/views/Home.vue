@@ -205,6 +205,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
+import { API_URL } from "@/main";
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
@@ -219,13 +220,20 @@ export default class HomeView extends Vue {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
 
-    const mdNewsResponse = await fetch("./news.md");
-    const mdNews = await mdNewsResponse.text();
-    this.newsContent = mdNews;
+    if (API_URL.includes("test")) {
+      await this.setNewsContent("test");
+    } else {
+      await this.setNewsContent("prod");
+    }
 
-    const mdNewsDateResponse = await fetch("./news-date.md");
-    const mdNewsDate = await mdNewsDateResponse.text();
-    this.newsDate = mdNewsDate;
+  }
+
+  private async setNewsContent(stage: string) {
+    const mdNewsResponse = await fetch(`https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`);
+    this.newsContent = await mdNewsResponse.text();
+
+    const mdNewsDateResponse = await fetch(`https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-date.md`);
+    this.newsDate = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {
