@@ -17,7 +17,7 @@
           </v-card-text>
           <v-row class="justify-center">
             <v-col class="text-center mb-10">
-              <v-btn @click="goToSetupPage" class="join-button">Join the Battlefield now!</v-btn>
+              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
             </v-col>
           </v-row>
           <v-card-title>Come and join us!</v-card-title>
@@ -185,5 +185,30 @@ export default class HomeView extends Vue {
 <style lang="scss" scoped>
 .no-padding {
   padding-top: 0;
+}
+
+.join-button {
+  cursor: pointer;
+  line-height: 1;
+  font-family: Lato, sans-serif;
+  font-weight: bold;
+  background-color: transparent;
+  text-transform: uppercase;
+  color: rgb(51, 38, 28);
+  background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%), linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px, rgba(236, 174, 6, 0.3) 0px 0px 40px 15px, rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset, rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
+  text-shadow: rgb(51, 38, 28) 0px 0px;
+  height: 76px;
+  font-size: 20px;
+  border-width: 0px;
+  border-style: initial;
+  border-color: initial;
+  border-image: initial;
+  border-radius: 2px;
+  background-repeat: no-repeat;
+  outline: 0px;
+  text-decoration: none;
+  transition: filter 200ms ease 0s;
+  padding: 0px 45px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <v-row class="justify-center">
-    <v-col cols="8">
+    <v-col cols="6">
       <v-container>
         <v-card tile>
           <v-card-text>
@@ -35,70 +35,74 @@
               </v-row>
             </v-card-text>
             <v-row>
-              <v-col cols="8" md="5">
-                <h3>Installation Guide Windows</h3>
-                <p>
-                  We created a setup tool that automatically does all steps
-                  needed.
-                </p>
-                <v-btn
-                  color="primary"
-                  href="./W3Champions.msi"
-                  target="_blank"
-                  value
-                  outlined
-                  class="w3-background"
-                >
-                  <v-icon>mdi-download</v-icon>
-                  <span class="mr-2 hidden-xs-only">Windows launcher</span>
-                </v-btn>
+              <v-col>
+                <v-card-text>
+                  <h3>Installation Guide Windows</h3>
+                  <p>
+                    We created a setup tool that automatically does all steps
+                    needed.
+                  </p>
+                  <v-btn
+                    color="primary"
+                    href="./W3Champions.msi"
+                    target="_blank"
+                    value
+                    outlined
+                    class="w3-background"
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Windows launcher</span>
+                  </v-btn>
+                </v-card-text>
               </v-col>
               <v-col>
-                <h3>Installation Guide Mac OS / Manual installation</h3>
-                <p>
-                  If you are using a MAC or you are having trouble with the
-                  launcher you can install W3Champions manually.
-                </p>
-                <ol>
-                  <li>
-                    Download the archive file and unpack it in your Warcraft
-                    Installation folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./MAC-W3Champions.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac Archive</span>
-                  </v-btn>
-                  <li>
-                    Make sure to have a directory structure like Warcraft
-                    III\webui\index.html
-                  </li>
-                  <li>
-                    Download the Maps Archive and unpack it to your Warcraft III
-                    Maps Folder
-                  </li>
-                  <v-btn
-                    class="w3-background ma-4"
-                    color="primary"
-                    href="./W3Champions-Maps-V1.zip"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      Download MAPS archive
-                    </span>
-                  </v-btn>
-                  <li>
-                    The folder structure after unpacking should be
-                    Maps/W3Champions/v1/FFA
-                  </li>
-                </ol>
+                <v-card-text>
+                  <h3>Installation Guide Mac OS / Manual installation</h3>
+                  <p>
+                    If you are using a MAC or you are having trouble with the
+                    launcher you can install W3Champions manually.
+                  </p>
+                  <ol>
+                    <li>
+                      Download the archive file and unpack it in your Warcraft
+                      Installation folder
+                    </li>
+                    <v-btn
+                      class="w3-background ma-4"
+                      color="primary"
+                      href="./MAC-W3Champions.zip"
+                      target="_blank"
+                      outlined
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Mac Archive</span>
+                    </v-btn>
+                    <li>
+                      Make sure to have a directory structure like Warcraft
+                      III\webui\index.html
+                    </li>
+                    <li>
+                      Download the Maps Archive and unpack it to your Warcraft III
+                      Maps Folder
+                    </li>
+                    <v-btn
+                      class="w3-background ma-4"
+                      color="primary"
+                      href="./W3Champions-Maps-V1.zip"
+                      target="_blank"
+                      outlined
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">
+                        Download MAPS archive
+                      </span>
+                    </v-btn>
+                    <li>
+                      The folder structure after unpacking should be
+                      Maps/W3Champions/v1/FFA
+                    </li>
+                  </ol>
+                </v-card-text>
               </v-col>
             </v-row>
             <br />
