@@ -235,10 +235,27 @@
                     his buggy stats and thank him for all eternity ;)
                   </v-card-text>
                 </v-row>
-                <player-stats-race-versus-race-on-map
-                  v-if="selectedSeason.id !== 0"
-                  :stats="raceWithoutRandom"
-                />
+                <v-row>
+                  <v-col cols="md-3">
+                    <v-card-text>
+                      <v-select
+                        :items="patches"
+                        item-text="patchVersion"
+                        item-value="patch"
+                        v-model="selectedPatch"
+                        @change="setSelectedPatch"
+                        label="Select Patch"
+                        outlined
+                      />
+                    </v-card-text>
+                  </v-col>
+                  <v-col cols="md-9">
+                    <player-stats-race-versus-race-on-map
+                      v-if="selectedSeason.id !== 0"
+                      :stats="raceWithoutRandom"
+                    />
+                  </v-col>
+                </v-row>
               </v-tab-item>
               <v-tab-item :value="'tab-at-teams'">
                 <v-card-title>Teams</v-card-title>
@@ -275,6 +292,7 @@ import {
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
+  PlayerStatsRaceOnMapVersusRaceByPatch,
 } from "@/store/player/types";
 import { PersonalSetting } from "@/store/personalSettings/types";
 import {
@@ -321,6 +339,7 @@ export default class PlayerView extends Vue {
 
   public raceEnums = ERaceEnum;
   public search = "";
+  public selectedPatch = "All";
   public searchModel = {} as Ranking;
   public isLoading = false;
   public opponentWins = 0;
@@ -377,13 +396,34 @@ export default class PlayerView extends Vue {
     return FEATURE_FLAG_CLANS;
   }
 
+  get patches() {
+    if (
+      !this.playerStatsRaceVersusRaceOnMap ||
+      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+    ) {
+      return [];
+    }
+    let patches = ["All"];
+
+    Object.keys(
+      this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+    ).map((p) => patches.push(p));
+
+    return patches;
+  }
+
   public selectedGameModeForSearch = EGameMode.UNDEFINED;
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
-    if (!this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap) return [];
-    return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMap.filter(
-      (r) => r.race !== ERaceEnum.RANDOM
-    );
+    if (
+      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch ||
+      !(this.selectedPatch in this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch)
+    )
+      return [];
+
+    return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
+      this.selectedPatch
+    ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
   }
 
   get ffaStats() {
@@ -537,6 +577,10 @@ export default class PlayerView extends Vue {
     }
 
     return "";
+  }
+
+  public setSelectedPatch(patch: string) {
+    this.selectedPatch = patch;
   }
 
   public async getMatches(page?: number) {

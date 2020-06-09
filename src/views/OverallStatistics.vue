@@ -250,7 +250,7 @@ export default class OverallStatisticsView extends Vue {
 
   public selectedMap = "Overall";
   public selectedMmr = 0;
-  public selectedPatch = "";
+  public selectedPatch = "All";
   public selectedSeason: Season = { id: 0 };
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
@@ -401,7 +401,7 @@ export default class OverallStatisticsView extends Vue {
 
   get patches() {
     if (this.statsPerRaceAndMap[0]) {
-      let allowedPatches = [];
+      let allowedPatches = ["All"];
       var patches = Object.keys(
         this.statsPerRaceAndMap[0].patchToStatsPerModes
       );

@@ -3,19 +3,15 @@
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
       {{
-        stat.race !== raceEnums.TOTAL
-          ? "as " + $t("races." + raceEnums[stat.race])
-          : "All races"
+      stat.race !== raceEnums.TOTAL
+      ? "as " + $t("races." + raceEnums[stat.race])
+      : "All races"
       }}
     </v-tab>
-    <v-tab-item
-      v-for="stat of stats"
-      :key="stat.race"
-      :value="'tab-' + stat.race"
-    >
+    <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
       <v-card-text>
         <v-row>
-          <v-col cols="md-8">
+          <v-col cols="md-12">
             <race-to-map-stat :stats="stat.winLossesOnMap" />
           </v-col>
         </v-row>
@@ -50,6 +46,7 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
           const gamesOfRace = w.winLosses
             .map((wl) => wl.games)
             .reduce((a, b) => a + b, 0);
+
           if (maxGames < gamesOfRace) {
             maxRace = s.race;
             maxGames = gamesOfRace;

@@ -46,9 +46,9 @@ export default class ModeStatsGrid extends Vue {
   }
 
   get gameModeStatsCombined() {
-    const gm2v2s = this.stats.filter(
-      (g) => g.gameMode === EGameMode.GM_2ON2_AT
-    );
+    const gm2v2s = this.stats.filter((g) => {
+      g.gameMode === EGameMode.GM_2ON2_AT;
+    });
     if (gm2v2s.length === 0) return this.stats;
     const combindes2v2 = gm2v2s.reduce(
       (a, b) => ({
@@ -83,13 +83,10 @@ export default class ModeStatsGrid extends Vue {
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
-    const gm1v1 = this.stats.find(
-      (g) => g.gameMode === EGameMode.GM_1ON1
-    );
 
-    const ffa = this.stats.find(
-      (g) => g.gameMode === EGameMode.GM_FFA
-    );
+    const gm1v1 = this.stats.find((g) => g.gameMode === EGameMode.GM_1ON1);
+
+    const ffa = this.stats.find((g) => g.gameMode === EGameMode.GM_FFA);
 
     return [gm1v1, combindes2v2, ffa].filter(i => i); //filter out nulls
   }
