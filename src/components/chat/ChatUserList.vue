@@ -13,15 +13,6 @@
       </div>
     </v-card>
     <br />
-    <v-card>
-      <v-row class="pa-0 justify-center">
-        <v-col class="pa-0 text-center">
-          <v-btn v-if="chatApiKey" class="ma-4" @click="copyChatApiKey">
-            Copy ApiKey
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
   </div>
 </template>
 <script lang="ts">
@@ -30,17 +21,8 @@ import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class ChatUserList extends Vue {
-  get chatApiKey(): string {
-    return this.$store.direct.state.chat.apiKey;
-  }
-
   get otherUsers() {
     return this.$store.direct.state.chat.otherUsers;
-  }
-
-  public async copyChatApiKey() {
-    await this.$store.direct.dispatch.chat.createApiKey();
-    await navigator.clipboard.writeText(this.chatApiKey);
   }
 
   public openProfile(battleTag: string) {

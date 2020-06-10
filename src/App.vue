@@ -41,6 +41,9 @@
           <v-list-item @click="openPlayerProfile">
             <v-list-item-title>View Profile</v-list-item-title>
           </v-list-item>
+          <v-list-item v-if="isClansActive" @click="downloadChatKey">
+            <v-list-item-title>Chat key</v-list-item-title>
+          </v-list-item>
           <v-list-item @click="logout">
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
@@ -90,7 +93,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { REDIRECT_URL } from "@/main";
+import { FEATURE_FLAG_CLANS, REDIRECT_URL } from "@/main";
 
 @Component({})
 export default class App extends Vue {
@@ -121,6 +124,29 @@ export default class App extends Vue {
 
   logout() {
     this.$store.direct.dispatch.oauth.logout();
+  }
+
+  get isClansActive() {
+    return FEATURE_FLAG_CLANS;
+  }
+
+  get chatApiKey(): string {
+    return this.$store.direct.state.chat.apiKey;
+  }
+
+  public async downloadChatKey() {
+    await this.$store.direct.dispatch.chat.createApiKey();
+
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.chatApiKey));
+    element.setAttribute('download', "chat.key");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
   }
 
   public openPlayerProfile() {
