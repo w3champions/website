@@ -18,12 +18,10 @@
                     needed.
                   </p>
                   <v-btn
-                    color="primary"
                     href="../W3Champions-Installer.exe"
                     target="_blank"
                     value
-                    outlined
-                    class="w3-background"
+                    class="join-button mt-0 mb-4"
                   >
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">Windows Installer</span>
@@ -216,5 +214,10 @@ export default class GettingStartedView extends Vue {
 
  .v-tab--active::before {
    opacity: 0.12 !important;
+ }
+
+ .theme--dark.v-application .v-btn.join-button {
+   text-shadow: none !important;
+   color: black !important;
  }
 </style>
