@@ -8,78 +8,140 @@
             <v-row>
               <v-col>
                 <v-card-text>
-                  <h3>Installation Guide Windows</h3>
+                  <h3>Automatic Install Windows</h3>
                   <p>
                     We created a setup tool that automatically does all steps
                     needed.
                   </p>
                   <v-btn
                     color="primary"
-                    href="../W3Champions.msi"
+                    href="../W3Champions-Installer.exe"
                     target="_blank"
                     value
                     outlined
                     class="w3-background"
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Windows launcher</span>
+                    <span class="mr-2 hidden-xs-only">Windows Installer</span>
                   </v-btn>
+                  <p>
+                    <span class="important">
+                     Make sure installer is run as administrator
+                    </span>
+                    <br/>
+                    <span>This is required because installer needs to put the <i>webui</i> folder inside your Warcraft III directory</span>
+                    </p>
+                  <h3 class="mt-10">Manual Install Windows</h3>
+                  <p>
+                    1. Download the archive file and unpack it in your Warcraft
+                    Installation folder
+                  </p>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    href="../W3Champions-webui.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">W3Champions Archive</span>
+                  </v-btn>
+                  <p class="mt-2">
+                   2. Make sure to have a directory structure like: 
+                    <code>Warcraft III\webui\index.html</code>
+                  </p>
+                  <p>
+                    If you have a folder called <i style="color:red">_retail_</i> in your Warcraft III folder,
+                    make sure to have the following structure:
+                    <br/>
+                    <code clas>Warcraft III\<span class="important-dark">_retail_</span>\webui\index.html</code>
+                  </p>
+                  <p>
+                    3. Download the Maps Archive and unpack it to your Warcraft III
+                    Maps Folder
+                  </p>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    href="../W3Champions-Maps-V1.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">
+                      Download MAPS archive
+                    </span>
+                  </v-btn>
+                  <p class="mt-2">
+                    4. The folder structure after unpacking should be
+                    <code>Documents\Warcraft III\Maps\W3Champions\v1\FFA</code>
+                  </p>
+                  <p>
+                    If you have a folder called <i style="color:red">_retail_</i> in your Warcraft III folder,
+                    make sure to have the following structure:
+                    <code>Documents\Warcraft III\<span class="important-dark">_retail_</span>\Maps\W3Champions\v1\FFA</code>
+                  </p>
                 </v-card-text>
               </v-col>
               <v-col>
                 <v-card-text>
-                  <h3>Installation Guide Mac OS / Manual installation</h3>
+                  <h3>Manual Install Mac OS</h3>
                   <p>
-                    If you are using a MAC or you are having trouble with the
-                    launcher you can install W3Champions manually.
+                    1. Download the archive file and unpack it in your Warcraft
+                    Installation folder
                   </p>
-                  <ol>
-                    <li>
-                      Download the archive file and unpack it in your Warcraft
-                      Installation folder
-                    </li>
-                    <v-btn
-                      class="w3-background ma-4"
-                      color="primary"
-                      href="../MAC-W3Champions.zip"
-                      target="_blank"
-                      outlined
-                    >
-                      <v-icon>mdi-download</v-icon>
-                      <span class="mr-2 hidden-xs-only">Mac Archive</span>
-                    </v-btn>
-                    <li>
-                      Make sure to have a directory structure like Warcraft
-                      III\webui\index.html
-                    </li>
-                    <li>
-                      Download the Maps Archive and unpack it to your Warcraft III
-                      Maps Folder
-                    </li>
-                    <v-btn
-                      class="w3-background ma-4"
-                      color="primary"
-                      href="../W3Champions-Maps-V1.zip"
-                      target="_blank"
-                      outlined
-                    >
-                      <v-icon>mdi-download</v-icon>
-                      <span class="mr-2 hidden-xs-only">
-                        Download MAPS archive
-                      </span>
-                    </v-btn>
-                    <li>
-                      The folder structure after unpacking should be
-                      Maps/W3Champions/v1/FFA
-                    </li>
-                  </ol>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    href="../W3Champions-webui.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">W3Champions Archive</span>
+                  </v-btn>
+                  <p class="mt-2">
+                   2. Make sure to have a directory structure like: 
+                    <code>Warcraft III\webui\index.html</code>
+                  </p>
+                  <p>
+                    If you have a folder called <i style="color:red">_retail_</i> in your Warcraft III folder,
+                    make sure to have the following structure:
+                    <br/>
+                    <code clas>Warcraft III\<span class="important-dark">_retail_</span>\webui\index.html</code>
+                  </p>
+                  <p>
+                    3. Download the Maps Archive and unpack it to your Warcraft III
+                    Maps Folder
+                  </p>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    href="../W3Champions-Maps-V1.zip"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">
+                      Download MAPS archive
+                    </span>
+                  </v-btn>
+                  <p class="mt-2">
+                    4. The folder structure after unpacking should be
+                    <code>Warcraft III\Maps\W3Champions\v1\FFA</code>
+                  </p>
+                  <p>
+                    If you have a folder called <i style="color:red">_retail_</i> in your Warcraft III folder,
+                    make sure to have the following structure:
+                    <code>Warcraft III\<span class="important-dark">_retail_</span>\Maps\W3Champions\v1\FFA</code>
+                  </p>
                 </v-card-text>
               </v-col>
             </v-row>
             <br />
-            <div class="filter-blur text-center mt-5">
+            <div class="filter-blur text-center">
               <h3>
-                If you are having trouble with the launcher. You can use this
+                If you are having trouble with the installer. You can use this
                 video to manually install W3C.
               </h3>
               <p>
@@ -115,3 +177,15 @@ import { Component } from "vue-property-decorator";
 @Component({})
 export default class GettingStartedView extends Vue {}
 </script>
+
+<style scoped>
+ .important {
+   color: red;
+   font-weight: bold;
+ }
+
+ .important-dark {
+   color: black;
+   font-weight: bold;
+ }
+</style>
