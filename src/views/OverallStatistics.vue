@@ -466,7 +466,7 @@ export default class OverallStatisticsView extends Vue {
   get maps() {
     const stats = this.statsPerRaceAndMap[0];
     if (!stats) return [];
-    return stats.statsPerModes.map((r) => {
+    return stats.patchToStatsPerModes[this.selectedPatch].map((r) => {
       return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
     });
   }

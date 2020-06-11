@@ -417,10 +417,14 @@ export default class PlayerView extends Vue {
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (
       !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch ||
-      !(this.selectedPatch in this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch)
-    )
+      !(
+        this.selectedPatch in
+        this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+      )
+    ) {
       return [];
-
+    }
+   
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
       this.selectedPatch
     ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
