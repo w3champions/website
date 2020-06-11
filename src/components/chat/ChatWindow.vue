@@ -23,6 +23,7 @@
         Sorry, but you have to be logged in to chat
       </v-list-item>
     </v-card>
+    <v-select :items="selects" @change="switchRoom" />
   </div>
 </template>
 <script lang="ts">
@@ -35,6 +36,10 @@ import { API_URL } from "@/main";
 export default class ChatWindow extends Vue {
   public connection!: HubConnection;
   public editChatMessage = "Connecting...";
+
+  get selects() {
+    return ["w3champions", "HUCastle", "w3c"];
+  }
 
   async mounted() {
     this.connection = new HubConnectionBuilder()
@@ -55,7 +60,7 @@ export default class ChatWindow extends Vue {
       );
 
       await this.$store.direct.dispatch.chat.loadChatApiKey();
-      await this.connection.invoke("LoginAs", this.chatApiKey);
+      await this.connection.invoke("LoginAs", this.chatApiKey, "w3champions");
     }
 
     if (this.chatApiKey) {
@@ -73,6 +78,14 @@ export default class ChatWindow extends Vue {
 
   get otherUsers() {
     return this.$store.direct.state.chat.otherUsers;
+  }
+
+  public async switchRoom(chatRoom: string) {
+    await this.connection.invoke(
+      "SwitchRoom",
+      this.chatApiKey,
+      chatRoom
+    );
   }
 
   public pushMessage(user: string, name: string, message: string) {

@@ -367,6 +367,7 @@ export default class RankingsGrid extends Vue {
     const foundByFirstPlayer = this.ongoingMatches[firstPlayer] as {
       players: string[];
     };
+
     if (foundByFirstPlayer) {
       let allMatch = true;
       playerIds.forEach((p) => {

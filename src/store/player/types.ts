@@ -63,7 +63,15 @@ export interface RaceWinsOnMap {
   winLossesOnMap: WinLossesOnMap[];
 }
 
+export interface PlayerStatsRaceOnMapVersusRaceByPatch {
+  [key: string]: any;
+
+  patch: string;
+  raceWinsOnMap: RaceWinsOnMap[];
+}
+
 export interface PlayerStatsRaceOnMapVersusRace {
+  raceWinsOnMapByPatch: PlayerStatsRaceOnMapVersusRaceByPatch;
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
 }

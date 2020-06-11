@@ -12,7 +12,6 @@
         </v-list-item>
       </div>
     </v-card>
-    <br />
   </div>
 </template>
 <script lang="ts">
