@@ -86,6 +86,7 @@ export type StatsPerMapAndRace = {
 export type StatsPerWinrate = {
   mmrRange: number;
   statsPerModes: StatsPerMapAndRace[];
+  patchToStatsPerModes: { [patch: string] : StatsPerMapAndRace[]; };
 };
 
 export interface Length {
