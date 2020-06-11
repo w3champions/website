@@ -95,7 +95,6 @@ export default class ProfileService {
     )}/race-on-map-versus-race?season=${season}`;
 
     const response = await fetch(url);
-
     return await response.json();
   }
 }
