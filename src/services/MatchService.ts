@@ -72,22 +72,25 @@ export default class MatchService {
     battleTag: string,
     opponentTag: string,
     gameMode: EGameMode,
-    gateway: Gateways
+    gateway: Gateways,
+    season: number
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
-    let url = `${API_URL}api/matches/search?offset=${offset}&playerId=${encodeURIComponent(
+    let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(
       battleTag
     )}&gateway=${gateway}`;
 
     if (opponentTag.length) {
-      url += `&opponentId=${encodeURIComponent(opponentTag)}`;
+      url += `&offset=0&opponentId=${encodeURIComponent(opponentTag)}&pageSize=50`;
     } else {
-      url += `&pageSize=${this.pageSize}`;
+      url += `&offset=${offset}&pageSize=${this.pageSize}`;
     }
 
     if (gameMode !== EGameMode.UNDEFINED) {
       url += `&gameMode=${gameMode}`;
     }
+    
+    url += `&season=${season}`
 
     const response = await fetch(url, {
       headers: {
