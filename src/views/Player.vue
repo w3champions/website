@@ -483,6 +483,7 @@ export default class PlayerView extends Vue {
 
   public selectSeason(season: Season) {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
+    this.getMatches();
     this.$store.direct.dispatch.player.loadGameModeStats();
     this.$store.direct.dispatch.player.loadRaceStats();
   }
@@ -726,9 +727,9 @@ export default class PlayerView extends Vue {
 
   private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
-    this.getMatches();
 
     await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    this.getMatches();
     await this.$store.direct.dispatch.player.loadGameModeStats();
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(

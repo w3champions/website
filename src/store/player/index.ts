@@ -109,7 +109,8 @@ const mod = {
         state.battleTag,
         state.opponentTag,
         state.gameMode,
-        rootState.gateway
+        rootState.gateway,
+        state.selectedSeason.id
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
