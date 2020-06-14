@@ -46,10 +46,16 @@ export default class ModeStatsGrid extends Vue {
   }
 
   get gameModeStatsCombined() {
-    const gm2v2s = this.stats.filter(
-      (g) => g.gameMode === EGameMode.GM_2ON2_AT
-    );
+    let gm2v2s = [];
+
+    for (var i = 0; i < this.stats.length; i++) {
+      if (this.stats[i].gameMode === EGameMode.GM_2ON2_AT) {
+        gm2v2s.push(this.stats[i]);
+      }
+    }
+
     if (gm2v2s.length === 0) return this.stats;
+
     const combindes2v2 = gm2v2s.reduce(
       (a, b) => ({
         gameMode: EGameMode.GM_2ON2_AT,
@@ -83,15 +89,12 @@ export default class ModeStatsGrid extends Vue {
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
-    const gm1v1 = this.stats.find(
-      (g) => g.gameMode === EGameMode.GM_1ON1
-    );
 
-    const ffa = this.stats.find(
-      (g) => g.gameMode === EGameMode.GM_FFA
-    );
+    const gm1v1 = this.stats.find((g) => g.gameMode === EGameMode.GM_1ON1);
 
-    return [gm1v1, combindes2v2, ffa].filter(i => i); //filter out nulls
+    const ffa = this.stats.find((g) => g.gameMode === EGameMode.GM_FFA);
+
+    return [gm1v1, combindes2v2, ffa].filter((i) => i); //filter out nulls
   }
 
   public headers = [

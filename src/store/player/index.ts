@@ -82,7 +82,6 @@ const mod = {
       battleTag: string
     ) {
       const { commit, state, rootGetters } = moduleActionContext(context, mod);
-
       const profile = await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
         battleTag,
         state.selectedSeason.id
