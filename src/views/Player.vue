@@ -570,7 +570,8 @@ export default class PlayerView extends Vue {
       case EGameMode.GM_1ON1: {
         return "one-v-one";
       }
-      case EGameMode.GM_2ON2_AT: {
+      case EGameMode.GM_2ON2_AT:
+      case EGameMode.GM_2ON2: {
         return "two-v-two-at";
       }
       case EGameMode.GM_4ON4: {
@@ -671,6 +672,10 @@ export default class PlayerView extends Vue {
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
         modeId: EGameMode.GM_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
+        modeId: EGameMode.GM_2ON2,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
