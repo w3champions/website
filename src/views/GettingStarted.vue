@@ -212,14 +212,15 @@
               </v-tab-item>
               <v-tab-item :value="'chat'">
                 <v-card-text class="filter-blur">
-                  <div class="filter-blur text-center">
+                  <div class="filter-blur">
                     <h3>
                       To verify, that you are you in the w3c chats, follow these steps
                     </h3>
-                    <v-list>
-                      <v-list-item>Login with your Battle Net Account on the top right</v-list-item>
-                      <v-list-item>Click on the Profile Icon Dropdown the "chat key" button</v-list-item>
-                    </v-list>
+                    <p>1. Login with your Battle Net Account on the top right</p>
+                    <p>2. Click on the Profile Icon Dropdown the "chat key" button</p>
+                    <p>3. A key will be downloaded. If you have allready downloaded a key, the previous key will be invalidated</p>
+                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "open game location"</p>
+                    <p>5. If you now start Warcraft you should see a lock icon next to your username in chat. This shows, that you are sucessfully authenticated with our website and that you can take actions related to your profile (switching icons, managing the clan etc.)</p>
                     <v-card-text class="text-center ma-5">
                       <div>
                         If your still having problems:
@@ -246,9 +247,11 @@ import { FEATURE_FLAG_CLANS } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
+
   get isChatEnabled() {
     return FEATURE_FLAG_CLANS;
   }
+
   data() {
     return {
       tabsModel: null,

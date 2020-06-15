@@ -156,8 +156,6 @@ import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
 import { EGameMode } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
-import ChatWindow from "@/components/chat/ChatWindow.vue";
-import ChatUserList from "@/components/chat/ChatUserList.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat } from "@/store/player/types";
@@ -166,8 +164,6 @@ import { ModeStat } from "@/store/player/types";
   components: {
     PlayerLeague,
     ClanRoleIcon,
-    ChatUserList,
-    ChatWindow,
     PlayerAvatar,
     LeagueIcon,
     DeleteClanModal,
