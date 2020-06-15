@@ -139,7 +139,7 @@ export default class App extends Vue {
 
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.chatApiKey));
-    element.setAttribute('download', "chat.key");
+    element.setAttribute('download', "w3champions.key");
 
     element.style.display = 'none';
     document.body.appendChild(element);
