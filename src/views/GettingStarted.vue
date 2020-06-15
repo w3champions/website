@@ -216,11 +216,10 @@
                     <h3>
                       To verify, that you are you in the w3c chats, follow these steps
                     </h3>
-                    <p>
-                      The video is shot on Windows but it should work for other
-                      operating systems as well.
-                    </p>
-                    <br />
+                    <v-list>
+                      <v-list-item>Login with your Battle Net Account on the top right</v-list-item>
+                      <v-list-item>Click on the Profile Icon Dropdown the "chat key" button</v-list-item>
+                    </v-list>
                     <v-card-text class="text-center ma-5">
                       <div>
                         If your still having problems:
