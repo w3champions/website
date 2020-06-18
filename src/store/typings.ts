@@ -89,6 +89,7 @@ export interface PlayerScore {
 export enum EGameMode {
   UNDEFINED,
   GM_1ON1 = 1,
+  GM_2ON2 = 2,
   GM_2ON2_AT = 6,
   GM_4ON4 = 3,
   GM_FFA = 5,
