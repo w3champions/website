@@ -475,14 +475,21 @@ export default class PlayerView extends Vue {
       result.push(gameModeStat);
     }
 
-    const sortFun = (x: ModeStat) => {
+    const sortByLeagueFun = (x: ModeStat) => {
       if (x.rank === 0) {
-              return 100000;
+              return 100000; // Push at the end of sorting
+          }
+        return x.leagueId;
+    };
+
+    const sortByRankFun = (x: ModeStat) => {
+      if (x.rank === 0) {
+              return 100000; // Push at the end of sorting
           }
         return x.rank;
     };
 
-    result = _.orderBy(result, [sortFun, sortFun], ['asc', 'asc']);
+    result = _.orderBy(result, [sortByLeagueFun, sortByRankFun], ['asc', 'asc']);
 
     return _.take(result, 3);
   }
