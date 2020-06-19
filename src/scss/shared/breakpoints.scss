@@ -1,3 +1,24 @@
+@media only screen and (max-width: 600px) {
+  .theme--light.v-application,
+  .theme--dark.v-application{
+    .container {
+      padding: 0;
+    }
+    .v-card {
+      border-radius: 0;
+    }
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .theme--light.v-application,
+  .theme--dark.v-application{
+    .v-card {
+      border-radius: 5px;
+    }
+  }
+}
+
 @media (min-width: 960px) {
   .container {
     max-width: none !important;
@@ -7,5 +28,11 @@
 @media (min-width: 1264px) {
   .container {
     max-width: 1185px !important;
+  }
+  .theme--light.v-application,
+  .theme--dark.v-application{
+    .v-card {
+      border-radius: 15px;
+    }
   }
 }
