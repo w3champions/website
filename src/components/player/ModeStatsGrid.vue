@@ -94,7 +94,9 @@ export default class ModeStatsGrid extends Vue {
 
     const ffa = this.stats.find((g) => g.gameMode === EGameMode.GM_FFA);
 
-    return [gm1v1, combindes2v2, ffa].filter((i) => i); //filter out nulls
+    const gm2v2 = this.stats.find((g) => g.gameMode === EGameMode.GM_2ON2);
+
+    return [gm1v1, gm2v2, combindes2v2, ffa].filter((i) => i); //filter out nulls
   }
 
   public headers = [
