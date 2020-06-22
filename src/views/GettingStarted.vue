@@ -329,4 +329,9 @@ export default class GettingStartedView extends Vue {
   height: 100px;
 }
 
+.chat-picture {
+  background-image: url("../assets/gettingStartedChat/7.jpg");
+  height: 200px;
+}
+
 </style>
