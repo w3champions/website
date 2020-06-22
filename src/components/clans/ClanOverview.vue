@@ -199,7 +199,7 @@ export default class ClanOverview extends Vue {
         losses: a.losses + b.losses,
         gameMode: mode,
         games: a.games + b.games,
-        rank: 5,
+        rank: 0,
         leagueOrder: 5,
       }),
       {
@@ -207,13 +207,15 @@ export default class ClanOverview extends Vue {
         losses: 0,
         gameMode: mode,
         games: 0,
-        rank: 5,
+        rank: 0,
         leagueOrder: 5,
       }
     );
 
-    const order = this.playersClan.ranks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }), { leagueOrder: 0 })
+    const allRanks = this.playersClan.ranks.filter(r => r.rankNumber != 0);
+    const order = allRanks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }), { leagueOrder: 0 })
     reduced.leagueOrder = Math.round(order.leagueOrder / games.length);
+    reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
 
     return reduced;
   }
