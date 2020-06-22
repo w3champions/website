@@ -214,13 +214,21 @@
                 <v-card-text class="filter-blur">
                   <div class="filter-blur">
                     <h3>
-                      To verify, that you are you in the w3c chats, follow these steps
+                      To unlock actions tied to your profile in game (e.g. changing race pictures), follow these steps
                     </h3>
+                    <br />
                     <p>1. Login with your Battle Net Account on the top right</p>
+                    <div class="login-picture gettingStartedPictures" />
                     <p>2. Click on the Profile Icon Dropdown the "chat key" button</p>
+                    <div class="chat-key-picture gettingStartedPictures" />
                     <p>3. A key will be downloaded. If you have allready downloaded a key, the previous key will be invalidated</p>
-                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "open game location"</p>
+                    <div class="download-picture gettingStartedPictures" />
+                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "Show in Explorer". <b>If you have a folder called _retail_ in your Warcraft III folder, the webui folder is in there!</b></p>
+                    <div class="bnet-place-picture gettingStartedPictures" />
+                    <div class="webui-location-picture gettingStartedPictures" />
+                    <div class="key-place-picture gettingStartedPictures" />
                     <p>5. If you now start Warcraft you should see a lock icon next to your username in chat. This shows, that you are sucessfully authenticated with our website and that you can take actions related to your profile (switching icons, managing the clan etc.)</p>
+                    <div class="chat-picture gettingStartedPictures" />
                     <v-card-text class="text-center ma-5">
                       <div>
                         If your still having problems:
@@ -284,4 +292,41 @@ export default class GettingStartedView extends Vue {
   text-shadow: none !important;
   color: black !important;
 }
+
+.gettingStartedPictures {
+  margin-bottom: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-picture {
+  background-image: url("../assets/gettingStartedChat/1.jpg");
+  height: 350px;
+}
+
+.chat-key-picture {
+  background-image: url("../assets/gettingStartedChat/2.jpg");
+  height: 280px;
+}
+
+.download-picture {
+  background-image: url("../assets/gettingStartedChat/3.jpg");
+  height: 240px;
+}
+
+.bnet-place-picture {
+  background-image: url("../assets/gettingStartedChat/4.jpg");
+  height: 450px;
+}
+
+.webui-location-picture {
+  background-image: url("../assets/gettingStartedChat/5.jpg");
+  height: 350px;
+}
+
+.key-place-picture {
+  background-image: url("../assets/gettingStartedChat/6.jpg");
+  height: 100px;
+}
+
 </style>
