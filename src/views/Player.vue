@@ -715,6 +715,10 @@ export default class PlayerView extends Vue {
         modeId: EGameMode.GM_2ON2_AT,
       },
       {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
+        modeId: EGameMode.GM_4ON4,
+      },
+      {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
         modeId: EGameMode.GM_FFA,
       },
@@ -871,6 +875,12 @@ export default class PlayerView extends Vue {
     height: 67px;
     .live-match__map {
       top: 65px;
+    }
+  }
+  &.four-v-four {
+    height: 100px;
+    .live-match__map {
+      top: 95px;
     }
   }
 }
