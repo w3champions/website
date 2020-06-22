@@ -88,14 +88,8 @@
                     </v-col>
                     <v-col md="12" lg="9">
                       <v-row>
-                        <v-col cols="12" md="4" v-if="oneVersusOneStat">
-                          <player-league :modeStat="oneVersusOneStat"></player-league>
-                        </v-col>
-                        <v-col cols="12" md="4" v-if="best2versus2Stat">
-                          <player-league :modeStat="best2versus2Stat"></player-league>
-                        </v-col>
-                        <v-col cols="12" md="4" v-if="ffaStats">
-                          <player-league :modeStat="ffaStats"></player-league>
+                        <v-col cols="12" md="4"  v-for="gameModeStat in topGameModeStats" :key="gameModeStat.gameMode">
+                          <player-league :modeStat="gameModeStat"></player-league>
                         </v-col>
                       </v-row>
                       <v-row class="filter-none" v-if="selectedSeason.id === 0">
@@ -293,6 +287,7 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
   PlayerStatsRaceOnMapVersusRaceByPatch,
+  ModeStat,
 } from "@/store/player/types";
 import { PersonalSetting } from "@/store/personalSettings/types";
 import {
@@ -315,6 +310,8 @@ import AppConstants from "../constants";
 import CountryFlag from "vue-country-flag";
 import { FEATURE_FLAG_CLANS } from "@/main";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
+
+import * as _ from 'lodash';
 
 @Component({
   components: {
@@ -430,10 +427,6 @@ export default class PlayerView extends Vue {
     ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
   }
 
-  get ffaStats() {
-    return this.gameModeStats.filter((m) => m.gameMode === EGameMode.GM_FFA)[0];
-  }
-
   get gameModeStatsAt() {
     const atStats = this.gameModeStats.filter(
       (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
@@ -451,14 +444,54 @@ export default class PlayerView extends Vue {
     ];
   }
 
-  get best2versus2Stat() {
-    return this.gameModeStatsAt[0];
-  }
+  get topGameModeStats() {
+    if (!this.gameModeStats) {
+      return [];
+    }
 
-  get oneVersusOneStat() {
-    return this.gameModeStats.filter(
-      (m) => m.gameMode === EGameMode.GM_1ON1
-    )[0];
+    const bestModesMap:  { [gameMode: number] : ModeStat; } = {}
+
+    this.gameModeStats.forEach(x => {
+      const foundMode = bestModesMap[x.gameMode];
+
+      if (foundMode) {
+        // if league is better
+        if (foundMode.leagueId > x.leagueId) {
+          bestModesMap[x.gameMode] = x;
+        }
+
+        // if same league but rank is better
+        if (foundMode.leagueId == x.leagueId && foundMode.rank > x.rank) {
+          bestModesMap[x.gameMode] = x;
+        }
+      } else {
+        bestModesMap[x.gameMode] = x;
+      }
+    });
+
+    let result: ModeStat[] = [];
+    for (const key in bestModesMap) {
+      const gameModeStat = bestModesMap[key]
+      result.push(gameModeStat);
+    }
+
+    const sortByLeagueFun = (x: ModeStat) => {
+      if (x.rank === 0) {
+              return 100000; // Push at the end of sorting
+          }
+        return x.leagueId;
+    };
+
+    const sortByRankFun = (x: ModeStat) => {
+      if (x.rank === 0) {
+              return 100000; // Push at the end of sorting
+          }
+        return x.rank;
+    };
+
+    result = _.orderBy(result, [sortByLeagueFun, sortByRankFun], ['asc', 'asc']);
+
+    return _.take(result, 3);
   }
 
   get raceStats() {
@@ -570,7 +603,8 @@ export default class PlayerView extends Vue {
       case EGameMode.GM_1ON1: {
         return "one-v-one";
       }
-      case EGameMode.GM_2ON2_AT: {
+      case EGameMode.GM_2ON2_AT:
+      case EGameMode.GM_2ON2: {
         return "two-v-two-at";
       }
       case EGameMode.GM_4ON4: {
@@ -671,6 +705,10 @@ export default class PlayerView extends Vue {
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
         modeId: EGameMode.GM_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
+        modeId: EGameMode.GM_2ON2,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
@@ -826,13 +864,13 @@ export default class PlayerView extends Vue {
 
   &.one-v-one {
     .live-match__map {
-      top: 28px;
+      top: 33px;
     }
   }
   &.two-v-two-at {
-    height: 60px;
+    height: 67px;
     .live-match__map {
-      top: 56px;
+      top: 65px;
     }
   }
 }

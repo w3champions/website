@@ -16,10 +16,12 @@
     "@types/moment": "^2.13.0",
     "@types/vue-markdown": "^2.2.1",
     "@types/vue-moment": "^4.0.0",
+    "@types/lodash": "^4.14.155",
     "babel-runtime": "^6.26.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
     "direct-vuex": "^0.11.0",
+    "lodash": "^4.17.15",
     "moment": "^2.26.0",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
@@ -36,6 +38,7 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.155",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "@vue/cli-plugin-babel": "~4.4.1",
