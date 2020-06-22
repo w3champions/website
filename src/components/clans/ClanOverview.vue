@@ -31,6 +31,9 @@
           <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2_AT)" />
         </v-col>
         <v-col>
+          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_4ON4)" />
+        </v-col>
+        <v-col>
           <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_FFA)" />
         </v-col>
       </v-row>

@@ -19,6 +19,7 @@ const en = {
     GM_1ON1: "1 vs 1",
     GM_2ON2: "2 vs 2",
     GM_2ON2_AT: "2 vs 2 AT",
+    GM_4ON4: "4 vs 4",
     GM_FFA: "FFA",
   },
 
@@ -76,7 +77,18 @@ const en = {
     "_ffa_rockslide_anon": "Rocketslide",
     "_ffa_rockslide_anon_cd": "Rocketslide",
     circleoffallenheroes: "Circle of Fallen Heroes",
-    tidewaterglades: "Tidewater Glades LV"
+    tidewaterglades: "Tidewater Glades LV",
+    goldrush: "Gold Rush",
+    feralas: "Feralas LV",
+    "mur'guloasis": "Mur'Gul Oasis LV",
+    deadlock: "Deadlock LV",
+    sanctuary: "Sanctuary LV",
+    nerubianpassage: "Nerubian Passage",
+    battleground: "Battleground LV",
+    northshire: "Northshire LV",
+    twilightruins: "Twilight Ruins LV",
+    northernfelwood: "Northern Felwood",
+    marketsquare: "Market Square",
   },
 
   heroNames: {
