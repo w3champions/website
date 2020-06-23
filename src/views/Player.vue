@@ -878,9 +878,9 @@ export default class PlayerView extends Vue {
     }
   }
   &.four-v-four {
-    height: 100px;
+    height: 135px;
     .live-match__map {
-      top: 95px;
+      top: 130px;
     }
   }
 }

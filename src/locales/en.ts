@@ -80,15 +80,19 @@ const en = {
     tidewaterglades: "Tidewater Glades LV",
     goldrush: "Gold Rush",
     feralas: "Feralas LV",
-    "mur'guloasis": "Mur'Gul Oasis LV",
+    "murguloasis": "Mur'Gul Oasis LV",
     deadlock: "Deadlock LV",
     sanctuary: "Sanctuary LV",
     nerubianpassage: "Nerubian Passage",
-    battleground: "Battleground LV",
+    battleground: "Battleground",
     northshire: "Northshire LV",
     twilightruins: "Twilight Ruins LV",
     northernfelwood: "Northern Felwood",
     marketsquare: "Market Square",
+    golemsinthemist: "Golems in the Mist",
+    cherryville: "Cherryville",
+    dragonfalls: "Dragon Falls",
+    fullscaleassault: "Full Scale Assault"
   },
 
   heroNames: {
