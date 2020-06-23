@@ -20,7 +20,7 @@
       </v-card-title>
       <br />
       <br />
-      <v-row>
+      <v-row v-if="clanIsFunded">
         <v-col>
           <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_1ON1)" />
         </v-col>
@@ -189,7 +189,7 @@ export default class ClanOverview extends Vue {
   }
 
   public getStats(mode: EGameMode) {
-    const games = this.playersClan.ranks?.filter((r) => r.gameMode === mode);
+    const games = this.playersClan.ranks?.filter((r) => r.gameMode === mode && r.leagueName != null);
     const players = games.map((l) => l.player);
     if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
 
@@ -218,6 +218,10 @@ export default class ClanOverview extends Vue {
     reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
 
     return reduced;
+  }
+
+  get clanIsFunded() {
+    return this.playersClan.isSuccesfullyFounded;
   }
 
   get roleEnums() {
