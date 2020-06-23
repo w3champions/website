@@ -70,7 +70,7 @@
               </v-row>
             </td>
             <td>
-              <span>{{ $t("mapNames." + item.map) }}</span>
+              <span>{{ $t("mapNames." + item.map.replace('\'', '')) }}</span>
             </td>
             <td>
               {{
