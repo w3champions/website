@@ -20,23 +20,24 @@
       </v-card-title>
       <br />
       <br />
-      <v-row v-if="clanIsFunded">
-        <v-col>
-          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_1ON1)" />
-        </v-col>
-        <v-col>
-          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2)" />
-        </v-col>
-        <v-col>
-          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2_AT)" />
-        </v-col>
-        <v-col>
-          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_4ON4)" />
-        </v-col>
-        <v-col>
-          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_FFA)" />
-        </v-col>
-      </v-row>
+<!--      Does not work properly at all, will fix a more data is on-->
+<!--      <v-row v-if="clanIsFunded">-->
+<!--        <v-col>-->
+<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_1ON1)" />-->
+<!--        </v-col>-->
+<!--        <v-col>-->
+<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2)" />-->
+<!--        </v-col>-->
+<!--        <v-col>-->
+<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2_AT)" />-->
+<!--        </v-col>-->
+<!--        <v-col>-->
+<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_4ON4)" />-->
+<!--        </v-col>-->
+<!--        <v-col>-->
+<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_FFA)" />-->
+<!--        </v-col>-->
+<!--      </v-row>-->
       <div v-if="playersClan.isSuccesfullyFounded">
         <table class="custom-table">
           <tr @click="gotToChiefTain">
