@@ -7,7 +7,9 @@
       ? "as " + $t("races." + raceEnums[stat.race])
       : "All races"
       }}
+      <race-icon v-bind:race="stat.race" />
     </v-tab>
+
     <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
       <v-card-text>
         <v-row>
@@ -26,9 +28,10 @@ import { Component, Prop } from "vue-property-decorator";
 import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overal-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
 @Component({
-  components: { RaceToMapStat },
+  components: { RaceToMapStat, RaceIcon },
 })
 export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   @Prop() public stats!: RaceWinsOnMap[];

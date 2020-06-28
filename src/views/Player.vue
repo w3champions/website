@@ -107,7 +107,7 @@
                             :items="selectedRaceStats"
                           >
                             <template v-slot:item.race="{ item }">
-                              <span>{{ $t("races." + raceEnums[item.race]) }}</span>
+                              <span><race-icon v-bind:race="item.race" /></span>
                             </template>
                             <template v-slot:item.wins="{ item }">
                               <span class="number-text">
@@ -310,11 +310,13 @@ import AppConstants from "../constants";
 import CountryFlag from "vue-country-flag";
 import { FEATURE_FLAG_CLANS } from "@/main";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
 import * as _ from 'lodash';
 
 @Component({
   components: {
+    RaceIcon,
     ClanOverview,
     PlayerAvatar,
     PlayerLeague,
