@@ -1,19 +1,15 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar :class="{ darkmode: isDarkTheme }" app :dark="isDarkTheme">
-      <div
-        @click="$router.push({ path: '/' })"
-        class="d-flex align-center pointer"
-      >
-        <span class="d-none d-md-inline">
-          W3Champions - your Ladder for Warcraft III
-        </span>
+      <div @click="$router.push({ path: '/' })" class="d-flex align-center pointer">
+        <span class="d-none d-md-inline">W3Champions - your Ladder for Warcraft III</span>
       </div>
       <v-spacer></v-spacer>
 
       <v-btn
         class="button-margin"
         v-for="item in items"
+        v-show="visible(item)"
         :key="item.title"
         text
         tile
@@ -25,9 +21,7 @@
       </v-btn>
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">
-          mdi-account-circle-outline
-        </v-icon>
+        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
       </v-btn>
 
       <v-menu offset-y v-if="authCode">
@@ -94,6 +88,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { FEATURE_FLAG_CLANS, REDIRECT_URL } from "@/main";
+import constants from "./constants";
 
 @Component({})
 export default class App extends Vue {
@@ -105,6 +100,11 @@ export default class App extends Vue {
       title: "Statistics",
       icon: "mdi-chart-areaspline",
       to: "/OverallStatistics",
+    },
+    {
+      title: "Admin",
+      icon: "mdi-account-tie",
+      to: "/AdminOnlyView",
     },
     {
       title: "FAQ",
@@ -134,14 +134,24 @@ export default class App extends Vue {
     return this.$store.direct.state.chat.apiKey;
   }
 
+  public visible(item: any): boolean {
+    if (item.title == "Admin" && !this.isAdmin) {
+      return false;
+    }
+    return true;
+  }
+
   public async downloadChatKey() {
     await this.$store.direct.dispatch.chat.createApiKey();
 
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.chatApiKey));
-    element.setAttribute('download', "w3champions.key");
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(this.chatApiKey)
+    );
+    element.setAttribute("download", "w3champions.key");
 
-    element.style.display = 'none';
+    element.style.display = "none";
     document.body.appendChild(element);
 
     element.click();
@@ -169,6 +179,10 @@ export default class App extends Vue {
 
   get battleTag(): string {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+  }
+
+  get isAdmin(): boolean {
+    return this.$store.direct.state.oauth.isAdmin;
   }
 
   private selectedTheme = "human";

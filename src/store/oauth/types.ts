@@ -2,7 +2,8 @@ export type OauthState = {
   code: string;
   token: string;
   blizzardVerifiedBtag: string;
-  twitch_token: TwitchToken
+  twitch_token: TwitchToken;
+  isAdmin: boolean;
 };
 
 export type BlizzardToken = {

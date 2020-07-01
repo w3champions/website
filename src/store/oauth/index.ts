@@ -10,6 +10,7 @@ const mod = {
     blizzardVerifiedBtag: "",
     token: "",
     twitch_token: {} as TwitchToken,
+    isAdmin: false,
   } as OauthState,
   actions: {
     async authorizeWithCode(
@@ -21,11 +22,11 @@ const mod = {
       const bearer = await rootGetters.oauthService.authorize(code);
       commit.SET_BEARER(bearer.access_token);
 
-      const profileName = await rootGetters.oauthService.getProfileName(
+      const profile = await rootGetters.oauthService.getProfile(
         bearer.access_token
       );
-      commit.SET_PROFILE_NAME(profileName);
-
+      commit.SET_PROFILE_NAME(profile.battletag);
+      commit.SET_IS_ADMIN(profile.isAdmin);
       await rootGetters.oauthService.saveAuthToken(bearer);
     },
     async authorizeWithTwitch(context: ActionContext<OauthState, RootState>) {
@@ -46,16 +47,19 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const profileName = await rootGetters.oauthService.getProfileName(
+      const profile = await rootGetters.oauthService.getProfile(
         bearerToken
       );
-      commit.SET_PROFILE_NAME(profileName);
+
+      commit.SET_PROFILE_NAME(profile.battletag);
+      commit.SET_IS_ADMIN(profile.isAdmin);
     },
     logout(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       rootGetters.oauthService.deleteAuthCookie();
       commit.SET_PROFILE_NAME("");
+      commit.SET_IS_ADMIN(false);
       commit.SET_BEARER("");
     },
   },
@@ -69,6 +73,9 @@ const mod = {
     SET_PROFILE_NAME(state: OauthState, btag: string) {
       state.blizzardVerifiedBtag = btag;
     },
+    SET_IS_ADMIN(state: OauthState, isAdmin: boolean) {
+      state.isAdmin = isAdmin;
+    }
   },
 } as const;
 
