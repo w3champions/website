@@ -227,8 +227,7 @@
                     <div class="bnet-place-picture gettingStartedPictures" />
                     <div class="webui-location-picture gettingStartedPictures" />
                     <div class="key-place-picture gettingStartedPictures" />
-                    <p>5. If you now start Warcraft you should see a lock icon next to your username in chat. This shows, that you are sucessfully authenticated with our website and that you can take actions related to your profile (switching icons, managing the clan etc.)</p>
-                    <div class="chat-picture gettingStartedPictures" />
+                    <p>5. If you now start Warcraft you should be able to to take actions related to your profile (switching icons, managing clans etc.)</p>
                     <v-card-text class="text-center ma-5">
                       <div>
                         If your still having problems:
@@ -327,11 +326,6 @@ export default class GettingStartedView extends Vue {
 .key-place-picture {
   background-image: url("../assets/gettingStartedChat/6.jpg");
   height: 100px;
-}
-
-.chat-picture {
-  background-image: url("../assets/gettingStartedChat/7.jpg");
-  height: 200px;
 }
 
 </style>
