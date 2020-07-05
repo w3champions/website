@@ -11,9 +11,9 @@
             <v-tab class="profileTab" :href="`#windows-setup`">Windows</v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">Mac</v-tab>
             <v-tab class="profileTab" :href="`#video`">Video</v-tab>
-            <v-tab class="profileTab" v-if="isChatEnabled" :href="`#chat`">
-              Chat
-            </v-tab>
+<!--            <v-tab class="profileTab" v-if="isChatEnabled" :href="`#chat`">-->
+<!--              Chat-->
+<!--            </v-tab>-->
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'windows-setup'">
                 <v-card-text class="centered-container">
@@ -210,35 +210,35 @@
                   </div>
                 </v-card-text>
               </v-tab-item>
-              <v-tab-item :value="'chat'">
-                <v-card-text class="filter-blur">
-                  <div class="filter-blur">
-                    <h3>
-                      To unlock actions tied to your profile in game (e.g. changing race pictures), follow these steps
-                    </h3>
-                    <br />
-                    <p>1. Login with your Battle Net Account on the top right</p>
-                    <div class="login-picture gettingStartedPictures" />
-                    <p>2. Click on the Profile Icon Dropdown the "chat key" button</p>
-                    <div class="chat-key-picture gettingStartedPictures" />
-                    <p>3. A key will be downloaded. If you have allready downloaded a key, the previous key will be invalidated</p>
-                    <div class="download-picture gettingStartedPictures" />
-                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "Show in Explorer". <b>If you have a folder called _retail_ in your Warcraft III folder, the webui folder is in there!</b></p>
-                    <div class="bnet-place-picture gettingStartedPictures" />
-                    <div class="webui-location-picture gettingStartedPictures" />
-                    <div class="key-place-picture gettingStartedPictures" />
-                    <p>5. If you now start Warcraft you should be able to to take actions related to your profile (switching icons, managing clans etc.)</p>
-                    <v-card-text class="text-center ma-5">
-                      <div>
-                        If your still having problems:
-                        <a href="https://discord.gg/uJmQxG2">
-                          Reach out to us on discord
-                        </a>
-                      </div>
-                    </v-card-text>
-                  </div>
-                </v-card-text>
-              </v-tab-item>
+<!--              <v-tab-item :value="'chat'">-->
+<!--                <v-card-text class="filter-blur">-->
+<!--                  <div class="filter-blur">-->
+<!--                    <h3>-->
+<!--                      To unlock actions tied to your profile in game (e.g. changing race pictures), follow these steps-->
+<!--                    </h3>-->
+<!--                    <br />-->
+<!--                    <p>1. Login with your Battle Net Account on the top right</p>-->
+<!--                    <div class="login-picture gettingStartedPictures" />-->
+<!--                    <p>2. Click on the Profile Icon Dropdown the "chat key" button</p>-->
+<!--                    <div class="chat-key-picture gettingStartedPictures" />-->
+<!--                    <p>3. A key will be downloaded. If you have allready downloaded a key, the previous key will be invalidated</p>-->
+<!--                    <div class="download-picture gettingStartedPictures" />-->
+<!--                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "Show in Explorer". <b>If you have a folder called _retail_ in your Warcraft III folder, the webui folder is in there!</b></p>-->
+<!--                    <div class="bnet-place-picture gettingStartedPictures" />-->
+<!--                    <div class="webui-location-picture gettingStartedPictures" />-->
+<!--                    <div class="key-place-picture gettingStartedPictures" />-->
+<!--                    <p>5. If you now start Warcraft you should be able to to take actions related to your profile (switching icons, managing clans etc.)</p>-->
+<!--                    <v-card-text class="text-center ma-5">-->
+<!--                      <div>-->
+<!--                        If your still having problems:-->
+<!--                        <a href="https://discord.gg/uJmQxG2">-->
+<!--                          Reach out to us on discord-->
+<!--                        </a>-->
+<!--                      </div>-->
+<!--                    </v-card-text>-->
+<!--                  </div>-->
+<!--                </v-card-text>-->
+<!--              </v-tab-item>-->
             </v-tabs-items>
           </v-tabs>
         </v-card>
