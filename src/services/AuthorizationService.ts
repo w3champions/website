@@ -46,7 +46,7 @@ export default class AuthorizationService {
     Vue.cookies.remove(BnetCookieKey);
   }
 
-  public async getProfileName(bearer: string): Promise<string> {
+  public async getProfile(bearer: string): Promise<any> {
     const url = `${API_URL}api/oauth/battleTag?bearer=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
@@ -57,6 +57,6 @@ export default class AuthorizationService {
     });
 
     const data = await response.json();
-    return data.battletag;
+    return data;
   }
 }

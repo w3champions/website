@@ -11,6 +11,7 @@ import personalSettings from "./personalSettings/index";
 import chat from "./chat/index";
 import clan from "./clan/index";
 import twitch from "./twitch/index";
+import admin from "./admin/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -24,6 +25,7 @@ import GatewaysService from "@/services/GatewaysService";
 import ChatService from "@/services/ChatService";
 import ClanService from "@/services/ClanService";
 import TwitchService from '@/services/TwitchService';
+import AdminService from '@/services/AdminService';
 
 Vue.use(Vuex);
 
@@ -37,6 +39,7 @@ const services = {
   chatService: new ChatService(),
   clanService: new ClanService(),
   twitchService: new TwitchService(),
+  adminService: new AdminService()
 };
 
 const mod = {
@@ -49,7 +52,8 @@ const mod = {
     personalSettings,
     chat,
     clan,
-    twitch
+    twitch, 
+    admin
   },
   state: {
     darkMode: false,
@@ -93,6 +97,9 @@ const mod = {
     twitchService() {
       return services.twitchService;
     },
+    adminService() {
+      return services.adminService;
+    }
   },
 } as const;
 

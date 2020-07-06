@@ -66,6 +66,14 @@ const routes = [
         /* webpackChunkName: "rankings" */ "../views/OverallStatistics.vue"
       ),
   },
+  {
+    path: "/AdminOnlyView",
+    name: "Admin",
+    component: () =>
+      import(
+        /* webpackChunkName: "rankings" */ "../views/Admin.vue"
+      ),
+  },
 ];
 
 const router = new VueRouter({
