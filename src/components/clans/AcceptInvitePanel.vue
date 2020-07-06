@@ -2,9 +2,9 @@
   <v-card-text>
     <v-row class="justify-center">
       <v-col class="text-center">
-        <v-card-subtitle>
-          You were invited by {{ clanName }} to join their ranks!
-        </v-card-subtitle>
+        <h3>
+          You were invited by <b>{{ clanName }}</b> to join their ranks!
+        </h3>
       </v-col>
     </v-row>
 

@@ -2,12 +2,8 @@
   <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
-      {{
-      stat.race !== raceEnums.TOTAL
-      ? "as " + $t("races." + raceEnums[stat.race])
-      : "All races"
-      }}
-      <race-icon v-bind:race="stat.race" />
+      <span v-if="stat.race === raceEnums.TOTAL">All races</span>
+      <race-icon :race="stat.race" />
     </v-tab>
 
     <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
