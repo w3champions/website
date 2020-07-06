@@ -26,8 +26,8 @@
           :items="searchPlayers"
           :search-input.sync="search"
           :no-data-text="noDataText"
-          item-text="name"
-          item-value="id"
+          item-text="battleTag"
+          item-value="battleTag"
           placeholder="Start typing to Search"
           return-object
         >

@@ -30,7 +30,7 @@ export default class ProfileService {
   }
 
   public async searchPlayer(search: string): Promise<PlayerProfile[]> {
-    const url = `${API_URL}api/players/?search=${search}`;
+    const url = `${API_URL}api/players/?search=${encodeURIComponent(search)}`;
 
     const response = await fetch(url);
 
