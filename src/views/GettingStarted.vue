@@ -10,7 +10,6 @@
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#windows-setup`">Windows</v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">Mac</v-tab>
-            <v-tab class="profileTab" :href="`#video`">Video</v-tab>
 <!--            <v-tab class="profileTab" v-if="isChatEnabled" :href="`#chat`">-->
 <!--              Chat-->
 <!--            </v-tab>-->
@@ -224,37 +223,6 @@
                     </ul>
                   </p>
                   <iframe class="mt-3" width="560" height="315" src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </v-card-text>
-              </v-tab-item>
-              <v-tab-item :value="'video'">
-                <v-card-text class="filter-blur">
-                  <div class="filter-blur text-center">
-                    <h3>
-                      If you are having trouble with the installer. You can use
-                      this video to manually install W3C.
-                    </h3>
-                    <p>
-                      The video is shot on Windows but it should work for other
-                      operating systems as well.
-                    </p>
-                    <br />
-                    <iframe
-                      width="560"
-                      height="315"
-                      src="https://www.youtube.com/embed/l1aRcUL7qEc"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                    ></iframe>
-                    <v-card-text class="text-center ma-5">
-                      <div>
-                        If your still having problems:
-                        <a href="https://discord.gg/uJmQxG2">
-                          Reach out to us on discord
-                        </a>
-                      </div>
-                    </v-card-text>
-                  </div>
                 </v-card-text>
               </v-tab-item>
 <!--              <v-tab-item :value="'chat'">-->
