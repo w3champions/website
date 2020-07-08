@@ -1,6 +1,6 @@
 <template>
   <v-row class="justify-center">
-    <v-col cols="7">
+    <v-col cols="12" md="7">
       <v-container>
         <v-card tile>
           <v-card-title class="text-center">
@@ -10,7 +10,6 @@
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#windows-setup`">Windows</v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">Mac</v-tab>
-            <v-tab class="profileTab" :href="`#video`">Video</v-tab>
 <!--            <v-tab class="profileTab" v-if="isChatEnabled" :href="`#chat`">-->
 <!--              Chat-->
 <!--            </v-tab>-->
@@ -108,6 +107,32 @@
                       \Maps\W3Champions\v1\FFA
                     </code>
                   </p>
+                  <p class="mt-2">
+                    5. As of War3 version 1.32.7 you need to set a registry (Installer is doing this automatically)
+                    <br />
+                  </p>
+                  <p>
+                    <ul>
+                      <li>
+                        open regedit.exe
+                      </li>
+                      <li>
+                        Find the registry
+                         <code>Computer\HKEY_CURRENT_USER\Software\Blizzard Entertainment\Warcraft III\</code>
+                      </li>
+                      <li>
+                        Add DWORD key to this registry path
+                        <ul>
+                          <li>
+                            name: <code>Allow Local Files</code>
+                          </li>
+                          <li>
+                            decimal value: <code>1</code>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </p>
                 </v-card-text>
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
@@ -177,37 +202,27 @@
                       \Maps\W3Champions\v1\FFA
                     </code>
                   </p>
-                </v-card-text>
-              </v-tab-item>
-              <v-tab-item :value="'video'">
-                <v-card-text class="filter-blur">
-                  <div class="filter-blur text-center">
-                    <h3>
-                      If you are having trouble with the installer. You can use
-                      this video to manually install W3C.
-                    </h3>
-                    <p>
-                      The video is shot on Windows but it should work for other
-                      operating systems as well.
-                    </p>
+                  <p class="mt-2">
+                    5. As of War3 version 1.32.7 you need to set a registry
                     <br />
-                    <iframe
-                      width="560"
-                      height="315"
-                      src="https://www.youtube.com/embed/l1aRcUL7qEc"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                    ></iframe>
-                    <v-card-text class="text-center ma-5">
-                      <div>
-                        If your still having problems:
-                        <a href="https://discord.gg/uJmQxG2">
-                          Reach out to us on discord
-                        </a>
-                      </div>
-                    </v-card-text>
-                  </div>
+                  </p>
+                  <p>
+                    <ul>
+                      <li>
+                        Copy command <code>defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1 </code>
+                      </li>
+                      <li>
+                        Open terminal
+                      </li>
+                      <li>
+                        Paste command and execute by pressing Enter key.
+                      </li>
+                      <li>
+                        Run Warcraft 3. You should see W3champions.
+                      </li>
+                    </ul>
+                  </p>
+                  <iframe class="mt-3" width="560" height="315" src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </v-card-text>
               </v-tab-item>
 <!--              <v-tab-item :value="'chat'">-->
