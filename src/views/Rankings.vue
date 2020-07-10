@@ -147,19 +147,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { Gateways, League, PlayerId, Ranking, Season } from "@/store/ranking/types";
-import {
-  EGameMode,
-} from "@/store/typings";
-import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import GatewaySelect from "@/components/common/GatewaySelect.vue";
-import GameModeSelect from "@/components/common/GameModeSelect.vue";
-import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
-import AppConstants from "../constants";
+  import Vue from "vue";
+  import { Component, Prop, Watch } from "vue-property-decorator";
+  import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
+  import { EGameMode } from "@/store/typings";
+  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+  import GatewaySelect from "@/components/common/GatewaySelect.vue";
+  import GameModeSelect from "@/components/common/GameModeSelect.vue";
+  import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
+  import AppConstants from "../constants";
 
-@Component({
+  @Component({
   components: {
     LeagueIcon,
     GatewaySelect,
@@ -215,17 +213,13 @@ export default class RankingsView extends Vue {
   }
 
   get selectedLeague(): League {
-    const league = this.$store.direct.state.rankings.league;
-    const gw = this.$store.direct.state.gateway;
-    const gameMode = this.$store.direct.state.rankings.gameMode;
-    const season = this.$store.direct.state.rankings.selectedSeason;
     const ladder = this.$store.direct.state.rankings.ladders.filter(
       (l) =>
-        l.gateway == gw && l.gameMode === gameMode && l.season === season.id
+        l.gateway == this.gateway && l.gameMode === this.gamemode && l.season === this.season
     )[0];
     if (!ladder) return {} as League;
 
-    return ladder.leagues.filter((l) => l.id == league)[0] || {};
+    return ladder.leagues.filter((l) => l.id == this.league)[0] || {};
   }
 
   get selectedLeagueName(): string {
@@ -249,12 +243,13 @@ export default class RankingsView extends Vue {
   }
 
   get ladders(): League[] {
-    const gameMode = this.$store.direct.state.rankings.gameMode;
+    if (!this.season || !this.gamemode || !this.league || !this.gateway) return []
+
     const league = this.$store.direct.state.rankings.ladders.filter(
       (l) =>
-        l.gateway === this.$store.direct.state.gateway &&
-        l.gameMode === gameMode &&
-        l.season === this.selectedSeason.id
+        l.gateway === this.gateway &&
+        l.gameMode === this.gamemode &&
+        l.season === this.season
     )[0];
     return league?.leagues;
   }
@@ -265,12 +260,10 @@ export default class RankingsView extends Vue {
 
   gatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   gameModeChanged(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   async mounted() {

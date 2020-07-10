@@ -87,8 +87,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { FEATURE_FLAG_CLANS, REDIRECT_URL } from "@/main";
-import constants from "./constants";
+import { REDIRECT_URL } from "@/main";
 
 @Component({})
 export default class App extends Vue {
@@ -97,7 +96,7 @@ export default class App extends Vue {
     {
       title: "Rankings",
       icon: "mdi-view-list",
-      to: "/Rankings" },
+      to: `/Rankings?season=1&gateway=${this.$store.direct.state.gateway}&gamemode=${this.$store.direct.state.rankings.gameMode}&league=${this.$store.direct.state.rankings.league}` },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     {
       title: "Statistics",
@@ -127,10 +126,6 @@ export default class App extends Vue {
 
   logout() {
     this.$store.direct.dispatch.oauth.logout();
-  }
-
-  get isClansActive() {
-    return FEATURE_FLAG_CLANS;
   }
 
   get chatApiKey(): string {

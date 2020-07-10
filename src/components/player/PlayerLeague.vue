@@ -95,7 +95,7 @@ export default class PlayerLeague extends Vue {
 
   public navigateToLeague() {
     this.$router.push({
-      path: `/Rankings/?season=${this.selectedSeason.id}&gateway=${this.gateWay}&gamemode=${this.gameMode}&league=${this.league}`,
+      path: `/Rankings?season=${this.selectedSeason.id}&gateway=${this.gateWay}&gamemode=${this.gameMode}&league=${this.league}`,
     });
   }
 
