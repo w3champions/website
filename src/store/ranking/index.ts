@@ -122,6 +122,7 @@ const mod = {
       const seasons = await rootGetters.rankingService.retrieveSeasons();
 
       commit.SET_SEASONS(seasons);
+      commit.SET_SELECTED_SEASON(seasons[0]);
     },
   },
   mutations: {

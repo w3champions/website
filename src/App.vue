@@ -96,7 +96,8 @@ export default class App extends Vue {
     {
       title: "Rankings",
       icon: "mdi-view-list",
-      to: `/Rankings?season=1&gateway=${this.$store.direct.state.gateway}&gamemode=${this.$store.direct.state.rankings.gameMode}&league=${this.$store.direct.state.rankings.league}` },
+      to: `/Rankings`
+    },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     {
       title: "Statistics",

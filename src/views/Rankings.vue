@@ -2,10 +2,10 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gateway-select @gatewayChanged="gatewayChanged" />
+        <gateway-select @gatewayChanged="onGatewayChanged" />
         <game-mode-select
           :gameMode="selectedGameMode"
-          @gameModeChanged="gameModeChanged"
+          @gameModeChanged="onGameModeChanged"
         ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
@@ -213,13 +213,9 @@ export default class RankingsView extends Vue {
   }
 
   get selectedLeague(): League {
-    const ladder = this.$store.direct.state.rankings.ladders.filter(
-      (l) =>
-        l.gateway == this.gateway && l.gameMode === this.gamemode && l.season === this.season
-    )[0];
-    if (!ladder) return {} as League;
+    if (!this.ladders) return {} as League;
 
-    return ladder.leagues.filter((l) => l.id == this.league)[0] || {};
+    return this.ladders.filter((l) => l.id == this.$store.direct.state.rankings.league)[0] || {};
   }
 
   get selectedLeagueName(): string {
@@ -243,13 +239,11 @@ export default class RankingsView extends Vue {
   }
 
   get ladders(): League[] {
-    if (!this.season || !this.gamemode || !this.league || !this.gateway) return []
-
-    const league = this.$store.direct.state.rankings.ladders.filter(
+    const league = this.$store.direct.state.rankings.ladders?.filter(
       (l) =>
-        l.gateway === this.gateway &&
-        l.gameMode === this.gamemode &&
-        l.season === this.season
+        l.gateway === this.$store.direct.state.gateway &&
+        l.gameMode === this.$store.direct.state.rankings.gameMode &&
+        l.season === this.$store.direct.state.rankings.selectedSeason.id
     )[0];
     return league?.leagues;
   }
@@ -258,12 +252,14 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.searchRanks;
   }
 
-  gatewayChanged() {
+  public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
-  gameModeChanged(gameMode: EGameMode) {
+  public async onGameModeChanged(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   async mounted() {
@@ -324,11 +320,12 @@ export default class RankingsView extends Vue {
   }
 
   public async selectSeason(season: Season) {
-    this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
-  public setLeague(league: number) {
-    this.$store.direct.dispatch.rankings.setLeague(league);
+  public async setLeague(league: number) {
+    await this.$store.direct.dispatch.rankings.setLeague(league);
   }
 }
 </script>
