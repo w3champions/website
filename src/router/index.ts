@@ -1,7 +1,16 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { Gateways } from "@/store/ranking/types";
-import { EGameMode } from "@/store/typings";
+import Rankings from "@/views/Rankings.vue";
+import Player from "@/views/Player.vue";
+import Imprint from "@/views/Imprint.vue";
+import MatchDetail from "@/views/MatchDetail.vue";
+import Matches from "@/views/Matches.vue";
+import OverallStatistics from "@/views/OverallStatistics.vue";
+import Admin from "@/views/Admin.vue";
+import GettingStarted from "@/views/GettingStarted.vue";
+import Faq from "@/views/Faq.vue";
+import Login from "@/views/Login.vue";
+import Home from "@/views/Home.vue";
 
 Vue.use(VueRouter);
 
@@ -9,42 +18,38 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    component: Home,
   },
   {
     path: "/login",
     name: "Login",
-    component: () =>
-      import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    component: Login,
     props: (route: { query: { code: string } }) => ({ code: route.query.code }),
   },
   {
     path: "/faq",
     name: "FAQ",
-    component: () => import(/* webpackChunkName: "faq" */ "../views/Faq.vue"),
+    component: Faq,
   },
   {
     path: "/getting-started",
     name: "GettingStarted",
-    component: () => import(/* webpackChunkName: "getting-started" */ "../views/GettingStarted.vue"),
+    component: GettingStarted,
   },
   {
     path: "/imprint",
     name: "Imprint",
-    component: () =>
-      import(/* webpackChunkName: "home" */ "../views/Imprint.vue"),
+    component: Imprint
   },
   {
     path: "/rankings",
     name: "Rankings",
     props: (route: { query: { season: string, gateway: string, gamemode: string, league: string } }) => ({ gamemode: parseInt(route.query.gamemode), gateway: parseInt(route.query.gateway), league: parseInt(route.query.league), season: parseInt(route.query.season) }),
-    component: () =>
-      import(/* webpackChunkName: "rankings" */ "../views/Rankings.vue"),
+    component: Rankings
   },
   {
     path: "/player/:id",
-    component: () =>
-      import(/* webpackChunkName: "player" */ "../views/Player.vue"),
+    component: Player,
     props: true,
     name: "Player",
     children: [
@@ -69,22 +74,17 @@ const routes = [
     path: "/match/:matchId",
     name: "Match",
     props: true,
-    component: () =>
-      import(/* webpackChunkName: "rankings" */ "../views/MatchDetail.vue"),
+    component: MatchDetail,
   },
   {
     path: "/matches",
     name: "Matches",
-    component: () =>
-      import(/* webpackChunkName: "rankings" */ "../views/Matches.vue"),
+    component: Matches,
   },
   {
     path: "/OverallStatistics",
     name: "OverallStatistics",
-    component: () =>
-      import(
-        /* webpackChunkName: "rankings" */ "../views/OverallStatistics.vue"
-      ),
+    component: OverallStatistics,
     children: [
       {
         path: "/"
@@ -103,10 +103,7 @@ const routes = [
   {
     path: "/AdminOnlyView",
     name: "Admin",
-    component: () =>
-      import(
-        /* webpackChunkName: "rankings" */ "../views/Admin.vue"
-      ),
+    component: Admin,
   },
 ];
 
