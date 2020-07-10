@@ -85,6 +85,20 @@ const routes = [
       import(
         /* webpackChunkName: "rankings" */ "../views/OverallStatistics.vue"
       ),
+    children: [
+      {
+        path: "/"
+      },
+      {
+        path: "mmr-distribution"
+      },
+      {
+        path: "winrates-per-race-and-map"
+      },
+      {
+        path: "heroes-winrates"
+      }
+    ]
   },
   {
     path: "/AdminOnlyView",
