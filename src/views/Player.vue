@@ -170,9 +170,9 @@
                                 >{{ data.item.player.name }}</span>
                                 <span v-if="isDuplicateName(data.item.player.name)">
                                   {{
-                                  data.item.player.playerIds
-                                  .map((p) => p.battleTag)
-                                  .join(" & ")
+                                    data.item.player.playerIds
+                                      .map((p) => p.battleTag)
+                                      .join(" & ")
                                   }}
                                 </span>
                               </v-list-item-title>
