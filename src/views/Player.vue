@@ -76,7 +76,7 @@
             <v-tab class="profileTab" :href="`#tab-matches`">Match History</v-tab>
             <v-tab class="profileTab" :href="`#tab-at-teams`">Teams</v-tab>
             <v-tab class="profileTab" :href="`#tab-statistics`">Statistics</v-tab>
-            <v-tab v-if="clanFlagEnabled" class="profileTab" :href="`#tab-clan`">Clan</v-tab>
+            <v-tab class="profileTab" :href="`#tab-clan`">Clan</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'tab-profile'">
                 <v-card-text v-if="!loadingProfile">
@@ -305,7 +305,6 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import { FEATURE_FLAG_CLANS } from "@/main";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 
@@ -385,10 +384,6 @@ export default class PlayerView extends Vue {
       this.$store.direct.dispatch.rankings.clearSearch();
       this.onSearchModelChanged(null as any);
     }
-  }
-
-  get clanFlagEnabled() {
-    return FEATURE_FLAG_CLANS;
   }
 
   get patches() {
