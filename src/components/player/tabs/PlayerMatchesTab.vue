@@ -85,13 +85,13 @@
 </template>
 
 <script lang="ts">
-  import Vue from "vue";
-  import { Component, Prop, Watch } from "vue-property-decorator";
-  import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-  import { Ranking } from "@/store/ranking/types";
-  import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import MatchesGrid from "@/components/matches/MatchesGrid.vue";
+import { Ranking } from "@/store/ranking/types";
+import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
 
-  @Component({ components: { MatchesGrid } })
+@Component({ components: { MatchesGrid } })
 export default class PlayerMatchesTab extends Vue {
   @Prop() public battleTag!: string;
   public opponentWins = 0;
@@ -112,8 +112,9 @@ export default class PlayerMatchesTab extends Vue {
     this.getMatches();
   }
 
-  async mounted() {
-    await this.getMatches();
+  public async mounted() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    setTimeout(async () => await this.getMatches(), 500);
   }
 
   @Watch("search")
