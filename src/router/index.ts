@@ -37,7 +37,7 @@ const routes = [
   {
     path: "/rankings",
     name: "Rankings",
-    props: (route: { query: { season: number, gateway: Gateways, gamemode: EGameMode, league: number } }) => ({ gamemode: route.query.gamemode, gateway: route.query.gateway, league: route.query.league, season: route.query.season }),
+    props: (route: { query: { season: string, gateway: string, gamemode: string, league: string } }) => ({ gamemode: parseInt(route.query.gamemode), gateway: parseInt(route.query.gateway), league: parseInt(route.query.league), season: parseInt(route.query.season) }),
     component: () =>
       import(/* webpackChunkName: "rankings" */ "../views/Rankings.vue"),
   },
