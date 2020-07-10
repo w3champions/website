@@ -26,7 +26,7 @@ const routes = [
   {
     path: "/getting-started",
     name: "GettingStarted",
-    component: () => import(/* webpackChunkName: "faq" */ "../views/GettingStarted.vue"),
+    component: () => import(/* webpackChunkName: "getting-started" */ "../views/GettingStarted.vue"),
   },
   {
     path: "/imprint",
@@ -43,10 +43,27 @@ const routes = [
   },
   {
     path: "/player/:id",
-    name: "Player",
-    props: true,
     component: () =>
-      import(/* webpackChunkName: "rankings" */ "../views/Player.vue"),
+      import(/* webpackChunkName: "player" */ "../views/Player.vue"),
+    props: true,
+    name: "Player",
+    children: [
+      {
+        path: ""
+      },
+      {
+        path: "matches"
+      },
+      {
+        path: "at-teams"
+      },
+      {
+        path: "statistics"
+      },
+      {
+        path: "clan"
+      }
+    ]
   },
   {
     path: "/match/:matchId",
