@@ -94,7 +94,10 @@ import constants from "./constants";
 export default class App extends Vue {
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
-    { title: "Rankings", icon: "mdi-view-list", to: "/Rankings" },
+    {
+      title: "Rankings",
+      icon: "mdi-view-list",
+      to: "/Rankings" },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     {
       title: "Statistics",

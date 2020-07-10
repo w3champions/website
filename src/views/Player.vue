@@ -286,10 +286,8 @@ import {
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
-  PlayerStatsRaceOnMapVersusRaceByPatch,
   ModeStat,
 } from "@/store/player/types";
-import { PersonalSetting } from "@/store/personalSettings/types";
 import {
   EGameMode,
   ERaceEnum,
@@ -307,7 +305,6 @@ import { Ranking, Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import CountryFlag from "vue-country-flag";
 import { FEATURE_FLAG_CLANS } from "@/main";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -336,7 +333,6 @@ export default class PlayerView extends Vue {
     };
   }
 
-  public raceEnums = ERaceEnum;
   public search = "";
   public selectedPatch = "All";
   public searchModel = {} as Ranking;
@@ -423,7 +419,7 @@ export default class PlayerView extends Vue {
     ) {
       return [];
     }
-   
+
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
       this.selectedPatch
     ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
@@ -451,7 +447,7 @@ export default class PlayerView extends Vue {
       return [];
     }
 
-    const bestModesMap:  { [gameMode: number] : ModeStat; } = {}
+    const bestModesMap: { [gameMode: number] : ModeStat; } = {}
 
     this.gameModeStats.forEach(x => {
       const foundMode = bestModesMap[x.gameMode];

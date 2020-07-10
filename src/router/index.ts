@@ -1,5 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import { Gateways } from "@/store/ranking/types";
+import { EGameMode } from "@/store/typings";
 
 Vue.use(VueRouter);
 
@@ -35,6 +37,7 @@ const routes = [
   {
     path: "/rankings",
     name: "Rankings",
+    props: (route: { query: { season: number, gateway: Gateways, gamemode: EGameMode, league: number } }) => ({ gamemode: route.query.gamemode, gateway: route.query.gateway, league: route.query.league, season: route.query.season }),
     component: () =>
       import(/* webpackChunkName: "rankings" */ "../views/Rankings.vue"),
   },

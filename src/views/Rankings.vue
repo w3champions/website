@@ -95,7 +95,7 @@
             class="ma-4"
             style="background-color: transparent;"
           >
-            <h2 class="pa-0">Season {{ currentSeason.id }}</h2>
+            <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
         </template>
@@ -148,12 +148,10 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { Gateways, League, PlayerId, Ranking, Season } from "@/store/ranking/types";
 import {
-  DataTableOptions,
   EGameMode,
-  ERaceEnum,
 } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -174,6 +172,11 @@ export default class RankingsView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public ongoingMatchesMap: any = {};
+
+  @Prop() public season!: number;
+  @Prop() public league!: number;
+  @Prop() public gateway!: Gateways;
+  @Prop() public gamemode!: EGameMode;
 
   private _intervalRefreshHandle: any = {};
 
@@ -199,7 +202,7 @@ export default class RankingsView extends Vue {
     return this.searchRanks.filter((r) => r.player.name === name).length > 1;
   }
 
-  get currentSeason() {
+  get selectedSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
   }
 
@@ -229,12 +232,6 @@ export default class RankingsView extends Vue {
     return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
   }
 
-  get selectedLeagueMaxParticipantCount(): number {
-    return !this.selectedLeague?.maxParticipantCount
-      ? 0
-      : this.selectedLeague?.maxParticipantCount;
-  }
-
   get selectedLeageueOrder(): number {
     return !this.selectedLeague?.order ? 0 : this.selectedLeague?.order;
   }
@@ -257,7 +254,7 @@ export default class RankingsView extends Vue {
       (l) =>
         l.gateway === this.$store.direct.state.gateway &&
         l.gameMode === gameMode &&
-        l.season === this.currentSeason.id
+        l.season === this.selectedSeason.id
     )[0];
     return league?.leagues;
   }
@@ -278,6 +275,11 @@ export default class RankingsView extends Vue {
 
   async mounted() {
     this.search = "";
+
+    if (this.season) this.$store.direct.commit.rankings.SET_SELECTED_SEASON({ id: this.season});
+    if (this.league) this.setLeague(this.league);
+    if (this.gamemode) this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
+    if (this.gateway) this.$store.direct.commit.SET_GATEWAY(this.gateway);
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();

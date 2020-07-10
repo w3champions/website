@@ -1,5 +1,5 @@
 <template>
-  <div class="LadderSummaryShowcase-card mt-1" :class="leagueName">
+  <div class="LadderSummaryShowcase-card mt-1 pointer" @click="navigateToLeague()" :class="leagueName">
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
       {{ modeStat.division !== 0 ? this.modeStat.division : null }}
@@ -65,6 +65,22 @@ export default class PlayerLeague extends Vue {
     return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
   }
 
+  get gameMode() {
+    return this.modeStat.gameMode;
+  }
+
+  get league() {
+    return this.modeStat.leagueId;
+  }
+
+  get gateWay() {
+    return this.$store.direct.state.gateway;;
+  }
+
+  get selectedSeason() {
+    return this.$store.direct.state.player.selectedSeason;
+  }
+
   get atPartner() {
     return this.modeStat.playerIds.filter(
       (id) => this.$store.direct.state.player.battleTag !== id.battleTag
@@ -74,6 +90,12 @@ export default class PlayerLeague extends Vue {
   public navigateToPartner() {
     this.$router.push({
       path: `/player/${encodeURIComponent(this.atPartner.battleTag)}`,
+    });
+  }
+
+  public navigateToLeague() {
+    this.$router.push({
+      path: `/Rankings/?season=${this.selectedSeason.id}&gateway=${this.gateWay}&gamemode=${this.gameMode}&league=${this.league}`,
     });
   }
 
