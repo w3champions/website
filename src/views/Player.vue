@@ -326,17 +326,12 @@ import * as _ from 'lodash';
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
 
-  data() {
-    return {
-      tabsModel: null,
-    };
-  }
-
   public search = "";
   public selectedPatch = "All";
   public searchModel = {} as Ranking;
   public isLoading = false;
   public opponentWins = 0;
+  public tabsModel = {}
 
   public raceHeaders = [
     {
