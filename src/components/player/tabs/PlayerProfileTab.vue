@@ -26,7 +26,7 @@
           </v-row>
           <v-row class="filter-none" v-if="selectedSeason.id !== 0">
             <v-col cols="12" md="4">
-              <h4>Stats by race</h4>
+              <h4 style="position: relative;">Stats by race</h4>
               <v-data-table
                 hide-default-footer
                 :headers="raceHeaders"
@@ -48,7 +48,7 @@
               </v-data-table>
             </v-col>
             <v-col cols="12" md="6">
-              <h4>Stats by game mode</h4>
+              <h4 style="position: relative;">Stats by game mode</h4>
               <mode-stats-grid :stats="gameModeStats" />
             </v-col>
           </v-row>
@@ -82,7 +82,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 
 @Component({ components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague } })
 export default class PlayerProfileTab extends Vue {
-  @Prop() public battleTag!: string;
+  @Prop() public id!: string;
 
   public raceHeaders = [
     {
@@ -98,6 +98,10 @@ export default class PlayerProfileTab extends Vue {
       value: "wins",
     },
   ];
+
+  get battleTag() {
+    return this.id;
+  }
 
   get loadingProfile(): boolean {
     return this.$store.direct.state.player.loadingProfile;

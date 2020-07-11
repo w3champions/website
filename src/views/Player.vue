@@ -115,39 +115,8 @@
             >
               Clan
             </v-tab>
-            <v-tab-item
-              :key="'tab-profile'"
-              :value="`/player/${encodeURIComponent(this.battleTag)}`"
-            >
-              <player-profile-tab :battle-tag="id" />
-            </v-tab-item>
-            <v-tab-item
-              :key="'tab-matches'"
-              :value="`/player/${encodeURIComponent(this.battleTag)}/matches`"
-            >
-              <player-matches-tab :battle-tag="id" />
-            </v-tab-item>
-            <v-tab-item
-              :key="'tab-at-teams'"
-              :value="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
-            >
-              <player-arranged-teams-tab />
-            </v-tab-item>
-            <v-tab-item
-              :key="'tab-statistics'"
-              :value="`/player/${encodeURIComponent(
-                this.battleTag
-              )}/statistics`"
-            >
-              <player-statistic-tab />
-            </v-tab-item>
-            <v-tab-item
-              :key="'tab-clan'"
-              :value="`/player/${encodeURIComponent(this.battleTag)}/clan`"
-            >
-              <clan-overview />
-            </v-tab-item>
           </v-tabs>
+          <router-view></router-view>
         </v-card>
       </v-col>
     </v-row>
@@ -157,15 +126,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  PlayerProfile,
-} from "@/store/player/types";
-import {
-  EGameMode,
-  Match,
-  PlayerInTeam,
-  Team,
-} from "@/store/typings";
+import { PlayerProfile } from "@/store/player/types";
+import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
 
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";

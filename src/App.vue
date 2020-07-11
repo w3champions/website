@@ -68,13 +68,7 @@
     </v-app-bar>
 
     <v-content>
-      <transition
-        name="warcraft"
-        enter-active-class="warcraft-transition-enter-active"
-        leave-active-class="warcraft-transition-leave-active"
-      >
-        <router-view :key="$route.fullPath" />
-      </transition>
+      <router-view :key="$route.fullPath" />
     </v-content>
     <v-footer padless class>
       <v-row justify="center" no-gutters>
