@@ -26,7 +26,7 @@
           </v-row>
           <v-row class="filter-none" v-if="selectedSeason.id !== 0">
             <v-col cols="12" md="4">
-              <h4 style="position: relative; z-index: 100 !important;">Stats by race</h4>
+              <h4 style="position: relative;">Stats by race</h4>
               <v-data-table
                 hide-default-footer
                 :headers="raceHeaders"
@@ -48,7 +48,7 @@
               </v-data-table>
             </v-col>
             <v-col cols="12" md="6">
-              <h4 style="position: relative; z-index: 100 !important;">Stats by game mode</h4>
+              <h4 style="position: relative;">Stats by game mode</h4>
               <mode-stats-grid :stats="gameModeStats" />
             </v-col>
           </v-row>

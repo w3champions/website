@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="md-3">
-        <v-card-text v-if="!loadingMapAndRaceStats">
+        <v-card-text>
           <v-select
             :items="maps"
             item-text="mapName"
@@ -35,7 +35,7 @@
         </v-card-text>
       </v-col>
       <v-col cols="md-9">
-        <v-card-text v-if="!loadingMapAndRaceStats">
+        <v-card-text>
           <v-data-table
             hide-default-footer
             :headers="headers"
@@ -99,10 +99,6 @@ export default class WinratesTab extends Vue {
   public selectedPatch = "All";
   public selectedMmr = 0;
   public selectedMap = "Overall";
-
-  get loadingMapAndRaceStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
-  }
 
   public headers = [
     {

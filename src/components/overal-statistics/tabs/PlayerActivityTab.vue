@@ -3,7 +3,7 @@
     <v-card-title>Games per Day</v-card-title>
     <v-card-text v-if="!loadingGamesPerDayStats">
       <amount-per-day-chart
-        style="position: relative; z-index: 100 !important;"
+        style="position: relative;"
         :game-days="gameDays"
       />
     </v-card-text>
@@ -11,7 +11,7 @@
 
     <v-card-text v-if="!loadingPlayersPerDayStats">
       <amount-per-day-chart
-        style="position: relative; z-index: 100 !important;"
+        style="position: relative;"
         :game-days="playersPerDay"
       />
     </v-card-text>
