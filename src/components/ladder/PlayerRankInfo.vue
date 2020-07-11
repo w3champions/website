@@ -8,11 +8,16 @@
         @click.middle="openProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
+        <span v-if="clanId">
+          [{{ clanId }}]
+        </span>
         {{ playerId.name }}
       </div>
     </template>
     <div>
-      {{ playerId.battleTag }}
+      <span>
+        {{ playerId.battleTag }}
+      </span>
     </div>
   </v-tooltip>
 </template>
@@ -25,6 +30,7 @@ import { PlayerId } from "@/store/ranking/types";
 @Component({})
 export default class PlayerRankInfo extends Vue {
   @Prop() public playerId!: PlayerId;
+  @Prop() public clanId!: string;
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({
@@ -39,10 +45,6 @@ export default class PlayerRankInfo extends Vue {
   public openProfileInNewTab(playerId: string) {
     const path = this.getPlayerPath(playerId);
     window.open(path, "_blank");
-  }
-
-  public onRowClicked() {
-    this.openPlayerProfile(this.playerId.battleTag);
   }
 }
 </script>

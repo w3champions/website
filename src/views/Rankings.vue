@@ -2,10 +2,10 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gateway-select @gatewayChanged="gatewayChanged" />
+        <gateway-select @gatewayChanged="onGatewayChanged" />
         <game-mode-select
           :gameMode="selectedGameMode"
-          @gameModeChanged="gameModeChanged"
+          @gameModeChanged="onGameModeChanged"
         ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
@@ -95,7 +95,7 @@
             class="ma-4"
             style="background-color: transparent;"
           >
-            <h2 class="pa-0">Season {{ currentSeason.id }}</h2>
+            <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
         </template>
@@ -147,21 +147,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { League, PlayerId, Ranking, Season } from "@/store/ranking/types";
-import {
-  DataTableOptions,
-  EGameMode,
-  ERaceEnum,
-} from "@/store/typings";
-import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import GatewaySelect from "@/components/common/GatewaySelect.vue";
-import GameModeSelect from "@/components/common/GameModeSelect.vue";
-import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
-import AppConstants from "../constants";
+  import Vue from "vue";
+  import { Component, Prop, Watch } from "vue-property-decorator";
+  import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
+  import { EGameMode } from "@/store/typings";
+  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+  import GatewaySelect from "@/components/common/GatewaySelect.vue";
+  import GameModeSelect from "@/components/common/GameModeSelect.vue";
+  import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
+  import AppConstants from "../constants";
 
-@Component({
+  @Component({
   components: {
     LeagueIcon,
     GatewaySelect,
@@ -174,6 +170,11 @@ export default class RankingsView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public ongoingMatchesMap: any = {};
+
+  @Prop() public season!: number;
+  @Prop() public league!: number;
+  @Prop() public gateway!: Gateways;
+  @Prop() public gamemode!: EGameMode;
 
   private _intervalRefreshHandle: any = {};
 
@@ -199,7 +200,7 @@ export default class RankingsView extends Vue {
     return this.searchRanks.filter((r) => r.player.name === name).length > 1;
   }
 
-  get currentSeason() {
+  get selectedSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
   }
 
@@ -212,27 +213,13 @@ export default class RankingsView extends Vue {
   }
 
   get selectedLeague(): League {
-    const league = this.$store.direct.state.rankings.league;
-    const gw = this.$store.direct.state.gateway;
-    const gameMode = this.$store.direct.state.rankings.gameMode;
-    const season = this.$store.direct.state.rankings.selectedSeason;
-    const ladder = this.$store.direct.state.rankings.ladders.filter(
-      (l) =>
-        l.gateway == gw && l.gameMode === gameMode && l.season === season.id
-    )[0];
-    if (!ladder) return {} as League;
+    if (!this.ladders) return {} as League;
 
-    return ladder.leagues.filter((l) => l.id == league)[0] || {};
+    return this.ladders.filter((l) => l.id == this.$store.direct.state.rankings.league)[0] || {};
   }
 
   get selectedLeagueName(): string {
     return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
-  }
-
-  get selectedLeagueMaxParticipantCount(): number {
-    return !this.selectedLeague?.maxParticipantCount
-      ? 0
-      : this.selectedLeague?.maxParticipantCount;
   }
 
   get selectedLeageueOrder(): number {
@@ -252,12 +239,11 @@ export default class RankingsView extends Vue {
   }
 
   get ladders(): League[] {
-    const gameMode = this.$store.direct.state.rankings.gameMode;
-    const league = this.$store.direct.state.rankings.ladders.filter(
+    const league = this.$store.direct.state.rankings.ladders?.filter(
       (l) =>
         l.gateway === this.$store.direct.state.gateway &&
-        l.gameMode === gameMode &&
-        l.season === this.currentSeason.id
+        l.gameMode === this.$store.direct.state.rankings.gameMode &&
+        l.season === this.$store.direct.state.rankings.selectedSeason.id
     )[0];
     return league?.leagues;
   }
@@ -266,18 +252,23 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.searchRanks;
   }
 
-  gatewayChanged() {
+  public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-    this.$store.direct.dispatch.rankings.setLeague(0);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
-  gameModeChanged(gameMode: EGameMode) {
+  public async onGameModeChanged(gameMode: EGameMode) {
     this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    this.$store.direct.dispatch.rankings.setLeague(0);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
   async mounted() {
     this.search = "";
+
+    if (this.season) this.$store.direct.commit.rankings.SET_SELECTED_SEASON({ id: this.season});
+    if (this.league) this.setLeague(this.league);
+    if (this.gamemode) this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
+    if (this.gateway) this.$store.direct.commit.SET_GATEWAY(this.gateway);
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();
@@ -329,11 +320,12 @@ export default class RankingsView extends Vue {
   }
 
   public async selectSeason(season: Season) {
-    this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.$store.direct.dispatch.rankings.setLeague(0);
   }
 
-  public setLeague(league: number) {
-    this.$store.direct.dispatch.rankings.setLeague(league);
+  public async setLeague(league: number) {
+    await this.$store.direct.dispatch.rankings.setLeague(league);
   }
 }
 </script>

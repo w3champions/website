@@ -8,11 +8,11 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :href="`#tab-games-per-day`">Player Activity</v-tab>
-            <v-tab class="profileTab" :href="`#tab-mmr-distribution`">MMR</v-tab>
-            <v-tab class="profileTab" :href="`#tab-winrates-per-race-and-map`">Winrates</v-tab>
-            <v-tab class="profileTab" :href="`#tab-heroes-winrates`">Heroes</v-tab>
-            <v-tab-item :value="'tab-games-per-day'">
+            <v-tab class="profileTab" :to="`/OverallStatistics/`">Player Activity</v-tab>
+            <v-tab class="profileTab" :to="`/OverallStatistics/mmr-distribution`">MMR</v-tab>
+            <v-tab class="profileTab" :to="`/OverallStatistics/winrates-per-race-and-map`">Winrates</v-tab>
+            <v-tab class="profileTab" :to="`/OverallStatistics/heroes-winrates`">Heroes</v-tab>
+            <v-tab-item :value="'/OverallStatistics/'">
               <v-card-title>Games per Day</v-card-title>
               <v-card-text v-if="!loadingGamesPerDayStats">
                 <amount-per-day-chart class="ammount-per-day-chart" :game-days="gameDays" />
@@ -65,7 +65,7 @@
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :value="'tab-mmr-distribution'">
+            <v-tab-item :value="'/OverallStatistics/mmr-distribution'">
               <v-row>
                 <v-col cols="md-2">
                   <v-card-text v-if="!loadingMapAndRaceStats">
@@ -91,7 +91,7 @@
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :value="'tab-winrates-per-race-and-map'">
+            <v-tab-item :value="'/OverallStatistics/winrates-per-race-and-map'">
               <v-row>
                 <v-col cols="md-3">
                   <v-card-text v-if="!loadingMapAndRaceStats">
@@ -170,7 +170,7 @@
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :value="'tab-heroes-winrates'">
+            <v-tab-item :value="'/OverallStatistics/heroes-winrates'">
               <v-row>
                 <v-col cols="12">
                   <hero-winrate />

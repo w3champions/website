@@ -39,16 +39,18 @@
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag"
             >
-            <div
-                  class="player-avatar mr-1 alignRight race-icon"
-                  :title="getTitleRace(item, index)"
-                  :style="{
-                    'background-image':
-                      'url(' + getRaceIcon(item, index) + ')',
-                  }"
-                />
-              <span v-if="item.playersInfo[index].clanId">[{{ item.playersInfo[index].clanId }}]</span>
-              <player-rank-info :player-id="playerId" />
+              <div
+                class="player-avatar mr-1 alignRight race-icon"
+                :title="getTitleRace(item, index)"
+                :style="{
+                  'background-image':
+                    'url(' + getRaceIcon(item, index) + ')',
+                }"
+              />
+              <player-rank-info
+                :player-id="playerId"
+                :clan-id="item.playersInfo[index].clanId"
+              />
               <div
                 class="country-flag__container"
                 v-if="item.playersInfo && item.playersInfo[index].country"
@@ -327,7 +329,7 @@ export default class RankingsGrid extends Vue {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
     }
   }
-  
+
   selectedAvatar(race: ERaceEnum, picId: number) {
     return require("../../assets/raceAvatars/" +
       ERaceEnum[race] +

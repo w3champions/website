@@ -265,14 +265,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { FEATURE_FLAG_CLANS } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
-
-  get isChatEnabled() {
-    return FEATURE_FLAG_CLANS;
-  }
 
   data() {
     return {
