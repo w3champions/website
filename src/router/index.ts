@@ -82,6 +82,7 @@ const routes = [
       },
       {
         path: "clan",
+        props: true,
         component: ClanOverview
       }
     ]

@@ -165,7 +165,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
@@ -197,6 +197,12 @@ import { ModeStat } from "@/store/player/types";
   },
 })
 export default class ClanOverview extends Vue {
+  @Prop() public id!: string;
+
+  get battleTag() {
+    return this.id;
+  }
+
   public getLeagueOrder(battleTag: string) {
     return this.playersClan.ranks?.find(
       (r) => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
@@ -324,6 +330,9 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted() {
+    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
+
+    await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
