@@ -1,5 +1,5 @@
 <template>
-  <div class="LadderSummaryShowcase-card mt-1" @click="isRanked ? navigateToLeague() : null" :class="`${leagueName} ${isRanked ? 'pointer' : ''}`">
+  <div class="LadderSummaryShowcase-card mt-1" @click="isRanked && !smallMode ? navigateToLeague() : null" :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`">
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
       {{ modeStat.division !== 0 ? this.modeStat.division : null }}

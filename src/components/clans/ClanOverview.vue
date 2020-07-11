@@ -20,24 +20,38 @@
       </v-card-title>
       <br />
       <br />
-<!--      Does not work properly at all, will fix a more data is on-->
-<!--      <v-row v-if="clanIsFunded">-->
-<!--        <v-col>-->
-<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_1ON1)" />-->
-<!--        </v-col>-->
-<!--        <v-col>-->
-<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2)" />-->
-<!--        </v-col>-->
-<!--        <v-col>-->
-<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_2ON2_AT)" />-->
-<!--        </v-col>-->
-<!--        <v-col>-->
-<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_4ON4)" />-->
-<!--        </v-col>-->
-<!--        <v-col>-->
-<!--          <player-league :small-mode="true" :mode-stat="getStats(modeEnums.GM_FFA)" />-->
-<!--        </v-col>-->
-<!--      </v-row>-->
+      <v-row v-if="clanIsFunded">
+        <v-col>
+          <player-league
+            :small-mode="true"
+            :mode-stat="getStats(modeEnums.GM_1ON1)"
+          />
+        </v-col>
+        <v-col>
+          <player-league
+            :small-mode="true"
+            :mode-stat="getStats(modeEnums.GM_2ON2)"
+          />
+        </v-col>
+        <v-col>
+          <player-league
+            :small-mode="true"
+            :mode-stat="getStats(modeEnums.GM_2ON2_AT)"
+          />
+        </v-col>
+        <v-col>
+          <player-league
+            :small-mode="true"
+            :mode-stat="getStats(modeEnums.GM_4ON4)"
+          />
+        </v-col>
+        <v-col>
+          <player-league
+            :small-mode="true"
+            :mode-stat="getStats(modeEnums.GM_FFA)"
+          />
+        </v-col>
+      </v-row>
       <div v-if="playersClan.isSuccesfullyFounded">
         <table class="custom-table">
           <tr @click="gotToChiefTain">
@@ -190,7 +204,9 @@ export default class ClanOverview extends Vue {
   }
 
   public getStats(mode: EGameMode) {
-    const games = this.playersClan.ranks?.filter((r) => r.gameMode === mode && r.leagueName != null);
+    const games = this.playersClan.ranks?.filter(
+      (r) => r.gameMode === mode && r.leagueName != null
+    );
     const players = games.map((l) => l.player);
     if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
 
@@ -201,7 +217,7 @@ export default class ClanOverview extends Vue {
         gameMode: mode,
         games: a.games + b.games,
         rank: 0,
-        leagueOrder: 5,
+        leagueOrder: 0,
       }),
       {
         wins: 0,
@@ -209,13 +225,16 @@ export default class ClanOverview extends Vue {
         gameMode: mode,
         games: 0,
         rank: 0,
-        leagueOrder: 5,
+        leagueOrder: 0,
       }
     );
 
-    const allRanks = this.playersClan.ranks.filter(r => r.rankNumber != 0);
-    const order = allRanks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }), { leagueOrder: 0 })
-    reduced.leagueOrder = Math.round(order.leagueOrder / games.length);
+    const allRanks = this.playersClan.ranks.filter((r) => r.rankNumber != 0 && r.gameMode === mode);
+    const order = allRanks.reduce(
+      (a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }),
+      { leagueOrder: 0 }
+    );
+    reduced.leagueOrder = Math.round(order.leagueOrder / allRanks.length);
     reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
 
     return reduced;
