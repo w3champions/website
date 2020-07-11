@@ -1,43 +1,11 @@
 <template>
   <div>
-    <v-card-title>Games per Day</v-card-title>
-    <v-card-text v-if="!loadingGamesPerDayStats">
-      <amount-per-day-chart
-        class="ammount-per-day-chart"
-        :game-days="gameDays"
-      />
-    </v-card-text>
-    <v-card-title>Players per Day</v-card-title>
-
-    <v-card-text v-if="!loadingPlayersPerDayStats">
-      <amount-per-day-chart
-        class="ammount-per-day-chart"
-        :game-days="playersPerDay"
-      />
-    </v-card-text>
-
-    <v-card-title>Popular Hours</v-card-title>
     <v-row>
-      <v-col cols="12" md="2">
-        <v-card-text>
-          <v-select
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
-            @change="setSelectedModeGameHour"
-            label="Select Mode"
-            outlined
-          />
-        </v-card-text>
-      </v-col>
-      <v-col cols="12" md="10">
-        <v-card-text>
-          <popular-game-time-chart :popular-game-hour="selectedGameHours" />
-        </v-card-text>
+      <v-col cols="12">
+        <hero-winrate />
       </v-col>
     </v-row>
-
-    <v-card-title>Game Lengths</v-card-title>
+    <v-card-title>Picked Heroes</v-card-title>
     <v-row>
       <v-col cols="12" md="2">
         <v-card-text>
@@ -45,15 +13,23 @@
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"
-            @change="setSelectedLengthMode"
-            label="Select Mode"
+            @change="setSelectedHeroesPlayedMode"
+            label="Mode"
+            outlined
+          />
+          <v-select
+            :items="picks"
+            item-text="pickName"
+            item-value="pickId"
+            @change="setSelectedHeroesPlayedPick"
+            label="Pick"
             outlined
           />
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <game-length-chart :game-length="selectedGameLength" />
+          <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
         </v-card-text>
       </v-col>
     </v-row>
@@ -62,33 +38,63 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { GameDay, GameLength, PopularGameHour } from "@/store/overallStats/types";
 import Component from "vue-class-component";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
-import { EGameMode } from "@/store/typings";
+import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
+import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
+import { EGameMode, EPick } from "@/store/typings";
+import { PlayedHero } from "@/store/overallStats/types";
 @Component({
-  components: { GameLengthChart, AmountPerDayChart, PopularGameTimeChart },
+  components: {
+    PlayedHeroesChart,
+    HeroWinrate,
+    GameLengthChart,
+    AmountPerDayChart,
+    PopularGameTimeChart,
+  },
 })
-export default class PlayerActivityTab extends Vue {
-  public selectedLengthMode = EGameMode.GM_1ON1;
-  public selectedPopularHourMode = EGameMode.GM_1ON1;
+export default class HeroTab extends Vue {
+  public selectedHeroesPlayedPick = 0;
+  public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
 
-  public setSelectedLengthMode(mode: EGameMode) {
-    this.selectedLengthMode = mode;
+  get picks() {
+    return [
+      {
+        pickName: "overall",
+        pickId: EPick.OVERALL,
+      },
+      {
+        pickName: "first",
+        pickId: EPick.FIRST,
+      },
+      {
+        pickName: "second",
+        pickId: EPick.SECOND,
+      },
+      {
+        pickName: "third",
+        pickId: EPick.THIRD,
+      },
+    ];
   }
 
-  public setSelectedModeGameHour(mode: EGameMode) {
-    this.selectedPopularHourMode = mode;
-  }
-
-  get selectedGameLength(): GameLength {
+  get selectedPlayedHeroes(): PlayedHero[] {
+    const heroes = this.$store.direct.state.overallStatistics.playedHeroes;
+    if (heroes.length === 0) return [];
     return (
-      this.gameLength?.filter(
-        (g) => g.gameMode == this.selectedLengthMode
-      )[0] ?? { lengths: [] }
+      heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
+        ?.orderedPicks[this.selectedHeroesPlayedPick]?.stats ?? []
     );
+  }
+
+  public setSelectedHeroesPlayedPick(pick: number) {
+    this.selectedHeroesPlayedPick = pick;
+  }
+
+  public setSelectedHeroesPlayedMode(mode: EGameMode) {
+    this.selectedHeroesPlayedMode = mode;
   }
 
   get gameModes() {
@@ -114,36 +120,6 @@ export default class PlayerActivityTab extends Vue {
         modeId: EGameMode.GM_FFA,
       },
     ];
-  }
-
-  get selectedGameHours(): PopularGameHour {
-    return this.popularGameHours.filter(
-      (g) => g.gameMode == this.selectedPopularHourMode
-    )[0];
-  }
-
-  get loadingGamesPerDayStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
-  }
-
-  get loadingPlayersPerDayStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingPlayersPerDayStats;
-  }
-
-  get gameDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay.reverse();
-  }
-
-  get playersPerDay(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
-  }
-
-  get gameLength(): GameLength[] {
-    return this.$store.direct.state.overallStatistics.gameLengths;
-  }
-
-  get popularGameHours(): PopularGameHour[] {
-    return this.$store.direct.state.overallStatistics.popularGameHours;
   }
 }
 </script>

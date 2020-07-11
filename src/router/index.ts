@@ -18,8 +18,8 @@ import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerActivityTab from "@/components/overal-statistics/tabs/PlayerActivityTab.vue";
 import WinrateTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
-import HeroesTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
 import MmrDistributionTab from "@/components/overal-statistics/tabs/MmrDistributionTab.vue";
+import HeroTab from "@/components/overal-statistics/tabs/HeroTab.vue";
 
 Vue.use(VueRouter);
 
@@ -116,7 +116,7 @@ const routes = [
       },
       {
         path: "heroes-winrates",
-        component: HeroesTab
+        component: HeroTab
       }
     ]
   },
