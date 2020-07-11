@@ -82,7 +82,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 
 @Component({ components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague } })
 export default class PlayerProfileTab extends Vue {
-  @Prop() public battleTag!: string;
+  @Prop() public id!: string;
 
   public raceHeaders = [
     {
@@ -98,6 +98,10 @@ export default class PlayerProfileTab extends Vue {
       value: "wins",
     },
   ];
+
+  get battleTag() {
+    return this.id;
+  }
 
   get loadingProfile(): boolean {
     return this.$store.direct.state.player.loadingProfile;

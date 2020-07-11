@@ -11,6 +11,11 @@ import GettingStarted from "@/views/GettingStarted.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
+import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
+import ClanOverview from "@/components/clans/ClanOverview.vue";
+import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
+import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 
 Vue.use(VueRouter);
 
@@ -54,19 +59,26 @@ const routes = [
     name: "Player",
     children: [
       {
-        path: ""
+        path: "",
+        props: true,
+        component: PlayerProfileTab
       },
       {
-        path: "matches"
+        path: "matches",
+        props: true,
+        component: PlayerMatchesTab
       },
       {
-        path: "at-teams"
+        path: "at-teams",
+        component: PlayerArrangedTeamsTab
       },
       {
-        path: "statistics"
+        path: "statistics",
+        component: PlayerStatisticTab
       },
       {
-        path: "clan"
+        path: "clan",
+        component: ClanOverview
       }
     ]
   },

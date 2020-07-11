@@ -93,7 +93,7 @@ import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
 
 @Component({ components: { MatchesGrid } })
 export default class PlayerMatchesTab extends Vue {
-  @Prop() public battleTag!: string;
+  @Prop() public id!: string;
   public opponentWins = 0;
   public searchModel = {} as Ranking;
   public search = "";
@@ -110,6 +110,10 @@ export default class PlayerMatchesTab extends Vue {
       this.$store.direct.commit.player.SET_OPPONENT_TAG("");
     }
     this.getMatches();
+  }
+
+  get battleTag() {
+    return this.id;
   }
 
   public async mounted() {
