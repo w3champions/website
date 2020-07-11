@@ -16,6 +16,10 @@ import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue"
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
+import PlayerActivityTab from "@/components/overal-statistics/tabs/PlayerActivityTab.vue";
+import WinrateTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
+import HeroesTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
+import MmrDistributionTab from "@/components/overal-statistics/tabs/MmrDistributionTab.vue";
 
 Vue.use(VueRouter);
 
@@ -99,16 +103,20 @@ const routes = [
     component: OverallStatistics,
     children: [
       {
-        path: "/"
+        path: "/",
+        component: PlayerActivityTab
       },
       {
-        path: "mmr-distribution"
+        path: "mmr-distribution",
+        component: MmrDistributionTab
       },
       {
-        path: "winrates-per-race-and-map"
+        path: "winrates-per-race-and-map",
+        component: WinrateTab
       },
       {
-        path: "heroes-winrates"
+        path: "heroes-winrates",
+        component: HeroesTab
       }
     ]
   },
