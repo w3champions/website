@@ -77,7 +77,7 @@
                 <br />
                 Support us
                 <br />
-                <a href="https://www.patreon.com/w3pad" target="_blank">
+                <a href="https://www.patreon.com/w3champions" target="_blank">
                   <img src="../assets/patreon.png" height="24" />
                 </a>
                 <br />
