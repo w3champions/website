@@ -12,7 +12,7 @@
           [{{ clanId }}]
         </span>
         {{ playerId.name }}
-        <span v-if="playerRace">
+        <span v-if="playerRace !== null">
           ({{ raceString }})
         </span>
       </div>
