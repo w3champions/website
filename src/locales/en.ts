@@ -54,6 +54,7 @@ const en = {
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
     hillsbradcreek: "Hillsbrad Creek",
+    "_1v1_autumnleaves_anon": "Autumn Leaves",
     "_ffa_marketsquare_anon": "Market Square",
     "_ffa_marketsquare_anon_cd": "Market Square",
     "_ffa_deathrose_anon": "Deathrose",
