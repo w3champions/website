@@ -3,6 +3,13 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
+          <br />
+          <v-card-title class="justify-center">The ladder you have been waiting for!</v-card-title>
+          <v-row class="justify-center">
+            <v-col class="text-center">
+              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
+            </v-col>
+          </v-row>
           <v-card-text>
             <v-row class="justify-center">
               <v-col>
@@ -15,11 +22,6 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-row class="justify-center">
-            <v-col class="text-center mb-10">
-              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
-            </v-col>
-          </v-row>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
             <v-row>
@@ -77,7 +79,7 @@
                 <br />
                 Support us
                 <br />
-                <a href="https://www.patreon.com/w3pad" target="_blank">
+                <a href="https://www.patreon.com/w3champions" target="_blank">
                   <img src="../assets/patreon.png" height="24" />
                 </a>
                 <br />

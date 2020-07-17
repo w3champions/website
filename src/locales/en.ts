@@ -15,6 +15,14 @@ const en = {
     TOTAL: "Total",
   },
 
+  racesShort: {
+    ORC: "OC",
+    HUMAN: "HU",
+    UNDEAD: "UD",
+    NIGHT_ELF: "NE",
+    RANDOM: "RnD"
+  },
+
   gameModes: {
     GM_1ON1: "1 vs 1",
     GM_2ON2: "2 vs 2",
@@ -54,6 +62,7 @@ const en = {
     turtlerock: "Turtle Rock",
     losttemple: "Lost Temple",
     hillsbradcreek: "Hillsbrad Creek",
+    "_1v1_autumnleaves_anon": "Autumn Leaves",
     "_ffa_marketsquare_anon": "Market Square",
     "_ffa_marketsquare_anon_cd": "Market Square",
     "_ffa_deathrose_anon": "Deathrose",
