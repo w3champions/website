@@ -3,6 +3,13 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
+          <v-card-title></v-card-title>
+          <br />
+          <v-row class="justify-center">
+            <v-col class="text-center mb-10">
+              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
+            </v-col>
+          </v-row>
           <v-card-text>
             <v-row class="justify-center">
               <v-col>
@@ -15,11 +22,6 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-row class="justify-center">
-            <v-col class="text-center mb-10">
-              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
-            </v-col>
-          </v-row>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
             <v-row>
