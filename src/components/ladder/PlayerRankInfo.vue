@@ -12,6 +12,9 @@
           [{{ clanId }}]
         </span>
         {{ playerId.name }}
+        <span v-if="playerRace">
+          ({{ raceString }})
+        </span>
       </div>
     </template>
     <div>
@@ -26,11 +29,17 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerId } from "@/store/ranking/types";
+import { ERaceEnum } from "@/store/typings";
 
 @Component({})
 export default class PlayerRankInfo extends Vue {
   @Prop() public playerId!: PlayerId;
   @Prop() public clanId!: string;
+  @Prop() public playerRace!: ERaceEnum;
+
+  get raceString() {
+    return this.$t(`races.${ERaceEnum[this.playerRace]}`);
+  }
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({

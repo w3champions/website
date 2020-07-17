@@ -40,6 +40,7 @@ export type Ranking = {
   league: number;
   leagueDivision: number;
   leagueOrder: number;
+  race: ERaceEnum;
   leagueName: string;
   rankNumber: number;
   rankingPoints: number;
