@@ -37,7 +37,7 @@
               class="d-inline-block rank-icon-container"
               v-bind:class="{ 'ml-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
-              :key="playerId.battleTag"
+              :key="playerId.battleTag + '_' + item.race"
             >
               <div
                 class="player-avatar mr-1 alignRight race-icon"
