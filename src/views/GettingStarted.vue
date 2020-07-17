@@ -22,7 +22,7 @@
                     needed.
                   </p>
                   <v-btn
-                    href="../W3Champions-Installer.exe"
+                    href="../W3Champions-Installer.zip"
                     target="_blank"
                     value
                     class="join-button mt-0 mb-4"
