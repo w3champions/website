@@ -3,17 +3,14 @@
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
         <gateway-select @gatewayChanged="onGatewayChanged" />
-        <game-mode-select
-          :gameMode="selectedGameMode"
-          @gameModeChanged="onGameModeChanged"
-        ></game-mode-select>
+        <game-mode-select :gameMode="selectedGameMode" @gameModeChanged="onGameModeChanged"></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
               <league-icon :league="selectedLeageueOrder" />
               {{ selectedLeagueName }}
               {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
+              selectedLeague.division !== 0 ? selectedLeague.division : null
               }}
             </v-btn>
           </template>
@@ -26,11 +23,7 @@
               </v-list>
               <v-divider></v-divider>
               <v-list dense>
-                <v-list-item
-                  v-for="item in ladders"
-                  :key="item.id"
-                  @click="setLeague(item.id)"
-                >
+                <v-list-item v-for="item in ladders" :key="item.id" @click="setLeague(item.id)">
                   <v-list-item-content>
                     <v-list-item-title>
                       <league-icon :league="item.order" />
@@ -66,14 +59,12 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">
-                    {{ data.item.player.name }}
-                  </span>
+                  <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
                   <span v-if="isDuplicateName(data.item.player.name)">
                     {{
-                      data.item.player.playerIds
-                        .map((p) => p.battleTag)
-                        .join(" & ")
+                    data.item.player.playerIds
+                    .map((p) => p.battleTag)
+                    .join(" & ")
                     }}
                   </span>
                 </v-list-item-title>
@@ -89,12 +80,7 @@
       </v-card-title>
       <v-menu offset-x>
         <template v-slot:activator="{ on }">
-          <v-btn
-            tile
-            v-on="on"
-            class="ma-4"
-            style="background-color: transparent;"
-          >
+          <v-btn tile v-on="on" class="ma-4" style="background-color: transparent;">
             <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
@@ -107,11 +93,7 @@
               </v-list-item-content>
             </v-list>
             <v-list dense>
-              <v-list-item
-                v-for="item in seasons"
-                :key="item.id"
-                @click="selectSeason(item)"
-              >
+              <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
                 <v-list-item-content>
                   <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                 </v-list-item-content>
@@ -135,9 +117,7 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">
-                {{ stat.value }}
-              </v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">{{ stat.value }}</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -147,17 +127,17 @@
 </template>
 
 <script lang="ts">
-  import Vue from "vue";
-  import { Component, Prop, Watch } from "vue-property-decorator";
-  import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-  import { EGameMode } from "@/store/typings";
-  import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-  import GatewaySelect from "@/components/common/GatewaySelect.vue";
-  import GameModeSelect from "@/components/common/GameModeSelect.vue";
-  import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
-  import AppConstants from "../constants";
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
+import { EGameMode } from "@/store/typings";
+import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+import GatewaySelect from "@/components/common/GatewaySelect.vue";
+import GameModeSelect from "@/components/common/GameModeSelect.vue";
+import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
+import AppConstants from "../constants";
 
-  @Component({
+@Component({
   components: {
     LeagueIcon,
     GatewaySelect,
@@ -215,7 +195,11 @@ export default class RankingsView extends Vue {
   get selectedLeague(): League {
     if (!this.ladders) return {} as League;
 
-    return this.ladders.filter((l) => l.id == this.$store.direct.state.rankings.league)[0] || {};
+    return (
+      this.ladders.filter(
+        (l) => l.id == this.$store.direct.state.rankings.league
+      )[0] || {}
+    );
   }
 
   get selectedLeagueName(): string {
@@ -254,24 +238,38 @@ export default class RankingsView extends Vue {
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    
+    if(this.ladders && this.ladders[0]){
+      await this.setLeague(this.ladders[0].id);
+    }
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {
-    this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    await this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    if(this.ladders && this.ladders[0]){
+      await this.setLeague(this.ladders[0].id);
+    }
+    
+
   }
 
   async mounted() {
     this.search = "";
-
-    if (this.season) this.$store.direct.commit.rankings.SET_SELECTED_SEASON({ id: this.season});
+    if (this.season)
+      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
+        id: this.season,
+      });
     if (this.league) this.setLeague(this.league);
-    if (this.gamemode) this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
+    if (this.gamemode)
+      this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
     if (this.gateway) this.$store.direct.commit.SET_GATEWAY(this.gateway);
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();
+
+    if (this.ladders) {
+      await this.setLeague(this.ladders[0].id);
+    }
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
@@ -289,12 +287,12 @@ export default class RankingsView extends Vue {
     await this.getLadders();
   }
 
-  public getRankings() {
-    this.$store.direct.dispatch.rankings.retrieveRankings();
+  public async getRankings() {
+    await this.$store.direct.dispatch.rankings.retrieveRankings();
   }
 
-  public getLadders() {
-    this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
+  public async getLadders() {
+    await this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
   }
 
   public async loadOngoingMatches() {
