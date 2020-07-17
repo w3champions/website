@@ -15,6 +15,14 @@ const en = {
     TOTAL: "Total",
   },
 
+  racesShort: {
+    ORC: "OC",
+    HUMAN: "HU",
+    UNDEAD: "UD",
+    NIGHT_ELF: "NE",
+    RANDOM: "RnD"
+  },
+
   gameModes: {
     GM_1ON1: "1 vs 1",
     GM_2ON2: "2 vs 2",

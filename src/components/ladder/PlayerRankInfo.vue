@@ -38,7 +38,7 @@ export default class PlayerRankInfo extends Vue {
   @Prop() public playerRace!: ERaceEnum;
 
   get raceString() {
-    return this.$t(`races.${ERaceEnum[this.playerRace]}`);
+    return this.$t(`racesShort.${ERaceEnum[this.playerRace]}`);
   }
 
   public openPlayerProfile(playerId: string) {
