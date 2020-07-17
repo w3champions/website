@@ -50,6 +50,7 @@
               <player-rank-info
                 :player-id="playerId"
                 :clan-id="item.playersInfo[index].clanId"
+                :player-race="item.race"
               />
               <div
                 class="country-flag__container"
