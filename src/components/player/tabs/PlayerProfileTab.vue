@@ -79,8 +79,11 @@ import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import { EGameMode } from "@/store/typings";
 
-@Component({ components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague } })
+@Component({
+  components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague },
+})
 export default class PlayerProfileTab extends Vue {
   @Prop() public id!: string;
 
@@ -145,53 +148,25 @@ export default class PlayerProfileTab extends Vue {
       return [];
     }
 
-    const bestModesMap: { [gameMode: number]: ModeStat } = {};
-
-    this.gameModeStats.forEach((x) => {
-      const foundMode = bestModesMap[x.gameMode];
-
-      if (foundMode) {
-        // if league is better
-        if (foundMode.leagueId > x.leagueId) {
-          bestModesMap[x.gameMode] = x;
-        }
-
-        // if same league but rank is better
-        if (foundMode.leagueId == x.leagueId && foundMode.rank > x.rank) {
-          bestModesMap[x.gameMode] = x;
-        }
-      } else {
-        bestModesMap[x.gameMode] = x;
-      }
-    });
-
-    let result: ModeStat[] = [];
-    for (const key in bestModesMap) {
-      const gameModeStat = bestModesMap[key];
-      result.push(gameModeStat);
-    }
-
-    const sortByLeagueFun = (x: ModeStat) => {
-      if (x.rank === 0) {
-        return 100000; // Push at the end of sorting
-      }
-      return x.leagueId;
-    };
-
-    const sortByRankFun = (x: ModeStat) => {
-      if (x.rank === 0) {
-        return 100000; // Push at the end of sorting
-      }
-      return x.rank;
-    };
-
-    result = _.orderBy(
-      result,
-      [sortByLeagueFun, sortByRankFun],
-      ["asc", "asc"]
+    const oneVOnes = this.gameModeStats.filter(
+      (g) => g.gameMode === EGameMode.GM_1ON1
+    );
+    const otherModes = this.gameModeStats.filter(
+      (g) => g.gameMode !== EGameMode.GM_1ON1 && g.rank != 0
     );
 
-    return _.take(result, 3);
+    const bestOneVOne = oneVOnes.sort(
+      (a, b) => b.mmr - a.mmr
+    )[0];
+    const bestOtherModes = otherModes.sort(
+      (a, b) => b.mmr - a.mmr
+    );
+
+    const allModes = [];
+    if (bestOneVOne) allModes.push(bestOneVOne);
+    allModes.push(...bestOtherModes);
+
+    return _.take(allModes, 3);
   }
 }
 </script>

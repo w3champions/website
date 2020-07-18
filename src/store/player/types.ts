@@ -39,6 +39,7 @@ export type RaceStat = {
 export type ModeStat = {
   gameMode: EGameMode;
   gateWay: Gateways;
+  race: ERaceEnum;
   wins: number;
   losses: number;
   games: number;

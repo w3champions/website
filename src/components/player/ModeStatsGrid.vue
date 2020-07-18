@@ -56,32 +56,7 @@ export default class ModeStatsGrid extends Vue {
 
     if (gm2v2s.length === 0) return this.stats;
 
-    const combindes2v2 = gm2v2s.reduce(
-      (a, b) => ({
-        gameMode: EGameMode.GM_2ON2_AT,
-        gateWay: b.gateWay,
-        wins: b.wins + a.wins,
-        losses: b.losses + a.losses,
-        games: b.games + a.games,
-        winrate: 0,
-        mmr: b.mmr + a.mmr,
-        rankingPoints: b.rankingPoints + a.rankingPoints,
-        leagueId: 0,
-        leagueOrder: 0,
-        division: 0,
-        rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
-        season: b.season,
-      }),
-      {
-        wins: 0,
-        losses: 0,
-        games: 0,
-        winrate: 0,
-        mmr: 0,
-        rank: 0,
-        rankingPoints: 0,
-      }
-    );
+    const combindes2v2 = this.combineStats(gm2v2s);
 
     combindes2v2.winrate =
       combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
@@ -99,6 +74,35 @@ export default class ModeStatsGrid extends Vue {
     const gm4v4 = this.stats.find((g) => g.gameMode === EGameMode.GM_4ON4);
 
     return [gm1v1, gm2v2, combindes2v2, gm4v4, ffa].filter((i) => i); //filter out nulls
+  }
+
+  private combineStats(gm2v2s: any[]) {
+    return gm2v2s.reduce(
+      (a, b) => ({
+        gameMode: EGameMode.GM_2ON2_AT,
+        gateWay: b.gateWay,
+        wins: b.wins + a.wins,
+        losses: b.losses + a.losses,
+        games: b.games + a.games,
+        winrate: 0,
+        mmr: b.mmr + a.mmr,
+        rankingPoints: b.rankingPoints + a.rankingPoints,
+        leagueId: 0,
+        leagueOrder: 0,
+        division: 0,
+        rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
+        season: b.season
+      }),
+      {
+        wins: 0,
+        losses: 0,
+        games: 0,
+        winrate: 0,
+        mmr: 0,
+        rank: 0,
+        rankingPoints: 0
+      }
+    );
   }
 
   public headers = [
