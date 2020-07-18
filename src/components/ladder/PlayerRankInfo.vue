@@ -8,13 +8,7 @@
         @click.middle="openProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
-        <span v-if="clanId">
-          [{{ clanId }}]
-        </span>
         {{ playerId.name }}
-        <span v-if="playerRace !== null">
-          ({{ raceString }})
-        </span>
       </div>
     </template>
     <div>
@@ -35,11 +29,6 @@ import { ERaceEnum } from "@/store/typings";
 export default class PlayerRankInfo extends Vue {
   @Prop() public playerId!: PlayerId;
   @Prop() public clanId!: string;
-  @Prop() public playerRace!: ERaceEnum;
-
-  get raceString() {
-    return this.$t(`racesShort.${ERaceEnum[this.playerRace]}`);
-  }
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({

@@ -109,6 +109,10 @@
               </v-tooltip>
             </span>
           </td>
+          <td class="number-text text-end"><race-icon :race="item.race" /></td>
+          <td class="number-text text-end">
+            {{ item.playersInfo.map((p) => p.clanId ? p.clanId : '-').join('/') }}
+          </td>
           <td class="number-text text-end won">{{ item.player.wins }}</td>
           <td class="number-text text-end lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
@@ -125,7 +129,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId } from "@/store/ranking/types";
-import { ERaceEnum, Match } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 
@@ -133,9 +137,11 @@ import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlag from "vue-country-flag";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
 @Component({
   components: {
+    RaceIcon,
     PlayerIcon,
     SwordIcon,
     PlayerRankInfo,
@@ -146,6 +152,8 @@ export default class RankingsGrid extends Vue {
   @Prop() rankings!: Ranking[];
   @Prop() ongoingMatches!: any;
   @Prop() selectedRank!: Ranking;
+
+  public gameModes = EGameMode;
 
   public headers = [
     {
@@ -162,6 +170,27 @@ export default class RankingsGrid extends Vue {
       align: "start",
       sortable: false,
       minWidth: "170px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return ('' + b.player.name).localeCompare(a.player.name);
+      }
+    },
+    {
+      text: "Race",
+      align: "end",
+      sortable: false,
+      width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return b.race - a.race;
+      },
+    },
+    {
+      text: "Clan",
+      align: "end",
+      sortable: false,
+      width: "50px",
+      sortFunction: (a: Ranking, b: Ranking) => {
+        return ('' + b.playersInfo[0].clanId).localeCompare(a.playersInfo[0].clanId);
+      },
     },
     {
       text: "Wins",
