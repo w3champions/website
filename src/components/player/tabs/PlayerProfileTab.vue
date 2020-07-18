@@ -73,7 +73,6 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ModeStat } from "@/store/player/types";
 import * as _ from "lodash";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";

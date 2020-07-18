@@ -8,7 +8,7 @@
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.gameMode">
-          <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</td>
+          <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }} <span v-if="item.gameMode === gameModeEnums.GM_1ON1">({{item.id.split('_')[4]}})</span></td>
           <td class="number-text text-start">
             <span class="won">{{ item.wins }}</span>
             -
