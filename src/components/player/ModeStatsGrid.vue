@@ -7,8 +7,14 @@
   >
     <template v-slot:body="{ items }">
       <tbody>
-        <tr v-for="item in items" :key="item.gameMode">
-          <td>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }} <span v-if="item.gameMode === gameModeEnums.GM_1ON1">({{item.id.split('_')[4]}})</span></td>
+        <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
+          <td>
+            <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }} </span>
+            <race-icon
+              style="display: inline;"
+              :race="item.race"
+            />
+          </td>
           <td class="number-text text-start">
             <span class="won">{{ item.wins }}</span>
             -
@@ -34,8 +40,11 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
-@Component({})
+@Component({
+  components: { RaceIcon }
+})
 export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
