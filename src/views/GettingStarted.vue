@@ -137,7 +137,33 @@
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
                 <v-card-text class="centered-container">
-                  <h3>Manual Install Mac OS</h3>
+                  <h3>Automatic Install Mac</h3>
+                  <p>
+                    We created a setup tool that automatically does all steps
+                    needed.
+                  </p>
+                  <v-btn
+                    href="../W3Champions-Installer.pkg"
+                    target="_blank"
+                    value
+                    class="join-button mt-0 mb-4"
+                  >
+                    <v-icon>mdi-download</v-icon>
+                    <span class="mr-2 hidden-xs-only">Mac Installer</span>
+                  </v-btn>
+                  <p>
+                    <span class="important">
+                      Make sure installer is run as administrator
+                    </span>
+                    <br />
+                    <span>
+                      This is required because installer needs to put the
+                      <i>webui</i>
+                      folder inside your Warcraft III directory
+                    </span>
+                  </p>
+                  <v-divider></v-divider>
+                  <h3 class="mt-10">Manual Install Mac OS</h3>
                   <p>
                     1. Download the archive file and unpack it in your Warcraft
                     Installation folder
