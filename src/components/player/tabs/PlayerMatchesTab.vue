@@ -235,10 +235,7 @@ export default class PlayerMatchesTab extends Vue {
 
     this.isLoadingMatches = true;
 
-    await this.$store.direct.dispatch.player.loadMatches({
-      page: page,
-      gameMode: this.selectedGameModeForSearch,
-    });
+    await this.$store.direct.dispatch.player.loadMatches(page);
     this.opponentWins = 0;
     if (this.$store.direct.state.player.opponentTag.length) {
       this.opponentWins = this.matches.filter((match: Match) =>

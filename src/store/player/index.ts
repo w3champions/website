@@ -91,18 +91,17 @@ const mod = {
     },
     async loadMatches(
       context: ActionContext<PlayerState, RootState>,
-      search: { page?: number; gameMode: EGameMode }
+      page?: number
     ) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,
         mod
       );
 
-      if (search.page != null && !isNaN(search.page)) {
-        commit.SET_PAGE(search.page - 1);
+      if (page != null && !isNaN(page)) {
+        commit.SET_PAGE(page - 1);
       }
 
-      commit.SET_GAMEMODE(search.gameMode);
       commit.SET_LOADING_RECENT_MATCHES(true);
       const response = await rootGetters.matchService.retrievePlayerMatches(
         state.page,
@@ -132,7 +131,7 @@ const mod = {
       commit.SET_PAGE(0);
 
       if (state.battleTag) {
-        await dispatch.loadMatches({ page: 1, gameMode: state.gameMode });
+        await dispatch.loadMatches(1);
         await dispatch.loadRaceStats();
         await dispatch.loadGameModeStats();
       }

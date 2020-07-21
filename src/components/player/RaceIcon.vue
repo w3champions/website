@@ -7,7 +7,7 @@
       class="race-icon"
       height="24px"
       width="auto"
-      :alt="{ enumToString }"
+      :alt="enumToString"
     />
   </div>
 </template>
@@ -23,13 +23,11 @@ export default class RaceIcon extends Vue {
   @Prop() race!: ERaceEnum;
 
   get enumToString() {
-    return ERaceEnum[this.race];
+    return this.$t(`races.${ERaceEnum[this.race]}`);
   }
 
   get renderIcon() {
-    return require("../../assets/raceIcons/" + this.enumToString + ".png");
+    return require("../../assets/raceIcons/" + ERaceEnum[this.race] + ".png");
   }
 }
 </script>
-
-<style lang="scss" scoped></style>

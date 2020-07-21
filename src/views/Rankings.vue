@@ -3,7 +3,10 @@
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
         <gateway-select @gatewayChanged="onGatewayChanged" />
-        <game-mode-select :gameMode="selectedGameMode" @gameModeChanged="onGameModeChanged"></game-mode-select>
+        <game-mode-select
+          :gameMode="selectedGameMode"
+          @gameModeChanged="onGameModeChanged"
+        ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent;">
@@ -62,11 +65,12 @@
                   <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
                   <span v-if="isDuplicateName(data.item.player.name)">
                     {{
-                    data.item.player.playerIds
-                    .map((p) => p.battleTag)
-                    .join(" & ")
+                      data.item.player.playerIds
+                        .map((p) => p.battleTag)
+                        .join(" & ")
                     }}
                   </span>
+                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1">({{$t(`racesShort.${races[data.item.player.race]}`)}})</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -130,7 +134,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -150,6 +154,8 @@ export default class RankingsView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public ongoingMatchesMap: any = {};
+  public gameModes = EGameMode;
+  public races = ERaceEnum;
 
   @Prop() public season!: number;
   @Prop() public league!: number;
@@ -238,10 +244,12 @@ export default class RankingsView extends Vue {
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-    
+
     if(this.ladders && this.ladders[0]){
       await this.setLeague(this.ladders[0].id);
     }
+
+    this.redirectToProperUrl()
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {
@@ -249,25 +257,27 @@ export default class RankingsView extends Vue {
     if(this.ladders && this.ladders[0]){
       await this.setLeague(this.ladders[0].id);
     }
-    
 
+    this.redirectToProperUrl()
+  }
+
+  private redirectToProperUrl() {
+    this.$router.push({
+      path: `Rankings?season=${this.selectedSeason.id}&gateway=${this.selectedGateway}&gamemode=${this.selectedGameMode}&league=${this.selectedLeague.id}`
+    })
   }
 
   async mounted() {
     this.search = "";
-    if (this.season)
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
-        id: this.season,
-      });
-    if (this.league) this.setLeague(this.league);
-    if (this.gamemode)
-      this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
+    if (this.league) await this.setLeague(this.league);
+    if (this.season) this.$store.direct.commit.rankings.SET_SELECTED_SEASON({ id: this.season });
+    if (this.gamemode) this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
     if (this.gateway) this.$store.direct.commit.SET_GATEWAY(this.gateway);
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();
 
-    if (this.ladders) {
+    if (this.ladders && !this.selectedLeague?.id) {
       await this.setLeague(this.ladders[0].id);
     }
 
@@ -278,6 +288,10 @@ export default class RankingsView extends Vue {
 
   destroyed() {
     clearInterval(this._intervalRefreshHandle);
+  }
+
+  get selectedGateway() {
+    return this.$store.direct.state.gateway;
   }
 
   public async refreshRankings() {
@@ -324,6 +338,7 @@ export default class RankingsView extends Vue {
 
   public async setLeague(league: number) {
     await this.$store.direct.dispatch.rankings.setLeague(league);
+    this.redirectToProperUrl();
   }
 }
 </script>
