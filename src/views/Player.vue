@@ -186,6 +186,7 @@ export default class PlayerView extends Vue {
     this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
     this.$store.direct.dispatch.player.loadGameModeStats();
     this.$store.direct.dispatch.player.loadRaceStats();
+    this.$store.direct.dispatch.player.loadMatches(1);
   }
 
   get seasons() {
