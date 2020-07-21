@@ -67,6 +67,7 @@
                     .join(" & ")
                     }}
                   </span>
+                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1">({{$t(`racesShort.${races[data.item.player.race]}`)}})</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -130,7 +131,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -150,6 +151,8 @@ export default class RankingsView extends Vue {
   public searchModel = {} as Ranking;
   public isLoading = false;
   public ongoingMatchesMap: any = {};
+  public gameModes = EGameMode;
+  public races = ERaceEnum;
 
   @Prop() public season!: number;
   @Prop() public league!: number;
@@ -238,7 +241,7 @@ export default class RankingsView extends Vue {
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-    
+
     if(this.ladders && this.ladders[0]){
       await this.setLeague(this.ladders[0].id);
     }
@@ -249,7 +252,7 @@ export default class RankingsView extends Vue {
     if(this.ladders && this.ladders[0]){
       await this.setLeague(this.ladders[0].id);
     }
-    
+
 
   }
 
