@@ -36,6 +36,11 @@
                           .join(" & ")
                       }}
                     </span>
+                    <span v-if="selectedGameModeForSearch === gameModeEnums.UNDEFINED">
+                      ({{
+                        $t(`gameModes.${gameModeEnums[data.item.player.gameMode]}`)
+                      }})
+                    </span>
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     Wins: {{ data.item.player.wins }} | Losses:
@@ -99,6 +104,7 @@ export default class PlayerMatchesTab extends Vue {
   public search = "";
   public isLoadingMatches = false;
   public isLoading = false;
+  public gameModeEnums = EGameMode;
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal: Ranking) {
