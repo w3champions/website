@@ -282,8 +282,6 @@ export default class RankingsView extends Vue {
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
     }, AppConstants.ongoingMatchesRefreshInterval);
-
-    this.redirectToProperUrl();
   }
 
   destroyed() {
