@@ -244,20 +244,11 @@ export default class RankingsView extends Vue {
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
-
-    if(this.ladders && this.ladders[0]){
-      await this.setLeague(this.ladders[0].id);
-    }
-
     this.redirectToProperUrl()
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {
     await this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    if(this.ladders && this.ladders[0]){
-      await this.setLeague(this.ladders[0].id);
-    }
-
     this.redirectToProperUrl()
   }
 
