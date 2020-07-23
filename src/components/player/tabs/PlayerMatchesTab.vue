@@ -202,7 +202,7 @@ export default class PlayerMatchesTab extends Vue {
   }
 
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
-    this.selectedGameModeForSearch = gameMode;
+    this.$store.direct.commit.player.SET_GAMEMODE(gameMode);
     this.getMatches();
   }
 
