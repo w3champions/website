@@ -268,6 +268,7 @@ export default class Admin extends Vue {
 
   closeNews() {
     this.dialogNews = false;
+    this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
 
   async mounted() {
