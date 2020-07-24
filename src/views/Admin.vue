@@ -232,6 +232,7 @@ export default class Admin extends Vue {
   async deleteNewsItem(item: NewsMessage) {
     confirm("Are you sure you want to delete this item?") &&
       (await this.$store.direct.dispatch.admin.deleteNews(item));
+    this.dialogNews = false;
   }
 
   formTitle() {
@@ -262,6 +263,7 @@ export default class Admin extends Vue {
   async saveNews() {
     await this.$store.direct.dispatch.admin.editNews(this.editedNewsItem);
     this.dialogNews = false;
+    this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
 
   closeNews() {

@@ -22,21 +22,25 @@ const mod = {
           context: ActionContext<AdminState, RootState>,
           newsMessage: NewsMessage
         ) {
-            const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-            await rootGetters.adminService.editNews(
+            const { rootGetters, rootState, dispatch } = moduleActionContext(context, mod);
+            const success = await rootGetters.adminService.editNews(
               newsMessage,
               rootState.oauth.token);
-            await this.loadNews(context);
+            if (success) {
+                await dispatch.loadNews();
+            }
         },
         async deleteNews(
           context: ActionContext<AdminState, RootState>,
           newsMessage: NewsMessage
         ) {
-            const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-            await rootGetters.adminService.deleteNews(
+            const { rootGetters, dispatch, rootState } = moduleActionContext(context, mod);
+            const success = await rootGetters.adminService.deleteNews(
               newsMessage,
               rootState.oauth.token);
-            await this.loadNews(context);
+            if (success) {
+                await dispatch.loadNews();
+            }
         },
         async loadBannedPlayers(
             context: ActionContext<AdminState, RootState>,
