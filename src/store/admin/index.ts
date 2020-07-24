@@ -1,15 +1,43 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { AdminState, BannedPlayer } from './types';
+import { AdminState, BannedPlayer, NewsMessage } from "./types";
 import moment from "moment";
 const mod = {
     namespaced: true,
     state: {
         total: 0,
         players: [],
+        news: [],
     } as AdminState,
     actions: {
+        async loadNews(
+          context: ActionContext<AdminState, RootState>
+        ) {
+            const { commit, rootGetters } = moduleActionContext(context, mod);
+            const news = await rootGetters.adminService.getNews();
+            commit.SET_NEWS(news);
+        },
+        async editNews(
+          context: ActionContext<AdminState, RootState>,
+          newsMessage: NewsMessage
+        ) {
+            const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+            await rootGetters.adminService.editNews(
+              newsMessage,
+              rootState.oauth.token);
+            await this.loadNews(context);
+        },
+        async deleteNews(
+          context: ActionContext<AdminState, RootState>,
+          newsMessage: NewsMessage
+        ) {
+            const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+            await rootGetters.adminService.deleteNews(
+              newsMessage,
+              rootState.oauth.token);
+            await this.loadNews(context);
+        },
         async loadBannedPlayers(
             context: ActionContext<AdminState, RootState>,
         ) {
@@ -58,7 +86,10 @@ const mod = {
         },
     },
     mutations: {
-        SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: Array<BannedPlayer>) {
+        SET_NEWS(state: AdminState, news: NewsMessage[]) {
+            state.news = news;
+        },
+        SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: BannedPlayer[]) {
             state.players = bannedPlayers;
         },
         ADD_BANNED_PLAYER(state: AdminState, bannedPlayer: BannedPlayer) {

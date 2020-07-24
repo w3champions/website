@@ -67,6 +67,59 @@
           </template>
         </v-data-table>
       </v-card-text>
+      <v-card-text>
+        <v-data-table
+          :headers="headersNews"
+          :items="news"
+          :items-per-page="5"
+          class="elevation-1"
+        >
+          <template v-slot:top>
+            <v-toolbar flat color="transparent">
+              <v-toolbar-title>News for Launcher</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-dialog v-model="dialogNews" max-width="500px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">Add News</v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle() }}</span>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-textarea
+                            v-model="editedNewsItem.message"
+                            label="Message"
+                          ></v-textarea>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="12">
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field v-model="editedNewsItem.date" label="Date"></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeNews">Cancel</v-btn>
+                    <v-btn color="blue darken-1" text @click="saveNews">Save</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editNewsItem(item)">mdi-pencil</v-icon>
+            <v-icon small @click="deleteNewsItem(item)">mdi-delete</v-icon>
+          </template>
+        </v-data-table>
+      </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -74,7 +127,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch} from "vue-property-decorator";
-import { BannedPlayer } from "../store/admin/types";
+import { BannedPlayer, NewsMessage } from "../store/admin/types";
 import { PlayerProfile } from "../store/player/types";
 @Component({ components: {} })
 export default class Admin extends Vue {
@@ -92,11 +145,25 @@ export default class Admin extends Vue {
         { text: "Ban Reason", value: "banReason" },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      headersNews: [
+        {
+          text: "Id",
+          align: "start",
+          value: "bsonId",
+        },
+        { text: "Text", value: "message", align: "start" },
+        { text: "Date", align: "start", value: "date" },
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
-  get bannedPlayers(): BannedPlayer[] {
+  get bannedPlayers() {
     return this.$store.direct.state.admin.players;
+  }
+
+  get news() {
+    return this.$store.direct.state.admin.news;
   }
 
   get isAdmin(): boolean {
@@ -111,12 +178,19 @@ export default class Admin extends Vue {
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
+      await this.$store.direct.dispatch.admin.loadNews();
     }
   }
 
   public dialog = false;
+  public dialogNews = false;
   public editedIndex = -1;
   public date = "";
+  public editedNewsItem = {
+    bsonId: "",
+    message: "",
+    date: "",
+  };
   public editedItem = {
     battleTag: "",
     endDate: "",
@@ -143,11 +217,21 @@ export default class Admin extends Vue {
     this.dialog = true;
   }
 
+  editNewsItem(item: NewsMessage) {
+    this.editedNewsItem = item;
+    this.dialogNews = true;
+  }
+
   async deleteItem(item: BannedPlayer) {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
+  }
+
+  async deleteNewsItem(item: NewsMessage) {
+    confirm("Are you sure you want to delete this item?") &&
+      (await this.$store.direct.dispatch.admin.deleteNews(item));
   }
 
   formTitle() {
@@ -173,6 +257,15 @@ export default class Admin extends Vue {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
     });
+  }
+
+  async saveNews() {
+    await this.$store.direct.dispatch.admin.editNews(this.editedNewsItem);
+    this.dialogNews = false;
+  }
+
+  closeNews() {
+    this.dialogNews = false;
   }
 
   async mounted() {
