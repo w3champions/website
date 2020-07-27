@@ -463,6 +463,13 @@ export default class PlayerAvatar extends Vue {
 
     if (!this.selectedCountryCode && this.personalSetting?.location) {
       this.selectedCountryCode = this.personalSetting.location;
+
+      for (const key in ECountries) {
+          const element = (ECountries as any)[key] as string;
+          if (element == this.selectedCountryCode) {
+            this.selectedCountry = key;
+          }
+      }
     }
   }
 }
