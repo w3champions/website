@@ -27,7 +27,10 @@ export default class RaceIcon extends Vue {
   }
 
   get renderIcon() {
-    return require("../../assets/raceIcons/" + ERaceEnum[this.race] + ".png");
+    if (ERaceEnum[this.race]) {
+      return require("../../assets/raceIcons/" + ERaceEnum[this.race] + ".png");
+    }
+    return '';
   }
 }
 </script>

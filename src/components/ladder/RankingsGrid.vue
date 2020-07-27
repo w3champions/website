@@ -54,11 +54,11 @@
               />
               <div
                 class="country-flag__container"
-                v-if="item.playersInfo && item.playersInfo[index].country"
+                v-if="item.playersInfo && item.playersInfo[index].country || item.playersInfo[index].location"
               >
                 <country-flag
                   class="country-flag"
-                  :country="getCountryCode(item.playersInfo[index].country)"
+                  :country="getCountryCode(item.playersInfo[index])"
                   size="small"
                 />
               </div>
@@ -128,7 +128,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Ranking, PlayerId } from "@/store/ranking/types";
+import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
@@ -449,8 +449,15 @@ export default class RankingsGrid extends Vue {
     }
   }
 
-  getCountryCode(country: string): string {
-    return (ECountries as any)[country] || "";
+  getCountryCode(playerInfo: PlayerInfo): string {
+    if (playerInfo.country) {
+     return (ECountries as any)[playerInfo.country];
+    }
+    else if (playerInfo.location) {
+      return playerInfo.location;
+    }
+
+    return  "";
   }
 }
 </script>
