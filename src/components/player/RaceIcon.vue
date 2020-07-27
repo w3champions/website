@@ -1,7 +1,7 @@
 <template>
   <div>
     <img
-      v-if="race !== raceEnums.TOTAL"
+      v-if="renderIcon"
       :src="renderIcon"
       :title="enumToString"
       class="race-icon"
