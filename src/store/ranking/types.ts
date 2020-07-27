@@ -55,6 +55,8 @@ export interface PlayerInfo {
   pictureId: number;
   twitchName: string;
   clanId: string;
+  country: string;
+  location: string;
 }
 
 export interface PlayerId {

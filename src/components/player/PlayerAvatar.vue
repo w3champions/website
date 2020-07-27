@@ -15,7 +15,7 @@
           <template v-slot:activator="{ on }">
             <div v-on="on" class="country__container">
               <country-flag
-                v-if="selectedCountry != ''"
+                v-if="selectedCountryCode != ''"
                 class="player-country"
                 :country="selectedCountryCode"
                 size="normal"
@@ -460,6 +460,10 @@ export default class PlayerAvatar extends Vue {
 
       this.countries.push(country);
     });
+
+    if (!this.selectedCountryCode && this.personalSetting?.location) {
+      this.selectedCountryCode = this.personalSetting.location;
+    }
   }
 }
 </script>
