@@ -158,12 +158,15 @@ export default class WinratesTab extends Vue {
       return [];
     }
 
-    return this.statsPerRaceAndMap
-      .filter((r) => r.mmrRange === this.selectedMmr)[0]
-      .patchToStatsPerModes[this.selectedPatch].filter(
+    const statsPerMapAndRace = this.statsPerRaceAndMap
+        .filter((r) => r.mmrRange === this.selectedMmr)[0]
+        .patchToStatsPerModes[this.selectedPatch].filter(
         (r) => r.mapName === this.selectedMap
-      )[0]
-      .ratio.slice(1, 5);
+    )[0];
+    if (!statsPerMapAndRace) {
+      return [];
+    }
+    return statsPerMapAndRace.ratio.slice(1, 5) ?? [];
   }
 
   public setSelectedMap(map: string) {
