@@ -1,60 +1,20 @@
+<template>
+  <line-chart :chart-data="gameHourChartData" />
+</template>
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
-import { Line } from "vue-chartjs";
 
+import { Component, Prop } from "vue-property-decorator";
 import { GameDay } from "@/store/overallStats/types";
 import moment from "moment";
+import LineChart from "@/components/overal-statistics/LineChart.vue";
+import Vue from "vue";
+import { ChartData } from "chart.js";
 
-@Component({})
-export default class AmountPerDayChart extends Mixins(Line) {
+@Component({
+  components: { LineChart }
+})
+export default class AmountPerDayChart extends Vue {
   @Prop() public gameDays!: GameDay[];
-
-  mounted() {
-    this.renderChart(
-      {
-        labels: this.gameDayDates,
-        datasets: [
-          {
-            label: "# of Games",
-            data: this.gameDayCounts,
-            backgroundColor: ["rgba(54, 162, 235, 0.2)"],
-            pointBackgroundColor: "#ffffff",
-            borderColor: ["rgba(54, 162, 235, 1)"],
-            borderWidth: 1,
-          },
-        ],
-      },
-      {
-        legend: {
-          display: false,
-        },
-        tooltips: {
-          custom: function (tooltip) {
-            if (!tooltip) return;
-            tooltip.displayColors = false;
-          },
-          callbacks: {
-            label: function (tooltipItem) {
-              return `${tooltipItem.xLabel}: ${tooltipItem.yLabel}`;
-            },
-            title: function () {
-              return "";
-            },
-          },
-        },
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      }
-    );
-  }
 
   get gameDayDates() {
     return this.gameDays.map((g) => moment(g.date).format("LL"));
@@ -62,6 +22,21 @@ export default class AmountPerDayChart extends Mixins(Line) {
 
   get gameDayCounts() {
     return this.gameDays.map((g) => g.gamesPlayed);
+  }
+
+  get gameHourChartData(): ChartData {
+    return {
+      labels: this.gameDayDates,
+      datasets: [
+        {
+          label: "amount of games",
+          data: this.gameDayCounts,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
   }
 }
 </script>

@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import {
-  GameDay,
+  GameDay, GameDayPerMode,
   GameLength,
   HeroPick,
   MmrDistribution,
@@ -9,9 +9,9 @@ import {
   PlayersPerDay,
   PopularGameHour,
   StatsPerWinrate,
-  WinLoss,
+  WinLoss
 } from "./types";
-import { ERaceEnum, RootState } from "../typings";
+import { EGameMode, ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -20,7 +20,7 @@ const mod = {
     loadingGamesPerDayStats: true,
     loadingMapAndRaceStats: true,
     loadingPlayersPerDayStats: true,
-    gamesPerDay: [] as GameDay[],
+    gamesPerDay: [] as GameDayPerMode[],
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
@@ -139,7 +139,7 @@ const mod = {
     SET_LOADING_GAMES_PER_DAY(state: OveralStatisticState, loading: boolean) {
       state.loadingGamesPerDayStats = loading;
     },
-    SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDay[]) {
+    SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[]) {
       state.gamesPerDay = games;
     },
     SET_LOADING_PLAYERS_PER_DAY(state: OveralStatisticState, loading: boolean) {

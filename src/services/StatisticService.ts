@@ -1,17 +1,18 @@
 import { API_URL } from "@/main";
 import {
-  GameDay,
+  GameDay, GameDayPerMode,
   GameLength,
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
   StatsPerWinrate,
-  WinLoss,
+  WinLoss
 } from "@/store/overallStats/types";
+import { EGameMode } from "@/store/typings";
 
 export default class StatisticService {
-  public async retrieveGamesPerDay(): Promise<GameDay[]> {
+  public async retrieveGamesPerDay(): Promise<GameDayPerMode[]> {
     const url = `${API_URL}api/w3c-stats/games-per-day`;
     const response = await fetch(url, {
       method: "GET",

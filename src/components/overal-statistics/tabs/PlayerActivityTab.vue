@@ -2,13 +2,28 @@
   <div>
     <v-card-title>Games per Day</v-card-title>
     <v-card-text v-if="!loadingGamesPerDayStats">
-      <amount-per-day-chart
-        style="position: relative;"
-        :game-days="gameDays"
-      />
+      <v-row>
+        <v-col cols="12" md="2">
+          <v-card-text>
+            <v-select
+              :items="gameModesWithAll"
+              item-text="modeName"
+              item-value="modeId"
+              @change="setSelectedGamesPerDayMode"
+              label="Select Mode"
+              outlined
+            />
+          </v-card-text>
+        </v-col>
+        <v-col cols="12" md="10">
+          <amount-per-day-chart
+            style="position: relative;"
+            :game-days="gameDays"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-title>Players per Day</v-card-title>
-
     <v-card-text v-if="!loadingPlayersPerDayStats">
       <amount-per-day-chart
         style="position: relative;"
@@ -62,7 +77,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { GameDay, GameLength, PopularGameHour } from "@/store/overallStats/types";
+import {
+  GameDay,
+  GameLength,
+  PopularGameHour,
+} from "@/store/overallStats/types";
 import Component from "vue-class-component";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
@@ -74,9 +93,14 @@ import { EGameMode } from "@/store/typings";
 export default class PlayerActivityTab extends Vue {
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
+  public selectedGamesPerDayMode = EGameMode.UNDEFINED;
 
   public setSelectedLengthMode(mode: EGameMode) {
     this.selectedLengthMode = mode;
+  }
+
+  public setSelectedGamesPerDayMode(mode: EGameMode) {
+    this.selectedGamesPerDayMode = mode;
   }
 
   public setSelectedModeGameHour(mode: EGameMode) {
@@ -89,6 +113,16 @@ export default class PlayerActivityTab extends Vue {
         (g) => g.gameMode == this.selectedLengthMode
       )[0] ?? { lengths: [] }
     );
+  }
+
+  get gameModesWithAll() {
+    return [
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
+        modeId: EGameMode.UNDEFINED,
+      },
+      ...this.gameModes,
+    ];
   }
 
   get gameModes() {
@@ -131,7 +165,9 @@ export default class PlayerActivityTab extends Vue {
   }
 
   get gameDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay.reverse();
+    return this.$store.direct.state.overallStatistics.gamesPerDay.filter(
+      (g) => g.gameMode == this.selectedGamesPerDayMode
+    )[0].gameDays;
   }
 
   get playersPerDay(): GameDay[] {
