@@ -58,7 +58,7 @@ export default class MultipleAmountPerDayChart extends Vue {
         return "rgb(255,99,240)";
 
       case EGameMode.GM_4ON4:
-        return "rgb(54,235,84)";
+        return "rgb(60,208,88)";
 
       case EGameMode.GM_FFA:
         return "rgb(255,114,20)";
