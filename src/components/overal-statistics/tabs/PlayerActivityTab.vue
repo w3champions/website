@@ -14,6 +14,9 @@
               outlined
             />
           </v-card-text>
+          <v-card-text v-if="isAllMode">
+            Game Modes are normalized: 2v2 and FFA games are counted x2, 4v4 games are counted x4
+          </v-card-text>
         </v-col>
         <v-col cols="12" md="10">
           <amount-per-day-chart

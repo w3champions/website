@@ -21,7 +21,7 @@ export default class MultipleAmountPerDayChart extends Vue {
   }
 
   get allSet() {
-    return this.gameDays.filter((g) => g.gameMode == EGameMode.UNDEFINED)[0];
+    return this.gameDays.filter((g) => g.gameMode == EGameMode.GM_1ON1)[0];
   }
 
   get gameHourChartData(): ChartData {
@@ -34,7 +34,7 @@ export default class MultipleAmountPerDayChart extends Vue {
         const nullPoints = new Array(indexOfFirstDataPoint).fill(null);
         return {
           label: EGameMode[c.gameMode],
-          data: [...nullPoints, ...c.gameDays.map((g) => g.gamesPlayed)],
+          data: [...nullPoints, ...c.gameDays.map((g) => g.gamesPlayed * this.multiplier(c.gameMode))],
           backgroundColor: "rgba(126,126,126,0.08)",
           borderColor: this.mapColor(c.gameMode),
           borderWidth: 1,
@@ -65,6 +65,31 @@ export default class MultipleAmountPerDayChart extends Vue {
 
       default:
         return "rgba(54, 162, 235, 1)";
+    }
+  }
+
+  private multiplier(gameMode: EGameMode) {
+    switch (gameMode) {
+      case EGameMode.GM_1ON1:
+        return 1;
+
+      case EGameMode.UNDEFINED:
+        return 1;
+
+      case EGameMode.GM_2ON2:
+        return 2;
+
+      case EGameMode.GM_2ON2_AT:
+        return 2;
+
+      case EGameMode.GM_4ON4:
+        return 4;
+
+      case EGameMode.GM_FFA:
+        return 2;
+
+      default:
+        return 1;
     }
   }
 }
