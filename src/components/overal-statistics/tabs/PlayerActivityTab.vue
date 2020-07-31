@@ -33,6 +33,7 @@
       </v-row>
     </v-card-text>
     <v-card-title>Players per Day</v-card-title>
+
     <v-card-text v-if="!loadingPlayersPerDayStats">
       <amount-per-day-chart
         style="position: relative;"
