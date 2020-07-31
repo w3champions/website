@@ -12,7 +12,7 @@ import {
 import { EGameMode } from "@/store/typings";
 
 export default class StatisticService {
-  public async retrieveGamesPerDay(): Promise<GameDayPerMode[]> {
+  public async retrieveGamesPerDay(): Promise<GameDayPerMode[][]> {
     const url = `${API_URL}api/w3c-stats/games-per-day`;
     const response = await fetch(url, {
       method: "GET",

@@ -182,11 +182,11 @@ export default class PlayerActivityTab extends Vue {
   }
 
   get gameDays(): GameDayPerMode[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay;
+    return this.$store.direct.state.overallStatistics.gamesPerDay[0];
   }
 
   get gameSelectedDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay.filter(
+    return this.$store.direct.state.overallStatistics.gamesPerDay[0].filter(
       (g) => g.gameMode == this.selectedGamesPerDayMode
     )[0].gameDays;
   }

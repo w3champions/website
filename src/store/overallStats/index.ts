@@ -20,7 +20,7 @@ const mod = {
     loadingGamesPerDayStats: true,
     loadingMapAndRaceStats: true,
     loadingPlayersPerDayStats: true,
-    gamesPerDay: [] as GameDayPerMode[],
+    gamesPerDay: [[]] as GameDayPerMode[][],
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
@@ -139,7 +139,7 @@ const mod = {
     SET_LOADING_GAMES_PER_DAY(state: OveralStatisticState, loading: boolean) {
       state.loadingGamesPerDayStats = loading;
     },
-    SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[]) {
+    SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[][]) {
       state.gamesPerDay = games;
     },
     SET_LOADING_PLAYERS_PER_DAY(state: OveralStatisticState, loading: boolean) {
