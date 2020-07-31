@@ -33,6 +33,7 @@
       </v-row>
     </v-card-text>
     <v-card-title>Players per Day</v-card-title>
+
     <v-card-text v-if="!loadingPlayersPerDayStats">
       <amount-per-day-chart
         style="position: relative;"
@@ -86,7 +87,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { GameDay, GameLength, PopularGameHour } from "@/store/overallStats/types";
+import { GameDay, GameDayPerMode, GameLength, PopularGameHour } from "@/store/overallStats/types";
 import Component from "vue-class-component";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
@@ -180,7 +181,7 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.overallStatistics.loadingPlayersPerDayStats;
   }
 
-  get gameDays(): GameDay[] {
+  get gameDays(): GameDayPerMode[] {
     return this.$store.direct.state.overallStatistics.gamesPerDay;
   }
 

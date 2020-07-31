@@ -235,7 +235,7 @@ export default class PlayerMatchesTab extends Vue {
   }
 
   public async getMatches(page?: number) {
-    if (this.isLoadingMatches) {
+    if (this.isLoadingMatches || !this.$store.direct.state.player.selectedSeason.id) {
       return;
     }
 
