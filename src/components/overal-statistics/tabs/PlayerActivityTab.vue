@@ -15,19 +15,20 @@
             />
           </v-card-text>
           <div v-if="isAllMode">
-            Game Modes are normalized: 2v2 and FFA games are counted x2, 4v4 games are counted x4
+            Game Modes are normalized: 2v2 and FFA games are counted twice, 4v4
+            games are counted four times
           </div>
         </v-col>
         <v-col cols="12" md="10">
-          <amount-per-day-chart
-            v-if="!isAllMode"
-            style="position: relative;"
-            :game-days="gameSelectedDays"
-          />
           <multiple-amount-per-day-chart
             v-if="isAllMode"
             style="position: relative;"
             :game-days="gameDays"
+          />
+          <amount-per-gateway-per-day-chart
+            v-if="!isAllMode"
+            style="position: relative;"
+            :game-days="gameDaysForGateways"
           />
         </v-col>
       </v-row>
@@ -87,16 +88,23 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { GameDay, GameDayPerMode, GameLength, PopularGameHour } from "@/store/overallStats/types";
+import {
+  GameDay,
+  GameDayPerMode,
+  GameLength,
+  PopularGameHour,
+} from "@/store/overallStats/types";
 import Component from "vue-class-component";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
 import { EGameMode } from "@/store/typings";
 import MultipleAmountPerDayChart from "@/components/overal-statistics/MultipleAmountPerDayChart.vue";
+import AmountPerGatewayPerDayChart from "@/components/overal-statistics/AmountPerGatewayPerDayChart.vue";
 
 @Component({
   components: {
+    AmountPerGatewayPerDayChart,
     MultipleAmountPerDayChart,
     GameLengthChart,
     AmountPerDayChart,
@@ -185,10 +193,23 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.overallStatistics.gamesPerDay[0];
   }
 
-  get gameSelectedDays(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay[0].filter(
-      (g) => g.gameMode == this.selectedGamesPerDayMode
-    )[0].gameDays;
+  get gameDaysForGateways(): GameDayPerMode[][] {
+    let all = this.$store.direct.state.overallStatistics.gamesPerDay[0];
+    let us = this.$store.direct.state.overallStatistics.gamesPerDay[1];
+    let eu = this.$store.direct.state.overallStatistics.gamesPerDay[2];
+
+    const filterForCurrentMode = (all: GameDayPerMode[]) => {
+      return all.filter((g) => g.gameMode === this.selectedGamesPerDayMode);
+    };
+
+    let gameDayPerModes = filterForCurrentMode(all);
+    let gameDayPerModes1 = filterForCurrentMode(eu);
+    let gameDayPerModes2 = filterForCurrentMode(us);
+    return [
+      gameDayPerModes,
+      gameDayPerModes1,
+      gameDayPerModes2,
+    ];
   }
 
   get playersPerDay(): GameDay[] {
