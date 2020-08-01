@@ -278,7 +278,14 @@ export default class PlayerActivityTab extends Vue {
   }
 
   get playersPerDay(): GameDay[] {
-    return this.$store.direct.state.overallStatistics.playersPerDay.reverse();
+    return (
+      this.$store.direct.state.overallStatistics.playersPerDay
+        .reverse()
+        ?.splice(
+          0,
+          this.$store.direct.state.overallStatistics.playersPerDay.length - 1
+        ) ?? []
+    );
   }
 
   get gameLength(): GameLength[] {

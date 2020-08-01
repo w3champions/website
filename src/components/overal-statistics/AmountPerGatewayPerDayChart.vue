@@ -21,7 +21,7 @@ export default class AmountPerGatewayPerDayChart extends Vue {
 
   get gameHourChartData(): ChartData {
     return {
-      labels: this.gameDayDates,
+      labels: this.gameDayDates.splice(0, this.gameDayDates.length - 1),
       datasets: this.gameDays.map((c, index) => {
         return {
           label: this.maIndex(index),
