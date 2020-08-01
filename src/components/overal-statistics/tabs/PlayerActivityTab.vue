@@ -15,7 +15,7 @@
             />
           </v-card-text>
           <div v-if="isAllMode">
-            Game Modes are normalized to compare them more easily: 2v2 and FFA games are counted twice, 4v4
+            Game Modes are normalized to compare their popularity more easily: 2v2 and FFA games are counted twice, 4v4
             games are counted four times
           </div>
         </v-col>
