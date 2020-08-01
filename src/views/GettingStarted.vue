@@ -93,19 +93,17 @@
                   <p class="mt-2">
                     4. The folder structure after unpacking should be
                     <br />
-                    <code>Documents\Warcraft III\Maps\W3Champions\v1\FFA</code>
+                    <code>Documents\Warcraft III\Maps\W3Champions</code>
                   </p>
                   <p>
-                    If you have a folder called
-                    <i style="color: red;">_retail_</i>
-                    in your Warcraft III folder, make sure to have the following
-                    structure:
-                    <br />
-                    <code>
-                      Documents\Warcraft III\
-                      <span class="important-dark">_retail_</span>
-                      \Maps\W3Champions\v1\FFA
-                    </code>
+                    <i style="color: red;">Important</i> <br/>
+                    If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it. <br/>
+                    DELETE <code>Path-to-game/Maps </code> <br/>
+                    DELETE <code>Path-to-game/retail/maps </code> <br/>
+
+                    Example: <br/>
+                    DELETE <code>C:\Program Files (x86)\Warcraft III\Maps</code> <br/>
+                    DELETE <code>C:\Program Files (x86)\Warcraft III_retail_\Maps</code> <br/>
                   </p>
                   <p class="mt-2">
                     5. As of War3 version 1.32.7 you need to set a registry (Installer is doing this automatically)
@@ -214,19 +212,17 @@
                   <p class="mt-2">
                     4. The folder structure after unpacking should be
                     <br />
-                    <code>Warcraft III\Maps\W3Champions\v1\FFA</code>
+                    <code>Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions</code>
                   </p>
                   <p>
-                    If you have a folder called
-                    <i style="color: red;">_retail_</i>
-                    in your Warcraft III folder, make sure to have the following
-                    structure:
-                    <br />
-                    <code>
-                      Warcraft III\
-                      <span class="important-dark">_retail_</span>
-                      \Maps\W3Champions\v1\FFA
-                    </code>
+                    <i style="color: red;">Important</i> <br/>
+                    If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it. <br/>
+                    DELETE <code>Path-to-game/Maps </code> <br/>
+                    DELETE <code>Path-to-game/retail/maps </code> <br/>
+
+                    Example: <br/>
+                    DELETE <code>Warcraft III\Maps</code> <br/>
+                    DELETE <code>Warcraft III_retail_\Maps</code> <br/>
                   </p>
                   <p class="mt-2">
                     5. As of War3 version 1.32.7 you need to set a registry
