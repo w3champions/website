@@ -145,6 +145,7 @@ export default class PlayerActivityTab extends Vue {
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedGamesPerDayMode = EGameMode.UNDEFINED;
   public selectedSeasonForMaps = "All";
+  public overWrittenOnce = false;
   public selectedModeForMaps = EGameMode.GM_1ON1;
 
   public setSelectedLengthMode(mode: EGameMode) {
@@ -189,6 +190,10 @@ export default class PlayerActivityTab extends Vue {
     ];
   }
 
+  get selectedSeasonForMapsInitial() {
+    return this.$store.direct.state.rankings.seasons[0]?.id?.toString() ?? "";
+  }
+
   get isAllMode() {
     return this.selectedGamesPerDayMode === EGameMode.UNDEFINED;
   }
@@ -229,6 +234,11 @@ export default class PlayerActivityTab extends Vue {
   }
 
   get mapsPerSeason(): MapCount[] {
+    if (this.selectedSeasonForMapsInitial && !this.overWrittenOnce) {
+      this.selectedSeasonForMaps = this.selectedSeasonForMapsInitial;
+      this.overWrittenOnce = true;
+    }
+
     const selectedSeasonMaps = this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
       (m) =>
         m.season ===
