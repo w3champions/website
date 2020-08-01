@@ -4,24 +4,23 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 
-import { MatchesOnMap, PopularGameHour } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
-import moment from "moment";
 import BarChart from "@/components/overal-statistics/BarChart.vue";
 import Vue from "vue";
+import { MapCount } from "@/store/overallStats/types";
 
 @Component({
   components: { BarChart },
 })
 export default class MapsPerSeasonChart extends Vue {
-  @Prop() public mapsPerSeason!: MatchesOnMap[];
+  @Prop() public mapsPerSeason!: MapCount[];
 
   get mapNames() {
-    return this.mapsPerSeason.map(m => m.map);
+    return this.mapsPerSeason.map(m => this.$t(`mapNames.${m.map}`));
   }
 
   get gamesCount() {
-    return this.mapsPerSeason.map(m => m.gamesOnModes[0].count);
+    return this.mapsPerSeason.map(m => m.count);
   }
 
   get barChartData(): ChartData {

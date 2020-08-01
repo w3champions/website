@@ -117,17 +117,17 @@ export interface PopularGameHour {
   playTimePerHour: SpecificGameHour[];
 }
 
-export interface GamesOnMode {
+export interface MapCount {
+  map: string;
   count: number;
-  gameMode: number;
 }
 
-export interface MatchesOnMap {
-  map: string;
-  gamesOnModes: GamesOnMode[];
+export interface MatchesOnMapPerMode {
+  gameMode: EGameMode;
+  maps: MapCount[];
 }
 
 export interface MatchesOnMapPerSeason {
-  matchesOnMap: MatchesOnMap[];
+  matchesOnMapPerModes: MatchesOnMapPerMode[];
   season: number;
 }

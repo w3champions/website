@@ -29,7 +29,7 @@ export default class MultipleAmountPerDayChart extends Vue {
       labels: this.gameDayDates,
       datasets: this.gameDays.map((c) => {
         return {
-          label: this.mapLabel(c.gameMode),
+          label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
           data: c.gameDays.map((g) => g.gamesPlayed * this.multiplier(c.gameMode)),
           backgroundColor: "rgba(126,126,126,0.08)",
           borderColor: this.mapColor(c.gameMode),
@@ -86,31 +86,6 @@ export default class MultipleAmountPerDayChart extends Vue {
 
       default:
         return 1;
-    }
-  }
-
-  private mapLabel(gameMode: EGameMode) {
-    switch (gameMode) {
-      case EGameMode.GM_1ON1:
-        return "1 vs 1";
-
-      case EGameMode.UNDEFINED:
-        return "All";
-
-      case EGameMode.GM_2ON2:
-        return "2 vs 2";
-
-      case EGameMode.GM_2ON2_AT:
-        return "2 vs 2 AT";
-
-      case EGameMode.GM_4ON4:
-        return "4 vs 4";
-
-      case EGameMode.GM_FFA:
-        return "FFA";
-
-      default:
-        return "unknown";
     }
   }
 }

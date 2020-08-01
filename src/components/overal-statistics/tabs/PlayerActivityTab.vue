@@ -124,7 +124,7 @@ import {
   GameDay,
   GameDayPerMode,
   GameLength,
-  MatchesOnMap,
+  MapCount,
   PopularGameHour,
 } from "@/store/overallStats/types";
 import Component from "vue-class-component";
@@ -152,7 +152,7 @@ export default class PlayerActivityTab extends Vue {
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedGamesPerDayMode = EGameMode.UNDEFINED;
   public selectedSeasonForMaps = -1;
-  public selectedModeForMaps = EGameMode.UNDEFINED;
+  public selectedModeForMaps = EGameMode.GM_1ON1;
 
   public setSelectedLengthMode(mode: EGameMode) {
     this.selectedLengthMode = mode;
@@ -235,18 +235,11 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
   }
 
-  get mapsPerSeason(): MatchesOnMap[] {
+  get mapsPerSeason(): MapCount[] {
     const selectedSeasonMaps = this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
       (m) => m.season === this.selectedSeasonForMaps
     )[0];
-    return (
-      selectedSeasonMaps?.matchesOnMap?.map((m) => ({
-        map: m.map,
-        gamesOnModes: m.gamesOnModes.filter(
-          (g) => g.gameMode === this.selectedModeForMaps
-        ),
-      })) ?? []
-    );
+    return selectedSeasonMaps.matchesOnMapPerModes.filter(m => m.gameMode === this.selectedModeForMaps)[0].maps;
   }
 
   get loadingPlayersPerDayStats(): boolean {
