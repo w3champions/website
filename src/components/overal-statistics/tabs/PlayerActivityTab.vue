@@ -42,6 +42,38 @@
       />
     </v-card-text>
 
+    <v-card-title>Played Maps</v-card-title>
+    <v-row>
+      <v-col cols="12" md="2">
+        <v-card-text>
+          <v-select
+            :items="gameModes"
+            item-text="modeName"
+            item-value="modeId"
+            @change="setSelectedModeForMaps"
+            label="Select Mode"
+            outlined
+          />
+          <v-select
+            :items="seasons"
+            item-text="id"
+            item-value="id"
+            @change="setSelectedSeasonForMaps"
+            label="Select Season"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="12" md="10">
+        <v-card-text>
+          <maps-per-season-chart
+            style="position: relative;"
+            :maps-per-season="mapsPerSeason"
+          />
+        </v-card-text>
+      </v-col>
+    </v-row>
+
     <v-card-title>Popular Hours</v-card-title>
     <v-row>
       <v-col cols="12" md="2">
@@ -92,6 +124,7 @@ import {
   GameDay,
   GameDayPerMode,
   GameLength,
+  MatchesOnMap,
   PopularGameHour,
 } from "@/store/overallStats/types";
 import Component from "vue-class-component";
@@ -101,9 +134,12 @@ import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTime
 import { EGameMode } from "@/store/typings";
 import MultipleAmountPerDayChart from "@/components/overal-statistics/MultipleAmountPerDayChart.vue";
 import AmountPerGatewayPerDayChart from "@/components/overal-statistics/AmountPerGatewayPerDayChart.vue";
+import MapsPerSeasonChart from "@/components/overal-statistics/MapsPerSeasonChart.vue";
+import { Season } from "@/store/ranking/types";
 
 @Component({
   components: {
+    MapsPerSeasonChart,
     AmountPerGatewayPerDayChart,
     MultipleAmountPerDayChart,
     GameLengthChart,
@@ -115,9 +151,19 @@ export default class PlayerActivityTab extends Vue {
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedGamesPerDayMode = EGameMode.UNDEFINED;
+  public selectedSeasonForMaps = -1;
+  public selectedModeForMaps = EGameMode.UNDEFINED;
 
   public setSelectedLengthMode(mode: EGameMode) {
     this.selectedLengthMode = mode;
+  }
+
+  public setSelectedModeForMaps(mode: EGameMode) {
+    this.selectedModeForMaps = mode;
+  }
+
+  public setSelectedSeasonForMaps(season: Season) {
+    this.selectedModeForMaps = season.id;
   }
 
   public setSelectedGamesPerDayMode(mode: EGameMode) {
@@ -126,6 +172,10 @@ export default class PlayerActivityTab extends Vue {
 
   public setSelectedModeGameHour(mode: EGameMode) {
     this.selectedPopularHourMode = mode;
+  }
+
+  get seasons() {
+    return this.$store.direct.state.rankings.seasons;
   }
 
   get selectedGameLength(): GameLength {
@@ -185,6 +235,20 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
   }
 
+  get mapsPerSeason(): MatchesOnMap[] {
+    const selectedSeasonMaps = this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
+      (m) => m.season === this.selectedSeasonForMaps
+    )[0];
+    return (
+      selectedSeasonMaps?.matchesOnMap?.map((m) => ({
+        map: m.map,
+        gamesOnModes: m.gamesOnModes.filter(
+          (g) => g.gameMode === this.selectedModeForMaps
+        ),
+      })) ?? []
+    );
+  }
+
   get loadingPlayersPerDayStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingPlayersPerDayStats;
   }
@@ -205,11 +269,7 @@ export default class PlayerActivityTab extends Vue {
     let gameDayPerModes = filterForCurrentMode(all);
     let gameDayPerModes1 = filterForCurrentMode(eu);
     let gameDayPerModes2 = filterForCurrentMode(us);
-    return [
-      gameDayPerModes,
-      gameDayPerModes1,
-      gameDayPerModes2,
-    ];
+    return [gameDayPerModes, gameDayPerModes1, gameDayPerModes2];
   }
 
   get playersPerDay(): GameDay[] {

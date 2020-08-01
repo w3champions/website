@@ -2,7 +2,7 @@ import { moduleActionContext } from "..";
 import {
   GameDay, GameDayPerMode,
   GameLength,
-  HeroPick,
+  HeroPick, MatchesOnMapPerSeason,
   MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
@@ -26,6 +26,7 @@ const mod = {
     gameLengths: [] as GameLength[],
     popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
+    matchesOnMapPerSeason: [] as MatchesOnMapPerSeason[],
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
@@ -49,6 +50,15 @@ const mod = {
 
       commit.SET_GAMES_PER_DAY(games);
       commit.SET_LOADING_GAMES_PER_DAY(false);
+    },
+    async loadMapsPerSeason(
+      context: ActionContext<OveralStatisticState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const games = await rootGetters.statisticService.retrieveMapsPerSeason();
+
+      commit.SET_MAPS_PER_SEASON(games);
     },
     async loadPlayersPerDayStatistics(
       context: ActionContext<OveralStatisticState, RootState>
@@ -141,6 +151,9 @@ const mod = {
     },
     SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[][]) {
       state.gamesPerDay = games;
+    },
+    SET_MAPS_PER_SEASON(state: OveralStatisticState, games: MatchesOnMapPerSeason[]) {
+      state.matchesOnMapPerSeason = games;
     },
     SET_LOADING_PLAYERS_PER_DAY(state: OveralStatisticState, loading: boolean) {
       state.loadingPlayersPerDayStats = loading;

@@ -1,7 +1,7 @@
 import { API_URL } from "@/main";
 import {
   GameDay, GameDayPerMode,
-  GameLength,
+  GameLength, MatchesOnMapPerSeason,
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
@@ -12,6 +12,19 @@ import {
 import { EGameMode } from "@/store/typings";
 
 export default class StatisticService {
+  public async retrieveMapsPerSeason(): Promise<MatchesOnMapPerSeason[]> {
+    const url = `${API_URL}api/w3c-stats/matches-on-map`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  }
+
   public async retrieveGamesPerDay(): Promise<GameDayPerMode[][]> {
     const url = `${API_URL}api/w3c-stats/games-per-day`;
     const response = await fetch(url, {

@@ -61,6 +61,7 @@ export default class OverallStatisticsView extends Vue {
 
   private async init() {
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
+    await this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
