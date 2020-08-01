@@ -14,6 +14,7 @@ export type OveralStatisticState = {
   loadingMapAndRaceStats: boolean;
   mmrDistribution: MmrDistribution;
   heroPicks: HeroPick[];
+  matchesOnMapPerSeason: MatchesOnMapPerSeason[];
 };
 
 export interface PlayedHeroPick {
@@ -114,4 +115,19 @@ export interface GameLength {
 export interface PopularGameHour {
   gameMode: EGameMode;
   playTimePerHour: SpecificGameHour[];
+}
+
+export interface MapCount {
+  map: string;
+  count: number;
+}
+
+export interface MatchesOnMapPerMode {
+  gameMode: EGameMode;
+  maps: MapCount[];
+}
+
+export interface MatchesOnMapPerSeason {
+  matchesOnMapPerModes: MatchesOnMapPerMode[];
+  season: number;
 }
