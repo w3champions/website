@@ -8,12 +8,53 @@
           </v-card-title>
           <v-tabs v-model="tabsModel" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
+            <v-tab class="profileTab" v-if="isLauncherEnabled" :href="`#launcher`">Launcher</v-tab>
             <v-tab class="profileTab" :href="`#windows-setup`">Windows</v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">Mac</v-tab>
-<!--            <v-tab class="profileTab" v-if="isChatEnabled" :href="`#chat`">-->
-<!--              Chat-->
-<!--            </v-tab>-->
             <v-tabs-items v-model="tabsModel" touchless>
+              <v-tab-item :value="'launcher'" v-if="isLauncherEnabled">
+                <v-card-text class="centered-container">
+                  <h3>Warcraft III Champions Launcher</h3>
+                  <v-card-text>
+                    Additional Features from the Launcher
+                    <ul>
+                      <li>
+                        Always have w3c installed, never have Problems with missing or outdated maps! Fixes all problems of the Joinbug!
+                      </li>
+                      <li>
+                        Remap Item-hotkeys
+                      </li>
+                      <li>
+                        Save Hotkeys to our cloud and reinstall everywhere
+                      </li>
+                      <li>
+                        Edit Zoomlevel for observer
+                      </li>
+                      <li>
+                        Keep up with the scene by getting the latest news
+                      </li>
+                    </ul>
+                  </v-card-text>
+                  <v-card-text>
+                    <v-btn
+                      :href="launcherUrlWin"
+                      target="_blank"
+                      class="join-button mt-0 mb-4"
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Windows</span>
+                    </v-btn>
+                    <v-btn
+                      :href="launcherUrlMac"
+                      target="_blank"
+                      class="join-button mt-0 mb-4 ml-8"
+                    >
+                      <v-icon>mdi-download</v-icon>
+                      <span class="mr-2 hidden-xs-only">Mac</span>
+                    </v-btn>
+                  </v-card-text>
+                </v-card-text>
+              </v-tab-item>
               <v-tab-item :value="'windows-setup'">
                 <v-card-text class="centered-container">
                   <h3>Automatic Install Windows</h3>
@@ -247,35 +288,6 @@
                   <iframe class="mt-3" width="560" height="315" src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </v-card-text>
               </v-tab-item>
-<!--              <v-tab-item :value="'chat'">-->
-<!--                <v-card-text class="filter-blur">-->
-<!--                  <div class="filter-blur">-->
-<!--                    <h3>-->
-<!--                      To unlock actions tied to your profile in game (e.g. changing race pictures), follow these steps-->
-<!--                    </h3>-->
-<!--                    <br />-->
-<!--                    <p>1. Login with your Battle Net Account on the top right</p>-->
-<!--                    <div class="login-picture gettingStartedPictures" />-->
-<!--                    <p>2. Click on the Profile Icon Dropdown the "chat key" button</p>-->
-<!--                    <div class="chat-key-picture gettingStartedPictures" />-->
-<!--                    <p>3. A key will be downloaded. If you have allready downloaded a key, the previous key will be invalidated</p>-->
-<!--                    <div class="download-picture gettingStartedPictures" />-->
-<!--                    <p>4. Place the w3champions.key file next to your index.html file in the webui folder. To locate your webui folder, click on the Options button in the BattleNet Launcher and select "Show in Explorer". <b>If you have a folder called _retail_ in your Warcraft III folder, the webui folder is in there!</b></p>-->
-<!--                    <div class="bnet-place-picture gettingStartedPictures" />-->
-<!--                    <div class="webui-location-picture gettingStartedPictures" />-->
-<!--                    <div class="key-place-picture gettingStartedPictures" />-->
-<!--                    <p>5. If you now start Warcraft you should be able to to take actions related to your profile (switching icons, managing clans etc.)</p>-->
-<!--                    <v-card-text class="text-center ma-5">-->
-<!--                      <div>-->
-<!--                        If your still having problems:-->
-<!--                        <a href="https://discord.gg/uJmQxG2">-->
-<!--                          Reach out to us on discord-->
-<!--                        </a>-->
-<!--                      </div>-->
-<!--                    </v-card-text>-->
-<!--                  </div>-->
-<!--                </v-card-text>-->
-<!--              </v-tab-item>-->
             </v-tabs-items>
           </v-tabs>
         </v-card>
@@ -287,9 +299,22 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { IS_LAUNCHER_ENABLED, LAUNCHER_UPDATE_URL } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
+
+  get isLauncherEnabled() {
+    return IS_LAUNCHER_ENABLED;
+  }
+
+  get launcherUrlMac() {
+    return LAUNCHER_UPDATE_URL + "mac";
+  }
+
+  get launcherUrlWin() {
+    return LAUNCHER_UPDATE_URL + "win";
+  }
 
   data() {
     return {
