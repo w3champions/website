@@ -67,6 +67,7 @@ const en = {
     "_1v1_autumnleaves_anon": "Autumn Leaves",
     "_ffa_marketsquare_anon": "Market Square",
     "_ffa_marketsquare_anon_cd": "Market Square",
+    deathrose: "Deathrose",
     "_ffa_deathrose_anon": "Deathrose",
     "_ffa_deathrose_anon_cd": "Deathrose",
     fountainofmanipulation: "Fountain Of Manipulation",
