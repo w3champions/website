@@ -112,6 +112,16 @@
           :ongoingMatches="ongoingMatchesMap"
           :selectedRank="searchModel"
         ></rankings-grid>
+        <v-row v-if="showRaceDistribution">
+          <v-col cols="12">
+            <div class="mt-10"> 
+              <h3 class="pl-5">Race distribution</h3>
+              <rankings-race-distribution
+                :rankings="rankings"
+              ></rankings-race-distribution>
+            </div>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
     <v-row>
@@ -139,6 +149,7 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
+import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants from "../constants";
 
 @Component({
@@ -147,6 +158,7 @@ import AppConstants from "../constants";
     GatewaySelect,
     GameModeSelect,
     RankingsGrid,
+    RankingsRaceDistribution
   },
 })
 export default class RankingsView extends Vue {
@@ -240,6 +252,10 @@ export default class RankingsView extends Vue {
 
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
+  }
+
+  get showRaceDistribution() {
+    return this.$store.direct.state.rankings.gameMode == EGameMode.GM_1ON1;
   }
 
   public async onGatewayChanged() {
