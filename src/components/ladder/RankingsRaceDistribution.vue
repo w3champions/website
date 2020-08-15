@@ -59,7 +59,7 @@ export default class RankingsRaceDistribution extends Vue {
                 const raceDistribution: {race: number, total: number, percent: number} = {
                     race: parseInt(key),
                     total: element.length,
-                    percent: Math.floor(element.length / this.rankings.length * 100)
+                    percent: Math.round(element.length / this.rankings.length * 100)
                 };
 
                 result.push(raceDistribution);
