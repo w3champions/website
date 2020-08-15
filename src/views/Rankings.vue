@@ -25,7 +25,7 @@
                 </v-list-item-content>
               </v-list>
               <v-divider></v-divider>
-              <v-list dense>
+              <v-list dense  class="leagues-list">
                 <v-list-item v-for="item in ladders" :key="item.id" @click="setLeague(item.id)">
                   <v-list-item-content>
                     <v-list-item-title>
@@ -355,4 +355,9 @@ export default class RankingsView extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+  .leagues-list {
+    max-height: 650px;
+    overflow-y: auto;
+  }
+</style>
