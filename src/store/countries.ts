@@ -248,3 +248,9 @@ export enum ECountries {
     Zimbabwe = "ZW"
   }
   
+  export const CountriesByCode = {} as any;
+
+  Object.keys(ECountries).forEach((key) => {
+    const cCode: string = (ECountries as any)[key] as string
+    CountriesByCode[cCode] = key;
+  });
