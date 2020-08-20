@@ -9,7 +9,7 @@
           class="mr-1"
         />
         <div>
-          <a
+          <a class="name-link"
             :class="won"
             v-on="on"
             @mouseover="lazyLoadWinrate"
@@ -24,6 +24,13 @@
               <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
+          <div class="flag-container">
+            <country-flag-extended
+              :country="player.country"
+              :location="player.location"
+              size="small"
+            />
+          </div>
         </div>
         <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
@@ -51,9 +58,10 @@ import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
+import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 
 @Component({
-  components: { PlayerIcon },
+  components: { PlayerIcon, CountryFlagExtended },
 })
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: PlayerInTeam;
@@ -169,15 +177,44 @@ export default class PlayerMatchInfo extends Vue {
 
 .player-info {
   display: flex;
+  position: relative;
+  overflow: hidden;
 }
 
 .player-info__right {
   justify-content: flex-end;
   text-align: right;
+
+  .flag-container {
+    right: 18px;
+  }
 }
 
 .player-info__left {
   justify-content: flex-start;
   text-align: left;
+
+  .flag-container {
+    left: 14px;
+  }
+}
+
+.flag-container {
+  position: absolute;
+  top: 6px;
+}
+
+.name-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 94px;
+}
+
+@media (min-width: 960px) {
+  .name-link  {
+    max-width: 100%;
+  }
 }
 </style>

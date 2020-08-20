@@ -56,9 +56,10 @@
                 class="country-flag__container"
                 v-if="item.playersInfo && item.playersInfo[index].country || item.playersInfo[index].location"
               >
-                <country-flag
+                <country-flag-extended
                   class="country-flag"
-                  :country="getCountryCode(item.playersInfo[index])"
+                  :country="item.playersInfo[index].country"
+                  :location="item.playersInfo[index].location"
                   size="small"
                 />
               </div>
@@ -134,7 +135,7 @@ import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-import CountryFlag from "vue-country-flag";
+import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -145,7 +146,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
     PlayerIcon,
     SwordIcon,
     PlayerRankInfo,
-    CountryFlag,
+    CountryFlagExtended,
   },
 })
 export default class RankingsGrid extends Vue {
@@ -511,6 +512,7 @@ td.header {
   display: inline-block;
 }
 
+::v-deep
 .country-flag {
   position: absolute;
   top: -15px;

@@ -354,14 +354,12 @@ export default class PlayerView extends Vue {
     position: absolute;
     left: 0;
     width: 45%;
-    overflow-x: hidden;
   }
 
   .live-match__team2 {
     position: absolute;
     right: 0;
     width: 45%;
-    overflow-x: hidden;
   }
 
   .live-match__vstext {

@@ -108,14 +108,12 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Match, DataTableOptions, Team, PlayerInTeam } from "@/store/typings";
-import PlayerMatchInfo from "./PlayerMatchInfo.vue";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 
 @Component({
   components: {
     TeamMatchInfo,
-    PlayerMatchInfo,
   },
 })
 export default class MatchesGrid extends Vue {
