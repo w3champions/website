@@ -8,13 +8,13 @@
           </v-card-title>
           <v-tabs v-model="tabsModel" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
-            <v-tab class="profileTab" :href="`#launcher`">Installer</v-tab>
+            <v-tab class="profileTab" :href="`#launcher`">Launcher</v-tab>
             <v-tab class="profileTab" :href="`#windows-setup`">Manual Install Windows</v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">Manual Install Mac</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'launcher'">
                 <v-card-text class="centered-container">
-                  <h3>Warcraft III Champions Installer</h3>
+                  <h3>Warcraft III Champions Launcher</h3>
                   <br />
                   <v-card-text>
                     <v-btn
