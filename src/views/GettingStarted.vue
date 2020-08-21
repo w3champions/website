@@ -52,6 +52,14 @@
               </v-tab-item>
               <v-tab-item :value="'windows-setup'">
                 <v-card-text class="centered-container">
+                  <v-alert
+                      outlined
+                      type="warning"
+                      prominent
+                      border="left"
+                  >
+                    {{ alertMessage }}
+                  </v-alert>
                   <h3 class="mt-10">Manual Install Windows</h3>
                   <p>
                     1. Download the zip file and unpack it in your Warcraft
@@ -145,6 +153,14 @@
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
                 <v-card-text class="centered-container">
+                  <v-alert
+                      outlined
+                      type="warning"
+                      prominent
+                      border="left"
+                  >
+                    {{ alertMessage }}
+                  </v-alert>
                   <h3 class="mt-10">Manual Install Mac OS</h3>
                   <p>
                     1. Download the zip file and unpack it in your Warcraft
@@ -246,6 +262,10 @@ import { LAUNCHER_UPDATE_URL } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
+
+  get alertMessage() {
+    return "Those steps are only needed, if you have problems with the normal installer. In that case, please reach out on discord!"
+  }
 
   get webUiLink() {
     return LAUNCHER_UPDATE_URL + "webui";
