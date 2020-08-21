@@ -8,33 +8,14 @@
           </v-card-title>
           <v-tabs v-model="tabsModel" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
-            <v-tab class="profileTab" v-if="isLauncherEnabled" :href="`#launcher`">Launcher</v-tab>
-            <v-tab class="profileTab" :href="`#windows-setup`">Windows</v-tab>
-            <v-tab class="profileTab" :href="`#mac-setup`">Mac</v-tab>
+            <v-tab class="profileTab" :href="`#launcher`">Installer</v-tab>
+            <v-tab class="profileTab" :href="`#windows-setup`">Manual Install Windows</v-tab>
+            <v-tab class="profileTab" :href="`#mac-setup`">Manual Install Mac</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
-              <v-tab-item :value="'launcher'" v-if="isLauncherEnabled">
+              <v-tab-item :value="'launcher'">
                 <v-card-text class="centered-container">
-                  <h3>Warcraft III Champions Launcher</h3>
-                  <v-card-text>
-                    Additional Features from the Launcher
-                    <ul>
-                      <li>
-                        Always have w3c installed, never have Problems with missing or outdated maps! Fixes all problems of the Joinbug!
-                      </li>
-                      <li>
-                        Remap Item-hotkeys
-                      </li>
-                      <li>
-                        Save Hotkeys to our cloud and reinstall everywhere
-                      </li>
-                      <li>
-                        Edit Zoomlevel for observer
-                      </li>
-                      <li>
-                        Keep up with the scene by getting the latest news
-                      </li>
-                    </ul>
-                  </v-card-text>
+                  <h3>Warcraft III Champions Installer</h3>
+                  <br />
                   <v-card-text>
                     <v-btn
                       :href="launcherUrlWin"
@@ -53,50 +34,38 @@
                       <span class="mr-2 hidden-xs-only">Mac</span>
                     </v-btn>
                   </v-card-text>
+                  <v-card-text>
+                    Features from the Launcher
+                    <ul>
+                      <li>
+                        Always have w3c installed, never have Problems with missing or outdated maps! Fixes problems of the Joinbug!
+                      </li>
+                      <li>
+                        Remap Item-hotkeys
+                      </li>
+                      <li>
+                        Keep up with the scene by getting the latest news
+                      </li>
+                    </ul>
+                  </v-card-text>
                 </v-card-text>
               </v-tab-item>
               <v-tab-item :value="'windows-setup'">
                 <v-card-text class="centered-container">
-                  <h3>Automatic Install Windows</h3>
-                  <p>
-                    We created a setup tool that automatically does all steps
-                    needed.
-                  </p>
-                  <v-btn
-                    href="../W3Champions-Installer.zip"
-                    target="_blank"
-                    value
-                    class="join-button mt-0 mb-4"
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Windows Installer</span>
-                  </v-btn>
-                  <p>
-                    <span class="important">
-                      Make sure installer is run as administrator
-                    </span>
-                    <br />
-                    <span>
-                      This is required because installer needs to put the
-                      <i>webui</i>
-                      folder inside your Warcraft III directory
-                    </span>
-                  </p>
-                  <v-divider></v-divider>
                   <h3 class="mt-10">Manual Install Windows</h3>
                   <p>
-                    1. Download the archive file and unpack it in your Warcraft
+                    1. Download the zip file and unpack it in your Warcraft
                     Installation folder
                   </p>
                   <v-btn
                     class="w3-background"
                     color="primary"
-                    href="../W3Champions-webui.zip"
+                    :href="webUiLink"
                     target="_blank"
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">W3Champions Archive</span>
+                    <span class="mr-2 hidden-xs-only">W3Champions</span>
                   </v-btn>
                   <p class="mt-2">
                     2. Make sure to have a directory structure like:
@@ -116,19 +85,19 @@
                     </code>
                   </p>
                   <p>
-                    3. Download the Maps Archive and unpack it to your Warcraft
+                    3. Download the Maps and unpack it to your Warcraft
                     III Maps Folder
                   </p>
                   <v-btn
                     class="w3-background"
                     color="primary"
-                    href="../W3Champions-Maps-V1.zip"
+                    :href="mapsLink"
                     target="_blank"
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">
-                      Download MAPS archive
+                      Download MAPS
                     </span>
                   </v-btn>
                   <p class="mt-2">
@@ -176,46 +145,20 @@
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
                 <v-card-text class="centered-container">
-                  <h3>Automatic Install Mac</h3>
-                  <p>
-                    We created a setup tool that automatically does all steps
-                    needed.
-                  </p>
-                  <v-btn
-                    href="../W3Champions-Installer.pkg"
-                    target="_blank"
-                    value
-                    class="join-button mt-0 mb-4"
-                  >
-                    <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac Installer</span>
-                  </v-btn>
-                  <p>
-                    <span class="important">
-                      Make sure installer is run as administrator
-                    </span>
-                    <br />
-                    <span>
-                      This is required because installer needs to put the
-                      <i>webui</i>
-                      folder inside your Warcraft III directory
-                    </span>
-                  </p>
-                  <v-divider></v-divider>
                   <h3 class="mt-10">Manual Install Mac OS</h3>
                   <p>
-                    1. Download the archive file and unpack it in your Warcraft
+                    1. Download the zip file and unpack it in your Warcraft
                     Installation folder
                   </p>
                   <v-btn
                     class="w3-background"
                     color="primary"
-                    href="../W3Champions-webui.zip"
+                    :href="webUiLink"
                     target="_blank"
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">W3Champions Archive</span>
+                    <span class="mr-2 hidden-xs-only">W3Champions</span>
                   </v-btn>
                   <p class="mt-2">
                     2. Make sure to have a directory structure like:
@@ -235,19 +178,19 @@
                     </code>
                   </p>
                   <p>
-                    3. Download the Maps Archive and unpack it to your Warcraft
+                    3. Download the Maps and unpack it to your Warcraft
                     III Maps Folder
                   </p>
                   <v-btn
                     class="w3-background"
                     color="primary"
-                    href="../W3Champions-Maps-V1.zip"
+                    :href="mapsLink"
                     target="_blank"
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">
-                      Download MAPS archive
+                      Download MAPS
                     </span>
                   </v-btn>
                   <p class="mt-2">
@@ -299,21 +242,25 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { IS_LAUNCHER_ENABLED, LAUNCHER_UPDATE_URL } from "@/main";
+import { LAUNCHER_UPDATE_URL } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
 
-  get isLauncherEnabled() {
-    return IS_LAUNCHER_ENABLED;
+  get webUiLink() {
+    return LAUNCHER_UPDATE_URL + "webui";
+  }
+
+  get mapsLink() {
+    return LAUNCHER_UPDATE_URL + "maps";
   }
 
   get launcherUrlMac() {
-    return LAUNCHER_UPDATE_URL + "mac";
+    return LAUNCHER_UPDATE_URL + "launcher/mac";
   }
 
   get launcherUrlWin() {
-    return LAUNCHER_UPDATE_URL + "win";
+    return LAUNCHER_UPDATE_URL + "launcher/win";
   }
 
   data() {
