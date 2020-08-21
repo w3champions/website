@@ -41,7 +41,7 @@
                         Always have w3c installed, never have Problems with missing or outdated maps! Fixes problems of the Joinbug!
                       </li>
                       <li>
-                        Remap Item-hotkeys
+                        Remap item and hero hotkeys
                       </li>
                       <li>
                         Keep up with the scene by getting the latest news
