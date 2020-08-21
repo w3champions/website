@@ -264,7 +264,7 @@ import { LAUNCHER_UPDATE_URL } from "@/main";
 export default class GettingStartedView extends Vue {
 
   get alertMessage() {
-    return "Those steps are only needed, if you have problems with the normal installer. In that case, please reach out on discord!"
+    return "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!"
   }
 
   get webUiLink() {
