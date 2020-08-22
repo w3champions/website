@@ -187,6 +187,7 @@ export default class PlayerView extends Vue {
     this.$store.direct.dispatch.player.loadGameModeStats();
     this.$store.direct.dispatch.player.loadRaceStats();
     this.$store.direct.dispatch.player.loadMatches(1);
+    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
   }
 
   get seasons() {
