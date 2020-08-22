@@ -33,11 +33,15 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { Ranking } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
-import { PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
+import {
+  ERaceEnum,
+} from "@/store/typings";
+import {
+  PlayerStatsRaceOnMapVersusRace,
+  RaceWinsOnMap,
+} from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 
 @Component({ components: { PlayerStatsRaceVersusRaceOnMap, MatchesGrid } })
@@ -54,15 +58,15 @@ export default class PlayerStatisticTab extends Vue {
 
   get patches() {
     if (
-            !this.playerStatsRaceVersusRaceOnMap ||
-            !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+      !this.playerStatsRaceVersusRaceOnMap ||
+      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
     ) {
       return [];
     }
     let patches = ["All"];
 
     Object.keys(
-            this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+      this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
     ).map((p) => patches.push(p));
 
     return patches;
@@ -74,18 +78,18 @@ export default class PlayerStatisticTab extends Vue {
 
   get raceWithoutRandom(): RaceWinsOnMap[] {
     if (
-            !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch ||
-            !(
-                    this.selectedPatch in
-                    this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
-            )
+      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch ||
+      !(
+        this.selectedPatch in
+        this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
+      )
     ) {
       return [];
     }
 
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
-            this.selectedPatch
-            ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
+      this.selectedPatch
+    ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
   }
 }
 </script>
