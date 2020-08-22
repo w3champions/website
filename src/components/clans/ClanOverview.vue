@@ -203,10 +203,14 @@ export default class ClanOverview extends Vue {
     return this.id;
   }
 
+  get currentSeason() {
+    return this.$store.direct.state.rankings.selectedSeason.id;
+  }
+
   public getLeagueOrder(battleTag: string) {
-    return this.playersClan.ranks?.find(
-      (r) => r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
-    )?.leagueOrder;
+    return this.playersClan.ranks?.filter(
+      (r) => r.season === this.currentSeason && r.id.includes(battleTag)
+    ).sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
   }
 
   public getStats(mode: EGameMode) {

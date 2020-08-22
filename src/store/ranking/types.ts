@@ -36,6 +36,7 @@ export type League = {
 
 export type Ranking = {
   id: string;
+  season: number;
   gateway: number;
   league: number;
   leagueDivision: number;
