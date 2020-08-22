@@ -104,6 +104,11 @@
     </v-dialog>
 
     <v-row>
+      <v-col style="margin-top: -15px">
+        <h3>Games: {{ playerGames }}</h3>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col>
         <h3>Homepage:</h3>
         <div v-if="homePageLinks && homePageLinks.length > 0">
@@ -271,6 +276,10 @@ export default class PlayerAvatar extends Vue {
 
   public countries: { country: string; countryCode: string }[] = [];
   public PicNumbers = Array.from(Array(11).keys());
+
+  get playerGames() {
+    return this.personalSetting.winLosses.reduce((sum, stat) => { return sum + stat.games; }, 0);
+  }
 
   get homePage(): string {
     return this.personalSetting.homePage || "-";
