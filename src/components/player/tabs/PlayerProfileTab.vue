@@ -155,10 +155,10 @@ export default class PlayerProfileTab extends Vue {
     );
 
     const bestOneVOne = oneVOnes.sort(
-      (a, b) => b.mmr - a.mmr
+      (a, b) => a.mmr - b.mmr
     )[0];
     const bestOtherModes = otherModes.sort(
-      (a, b) => b.mmr - a.mmr
+      (a, b) => a.mmr - b.mmr
     );
 
     const allModes = [];
