@@ -204,7 +204,7 @@ export default class ClanOverview extends Vue {
   }
 
   get currentSeason() {
-    return this.$store.direct.state.rankings.selectedSeason.id;
+    return this.$store.direct.state.rankings.seasons[0].id;
   }
 
   public getLeagueOrder(battleTag: string) {
