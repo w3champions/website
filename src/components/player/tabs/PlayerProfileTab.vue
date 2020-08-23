@@ -160,7 +160,7 @@ export default class PlayerProfileTab extends Vue {
     }
 
     const twoV2s= this.gameModeStats.filter(
-        (g) => g.gameMode === EGameMode.GM_2ON2_AT
+      (g) => g.gameMode === EGameMode.GM_2ON2_AT
     );
 
     const rankedtwoV2s = twoV2s.filter(x => x.rank != 0);
