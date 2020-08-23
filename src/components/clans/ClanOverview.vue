@@ -65,10 +65,20 @@
                   >
                     {{ playersClan.chiefTain.split("#")[0] }}
                   </span>
-                  <league-icon
-                    class="ml-4 mb-1"
-                    :league="getLeagueOrder(playersClan.chiefTain)"
-                  />
+                  <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on" style="display: inline">
+                        <league-icon
+                          v-on="on"
+                          class="ml-4 mb-1"
+                          :league="getLeagueOrder(playersClan.chiefTain)"
+                        />
+                      </div>
+                    </template>
+                    <div>
+                      1 vs 1
+                    </div>
+                  </v-tooltip>
                 </v-col>
               </v-row>
             </td>
@@ -87,10 +97,20 @@
                   <span class="pointer" @click="goToPlayer(member)">
                     {{ member.split("#")[0] }}
                   </span>
-                  <league-icon
-                    class="ml-4 mb-1"
-                    :league="getLeagueOrder(member)"
-                  />
+                  <v-tooltip top :disabled="!getLeagueOrder(member)">
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on" style="display: inline">
+                        <league-icon
+                          v-on="on"
+                          class="ml-4 mb-1"
+                          :league="getLeagueOrder(member)"
+                        />
+                      </div>
+                    </template>
+                    <div>
+                      1 vs 1
+                    </div>
+                  </v-tooltip>
                 </v-col>
                 <v-col class="text-right pa-0">
                   <member-management-menu
@@ -117,10 +137,20 @@
                   <span class="pointer" @click="goToPlayer(member)">
                     {{ member.split("#")[0] }}
                   </span>
-                  <league-icon
-                    class="ml-4 mb-1"
-                    :league="getLeagueOrder(member)"
-                  />
+                  <v-tooltip top :disabled="!getLeagueOrder(member)">
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on" style="display: inline">
+                        <league-icon
+                          v-on="on"
+                          class="ml-4 mb-1"
+                          :league="getLeagueOrder(member)"
+                        />
+                      </div>
+                    </template>
+                    <div>
+                      1 vs 1
+                    </div>
+                  </v-tooltip>
                 </v-col>
                 <v-col class="text-right pa-0">
                   <member-management-menu
@@ -209,7 +239,7 @@ export default class ClanOverview extends Vue {
 
   public getLeagueOrder(battleTag: string) {
     return this.playersClan.ranks?.filter(
-      (r) => r.season === this.currentSeason && r.id.includes(battleTag)
+      (r) => r.season === this.currentSeason && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
     ).sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
   }
 
