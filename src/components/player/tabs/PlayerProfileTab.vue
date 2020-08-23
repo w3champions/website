@@ -150,16 +150,21 @@ export default class PlayerProfileTab extends Vue {
     const oneVOnes = this.gameModeStats.filter(
       (g) => g.gameMode === EGameMode.GM_1ON1
     );
+
+    const rankedOneVOnes = oneVOnes.filter(x => x.rank != 0);
+  
+    let bestOneVOne = _.sortBy(rankedOneVOnes, ['leagueOrder', 'division', 'rank'])[0];
+
+    if (!bestOneVOne) {
+      bestOneVOne = oneVOnes[0];
+    }
+
     const otherModes = this.gameModeStats.filter(
-      (g) => g.gameMode !== EGameMode.GM_1ON1 && g.rank != 0
+      (g) => g.gameMode !== EGameMode.GM_1ON1
     );
 
-    const bestOneVOne = oneVOnes.sort(
-      (a, b) => a.mmr - b.mmr
-    )[0];
-    const bestOtherModes = otherModes.sort(
-      (a, b) => a.mmr - b.mmr
-    );
+    const otherModesRanked = otherModes.filter(g => g.rank != 0);
+    const bestOtherModes = _.sortBy(otherModesRanked, ['leagueOrder', 'division', 'rank']);
 
     const allModes = [];
     if (bestOneVOne) allModes.push(bestOneVOne);
