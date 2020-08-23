@@ -278,7 +278,7 @@ export default class PlayerAvatar extends Vue {
   public PicNumbers = Array.from(Array(11).keys());
 
   get playerGames() {
-    return this.personalSetting.winLosses.reduce((sum, stat) => { return sum + stat.games; }, 0);
+    return this.personalSetting.winLosses?.reduce((sum, stat) => { return sum + stat.games; }, 0);
   }
 
   get homePage(): string {
