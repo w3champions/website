@@ -49,7 +49,7 @@ const mod = {
             const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
             for (let i = 0; i < bannedPlayers.players.length; i++) {
                 const player = bannedPlayers.players[i];
-                player.endDate = moment(player.endDate).toISOString().substr(0, 10);
+                player.endDate = moment(player.endDate, 'YYYY-MM-DD').toISOString().substr(0, 10);
                 player.ipBanValue = player.isIpBan.toString();
             }
             commit.SET_BANNED_PLAYERS(bannedPlayers.players);
