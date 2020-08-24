@@ -13,7 +13,7 @@
               <league-icon :league="selectedLeageueOrder" />
               {{ selectedLeagueName }}
               {{
-              selectedLeague.division !== 0 ? selectedLeague.division : null
+                selectedLeague.division !== 0 ? selectedLeague.division : null
               }}
             </v-btn>
           </template>
@@ -70,7 +70,7 @@
                         .join(" & ")
                     }}
                   </span>
-                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1">({{$t(`racesShort.${races[data.item.player.race]}`)}})</span>
+                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1"> ({{$t(`racesShort.${races[data.item.player.race]}`)}})</span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -114,7 +114,7 @@
         ></rankings-grid>
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
-            <div class="mt-10"> 
+            <div class="mt-10">
               <h3 class="pl-5">Race distribution</h3>
               <rankings-race-distribution
                 :rankings="rankings"
