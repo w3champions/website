@@ -18,13 +18,13 @@
               <player-league :modeStat="gameModeStat"></player-league>
             </v-col>
           </v-row>
-          <v-row class="filter-none" v-if="selectedSeason.id === 0">
+          <v-row class="filter-none" v-if="isBetaSeason">
             <v-card-text class="text-center">
               This noble person was part of our beta, therefore we hide his
               buggy stats and thank him for all eternity ;)
             </v-card-text>
           </v-row>
-          <v-row class="filter-none" v-if="selectedSeason.id !== 0">
+          <v-row class="filter-none" v-if="!isBetaSeason">
             <v-col cols="12" md="4">
               <h4 style="position: relative;">Stats by race</h4>
               <v-data-table
@@ -101,6 +101,10 @@ export default class PlayerProfileTab extends Vue {
     },
   ];
 
+  get isBetaSeason() {
+    return this.selectedSeason?.id === 0;
+  }
+
   get battleTag() {
     return this.id;
   }
@@ -130,7 +134,7 @@ export default class PlayerProfileTab extends Vue {
     return this.raceStats.filter(
       (r) =>
         r.gateWay === this.$store.direct.state.gateway &&
-        r.season === this.selectedSeason.id
+        r.season === this.selectedSeason?.id
     );
   }
 

@@ -58,7 +58,7 @@ const mod = {
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         battleTag ?? state.battleTag,
         rootState.gateway,
-        state.selectedSeason.id
+        state.selectedSeason?.id ?? -1
       );
 
       commit.SET_MODE_STATS(modeStats);
@@ -72,7 +72,7 @@ const mod = {
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
         rootState.gateway,
-        state.selectedSeason.id
+        state.selectedSeason?.id ?? -1
       );
 
       commit.SET_RACE_STATS(raceStats);
@@ -84,7 +84,7 @@ const mod = {
       const { commit, state, rootGetters } = moduleActionContext(context, mod);
       const profile = await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
         battleTag,
-        state.selectedSeason.id
+        state.selectedSeason?.id ?? -1
       );
 
       commit.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
@@ -109,7 +109,7 @@ const mod = {
         state.opponentTag,
         state.gameMode,
         rootState.gateway,
-        state.selectedSeason.id
+        state.selectedSeason?.id ?? -1
       );
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);

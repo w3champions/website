@@ -45,7 +45,7 @@ export default class MmrDistributionChart extends Vue {
       this.gameModeStats.filter(
         (g) =>
           g.gameMode === EGameMode.GM_1ON1 &&
-          g.season === this.selectedSeason.id
+          g.season === this.selectedSeason?.id
       )[0]?.mmr ?? 0
     );
   }

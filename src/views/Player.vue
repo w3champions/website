@@ -17,7 +17,7 @@
                     class="ma-2"
                     style="background-color: transparent;"
                   >
-                    <span class="pa-0">Season {{ selectedSeason.id }}</span>
+                    <span class="pa-0" v-if="selectedSeason">Season {{ selectedSeason.id }}</span>
                   </v-btn>
                 </template>
                 <v-card>
