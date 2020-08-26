@@ -4,8 +4,15 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="justify-space-between">
-            <div style="position-relative">
+            <div style="display: flex; flex-direction: row; align-items: center">
               <span>Profile of {{ profile.battleTag }}</span>
+              <div style="display: flex; flex-direction: row; margin-left: 25px">
+                <SeasonBadge
+                  v-for="season in seasonsWithoutCurrentOne"
+                  :season="season"
+                  :key="season.id"
+                />
+              </div>
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
@@ -145,9 +152,11 @@ import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
+import SeasonBadge from "@/components/player/SeasonBadge.vue";
 
 @Component({
   components: {
+    SeasonBadge,
     PlayerStatisticTab,
     PlayerArrangedTeamsTab,
     PlayerProfileTab,
@@ -192,6 +201,10 @@ export default class PlayerView extends Vue {
 
   get seasons() {
     return this.$store.direct.state.player.playerProfile.participatedInSeasons;
+  }
+
+  get seasonsWithoutCurrentOne() {
+    return this.seasons.filter(s => s.id !== this.$store.direct.state.rankings.seasons[0].id).reverse();
   }
 
   get profile(): PlayerProfile {
