@@ -8,7 +8,7 @@
           </v-card-text>
         </v-col>
         <v-col md="12" lg="9">
-          <v-row>
+          <v-row v-if="!isBetaSeason">
             <v-col
               cols="12"
               md="4"
@@ -18,11 +18,13 @@
               <player-league :modeStat="gameModeStat"></player-league>
             </v-col>
           </v-row>
-          <v-row class="filter-none" v-if="isBetaSeason">
-            <v-card-text class="text-center">
-              This noble person was part of our beta, therefore we hide his
-              buggy stats and thank him for all eternity ;)
-            </v-card-text>
+          <v-row v-if="isBetaSeason">
+            <v-col>
+              <v-card-text>
+                This noble person was part of our beta, therefore we hide his
+                buggy stats and thank him for all eternity ;)
+              </v-card-text>
+            </v-col>
           </v-row>
           <v-row class="filter-none" v-if="!isBetaSeason">
             <v-col cols="12" md="4">
