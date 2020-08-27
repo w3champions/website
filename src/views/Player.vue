@@ -11,6 +11,7 @@
                   v-for="season in seasonsWithoutCurrentOne"
                   :season="season"
                   :key="season.id"
+                  :on-click="selectSeason"
                 />
               </div>
             </div>

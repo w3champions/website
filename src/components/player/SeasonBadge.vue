@@ -2,8 +2,9 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div
+        @click="() => onClick(season)"
         v-on="on"
-        class="season-badge"
+        class="season-badge pointer"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
       />
     </template>
@@ -19,6 +20,7 @@ import { Season } from "@/store/ranking/types";
 @Component({})
 export default class SeasonBadge extends Vue {
   @Prop() season!: Season;
+  @Prop() onClick!: (season: Season) => void;
 
   get seasonId() {
     if (!this.season) return "";
