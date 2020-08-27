@@ -6,13 +6,13 @@
           <v-card-title class="justify-space-between">
             <div style="display: flex; flex-direction: row; align-items: center">
               <span>Profile of {{ profile.battleTag }}</span>
-<!--              <div style="display: flex; flex-direction: row; margin-left: 25px">-->
-<!--                <SeasonBadge-->
-<!--                  v-for="season in seasonsWithoutCurrentOne"-->
-<!--                  :season="season"-->
-<!--                  :key="season.id"-->
-<!--                />-->
-<!--              </div>-->
+              <div style="display: flex; flex-direction: row; margin-left: 25px">
+                <SeasonBadge
+                  v-for="season in seasonsWithoutCurrentOne"
+                  :season="season"
+                  :key="season.id"
+                />
+              </div>
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
