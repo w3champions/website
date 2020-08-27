@@ -1,13 +1,15 @@
 <template>
   <div>
     <v-card-title>Statistics</v-card-title>
-    <v-row class="filter-none" v-if="selectedSeason.id === 0">
-      <v-card-text class="text-center">
-        This noble person was part of our beta, therefore we hide his buggy
-        stats and thank him for all eternity ;)
-      </v-card-text>
+    <v-row v-if="selectedSeason.id === 0">
+      <v-col>
+        <v-card-text class="text-center">
+          This noble person was part of our beta, therefore we hide his buggy
+          stats and thank him for all eternity ;)
+        </v-card-text>
+      </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="md-3">
         <v-card-text>
           <v-select
