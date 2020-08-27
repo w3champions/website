@@ -9,11 +9,11 @@
           <v-tabs v-model="tabsModel" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#launcher`">Launcher</v-tab>
-            <v-tab class="profileTab" :href="`#windows-setup`">Manual Install Windows</v-tab>
-            <v-tab class="profileTab" :href="`#mac-setup`">Manual Install Mac</v-tab>
+            <v-tab class="profileTab" :href="`#windows-setup`">Manual Windows</v-tab>
+            <v-tab class="profileTab" :href="`#mac-setup`">Manual Mac</v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'launcher'">
-                <v-card-text class="centered-container">
+                <v-card-text class="px-16">
                   <h3>Warcraft III Champions Launcher</h3>
                   <br />
                   <v-card-text>
@@ -51,7 +51,7 @@
                 </v-card-text>
               </v-tab-item>
               <v-tab-item :value="'windows-setup'">
-                <v-card-text class="centered-container">
+                <v-card-text class="px-16">
                   <v-alert
                       outlined
                       type="warning"
@@ -60,7 +60,7 @@
                   >
                     {{ alertMessage }}
                   </v-alert>
-                  <h3 class="mt-10">Manual Install Windows</h3>
+                  <h3 class="mt-10">Manual Windows</h3>
                   <p>
                     1. Download the zip file and unpack it in your Warcraft
                     Installation folder
@@ -152,7 +152,7 @@
                 </v-card-text>
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
-                <v-card-text class="centered-container">
+                <v-card-text class="px-16">
                   <v-alert
                       outlined
                       type="warning"
@@ -161,7 +161,7 @@
                   >
                     {{ alertMessage }}
                   </v-alert>
-                  <h3 class="mt-10">Manual Install Mac OS</h3>
+                  <h3 class="mt-10">Manual Mac OS</h3>
                   <p>
                     1. Download the zip file and unpack it in your Warcraft
                     Installation folder
@@ -244,7 +244,7 @@
                       </li>
                     </ul>
                   </p>
-                  <iframe class="mt-3" width="560" height="315" src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  <iframe class="mt-3" width="100%" height="315" src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </v-card-text>
               </v-tab-item>
             </v-tabs-items>
@@ -300,11 +300,6 @@ export default class GettingStartedView extends Vue {
 .important-dark {
   color: black;
   font-weight: bold;
-}
-
-.centered-container {
-  max-width: 650px;
-  margin-left: 100px;
 }
 
 .v-tab--active::before {
