@@ -35,9 +35,6 @@
           <v-list-item @click="openPlayerProfile">
             <v-list-item-title>View Profile</v-list-item-title>
           </v-list-item>
-<!--          <v-list-item v-if="isClansActive" @click="downloadChatKey">-->
-<!--            <v-list-item-title>Chat key</v-list-item-title>-->
-<!--          </v-list-item>-->
           <v-list-item @click="logout">
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>

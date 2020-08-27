@@ -14,7 +14,7 @@
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'launcher'">
                 <v-card-text class="px-16">
-                  <h3>Warcraft III Champions Launcher</h3>
+                  <h3>Download Warcraft III Champions</h3>
                   <br />
                   <v-card-text>
                     <v-btn
@@ -34,8 +34,12 @@
                       <span class="mr-2 hidden-xs-only">Mac</span>
                     </v-btn>
                   </v-card-text>
+                  <br/>
+                  <h3>After the Installation, open W3Champions and join us!</h3>
+                  <br/>
+                  <div class="w3c-screenshot" />
                   <v-card-text>
-                    Features from the Launcher
+                    Launcher features:
                     <ul>
                       <li>
                         Always have w3c installed, never have Problems with missing or outdated maps! Fixes problems of the Joinbug!
@@ -316,42 +320,6 @@ export default class GettingStartedView extends Vue {
   color: black !important;
 }
 
-.gettingStartedPictures {
-  margin-bottom: 30px;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.login-picture {
-  background-image: url("../assets/gettingStartedChat/1.jpg");
-  height: 350px;
-}
-
-.chat-key-picture {
-  background-image: url("../assets/gettingStartedChat/2.jpg");
-  height: 280px;
-}
-
-.download-picture {
-  background-image: url("../assets/gettingStartedChat/3.jpg");
-  height: 240px;
-}
-
-.bnet-place-picture {
-  background-image: url("../assets/gettingStartedChat/4.jpg");
-  height: 450px;
-}
-
-.webui-location-picture {
-  background-image: url("../assets/gettingStartedChat/5.jpg");
-  height: 350px;
-}
-
-.key-place-picture {
-  background-image: url("../assets/gettingStartedChat/6.jpg");
-  height: 100px;
-}
-
 .video-container {
   position: relative;
   padding-bottom: 62.25%;
@@ -365,5 +333,12 @@ export default class GettingStartedView extends Vue {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.w3c-screenshot {
+  width: 100%;
+  padding-bottom: 56%;
+  background-image: url("../assets/w3championsScreenshot.png");
+  background-size: cover;
 }
 </style>

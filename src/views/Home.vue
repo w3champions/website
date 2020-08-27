@@ -46,7 +46,7 @@
               </v-col>
               <v-col cols="12" md="6">
                 <img
-                  src="../assets/reforged.jpg"
+                  src="../assets/w3championsScreenshot.png"
                   style="max-width: 90%; max-height: 320px;"
                 />
               </v-col>
