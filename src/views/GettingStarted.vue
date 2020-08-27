@@ -44,6 +44,9 @@
                         Remap item and hero hotkeys
                       </li>
                       <li>
+                        Custom team coloring
+                      </li>
+                      <li>
                         Keep up with the scene by getting the latest news
                       </li>
                     </ul>
