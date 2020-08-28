@@ -8,7 +8,7 @@
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
       />
     </template>
-    <span>Season: {{ seasonId }}</span>
+    <span>participated in season {{ seasonId }}</span>
   </v-tooltip>
 </template>
 
