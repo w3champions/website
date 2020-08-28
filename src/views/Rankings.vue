@@ -255,7 +255,7 @@ export default class RankingsView extends Vue {
   }
 
   get showRaceDistribution() {
-    return this.$store.direct.state.rankings.gameMode == EGameMode.GM_1ON1;
+    return this.$store.direct.state.rankings.gameMode == EGameMode.GM_1ON1 && this.$store.direct.state.rankings.selectedSeason?.id > 1;
   }
 
   public async onGatewayChanged() {
