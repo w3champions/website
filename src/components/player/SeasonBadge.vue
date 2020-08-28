@@ -35,8 +35,8 @@ export default class SeasonBadge extends Vue {
 
 <style lang="scss" scoped>
 .season-badge {
-  margin-right: 10px;
-  width: 24px;
+  margin-right: 14px;
+  width: 20px;
   height: 24px;
   background-size: cover;
 }
