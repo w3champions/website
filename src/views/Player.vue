@@ -205,7 +205,7 @@ export default class PlayerView extends Vue {
   }
 
   get seasonsWithoutCurrentOne() {
-    return this.seasons?.filter(s => s.id !== this.$store.direct.state.rankings.seasons[0].id).reverse() ?? [];
+    return this.seasons?.filter(s => s.id !== this.$store.direct.state.rankings.seasons[0]?.id).reverse() ?? [];
   }
 
   get profile(): PlayerProfile {

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip top v-if="season">
     <template v-slot:activator="{ on }">
       <div
         @click="() => onClick(season)"
@@ -23,7 +23,6 @@ export default class SeasonBadge extends Vue {
   @Prop() onClick!: (season: Season) => void;
 
   get seasonId() {
-    if (!this.season) return "";
     return this.season.id === 0 ? "β" : this.season.id;
   }
 
