@@ -48,7 +48,7 @@ const mod = {
     },
     async loadGameModeStats(
       context: ActionContext<PlayerState, RootState>,
-      battleTag?: string
+      params: { battleTag?: string, season?: number }
     ) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,
@@ -56,9 +56,9 @@ const mod = {
       );
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
-        battleTag ?? state.battleTag,
+        params.battleTag ?? state.battleTag,
         rootState.gateway,
-        state.selectedSeason?.id ?? -1
+        params.season ?? state.selectedSeason?.id ?? -1
       );
 
       commit.SET_MODE_STATS(modeStats);
@@ -133,7 +133,7 @@ const mod = {
       if (state.battleTag) {
         await dispatch.loadMatches(1);
         await dispatch.loadRaceStats();
-        await dispatch.loadGameModeStats();
+        await dispatch.loadGameModeStats({});
       }
     },
   },

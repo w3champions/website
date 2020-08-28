@@ -50,7 +50,7 @@ export default class PlayerActivityTab extends Vue {
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
       await this.$store.direct.dispatch.player.loadGameModeStats(
-        this.verifiedBtag
+        { battleTag: this.verifiedBtag, season: season.id }
       );
     }
 
