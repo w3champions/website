@@ -8,10 +8,27 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :to="`/OverallStatistics/`">Player Activity</v-tab>
-            <v-tab class="profileTab" :to="`/OverallStatistics/mmr-distribution`">MMR</v-tab>
-            <v-tab class="profileTab" :to="`/OverallStatistics/winrates-per-race-and-map`">Winrates</v-tab>
-            <v-tab class="profileTab" :to="`/OverallStatistics/heroes-winrates`">Heroes</v-tab>
+            <v-tab class="profileTab" :to="`/OverallStatistics/`">
+              Player Activity
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/OverallStatistics/mmr-distribution`"
+            >
+              MMR
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/OverallStatistics/winrates-per-race-and-map`"
+            >
+              Winrates
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/OverallStatistics/heroes-winrates`"
+            >
+              Heroes
+            </v-tab>
           </v-tabs>
           <router-view></router-view>
         </v-card>

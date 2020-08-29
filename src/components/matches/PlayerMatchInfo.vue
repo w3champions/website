@@ -9,7 +9,8 @@
           class="mr-1"
         />
         <div>
-          <a class="name-link"
+          <a
+            class="name-link"
             :class="won"
             v-on="on"
             @mouseover="lazyLoadWinrate"
@@ -131,7 +132,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public openProfileInNewTab() {
-    if(!this.showPlayerInfo) {
+    if (!this.showPlayerInfo) {
       return;
     }
 
@@ -151,7 +152,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   public goToPlayer() {
-    if(!this.showPlayerInfo) {
+    if (!this.showPlayerInfo) {
       return;
     }
 
@@ -213,7 +214,7 @@ export default class PlayerMatchInfo extends Vue {
 }
 
 @media (min-width: 960px) {
-  .name-link  {
+  .name-link {
     max-width: 100%;
   }
 }

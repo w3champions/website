@@ -70,7 +70,7 @@
               </v-row>
             </td>
             <td>
-              <span>{{ $t("mapNames." + item.map.replace('\'', '')) }}</span>
+              <span>{{ $t("mapNames." + item.map.replace("'", "")) }}</span>
             </td>
             <td>
               {{
@@ -134,10 +134,10 @@ export default class MatchesGrid extends Vue {
   }
 
   get currentMatchesLowRange() {
-    if(this.totalMatches === 0){
+    if (this.totalMatches === 0) {
       return 0;
     }
-    if(this.totalMatches <= 50){
+    if (this.totalMatches <= 50) {
       return 1;
     }
     return this.$data.page * 50 - 49;

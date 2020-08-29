@@ -15,7 +15,10 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async editNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
+  public async editNews(
+    newsMessage: NewsMessage,
+    token: string
+  ): Promise<boolean> {
     const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
 
     const data = JSON.stringify(newsMessage);
@@ -25,13 +28,16 @@ export default class AdminService {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: data
+      body: data,
     });
 
     return response.ok;
   }
 
-  public async deleteNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
+  public async deleteNews(
+    newsMessage: NewsMessage,
+    token: string
+  ): Promise<boolean> {
     const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
     const response = await fetch(url, {
       method: "DELETE",
@@ -57,7 +63,10 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async postBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
+  public async postBan(
+    bannedPlayer: BannedPlayer,
+    token: string
+  ): Promise<string> {
     const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);
@@ -72,7 +81,10 @@ export default class AdminService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
+  public async deleteBan(
+    bannedPlayer: BannedPlayer,
+    token: string
+  ): Promise<string> {
     const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);

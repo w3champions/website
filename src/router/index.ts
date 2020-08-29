@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Rankings from "@/views/Rankings.vue";
+import Tournaments from "@/views/Tournaments.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
@@ -48,13 +49,25 @@ const routes = [
   {
     path: "/imprint",
     name: "Imprint",
-    component: Imprint
+    component: Imprint,
   },
   {
     path: "/rankings",
     name: "Rankings",
-    props: (route: { query: { season: string, gateway: string, gamemode: string, league: string } }) => ({ gamemode: parseInt(route.query.gamemode), gateway: parseInt(route.query.gateway), league: parseInt(route.query.league), season: parseInt(route.query.season) }),
-    component: Rankings
+    props: (route: {
+      query: {
+        season: string;
+        gateway: string;
+        gamemode: string;
+        league: string;
+      };
+    }) => ({
+      gamemode: parseInt(route.query.gamemode),
+      gateway: parseInt(route.query.gateway),
+      league: parseInt(route.query.league),
+      season: parseInt(route.query.season),
+    }),
+    component: Rankings,
   },
   {
     path: "/player/:id",
@@ -65,27 +78,27 @@ const routes = [
       {
         path: "",
         props: true,
-        component: PlayerProfileTab
+        component: PlayerProfileTab,
       },
       {
         path: "matches",
         props: true,
-        component: PlayerMatchesTab
+        component: PlayerMatchesTab,
       },
       {
         path: "at-teams",
-        component: PlayerArrangedTeamsTab
+        component: PlayerArrangedTeamsTab,
       },
       {
         path: "statistics",
-        component: PlayerStatisticTab
+        component: PlayerStatisticTab,
       },
       {
         path: "clan",
         props: true,
-        component: ClanOverview
-      }
-    ]
+        component: ClanOverview,
+      },
+    ],
   },
   {
     path: "/match/:matchId",
@@ -105,26 +118,31 @@ const routes = [
     children: [
       {
         path: "/",
-        component: PlayerActivityTab
+        component: PlayerActivityTab,
       },
       {
         path: "mmr-distribution",
-        component: MmrDistributionTab
+        component: MmrDistributionTab,
       },
       {
         path: "winrates-per-race-and-map",
-        component: WinrateTab
+        component: WinrateTab,
       },
       {
         path: "heroes-winrates",
-        component: HeroTab
-      }
-    ]
+        component: HeroTab,
+      },
+    ],
   },
   {
     path: "/AdminOnlyView",
     name: "Admin",
     component: Admin,
+  },
+  {
+    path: "/tournaments",
+    name: "Tournaments",
+    component: Tournaments,
   },
 ];
 

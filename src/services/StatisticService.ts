@@ -1,13 +1,15 @@
 import { API_URL } from "@/main";
 import {
-  GameDay, GameDayPerMode,
-  GameLength, MatchesOnMapPerSeason,
+  GameDay,
+  GameDayPerMode,
+  GameLength,
+  MatchesOnMapPerSeason,
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
   StatsPerWinrate,
-  WinLoss
+  WinLoss,
 } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/typings";
 

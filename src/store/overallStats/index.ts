@@ -1,15 +1,17 @@
 import { moduleActionContext } from "..";
 import {
-  GameDay, GameDayPerMode,
+  GameDay,
+  GameDayPerMode,
   GameLength,
-  HeroPick, MatchesOnMapPerSeason,
+  HeroPick,
+  MatchesOnMapPerSeason,
   MmrDistribution,
   OveralStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
   StatsPerWinrate,
-  WinLoss
+  WinLoss,
 } from "./types";
 import { EGameMode, ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -152,7 +154,10 @@ const mod = {
     SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[][]) {
       state.gamesPerDay = games;
     },
-    SET_MAPS_PER_SEASON(state: OveralStatisticState, games: MatchesOnMapPerSeason[]) {
+    SET_MAPS_PER_SEASON(
+      state: OveralStatisticState,
+      games: MatchesOnMapPerSeason[]
+    ) {
       state.matchesOnMapPerSeason = games;
     },
     SET_LOADING_PLAYERS_PER_DAY(state: OveralStatisticState, loading: boolean) {

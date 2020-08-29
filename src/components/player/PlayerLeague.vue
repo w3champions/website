@@ -1,5 +1,9 @@
 <template>
-  <div class="LadderSummaryShowcase-card mt-1" @click="isRanked && !smallMode ? navigateToLeague() : null" :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`">
+  <div
+    class="LadderSummaryShowcase-card mt-1"
+    @click="isRanked && !smallMode ? navigateToLeague() : null"
+    :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
+  >
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
       {{ modeStat.division !== 0 ? this.modeStat.division : null }}
@@ -16,9 +20,7 @@
       </div>
       <span v-if="isRanked">
         <span v-if="!smallMode">Rank</span>
-        <span v-if="!smallMode" class="number-text">
-          {{ modeStat.rank }} |
-        </span>
+        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
         <span class="won">{{ modeStat.wins }}</span>
         -
         <span class="lost">{{ modeStat.losses }}</span>
@@ -74,7 +76,7 @@ export default class PlayerLeague extends Vue {
   }
 
   get gateWay() {
-    return this.$store.direct.state.gateway;;
+    return this.$store.direct.state.gateway;
   }
 
   get selectedSeason() {

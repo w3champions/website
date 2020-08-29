@@ -24,8 +24,8 @@ import { Component } from "vue-property-decorator";
 import { API_URL } from "@/main";
 
 interface Faq {
-  qestion: string,
-  answer: string,
+  qestion: string;
+  answer: string;
 }
 
 @Component({})
@@ -33,7 +33,6 @@ export default class FaqView extends Vue {
   public faqs = [] as Faq[];
 
   async mounted() {
-
     if (API_URL.includes("test")) {
       await this.setNewsContent("test");
     } else {

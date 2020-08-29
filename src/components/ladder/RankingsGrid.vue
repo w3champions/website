@@ -43,8 +43,7 @@
                 class="player-avatar mr-1 alignRight race-icon"
                 :title="getTitleRace(item, index)"
                 :style="{
-                  'background-image':
-                    'url(' + getRaceIcon(item, index) + ')',
+                  'background-image': 'url(' + getRaceIcon(item, index) + ')',
                 }"
               />
               <player-rank-info
@@ -54,7 +53,10 @@
               />
               <div
                 class="country-flag__container"
-                v-if="item.playersInfo && item.playersInfo[index].country || item.playersInfo[index].location"
+                v-if="
+                  (item.playersInfo && item.playersInfo[index].country) ||
+                  item.playersInfo[index].location
+                "
               >
                 <country-flag-extended
                   class="country-flag"
@@ -70,32 +72,44 @@
                       <v-btn
                         icon
                         v-on="on"
-                        :href="'http://twitch.tv/' + item.playersInfo[index].twitchName"
+                        :href="
+                          'http://twitch.tv/' +
+                          item.playersInfo[index].twitchName
+                        "
                         target="_blank"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"
                           color="purple accent-4"
-                        >mdi-twitch</v-icon>
+                        >
+                          mdi-twitch
+                        </v-icon>
                         <v-icon
                           v-if="isCurrentlyLive(item.player.playerIds)"
                           class="blinker"
                           color="red accent-4"
-                        >mdi-twitch</v-icon>
+                        >
+                          mdi-twitch
+                        </v-icon>
                       </v-btn>
                     </span>
                   </template>
 
-                  <div
-                    v-if="isCurrentlyLive(item.player.playerIds)"
-                  >Streaming a match versus {{ getLiveOpponent(item.player.playerIds) }}</div>
-                  <div v-if="!isCurrentlyLive(item.player.playerIds)">Stream is live!</div>
+                  <div v-if="isCurrentlyLive(item.player.playerIds)">
+                    Streaming a match versus
+                    {{ getLiveOpponent(item.player.playerIds) }}
+                  </div>
+                  <div v-if="!isCurrentlyLive(item.player.playerIds)">
+                    Stream is live!
+                  </div>
                 </v-tooltip>
               </div>
             </div>
             <span
               style="position: relative;"
-              v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
+              v-if="
+                isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
+              "
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -112,12 +126,16 @@
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
-            {{ item.playersInfo.map((p) => p.clanId ? p.clanId : '-').join('/') }}
+            {{
+              item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/")
+            }}
           </td>
           <td class="number-text text-end won">{{ item.player.wins }}</td>
           <td class="number-text text-end lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
-          <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
+          <td class="number-text text-end">
+            {{ (item.player.winrate * 100).toFixed(1) }}%
+          </td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
           <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
@@ -172,8 +190,8 @@ export default class RankingsGrid extends Vue {
       sortable: false,
       minWidth: "170px",
       sortFunction: (a: Ranking, b: Ranking) => {
-        return ('' + b.player.name).localeCompare(a.player.name);
-      }
+        return ("" + b.player.name).localeCompare(a.player.name);
+      },
     },
     {
       text: "Race",
@@ -190,7 +208,9 @@ export default class RankingsGrid extends Vue {
       sortable: false,
       width: "50px",
       sortFunction: (a: Ranking, b: Ranking) => {
-        return ('' + b.playersInfo[0].clanId).localeCompare(a.playersInfo[0].clanId);
+        return ("" + b.playersInfo[0].clanId).localeCompare(
+          a.playersInfo[0].clanId
+        );
       },
     },
     {
@@ -452,13 +472,12 @@ export default class RankingsGrid extends Vue {
 
   getCountryCode(playerInfo: PlayerInfo): string {
     if (playerInfo.country) {
-     return (ECountries as any)[playerInfo.country];
-    }
-    else if (playerInfo.location) {
+      return (ECountries as any)[playerInfo.country];
+    } else if (playerInfo.location) {
       return playerInfo.location;
     }
 
-    return  "";
+    return "";
   }
 }
 </script>
@@ -512,8 +531,7 @@ td.header {
   display: inline-block;
 }
 
-::v-deep
-.country-flag {
+::v-deep .country-flag {
   position: absolute;
   top: -15px;
   left: -20px;

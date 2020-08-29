@@ -6,7 +6,11 @@
       <race-icon :race="stat.race" />
     </v-tab>
 
-    <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
+    <v-tab-item
+      v-for="stat of stats"
+      :key="stat.race"
+      :value="'tab-' + stat.race"
+    >
       <v-card-text>
         <v-row>
           <v-col cols="md-12">

@@ -30,7 +30,9 @@ export default class MultipleAmountPerDayChart extends Vue {
       datasets: this.gameDays.map((c) => {
         return {
           label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
-          data: c.gameDays.map((g) => g.gamesPlayed * this.multiplier(c.gameMode)).splice(0, c.gameDays.length - 1),
+          data: c.gameDays
+            .map((g) => g.gamesPlayed * this.multiplier(c.gameMode))
+            .splice(0, c.gameDays.length - 1),
           backgroundColor: "rgba(126,126,126,0.08)",
           borderColor: this.mapColor(c.gameMode),
           borderWidth: 1,

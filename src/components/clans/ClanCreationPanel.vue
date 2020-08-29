@@ -54,9 +54,10 @@ export default class ClanCreationPanel extends Vue {
   public mustBeBetween(min: number, max: number, space: string) {
     return function (v: string) {
       if (!v) return "Field is mandatory";
-      if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`)) return `Must be between ${min} and ${max} numerical characters`;
+      if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
+        return `Must be between ${min} and ${max} numerical characters`;
       return undefined;
-    }
+    };
   }
 
   public changeInsertedClanName(newName: string) {
@@ -76,7 +77,10 @@ export default class ClanCreationPanel extends Vue {
   }
 
   public async createClan() {
-    await this.$store.direct.dispatch.clan.createClan({ clanName: this.clanNameToCreate.trim(), abbreviation: this.clanAbbreviationToCreate });
+    await this.$store.direct.dispatch.clan.createClan({
+      clanName: this.clanNameToCreate.trim(),
+      abbreviation: this.clanAbbreviationToCreate,
+    });
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
 }

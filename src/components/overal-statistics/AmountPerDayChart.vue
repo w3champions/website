@@ -2,7 +2,6 @@
   <line-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-
 import { Component, Prop } from "vue-property-decorator";
 import { GameDay } from "@/store/overallStats/types";
 import moment from "moment";
@@ -11,7 +10,7 @@ import Vue from "vue";
 import { ChartData } from "chart.js";
 
 @Component({
-  components: { LineChart }
+  components: { LineChart },
 })
 export default class AmountPerDayChart extends Vue {
   @Prop() public gameDays!: GameDay[];

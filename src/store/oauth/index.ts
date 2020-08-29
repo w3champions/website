@@ -47,9 +47,7 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const profile = await rootGetters.oauthService.getProfile(
-        bearerToken
-      );
+      const profile = await rootGetters.oauthService.getProfile(bearerToken);
 
       commit.SET_PROFILE_NAME(profile.battletag);
       commit.SET_IS_ADMIN(profile.isAdmin);
@@ -75,7 +73,7 @@ const mod = {
     },
     SET_IS_ADMIN(state: OauthState, isAdmin: boolean) {
       state.isAdmin = isAdmin;
-    }
+    },
   },
 } as const;
 

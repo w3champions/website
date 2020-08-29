@@ -16,11 +16,13 @@ export default class MapsPerSeasonChart extends Vue {
   @Prop() public mapsPerSeason!: MapCount[];
 
   get mapNames() {
-    return this.mapsPerSeason.map(m => this.$t(`mapNames.${m.map}`).toString());
+    return this.mapsPerSeason.map((m) =>
+      this.$t(`mapNames.${m.map}`).toString()
+    );
   }
 
   get gamesCount() {
-    return this.mapsPerSeason.map(m => m.count);
+    return this.mapsPerSeason.map((m) => m.count);
   }
 
   get barChartData(): ChartData {
