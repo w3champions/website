@@ -1,8 +1,13 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar :class="{ darkmode: isDarkTheme }" app :dark="isDarkTheme">
-      <div @click="$router.push({ path: '/' })" class="d-flex align-center pointer">
-        <span class="d-none d-md-inline">W3Champions - your Ladder for Warcraft III</span>
+      <div
+        @click="$router.push({ path: '/' })"
+        class="d-flex align-center pointer"
+      >
+        <span class="d-none d-md-inline">
+          W3Champions - your Ladder for Warcraft III
+        </span>
       </div>
       <v-spacer></v-spacer>
 
@@ -21,7 +26,9 @@
       </v-btn>
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="!authCode" class="mr-2">
+          mdi-account-circle-outline
+        </v-icon>
       </v-btn>
 
       <v-menu offset-y v-if="authCode">
@@ -87,7 +94,7 @@ export default class App extends Vue {
     {
       title: "Rankings",
       icon: "mdi-view-list",
-      to: `/Rankings`
+      to: `/Rankings`,
     },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     {

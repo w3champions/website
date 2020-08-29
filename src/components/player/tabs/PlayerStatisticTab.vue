@@ -37,9 +37,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import {
-  ERaceEnum,
-} from "@/store/typings";
+import { ERaceEnum } from "@/store/typings";
 import {
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,

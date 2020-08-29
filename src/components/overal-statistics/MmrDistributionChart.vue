@@ -65,7 +65,7 @@ export default class MmrDistributionChart extends Vue {
   }
 
   get gameHourChartData(): ChartData {
-    if(!this.mmrDistribution.distributedMmrs){
+    if (!this.mmrDistribution.distributedMmrs) {
       return {};
     }
 

@@ -3,7 +3,9 @@
     <v-row class="justify-center">
       <v-col class="text-center">
         <h3>
-          You were invited by <b>{{ clanName }}</b> to join their ranks!
+          You were invited by
+          <b>{{ clanName }}</b>
+          to join their ranks!
         </h3>
       </v-col>
     </v-row>
@@ -24,17 +26,17 @@ import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class AcceptInvitePanel extends Vue {
-  get clanName() {
+  get clanName(): string {
     return this.$store.direct.state.clan.selectedMemberShip.clanName;
   }
 
-  public async joinClan() {
+  public async joinClan(): Promise<void> {
     await this.$store.direct.dispatch.clan.acceptInvite();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
   }
 
-  public async rejectClan() {
+  public async rejectClan(): Promise<void> {
     await this.$store.direct.dispatch.clan.rejectInvite();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();

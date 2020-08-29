@@ -15,7 +15,9 @@
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">Add Player</v-btn>
+                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
+                    Add Player
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -26,7 +28,10 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="12">
-                          <v-text-field v-model="editedItem.battleTag" label="BattleTag"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.battleTag"
+                            label="BattleTag"
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
@@ -46,7 +51,10 @@
                           ></v-select>
                         </v-col>
                         <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.banReason" label="Ban Reason"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.banReason"
+                            label="Ban Reason"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -54,7 +62,9 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                    <v-btn color="blue darken-1" text @click="close">
+                      Cancel
+                    </v-btn>
                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                   </v-card-actions>
                 </v-card>
@@ -62,7 +72,9 @@
             </v-toolbar>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+            <v-icon small class="mr-2" @click="editItem(item)">
+              mdi-pencil
+            </v-icon>
             <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
           </template>
         </v-data-table>
@@ -80,7 +92,9 @@
               <v-spacer></v-spacer>
               <v-dialog v-model="dialogNews" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">Add News</v-btn>
+                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
+                    Add News
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -96,10 +110,12 @@
                             label="Message"
                           ></v-textarea>
                         </v-col>
-                        <v-col cols="12" sm="6" md="12">
-                        </v-col>
+                        <v-col cols="12" sm="6" md="12"></v-col>
                         <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedNewsItem.date" label="Date"></v-text-field>
+                          <v-text-field
+                            v-model="editedNewsItem.date"
+                            label="Date"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -107,15 +123,21 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeNews">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="saveNews">Save</v-btn>
+                    <v-btn color="blue darken-1" text @click="closeNews">
+                      Cancel
+                    </v-btn>
+                    <v-btn color="blue darken-1" text @click="saveNews">
+                      Save
+                    </v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
             </v-toolbar>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editNewsItem(item)">mdi-pencil</v-icon>
+            <v-icon small class="mr-2" @click="editNewsItem(item)">
+              mdi-pencil
+            </v-icon>
             <v-icon small @click="deleteNewsItem(item)">mdi-delete</v-icon>
           </template>
         </v-data-table>
@@ -126,7 +148,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch} from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import { BannedPlayer, NewsMessage } from "../store/admin/types";
 import { PlayerProfile } from "../store/player/types";
 @Component({ components: {} })

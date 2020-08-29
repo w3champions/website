@@ -13,6 +13,8 @@
 *.html          text
 *.java          text
 *.js            text
+*.ts            text
+*.vue           text
 *.json          text
 *.properties    text
 *.txt           text

@@ -31,5 +31,5 @@ export enum EClanRole {
   ChiefTain = 3,
   Shaman = 2,
   Member = 1,
-  Undefined = 0
+  Undefined = 0,
 }

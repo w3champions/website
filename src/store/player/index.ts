@@ -48,7 +48,7 @@ const mod = {
     },
     async loadGameModeStats(
       context: ActionContext<PlayerState, RootState>,
-      params: { battleTag?: string, season?: number }
+      params: { battleTag?: string; season?: number }
     ) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,

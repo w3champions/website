@@ -4,9 +4,13 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="justify-space-between">
-            <div style="display: flex; flex-direction: row; align-items: center">
+            <div
+              style="display: flex; flex-direction: row; align-items: center;"
+            >
               <span>Profile of {{ profile.battleTag }}</span>
-              <div style="display: flex; flex-direction: row; margin-left: 25px">
+              <div
+                style="display: flex; flex-direction: row; margin-left: 25px;"
+              >
                 <SeasonBadge
                   v-for="season in seasonsWithoutCurrentOne"
                   :season="season"
@@ -25,7 +29,9 @@
                     class="ma-2"
                     style="background-color: transparent;"
                   >
-                    <span class="pa-0" v-if="selectedSeason">Season {{ selectedSeason.id }}</span>
+                    <span class="pa-0" v-if="selectedSeason">
+                      Season {{ selectedSeason.id }}
+                    </span>
                   </v-btn>
                 </template>
                 <v-card>
@@ -197,7 +203,9 @@ export default class PlayerView extends Vue {
     this.$store.direct.dispatch.player.loadGameModeStats({});
     this.$store.direct.dispatch.player.loadRaceStats();
     this.$store.direct.dispatch.player.loadMatches(1);
-    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
+      this.battleTag
+    );
   }
 
   get seasons() {
@@ -205,7 +213,13 @@ export default class PlayerView extends Vue {
   }
 
   get seasonsWithoutCurrentOne() {
-    return this.seasons?.filter(s => s.id !== this.$store.direct.state.rankings.seasons[0]?.id).reverse() ?? [];
+    return (
+      this.seasons
+        ?.filter(
+          (s) => s.id !== this.$store.direct.state.rankings.seasons[0]?.id
+        )
+        .reverse() ?? []
+    );
   }
 
   get profile(): PlayerProfile {

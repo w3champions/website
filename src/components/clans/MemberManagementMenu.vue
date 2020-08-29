@@ -32,26 +32,37 @@ export default class MemberManagementMenu extends Vue {
   @Prop() role!: EClanRole;
   @Prop() loggedInUserRole!: EClanRole;
 
-  public kickPlayer = {name: "kick player", action: async () => await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag) };
+  public kickPlayer = {
+    name: "kick player",
+    action: async () =>
+      await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag),
+  };
 
-  public promoteToShaman = {name: "promote to shaman", action: async () => await this.$store.direct.dispatch.clan.addShaman(this.battleTag)};
-  public demoteShaman = {name: "demote to member", action: async () => await this.$store.direct.dispatch.clan.removeShaman(this.battleTag)};
+  public promoteToShaman = {
+    name: "promote to shaman",
+    action: async () =>
+      await this.$store.direct.dispatch.clan.addShaman(this.battleTag),
+  };
+  public demoteShaman = {
+    name: "demote to member",
+    action: async () =>
+      await this.$store.direct.dispatch.clan.removeShaman(this.battleTag),
+  };
 
-  public makeChiefTain = {name: "make chieftain", action: async () => await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag)};
+  public makeChiefTain = {
+    name: "make chieftain",
+    action: async () =>
+      await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag),
+  };
 
   get actions() {
     switch (this.role) {
       case EClanRole.Member:
         switch (this.loggedInUserRole) {
           case EClanRole.Shaman:
-            return [
-              this.kickPlayer
-            ];
+            return [this.kickPlayer];
           case EClanRole.ChiefTain:
-            return [
-              this.promoteToShaman,
-              this.kickPlayer
-            ];
+            return [this.promoteToShaman, this.kickPlayer];
           default:
             return [];
         }
@@ -60,11 +71,7 @@ export default class MemberManagementMenu extends Vue {
           case EClanRole.Shaman:
             return [];
           case EClanRole.ChiefTain:
-            return [
-              this.demoteShaman,
-              this.kickPlayer,
-              this.makeChiefTain
-            ];
+            return [this.demoteShaman, this.kickPlayer, this.makeChiefTain];
           default:
             return [];
         }

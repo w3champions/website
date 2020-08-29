@@ -64,8 +64,8 @@ export type PlayersPerDay = {
 };
 
 export interface GameDayPerMode {
-  gameMode: EGameMode,
-  gameDays: GameDay[]
+  gameMode: EGameMode;
+  gameDays: GameDay[];
 }
 
 export interface WinLoss {
@@ -92,7 +92,7 @@ export type StatsPerMapAndRace = {
 export type StatsPerWinrate = {
   mmrRange: number;
   statsPerModes: StatsPerMapAndRace[];
-  patchToStatsPerModes: { [patch: string] : StatsPerMapAndRace[]; };
+  patchToStatsPerModes: { [patch: string]: StatsPerMapAndRace[] };
 };
 
 export interface Length {

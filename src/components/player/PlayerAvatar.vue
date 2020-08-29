@@ -22,7 +22,7 @@
               />
             </div>
           </template>
-          <span>{{selectedCountry}}</span>
+          <span>{{ selectedCountry }}</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -104,7 +104,7 @@
     </v-dialog>
 
     <v-row>
-      <v-col style="margin-top: -15px">
+      <v-col style="margin-top: -15px;">
         <h3>Games: {{ playerGames }}</h3>
       </v-col>
     </v-row>
@@ -119,7 +119,9 @@
             target="_blank"
             :href="homePageLink"
             :key="homePageLink"
-          >{{ homePage }}</a>
+          >
+            {{ homePage }}
+          </a>
         </div>
         <div v-else>{{ homePage }}</div>
       </v-col>
@@ -133,7 +135,11 @@
     <template>
       <v-row v-if="isLoggedInPlayer">
         <v-col>
-          <v-dialog v-model="userProfile.editDialogOpened" persistent max-width="600px">
+          <v-dialog
+            v-model="userProfile.editDialogOpened"
+            persistent
+            max-width="600px"
+          >
             <template v-slot:activator="{ on }">
               <v-btn
                 @click="userProfile.editDialogOpened = true"
@@ -143,7 +149,8 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>mdi-pencil</v-icon>Edit Profile
+                <v-icon left>mdi-pencil</v-icon>
+                Edit Profile
               </v-btn>
             </template>
             <v-card>
@@ -204,7 +211,7 @@
                       <v-autocomplete
                         prepend-icon="mdi-flag"
                         clearable
-                        :item-value="(obj) => (obj)[country]"
+                        :item-value="(obj) => obj[country]"
                         :items="countries"
                         :filter="countryFilter"
                         label="Select your country"
@@ -213,12 +220,18 @@
                         :return-object="false"
                       >
                         <template v-slot:item="{ index, item }">
-                          <country-flag :country="item.countryCode" size="normal" />
+                          <country-flag
+                            :country="item.countryCode"
+                            size="normal"
+                          />
                           {{ item.country }}
                           <v-spacer></v-spacer>
                         </template>
                         <template v-slot:selection="{ attrs, item }">
-                          <country-flag :country="item.countryCode" size="normal" />
+                          <country-flag
+                            :country="item.countryCode"
+                            size="normal"
+                          />
                           <span class="pr-2">{{ item.country }}</span>
                         </template>
                       </v-autocomplete>
@@ -242,8 +255,12 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="resetUserProfile">Close</v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">Save</v-btn>
+                <v-btn color="blue darken-1" text @click="resetUserProfile">
+                  Close
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="saveUserProfile">
+                  Save
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -278,7 +295,9 @@ export default class PlayerAvatar extends Vue {
   public PicNumbers = Array.from(Array(11).keys());
 
   get playerGames() {
-    return this.personalSetting.winLosses?.reduce((sum, stat) => { return sum + stat.games; }, 0);
+    return this.personalSetting.winLosses?.reduce((sum, stat) => {
+      return sum + stat.games;
+    }, 0);
   }
 
   get homePage(): string {
@@ -474,10 +493,10 @@ export default class PlayerAvatar extends Vue {
       this.selectedCountryCode = this.personalSetting.location;
 
       for (const key in ECountries) {
-          const element = (ECountries as any)[key] as string;
-          if (element == this.selectedCountryCode) {
-            this.selectedCountry = key;
-          }
+        const element = (ECountries as any)[key] as string;
+        if (element == this.selectedCountryCode) {
+          this.selectedCountry = key;
+        }
       }
     }
   }

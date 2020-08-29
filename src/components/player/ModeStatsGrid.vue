@@ -9,17 +9,16 @@
       <tbody>
         <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
           <td>
-            <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }} </span>
-            <race-icon
-              style="display: inline;"
-              :race="item.race"
-            />
+            <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</span>
+            <race-icon style="display: inline;" :race="item.race" />
           </td>
           <td class="number-text text-start">
             <span class="won">{{ item.wins }}</span>
             -
             <span class="lost">{{ item.losses }}</span>
-            <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
+            <span style="float: right;">
+              ({{ (item.winrate * 100).toFixed(1) }}%)
+            </span>
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
@@ -43,7 +42,7 @@ import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 
 @Component({
-  components: { RaceIcon }
+  components: { RaceIcon },
 })
 export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
@@ -100,7 +99,7 @@ export default class ModeStatsGrid extends Vue {
         leagueOrder: 0,
         division: 0,
         rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
-        season: b.season
+        season: b.season,
       }),
       {
         wins: 0,
@@ -109,7 +108,7 @@ export default class ModeStatsGrid extends Vue {
         winrate: 0,
         mmr: 0,
         rank: 0,
-        rankingPoints: 0
+        rankingPoints: 0,
       }
     );
   }

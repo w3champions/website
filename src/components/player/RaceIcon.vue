@@ -30,7 +30,7 @@ export default class RaceIcon extends Vue {
     if (ERaceEnum[this.race]) {
       return require("../../assets/raceIcons/" + ERaceEnum[this.race] + ".png");
     }
-    return '';
+    return "";
   }
 }
 </script>
