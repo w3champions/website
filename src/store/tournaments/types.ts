@@ -8,3 +8,13 @@ export interface ITournamentPlayer {
 export interface ITournamentMatch {
     players: ITournamentPlayer[]
 }
+
+export interface ITournamentRound {
+    round: number;
+    matches: ITournamentMatch[]
+}
+
+export interface ITournament {
+    winnerBracketRounds: ITournamentRound[];
+    loserBracketRounds?: ITournamentRound[];
+}

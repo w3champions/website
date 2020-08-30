@@ -4,233 +4,47 @@
       <v-card-title class="search-bar"></v-card-title>
       <div class="bracket-wrapper bracket-player">
         <div class="bracket-scroller">
-          <div style="width: 325px;" class="bracket bracket-width-2col-20">
+          <div style="width: 100%;" class="bracket bracket-width-2col-20">
             <div
-              class="bracket-column bracket-column-matches"
-              style="width: 150px;"
+              v-for="round in tournament.winnerBracketRounds"
+              :key="round.round"
             >
-              <div style="height: 40px; margin-top: 0px;">
-                <div class="bracket-header">
-                  Round 1
-                </div>
-              </div>
               <div
-                class="bracket-game"
-                v-for="(match, matchIndex) in matches"
-                :key="matchIndex"
+                class="bracket-column bracket-column-matches"
+                style="width: 150px;"
               >
-                <div class="icon" style="margin-top: 30px; right: 16px;" />
-                <div class="bracket-cell-r1" 
+                <div style="height: 40px; margin-top: 0px;">
+                  <div class="bracket-header">Round {{ round.round }}</div>
+                </div>
+                <div
+                  class="bracket-game"
+                  v-for="(match, matchIndex) in round.matches"
+                  :key="matchIndex"
+                >
+                  <div class="icon" style="margin-top: 30px; right: 16px;" />
+                  <div
+                    v-bind:class="getBracketCellClass(round)"
                     v-for="(player, playerIndex) in match.players"
                     :key="playerIndex"
-                >
-                  <div
-                    v-bind:class="getClass(player, playerIndex)"
-                    style="padding-right: 23px; cursor: pointer;"
                   >
-                    &nbsp; &nbsp;
-                    <span style="vertical-align: -1px;">{{player.name}}</span>
-                    <div class="bracket-score" style="width: 21px;" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="bracket-column" style="width: 20px;">
-              <div style="float: left; width: 9px;">
-                <div style="width: 9px; height: 75px;"></div>
-                <div
-                  style="
-                    width: 9px;
-                    height: 16px;
-                    border-top-right-radius: 3px;
-                    border: solid #aaa;
-                    border-width: 2px 2px 0 0;
-                  "
-                ></div>
-                <div style="width: 9px; height: 38px;"></div>
-                <div
-                  style="
-                    width: 9px;
-                    height: 16px;
-                    border-bottom-right-radius: 3px;
-                    border: solid #aaa;
-                    border-width: 0 2px 2px 0;
-                  "
-                ></div>
-                <div style="width: 9px; height: 33px;"></div>
-              </div>
-              <div style="float: left; width: 9px;">
-                <div style="width: 9px; height: 93px;"></div>
-                <div
-                  style="
-                    width: 9px;
-                    height: 6px;
-                    border-bottom-left-radius: 3px;
-                    border: solid #aaa;
-                    border-width: 0 0 2px 2px;
-                  "
-                ></div>
-                <div style="width: 9px; height: 22px;"></div>
-                <div
-                  style="
-                    width: 9px;
-                    height: 6px;
-                    border-top-left-radius: 3px;
-                    border: solid #aaa;
-                    border-width: 2px 0 0 2px;
-                  "
-                ></div>
-                <div style="width: 9px; height: 51px;"></div>
-              </div>
-            </div>
-            <div
-              class="bracket-column bracket-column-matches"
-              style="width: 150px;"
-            >
-              <div style="height: 40px; margin-top: 0px;">
-                <div class="bracket-header">Round 2</div>
-              </div>
-              <div class="bracket-game">
-                <div class="icon" style="margin-top: 66px; right: 16px;" />
-                <div class="bracket-cell-r2" style="">
-                  <div
-                    class="bracket-player-top"
-                    style="padding-right: 23px; cursor: pointer;"
-                    title="Click for further information"
-                    data-highlightingkey=""
-                  >
-                    &nbsp; &nbsp;
-                    <span style="vertical-align: -1px;" />
-                    <div class="bracket-score" style="width: 21px;" />
-                  </div>
-                </div>
-                <div
-                  class="bracket-popup-wrapper bracket-popup-player"
-                  style="margin-left: 150px;"
-                >
-                  <div class="bracket-popup">
-                    <div class="bracket-popup-header">
-                      <div class="bracket-popup-header-left">
-                        TBD&nbsp;
-                        <span class="race-icon-small">
-                          <a href="/warcraft/TBD" title="TBD"></a>
-                        </span>
-                      </div>
-                      <div class="bracket-popup-header-right">
-                        <span class="race-icon-small">
-                          <a href="/warcraft/TBD" title="TBD"></a>
-                        </span>
-                        &nbsp;TBD
-                      </div>
-                    </div>
-                    <div class="bracket-popup-body">
-                      <div class="bracket-popup-body-time">
-                        <span class="timer-object" data-timestamp="1598796000">
-                          <span class="timer-object-date">
-                            August 30, 2020 - 17:00
-                            <abbr
-                              data-tz="+3:00"
-                              title="Eastern European Summer Time (UTC+3)"
-                            >
-                              EEST
-                            </abbr>
-                          </span>
-                          <br class="timer-object-separator" />
-                          <span class="timer-object-countdown">
-                            <span class="timer-object-countdown-time">
-                              1d 1h 57m
-                            </span>
-                          </span>
-                        </span>
-                      </div>
+                    <div
+                      v-bind:class="getClass(player, playerIndex)"
+                      style="padding-right: 23px; cursor: pointer;"
+                    >
+                      &nbsp; &nbsp;
+                      <span style="vertical-align: -1px;">
+                        {{ player.name }}
+                      </span>
+                      <div class="bracket-score" style="width: 21px;" />
                     </div>
                   </div>
                 </div>
-                <div class="bracket-cell-r1" style="">
-                  <div
-                    class="bracket-player-bottom"
-                    style="padding-right: 23px; cursor: pointer;"
-                    title="Click for further information"
-                    data-highlightingkey=""
-                  >
-                    &nbsp;&nbsp;
-                    <span style="vertical-align: -1px;" />
-                    <div class="bracket-score" style="width: 21px;" />
-                  </div>
-                </div>
               </div>
-              <div class="bracket-game">
-                <div class="icon" style="margin-top: 66px; right: 16px;" />
-                <div class="bracket-cell-r2" style="">
-                  <div
-                    class="bracket-player-top"
-                    style="padding-right: 23px; cursor: pointer;"
-                    title="Click for further information"
-                    data-highlightingkey=""
-                  >
-                    &nbsp; &nbsp;
-                    <span style="vertical-align: -1px;" />
-                    <div class="bracket-score" style="width: 21px;" />
-                  </div>
-                </div>
-                <div
-                  class="bracket-popup-wrapper bracket-popup-player"
-                  style="margin-left: 150px;"
-                >
-                  <div class="bracket-popup">
-                    <div class="bracket-popup-header">
-                      <div class="bracket-popup-header-left">
-                        TBD&nbsp;
-                        <span class="race-icon-small">
-                          <a href="/warcraft/TBD" title="TBD"></a>
-                        </span>
-                      </div>
-                      <div class="bracket-popup-header-right">
-                        <span class="race-icon-small">
-                          <a href="/warcraft/TBD" title="TBD"></a>
-                        </span>
-                        &nbsp;TBD
-                      </div>
-                    </div>
-                    <div class="bracket-popup-body">
-                      <div class="bracket-popup-body-time">
-                        <span class="timer-object" data-timestamp="1598796000">
-                          <span class="timer-object-date">
-                            August 30, 2020 - 17:00
-                            <abbr
-                              data-tz="+3:00"
-                              title="Eastern European Summer Time (UTC+3)"
-                            >
-                              EEST
-                            </abbr>
-                          </span>
-                          <br class="timer-object-separator" />
-                          <span class="timer-object-countdown">
-                            <span class="timer-object-countdown-time">
-                              1d 1h 57m
-                            </span>
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="bracket-cell-r1" style="">
-                  <div
-                    class="bracket-player-bottom"
-                    style="padding-right: 23px; cursor: pointer;"
-                    title="Click for further information"
-                    data-highlightingkey=""
-                  >
-                    &nbsp;&nbsp;
-                    <span style="vertical-align: -1px;" />
-                    <div class="bracket-score" style="width: 21px;" />
-                  </div>
-                </div>
-              </div>
-              <p>
-                <br />
-              </p>
+              <tournamentRoundConnector
+                :round="round.round"
+                :totalRounds="tournament.winnerBracketRounds.length"
+                :matchesInRound="round.matches.length"
+              ></tournamentRoundConnector>
             </div>
             <div style="clear: left;"></div>
           </div>
@@ -247,30 +61,21 @@ import { Component, Prop } from "vue-property-decorator";
 import {
   ITournamentPlayer,
   ITournamentMatch,
+  ITournamentRound,
+  ITournament,
 } from "../store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
+import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
+import { matches } from "lodash";
 
 @Component({
-  components: {},
+  components: {
+    TournamentRoundConnector,
+  },
 })
 export default class TournamentsView extends Vue {
-  get players() {
-    const result: ITournamentPlayer[] = [
-      { name: "Happy", race: ERaceEnum.UNDEAD },
-      { name: "DemusliM", race: ERaceEnum.HUMAN },
-      { name: "Grubby", race: ERaceEnum.ORC },
-      { name: "Vortix", race: ERaceEnum.UNDEAD },
-      { name: "Blade", race: ERaceEnum.HUMAN },
-      { name: "Wan", race: ERaceEnum.UNDEAD },
-      { name: "Xlord", race: ERaceEnum.UNDEAD },
-      { name: "Sonik", race: ERaceEnum.NIGHT_ELF },
-    ];
-
-    return result;
-  }
-
-  get matches() {
-    const result: ITournamentMatch[] = [
+  get tournament() {
+    const round1: ITournamentMatch[] = [
       {
         players: [
           { name: "Happy", race: ERaceEnum.UNDEAD },
@@ -297,28 +102,74 @@ export default class TournamentsView extends Vue {
       },
     ];
 
+    const round2: ITournamentMatch[] = [
+      {
+        players: [
+          { name: "", race: 0 },
+          { name: "", race: 0 },
+        ],
+      },
+      {
+        players: [
+          { name: "", race: 0 },
+          { name: "", race: 0 },
+        ],
+      },
+    ];
+
+    const round3: ITournamentMatch[] = [
+      {
+        players: [
+          { name: "", race: 0 },
+          { name: "", race: 0 },
+        ],
+      },
+    ];
+
+    const result: ITournament = {
+      winnerBracketRounds: [
+        {
+          round: 1,
+          matches: round1,
+        },
+        {
+          round: 2,
+          matches: round2,
+        },
+        {
+          round: 3,
+          matches: round3
+        }
+      ],
+    };
+
     return result;
   }
 
   getClass(player: ITournamentPlayer, index: number) {
-      return {
-          'bracket-player-top': index == 0,
-          'bracket-player-bottom': index == 1,
-          'bracket-human': player.race == ERaceEnum.HUMAN,
-          'bracket-orc': player.race == ERaceEnum.ORC,
-          'bracket-ud': player.race == ERaceEnum.UNDEAD,
-          'bracket-elf': player.race == ERaceEnum.NIGHT_ELF,
-      }
+    return {
+      "bracket-player-top": index == 0,
+      "bracket-player-bottom": index == 1,
+      "bracket-human": player.race == ERaceEnum.HUMAN,
+      "bracket-orc": player.race == ERaceEnum.ORC,
+      "bracket-ud": player.race == ERaceEnum.UNDEAD,
+      "bracket-elf": player.race == ERaceEnum.NIGHT_ELF,
+    };
+  }
+
+  getBracketCellClass(round: ITournamentRound) {
+    return `bracket-cell-r${round.round}`;
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 .bracket-wrapper {
   min-height: 0.01%;
   pointer-events: auto;
   overflow-x: auto;
   padding-bottom: 15px;
+  box-sizing: content-box;
 }
 
 .bracket-scroller {
@@ -337,10 +188,6 @@ export default class TournamentsView extends Vue {
 .bracket-column {
   float: left;
   position: relative;
-}
-
-.bracket-column:not(.bracket-column-matches) {
-  margin-left: -0.1px;
 }
 
 .bracket-header {
@@ -471,6 +318,10 @@ export default class TournamentsView extends Vue {
 
 .bracket-cell-r2 {
   height: 72px;
+}
+
+.bracket-cell-r3 {
+    height: 144px;
 }
 
 .bracket-elf {
