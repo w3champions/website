@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mt-2 filter-blur" tile>
       <v-card-title class="search-bar">
-        Season 2 Europe W3Champions Tournament
+        Season 2 Europe Tournament
       </v-card-title>
       <div class="pl-4 filter-blur">
         <p>Winner bracket</p>
