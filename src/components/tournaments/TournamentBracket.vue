@@ -1,7 +1,7 @@
 <template>
   <div class="bracket-wrapper bracket-player">
     <div class="bracket-scroller">
-      <div style="width: 100%;" class="bracket bracket-width-2col-20" v-if="bracketRoundsWithDimensions">
+      <div style="width:100%" class="bracket bracket-width-2col-20" v-if="bracketRoundsWithDimensions">
         <div v-for="(round, roundIndex) in bracketRounds" :key="round.round">
           <div
             class="bracket-column bracket-column-matches"
