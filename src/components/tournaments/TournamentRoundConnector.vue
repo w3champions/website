@@ -52,6 +52,7 @@ import {
   ConnectionType,
 } from "../../store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
+import router from '@/router';
 
 @Component({
   components: {},
@@ -84,22 +85,23 @@ export default class TournamentRoundConnector extends Vue {
     );
   }
 
-  get isPrevStraight() {
-    return this.round.connectionType == ConnectionType.StraightOpen;
-  }
-
   getOffsetLeftStyles(connection: number) {
     let height = "0px";
 
-    if (this.round.round == 1) {
+    if (this.isStraight) {
+      return { height };
+    }
+    
+    if (this.round.dimensions) {
       if (connection == 1) {
-        height = "75px";
-      } else if (connection == 2) {
-        height = "37px";
-      }
-    } else if (this.round.round == 2) {
-      if (connection == 1) {
-        height = "111px";
+        height =
+          (this.round.dimensions?.headerHeight) +
+          this.round.dimensions?.cellHeight +
+          - 1 +
+          "px";
+          
+      } else {
+        height = this.round.dimensions?.cellHeight + 1 + "px";
       }
     }
 
@@ -109,12 +111,16 @@ export default class TournamentRoundConnector extends Vue {
   getLeftStyles(connection: number) {
     let height = "0px";
 
-    if (this.round.round == 1) {
-      height = "16px";
-    } else if (this.round.round == 2) {
-      if (connection == 1) {
-        height = "52px";
-      }
+    if (this.isStraight) {
+      return { height };
+    }
+
+    if (this.round.dimensions) {
+        let roundNumber = this.round.round;
+        if (this.prevRound && this.prevRound.connectionType == ConnectionType.StraightOpen) {
+          roundNumber = this.prevRound.round;
+        }
+        height = (this.round.dimensions?.cellHeight / 2) + (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) - (2 * roundNumber)  + "px";
     }
 
     return { height };
@@ -126,8 +132,10 @@ export default class TournamentRoundConnector extends Vue {
     if (this.isStraight) {
       if (this.round.dimensions) {
         if (connection == 1) {
+          const cellHeightPart = this.round.dimensions?.cellHeight > 36 ? (this.round.dimensions?.cellHeight / 2) : 0;
+
           height =
-            this.round.dimensions?.headerHeight +
+            this.round.dimensions?.headerHeight + cellHeightPart +
             6 +
             "px";
         } else {
@@ -172,8 +180,12 @@ export default class TournamentRoundConnector extends Vue {
       return { height };
     }
 
-    if (this.round.round == 2) {
-      height = "52px";
+    if (this.round.dimensions) {
+        let roundNumber = this.round.round;
+        if (this.prevRound && this.prevRound.connectionType == ConnectionType.StraightOpen) {
+          roundNumber = this.prevRound.round;
+        }
+        height = (this.round.dimensions?.cellHeight / 2) + (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) - (2 * roundNumber)  + "px";
     }
 
     return { height };
