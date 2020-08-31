@@ -2,9 +2,15 @@
   <v-container class="tournament-page">
     <v-card class="mt-2 filter-blur">
       <v-card-title class="search-bar">
-        Season 2 Tournament
+        Season 2 Tournament 
+
       </v-card-title>
+
       <div class="pl-4 filter-blur tourney-content">
+        <div class="mb-2">
+          <a href="https://matcherino.com/tournaments/31685">Donate to Prize Pool</a>
+        </div>
+        
         <gateway-select />
 
         <div style="min-width: 800px;">
