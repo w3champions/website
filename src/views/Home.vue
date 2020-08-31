@@ -77,7 +77,7 @@
                 <br />
                 Social Media
                 <br />
-                <a href="https://twitter.com/W3Pad" target="_blank">
+                <a href="https://twitter.com/W3ChampionsTeam" target="_blank">
                   <img src="../assets/twitter.svg" height="24" />
                 </a>
                 <br />
@@ -90,7 +90,7 @@
                 <div style="margin-top: 5px;">
                   <a
                     style="margin-top: 15px;"
-                    href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
+                    href="https://www.paypal.me/w3champions"
                     target="_blank"
                   >
                     <img src="../assets/paypal.png" height="24" />
