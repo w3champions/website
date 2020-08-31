@@ -45,26 +45,26 @@ export default class TournamentsView extends Vue {
     const round1: ITournamentMatch[] = [
       {
         players: [
-          { name: "Happy", race: ERaceEnum.UNDEAD },
-          { name: "DemusliM", race: ERaceEnum.HUMAN },
+          { name: "Vortix", race: ERaceEnum.UNDEAD },
+          { name: "Sonik", race: ERaceEnum.NIGHT_ELF },
         ],
       },
       {
         players: [
           { name: "Grubby", race: ERaceEnum.ORC },
-          { name: "Vortix", race: ERaceEnum.UNDEAD },
+          { name: "Blade", race: ERaceEnum.HUMAN },
         ],
       },
       {
         players: [
-          { name: "Blade", race: ERaceEnum.HUMAN },
+          { name: "DeMusliM", race: ERaceEnum.HUMAN },
           { name: "Wan", race: ERaceEnum.UNDEAD },
         ],
       },
       {
         players: [
+          { name: "Happy", race: ERaceEnum.UNDEAD },
           { name: "Xlord", race: ERaceEnum.UNDEAD },
-          { name: "Sonik", race: ERaceEnum.NIGHT_ELF },
         ],
       },
     ];
@@ -85,6 +85,15 @@ export default class TournamentsView extends Vue {
     ];
 
     const round3: ITournamentMatch[] = [
+      {
+        players: [
+          { name: "", race: 0 },
+          { name: "", race: 0 },
+        ],
+      },
+    ];
+
+    const final: ITournamentMatch[] = [
       {
         players: [
           { name: "", race: 0 },
@@ -144,34 +153,47 @@ export default class TournamentsView extends Vue {
     const result: ITournament = {
       winnerBracketRounds: [
         {
+          name: 'Round of 8',
           round: 1,
           matches: round1,
         },
         {
+          name: 'Round of 4',
           round: 2,
           matches: round2,
         },
         {
+          name: 'Semi final',
           round: 3,
           matches: round3,
+          connectionType: ConnectionType.StraightOpenDown
+        },
+        {
+          name: 'Final',
+          round: 4,
+          matches: final,
         },
       ],
       loserBracketRounds: [
         {
+          name: 'Losers R1',
           round: 1,
           matches: loserRound1,
           connectionType: ConnectionType.StraightOpen
         },
         {
+          name: 'Losers R2',
           round: 2,
           matches: loserRound2,
         },
         {
+          name: 'Losers R3',
           round: 3,
           matches: loserRound3,
           connectionType: ConnectionType.StraightOpen
         },
         {
+          name: 'Losers Final',
           round: 4,
           matches: loserRound4
         }

@@ -2,7 +2,8 @@ import { ERaceEnum } from '../typings';
 
 export enum ConnectionType {
     Default = 1,
-    StraightOpen = 2
+    StraightOpen = 2,
+    StraightOpenDown = 3
 }
 
 export interface ITournamentPlayer {
@@ -15,6 +16,7 @@ export interface ITournamentMatch {
 }
 
 export interface ITournamentRound {
+    name: string;
     round: number;
     matches: ITournamentMatch[],
     connectionType?: ConnectionType;

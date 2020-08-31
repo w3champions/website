@@ -13,11 +13,12 @@
         ></div>
         <div
           v-if="!isStraight"
-          class="connector-left"
           v-bind:style="getLeftStyles(connection)"
+          v-bind:class="getLeftClass(connection)"
         ></div>
         <div v-if="!isStraight" class="offset-between-left"></div>
         <div
+          v-if="!isStraightDown"
           v-bind:class="getBottomLeftClass()"
           v-bind:style="getHeightConnectorBottomLeft(connection)"
         ></div>
@@ -28,7 +29,7 @@
           class="offset-right"
           v-bind:style="getOffsetRightHeight(connection)"
         ></div>
-        <div class="connector-right"></div>
+        <div v-bind:class="getRightClass()"></div>
         <div
           v-bind:style="getOffsetBetweenRightStyles()"
           class="offset-between-right"
@@ -52,7 +53,7 @@ import {
   ConnectionType,
 } from "../../store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
-import router from '@/router';
+import router from "@/router";
 
 @Component({
   components: {},
@@ -85,21 +86,27 @@ export default class TournamentRoundConnector extends Vue {
     );
   }
 
+  get isStraightDown() {
+    return (
+      this.round.connectionType &&
+      this.round.connectionType == ConnectionType.StraightOpenDown
+    );
+  }
+
   getOffsetLeftStyles(connection: number) {
     let height = "0px";
 
     if (this.isStraight) {
       return { height };
     }
-    
+
     if (this.round.dimensions) {
       if (connection == 1) {
         height =
-          (this.round.dimensions?.headerHeight) +
+          this.round.dimensions?.headerHeight +
           this.round.dimensions?.cellHeight +
-          - 1 +
+          -1 +
           "px";
-          
       } else {
         height = this.round.dimensions?.cellHeight + 1 + "px";
       }
@@ -116,14 +123,37 @@ export default class TournamentRoundConnector extends Vue {
     }
 
     if (this.round.dimensions) {
-        let roundNumber = this.round.round;
-        if (this.prevRound && this.prevRound.connectionType == ConnectionType.StraightOpen) {
-          roundNumber = this.prevRound.round;
-        }
-        height = (this.round.dimensions?.cellHeight / 2) + (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) - (2 * roundNumber)  + "px";
+      let roundNumber = this.round.round;
+      if (
+        this.prevRound &&
+        this.prevRound.connectionType == ConnectionType.StraightOpen
+      ) {
+        roundNumber = this.prevRound.round;
+      }
+      height =
+        this.round.dimensions?.cellHeight / 2 +
+        (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) -
+        2 * roundNumber +
+        "px";
     }
 
     return { height };
+  }
+
+  getLeftClass(connection: number) {
+    if (this.round.connectionType == ConnectionType.StraightOpenDown) {
+      return "connector-left-straight";
+    }
+
+    return "connector-left";
+  }
+
+  getRightClass() {
+    if (this.round.connectionType == ConnectionType.StraightOpenDown) {
+      return "connector-right-straight";
+    }
+
+    return "connector-right";
   }
 
   getOffsetRightHeight(connection: number) {
@@ -132,12 +162,13 @@ export default class TournamentRoundConnector extends Vue {
     if (this.isStraight) {
       if (this.round.dimensions) {
         if (connection == 1) {
-          const cellHeightPart = this.round.dimensions?.cellHeight > 36 ? (this.round.dimensions?.cellHeight / 2) : 0;
+          const cellHeightPart =
+            this.round.dimensions?.cellHeight > 36
+              ? this.round.dimensions?.cellHeight / 2
+              : 0;
 
           height =
-            this.round.dimensions?.headerHeight + cellHeightPart +
-            6 +
-            "px";
+            this.round.dimensions?.headerHeight + cellHeightPart + 6 + "px";
         } else {
           height = this.round.dimensions?.cellHeight + 5 + "px";
         }
@@ -145,15 +176,30 @@ export default class TournamentRoundConnector extends Vue {
       return { height };
     }
 
+    if (this.isStraightDown) {
+      if (this.round.dimensions) {
+        if (connection == 1) {
+          const cellHeightPart =
+            this.round.dimensions?.cellHeight > 36
+              ? this.round.dimensions?.cellHeight - 13
+              : 0;
+
+          height =
+            this.round.dimensions?.headerHeight + cellHeightPart + 6 + "px";
+        } else {
+          height = this.round.dimensions?.cellHeight + 5 + "px";
+        }
+      }
+      return { height };
+    }
 
     if (this.round.dimensions) {
       if (connection == 1) {
         height =
-          (this.round.dimensions?.headerHeight / 2) +
+          this.round.dimensions?.headerHeight / 2 +
           this.round.dimensions?.cellHeight * 2 +
-          + 1 +
+          +1 +
           "px";
-          
       } else {
         height = this.round.dimensions?.cellHeight + 19 + "px";
       }
@@ -181,11 +227,18 @@ export default class TournamentRoundConnector extends Vue {
     }
 
     if (this.round.dimensions) {
-        let roundNumber = this.round.round;
-        if (this.prevRound && this.prevRound.connectionType == ConnectionType.StraightOpen) {
-          roundNumber = this.prevRound.round;
-        }
-        height = (this.round.dimensions?.cellHeight / 2) + (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) - (2 * roundNumber)  + "px";
+      let roundNumber = this.round.round;
+      if (
+        this.prevRound &&
+        this.prevRound.connectionType == ConnectionType.StraightOpen
+      ) {
+        roundNumber = this.prevRound.round;
+      }
+      height =
+        this.round.dimensions?.cellHeight / 2 +
+        (this.round.dimensions?.headerHeight / 2) * (roundNumber - 1) -
+        2 * roundNumber +
+        "px";
     }
 
     return { height };
@@ -241,12 +294,25 @@ export default class TournamentRoundConnector extends Vue {
   border-width: 2px 2px 0 0;
 }
 
+.connector-left-straight {
+  width: 9px;
+  border: solid #aaa;
+  border-width: 2px 0 0 0;
+}
+
 .connector-right {
   width: 9px;
   height: 6px;
   border-bottom-left-radius: 3px;
   border: solid #aaa;
   border-width: 0 0 2px 2px;
+}
+
+.connector-right-straight {
+  width: 11px;
+  height: 6px;
+  border: solid #aaa;
+  border-width: 0 0 2px 0px;
 }
 
 .connector-bottom-left {

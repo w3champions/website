@@ -8,7 +8,7 @@
             style="width: 150px;"
           >
             <div style="margin-top: 0px;" v-bind:style="`height: ${round.dimensions.headerHeight}px`">
-              <div class="bracket-header">Round {{ round.round }}</div>
+              <div class="bracket-header">{{ round.name }}</div>
             </div>
             <div
               class="bracket-game"
@@ -113,7 +113,7 @@ export default class TournamentBracket extends Vue {
     if (prevRound) {
         previousHeight = prevRound?.dimensions?.cellHeight || 18;
 
-        if (prevRound.connectionType == ConnectionType.StraightOpen) {
+        if (prevRound.connectionType == ConnectionType.StraightOpen || prevRound.connectionType == ConnectionType.StraightOpenDown) {
           multiplier = 1;
         }
     }
@@ -125,6 +125,10 @@ export default class TournamentBracket extends Vue {
     let height = 40;
     if ((prevRound || round).connectionType === ConnectionType.StraightOpen) {
         height = (64 - (round.round -1) * 12);
+    }
+
+    if (prevRound && prevRound.connectionType === ConnectionType.StraightOpenDown) {
+        height = (prevRound.dimensions?.headerHeight || 0) + 12;
     }
 
     return height;
