@@ -1,46 +1,40 @@
 <template>
-  <div class="bracket-column" style="width: 20px;" v-if="round < totalRounds">
+  <div
+    class="bracket-column"
+    style="width: 20px;"
+    v-if="round && round.round < totalRounds"
+  >
     <div v-for="connection in numberOfConnectors" :key="connection">
       <div class="connector-element">
         <div
+          v-if="!isStraight"
           class="offset-left"
-          v-bind:style="getOffsetHeightConnectorOne(connection)"
+          v-bind:style="getOffsetLeftStyles(connection)"
         ></div>
         <div
+          v-if="!isStraight"
           class="connector-left"
-          v-bind:style="getHeightConnectorOne(connection)"
+          v-bind:style="getLeftStyles(connection)"
         ></div>
-        <div style="width: 9px; height: 38px;"></div>
+        <div v-if="!isStraight" class="offset-between-left"></div>
         <div
-          style="
-            width: 9px;
-            height: 16px;
-            border-bottom-right-radius: 3px;
-            border: solid #aaa;
-            border-width: 0 2px 2px 0;
-          "
+          v-bind:class="getBottomLeftClass()"
+          v-bind:style="getHeightConnectorBottomLeft(connection)"
         ></div>
-        <div style="width: 9px; height: 33px;"></div>
+        <div v-if="!isStraight" class="offset-bottom-left"></div>
       </div>
       <div class="connector-element">
         <div
           class="offset-right"
-          v-bind:style="getOffsetHeightConnectorTwo(connection)"
+          v-bind:style="getOffsetRightHeight(connection)"
         ></div>
+        <div class="connector-right"></div>
         <div
-          class="connector-right"
+          v-bind:style="getOffsetBetweenRightStyles()"
+          class="offset-between-right"
         ></div>
-        <div style="width: 9px; height: 22px;"></div>
-        <div
-          style="
-            width: 9px;
-            height: 6px;
-            border-top-left-radius: 3px;
-            border: solid #aaa;
-            border-width: 2px 0 0 2px;
-          "
-        ></div>
-        <div style="width: 9px; height: 51px;"></div>
+        <div v-bind:class="getBottomRightClass()"></div>
+        <div v-if="!isStraight" class="offset-bottom-right"></div>
       </div>
       <div style="clear: left;"></div>
     </div>
@@ -55,6 +49,7 @@ import {
   ITournamentMatch,
   ITournamentRound,
   ITournament,
+  ConnectionType,
 } from "../../store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
 
@@ -62,24 +57,47 @@ import { ERaceEnum } from "@/store/typings";
   components: {},
 })
 export default class TournamentRoundConnector extends Vue {
-  @Prop() round!: number;
+  @Prop() round!: ITournamentRound;
+  @Prop() prevRound!: ITournamentRound;
   @Prop() matchesInRound!: number;
   @Prop() totalRounds!: number;
 
   get numberOfConnectors() {
-    return this.matchesInRound / 2;
+    let connections = this.matchesInRound;
+
+    if (!this.isStraight) {
+      connections = this.matchesInRound / 2;
+    }
+
+    const result = [];
+    for (let index = 0; index < connections; index++) {
+      result.push(index + 1);
+    }
+
+    return result;
   }
 
-  getOffsetHeightConnectorOne(connection: number) {
+  get isStraight() {
+    return (
+      this.round.connectionType &&
+      this.round.connectionType == ConnectionType.StraightOpen
+    );
+  }
+
+  get isPrevStraight() {
+    return this.round.connectionType == ConnectionType.StraightOpen;
+  }
+
+  getOffsetLeftStyles(connection: number) {
     let height = "0px";
 
-    if (this.round == 1) {
+    if (this.round.round == 1) {
       if (connection == 1) {
         height = "75px";
       } else if (connection == 2) {
         height = "37px";
       }
-    } else if (this.round == 2) {
+    } else if (this.round.round == 2) {
       if (connection == 1) {
         height = "111px";
       }
@@ -88,12 +106,12 @@ export default class TournamentRoundConnector extends Vue {
     return { height };
   }
 
-  getHeightConnectorOne(connection: number) {
+  getLeftStyles(connection: number) {
     let height = "0px";
 
-    if (this.round == 1) {
+    if (this.round.round == 1) {
       height = "16px";
-    } else if (this.round == 2) {
+    } else if (this.round.round == 2) {
       if (connection == 1) {
         height = "52px";
       }
@@ -102,62 +120,172 @@ export default class TournamentRoundConnector extends Vue {
     return { height };
   }
 
-  getOffsetHeightConnectorTwo(connection: number) {
+  getOffsetRightHeight(connection: number) {
     let height = "0px";
 
-    if (this.round == 1) {
-      if (connection == 1) {
-        height = "93px";
-      } else if (connection == 2) {
-        height = "55px";
+    if (this.isStraight) {
+      if (this.round.dimensions) {
+        if (connection == 1) {
+          height =
+            this.round.dimensions?.headerHeight +
+            6 +
+            "px";
+        } else {
+          height = this.round.dimensions?.cellHeight + 5 + "px";
+        }
       }
-    } else if (this.round == 2) {
+      return { height };
+    }
+
+
+    if (this.round.dimensions) {
       if (connection == 1) {
-        height = "165px";
+        height =
+          (this.round.dimensions?.headerHeight / 2) +
+          this.round.dimensions?.cellHeight * 2 +
+          + 1 +
+          "px";
+          
+      } else {
+        height = this.round.dimensions?.cellHeight + 19 + "px";
       }
     }
 
     return { height };
   }
 
-  getHeightConnectorTwo(connection: number) {
-    let height = "0px";
+  getHeightConnectorBottomLeft(connection: number) {
+    let height = "16px";
 
-    if (this.round == 1) {
-      height = "51px";
-    } else if (this.round == 2) {
-      if (connection == 1) {
-        height = "52px";
+    if (this.isStraight) {
+      if (this.round.dimensions) {
+        if (connection == 1) {
+          height =
+            this.round.dimensions?.headerHeight +
+            this.round.dimensions?.cellHeight -
+            1 +
+            "px";
+        } else {
+          height = this.round.dimensions?.cellHeight + 34 + "px";
+        }
       }
+      return { height };
+    }
+
+    if (this.round.round == 2) {
+      height = "52px";
     }
 
     return { height };
+  }
+
+  getOffsetBetweenRightStyles() {
+    let height = "22px";
+
+    if (this.isStraight) {
+      height = "0";
+      return { height };
+    }
+
+    return { height };
+  }
+
+  getBottomLeftClass() {
+    if (this.round.connectionType == ConnectionType.StraightOpen) {
+      return "connector-bottom-left-straight";
+    }
+
+    return "connector-bottom-left";
+  }
+
+  getBottomRightClass() {
+    if (this.round.connectionType == ConnectionType.StraightOpen) {
+      return "connector-bottom-right-straight";
+    }
+
+    return "connector-bottom-right";
   }
 }
 </script>
 
 <style lang="scss" scoped>
-    .connector-element {
-        float: left; 
-        width: 9px;
-    }
+*,
+::before,
+::after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
 
-    .connector-left {
-        width: 9px;
-        border-top-right-radius: 3px;
-        border: solid #aaa;
-        border-width: 2px 2px 0 0;
-    }
+.connector-element {
+  float: left;
+  width: 9px;
+  box-sizing: content-box;
+}
 
-    .connector-right {
-        width: 9px;
-        height: 6px;
-        border-bottom-left-radius: 3px;
-        border: solid #aaa;
-        border-width: 0 0 2px 2px;
-    }
+.connector-left {
+  width: 9px;
+  border-top-right-radius: 3px;
+  border: solid #aaa;
+  border-width: 2px 2px 0 0;
+}
 
-    .offset-left, .offset-right {
-        width: 9px;
-    }
+.connector-right {
+  width: 9px;
+  height: 6px;
+  border-bottom-left-radius: 3px;
+  border: solid #aaa;
+  border-width: 0 0 2px 2px;
+}
+
+.connector-bottom-left {
+  width: 9px;
+  height: 16px;
+  border-bottom-right-radius: 3px;
+  border: solid #aaa;
+  border-width: 0 2px 2px 0;
+}
+
+.connector-bottom-left-straight {
+  width: 9px;
+  border-bottom: solid #aaa 2px;
+}
+
+.connector-bottom-right {
+  width: 9px;
+  height: 6px;
+  border-top-left-radius: 3px;
+  border: solid #aaa;
+  border-width: 2px 0 0 2px;
+}
+
+.connector-bottom-right-straight {
+  width: 11px;
+  height: 21px;
+  border-bottom: solid #aaa 2px;
+}
+
+.offset-left,
+.offset-right {
+  width: 9px;
+}
+
+.offset-between-right {
+  width: 9px;
+  height: 22px;
+}
+
+.offset-between-left {
+  width: 9px;
+  height: 38px;
+}
+
+.offset-bottom-left {
+  width: 9px;
+  height: 33px;
+}
+
+.offset-bottom-right {
+  width: 9px;
+  height: 51px;
+}
 </style>
