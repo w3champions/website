@@ -1,13 +1,21 @@
 <template>
   <div class="bracket-wrapper bracket-player">
     <div class="bracket-scroller">
-      <div style="width:100%" class="bracket bracket-width-2col-20" v-if="bracketRoundsWithDimensions">
-        <div v-for="(round, roundIndex) in bracketRounds" :key="round.round">
+      <div
+        style="width: 100%;"
+        class="bracket bracket-width-2col-20"
+        v-if="bracketRoundsWithDimensions"
+      >
+        <template v-for="(round, roundIndex) in bracketRounds">
           <div
+            :key="round.round"
             class="bracket-column bracket-column-matches"
             style="width: 150px;"
           >
-            <div style="margin-top: 0px;" v-bind:style="`height: ${round.dimensions.headerHeight}px`">
+            <div
+              style="margin-top: 0px;"
+              v-bind:style="`height: ${round.dimensions.headerHeight}px`"
+            >
               <div class="bracket-header">{{ round.name }}</div>
             </div>
             <div
@@ -25,8 +33,16 @@
                   v-bind:class="getClass(player, playerIndex)"
                   style="padding-right: 23px; cursor: pointer;"
                 >
-                  &nbsp; &nbsp;
-                  <span style="vertical-align: -1px;">
+                  <div
+                    class="country-flag__container"
+                  >
+                    <country-flag-extended
+                      class="country-flag"
+                      :location="player.countryCode"
+                      size="small"
+                    />
+                  </div>
+                  <span style="vertical-align: -1px; padding-left:3px">
                     {{ player.name }}
                   </span>
                   <div class="bracket-score" style="width: 21px;" />
@@ -35,12 +51,13 @@
             </div>
           </div>
           <tournamentRoundConnector
+            :key="`conn${round.round}`"
             :round="round"
-            :prevRound="bracketRounds[roundIndex -1]"
+            :prevRound="bracketRounds[roundIndex - 1]"
             :totalRounds="totalRounds"
             :matchesInRound="round.matches.length"
           ></tournamentRoundConnector>
-        </div>
+        </template>
         <div style="clear: left;"></div>
       </div>
     </div>
@@ -59,12 +76,12 @@ import {
 } from "../../store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
-import { add } from 'lodash';
-import router from '@/router';
+import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 
 @Component({
   components: {
     TournamentRoundConnector,
+    CountryFlagExtended,
   },
 })
 export default class TournamentBracket extends Vue {
@@ -79,16 +96,21 @@ export default class TournamentBracket extends Vue {
   }
 
   get bracketRoundsWithDimensions() {
-
     for (let index = 0; index < this.bracketRounds.length; index++) {
       const round = this.bracketRounds[index];
       const prevRound = this.bracketRounds[index - 1];
-      
-      round.dimensions = round.dimensions || {} as any;
+
+      round.dimensions = round.dimensions || ({} as any);
 
       if (round.dimensions) {
-       round.dimensions.headerHeight = this.calculateHeaderHeight(round, prevRound);
-       round.dimensions.cellHeight = this.calculateCellHeight(round, prevRound);
+        round.dimensions.headerHeight = this.calculateHeaderHeight(
+          round,
+          prevRound
+        );
+        round.dimensions.cellHeight = this.calculateCellHeight(
+          round,
+          prevRound
+        );
       }
     }
 
@@ -106,29 +128,41 @@ export default class TournamentBracket extends Vue {
     };
   }
 
-  private calculateCellHeight(round: ITournamentRound, prevRound: ITournamentRound) {
+  private calculateCellHeight(
+    round: ITournamentRound,
+    prevRound: ITournamentRound
+  ) {
     let previousHeight = 18;
     let multiplier = 2;
-    
-    if (prevRound) {
-        previousHeight = prevRound?.dimensions?.cellHeight || 18;
 
-        if (prevRound.connectionType == ConnectionType.StraightOpen || prevRound.connectionType == ConnectionType.StraightOpenDown) {
-          multiplier = 1;
-        }
+    if (prevRound) {
+      previousHeight = prevRound?.dimensions?.cellHeight || 18;
+
+      if (
+        prevRound.connectionType == ConnectionType.StraightOpen ||
+        prevRound.connectionType == ConnectionType.StraightOpenDown
+      ) {
+        multiplier = 1;
+      }
     }
 
     return previousHeight * multiplier;
   }
 
-  private calculateHeaderHeight(round: ITournamentRound, prevRound: ITournamentRound) {
+  private calculateHeaderHeight(
+    round: ITournamentRound,
+    prevRound: ITournamentRound
+  ) {
     let height = 40;
     if ((prevRound || round).connectionType === ConnectionType.StraightOpen) {
-        height = (64 - (round.round -1) * 12);
+      height = 64 - (round.round - 1) * 12;
     }
 
-    if (prevRound && prevRound.connectionType === ConnectionType.StraightOpenDown) {
-        height = (prevRound.dimensions?.headerHeight || 0) + 12;
+    if (
+      prevRound &&
+      prevRound.connectionType === ConnectionType.StraightOpenDown
+    ) {
+      height = (prevRound.dimensions?.headerHeight || 0) + 12;
     }
 
     return height;
@@ -137,17 +171,11 @@ export default class TournamentBracket extends Vue {
 </script>
 
 <style lang="scss">
-
 .bracket-wrapper {
   min-height: 0.01%;
   pointer-events: auto;
-  overflow-x: auto;
   padding-bottom: 15px;
   box-sizing: content-box;
-}
-
-.bracket-scroller {
-  pointer-events: none;
 }
 
 .bracket {
@@ -258,20 +286,6 @@ export default class TournamentBracket extends Vue {
   bottom: 0;
 }
 
-.bracket-game .flag img {
-  vertical-align: middle;
-  width: 18px;
-  height: 12px;
-  image-rendering: -webkit-optimize-contrast;
-}
-
-.flag img {
-  width: 18px;
-  height: 12px;
-  vertical-align: middle;
-  image-rendering: -webkit-optimize-contrast;
-}
-
 .wiki-warcraft .bracket-popup-wrapper.bracket-popup-player {
   width: 320px;
 }
@@ -301,5 +315,18 @@ export default class TournamentBracket extends Vue {
 
 .bracket-ud {
   background: rgb(242, 184, 242);
+}
+
+.bracket-wrapper .country-flag__container {
+  position: relative;
+  width: 15px;
+  height: 10px;
+  display: inline-block;
+}
+
+.bracket-wrapper .country-flag {
+  position: absolute;
+    left: -22px;
+    top: -13px;
 }
 </style>

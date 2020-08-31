@@ -7,15 +7,17 @@
       <div class="pl-4 filter-blur tourney-content">
         <gateway-select />
 
-        <p class="mt-4">Winner bracket</p>
-        <tournamentBracket
-          :bracketRounds="tournament.winnerBracketRounds"
-        ></tournamentBracket>
+        <div style="min-width: 800px;">
+          <p class="mt-4">Winner bracket</p>
+          <tournamentBracket
+            :bracketRounds="tournament.winnerBracketRounds"
+          ></tournamentBracket>
 
-        <p>Losers bracket</p>
-        <tournamentBracket
-          :bracketRounds="tournament.loserBracketRounds"
-        ></tournamentBracket>
+          <p>Losers bracket</p>
+          <tournamentBracket
+            :bracketRounds="tournament.loserBracketRounds"
+          ></tournamentBracket>
+        </div>
       </div>
     </v-card>
   </v-container>
@@ -63,26 +65,26 @@ export default class TournamentsView extends Vue {
     const round1: ITournamentMatch[] = [
       {
         players: [
-          { name: "Vortix", race: ERaceEnum.UNDEAD },
-          { name: "Sonik", race: ERaceEnum.NIGHT_ELF },
+          { name: "VortiX", race: ERaceEnum.UNDEAD, countryCode: 'ES' },
+          { name: "Sonik", race: ERaceEnum.NIGHT_ELF, countryCode: 'UA' },
         ],
       },
       {
         players: [
-          { name: "Grubby", race: ERaceEnum.ORC },
-          { name: "Blade", race: ERaceEnum.HUMAN },
+          { name: "Grubby", race: ERaceEnum.ORC, countryCode: 'NL' },
+          { name: "Blade", race: ERaceEnum.HUMAN, countryCode: 'MD' },
         ],
       },
       {
         players: [
-          { name: "DeMusliM", race: ERaceEnum.HUMAN },
-          { name: "Wan", race: ERaceEnum.UNDEAD },
+          { name: "DeMusliM", race: ERaceEnum.HUMAN, countryCode: 'UK' },
+          { name: "WaN", race: ERaceEnum.UNDEAD, countryCode: 'DE' },
         ],
       },
       {
         players: [
-          { name: "Happy", race: ERaceEnum.UNDEAD },
-          { name: "Xlord", race: ERaceEnum.UNDEAD },
+          { name: "Happy", race: ERaceEnum.UNDEAD, countryCode: 'RU' },
+          { name: "XlorD", race: ERaceEnum.UNDEAD, countryCode: 'DE' },
         ],
       },
     ];
@@ -225,26 +227,26 @@ export default class TournamentsView extends Vue {
     const round1: ITournamentMatch[] = [
       {
         players: [
-          { name: "SaysO", race: ERaceEnum.UNDEAD },
-          { name: "KingDeuce", race: ERaceEnum.UNDEAD },
+          { name: "SaysO", race: ERaceEnum.UNDEAD, countryCode: 'NZ' },
+          { name: "Kingdeuce", race: ERaceEnum.UNDEAD, countryCode: 'CA' },
         ],
       },
       {
         players: [
-          { name: "Hitman", race: ERaceEnum.ORC },
-          { name: "AccCreate", race: ERaceEnum.NIGHT_ELF },
+          { name: "Hitman", race: ERaceEnum.ORC, countryCode: 'US' },
+          { name: "AccCreate", race: ERaceEnum.NIGHT_ELF, countryCode: 'US'  },
         ],
       },
       {
         players: [
-          { name: "Cruncher", race: ERaceEnum.HUMAN },
-          { name: "Hailua", race: ERaceEnum.HUMAN },
+          { name: "CrunCher", race: ERaceEnum.HUMAN, countryCode: 'US'  },
+          { name: "hailua", race: ERaceEnum.HUMAN, countryCode: 'US'  },
         ],
       },
       {
         players: [
-          { name: "Insuperable", race: ERaceEnum.UNDEAD },
-          { name: "Ark", race: ERaceEnum.NIGHT_ELF },
+          { name: "iNSUPERABLE", race: ERaceEnum.UNDEAD, countryCode: 'CA'  },
+          { name: "Ark", race: ERaceEnum.NIGHT_ELF, countryCode: 'US'  },
         ],
       },
     ];
@@ -391,6 +393,6 @@ export default class TournamentsView extends Vue {
 }
 
 .tourney-content {
-  min-width: 800px;
+  overflow-x: auto;
 }
 </style>
