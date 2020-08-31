@@ -9,6 +9,7 @@ export enum ConnectionType {
 export interface ITournamentPlayer {
     name: string;
     race: ERaceEnum;
+    countryCode?: string;
 }
 
 export interface ITournamentMatch {

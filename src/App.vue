@@ -91,7 +91,7 @@ import { REDIRECT_URL } from "@/main";
 export default class App extends Vue {
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
-    { title: "Tournaments", icon: "mdi-tournament", to: "/tournaments" },
+    { title: "Tournaments", icon: "mdi-trophy", to: "/tournaments" },
     {
       title: "Rankings",
       icon: "mdi-view-list",
