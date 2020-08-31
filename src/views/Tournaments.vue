@@ -77,7 +77,7 @@ export default class TournamentsView extends Vue {
       },
       {
         players: [
-          { name: "DeMusliM", race: ERaceEnum.HUMAN, countryCode: 'UK' },
+          { name: "DeMusliM", race: ERaceEnum.HUMAN, countryCode: 'GB' },
           { name: "WaN", race: ERaceEnum.UNDEAD, countryCode: 'DE' },
         ],
       },
