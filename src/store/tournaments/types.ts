@@ -1,5 +1,9 @@
 import { ERaceEnum } from '../typings';
 
+export type TournamentsState = {
+    tournaments: ITournament[]
+};
+
 export enum ConnectionType {
     Default = 1,
     StraightOpen = 2,
@@ -10,9 +14,11 @@ export interface ITournamentPlayer {
     name: string;
     race: ERaceEnum;
     countryCode?: string;
+    score?: number;
 }
 
 export interface ITournamentMatch {
+    id?: string,
     players: ITournamentPlayer[]
 }
 
@@ -30,6 +36,8 @@ export interface ITournamentRoundDimensions {
 }
 
 export interface ITournament {
+    id: string;
+    name: string;
     winnerBracketRounds: ITournamentRound[];
     loserBracketRounds?: ITournamentRound[];
 }

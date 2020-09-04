@@ -19,6 +19,7 @@
               <div class="bracket-header">{{ round.name }}</div>
             </div>
             <div
+              @click="matchSelected(match)"
               class="bracket-game"
               v-for="(match, matchIndex) in round.matches"
               :key="matchIndex"
@@ -45,7 +46,7 @@
                   <span style="vertical-align: -1px; padding-left:3px">
                     {{ player.name }}
                   </span>
-                  <div class="bracket-score" style="width: 21px;" />
+                  <div class="bracket-score" style="width: 21px;" >{{ player.score }}</div>
                 </div>
               </div>
             </div>
@@ -126,6 +127,10 @@ export default class TournamentBracket extends Vue {
       "bracket-ud": player.race == ERaceEnum.UNDEAD,
       "bracket-elf": player.race == ERaceEnum.NIGHT_ELF,
     };
+  }
+
+  private matchSelected(match: ITournamentMatch) {
+    this.$emit("matchSelected", match);
   }
 
   private calculateCellHeight(

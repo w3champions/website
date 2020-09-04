@@ -2,27 +2,39 @@
   <v-container class="tournament-page">
     <v-card class="mt-2 filter-blur">
       <v-card-title class="search-bar">
-        Season 2 Tournament 
-
+        Season 2 Tournament
       </v-card-title>
 
       <div class="pl-4 filter-blur tourney-content">
         <div class="mb-2">
-          <a href="https://matcherino.com/tournaments/31685">Donate to Prize Pool</a>
+          <a href="https://matcherino.com/tournaments/31685">
+            Donate to Prize Pool
+          </a>
         </div>
-        
+
         <gateway-select />
 
-        <div style="min-width: 800px;">
-          <p class="mt-4">Winner bracket</p>
-          <tournamentBracket
-            :bracketRounds="tournament.winnerBracketRounds"
-          ></tournamentBracket>
+        <div v-if="tournament">
+          <tournament-match-update
+            :tournamentMatch="selectedMatch"
+            :isModalOpened="isEditMatchModalOpened"
+            @modalClosed="closeModal"
+            @saveChanges="updateTournament"
+          >
+          </tournament-match-update>
+          <div style="min-width: 800px;">
+            <p class="mt-4">Winner bracket</p>
+            <tournamentBracket
+              @matchSelected="matchSelected"
+              :bracketRounds="tournament.winnerBracketRounds"
+            ></tournamentBracket>
 
-          <p>Losers bracket</p>
-          <tournamentBracket
-            :bracketRounds="tournament.loserBracketRounds"
-          ></tournamentBracket>
+            <p>Losers bracket</p>
+            <tournamentBracket
+              @matchSelected="matchSelected"
+              :bracketRounds="tournament.loserBracketRounds"
+            ></tournamentBracket>
+          </div>
         </div>
       </div>
     </v-card>
@@ -46,15 +58,20 @@ import { Gateways } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
+import TournamentMatchUpdate from "@/components/tournaments/TournamentMatchUpdate.vue";
 
 @Component({
   components: {
     GatewaySelect,
     TournamentBracket,
     TournamentRoundConnector,
+    TournamentMatchUpdate
   },
 })
 export default class TournamentsView extends Vue {
+  public selectedMatch = {} as ITournamentMatch;
+  public isEditMatchModalOpened = false;
+
   get gateway() {
     return this.$store.direct.state.gateway;
   }
@@ -67,328 +84,48 @@ export default class TournamentsView extends Vue {
     }
   }
 
+  get tournaments() {
+    return this.$store.direct.state.tournaments.tournaments;
+  }
+
   get tournamentEU() {
-    const round1: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "VortiX", race: ERaceEnum.UNDEAD, countryCode: 'ES' },
-          { name: "Sonik", race: ERaceEnum.NIGHT_ELF, countryCode: 'UA' },
-        ],
-      },
-      {
-        players: [
-          { name: "Grubby", race: ERaceEnum.ORC, countryCode: 'NL' },
-          { name: "Blade", race: ERaceEnum.HUMAN, countryCode: 'MD' },
-        ],
-      },
-      {
-        players: [
-          { name: "DeMusliM", race: ERaceEnum.HUMAN, countryCode: 'GB' },
-          { name: "WaN", race: ERaceEnum.UNDEAD, countryCode: 'DE' },
-        ],
-      },
-      {
-        players: [
-          { name: "Happy", race: ERaceEnum.UNDEAD, countryCode: 'RU' },
-          { name: "XlorD", race: ERaceEnum.UNDEAD, countryCode: 'DE' },
-        ],
-      },
-    ];
+    if (!this.tournaments || this.tournaments.length == 0) {
+      return null;
+    }
 
-    const round2: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const round3: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const final: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const loserRound1: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const loserRound2: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const loserRound3: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const loserRound4: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const result: ITournament = {
-      winnerBracketRounds: [
-        {
-          name: "Round of 8",
-          round: 1,
-          matches: round1,
-        },
-        {
-          name: "Round of 4",
-          round: 2,
-          matches: round2,
-        },
-        {
-          name: "Semi final",
-          round: 3,
-          matches: round3,
-          connectionType: ConnectionType.StraightOpenDown,
-        },
-        {
-          name: "Final",
-          round: 4,
-          matches: final,
-        },
-      ],
-      loserBracketRounds: [
-        {
-          name: "Losers R1",
-          round: 1,
-          matches: loserRound1,
-          connectionType: ConnectionType.StraightOpen,
-        },
-        {
-          name: "Losers R2",
-          round: 2,
-          matches: loserRound2,
-        },
-        {
-          name: "Losers R3",
-          round: 3,
-          matches: loserRound3,
-          connectionType: ConnectionType.StraightOpen,
-        },
-        {
-          name: "Losers Final",
-          round: 4,
-          matches: loserRound4,
-        },
-      ],
-    };
-
-    return result;
+    return this.tournaments[0];
   }
 
   get tournamentNA() {
-    const round1: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "SaysO", race: ERaceEnum.UNDEAD, countryCode: 'NZ' },
-          { name: "Kingdeuce", race: ERaceEnum.UNDEAD, countryCode: 'CA' },
-        ],
-      },
-      {
-        players: [
-          { name: "Hitman", race: ERaceEnum.ORC, countryCode: 'US' },
-          { name: "AccCreate", race: ERaceEnum.NIGHT_ELF, countryCode: 'US'  },
-        ],
-      },
-      {
-        players: [
-          { name: "CrunCher", race: ERaceEnum.HUMAN, countryCode: 'US'  },
-          { name: "hailua", race: ERaceEnum.HUMAN, countryCode: 'US'  },
-        ],
-      },
-      {
-        players: [
-          { name: "iNSUPERABLE", race: ERaceEnum.UNDEAD, countryCode: 'CA'  },
-          { name: "Ark", race: ERaceEnum.NIGHT_ELF, countryCode: 'US'  },
-        ],
-      },
-    ];
+    if (!this.tournaments || this.tournaments.length == 1) {
+      return null;
+    }
 
-    const round2: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
+    return this.tournaments[1];
+  }
 
-    const round3: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
+  get isAdmin(): boolean {
+    return this.$store.direct.state.oauth.isAdmin;
+  }
 
-    const final: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
+  matchSelected(match: ITournamentMatch) {
+    if (this.isAdmin) {
+      this.selectedMatch = match;
+      this.isEditMatchModalOpened = true;
+    }
+  }
 
-    const loserRound1: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
+  closeModal() {
+    this.isEditMatchModalOpened = false;
+    this.selectedMatch = {} as ITournamentMatch;
+  }
 
-    const loserRound2: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
+  async updateTournament() {
+      await this.$store.direct.dispatch.tournaments.saveTournament(this.tournament as any);
+  }
 
-    const loserRound3: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const loserRound4: ITournamentMatch[] = [
-      {
-        players: [
-          { name: "", race: 0 },
-          { name: "", race: 0 },
-        ],
-      },
-    ];
-
-    const result: ITournament = {
-      winnerBracketRounds: [
-        {
-          name: "Round of 8",
-          round: 1,
-          matches: round1,
-        },
-        {
-          name: "Round of 4",
-          round: 2,
-          matches: round2,
-        },
-        {
-          name: "Semi final",
-          round: 3,
-          matches: round3,
-          connectionType: ConnectionType.StraightOpenDown,
-        },
-        {
-          name: "Final",
-          round: 4,
-          matches: final,
-        },
-      ],
-      loserBracketRounds: [
-        {
-          name: "Losers R1",
-          round: 1,
-          matches: loserRound1,
-          connectionType: ConnectionType.StraightOpen,
-        },
-        {
-          name: "Losers R2",
-          round: 2,
-          matches: loserRound2,
-        },
-        {
-          name: "Losers R3",
-          round: 3,
-          matches: loserRound3,
-          connectionType: ConnectionType.StraightOpen,
-        },
-        {
-          name: "Losers Final",
-          round: 4,
-          matches: loserRound4,
-        },
-      ],
-    };
-
-    return result;
+  async mounted() {
+    await this.$store.direct.dispatch.tournaments.retrieveTournaments();
   }
 }
 </script>
