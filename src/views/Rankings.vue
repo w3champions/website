@@ -25,8 +25,12 @@
                 </v-list-item-content>
               </v-list>
               <v-divider></v-divider>
-              <v-list dense  class="leagues-list">
-                <v-list-item v-for="item in ladders" :key="item.id" @click="setLeague(item.id)">
+              <v-list dense class="leagues-list">
+                <v-list-item
+                  v-for="item in ladders"
+                  :key="item.id"
+                  @click="setLeague(item.id)"
+                >
                   <v-list-item-content>
                     <v-list-item-title>
                       <league-icon :league="item.order" />
@@ -62,7 +66,9 @@
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">{{ data.item.player.name }}</span>
+                  <span v-if="!isDuplicateName(data.item.player.name)">
+                    {{ data.item.player.name }}
+                  </span>
                   <span v-if="isDuplicateName(data.item.player.name)">
                     {{
                       data.item.player.playerIds
@@ -70,7 +76,9 @@
                         .join(" & ")
                     }}
                   </span>
-                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1"> ({{$t(`racesShort.${races[data.item.player.race]}`)}})</span>
+                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1">
+                    ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
+                  </span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   Wins: {{ data.item.player.wins }} | Losses:
@@ -84,7 +92,12 @@
       </v-card-title>
       <v-menu offset-x>
         <template v-slot:activator="{ on }">
-          <v-btn tile v-on="on" class="ma-4" style="background-color: transparent;">
+          <v-btn
+            tile
+            v-on="on"
+            class="ma-4"
+            style="background-color: transparent;"
+          >
             <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
@@ -97,7 +110,11 @@
               </v-list-item-content>
             </v-list>
             <v-list dense>
-              <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
+              <v-list-item
+                v-for="item in seasons"
+                :key="item.id"
+                @click="selectSeason(item)"
+              >
                 <v-list-item-content>
                   <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                 </v-list-item-content>
@@ -131,7 +148,9 @@
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">{{ stat.value }}</v-list-item-subtitle>
+              <v-list-item-subtitle class="text-right">
+                {{ stat.value }}
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -158,7 +177,7 @@ import AppConstants from "../constants";
     GatewaySelect,
     GameModeSelect,
     RankingsGrid,
-    RankingsRaceDistribution
+    RankingsRaceDistribution,
   },
 })
 export default class RankingsView extends Vue {
@@ -255,20 +274,23 @@ export default class RankingsView extends Vue {
   }
 
   get showRaceDistribution() {
-    return this.$store.direct.state.rankings.gameMode == EGameMode.GM_1ON1 && this.$store.direct.state.rankings.selectedSeason?.id > 1;
+    return (
+      this.$store.direct.state.rankings.gameMode == EGameMode.GM_1ON1 &&
+      this.$store.direct.state.rankings.selectedSeason?.id > 1
+    );
   }
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
 
-    if(this.ladders && this.ladders[0]){
+    if (this.ladders && this.ladders[0]) {
       await this.setLeague(this.ladders[0].id);
     }
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {
     await this.$store.direct.dispatch.rankings.setGameMode(gameMode);
-    if(this.ladders && this.ladders[0]){
+    if (this.ladders && this.ladders[0]) {
       await this.setLeague(this.ladders[0].id);
     }
   }
@@ -279,7 +301,9 @@ export default class RankingsView extends Vue {
       await this.$store.direct.dispatch.rankings.setLeague(this.league);
     }
     if (this.season) {
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({ id: this.season });
+      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
+        id: this.season,
+      });
     }
     if (this.gamemode) {
       this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
@@ -356,8 +380,8 @@ export default class RankingsView extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  .leagues-list {
-    max-height: 650px;
-    overflow-y: auto;
-  }
+.leagues-list {
+  max-height: 650px;
+  overflow-y: auto;
+}
 </style>

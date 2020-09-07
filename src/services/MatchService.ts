@@ -81,7 +81,9 @@ export default class MatchService {
     )}&gateway=${gateway}`;
 
     if (opponentTag.length) {
-      url += `&offset=${offset}&opponentId=${encodeURIComponent(opponentTag)}&pageSize=${this.pageSize}`;
+      url += `&offset=${offset}&opponentId=${encodeURIComponent(
+        opponentTag
+      )}&pageSize=${this.pageSize}`;
     } else {
       url += `&offset=${offset}&pageSize=${this.pageSize}`;
     }
@@ -90,7 +92,7 @@ export default class MatchService {
       url += `&gameMode=${gameMode}`;
     }
 
-    url += `&season=${season}`
+    url += `&season=${season}`;
 
     const response = await fetch(url, {
       headers: {

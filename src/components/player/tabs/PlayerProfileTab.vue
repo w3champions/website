@@ -157,32 +157,45 @@ export default class PlayerProfileTab extends Vue {
       (g) => g.gameMode === EGameMode.GM_1ON1
     );
 
-    const rankedOneVOnes = oneVOnes.filter(x => x.rank != 0);
+    const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
 
-    let bestOneVOne = _.sortBy(rankedOneVOnes, ['leagueOrder', 'division', 'rank'])[0];
+    let bestOneVOne = _.sortBy(rankedOneVOnes, [
+      "leagueOrder",
+      "division",
+      "rank",
+    ])[0];
 
     if (!bestOneVOne) {
       bestOneVOne = oneVOnes[0];
     }
 
-    const twoV2s= this.gameModeStats.filter(
+    const twoV2s = this.gameModeStats.filter(
       (g) => g.gameMode === EGameMode.GM_2ON2_AT
     );
 
-    const rankedtwoV2s = twoV2s.filter(x => x.rank != 0);
+    const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
 
-    let besttwoV2s = _.sortBy(rankedtwoV2s, ['leagueOrder', 'division', 'rank'])[0];
+    let besttwoV2s = _.sortBy(rankedtwoV2s, [
+      "leagueOrder",
+      "division",
+      "rank",
+    ])[0];
 
     if (!besttwoV2s) {
       besttwoV2s = twoV2s[0];
     }
 
     const otherModes = this.gameModeStats.filter(
-      (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
+      (g) =>
+        g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
     );
 
-    const otherModesRanked = otherModes.filter(g => g.rank != 0);
-    const bestOtherModes = _.sortBy(otherModesRanked, ['leagueOrder', 'division', 'rank']);
+    const otherModesRanked = otherModes.filter((g) => g.rank != 0);
+    const bestOtherModes = _.sortBy(otherModesRanked, [
+      "leagueOrder",
+      "division",
+      "rank",
+    ]);
 
     const allModes = [];
     if (bestOneVOne) allModes.push(bestOneVOne);

@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { createDirectStore } from "direct-vuex";
 
-import rankings from "./ranking/index";
+import tournaments from "./tournaments/index";
 import player from "./player/index";
 import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
@@ -12,6 +12,7 @@ import chat from "./chat/index";
 import clan from "./clan/index";
 import twitch from "./twitch/index";
 import admin from "./admin/index";
+import rankings from "./ranking/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -24,8 +25,10 @@ import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
 import ChatService from "@/services/ChatService";
 import ClanService from "@/services/ClanService";
-import TwitchService from '@/services/TwitchService';
-import AdminService from '@/services/AdminService';
+import TwitchService from "@/services/TwitchService";
+import AdminService from "@/services/AdminService";
+import TournamentsService from "@/services/TournamentsService";
+
 
 Vue.use(Vuex);
 
@@ -39,7 +42,8 @@ const services = {
   chatService: new ChatService(),
   clanService: new ClanService(),
   twitchService: new TwitchService(),
-  adminService: new AdminService()
+  adminService: new AdminService(),
+  tournamentsService: new TournamentsService()
 };
 
 const mod = {
@@ -52,8 +56,9 @@ const mod = {
     personalSettings,
     chat,
     clan,
-    twitch, 
-    admin
+    twitch,
+    admin,
+    tournaments
   },
   state: {
     darkMode: false,
@@ -99,6 +104,9 @@ const mod = {
     },
     adminService() {
       return services.adminService;
+    },
+    tournamentsService() {
+      return services.tournamentsService;
     }
   },
 } as const;

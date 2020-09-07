@@ -1,8 +1,13 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar :class="{ darkmode: isDarkTheme }" app :dark="isDarkTheme">
-      <div @click="$router.push({ path: '/' })" class="d-flex align-center pointer">
-        <span class="d-none d-md-inline">W3Champions - your Ladder for Warcraft III</span>
+      <div
+        @click="$router.push({ path: '/' })"
+        class="d-flex align-center pointer"
+      >
+        <span class="d-none d-md-inline">
+          W3Champions - your Ladder for Warcraft III
+        </span>
       </div>
       <v-spacer></v-spacer>
 
@@ -21,7 +26,9 @@
       </v-btn>
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="!authCode" class="mr-2">
+          mdi-account-circle-outline
+        </v-icon>
       </v-btn>
 
       <v-menu offset-y v-if="authCode">
@@ -84,10 +91,11 @@ import { REDIRECT_URL } from "@/main";
 export default class App extends Vue {
   public items = [
     { title: "Home", icon: "mdi-home-city", to: "/" },
+    { title: "Tournaments", icon: "mdi-trophy", to: "/tournaments" },
     {
       title: "Rankings",
       icon: "mdi-view-list",
-      to: `/Rankings`
+      to: `/Rankings`,
     },
     { title: "Matches", icon: "mdi-controller-classic", to: "/Matches" },
     {
@@ -253,5 +261,9 @@ export default class App extends Vue {
 
 .theme--light.v-badge .v-badge__badge::after {
   border-color: #36393f !important;
+}
+
+.v-toolbar__content {
+  overflow: auto;
 }
 </style>

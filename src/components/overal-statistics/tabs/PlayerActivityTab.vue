@@ -15,8 +15,9 @@
             />
           </v-card-text>
           <div v-if="isAllMode">
-            Game Modes are normalized to compare their popularity more easily: 2v2 and FFA games are counted twice, 4v4
-            games are counted four times
+            Game Modes are normalized to compare their popularity more easily:
+            2v2 and FFA games are counted twice, 4v4 games are counted four
+            times
           </div>
         </v-col>
         <v-col cols="12" md="10">
@@ -120,7 +121,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { GameDay, GameDayPerMode, GameLength, MapCount, PopularGameHour } from "@/store/overallStats/types";
+import {
+  GameDay,
+  GameDayPerMode,
+  GameLength,
+  MapCount,
+  PopularGameHour,
+} from "@/store/overallStats/types";
 import Component from "vue-class-component";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
@@ -169,7 +176,10 @@ export default class PlayerActivityTab extends Vue {
   }
 
   get seasons() {
-    return ["All", ...this.$store.direct.state.rankings.seasons.map(s => s.id.toString())];
+    return [
+      "All",
+      ...this.$store.direct.state.rankings.seasons.map((s) => s.id.toString()),
+    ];
   }
 
   get selectedGameLength(): GameLength {

@@ -1,19 +1,19 @@
 export type AdminState = {
-    total: number;
-    players: BannedPlayer[];
-    news: NewsMessage[];
+  total: number;
+  players: BannedPlayer[];
+  news: NewsMessage[];
 };
 
 export interface NewsMessage {
-    message: string;
-    date: string;
-    bsonId: string;
+  message: string;
+  date: string;
+  bsonId: string;
 }
 
 export interface BannedPlayer {
-    battleTag: string;
-    endDate: string;
-    isIpBan: boolean;
-    ipBanValue: string
-    banReason: string;
+  battleTag: string;
+  endDate: string;
+  isIpBan: boolean;
+  ipBanValue: string;
+  banReason: string;
 }

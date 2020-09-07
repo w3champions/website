@@ -4,10 +4,14 @@
       <v-col cols="12" md="8">
         <v-card tile>
           <br />
-          <v-card-title class="justify-center">The ladder you have been waiting for!</v-card-title>
+          <v-card-title class="justify-center">
+            The ladder you have been waiting for!
+          </v-card-title>
           <v-row class="justify-center">
             <v-col class="text-center">
-              <button @click="goToSetupPage" class="join-button">Join the Battlefield now!</button>
+              <button @click="goToSetupPage" class="join-button">
+                Join the Battlefield now!
+              </button>
             </v-col>
           </v-row>
           <v-card-text>
@@ -73,7 +77,7 @@
                 <br />
                 Social Media
                 <br />
-                <a href="https://twitter.com/W3Pad" target="_blank">
+                <a href="https://twitter.com/W3ChampionsTeam" target="_blank">
                   <img src="../assets/twitter.svg" height="24" />
                 </a>
                 <br />
@@ -86,7 +90,7 @@
                 <div style="margin-top: 5px;">
                   <a
                     style="margin-top: 15px;"
-                    href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MT3PNN6W44AYN&source=url"
+                    href="https://www.paypal.me/w3champions"
                     target="_blank"
                   >
                     <img src="../assets/paypal.png" height="24" />
@@ -160,7 +164,7 @@ export default class HomeView extends Vue {
 
   public goToSetupPage() {
     this.$router.push({
-      path: "/getting-started/"
+      path: "/getting-started/",
     });
   }
 
@@ -195,8 +199,12 @@ export default class HomeView extends Vue {
   background-color: transparent;
   text-transform: uppercase;
   color: rgb(51, 38, 28);
-  background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%), linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));
-  box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px, rgba(236, 174, 6, 0.3) 0px 0px 40px 15px, rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset, rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
+  background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%),
+    linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px,
+    rgba(236, 174, 6, 0.3) 0px 0px 40px 15px,
+    rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset,
+    rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
   text-shadow: rgb(51, 38, 28) 0px 0px;
   height: 76px;
   margin-top: 26px;

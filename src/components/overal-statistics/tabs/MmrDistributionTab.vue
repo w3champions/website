@@ -32,7 +32,7 @@ import Component from "vue-class-component";
 import { Season } from "@/store/ranking/types";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 @Component({
-  components: { MmrDistributionChart }
+  components: { MmrDistributionChart },
 })
 export default class PlayerActivityTab extends Vue {
   public selectedSeason: Season = { id: 1 };
@@ -49,9 +49,10 @@ export default class PlayerActivityTab extends Vue {
     this.selectedSeason = season;
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
-      await this.$store.direct.dispatch.player.loadGameModeStats(
-        { battleTag: this.verifiedBtag, season: season.id }
-      );
+      await this.$store.direct.dispatch.player.loadGameModeStats({
+        battleTag: this.verifiedBtag,
+        season: season.id,
+      });
     }
 
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(

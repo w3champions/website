@@ -36,12 +36,22 @@
                           .join(" & ")
                       }}
                     </span>
-                    <span v-if="data.item.player.gameMode === gameModeEnums.GM_1ON1">
+                    <span
+                      v-if="data.item.player.gameMode === gameModeEnums.GM_1ON1"
+                    >
                       {{ $t(`races.${raceEnums[data.item.player.race]}`) }}
                     </span>
-                    <span v-if="selectedGameModeForSearch === gameModeEnums.UNDEFINED">
+                    <span
+                      v-if="
+                        selectedGameModeForSearch === gameModeEnums.UNDEFINED
+                      "
+                    >
                       ({{
-                        $t(`gameModes.${gameModeEnums[data.item.player.gameMode]}`)
+                        $t(
+                          `gameModes.${
+                            gameModeEnums[data.item.player.gameMode]
+                          }`
+                        )
                       }})
                     </span>
                   </v-list-item-title>
@@ -97,7 +107,13 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
+import {
+  EGameMode,
+  ERaceEnum,
+  Match,
+  PlayerInTeam,
+  Team,
+} from "@/store/typings";
 
 @Component({ components: { MatchesGrid } })
 export default class PlayerMatchesTab extends Vue {
@@ -239,7 +255,10 @@ export default class PlayerMatchesTab extends Vue {
   }
 
   public async getMatches(page?: number) {
-    if (this.isLoadingMatches || !this.$store.direct.state.player.selectedSeason.id) {
+    if (
+      this.isLoadingMatches ||
+      !this.$store.direct.state.player.selectedSeason.id
+    ) {
       return;
     }
 

@@ -11,7 +11,9 @@
         <td>
           <v-row class="justify-space-between align-center ma-0">
             <v-col class="pa-0">
-              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
+              <span class="pointer" @click="goToPlayer(member)">
+                {{ member.split("#")[0] }}
+              </span>
             </v-col>
             <v-col class="text-right pa-0">
               <v-btn @click="revokeInvite(member)">

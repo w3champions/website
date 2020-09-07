@@ -15,7 +15,7 @@ const mod = {
   actions: {
     async createClan(
       context: ActionContext<ClanState, RootState>,
-      clanOptions: { clanName: string, abbreviation: string }
+      clanOptions: { clanName: string; abbreviation: string }
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
@@ -35,7 +35,10 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit, rootState, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.clanService.addShaman(
         state.playersClan.clanId,
@@ -50,7 +53,10 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit, rootState, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.clanService.removeShaman(
         state.playersClan.clanId,
@@ -65,7 +71,10 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit, rootState, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.clanService.switchChieftain(
         state.playersClan.clanId,
@@ -76,26 +85,37 @@ const mod = {
       commit.SET_CLAN_ERROR(response);
     },
 
-    async acceptInvite(
-      context: ActionContext<ClanState, RootState>
-    ) {
-      const { rootGetters, state, rootState } = moduleActionContext(context, mod);
+    async acceptInvite(context: ActionContext<ClanState, RootState>) {
+      const { rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
-      await rootGetters.clanService.acceptInvite(state.selectedMemberShip.pendingInviteFromClan, state.selectedMemberShip.battleTag, rootState.oauth.token);
+      await rootGetters.clanService.acceptInvite(
+        state.selectedMemberShip.pendingInviteFromClan,
+        state.selectedMemberShip.battleTag,
+        rootState.oauth.token
+      );
     },
 
-    async rejectInvite(
-      context: ActionContext<ClanState, RootState>
-    ) {
-      const { rootGetters, state, rootState } = moduleActionContext(context, mod);
+    async rejectInvite(context: ActionContext<ClanState, RootState>) {
+      const { rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
-      await rootGetters.clanService.rejectInvite(state.selectedMemberShip.pendingInviteFromClan, state.selectedMemberShip.battleTag, rootState.oauth.token);
+      await rootGetters.clanService.rejectInvite(
+        state.selectedMemberShip.pendingInviteFromClan,
+        state.selectedMemberShip.battleTag,
+        rootState.oauth.token
+      );
     },
 
-    async retrievePlayersClan(
-      context: ActionContext<ClanState, RootState>,
-    ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+    async retrievePlayersClan(context: ActionContext<ClanState, RootState>) {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.clanService.retrieveClanForPlayer(
         rootState.player.battleTag
@@ -104,10 +124,11 @@ const mod = {
       commit.SET_PLAYERS_CLAN(response);
     },
 
-    async deleteClan(
-      context: ActionContext<ClanState, RootState>,
-    ) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+    async deleteClan(context: ActionContext<ClanState, RootState>) {
+      const { state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       await rootGetters.clanService.deleteClan(
         state.playersClan.clanId,
@@ -115,10 +136,11 @@ const mod = {
       );
     },
 
-    async leaveClan(
-      context: ActionContext<ClanState, RootState>,
-    ) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+    async leaveClan(context: ActionContext<ClanState, RootState>) {
+      const { state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       await rootGetters.clanService.leaveClan(
         state.playersClan.clanId,
@@ -128,9 +150,12 @@ const mod = {
     },
 
     async retrievePlayersMembership(
-      context: ActionContext<ClanState, RootState>,
+      context: ActionContext<ClanState, RootState>
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       const response = await rootGetters.clanService.retrievePlayerMembership(
         rootState.player.battleTag
@@ -143,7 +168,10 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTagId: string
     ) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { state, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
       await rootGetters.clanService.revokeInvite(
         battleTagId,
