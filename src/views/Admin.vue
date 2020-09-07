@@ -50,6 +50,15 @@
                             required
                           ></v-select>
                         </v-col>
+                        <v-col cols="12" sm="6" md="12">
+                          <v-select
+                            v-model="editedItem.isOnlyChatBan"
+                            :items="['true', 'false']"
+                            label="Is only banned from chat"
+                            :item-value="editedItem.isOnlyChatBan"
+                            required
+                          ></v-select>
+                        </v-col>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
                             v-model="editedItem.banReason"
@@ -150,7 +159,6 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { BannedPlayer, NewsMessage } from "../store/admin/types";
-import { PlayerProfile } from "../store/player/types";
 @Component({ components: {} })
 export default class Admin extends Vue {
   data() {
@@ -163,8 +171,9 @@ export default class Admin extends Vue {
           value: "battleTag",
         },
         { text: "Ban End Date", value: "endDate" },
-        { text: "Is IP Banned?", value: "isIpBan" },
-        { text: "Ban Reason", value: "banReason" },
+        { text: "Is IP banned?", value: "isIpBan" },
+        { text: "Is only banned from chat?", value: "isOnlyChatBan" },
+        { text: "Ban reason", value: "banReason" },
         { text: "Actions", value: "actions", sortable: false },
       ],
       headersNews: [
@@ -217,6 +226,7 @@ export default class Admin extends Vue {
     battleTag: "",
     endDate: "",
     isIpBan: false,
+    isOnlyChatBan: false,
     ipBanValue: "",
     banReason: "",
   };
@@ -224,6 +234,7 @@ export default class Admin extends Vue {
     battleTag: "",
     endDate: "",
     isIpBan: false,
+    isOnlyChatBan: false,
     ipBanValue: "",
     banReason: "",
   };

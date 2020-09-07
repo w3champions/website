@@ -14,6 +14,7 @@ export interface BannedPlayer {
   battleTag: string;
   endDate: string;
   isIpBan: boolean;
+  isOnlyChatBan: boolean;
   ipBanValue: string;
   banReason: string;
 }
