@@ -27,15 +27,15 @@ export default class SeasonBadge extends Vue {
   }
 
   get seasonBadgeBg() {
-    return require("../../assets/seasonBadges/" + this.season.id + ".png");
+    return require(`../../assets/seasonBadges/Season_${this.season.id}.png`);
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .season-badge {
-  margin-right: 14px;
-  width: 20px;
+  margin-right: 10px;
+  width: 24px;
   height: 24px;
   background-size: cover;
 }
