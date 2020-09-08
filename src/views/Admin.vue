@@ -52,10 +52,10 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-select
-                            v-model="editedItem.isOnlyChatBan"
+                            v-model="editedItem.isOnlyChatBanValue"
                             :items="['true', 'false']"
                             label="Is only banned from chat"
-                            :item-value="editedItem.isOnlyChatBan"
+                            :item-value="editedItem.isOnlyChatBanValue"
                             required
                           ></v-select>
                         </v-col>
@@ -227,6 +227,7 @@ export default class Admin extends Vue {
     endDate: "",
     isIpBan: false,
     isOnlyChatBan: false,
+    isOnlyChatBanValue: "",
     ipBanValue: "",
     banReason: "",
   };
@@ -235,6 +236,7 @@ export default class Admin extends Vue {
     endDate: "",
     isIpBan: false,
     isOnlyChatBan: false,
+    isOnlyChatBanValue: "",
     ipBanValue: "",
     banReason: "",
   };
@@ -273,7 +275,8 @@ export default class Admin extends Vue {
   }
 
   async save() {
-    this.editedItem.isIpBan = this.editedItem.ipBanValue == "true";
+    this.editedItem.isIpBan = this.editedItem.ipBanValue === "true";
+    this.editedItem.isOnlyChatBan = this.editedItem.isOnlyChatBanValue === "true";
 
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
