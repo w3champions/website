@@ -43,19 +43,19 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-select
-                            v-model="editedItem.ipBanValue"
-                            :items="['true', 'false']"
+                            v-model="editedItem.isIpBan"
+                            :items="[true, false]"
                             label="Is Ip Banned"
-                            :item-value="editedItem.ipBanValue"
+                            :item-value="editedItem.isIpBan"
                             required
                           ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-select
-                            v-model="editedItem.isOnlyChatBanValue"
-                            :items="['true', 'false']"
+                            v-model="editedItem.isOnlyChatBan"
+                            :items="[true, false]"
                             label="Is only banned from chat"
-                            :item-value="editedItem.isOnlyChatBanValue"
+                            :item-value="editedItem.isOnlyChatBan"
                             required
                           ></v-select>
                         </v-col>
@@ -227,8 +227,6 @@ export default class Admin extends Vue {
     endDate: "",
     isIpBan: false,
     isOnlyChatBan: false,
-    isOnlyChatBanValue: "",
-    ipBanValue: "",
     banReason: "",
   };
   public defaultItem = {
@@ -236,8 +234,6 @@ export default class Admin extends Vue {
     endDate: "",
     isIpBan: false,
     isOnlyChatBan: false,
-    isOnlyChatBanValue: "",
-    ipBanValue: "",
     banReason: "",
   };
 
@@ -275,9 +271,6 @@ export default class Admin extends Vue {
   }
 
   async save() {
-    this.editedItem.isIpBan = this.editedItem.ipBanValue === "true";
-    this.editedItem.isOnlyChatBan = this.editedItem.isOnlyChatBanValue === "true";
-
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
     } else {

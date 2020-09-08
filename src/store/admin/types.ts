@@ -15,7 +15,5 @@ export interface BannedPlayer {
   endDate: string;
   isIpBan: boolean;
   isOnlyChatBan: boolean;
-  isOnlyChatBanValue: string;
-  ipBanValue: string;
   banReason: string;
 }

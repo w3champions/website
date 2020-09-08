@@ -56,7 +56,6 @@ const mod = {
         player.endDate = moment(player.endDate, "YYYY-MM-DD")
           .toISOString()
           .substr(0, 10);
-        player.ipBanValue = player.isIpBan.toString();
       }
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
