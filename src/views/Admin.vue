@@ -43,15 +43,6 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-select
-                            v-model="editedItem.isIpBan"
-                            :items="[true, false]"
-                            label="Is Ip Banned"
-                            :item-value="editedItem.isIpBan"
-                            required
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="12">
-                          <v-select
                             v-model="editedItem.isOnlyChatBan"
                             :items="[true, false]"
                             label="Is only banned from chat"
@@ -171,7 +162,6 @@ export default class Admin extends Vue {
           value: "battleTag",
         },
         { text: "Ban End Date", value: "endDate" },
-        { text: "Is IP banned?", value: "isIpBan" },
         { text: "Is only banned from chat?", value: "isOnlyChatBan" },
         { text: "Ban reason", value: "banReason" },
         { text: "Actions", value: "actions", sortable: false },
@@ -225,14 +215,12 @@ export default class Admin extends Vue {
   public editedItem = {
     battleTag: "",
     endDate: "",
-    isIpBan: false,
     isOnlyChatBan: false,
     banReason: "",
   };
   public defaultItem = {
     battleTag: "",
     endDate: "",
-    isIpBan: false,
     isOnlyChatBan: false,
     banReason: "",
   };
