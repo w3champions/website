@@ -100,11 +100,7 @@ export default class PlayerMatchInfo extends Vue {
   }
 
   get currentRating() {
-    if (this.unfinishedMatch) {
-      return Math.floor(this.player.oldMmr);
-    }
-
-    return Math.floor(this.player.currentMmr);
+    return Math.floor(this.player.oldMmr);
   }
 
   get textClass() {
@@ -210,7 +206,7 @@ export default class PlayerMatchInfo extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  max-width: 94px;
+  max-width: 150px;
 }
 
 @media (min-width: 960px) {
