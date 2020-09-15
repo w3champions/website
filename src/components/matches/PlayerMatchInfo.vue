@@ -199,6 +199,7 @@ export default class PlayerMatchInfo extends Vue {
 .flag-container {
   position: absolute;
   top: 6px;
+  z-index: -1;
 }
 
 .name-link {
