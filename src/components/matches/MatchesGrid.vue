@@ -226,26 +226,28 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      minWidth: "475px",
+      minWidth: "840px",
     },
     {
       text: "Map",
       align: "start",
       sortable: false,
       value: "map",
+      minWidth: "100px"
     },
     {
       text: "Start Time",
       align: "start",
       sortable: false,
       value: "startTime",
-      minWidth: "170px",
+      minWidth: "120px",
     },
     {
       text: "Duration",
       align: "start",
       sortable: false,
       value: "duration",
+      minWidth: "100px"
     },
   ];
 }
