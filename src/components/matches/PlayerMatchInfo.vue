@@ -181,6 +181,7 @@ export default class PlayerMatchInfo extends Vue {
 .player-info__right {
   justify-content: flex-end;
   text-align: right;
+  z-index: 1;
 
   .flag-container {
     right: 18px;
@@ -190,6 +191,7 @@ export default class PlayerMatchInfo extends Vue {
 .player-info__left {
   justify-content: flex-start;
   text-align: left;
+  z-index: 1;
 
   .flag-container {
     left: 14px;
