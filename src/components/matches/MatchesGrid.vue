@@ -244,6 +244,7 @@ export default class MatchesGrid extends Vue {
       align: "start",
       sortable: false,
       value: "startTime",
+      minWidth: "170px",
       ffaMinWidth: "120px",
     },
     {
