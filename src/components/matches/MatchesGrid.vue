@@ -9,7 +9,10 @@
               :key="header.text"
               v-bind:style="{
                 width: header.width,
-                'min-width': header.minWidth,
+                'min-width':
+                  matches[0].gameMode === 5
+                    ? header.ffaMinWidth
+                    : header.minWidth,
                 'text-align': header.align,
               }"
             >
@@ -226,28 +229,29 @@ export default class MatchesGrid extends Vue {
       align: "center",
       sortable: false,
       value: "players",
-      minWidth: "840px",
+      minWidth: "475px",
+      ffaMinWidth: "850px",
     },
     {
       text: "Map",
       align: "start",
       sortable: false,
       value: "map",
-      minWidth: "100px"
+      ffaMinWidth: "100px",
     },
     {
       text: "Start Time",
       align: "start",
       sortable: false,
       value: "startTime",
-      minWidth: "120px",
+      ffaMinWidth: "120px",
     },
     {
       text: "Duration",
       align: "start",
       sortable: false,
       value: "duration",
-      minWidth: "100px"
+      ffaMinWidth: "100px",
     },
   ];
 }
