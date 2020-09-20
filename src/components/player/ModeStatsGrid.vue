@@ -126,8 +126,9 @@ export default class ModeStatsGrid extends Vue {
       return '';
     }
     const quantilePerc = modeStat.quantile * 100;
+    const topPerc = Math.ceil(100 - quantilePerc);
 
-    return `top ${Math.ceil(100 - quantilePerc)}%`;
+    return `top ${Math.max(topPerc, 1)}%`;
   }
 
   public headers = [
