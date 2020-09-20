@@ -52,6 +52,7 @@ export type ModeStat = {
   season: number;
   rankingPoints: number;
   playerIds: PlayerId[];
+  quantile: number;
 };
 
 export interface WinLossesOnMap {

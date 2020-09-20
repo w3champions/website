@@ -22,7 +22,12 @@
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
-            {{ item.rank !== 0 ? item.mmr : "-" }}
+            <div class="text-center">
+              {{ item.rank !== 0 ? item.mmr : "-" }}
+            </div>
+            <div v-if="item.rank !== 0" class="top-perc">
+              {{getTopPercent(item)}}
+            </div>
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
@@ -72,6 +77,7 @@ export default class ModeStatsGrid extends Vue {
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
+    combindes2v2.quantile = combindes2v2.quantile / gm2v2s.length;
 
     const gm1v1 = this.stats.filter((g) => g.gameMode === EGameMode.GM_1ON1);
 
@@ -100,6 +106,7 @@ export default class ModeStatsGrid extends Vue {
         division: 0,
         rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
+        quantile: b.quantile + a.quantile
       }),
       {
         wins: 0,
@@ -109,8 +116,18 @@ export default class ModeStatsGrid extends Vue {
         mmr: 0,
         rank: 0,
         rankingPoints: 0,
+        quantile: 0
       }
     );
+  }
+
+  getTopPercent(modeStat: ModeStat) {
+    if (modeStat.rank <= 0) {
+      return '';
+    }
+    const quantilePerc = modeStat.quantile * 100;
+
+    return `top ${Math.ceil(100 - quantilePerc)}%`;
   }
 
   public headers = [
@@ -126,7 +143,7 @@ export default class ModeStatsGrid extends Vue {
     },
     {
       text: "MMR",
-      align: "end",
+      align: "center",
       sortable: false,
     },
     {
@@ -137,3 +154,17 @@ export default class ModeStatsGrid extends Vue {
   ];
 }
 </script>
+
+<style lang="scss" scoped>
+  .top-perc {
+    font-size: 11px;
+    border-top: 2px solid #122a42;
+    text-align: center;
+  }
+
+  .theme--light {
+    .top-perc {
+      border-top: 2px solid rgb(205, 205, 205);
+    }
+  }
+</style>
