@@ -1,4 +1,4 @@
-import { ERaceEnum } from '../typings';
+import { ERaceEnum } from "../typings";
 
 export type TournamentsState = {
     tournaments: ITournament[]
