@@ -13,18 +13,23 @@
             <race-icon style="display: inline;" :race="item.race" />
           </td>
           <td class="number-text text-start">
-            <span class="won">{{ item.wins }}</span>
-            -
-            <span class="lost">{{ item.losses }}</span>
-            <span style="float: right;">
-              ({{ (item.winrate * 100).toFixed(1) }}%)
-            </span>
+            <div class="text-center">
+              <span class="won">{{ item.wins }}</span>
+              -
+              <span class="lost">{{ item.losses }}</span>
+            </div>
+            <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
           </td>
           <td class="number-text text-end">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
-            {{ item.rank !== 0 ? item.mmr : "-" }}
+            <div class="text-center">
+              {{ item.rank !== 0 ? item.mmr : "-" }}
+            </div>
+            <div v-if="item.rank !== 0" class="sub-value">
+              {{ getTopPercent(item) }}
+            </div>
           </td>
-          <td class="number-text text-end">
+          <td class="number-text text-center">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
             {{ item.rank !== 0 ? item.rankingPoints : "-" }}
           </td>
@@ -49,11 +54,11 @@ export default class ModeStatsGrid extends Vue {
 
   public gameModeEnums = EGameMode;
 
-  public is2v2(stats: ModeStat) {
+  public is2v2(stats: ModeStat): boolean {
     return stats.gameMode === EGameMode.GM_2ON2_AT;
   }
 
-  get gameModeStatsCombined() {
+  get gameModeStatsCombined(): ModeStat[] {
     let gm2v2s = [];
 
     for (var i = 0; i < this.stats.length; i++) {
@@ -72,6 +77,7 @@ export default class ModeStatsGrid extends Vue {
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
+    combindes2v2.quantile = combindes2v2.quantile / gm2v2s.length;
 
     const gm1v1 = this.stats.filter((g) => g.gameMode === EGameMode.GM_1ON1);
 
@@ -100,6 +106,7 @@ export default class ModeStatsGrid extends Vue {
         division: 0,
         rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
+        quantile: b.quantile + a.quantile,
       }),
       {
         wins: 0,
@@ -109,31 +116,60 @@ export default class ModeStatsGrid extends Vue {
         mmr: 0,
         rank: 0,
         rankingPoints: 0,
+        quantile: 0,
       }
     );
+  }
+
+  getTopPercent(modeStat: ModeStat): string {
+    if (modeStat.rank <= 0) {
+      return "";
+    }
+    const quantilePerc = modeStat.quantile * 100;
+    const topPerc = Math.ceil(100 - quantilePerc);
+
+    if (topPerc > 90) {
+      return "";
+    }
+
+    return `top ${Math.max(topPerc, 1)}%`;
   }
 
   public headers = [
     {
       text: "Mode",
-      align: "start",
+      align: "center",
       sortable: false,
     },
     {
       text: "Win/Loss",
-      align: "start",
+      align: "center",
       sortable: false,
     },
     {
       text: "MMR",
-      align: "end",
+      align: "center",
       sortable: false,
     },
     {
       text: "RP",
-      align: "end",
+      align: "center",
       sortable: false,
     },
   ];
 }
 </script>
+
+<style lang="scss" scoped>
+.sub-value {
+  font-size: 11px;
+  border-top: 2px solid #122a42;
+  text-align: center;
+}
+
+.theme--light {
+  .sub-value {
+    border-top: 2px solid rgb(205, 205, 205);
+  }
+}
+</style>
