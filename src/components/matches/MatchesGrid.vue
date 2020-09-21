@@ -9,10 +9,7 @@
               :key="header.text"
               v-bind:style="{
                 width: header.width,
-                'min-width':
-                  matches[0].gameMode === 5
-                    ? header.ffaMinWidth
-                    : header.minWidth,
+                'min-width': isFfa ? header.ffaMinWidth : header.minWidth,
                 'text-align': header.align,
               }"
             >
@@ -110,7 +107,13 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Match, DataTableOptions, Team, PlayerInTeam } from "@/store/typings";
+import {
+  Match,
+  DataTableOptions,
+  Team,
+  PlayerInTeam,
+  EGameMode,
+} from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 
@@ -134,6 +137,14 @@ export default class MatchesGrid extends Vue {
 
   get matches(): Match[] {
     return this.value;
+  }
+
+  get isFfa(): boolean {
+    return (
+      this.matches &&
+      this.matches.length > 0 &&
+      this.matches[0].gameMode == EGameMode.GM_FFA
+    );
   }
 
   get currentMatchesLowRange() {
