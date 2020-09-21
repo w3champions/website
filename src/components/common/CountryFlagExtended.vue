@@ -1,6 +1,7 @@
 <template>
   <v-tooltip bottom>
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ on }"
+      max-height="5px">
       <span v-on="on">
         <country-flag
           v-if="countryCode"
