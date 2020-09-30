@@ -10,6 +10,7 @@
             <matches-status-select />
             <gateway-select @gatewayChanged="gatewayChanged" />
             <game-mode-select
+              :disabledModes="disabledGameModes"
               :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
             ></game-mode-select>
@@ -50,6 +51,14 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 export default class MatchesView extends Vue {
   onPageChanged(page: number) {
     this.getMatches(page);
+  }
+
+  get disabledGameModes() {
+    if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
+      return [EGameMode.GM_2ON2_AT];
+    }
+
+    return [];
   }
 
   get totalMatches(): number {
