@@ -181,27 +181,29 @@ export default class PlayerMatchInfo extends Vue {
 .player-info__right {
   justify-content: flex-end;
   text-align: right;
-  z-index: 1;
+  z-index: 2;
 
   .flag-container {
     right: 18px;
+    height: 0px;
   }
 }
 
 .player-info__left {
   justify-content: flex-start;
   text-align: left;
-  z-index: 1;
+  z-index: 2;
 
   .flag-container {
     left: 14px;
+    height: 0px;
   }
 }
 
 .flag-container {
   position: absolute;
   top: 6px;
-  z-index: -1;
+  z-index: 1;
 }
 
 .name-link {
