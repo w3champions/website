@@ -39,9 +39,10 @@ import { EGameMode } from "../../store/typings";
 @Component({})
 export default class GameModeSelect extends Vue {
   @Prop() gameMode?: EGameMode;
+  @Prop() disabledModes?: EGameMode[];
 
   get gameModes() {
-    return [
+    let modes = [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
         gameMode: EGameMode.GM_1ON1,
@@ -63,6 +64,12 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
     ];
+
+    if (this.disabledModes) {
+      modes = modes.filter(x => !this.disabledModes?.includes(x.gameMode))
+    }
+
+    return modes;
   }
 
   get gameModeName() {

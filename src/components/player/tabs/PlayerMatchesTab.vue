@@ -175,10 +175,6 @@ export default class PlayerMatchesTab extends Vue {
         modeId: EGameMode.GM_2ON2,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        modeId: EGameMode.GM_2ON2_AT,
-      },
-      {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
         modeId: EGameMode.GM_4ON4,
       },
