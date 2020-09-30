@@ -74,11 +74,16 @@ export default class GameModeSelect extends Vue {
 
   get gameModeName() {
     if (!this.gameMode) {
-      return "";
+      return '';
     }
 
-    return this.gameModes.filter((g) => g.gameMode == this.gameMode)[0]
-      .modeName;
+    const mode = this.gameModes.filter((g) => g.gameMode == this.gameMode)[0];
+
+    if (!mode) {
+      return 'Not Supported';
+    }
+
+    return mode.modeName;
   }
 
   public selectGameMode(gameMode: EGameMode) {

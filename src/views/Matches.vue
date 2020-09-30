@@ -54,7 +54,11 @@ export default class MatchesView extends Vue {
   }
 
   get disabledGameModes() {
-    return [EGameMode.GM_2ON2_AT];
+    if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
+      return [EGameMode.GM_2ON2_AT];
+    }
+
+    return [];
   }
 
   get totalMatches(): number {
