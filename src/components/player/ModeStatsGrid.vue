@@ -45,6 +45,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import { toInteger } from 'lodash';
 
 @Component({
   components: { RaceIcon },
@@ -126,13 +127,19 @@ export default class ModeStatsGrid extends Vue {
       return "";
     }
     const quantilePerc = modeStat.quantile * 100;
-    const topPerc = Math.ceil(100 - quantilePerc);
+    let topPerc
+
+    if (quantilePerc > 95) {
+      topPerc =  100 - quantilePerc
+    } else {
+      topPerc = Math.ceil(100 - quantilePerc);
+    }
 
     if (topPerc > 90) {
       return "";
     }
 
-    return `top ${Math.max(topPerc, 1)}%`;
+      return (topPerc < 5 ? `top ${Math.max(topPerc,0.1).toFixed(1)}` : `top ${topPerc}`)
   }
 
   public headers = [
