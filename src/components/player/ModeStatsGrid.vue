@@ -126,19 +126,13 @@ export default class ModeStatsGrid extends Vue {
       return "";
     }
     const quantilePerc = modeStat.quantile * 100;
-    let topPerc
-
-    if (quantilePerc > 95) {
-      topPerc =  100 - quantilePerc
-    } else {
-      topPerc = Math.ceil(100 - quantilePerc);
-    }
+    const topPerc = 100 - quantilePerc
 
     if (topPerc > 90) {
       return "";
     }
 
-      return (topPerc < 5 ? `top ${Math.max(topPerc,0.1).toFixed(1)}%` : `top ${topPerc}%`)
+      return `top ${Math.max(topPerc,0.1).toFixed(1)}%`
   }
 
   public headers = [
