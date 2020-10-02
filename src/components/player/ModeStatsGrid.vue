@@ -138,7 +138,7 @@ export default class ModeStatsGrid extends Vue {
       return "";
     }
 
-      return (topPerc < 5 ? `top ${Math.max(topPerc,0.1).toFixed(1)}` : `top ${topPerc}`)
+      return (topPerc < 5 ? `top ${Math.max(topPerc,0.1).toFixed(1)}%` : `top ${topPerc}%`)
   }
 
   public headers = [
