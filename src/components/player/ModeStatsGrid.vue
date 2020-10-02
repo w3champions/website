@@ -45,7 +45,6 @@ import { Component, Prop } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { toInteger } from 'lodash';
 
 @Component({
   components: { RaceIcon },
