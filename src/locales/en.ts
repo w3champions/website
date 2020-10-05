@@ -150,6 +150,10 @@ const en = {
     _turtlerock_anon: "Turtle Rock",
     _twilightruins_lv_anon: "Twilight Ruins LV",
     _twilightruins_anon: "Twilight Ruins",
+    vilereef: "Vile Reef",
+    dalarangarden: "Dalaran Garden",
+    phantomgrovew3c: "Phantom Grove W3C",
+    tidewatergladesw3c: "Tidewater Glades W3C"
   },
 
   heroNames: {
