@@ -21,7 +21,7 @@
           <tr
             v-for="item in matches"
             :key="item.id"
-            @click="gotToMatchDetailPage(item)"
+            @click="goToMatchDetailPage(item)"
           >
             <td>
               <v-row v-if="item.gameMode === 5">
@@ -179,7 +179,7 @@ export default class MatchesGrid extends Vue {
     return Math.ceil(this.totalMatches / 50);
   }
 
-  public gotToMatchDetailPage(match: Match) {
+  public goToMatchDetailPage(match: Match) {
     if (this.unfinished) {
       return true;
     }
