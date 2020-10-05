@@ -11,7 +11,7 @@
         class="d-flex align-center pointer"
         style="padding-top: 0px;"
       >
-        <div>
+        <div class="d-none d-md-inline">
           <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
             <img src="./assets/logos/small-logo-full-black.png" />
           </div>
