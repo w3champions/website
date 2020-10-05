@@ -1,13 +1,24 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
-    <v-app-bar :class="{ darkmode: isDarkTheme }" app :dark="isDarkTheme">
+    <v-app-bar
+      :class="{ darkmode: isDarkTheme }"
+      app
+      :dark="isDarkTheme"
+      style="height: 60px;"
+    >
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
+        style="padding-top: 0px;"
       >
-        <span class="d-none d-md-inline">
-          W3Champions - your Ladder for Warcraft III
-        </span>
+        <div class="d-none d-md-inline">
+          <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
+            <img src="./assets/logos/small-logo-full-black.png" />
+          </div>
+          <div v-else id="app">
+            <img src="./assets/logos/small-logo-full.png" />
+          </div>
+        </div>
       </div>
       <v-spacer></v-spacer>
 
@@ -25,7 +36,7 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
+      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode" class="right-menu">
         <v-icon v-if="!authCode" class="mr-2">
           mdi-account-circle-outline
         </v-icon>
@@ -33,7 +44,7 @@
 
       <v-menu offset-y v-if="authCode">
         <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on">
+          <v-btn text tile v-on="on" class="right-menu">
             <v-icon class="mr-2">mdi-account-circle</v-icon>
             <span class="mr-2 hidden-xs-only">{{ loginName }}</span>
           </v-btn>
@@ -48,9 +59,9 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-y>
+      <v-menu offset-y class="menu-button">
         <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on">
+          <v-btn text tile v-on="on" class="right-menu">
             <v-icon>mdi-invert-colors</v-icon>
           </v-btn>
         </template>
@@ -225,6 +236,10 @@ export default class App extends Vue {
 <style lang="scss">
 @import "./scss/main.scss";
 
+.right-menu {
+  top: 10px;
+}
+
 .level {
   color: white;
   text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black,
@@ -241,17 +256,58 @@ export default class App extends Vue {
 
 .button-margin {
   margin-right: 10px;
+  top: 9px;
 }
 
 @font-face {
-  font-family: "Friz Quadrata Regular OS";
+  font-family: "Friz Quadrata Std Bold";
   font-style: normal;
   font-weight: normal;
-  src: local("Friz Quadrata Regular OS"),
-    url("./assets/friz-quadrata-regular-os-5870333951e7c.woff") format("woff");
+  src: local("Friz Quadrata Std Bold"),
+    url("./assets/fonts/friz-quadrata-std-bold-587034a220f9f.woff")
+      format("woff");
 
   * {
-    font-family: "Friz Quadrata Regular OS" !important;
+    font-family: "Friz Quadrata Std Bold" !important;
+  }
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Friz Quadrata Std Italic"),
+    url("./assets/fonts/friz-quadrata-std-italic-587033b2c95df.woff")
+      format("woff");
+
+  * {
+    font-family: "Friz Quadrata Std Italic" !important;
+  }
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std Medium";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Friz Quadrata Std Medium"),
+    url("./assets/fonts/friz-quadrata-std-medium-5870338ec7ef8.woff")
+      format("woff");
+
+  * {
+    font-family: "Friz Quadrata Std Medium" !important;
+  }
+}
+
+@font-face {
+  font-family: "Friz Quadrata Std Bold Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Friz Quadrata Std Bold Italic"),
+    url("./assets/fonts/friz-quadrata-std-bold-italic-587033d6d4298.woff")
+      format("woff");
+
+  * {
+    font-family: "Friz Quadrata Std Bold Italic" !important;
   }
 }
 
@@ -265,5 +321,6 @@ export default class App extends Vue {
 
 .v-toolbar__content {
   overflow: auto;
+  top: -8px;
 }
 </style>
