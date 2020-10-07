@@ -37,6 +37,13 @@ export default class BarChart extends Mixins(Bar) {
           },
         },
       ],
+      xAxes: [
+        {
+          ticks: {
+            reverse: true,
+          },
+        },
+      ],
     },
   };
 
