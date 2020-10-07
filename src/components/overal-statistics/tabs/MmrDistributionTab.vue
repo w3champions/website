@@ -13,7 +13,10 @@
           />
         </v-card-text>
         <v-card-text>
-          Pink bars mark top 3%, 5%, 10%, 25% and 50% of players, green is you
+          The purple bars mark top: 3%, 5%, 10%, 25% and 50% of players.
+        </v-card-text>
+        <v-card-text v-if="authCode">
+          The green bar shows where you are in the distribution.
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
@@ -75,6 +78,10 @@ export default class PlayerActivityTab extends Vue {
 
   get mmrDistribution() {
     return this.$store.direct.state.overallStatistics.mmrDistribution;
+  }
+
+  get authCode(): string {
+    return this.$store.direct.state.oauth.token;
   }
 }
 </script>
