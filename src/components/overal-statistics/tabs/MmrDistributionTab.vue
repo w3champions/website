@@ -13,7 +13,7 @@
           />
         </v-card-text>
         <v-card-text>
-          The purple bars mark top: 3%, 5%, 10%, 25% and 50% of players.
+          The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.
         </v-card-text>
         <v-card-text v-if="authCode">
           The green bar shows where you are in the distribution.
