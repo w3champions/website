@@ -202,7 +202,13 @@ export default class PlayerProfileTab extends Vue {
     if (besttwoV2s) allModes.push(besttwoV2s);
     allModes.push(...bestOtherModes);
 
-    return _.take(allModes, 3);
+    const bestAllModesSorted = _.sortBy(allModes, [
+      "leagueOrder",
+      "division",
+      "rank",
+    ]);
+
+    return _.take(bestAllModesSorted.filter(x =>x.rank != 0), 3);
   }
 }
 </script>
