@@ -81,13 +81,34 @@
             :scores-of-winner="ffaLooser2.heroScore"
             :scores-of-looser="ffaLooser3.heroScore"
           />
+          <match-detail-hero-row
+            v-if="matchIs4v4 && isCompleteGame"
+            :heroes-of-winner="scoresOfWinners[1].heroes"
+            :heroes-of-looser="scoresOfLoosers[1].heroes"
+            :scores-of-winner="scoresOfWinners[1].heroScore"
+            :scores-of-looser="scoresOfLoosers[1].heroScore"
+          ></match-detail-hero-row>
+          <match-detail-hero-row
+            v-if="matchIs4v4 && isCompleteGame"
+            :heroes-of-winner="scoresOfWinners[2].heroes"
+            :heroes-of-looser="scoresOfLoosers[2].heroes"
+            :scores-of-winner="scoresOfWinners[2].heroScore"
+            :scores-of-looser="scoresOfLoosers[2].heroScore"
+          ></match-detail-hero-row>
+          <match-detail-hero-row
+            v-if="matchIs4v4 && isCompleteGame"
+            :heroes-of-winner="scoresOfWinners[3].heroes"
+            :heroes-of-looser="scoresOfLoosers[3].heroes"
+            :scores-of-winner="scoresOfWinners[3].heroScore"
+            :scores-of-looser="scoresOfLoosers[3].heroScore"
+          ></match-detail-hero-row>
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               Sorry, but this games seems to have incomplete data
             </v-card-subtitle>
           </v-row>
           <v-row v-if="isCompleteGame && !matchIsFFA">
-            <v-col :cols="matchIs2v2 ? 0 : 1"></v-col>
+            <v-col :cols="0"></v-col>
             <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
@@ -249,6 +270,13 @@ export default class MatchDetailView extends Vue {
     );
   }
 
+  get matchIs4v4() {
+    return (
+      this.$store.direct.state.matches.matchDetail.match.gameMode ===
+        EGameMode.GM_4ON4 
+    );
+  }
+
   get isCompleteGame() {
     return this.$store.direct.state.matches.matchDetail.playerScores;
   }
@@ -257,7 +285,9 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
         this.match.teams[0].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[0].players[2]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[0].players[3]?.battleTag?.startsWith(s.battleTag)
     );
   }
 
@@ -265,7 +295,9 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
         this.match.teams[1].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[1].players[2]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[1].players[3]?.battleTag?.startsWith(s.battleTag)
     );
   }
 
