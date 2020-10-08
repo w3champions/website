@@ -51,27 +51,14 @@
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
+          <!-- v-if="!matchIsFFA && isCompleteGame" -->
           <match-detail-hero-row
-            v-if="!matchIsFFA && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[0].heroes"
-            :heroes-of-looser="scoresOfLoosers[0].heroes"
-            :scores-of-winner="scoresOfWinners[0].heroScore"
-            :scores-of-looser="scoresOfLoosers[0].heroScore"
-          />
-          <match-detail-hero-row
-            v-if="matchIs2v2 && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[1].heroes"
-            :heroes-of-looser="scoresOfLoosers[1].heroes"
-            :scores-of-winner="scoresOfWinners[1].heroScore"
-            :scores-of-looser="scoresOfLoosers[1].heroScore"
-          />
-          <match-detail-hero-row
-            v-if="matchIsFFA && isCompleteGame"
-            :not-color-winner="true"
-            :heroes-of-winner="ffaWinner.heroes"
-            :heroes-of-looser="ffaLooser1.heroes"
-            :scores-of-winner="ffaWinner.heroScore"
-            :scores-of-looser="ffaLooser1.heroScore"
+            v-for="(player, index) in scoresOfWinners"
+            v-bind:key="index"
+            :heroes-of-winner="scoresOfWinners[index].heroes"
+            :heroes-of-looser="scoresOfLoosers[index].heroes"
+            :scores-of-winner="scoresOfWinners[index].heroScore"
+            :scores-of-looser="scoresOfLoosers[index].heroScore"
           />
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
@@ -81,27 +68,6 @@
             :scores-of-winner="ffaLooser2.heroScore"
             :scores-of-looser="ffaLooser3.heroScore"
           />
-          <match-detail-hero-row
-            v-if="matchIs4v4 && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[1].heroes"
-            :heroes-of-looser="scoresOfLoosers[1].heroes"
-            :scores-of-winner="scoresOfWinners[1].heroScore"
-            :scores-of-looser="scoresOfLoosers[1].heroScore"
-          ></match-detail-hero-row>
-          <match-detail-hero-row
-            v-if="matchIs4v4 && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[2].heroes"
-            :heroes-of-looser="scoresOfLoosers[2].heroes"
-            :scores-of-winner="scoresOfWinners[2].heroScore"
-            :scores-of-looser="scoresOfLoosers[2].heroScore"
-          ></match-detail-hero-row>
-          <match-detail-hero-row
-            v-if="matchIs4v4 && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[3].heroes"
-            :heroes-of-looser="scoresOfLoosers[3].heroes"
-            :scores-of-winner="scoresOfWinners[3].heroScore"
-            :scores-of-looser="scoresOfLoosers[3].heroScore"
-          ></match-detail-hero-row>
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               Sorry, but this games seems to have incomplete data
