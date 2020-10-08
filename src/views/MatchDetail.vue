@@ -51,7 +51,6 @@
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
-          <!-- v-if="!matchIsFFA && isCompleteGame" -->
           <match-detail-hero-row
             v-for="(player, index) in scoresOfWinners"
             v-bind:key="index"
