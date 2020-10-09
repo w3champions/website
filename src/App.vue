@@ -71,9 +71,9 @@
       </v-menu>
     </v-app-bar>
 
-    <v-content>
+    <v-main>
       <router-view :key="$route.fullPath" />
-    </v-content>
+    </v-main>
     <v-footer padless class>
       <v-row justify="center" no-gutters>
         <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
