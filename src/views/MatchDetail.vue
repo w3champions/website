@@ -52,26 +52,12 @@
             </v-card-subtitle>
           </v-card-title>
           <match-detail-hero-row
-            v-if="!matchIsFFA && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[0].heroes"
-            :heroes-of-looser="scoresOfLoosers[0].heroes"
-            :scores-of-winner="scoresOfWinners[0].heroScore"
-            :scores-of-looser="scoresOfLoosers[0].heroScore"
-          />
-          <match-detail-hero-row
-            v-if="matchIs2v2 && isCompleteGame"
-            :heroes-of-winner="scoresOfWinners[1].heroes"
-            :heroes-of-looser="scoresOfLoosers[1].heroes"
-            :scores-of-winner="scoresOfWinners[1].heroScore"
-            :scores-of-looser="scoresOfLoosers[1].heroScore"
-          />
-          <match-detail-hero-row
-            v-if="matchIsFFA && isCompleteGame"
-            :not-color-winner="true"
-            :heroes-of-winner="ffaWinner.heroes"
-            :heroes-of-looser="ffaLooser1.heroes"
-            :scores-of-winner="ffaWinner.heroScore"
-            :scores-of-looser="ffaLooser1.heroScore"
+            v-for="(player, index) in scoresOfWinners"
+            v-bind:key="index"
+            :heroes-of-winner="scoresOfWinners[index].heroes"
+            :heroes-of-looser="scoresOfLoosers[index].heroes"
+            :scores-of-winner="scoresOfWinners[index].heroScore"
+            :scores-of-looser="scoresOfLoosers[index].heroScore"
           />
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
@@ -87,7 +73,7 @@
             </v-card-subtitle>
           </v-row>
           <v-row v-if="isCompleteGame && !matchIsFFA">
-            <v-col :cols="matchIs2v2 ? 0 : 1"></v-col>
+            <v-col :cols="0"></v-col>
             <v-col cols="5">
               <player-performance-on-match
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
@@ -233,15 +219,6 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match.season ?? 1;
   }
 
-  get matchIs2v2() {
-    return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-        EGameMode.GM_2ON2_AT ||
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-        EGameMode.GM_2ON2
-    );
-  }
-
   get matchIsFFA() {
     return (
       this.$store.direct.state.matches.matchDetail.match.gameMode ===
@@ -257,7 +234,9 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
         this.match.teams[0].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[0].players[2]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[0].players[3]?.battleTag?.startsWith(s.battleTag)
     );
   }
 
@@ -265,7 +244,9 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
         this.match.teams[1].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[1].players[2]?.battleTag?.startsWith(s.battleTag) ||
+        this.match.teams[1].players[3]?.battleTag?.startsWith(s.battleTag)
     );
   }
 
