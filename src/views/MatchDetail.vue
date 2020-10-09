@@ -219,26 +219,10 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match.season ?? 1;
   }
 
-  get matchIs2v2() {
-    return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-        EGameMode.GM_2ON2_AT ||
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-        EGameMode.GM_2ON2
-    );
-  }
-
   get matchIsFFA() {
     return (
       this.$store.direct.state.matches.matchDetail.match.gameMode ===
       EGameMode.GM_FFA
-    );
-  }
-
-  get matchIs4v4() {
-    return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-        EGameMode.GM_4ON4 
     );
   }
 
