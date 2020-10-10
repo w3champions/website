@@ -21,7 +21,7 @@ export type WinsToPictureId = {
 };
 
 export type SpecialPicture = {
-  id: number;
+  pictureId: number;
   description: string;
 }
 

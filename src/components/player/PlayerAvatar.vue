@@ -105,7 +105,7 @@
           style="padding-left: 25px; padding-right: 25px;"
           align="center"
         >
-          <v-col cols="1" v-for="number in specialPictures" :key="number">
+          <v-col cols="1" v-for="specialPicture in specialPictures" :key="specialPicture.pictureId">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
@@ -113,11 +113,11 @@
                   class="player-avatar-choosing" v-bind:class="{pointer: isLoggedInPlayer}"
                   @click="isLoggedInPlayer ? savePicture(race, number) : null"
                   :style="{
-                    'background-image': 'url(' + specialPicture(number) + ')',
+                    'background-image': 'url(' + getSpecialPicture(specialPicture.pictureId) + ')',
                   }"
                 />
               </template>
-              <span>W3NL $25 Donation</span>
+              <span>{{specialPicture.description}}</span>
             </v-tooltip>
           </v-col>
         </v-row>
@@ -471,7 +471,7 @@ export default class PlayerAvatar extends Vue {
       ".jpg");
   }
 
-  specialPicture(picId: number) {
+  getSpecialPicture(picId: number) {
     return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
   }
 
