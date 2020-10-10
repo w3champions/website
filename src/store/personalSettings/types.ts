@@ -20,6 +20,11 @@ export type WinsToPictureId = {
   neededWins: number;
 };
 
+export type SpecialPicture = {
+  id: number;
+  description: string;
+}
+
 export type PersonalSetting = {
   profileMessage: string;
   homePage?: string;
@@ -32,5 +37,6 @@ export type PersonalSetting = {
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];
   winLosses: RaceStat[];
+  specialPictures: SpecialPicture[];
   id: string;
 };

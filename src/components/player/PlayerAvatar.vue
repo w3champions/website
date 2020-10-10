@@ -75,7 +75,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="dialogOpened" max-width="1400px">
+    <v-dialog v-model="dialogOpened" scrollable max-width="1400px" >
       <v-card>
         <v-row
           style="padding-left: 25px; padding-right: 25px;"
@@ -84,7 +84,7 @@
           align="center"
           justify="space-between"
         >
-          <v-col cols="1" v-for="number in PicNumbers" :key="number">
+          <v-col cols="1" v-for="number in picNumbers" :key="number">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
@@ -97,6 +97,27 @@
                 />
               </template>
               <span>{{ winsOf(winsOfRace(race), number) }}</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+        <v-row
+          class="special-icons"
+          style="padding-left: 25px; padding-right: 25px;"
+          align="center"
+        >
+          <v-col cols="1" v-for="number in specialPictures" :key="number">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-card-text
+                  v-on="on"
+                  class="player-avatar-choosing" v-bind:class="{pointer: isLoggedInPlayer}"
+                  @click="isLoggedInPlayer ? savePicture(race, number) : null"
+                  :style="{
+                    'background-image': 'url(' + specialPicture(number) + ')',
+                  }"
+                />
+              </template>
+              <span>W3NL $25 Donation</span>
             </v-tooltip>
           </v-col>
         </v-row>
@@ -275,7 +296,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import { PersonalSetting } from "../../store/personalSettings/types";
+import { PersonalSetting, SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
 
 @Component({ components: { CountryFlag } })
@@ -292,7 +313,7 @@ export default class PlayerAvatar extends Vue {
   ];
 
   public countries: { country: string; countryCode: string }[] = [];
-  public PicNumbers = Array.from(Array(11).keys());
+  public picNumbers = Array.from(Array(11).keys());
 
   get playerGames() {
     return this.personalSetting.winLosses?.reduce((sum, stat) => {
@@ -329,6 +350,10 @@ export default class PlayerAvatar extends Vue {
       .split(" ")
       .filter((url) => !!url)
       .map((url) => url.trim());
+  }
+
+  get specialPictures(): Array<SpecialPicture> {
+    return this.personalSetting.specialPictures || [];
   }
 
   get savedMessageValue(): string {
@@ -444,6 +469,10 @@ export default class PlayerAvatar extends Vue {
       "_" +
       picId +
       ".jpg");
+  }
+
+  specialPicture(picId: number) {
+    return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
   }
 
   openDialog() {
@@ -569,6 +598,16 @@ export default class PlayerAvatar extends Vue {
 
   .player-league-points {
     font-size: 13px;
+  }
+}
+
+.special-icons {
+  .col {
+    margin-left: 10px;
+  }
+
+  .col:first-child {
+    margin-left: 0;
   }
 }
 </style>
