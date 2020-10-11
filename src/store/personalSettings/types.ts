@@ -1,4 +1,4 @@
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { RaceStat } from "@/store/player/types";
 
 export type PersonalSettingsState = {
@@ -6,8 +6,9 @@ export type PersonalSettingsState = {
 };
 
 export type ProfilePicture = {
-  race: ERaceEnum;
+  race: EAvatarCategory;
   pictureId: number;
+  description?: string;
 };
 
 export type RaceToMaxPicture = {
@@ -19,6 +20,11 @@ export type WinsToPictureId = {
   pictureId: number;
   neededWins: number;
 };
+
+export type SpecialPicture = {
+  pictureId: number;
+  description: string;
+}
 
 export type PersonalSetting = {
   profileMessage: string;
@@ -32,5 +38,6 @@ export type PersonalSetting = {
   pickablePictures: RaceToMaxPicture[];
   pictureRange: WinsToPictureId[];
   winLosses: RaceStat[];
+  specialPictures: SpecialPicture[];
   id: string;
 };
