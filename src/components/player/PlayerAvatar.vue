@@ -450,7 +450,12 @@ export default class PlayerAvatar extends Vue {
   }
 
   get avatarDescription(): string {
-    return this.personalSetting?.profilePicture?.description ?? '';
+    if (this.avatarCategory != EAvatarCategory.SPECIAL) {
+      return '';
+    }
+
+    const specialPicture = this.specialPictures.find(x => x.pictureId == this.avatarIcon);
+    return specialPicture?.description ?? '';
   }
 
   enabledIfEnoughWins(category: EAvatarCategory, iconId: number) {
