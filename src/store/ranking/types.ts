@@ -54,6 +54,7 @@ export interface PlayerInfo {
   calculatedRace: ERaceEnum;
   selectedRace: number;
   pictureId: number;
+  isClassicPicture: boolean;
   twitchName: string;
   clanId: string;
   country: string;

@@ -83,6 +83,11 @@
 
     <v-dialog v-model="dialogOpened" scrollable max-width="1400px" >
       <v-card>
+        <v-checkbox
+         style="margin-left:25px"
+          v-model="useClassicIcons"
+          :label="`Use classic icons`"
+        ></v-checkbox>
         <v-row
           style="padding-left: 25px; padding-right: 25px;"
           v-for="race in races"
@@ -304,10 +309,13 @@ import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
 import { PersonalSetting, SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
+import { getAvatarUrl } from '../../helpers/url-functions';
 
 @Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
   @Prop() isLoggedInPlayer!: boolean;
+
+  public useClassicIcons = false;
 
   public dialogOpened = false;
   public races = [
@@ -489,13 +497,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   picture(category: EAvatarCategory, picId: number) {
-    if (category == EAvatarCategory.SPECIAL) {
-      return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
-    }
-    else {
-      const categoryString = EAvatarCategory[category].toString();
-      return require(`../../assets/raceAvatars/${categoryString}_${picId}.jpg`);
-    }
+    return getAvatarUrl(category, picId, this.useClassicIcons);
   }
 
   openDialog() {
@@ -507,6 +509,7 @@ export default class PlayerAvatar extends Vue {
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
       race: avatarCategory,
       pictureId: picture,
+      isClassic: this.useClassicIcons,
       description
     });
 
@@ -526,6 +529,8 @@ export default class PlayerAvatar extends Vue {
       twitter: this.twitter,
       editDialogOpened: false,
     };
+
+    this.useClassicIcons = this.personalSetting?.profilePicture?.isClassic ?? false;
 
     // populate countries dropdown for combobox
     Object.keys(ECountries).map((key) => {

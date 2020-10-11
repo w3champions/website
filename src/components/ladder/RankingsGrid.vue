@@ -157,6 +157,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import { getAvatarUrl } from '@/helpers/url-functions';
 
 @Component({
   components: {
@@ -364,7 +365,7 @@ export default class RankingsGrid extends Vue {
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
     if (playerInfo.selectedRace && playerInfo.pictureId) {
-      return this.selectedAvatar(playerInfo.selectedRace, playerInfo.pictureId);
+      return getAvatarUrl(playerInfo.selectedRace, playerInfo.pictureId, playerInfo.isClassicPicture);
     } else {
       return this.raceIcon(playerInfo.calculatedRace);
     }
@@ -378,15 +379,6 @@ export default class RankingsGrid extends Vue {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
-    }
-  }
-
-  selectedAvatar(category: EAvatarCategory, picId: number) {
-    if (category == EAvatarCategory.SPECIAL) {
-      return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
-    } else {
-      const categoryString = EAvatarCategory[category].toString();
-      return require(`../../assets/raceAvatars/${categoryString}_${picId}.jpg`);
     }
   }
 

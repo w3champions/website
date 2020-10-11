@@ -8,6 +8,7 @@ export type PersonalSettingsState = {
 export type ProfilePicture = {
   race: EAvatarCategory;
   pictureId: number;
+  isClassic: boolean;
   description?: string;
 };
 
