@@ -148,7 +148,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, Match } from "@/store/typings";
+import { EAvatarCategory, EGameMode, ERaceEnum, Match } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 
@@ -381,12 +381,13 @@ export default class RankingsGrid extends Vue {
     }
   }
 
-  selectedAvatar(race: ERaceEnum, picId: number) {
-    return require("../../assets/raceAvatars/" +
-      ERaceEnum[race] +
-      "_" +
-      picId +
-      ".jpg");
+  selectedAvatar(category: EAvatarCategory, picId: number) {
+    if (category == EAvatarCategory.SPECIAL) {
+      return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
+    } else {
+      const categoryString = EAvatarCategory[category].toString();
+      return require(`../../assets/raceAvatars/${categoryString}_${picId}.jpg`);
+    }
   }
 
   raceIcon(race: ERaceEnum) {
