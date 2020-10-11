@@ -112,3 +112,13 @@ export enum ERaceEnum {
   UNDEAD = 8,
   TOTAL = 16,
 }
+
+export enum EAvatarCategory {
+  RANDOM = 0,
+  HUMAN = 1,
+  ORC = 2,
+  NIGHT_ELF = 4,
+  UNDEAD = 8,
+  TOTAL = 16,
+  SPECIAL = 32
+}

@@ -1,4 +1,4 @@
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { RaceStat } from "@/store/player/types";
 
 export type PersonalSettingsState = {
@@ -6,8 +6,9 @@ export type PersonalSettingsState = {
 };
 
 export type ProfilePicture = {
-  race: ERaceEnum;
+  race: EAvatarCategory;
   pictureId: number;
+  description?: string;
 };
 
 export type RaceToMaxPicture = {

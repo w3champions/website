@@ -2,15 +2,21 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-card-text
-          style="cursor: pointer;"
-          @click.stop="openDialog"
-          class="player-avatar text-center"
-          :style="{
-            'background-image':
-              'url(' + picture(personalRace, personalRaceIcon) + ')',
-          }"
-        />
+        <v-tooltip top v-bind:disabled="!avatarDescription">
+          <template v-slot:activator="{ on }">
+            <v-card-text v-on="on"
+              style="cursor: pointer;"
+              @click.stop="openDialog"
+              class="player-avatar text-center"
+              :style="{
+                'background-image':
+                  'url(' + picture(avatarCategory, avatarIcon) + ')',
+              }"
+            />
+          </template>
+          <span>{{avatarDescription}}</span>
+        </v-tooltip>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div v-on="on" class="country__container">
@@ -111,9 +117,9 @@
                 <v-card-text
                   v-on="on"
                   class="player-avatar-choosing" v-bind:class="{pointer: isLoggedInPlayer}"
-                  @click="isLoggedInPlayer ? savePicture(race, number) : null"
+                  @click="isLoggedInPlayer ? savePicture(specialAvatarCategory, specialPicture.pictureId, specialPicture.description) : null"
                   :style="{
-                    'background-image': 'url(' + getSpecialPicture(specialPicture.pictureId) + ')',
+                    'background-image': 'url(' + picture(specialAvatarCategory, specialPicture.pictureId) + ')',
                   }"
                 />
               </template>
@@ -294,7 +300,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
 import { PersonalSetting, SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
@@ -364,6 +370,10 @@ export default class PlayerAvatar extends Vue {
     return this.$store.direct.state.personalSettings.personalSettings;
   }
 
+  get specialAvatarCategory() {
+    return EAvatarCategory.SPECIAL;
+  }
+
   public rules = {
     maxLength: (len: number) => (v: string) =>
       (v || "").length < len || `Can not exceed ${len} characters`,
@@ -420,28 +430,38 @@ export default class PlayerAvatar extends Vue {
     this.userProfile.editDialogOpened = false;
   }
 
-  getCorrectClasses(race: ERaceEnum, iconId: number) {
+  getCorrectClasses(category: EAvatarCategory, iconId: number) {
     const classes = ["player-avatar-choosing"];
-    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(race, iconId))
+    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(category, iconId))
       classes.push("pointer");
 
-    if (!this.enabledIfEnoughWins(race, iconId))
+    if (!this.enabledIfEnoughWins(category, iconId))
       classes.push("player-avatar-choosing-disabled");
 
     return classes;
   }
 
-  get personalRaceIcon(): number {
+  get avatarIcon(): number {
     return this.personalSetting?.profilePicture?.pictureId ?? 0;
   }
 
-  get personalRace(): ERaceEnum {
-    return this.personalSetting?.profilePicture?.race ?? ERaceEnum.TOTAL;
+  get avatarCategory(): EAvatarCategory {
+    return this.personalSetting?.profilePicture?.race ?? EAvatarCategory.TOTAL;
   }
 
-  enabledIfEnoughWins(race: ERaceEnum, iconId: number) {
+  get avatarDescription(): string {
+    return this.personalSetting?.profilePicture?.description ?? '';
+  }
+
+  enabledIfEnoughWins(category: EAvatarCategory, iconId: number) {
+    if (category == EAvatarCategory.SPECIAL) {
+      return true;
+    }
+
+    const raceCategory = (category as any) as ERaceEnum;
+
     return (
-      this.personalSetting.pickablePictures?.filter((r) => r.race == race)[0]
+      this.personalSetting.pickablePictures?.filter((r) => r.race == raceCategory)[0]
         .max >= iconId
     );
   }
@@ -463,27 +483,26 @@ export default class PlayerAvatar extends Vue {
     )[0]?.neededWins;
   }
 
-  picture(race: ERaceEnum, picId: number) {
-    return require("../../assets/raceAvatars/" +
-      ERaceEnum[race] +
-      "_" +
-      picId +
-      ".jpg");
-  }
-
-  getSpecialPicture(picId: number) {
-    return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
+  picture(category: EAvatarCategory, picId: number) {
+    if (category == EAvatarCategory.SPECIAL) {
+      return require(`../../assets/specialAvatars/SPECIAL_${picId}.jpg`);
+    }
+    else {
+      const categoryString = EAvatarCategory[category].toString();
+      return require(`../../assets/raceAvatars/${categoryString}_${picId}.jpg`);
+    }
   }
 
   openDialog() {
     this.dialogOpened = true;
   }
 
-  async savePicture(race: ERaceEnum, picture: number) {
-    if (!this.enabledIfEnoughWins(race, picture)) return;
+  async savePicture(avatarCategory: EAvatarCategory, picture: number, description?: string) {
+    if (!this.enabledIfEnoughWins(avatarCategory, picture)) return;
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
-      race: race,
+      race: avatarCategory,
       pictureId: picture,
+      description
     });
 
     this.dialogOpened = false;
