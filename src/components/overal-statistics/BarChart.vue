@@ -40,13 +40,17 @@ export default class BarChart extends Mixins(Bar) {
       xAxes: [
         {
           ticks: {
-            reverse: true,
+            reverse: false
           },
         },
       ],
     },
   };
 
+  set reverseX(val: boolean) {
+    this.options.scales.xAxes[0].ticks.reverse = val
+  }
+  
   mounted() {
     if (this.chartData) {
       this.renderChart(this.chartData, this.options);

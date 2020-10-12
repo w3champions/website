@@ -10,6 +10,7 @@ import Vue from "vue";
 import BarChart from "@/components/overal-statistics/BarChart.vue";
 import { EGameMode } from "@/store/typings";
 import { Season } from "@/store/ranking/types";
+import { reverse } from 'lodash';
 
 @Component({
   components: { BarChart },
@@ -17,6 +18,7 @@ import { Season } from "@/store/ranking/types";
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
+  @Prop() public reverseX!: boolean
 
   private colors() {
     const colors = [];
