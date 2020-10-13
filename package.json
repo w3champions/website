@@ -13,6 +13,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "@types/chart.js": "^2.9.25",
+    "@types/lodash": "^4.14.162",
     "@types/moment": "^2.13.0",
     "@types/vue-markdown": "^2.2.1",
     "@types/vue-moment": "^4.0.0",
