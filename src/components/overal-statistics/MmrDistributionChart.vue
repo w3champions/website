@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="gameHourChartData" />
+  <bar-chart :chart-data="gameHourChartData" :xAxesReversed="true" />
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
@@ -10,7 +10,6 @@ import Vue from "vue";
 import BarChart from "@/components/overal-statistics/BarChart.vue";
 import { EGameMode } from "@/store/typings";
 import { Season } from "@/store/ranking/types";
-import { reverse } from 'lodash';
 
 @Component({
   components: { BarChart },
@@ -18,7 +17,6 @@ import { reverse } from 'lodash';
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
-  @Prop() public reverseX!: boolean
 
   private colors() {
     const colors = [];
