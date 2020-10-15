@@ -9,7 +9,6 @@ import { ChartData } from "chart.js";
 })
 export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
-  @Prop() public xAxesReversed!: boolean;
 
   private options = {
     legend: {
@@ -41,16 +40,15 @@ export default class BarChart extends Mixins(Bar) {
       xAxes: [
         {
           ticks: {
-            reverse: false
+            reverse: true,
           },
         },
       ],
     },
   };
-  
+
   mounted() {
     if (this.chartData) {
-      this.options.scales.xAxes[0].ticks.reverse = this.xAxesReversed;
       this.renderChart(this.chartData, this.options);
     }
   }
