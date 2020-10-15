@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="gameHourChartData" :xAxesReversed="true" />
+  <bar-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
