@@ -154,7 +154,13 @@ const en = {
     vilereef: "Vile Reef",
     dalarangarden: "Dalaran Garden",
     phantomgrovew3c: "Phantom Grove W3C",
-    tidewatergladesw3c: "Tidewater Glades W3C"
+    tidewatergladesw3c: "Tidewater Glades W3C",
+    autumnleaves201016: "Autumn Leaves",
+    ruinsofazshara201016: "Ruins of Azshara",
+    phantomgrovew3c201016: "Phantom Grove W3C",
+    vilereef201016: "Vile Reef",
+    wellspringtemple201016: "Wellspring Temple",
+    ferocity201016: "Ferocity"
   },
 
   heroNames: {
