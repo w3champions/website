@@ -160,7 +160,9 @@ const en = {
     phantomgrovew3c201016: "Phantom Grove W3C",
     vilereef201016: "Vile Reef",
     wellspringtemple201016: "Wellspring Temple",
-    ferocity201016: "Ferocity"
+    ferocity201016: "Ferocity",
+    synergyw3c: "Synergy W3C",
+    featherville: "Featherville"
   },
 
   heroNames: {
