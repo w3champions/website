@@ -18,7 +18,7 @@
         <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
           <td>
             <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</span>
-            <race-icon style="display: inline;" :race="item.race" />
+            <race-icon style="display: inline; padding-left: 10px;" :race="item.race" />
           </td>
           <td class="number-text text-start">
             <div class="text-center">
