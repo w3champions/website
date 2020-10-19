@@ -156,12 +156,12 @@ const en = {
     phantomgrovew3c: "Phantom Grove W3C",
     tidewatergladesw3c: "Tidewater Glades W3C",
     autumnleaves201016: "Autumn Leaves",
-    ruinsofazshara201016: "Ruins of Azshara",
+    ruinsofazshara201016: "Ruins of Azshara LV",
     phantomgrovew3c201016: "Phantom Grove W3C",
     vilereef201016: "Vile Reef",
     wellspringtemple201016: "Wellspring Temple",
     ferocity201016: "Ferocity",
-    synergyw3c: "Synergy W3C",
+    synergyw3c: "Synergy",
     featherville: "Featherville"
   },
 
