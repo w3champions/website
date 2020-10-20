@@ -6,11 +6,11 @@
           <v-col cols="12" md="5">
             <tournament-select 
               :tournaments="tournaments" 
-              :selectedTournament="selectedTournament"
+              :selectedTournament="tournament"
               @tournamentSelected="tournamentSelected"
             />
             <div>
-              <a style="font-size: 16px" v-bind:href="selectedTournament.matcherinoLink">
+              <a style="font-size: 16px" v-bind:href="tournament.matcherinoLink">
                 Donate to prize pool
               </a>
             </div>
@@ -34,7 +34,7 @@
 
         </div>
 
-        <div v-if="selectedTournament">
+        <div v-if="tournament">
           <tournament-match-update
             :tournamentMatch="selectedMatch"
             :isModalOpened="isEditMatchModalOpened"
@@ -46,13 +46,13 @@
             <p class="mt-4">Winner bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
-              :bracketRounds="selectedTournament.winnerBracketRounds"
+              :bracketRounds="tournament.winnerBracketRounds"
             ></tournamentBracket>
 
             <p>Losers bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
-              :bracketRounds="selectedTournament.loserBracketRounds"
+              :bracketRounds="tournament.loserBracketRounds"
             ></tournamentBracket>
           </div>
         </div>
@@ -95,8 +95,8 @@ export default class TournamentsView extends Vue {
 
   selectedTournament? = {} as ITournament;
 
-  get gateway() {
-    return this.$store.direct.state.gateway;
+  get tournament() {
+    return this.tournaments.find(x => x.id == this.selectedTournament?.id);
   }
 
   get tournaments() {
