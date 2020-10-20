@@ -32,7 +32,7 @@
     <div>
       <img
         class="LadderSummaryShowcase-divider"
-        src="https://static.starcraft2.com/dist/images/ladder/profile-ladders-summary-small-divider.png"
+        src="../../../src/assets/profiles/profile-ladders-divider.png"
       />
       <div class="text-center" v-if="isRanked && !smallMode">
         <span>

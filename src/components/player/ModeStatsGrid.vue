@@ -5,12 +5,20 @@
     :items="gameModeStatsCombined"
     mobile-breakpoint="400"
   >
+    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ header }">
+      <v-tooltip top v-bind:key="h.text">
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ header.text }}</span>
+        </template>
+        <span style="white-space: pre-line;">{{ header.tooltip }}</span>
+      </v-tooltip>
+    </template>
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
           <td>
             <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</span>
-            <race-icon style="display: inline;" :race="item.race" />
+            <race-icon style="display: inline; padding-left: 10px;" :race="item.race" />
           </td>
           <td class="number-text text-start">
             <div class="text-center">
@@ -126,13 +134,13 @@ export default class ModeStatsGrid extends Vue {
       return "";
     }
     const quantilePerc = modeStat.quantile * 100;
-    const topPerc = 100 - quantilePerc
+    const topPerc = 100 - quantilePerc;
 
     if (topPerc > 90) {
       return "";
     }
 
-      return `top ${Math.max(topPerc,0.1).toFixed(1)}%`
+    return `top ${Math.max(topPerc, 0.1).toFixed(1)}%`;
   }
 
   public headers = [
@@ -140,21 +148,26 @@ export default class ModeStatsGrid extends Vue {
       text: "Mode",
       align: "center",
       sortable: false,
+      tooltip: "Mode",
     },
     {
       text: "Win/Loss",
       align: "center",
       sortable: false,
+      tooltip: "Win/Loss"
     },
     {
       text: "MMR",
       align: "center",
       sortable: false,
+      tooltip: "MMR",
     },
     {
       text: "RP",
       align: "center",
       sortable: false,
+      tooltip:
+        "RP stands for Ranking Points and \ndetermines your rank in the ladder. \nRP is calculated from your MMR and activity level.",
     },
   ];
 }
@@ -171,5 +184,9 @@ export default class ModeStatsGrid extends Vue {
   .sub-value {
     border-top: 2px solid rgb(205, 205, 205);
   }
+}
+
+.tooltip-inner {
+  white-space: pre-line;
 }
 </style>

@@ -21,8 +21,8 @@
           <v-row v-if="isBetaSeason">
             <v-col>
               <v-card-text>
-                This noble person was part of our beta, therefore we hide his
-                buggy stats and thank him for all eternity ;)
+                This noble person was part of our beta, therefore we hide their
+                buggy stats and thank them for all eternity ;)
               </v-card-text>
             </v-col>
           </v-row>
