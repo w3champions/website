@@ -1,20 +1,40 @@
 <template>
-  <v-container class="tournament-page">
+  <v-container class="tournament-page" v-if="selectedTournament.id">
     <v-card class="mt-2 filter-blur">
       <v-card-title class="search-bar">
-        Season 2 Tournament
+        <v-row>
+          <v-col cols="12" md="5">
+            <tournament-select 
+              :tournaments="tournaments" 
+              :selectedTournament="selectedTournament"
+              @tournamentSelected="tournamentSelected"
+            />
+            <div>
+              <a style="font-size: 16px" v-bind:href="selectedTournament.matcherinoLink">
+                Donate to prize pool
+              </a>
+            </div>
+          </v-col>
+          <v-col cols="12" md="3">
+            <div>
+              <v-icon style="margin-right: 5px;">mdi-calendar</v-icon>
+              {{startDate}}
+            </div>
+            <div>
+              <v-icon style="margin-right: 5px;">mdi-clock</v-icon>
+                {{startTime}}
+            </div>
+          </v-col>
+        </v-row>
+
       </v-card-title>
 
       <div class="pl-4 filter-blur tourney-content">
         <div class="mb-2">
-          <a href="https://matcherino.com/tournaments/31685">
-            Donate to Prize Pool
-          </a>
+
         </div>
 
-        <gateway-select />
-
-        <div v-if="tournament">
+        <div v-if="selectedTournament">
           <tournament-match-update
             :tournamentMatch="selectedMatch"
             :isModalOpened="isEditMatchModalOpened"
@@ -26,13 +46,13 @@
             <p class="mt-4">Winner bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
-              :bracketRounds="tournament.winnerBracketRounds"
+              :bracketRounds="selectedTournament.winnerBracketRounds"
             ></tournamentBracket>
 
             <p>Losers bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
-              :bracketRounds="tournament.loserBracketRounds"
+              :bracketRounds="selectedTournament.loserBracketRounds"
             ></tournamentBracket>
           </div>
         </div>
@@ -55,14 +75,15 @@ import { ERaceEnum, EGameMode } from "@/store/typings";
 
 import { Gateways } from "@/store/ranking/types";
 
-import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
 import TournamentMatchUpdate from "@/components/tournaments/TournamentMatchUpdate.vue";
+import TournamentSelect from "@/components/tournaments/TournamentSelect.vue";
+import moment from 'moment';
 
 @Component({
   components: {
-    GatewaySelect,
+    TournamentSelect,
     TournamentBracket,
     TournamentRoundConnector,
     TournamentMatchUpdate
@@ -72,40 +93,30 @@ export default class TournamentsView extends Vue {
   public selectedMatch = {} as ITournamentMatch;
   public isEditMatchModalOpened = false;
 
+  selectedTournament? = {} as ITournament;
+
   get gateway() {
     return this.$store.direct.state.gateway;
-  }
-
-  get tournament() {
-    if (this.gateway == Gateways.Europe) {
-      return this.tournamentEU;
-    } else {
-      return this.tournamentNA;
-    }
   }
 
   get tournaments() {
     return this.$store.direct.state.tournaments.tournaments;
   }
 
-  get tournamentEU() {
-    if (!this.tournaments || this.tournaments.length == 0) {
-      return null;
-    }
-
-    return this.tournaments[0];
-  }
-
-  get tournamentNA() {
-    if (!this.tournaments || this.tournaments.length == 1) {
-      return null;
-    }
-
-    return this.tournaments[1];
-  }
-
   get isAdmin(): boolean {
     return this.$store.direct.state.oauth.isAdmin;
+  }
+
+  get startDate() {
+    return moment(this.selectedTournament?.startsOn).format('DD-MM-YYYY')
+  }
+
+  get startTime() {
+    return moment(this.selectedTournament?.startsOn).format('HH:mm:ss');
+  }
+
+  tournamentSelected(tournament: ITournament) {
+    this.selectedTournament = tournament;
   }
 
   matchSelected(match: ITournamentMatch) {
@@ -121,11 +132,12 @@ export default class TournamentsView extends Vue {
   }
 
   async updateTournament() {
-      await this.$store.direct.dispatch.tournaments.saveTournament(this.tournament as any);
+      await this.$store.direct.dispatch.tournaments.saveTournament(this.selectedTournament as any);
   }
 
   async mounted() {
     await this.$store.direct.dispatch.tournaments.retrieveTournaments();
+    this.selectedTournament = this.tournaments[0];
   }
 }
 </script>

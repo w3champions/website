@@ -40,4 +40,7 @@ export interface ITournament {
     name: string;
     winnerBracketRounds: ITournamentRound[];
     loserBracketRounds?: ITournamentRound[];
+    createdOn: Date;
+    startsOn: Date;
+    matcherinoLink: string;
 }
