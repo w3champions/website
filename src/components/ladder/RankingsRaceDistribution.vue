@@ -11,7 +11,7 @@
       <tbody>
         <tr v-for="item in raceDistributions" :key="item.race">
           <td>
-            <race-icon style="display: inline;" :race="item.race" />
+            <race-icon style="display: inline; padding-right: 10px;" :race="item.race" />
             <span>{{ getRaceName(item.race) }}</span>
           </td>
           <td>
