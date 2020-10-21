@@ -17,10 +17,12 @@ Vue.config.productionTip = false;
 const _apiUrl = (window as any)._env_.BASE_URL;
 const _redirectUrl = (window as any)._env_.REDIRECT_URL;
 const _launcherUrl = (window as any)._env_.LAUNCHER_UPDATE_URL;
+const _ingameUrlStaticResourcesUrl = (window as any)._env_.INGAME_STATIC_RESOURCES_URL;
 
 export const API_URL = _apiUrl;
 export const REDIRECT_URL = _redirectUrl;
 export const LAUNCHER_UPDATE_URL = _launcherUrl;
+export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 
 const i18n = new VueI18n({
   locale: "en",
