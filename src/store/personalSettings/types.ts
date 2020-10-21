@@ -34,6 +34,7 @@ export type PersonalSetting = {
   youTube: string;
   twitter: string;
   country: string;
+  countryCode: string;
   location?: string;
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];

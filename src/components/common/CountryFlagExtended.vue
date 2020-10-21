@@ -3,9 +3,9 @@
     <template v-slot:activator="{ on }">
       <span v-on="on">
         <country-flag
-          v-if="countryCode"
+          v-if="selectedCountryCode"
           class="country-flag"
-          :country="countryCode"
+          :country="selectedCountryCode"
           size="small"
         />
       </span>
@@ -22,12 +22,12 @@ import CountryFlag from "vue-country-flag";
 
 @Component({ components: { CountryFlag } })
 export default class CountryFlagExtended extends Vue {
-  @Prop() country?: string;
+  @Prop() countryCode?: string;
   @Prop() location?: string;
 
-  get countryCode(): string {
-    if (this.country) {
-      return (ECountries as any)[this.country];
+  get selectedCountryCode(): string {
+    if (this.countryCode) {
+      return this.countryCode;
     } else if (this.location) {
       return this.location;
     }
@@ -36,8 +36,8 @@ export default class CountryFlagExtended extends Vue {
   }
 
   get tooltip(): string {
-    if (this.country) {
-      return this.country;
+    if (this.countryCode) {
+      return CountriesByCode[this.countryCode];
     } else if (this.location) {
       return CountriesByCode[this.location];
     }

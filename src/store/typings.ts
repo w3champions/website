@@ -21,7 +21,7 @@ export type PlayerInTeam = {
   race: ERaceEnum;
   won: boolean;
   location?: string;
-  country?: string;
+  countryCode?: string;
 };
 
 export type Team = {

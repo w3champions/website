@@ -27,7 +27,7 @@
           </a>
           <div class="flag-container">
             <country-flag-extended
-              :country="player.country"
+              :countryCode="player.countryCode"
               :location="player.location"
               size="small"
             />
