@@ -243,7 +243,7 @@
                       <v-autocomplete
                         prepend-icon="mdi-flag"
                         clearable
-                        :item-value="(obj) => obj[country]"
+                        :item-value="countryCode"
                         :items="countries"
                         :filter="countryFilter"
                         label="Select your country"
@@ -339,8 +339,8 @@ export default class PlayerAvatar extends Vue {
     return this.personalSetting.homePage || "-";
   }
 
-  get country(): string {
-    return this.personalSetting.country || "-";
+  get countryCode(): string {
+    return this.personalSetting.countryCode || "";
   }
 
   get twitch(): string {
@@ -423,7 +423,6 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitch = this.userProfile.twitch;
     personalSetting.youTube = this.userProfile.youtube;
     personalSetting.twitter = this.userProfile.twitter;
-    personalSetting.country = this.selectedCountry || "";
 
     this.countries.map((c) => {
       if (c.country == this.selectedCountry) {
@@ -431,6 +430,13 @@ export default class PlayerAvatar extends Vue {
         this.selectedCountryCode = c.countryCode;
       }
     });
+
+    if (!this.selectedCountry) {
+      this.selectedCountryCode = "";
+    }
+
+    personalSetting.country = this.selectedCountry || "";
+    personalSetting.countryCode = this.selectedCountryCode || "";
 
     await this.$store.direct.dispatch.personalSettings.saveUserProfile(
       personalSetting
@@ -539,7 +545,7 @@ export default class PlayerAvatar extends Vue {
         countryCode: (ECountries as any)[key] as string,
       };
 
-      if (this.country && this.country == key) {
+      if (this.countryCode && this.countryCode == country.countryCode) {
         this.selectedCountry = country.country;
         this.selectedCountryCode = country.countryCode;
       }

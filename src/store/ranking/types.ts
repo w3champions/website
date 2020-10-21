@@ -58,6 +58,7 @@ export interface PlayerInfo {
   twitchName: string;
   clanId: string;
   country: string;
+  countryCode: string;
   location: string;
 }
 

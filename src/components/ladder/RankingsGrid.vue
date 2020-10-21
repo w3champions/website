@@ -54,13 +54,13 @@
               <div
                 class="country-flag__container"
                 v-if="
-                  (item.playersInfo && item.playersInfo[index].country) ||
+                  (item.playersInfo && item.playersInfo[index].countryCode) ||
                   item.playersInfo[index].location
                 "
               >
                 <country-flag-extended
                   class="country-flag"
-                  :country="item.playersInfo[index].country"
+                  :countryCode="item.playersInfo[index].countryCode"
                   :location="item.playersInfo[index].location"
                   size="small"
                 />
@@ -471,8 +471,8 @@ export default class RankingsGrid extends Vue {
   }
 
   getCountryCode(playerInfo: PlayerInfo): string {
-    if (playerInfo.country) {
-      return (ECountries as any)[playerInfo.country];
+    if (playerInfo.countryCode) {
+      return playerInfo.countryCode;
     } else if (playerInfo.location) {
       return playerInfo.location;
     }
