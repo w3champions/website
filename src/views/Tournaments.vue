@@ -132,7 +132,7 @@ export default class TournamentsView extends Vue {
   }
 
   async updateTournament() {
-      await this.$store.direct.dispatch.tournaments.saveTournament(this.selectedTournament as any);
+      await this.$store.direct.dispatch.tournaments.saveTournament(this.tournament as any);
   }
 
   async mounted() {
