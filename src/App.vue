@@ -96,7 +96,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { REDIRECT_URL } from "@/main";
+import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 
 @Component({})
 export default class App extends Vue {
@@ -136,7 +136,7 @@ export default class App extends Vue {
     if (this.authCode) {
       this.openPlayerProfile();
     } else {
-      location.href = `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=d7bd6dd46e2842c8a680866759ad34c2&redirect_uri=${REDIRECT_URL}`;
+      location.href = `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
     }
   }
 
