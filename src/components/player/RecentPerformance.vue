@@ -21,9 +21,9 @@ import { Component, Prop } from "vue-property-decorator";
 @Component({})
 export default class RecentPerformance extends Vue {
   /**
-   * @example WWWLLWLWLL
+   * @example ['W', 'W', 'W', 'L', 'L', 'W', 'L','W','L','L']
    */
-  @Prop() lastTenMatchesPerformance!: string;
+  @Prop() lastTenMatchesPerformance!: string[];
 }
 </script>
 

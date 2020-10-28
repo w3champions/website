@@ -166,7 +166,7 @@ export default class PlayerLeague extends Vue {
     return this.modeStat.rank > 0;
   }
 
-  get lastTenMatchesPerformance(): string {
+  get lastTenMatchesPerformance(): string[] {
     return this.matches
         .slice(0,10)
         .map(match => match.teams.find(team => team.players.find(player => player.battleTag === this.battleTag)))
