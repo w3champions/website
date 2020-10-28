@@ -108,7 +108,7 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get battleTag() {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   get loadingProfile(): boolean {

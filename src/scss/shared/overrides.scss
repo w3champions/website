@@ -134,3 +134,8 @@ h3 {
 .row {
   filter: blur(0);
 }
+
+.scroll-v-dialog {
+  background: inherit !important;
+  overflow-y: scroll !important;
+}
