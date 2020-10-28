@@ -235,7 +235,7 @@ export default class PlayerView extends Vue {
   }
 
   get battleTag(): string {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   get totalMatches(): number {

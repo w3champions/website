@@ -135,6 +135,10 @@ export default class MatchesGrid extends Vue {
     };
   }
 
+  destroyed(){
+    this.$emit("pageChanged", 1);
+  }
+
   get matches(): Match[] {
     return this.value;
   }

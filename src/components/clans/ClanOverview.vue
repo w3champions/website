@@ -233,7 +233,7 @@ export default class ClanOverview extends Vue {
   @Prop() public id!: string;
 
   get battleTag() {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   get currentSeason() {

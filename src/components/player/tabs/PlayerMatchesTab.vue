@@ -93,11 +93,11 @@
     </v-card-text>
     <matches-grid
       v-model="matches"
-      :totalMatches="totalMatches"
+      :total-matches="totalMatches"
+      :items-per-page="50"
+      :always-left-name="battleTag"
+      only-show-enemy
       @pageChanged="onPageChanged"
-      :itemsPerPage="50"
-      :alwaysLeftName="battleTag"
-      :only-show-enemy="true"
     ></matches-grid>
   </div>
 </template>
@@ -139,7 +139,7 @@ export default class PlayerMatchesTab extends Vue {
   }
 
   get battleTag() {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   public async mounted() {
