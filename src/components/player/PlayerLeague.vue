@@ -48,20 +48,29 @@
         <span>Placement matches played</span>
       </div>
     </div>
+    <recent-performance
+      v-if="lastTenMatchesPerformance.length"
+      :last-ten-matches-performance="lastTenMatchesPerformance"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { EGameMode } from "@/store/typings";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { EGameMode, Match } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
+import RecentPerformance from "@/components/player/RecentPerformance.vue";
 
-@Component({})
+@Component({
+  components: { RecentPerformance },
+})
 export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
   @Prop() showAtPartner!: boolean;
   @Prop() smallMode!: boolean;
+
+  matches: Match[] = [];
 
   get leagueMode() {
     return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
@@ -83,10 +92,33 @@ export default class PlayerLeague extends Vue {
     return this.$store.direct.state.player.selectedSeason;
   }
 
+  get battleTag(){
+    return this.$store.direct.state.player.battleTag;
+  }
+
   get atPartner() {
     return this.modeStat.playerIds.filter(
-      (id) => this.$store.direct.state.player.battleTag !== id.battleTag
+      (id) => this.battleTag !== id.battleTag
     )[0];
+  }
+
+  get seasonAndGameModeAndGateway() {
+    return `${this.selectedSeason.id}${this.gameMode}${this.gateWay}`;
+  }
+
+  public async init(){
+    const {
+      matches,
+    } = await this.$store.direct.getters.matchService.retrievePlayerMatches(
+      0,
+      this.battleTag,
+      "",
+      this.gameMode,
+      this.gateWay,
+      this.selectedSeason.id
+    );
+
+    this.matches = matches;
   }
 
   public navigateToPartner() {
@@ -132,6 +164,19 @@ export default class PlayerLeague extends Vue {
 
   get isRanked() {
     return this.modeStat.rank > 0;
+  }
+
+  get lastTenMatchesPerformance(): string {
+    return this.matches
+        .slice(0,10)
+        .map(match => match.teams.find(team => team.players.find(player => player.battleTag === this.battleTag)))
+        .filter(Boolean)
+        .map(team => team!.won ? 'W' : 'L');
+  }
+
+  @Watch('seasonAndGameModeAndGateway', {immediate: true})
+  onSeasonOrGameModeOrGatewayChange(){
+    this.init();
   }
 }
 </script>
