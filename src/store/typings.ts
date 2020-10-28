@@ -26,6 +26,7 @@ export type PlayerInTeam = {
 
 export type Team = {
   players: PlayerInTeam[];
+  won?: boolean;
 };
 
 export type Match = {
