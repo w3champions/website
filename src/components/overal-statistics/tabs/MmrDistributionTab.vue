@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row>
+    <v-row align="center">
       <v-col cols="md-2">
-        <v-card-text v-if="!loadingMapAndRaceStats">
+        <v-card-text>
           <v-select
             :items="seasons"
             item-text="id"
@@ -16,11 +16,18 @@
           The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.
         </v-card-text>
         <v-card-text v-if="authCode">
-          The green bar shows where you are in the distribution.
+          The green line shows where you are in the distribution.
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
+        <div class="text-center my-auto">
+          <v-progress-circular
+            indeterminate
+            v-if="loadingData"
+          ></v-progress-circular>
+        </div>
         <mmr-distribution-chart
+          v-if="!loadingData"
           :mmr-distribution="mmrDistribution"
           :selected-season="selectedSeason"
         />
@@ -39,13 +46,10 @@ import MmrDistributionChart from "@/components/overal-statistics/MmrDistribution
 })
 export default class PlayerActivityTab extends Vue {
   public selectedSeason: Season = { id: 1 };
+  private loadingData = true;
 
   get seasons() {
     return this.$store.direct.state.rankings.seasons;
-  }
-
-  get loadingMapAndRaceStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
   }
 
   public async setSelectedSeason(season: Season) {
@@ -68,8 +72,10 @@ export default class PlayerActivityTab extends Vue {
   }
 
   private async init() {
+    this.loadingData = true;
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
+    this.loadingData = false;
   }
 
   get verifiedBtag() {

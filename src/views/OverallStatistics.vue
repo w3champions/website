@@ -68,10 +68,6 @@ export default class OverallStatisticsView extends Vue {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
-  get mmrDistribution() {
-    return this.$store.direct.state.overallStatistics.mmrDistribution;
-  }
-
   mounted() {
     this.init();
   }
@@ -87,9 +83,6 @@ export default class OverallStatisticsView extends Vue {
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
     }
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
-      this.$store.direct.state.rankings.selectedSeason.id
-    );
   }
 }
 </script>
