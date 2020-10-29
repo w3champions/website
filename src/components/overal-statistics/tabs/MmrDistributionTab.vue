@@ -53,6 +53,7 @@ export default class PlayerActivityTab extends Vue {
   }
 
   public async setSelectedSeason(season: Season) {
+    this.loadingData = true;
     this.selectedSeason = season;
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
@@ -65,6 +66,7 @@ export default class PlayerActivityTab extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       season.id
     );
+    this.loadingData = false;
   }
 
   mounted() {
@@ -72,10 +74,8 @@ export default class PlayerActivityTab extends Vue {
   }
 
   private async init() {
-    this.loadingData = true;
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
-    this.loadingData = false;
   }
 
   get verifiedBtag() {
