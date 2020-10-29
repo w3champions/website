@@ -1,5 +1,8 @@
 <template>
-  <bar-chart :chartData="mmrDistributionChartData" :xAxesReversed="true" />
+  <bar-chart
+    :chartData="mmrDistributionChartData"
+    :chartOptions="mmrDistributionChartOptions"
+  />
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
@@ -21,9 +24,7 @@ export default class MmrDistributionChart extends Vue {
   private colors() {
     const colors = [];
     for (let i = 0; i < this.mmrDistribution.distributedMmrs.length; i++) {
-      if (this.isYou(i)) {
-        colors.push("rgb(28,95,47, 0.7)");
-      } else if (
+      if (
         i === this.mmrDistribution.top2PercentIndex ||
         i === this.mmrDistribution.top5PercentIndex ||
         i === this.mmrDistribution.top10PercentIndex ||
@@ -54,73 +55,100 @@ export default class MmrDistributionChart extends Vue {
     return this.$store.direct.state.player.gameModeStats;
   }
 
-  public isYou(index: number) {
-    return (
-      Math.abs(
-        this.mmrDistribution.distributedMmrs[index].mmr +
-          25 -
-          this.mmrOfLoggedInPlayer
-      ) < 12
-    );
-  }
-
-  get mmrDistributionChartData(): ChartData {
+  get mmrGroupOfLoggedInPlayer() {
     if (!this.mmrDistribution.distributedMmrs) {
       return null;
     }
 
-    const totalSum = this.mmrDistribution.distributedMmrs
+    const mmrGroup = this.mmrDistribution.distributedMmrs.find(
+      (d) => Math.abs(d.mmr + 25 - this.mmrOfLoggedInPlayer) <= 25
+    );
+    return mmrGroup ? mmrGroup.mmr : null;
+  }
+
+  get mmrDistributionTotalPlayers(): number {
+    return this.mmrDistribution.distributedMmrs
       .map((d) => d.count)
       .reduce((a, b) => a + b);
-    const maxCount = Math.max(
-      ...this.mmrDistribution.distributedMmrs.map((d) => d.count)
-    );
+  }
+
+  get isTop50percent(): boolean {
+    const top50mmr = this.mmrDistribution.distributedMmrs[
+      this.mmrDistribution.top50PercentIndex
+    ].mmr;
+    return this.mmrOfLoggedInPlayer > top50mmr;
+  }
+
+  get cumulativeSumData(): number[] {
+    return this.mmrDistribution.distributedMmrs
+      .slice()
+      .reverse()
+      .map((d) => d.count)
+      .reduce<number[]>((a, e, i) => {
+        // a: Accumulator; e: current Element; i: current Index
+        return a.length > 0 ? [...a, e + a[i - 1]] : [e];
+      }, [])
+      .reverse();
+  }
+
+  get mmrDistributionChartData(): ChartData {
+    if (!this.mmrDistribution.distributedMmrs) {
+      return {};
+    }
 
     return {
       labels: this.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
       datasets: [
         {
           label: "mmr",
-          data: this.mmrDistribution.distributedMmrs
-            .slice()
-            .reverse()
-            .map((d) => d.count),
+          data: this.mmrDistribution.distributedMmrs.map((d) => d.count),
           borderColor: "rgba(54, 162, 235, 1)",
           borderWidth: 1,
           backgroundColor: this.colors,
         },
         {
           label: "cumulative",
-          data: this.mmrDistribution.distributedMmrs
-            .slice()
-            .reverse()
-            .map((d) => d.count)
-            .reduce((a, e, i) => {
-              // a: Accumulator; e: current Element; i: current Index
-              return a.length > 0 ? [...a, e + a[i - 1]] : [e];
-            }, [])
-            .reverse(),
+          data: this.cumulativeSumData,
           borderColor: "rgb(60,208,88)",
           type: "line",
           yAxisID: "y-axis-1",
+          fill: false,
         },
       ],
     };
   }
 
   get mmrDistributionChartOptions() {
+    if (!this.mmrDistribution.distributedMmrs) {
+      return null;
+    }
+
     return {
       legend: {
         display: true,
       },
       tooltips: {
+        bodyAlign: "center",
         custom: function (tooltip: { displayColors: boolean }) {
           if (!tooltip) return;
           tooltip.displayColors = false;
         },
         callbacks: {
-          label: function (tooltipItem: { xLabel: any; yLabel: any }) {
-            return `75.3%`;
+          label: (tooltipItem: {
+            xLabel: any;
+            yLabel: any;
+            datasetIndex: number;
+          }) => {
+            if (tooltipItem.datasetIndex === 0) {
+              // MMR
+              return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
+            } else {
+              //Cummulative
+              const percent =
+                100 -
+                (tooltipItem.yLabel / this.mmrDistributionTotalPlayers) * 100;
+              return `top ${Math.max(percent, 0.1).toFixed(0)}%`;
+            }
           },
           title: function () {
             return "";
@@ -147,7 +175,7 @@ export default class MmrDistributionChart extends Vue {
         xAxes: [
           {
             ticks: {
-              reverse: false,
+              reverse: true,
             },
           },
         ],
@@ -158,7 +186,7 @@ export default class MmrDistributionChart extends Vue {
             type: "line",
             mode: "vertical",
             scaleID: "x-axis-0",
-            value: "> 1250",
+            value: `> ${this.mmrGroupOfLoggedInPlayer}`,
             borderColor: "rgb(28,95,47, 0.7)",
             borderWidth: 2,
             borderDash: [10, 10],
@@ -167,7 +195,7 @@ export default class MmrDistributionChart extends Vue {
               backgroundColor: "rgb(28,95,47, 0.7)",
               enabled: true,
               yAdjust: 10,
-              xAdjust: -40,
+              xAdjust: this.isTop50percent ? 40 : -40, //Move label to left or right of line
               position: "top",
               cornerRadius: 0,
             },
