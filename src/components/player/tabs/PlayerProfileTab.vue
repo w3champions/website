@@ -15,7 +15,10 @@
               v-for="gameModeStat in topGameModeStats"
               :key="gameModeStat.gameMode"
             >
-              <player-league :modeStat="gameModeStat"></player-league>
+              <player-league
+                :modeStat="gameModeStat"
+                :playerId="id"
+              ></player-league>
             </v-col>
           </v-row>
           <v-row v-if="isBetaSeason">
@@ -208,7 +211,10 @@ export default class PlayerProfileTab extends Vue {
       "rank",
     ]);
 
-    return _.take(bestAllModesSorted.filter(x =>x.rank != 0), 3);
+    return _.take(
+      bestAllModesSorted.filter((x) => x.rank != 0),
+      3
+    );
   }
 }
 </script>

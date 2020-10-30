@@ -157,7 +157,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { getAvatarUrl } from '@/helpers/url-functions';
+import { getAvatarUrl } from "@/helpers/url-functions";
 
 @Component({
   components: {
@@ -357,7 +357,7 @@ export default class RankingsGrid extends Vue {
           behavior: "smooth",
         });
       }
-    }, 200);
+    }, 500);
   }
 
   public getRaceIcon(ranking: Ranking, playerIndex: number) {
@@ -365,7 +365,11 @@ export default class RankingsGrid extends Vue {
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
     if (this.hasSelectedIcon(playerInfo)) {
-      return getAvatarUrl(playerInfo.selectedRace, playerInfo.pictureId, playerInfo.isClassicPicture);
+      return getAvatarUrl(
+        playerInfo.selectedRace,
+        playerInfo.pictureId,
+        playerInfo.isClassicPicture
+      );
     } else {
       return this.raceIcon(playerInfo.calculatedRace);
     }
@@ -375,7 +379,10 @@ export default class RankingsGrid extends Vue {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
-    if (this.hasSelectedIcon(playerInfo) && playerInfo.selectedRace <= ERaceEnum.UNDEAD) {
+    if (
+      this.hasSelectedIcon(playerInfo) &&
+      playerInfo.selectedRace <= ERaceEnum.UNDEAD
+    ) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
@@ -383,7 +390,12 @@ export default class RankingsGrid extends Vue {
   }
 
   private hasSelectedIcon(playerInfo: PlayerInfo) {
-    if (playerInfo.selectedRace !== undefined && playerInfo.selectedRace != null && playerInfo.pictureId !== undefined && playerInfo.pictureId != null){
+    if (
+      playerInfo.selectedRace !== undefined &&
+      playerInfo.selectedRace != null &&
+      playerInfo.pictureId !== undefined &&
+      playerInfo.pictureId != null
+    ) {
       return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
     }
     return false;
