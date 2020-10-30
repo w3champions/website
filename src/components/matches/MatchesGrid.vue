@@ -34,7 +34,7 @@
                   ></team-match-info>
                 </v-col>
                 <v-col
-                  cols="3"
+                  cols="6"
                   v-for="(team, index) in getOpponentTeams(item)"
                   :key="index"
                 >
@@ -135,7 +135,7 @@ export default class MatchesGrid extends Vue {
     };
   }
 
-  destroyed(){
+  destroyed() {
     this.$emit("pageChanged", 1);
   }
 
