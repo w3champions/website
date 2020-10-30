@@ -365,7 +365,7 @@ export default class RankingsGrid extends Vue {
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
     if (this.hasSelectedIcon(playerInfo)) {
-      return getAvatarUrl(playerInfo.selectedRace, playerInfo.pictureId, playerInfo.isClassicPicture);
+      return getAvatarUrl(playerInfo.selectedRace, playerInfo.pictureId, false);
     } else {
       return this.raceIcon(playerInfo.calculatedRace);
     }
