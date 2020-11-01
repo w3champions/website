@@ -140,6 +140,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import moment from "moment";
 import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
@@ -231,22 +232,30 @@ export default class MatchDetailView extends Vue {
   }
 
   get scoresOfWinners() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfWinners = this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
-        this.match.teams[0].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[0].players[1]?.battleTag?.startsWith(s.battleTag) ||
-        this.match.teams[0].players[2]?.battleTag?.startsWith(s.battleTag) ||
-        this.match.teams[0].players[3]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[0].players.some((player) =>
+          player.battleTag.startsWith(s.battleTag)
+        )
+    );
+    const scoresOfWinnersByBattleTag = _keyBy(scoresOfWinners, "battleTag");
+
+    return this.match.teams[0].players.map(
+      (player) => scoresOfWinnersByBattleTag[player.battleTag]
     );
   }
 
   get scoresOfLoosers() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfLoosers = this.$store.direct.state.matches.matchDetail.playerScores.filter(
       (s) =>
-        this.match.teams[1].players[0].battleTag.startsWith(s.battleTag) ||
-        this.match.teams[1].players[1]?.battleTag?.startsWith(s.battleTag) ||
-        this.match.teams[1].players[2]?.battleTag?.startsWith(s.battleTag) ||
-        this.match.teams[1].players[3]?.battleTag?.startsWith(s.battleTag)
+        this.match.teams[1].players.some((player) =>
+          player.battleTag.startsWith(s.battleTag)
+        )
+    );
+    const scoresOfLoosersByBattleTag = _keyBy(scoresOfLoosers, "battleTag");
+
+    return this.match.teams[1].players.map(
+      (player) => scoresOfLoosersByBattleTag[player.battleTag]
     );
   }
 
