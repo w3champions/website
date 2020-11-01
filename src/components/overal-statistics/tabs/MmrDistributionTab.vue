@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row>
+    <v-row align="center">
       <v-col cols="md-2">
-        <v-card-text v-if="!loadingMapAndRaceStats">
+        <v-card-text>
           <v-select
             :items="seasons"
             item-text="id"
@@ -27,11 +27,18 @@
           The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.
         </v-card-text>
         <v-card-text v-if="authCode">
-          The green bar shows where you are in the distribution.
+          The green line shows where you are in the distribution.
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
+        <div class="text-center my-auto">
+          <v-progress-circular
+            indeterminate
+            v-if="loadingData"
+          ></v-progress-circular>
+        </div>
         <mmr-distribution-chart
+          v-if="!loadingData"
           :mmr-distribution="mmrDistribution"
           :selected-season="selectedSeason"
         />
@@ -60,46 +67,14 @@ export default class PlayerActivityTab extends Vue {
   public selectedSeason: Season = { id: 1 };
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
+  private loadingData = true;
 
   get seasons() {
     return this.$store.direct.state.rankings.seasons;
   }
 
-  get disabledGameModes() {    
-    return [];
-  }
-
-   get gameModes() {
-    let modes = [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        gameMode: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        gameMode: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        gameMode: EGameMode.GM_2ON2_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        gameMode: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        gameMode: EGameMode.GM_FFA,
-      },
-    ];
-    return modes;
-  }
-
-  get loadingMapAndRaceStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
-  }
-
   public async setSelectedSeason(season: Season) {
+    this.loadingData = true;
     this.selectedSeason = season;
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
@@ -115,6 +90,7 @@ export default class PlayerActivityTab extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       payload
     );
+    this.loadingData = false;
   }
 
   gameModeChanged(gameMode: EGameMode) {

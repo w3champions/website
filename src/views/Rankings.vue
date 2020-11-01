@@ -76,7 +76,12 @@
                         .join(" & ")
                     }}
                   </span>
-                  <span v-if="data.item.player.gameMode === gameModes.GM_1ON1">
+                  <span
+                    v-if="
+                      data.item.player.gameMode === gameModes.GM_1ON1 &&
+                      data.item.player.race
+                    "
+                  >
                     ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
                   </span>
                 </v-list-item-title>
