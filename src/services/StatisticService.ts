@@ -11,7 +11,8 @@ import {
   StatsPerWinrate,
   WinLoss,
 } from "@/store/overallStats/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from '@/store/typings';
+import { Gateways } from '@/store/ranking/types';
 
 export default class StatisticService {
   public async retrieveMapsPerSeason(): Promise<MatchesOnMapPerSeason[]> {
@@ -107,9 +108,11 @@ export default class StatisticService {
   }
 
   public async retrieveMmrDistribution(
-    season: number
+    season: number,
+    gameMode: EGameMode,
+    gateWay:Gateways
   ): Promise<MmrDistribution> {
-    const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}`;
+    const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}&gateWay=${gateWay}&gameMode=${gameMode}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
