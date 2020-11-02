@@ -19,8 +19,8 @@
         <br v-if="showAtPartner" />
       </div>
       <span v-if="isRanked">
-        <span v-if="!smallMode">Rank</span>
-        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
+        <span v-if="!smallMode">Rank </span>
+        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} | </span>
         <span class="won">{{ modeStat.wins }}</span>
         -
         <span class="lost">{{ modeStat.losses }}</span>
