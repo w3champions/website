@@ -1,31 +1,25 @@
-<template>
-  <span :class="[raceIcon(), alignment(), raceIconSize()]"></span>
-</template>
-
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import Vue, { CreateElement, RenderContext, VNode } from "vue";
 import { ERaceEnum } from "@/store/typings";
 
-@Component({})
-export default class PlayerIcon extends Vue {
-  @Prop() race!: ERaceEnum;
-  @Prop() mmr!: number;
-  @Prop() left!: boolean;
-  @Prop() big!: boolean;
-
-  raceIcon() {
-    return "race-icon-" + ERaceEnum[this.race];
-  }
-
-  raceIconSize() {
-    return this.big ? "race-icon-big" : "race-icon";
-  }
-
-  alignment() {
-    return this.left ? "alignLeft" : "alignRight";
-  }
+interface IProps {
+  race: ERaceEnum;
+  left: boolean;
+  big: boolean;
 }
+
+export default Vue.component<IProps>("PlayerIcon", {
+  functional: true,
+  render(h: CreateElement, { props }: RenderContext<IProps>): VNode {
+    const classes = [
+      "race-icon-" + ERaceEnum[props.race],
+      props.big ? "race-icon-big" : "race-icon",
+      props.left ? "alignLeft" : "alignRight",
+    ];
+
+    return h("span", { class: classes.join(" ") });
+  },
+});
 </script>
 
 <style lang="scss">
