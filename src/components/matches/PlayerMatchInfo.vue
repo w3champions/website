@@ -25,7 +25,7 @@
               <span v-else>{{ mmrChange }}</span>
             </span>
           </a>
-          <div v-if="player.countryCode" class="flag-container">
+          <div class="flag-container">
             <country-flag-extended
               :countryCode="player.countryCode"
               :location="player.location"
