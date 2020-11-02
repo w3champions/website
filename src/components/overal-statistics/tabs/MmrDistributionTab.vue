@@ -4,6 +4,7 @@
       <v-col cols="md-2">
         <v-card-text>
           <v-select
+            v-model="selectedSeason"
             :items="seasons"
             item-text="id"
             @change="setSelectedSeason"
@@ -12,12 +13,16 @@
             outlined
           />
 
-          <game-mode-select
-              :disabledModes="disabledGameModes"
-              :gameMode="selectedGameMode"
-              @gameModeChanged="gameModeChanged"
-            ></game-mode-select>
-          
+           <v-select
+            v-model="selectedGameMode"
+            class="over-chart-select-box"
+            :items="gameModes"
+            item-text="modeName"
+            item-value="modeId"
+            @change="gameModeChanged"
+            label="Mode"
+            outlined
+          />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats">
           <gateway-select @gatewayChanged="gatewayChanged" />
@@ -73,6 +78,30 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.rankings.seasons;
   }
 
+   get gameModes() {
+    return [      
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
+        modeId: EGameMode.GM_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
+        modeId: EGameMode.GM_2ON2,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
+        modeId: EGameMode.GM_2ON2_AT,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
+        modeId: EGameMode.GM_4ON4,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
+        modeId: EGameMode.GM_FFA,
+      },
+    ];
+  }
   public async setSelectedSeason(season: Season) {
     this.loadingData = true;
     this.selectedSeason = season;
