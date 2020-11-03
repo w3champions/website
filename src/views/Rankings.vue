@@ -85,10 +85,13 @@
                     ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
                   </span>
                 </v-list-item-title>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle v-if="playerIsRanked(data.item)">
                   Wins: {{ data.item.player.wins }} | Losses:
                   {{ data.item.player.losses }} | Total:
                   {{ data.item.player.games }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>
+                  Unranked
                 </v-list-item-subtitle>
               </v-list-item-content>
             </template>
@@ -203,6 +206,11 @@ export default class RankingsView extends Vue {
   @Watch("searchModel")
   public onSearchModelChanged(rank: Ranking) {
     if (!rank) return;
+
+    if (!this.playerIsRanked(rank)) {
+      this.routeToProfilePage(rank.player.playerIds[0].battleTag)
+    }
+
     this.setLeague(rank.league);
   }
 
@@ -381,6 +389,16 @@ export default class RankingsView extends Vue {
 
   public async setLeague(league: number) {
     await this.$store.direct.dispatch.rankings.setLeague(league);
+  }
+
+  public playerIsRanked(rank: Ranking): boolean {
+    return rank.player.games > 0        
+  }
+
+  public routeToProfilePage(playerId: string) {
+    this.$router.push({ 
+      path: "/player/" + encodeURIComponent(`${playerId}`)
+    })
   }
 }
 </script>
