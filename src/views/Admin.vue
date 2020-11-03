@@ -34,21 +34,51 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            v-model="editedItem.endDate"
-                            hint="YYYY-MM-DD format"
-                            persistent-hint
-                            label="Ban End Date"
-                          ></v-text-field>
+                          <v-menu
+                            v-model="dateMenu"
+                            :close-on-content-click="false"
+                            min-width="290px"
+                          >
+                            <template #activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.endDate"
+                                readonly
+                                label="Ban End Date"
+                                v-bind="attrs"
+                                v-on="on"
+                              />
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.endDate"
+                              no-title
+                              scrollable
+                            >
+                              <v-spacer />
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="
+                                  editedItem.endDate = '';
+                                  dateMenu = false;
+                                "
+                              >
+                                Cancel
+                              </v-btn>
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="dateMenu = false"
+                              >
+                                OK
+                              </v-btn>
+                            </v-date-picker>
+                          </v-menu>
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
-                          <v-select
+                          <v-checkbox
                             v-model="editedItem.isOnlyChatBan"
-                            :items="[true, false]"
                             label="Is only banned from chat"
-                            :item-value="editedItem.isOnlyChatBan"
-                            required
-                          ></v-select>
+                          />
                         </v-col>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field
@@ -205,6 +235,7 @@ export default class Admin extends Vue {
 
   public dialog = false;
   public dialogNews = false;
+  public dateMenu = false;
   public editedIndex = -1;
   public date = "";
   public editedNewsItem = {
