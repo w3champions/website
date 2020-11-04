@@ -13,7 +13,7 @@
             outlined
           />
 
-           <v-select
+          <v-select
             v-model="selectedGameMode"
             class="over-chart-select-box"
             :items="gameModes"
@@ -27,7 +27,7 @@
         <v-card-text v-if="!loadingMapAndRaceStats">
           <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
-      
+
         <v-card-text>
           The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.
         </v-card-text>
@@ -46,6 +46,7 @@
           v-if="!loadingData"
           :mmr-distribution="mmrDistribution"
           :selected-season="selectedSeason"
+          :selected-game-mode="selectedGameMode"
         />
       </v-col>
     </v-row>
@@ -57,16 +58,13 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Gateways, Season } from "@/store/ranking/types";
 import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
-import { EGameMode } from '@/store/typings';
+import { EGameMode } from "@/store/typings";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 
-
 @Component({
-  components: { MmrDistributionChart,
-                GameModeSelect,
-                GatewaySelect },
+  components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
 })
 export default class PlayerActivityTab extends Vue {
   public selectedSeason: Season = { id: 1 };
@@ -78,8 +76,8 @@ export default class PlayerActivityTab extends Vue {
     return this.$store.direct.state.rankings.seasons;
   }
 
-   get gameModes() {
-    return [      
+  get gameModes() {
+    return [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
         modeId: EGameMode.GM_1ON1,
@@ -102,6 +100,10 @@ export default class PlayerActivityTab extends Vue {
       },
     ];
   }
+  get loadingMapAndRaceStats(): boolean {
+    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
+  }
+
   public async setSelectedSeason(season: Season) {
     this.loadingData = true;
     this.selectedSeason = season;
@@ -114,8 +116,12 @@ export default class PlayerActivityTab extends Vue {
     }
     this.updateMMRDistribution();
   }
-  public async updateMMRDistribution(){
-    const payload: SeasonGameModeGateWayForMMR ={season: this.selectedSeason.id, gameMode: this.selectedGameMode, gateWay: this.selectedGateWay} ;
+  public async updateMMRDistribution() {
+    const payload: SeasonGameModeGateWayForMMR = {
+      season: this.selectedSeason.id,
+      gameMode: this.selectedGameMode,
+      gateWay: this.selectedGateWay,
+    };
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       payload
     );
@@ -131,7 +137,6 @@ export default class PlayerActivityTab extends Vue {
     this.selectedGateWay = gateWay;
     this.updateMMRDistribution();
   }
-  
 
   mounted() {
     this.init();
@@ -154,7 +159,5 @@ export default class PlayerActivityTab extends Vue {
   get authCode(): string {
     return this.$store.direct.state.oauth.token;
   }
-
-
 }
 </script>

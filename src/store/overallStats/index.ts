@@ -14,7 +14,7 @@ import {
   StatsPerWinrate,
   WinLoss,
 } from "./types";
-import { EGameMode, ERaceEnum, RootState } from "../typings";
+import { ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 
@@ -139,7 +139,6 @@ const mod = {
     async loadMmrDistribution(
       context: ActionContext<OveralStatisticState, RootState>,
       payload: SeasonGameModeGateWayForMMR
- 
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
