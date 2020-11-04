@@ -213,6 +213,7 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat } from "@/store/player/types";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({
   components: {
@@ -342,7 +343,7 @@ export default class ClanOverview extends Vue {
   }
 
   public goToPlayer(battleTag: string) {
-    this.$router.push({ path: "/player/" + encodeURIComponent(battleTag) });
+    this.$router.push({ path: getProfileUrl(battleTag) });
   }
 
   get verifiedBtag() {

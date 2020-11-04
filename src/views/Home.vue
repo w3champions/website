@@ -141,6 +141,7 @@ import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
 import { API_URL } from "@/main";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
@@ -182,7 +183,7 @@ export default class HomeView extends Vue {
 
   public goToProfile(rank: Ranking) {
     this.$router.push({
-      path: "/player/" + encodeURIComponent(rank.player.playerIds[0].battleTag),
+      path: getProfileUrl(rank.player.playerIds[0].battleTag),
     });
   }
 }

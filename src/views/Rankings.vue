@@ -178,7 +178,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants from "../constants";
-import { getEncodedURI } from '@/helpers/url-functions';
+import { getProfileUrl  } from '@/helpers/url-functions';
 
 @Component({
   components: {
@@ -398,7 +398,7 @@ export default class RankingsView extends Vue {
 
   public routeToProfilePage(playerId: string) {
     this.$router.push({ 
-      path: "/player/" + getEncodedURI(playerId)
+      path: getProfileUrl(playerId)
     })
   }
 }

@@ -61,6 +61,7 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import { EGameMode, Match } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({
   components: { RecentPerformance },
@@ -123,7 +124,7 @@ export default class PlayerLeague extends Vue {
 
   public navigateToPartner() {
     this.$router.push({
-      path: `/player/${encodeURIComponent(this.atPartner.battleTag)}`,
+      path: getProfileUrl(this.atPartner.battleTag),
     });
   }
 

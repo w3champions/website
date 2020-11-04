@@ -97,6 +97,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
+import { getProfileUrl } from './helpers/url-functions';
 
 @Component({})
 export default class App extends Vue {
@@ -175,12 +176,8 @@ export default class App extends Vue {
 
   public openPlayerProfile() {
     this.$router.push({
-      path: this.getPlayerPath(this.battleTag),
+      path: getProfileUrl(this.battleTag),
     });
-  }
-
-  private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(playerName);
   }
 
   get authCode(): string {

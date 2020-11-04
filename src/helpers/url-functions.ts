@@ -12,6 +12,6 @@ export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic
     }
   }
 
-export function getEncodedURI(uri: string) {
-  return encodeURIComponent(`${uri}`)
+export function getProfileUrl(playerId: string) {
+  return  "/player/" + encodeURIComponent(`${playerId}`)
 }
