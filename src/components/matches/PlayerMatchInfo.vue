@@ -60,6 +60,7 @@ import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({
   components: { PlayerIcon, CountryFlagExtended },
@@ -123,16 +124,12 @@ export default class PlayerMatchInfo extends Vue {
     return !this.unfinishedMatch || !this.isAnonymous;
   }
 
-  private getPlayerPath() {
-    return "/player/" + encodeURIComponent(this.player.battleTag);
-  }
-
   public openProfileInNewTab() {
     if (!this.showPlayerInfo) {
       return;
     }
 
-    const path = this.getPlayerPath();
+    const path = getProfileUrl(this.player.battleTag);
     window.open(path, "_blank");
   }
 
@@ -154,7 +151,7 @@ export default class PlayerMatchInfo extends Vue {
 
     this.$router
       .push({
-        path: "/player/" + encodeURIComponent(this.player.battleTag),
+        path: getProfileUrl(this.player.battleTag),
       })
       .catch((err) => {
         return err;
