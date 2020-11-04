@@ -20,6 +20,7 @@ import { Season } from "@/store/ranking/types";
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
+  @Prop() public selectedGameMode!: EGameMode;
 
   private colors() {
     const colors = [];
@@ -43,11 +44,11 @@ export default class MmrDistributionChart extends Vue {
     if (!this.gameModeStats) return 0;
 
     return (
-      this.gameModeStats.filter(
+      this.gameModeStats.find(
         (g) =>
-          g.gameMode === EGameMode.GM_1ON1 &&
+          g.gameMode === this.selectedGameMode &&
           g.season === this.selectedSeason?.id
-      )[0]?.mmr ?? 0
+      )?.mmr ?? 0
     );
   }
 
