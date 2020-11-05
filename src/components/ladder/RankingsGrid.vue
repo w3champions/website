@@ -346,17 +346,9 @@ export default class RankingsGrid extends Vue {
 
       if (!listItemOfPlayer) return;
 
-      const offset =
-        listItemOfPlayer.offsetHeight +
-        listItemOfPlayer.offsetTop +
-        200 -
-        window.screenTop;
-      if (offset > window.innerHeight) {
-        window.scrollTo({
-          top: offset - window.innerHeight + 150,
-          behavior: "smooth",
-        });
-      }
+      this.$vuetify.goTo(listItemOfPlayer, {
+        offset: window.innerHeight - 150,
+      });
     }, 500);
   }
 
