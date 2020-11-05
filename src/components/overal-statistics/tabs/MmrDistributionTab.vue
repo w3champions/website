@@ -62,6 +62,7 @@ import { EGameMode } from "@/store/typings";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
@@ -158,6 +159,17 @@ export default class PlayerActivityTab extends Vue {
 
   get authCode(): string {
     return this.$store.direct.state.oauth.token;
+  }
+
+  @Watch("verifiedBtag")
+  async onBattleTagChanged(newBattleTag: string) {
+    if (newBattleTag) {
+      await this.$store.direct.dispatch.player.loadProfile(newBattleTag);
+      await this.$store.direct.dispatch.player.loadGameModeStats({
+        battleTag: newBattleTag,
+        season: this.selectedSeason.id,
+      });
+    }
   }
 }
 </script>
