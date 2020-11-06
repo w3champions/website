@@ -36,7 +36,13 @@
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode" class="right-menu">
+      <v-btn
+        text
+        tile
+        @click="loginOrGoToProfile"
+        v-if="!authCode"
+        class="right-menu"
+      >
         <v-icon v-if="!authCode" class="mr-2">
           mdi-account-circle-outline
         </v-icon>
@@ -97,24 +103,26 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
-import { getProfileUrl } from './helpers/url-functions';
+import { getProfileUrl } from "./helpers/url-functions";
 
 @Component({})
 export default class App extends Vue {
   public items = [
-    { 
-      title: "Tournaments", 
-      icon: "mdi-trophy", 
-      to: "/tournaments" },
+    {
+      title: "Tournaments",
+      icon: "mdi-trophy",
+      to: "/tournaments",
+    },
     {
       title: "Rankings",
       icon: "mdi-view-list",
       to: `/Rankings`,
     },
-    { 
-      title: "Matches", 
-      icon: "mdi-controller-classic", 
-      to: "/Matches" },
+    {
+      title: "Matches",
+      icon: "mdi-controller-classic",
+      to: "/Matches",
+    },
     {
       title: "Statistics",
       icon: "mdi-chart-areaspline",
