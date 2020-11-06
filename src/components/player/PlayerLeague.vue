@@ -2,6 +2,7 @@
   <div
     class="LadderSummaryShowcase-card mt-1"
     @click="isRanked && !smallMode ? navigateToLeague() : null"
+    :title="isRanked && !smallMode ? 'Go to League Rankings' : null"
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
   >
     <h2 class="LadderSummaryShowcase-title">
@@ -73,6 +74,10 @@ export default class PlayerLeague extends Vue {
 
   matches: Match[] = [];
 
+  get playerId() {
+    return this.modeStat.id;
+  }
+
   get leagueMode() {
     return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
   }
@@ -93,7 +98,7 @@ export default class PlayerLeague extends Vue {
     return this.$store.direct.state.player.selectedSeason;
   }
 
-  get battleTag(){
+  get battleTag() {
     return this.$store.direct.state.player.battleTag;
   }
 
@@ -107,7 +112,7 @@ export default class PlayerLeague extends Vue {
     return `${this.selectedSeason.id}${this.gameMode}${this.gateWay}`;
   }
 
-  public async init(){
+  public async init() {
     const {
       matches,
     } = await this.$store.direct.getters.matchService.retrievePlayerMatches(
@@ -130,7 +135,11 @@ export default class PlayerLeague extends Vue {
 
   public navigateToLeague() {
     this.$router.push({
-      path: `/Rankings?season=${this.selectedSeason.id}&gateway=${this.gateWay}&gamemode=${this.gameMode}&league=${this.league}`,
+      path: `/Rankings?season=${this.selectedSeason.id}&gateway=${
+        this.gateWay
+      }&gamemode=${this.gameMode}&league=${
+        this.league
+      }&playerId=${encodeURIComponent(this.playerId)}`,
     });
   }
 
@@ -169,14 +178,18 @@ export default class PlayerLeague extends Vue {
 
   get lastTenMatchesPerformance(): string[] {
     return this.matches
-        .slice(0,10)
-        .map(match => match.teams.find(team => team.players.find(player => player.battleTag === this.battleTag)))
-        .filter(Boolean)
-        .map(team => team!.won ? 'W' : 'L');
+      .slice(0, 10)
+      .map((match) =>
+        match.teams.find((team) =>
+          team.players.find((player) => player.battleTag === this.battleTag)
+        )
+      )
+      .filter(Boolean)
+      .map((team) => (team!.won ? "W" : "L"));
   }
 
-  @Watch('seasonAndGameModeAndGateway', {immediate: true})
-  onSeasonOrGameModeOrGatewayChange(){
+  @Watch("seasonAndGameModeAndGateway", { immediate: true })
+  onSeasonOrGameModeOrGatewayChange() {
     this.init();
   }
 }

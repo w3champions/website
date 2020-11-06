@@ -37,6 +37,7 @@ export type RaceStat = {
 };
 
 export type ModeStat = {
+  id: string;
   gameMode: EGameMode;
   gateWay: Gateways;
   race: ERaceEnum;

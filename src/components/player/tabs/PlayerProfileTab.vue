@@ -208,7 +208,10 @@ export default class PlayerProfileTab extends Vue {
       "rank",
     ]);
 
-    return _.take(bestAllModesSorted.filter(x =>x.rank != 0), 3);
+    return _.take(
+      bestAllModesSorted.filter((x) => x.rank != 0),
+      3
+    );
   }
 }
 </script>

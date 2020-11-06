@@ -201,6 +201,8 @@ export default class RankingsView extends Vue {
   @Prop() public league!: number;
   @Prop() public gateway!: Gateways;
   @Prop() public gamemode!: EGameMode;
+  @Prop({ default: "" })
+  public playerId!: string;
 
   private _intervalRefreshHandle: any = {};
 
@@ -263,7 +265,7 @@ export default class RankingsView extends Vue {
 
   get noDataText(): string {
     if (!this.search || this.search.length < 3) {
-      return "Type at lease 3 letters";
+      return "Type at least 3 letters";
     }
 
     return "No player found";
@@ -331,6 +333,13 @@ export default class RankingsView extends Vue {
 
     if (this.ladders && !this.selectedLeague?.id) {
       await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
+    }
+
+    if (this.playerId) {
+      const selectedPlayer = this.rankings.find(
+        (r) => r.player.id === this.playerId
+      );
+      this.searchModel = selectedPlayer ?? ({} as Ranking);
     }
 
     this._intervalRefreshHandle = setInterval(async () => {

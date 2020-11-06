@@ -190,7 +190,7 @@ export default class PlayerMatchesTab extends Vue {
 
   get noDataText(): string {
     if (!this.search || this.search.length < 3) {
-      return "Type at lease 3 letters";
+      return "Type at least 3 letters";
     }
 
     return "No player found";
