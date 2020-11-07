@@ -1,0 +1,28 @@
+import { HeroNames, HeroIndex } from "@/enums/Heroes";
+
+export const HeroIcons: any = [
+    { icon: HeroNames.Archmage, index: HeroIndex.Human },
+    { icon: HeroNames.Paladin, index: HeroIndex.Human },
+    { icon: HeroNames.Bloodmage, index: HeroIndex.Human },
+    { icon: HeroNames.MountainKing, index: HeroIndex.Human },
+    { icon: HeroNames.Blademaster, index: HeroIndex.Orc },
+    { icon: HeroNames.TaurenChieftain, index: HeroIndex.Orc },
+    { icon: HeroNames.Farseer, index: HeroIndex.Orc },
+    { icon: HeroNames.ShadowHunter, index: HeroIndex.Orc },
+    { icon: HeroNames.Warden, index: HeroIndex.NightElf },
+    { icon: HeroNames.KeeperOfTheGrove, index: HeroIndex.NightElf },
+    { icon: HeroNames.DemonHunter, index: HeroIndex.NightElf },
+    { icon: HeroNames.PriestressOfTheMoon, index: HeroIndex.NightElf },
+    { icon: HeroNames.DreadLord, index: HeroIndex.Undead },
+    { icon: HeroNames.CryptLord, index: HeroIndex.Undead },
+    { icon: HeroNames.DeathKnight, index: HeroIndex.Undead },
+    { icon: HeroNames.Lich, index: HeroIndex.Undead },
+    { icon: HeroNames.Beastmaster, index: HeroIndex.Tavern },
+    { icon: HeroNames.GoblinTinker, index: HeroIndex.Tavern },
+    { icon: HeroNames.PandarenBrewmaster, index: HeroIndex.Tavern },
+    { icon: HeroNames.DarkRanger, index: HeroIndex.Tavern },
+    { icon: HeroNames.NagaSeaWitch, index: HeroIndex.Tavern },
+    { icon: HeroNames.PitLord, index: HeroIndex.Tavern },
+    { icon: HeroNames.Firelord, index: HeroIndex.Tavern },
+    { icon: HeroNames.GoblinAlchemist, index: HeroIndex.Tavern },
+  ];

@@ -1,8 +1,8 @@
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop, Mixins, Watch } from "vue-property-decorator";
 
 import { Bar, mixins } from "vue-chartjs";
-import { ChartData } from "chart.js";
+import { ChartData, ChartOptions } from "chart.js";
 
 @Component({
   mixins: [mixins.reactiveProp],
@@ -10,8 +10,13 @@ import { ChartData } from "chart.js";
 export default class BarChart extends Mixins(Bar) {
   @Prop() public chartData!: ChartData;
   @Prop() public xAxesReversed!: boolean;
+  @Prop() public options!: ChartOptions;
 
-  private options = {
+  get mergedOptions(): ChartOptions {
+    return Object.assign(this.defaultOptions, this.options);
+  }
+
+  private defaultOptions: ChartOptions = {
     legend: {
       display: true,
     },
@@ -41,18 +46,35 @@ export default class BarChart extends Mixins(Bar) {
       xAxes: [
         {
           ticks: {
-            reverse: false
+            reverse: false,
           },
         },
       ],
     },
   };
-  
+
+  @Watch("options")
+  onOptionsUpdated(updated: ChartOptions) {
+    this.$data._chart.options = this.options;
+    this.updateChart();
+  }
+
+  updateChart () {
+    this.$data._chart.update();
+  }
+
   mounted() {
     if (this.chartData) {
-      this.options.scales.xAxes[0].ticks.reverse = this.xAxesReversed;
-      this.renderChart(this.chartData, this.options);
+      if (
+        this.mergedOptions != null &&
+        this.mergedOptions.scales != null &&
+        this.mergedOptions.scales.xAxes != null &&
+        this.mergedOptions.scales.xAxes[0].ticks != null
+      )
+        this.mergedOptions.scales.xAxes[0].ticks.reverse = this.xAxesReversed;
     }
+
+    this.renderChart(this.chartData, this.mergedOptions);
   }
 }
 </script>

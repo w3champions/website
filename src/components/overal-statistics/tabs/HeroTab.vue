@@ -13,7 +13,7 @@
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"
-            @change="setSelectedHeroesPlayedMode"
+            v-model="selectedHeroesPlayedModeComputed"
             label="Mode"
             outlined
           />
@@ -21,7 +21,7 @@
             :items="picks"
             item-text="pickName"
             item-value="pickId"
-            @change="setSelectedHeroesPlayedPick"
+            v-model="selectedHeroesPlayedPickComputed"
             label="Pick"
             outlined
           />
@@ -29,7 +29,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
+          <played-heroes-chart :played-heroes="selectedPlayedHeroes" :pick="selectedPickName" :mode="selectedModeName" />
         </v-card-text>
       </v-col>
     </v-row>
@@ -62,19 +62,19 @@ export default class HeroTab extends Vue {
   get picks() {
     return [
       {
-        pickName: "overall",
+        pickName: "Overall",
         pickId: EPick.OVERALL,
       },
       {
-        pickName: "first",
+        pickName: "First",
         pickId: EPick.FIRST,
       },
       {
-        pickName: "second",
+        pickName: "Second",
         pickId: EPick.SECOND,
       },
       {
-        pickName: "third",
+        pickName: "Third",
         pickId: EPick.THIRD,
       },
     ];
@@ -84,20 +84,36 @@ export default class HeroTab extends Vue {
     const heroes = this.$store.direct.state.overallStatistics.playedHeroes;
     if (heroes.length === 0) return [];
     return (
-      heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
-        ?.orderedPicks[this.selectedHeroesPlayedPick]?.stats ?? []
+      heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedModeComputed)[0]
+        ?.orderedPicks[this.selectedHeroesPlayedPickComputed]?.stats ?? []
     );
   }
 
-  public setSelectedHeroesPlayedPick(pick: number) {
-    this.selectedHeroesPlayedPick = pick;
+  get selectedHeroesPlayedModeComputed() {
+    return this.selectedHeroesPlayedMode;
   }
 
-  public setSelectedHeroesPlayedMode(mode: EGameMode) {
+  set selectedHeroesPlayedModeComputed(mode) {
     this.selectedHeroesPlayedMode = mode;
   }
 
-  get gameModes() {
+  get selectedHeroesPlayedPickComputed() {
+    return this.selectedHeroesPlayedPick;
+  }
+
+  set selectedHeroesPlayedPickComputed(pick) {
+    this.selectedHeroesPlayedPick = pick;
+  }
+
+  get selectedModeName(): string {
+    return this.gameModes.find((mode: any) => mode.modeId === this.selectedHeroesPlayedModeComputed)?.modeName ?? "";
+  }
+
+  get selectedPickName(): string {
+    return this.picks.find((pick: any) => pick.pickId === this.selectedHeroesPlayedPickComputed)?.pickName ?? "";
+  }
+
+  get gameModes(): any {
     return [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
