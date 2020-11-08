@@ -24,6 +24,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerId } from "@/store/ranking/types";
 import { ERaceEnum } from "@/store/typings";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({})
 export default class PlayerRankInfo extends Vue {
@@ -32,16 +33,12 @@ export default class PlayerRankInfo extends Vue {
 
   public openPlayerProfile(playerId: string) {
     this.$router.push({
-      path: this.getPlayerPath(playerId),
+      path: getProfileUrl(playerId),
     });
   }
 
-  private getPlayerPath(playerId: string) {
-    return "/player/" + encodeURIComponent(`${playerId}`);
-  }
-
   public openProfileInNewTab(playerId: string) {
-    const path = this.getPlayerPath(playerId);
+    const path = getProfileUrl(playerId);
     window.open(path, "_blank");
   }
 }

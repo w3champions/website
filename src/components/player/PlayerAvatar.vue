@@ -81,7 +81,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="dialogOpened" scrollable max-width="1400px" >
+    <v-dialog v-model="dialogOpened" max-width="1400px" class="scroll-v-dialog">
       <v-card>
         <v-checkbox
          style="margin-left:25px"

@@ -60,12 +60,14 @@ const routes = [
         gateway: string;
         gamemode: string;
         league: string;
+        playerId: string;
       };
     }) => ({
       gamemode: parseInt(route.query.gamemode),
       gateway: parseInt(route.query.gateway),
       league: parseInt(route.query.league),
       season: parseInt(route.query.season),
+      playerId: route.query.playerId,
     }),
     component: Rankings,
   },

@@ -13,6 +13,7 @@
   </v-container>
 </template>
 <script lang="ts">
+import { getProfileUrl } from '@/helpers/url-functions';
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -40,13 +41,10 @@ export default class LoginView extends Vue {
 
   public openPlayerProfile(playerName: string) {
     this.$router.push({
-      path: this.getPlayerPath(playerName),
+      path: getProfileUrl(playerName),
     });
   }
-
-  private getPlayerPath(playerName: string) {
-    return "/player/" + encodeURIComponent(playerName);
-  }
+  
 }
 </script>
 <style type="text/css" scoped>

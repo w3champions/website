@@ -93,11 +93,11 @@
     </v-card-text>
     <matches-grid
       v-model="matches"
-      :totalMatches="totalMatches"
+      :total-matches="totalMatches"
+      :items-per-page="50"
+      :always-left-name="battleTag"
+      only-show-enemy
       @pageChanged="onPageChanged"
-      :itemsPerPage="50"
-      :alwaysLeftName="battleTag"
-      :only-show-enemy="true"
     ></matches-grid>
   </div>
 </template>
@@ -118,7 +118,6 @@ import {
 @Component({ components: { MatchesGrid } })
 export default class PlayerMatchesTab extends Vue {
   @Prop() public id!: string;
-  public opponentWins = 0;
   public searchModel = {} as Ranking;
   public search = "";
   public isLoadingMatches = false;
@@ -139,7 +138,7 @@ export default class PlayerMatchesTab extends Vue {
   }
 
   get battleTag() {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   public async mounted() {
@@ -191,7 +190,7 @@ export default class PlayerMatchesTab extends Vue {
 
   get noDataText(): string {
     if (!this.search || this.search.length < 3) {
-      return "Type at lease 3 letters";
+      return "Type at least 3 letters";
     }
 
     return "No player found";
@@ -254,20 +253,9 @@ export default class PlayerMatchesTab extends Vue {
     return totalMatchesAgainstOpponent;
   }
 
-  public async getMatches(page?: number) {
-    if (
-      this.isLoadingMatches ||
-      !this.$store.direct.state.player.selectedSeason.id
-    ) {
-      return;
-    }
-
-    this.isLoadingMatches = true;
-
-    await this.$store.direct.dispatch.player.loadMatches(page);
-    this.opponentWins = 0;
+  get opponentWins(): number {
     if (this.$store.direct.state.player.opponentTag.length) {
-      this.opponentWins = this.matches.filter((match: Match) =>
+      return this.matches.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerHasWin = team.players.some(
             (player: PlayerInTeam) =>
@@ -287,6 +275,21 @@ export default class PlayerMatchesTab extends Vue {
         })
       ).length;
     }
+
+    return 0;
+  }
+
+  public async getMatches(page?: number) {
+    if (
+      this.isLoadingMatches ||
+      !this.$store.direct.state.player.selectedSeason.id
+    ) {
+      return;
+    }
+
+    this.isLoadingMatches = true;
+
+    await this.$store.direct.dispatch.player.loadMatches(page);
 
     this.isLoadingMatches = false;
   }

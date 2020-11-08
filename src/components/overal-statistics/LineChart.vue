@@ -6,7 +6,7 @@ import { ChartData } from "chart.js";
 @Component({
   mixins: [mixins.reactiveProp],
 })
-export default class BarChart extends Mixins(Line) {
+export default class LineChart extends Mixins(Line) {
   @Prop() public chartData!: ChartData;
 
   private options = {

@@ -108,7 +108,7 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get battleTag() {
-    return this.id;
+    return decodeURIComponent(this.id);
   }
 
   get loadingProfile(): boolean {
@@ -208,7 +208,10 @@ export default class PlayerProfileTab extends Vue {
       "rank",
     ]);
 
-    return _.take(bestAllModesSorted.filter(x =>x.rank != 0), 3);
+    return _.take(
+      bestAllModesSorted.filter((x) => x.rank != 0),
+      3
+    );
   }
 }
 </script>

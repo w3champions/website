@@ -33,6 +33,7 @@ import { Component } from "vue-property-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({
   components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
@@ -58,7 +59,7 @@ export default class PendingInvitesPanel extends Vue {
   }
 
   public goToPlayer(battleTag: string) {
-    this.$router.push({ path: "/player/" + encodeURIComponent(battleTag) });
+    this.$router.push({ path: getProfileUrl(battleTag) });
   }
 
   get playersClan() {
