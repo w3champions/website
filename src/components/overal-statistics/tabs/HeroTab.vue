@@ -26,6 +26,9 @@
             outlined
           />
         </v-card-text>
+        <v-card-text>
+          Note: The current percentage is based on hero pick / race (tavern is separate)
+        </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>

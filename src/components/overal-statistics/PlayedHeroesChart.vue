@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="gameHourChartData" :options="chartOptions" />
+  <bar-chart :chart-data="gameHourChartData" :chartOptions="mergedChartOptions" />
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
@@ -10,6 +10,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import Vue from "vue";
 import { HeroIndex, HeroNames } from "@/enums/Heroes";
 import { HeroIcons } from "@/types/Heroes";
+import { DefaultOptions } from "@/types/BarChart";
 
 @Component({
   components: { BarChart },
@@ -17,7 +18,7 @@ import { HeroIcons } from "@/types/Heroes";
 export default class PlayedHeroesChart extends Vue {
   @Prop() public playedHeroes!: PlayedHero[];
   @Prop() public mode!: string;
-  @Prop() public pick!: string;
+  @Prop() public pick!: string;  
 
   get orderedHeroes(): PlayedHero[] {
     return this.playedHeroes
@@ -96,38 +97,6 @@ export default class PlayedHeroesChart extends Vue {
       .reduce((accumulator: number, currentValue: number) => accumulator + currentValue);
   }
 
-  get chartOptions(): ChartOptions {
-    return {
-      legend: {
-        display: false,        
-      },
-      title: {
-        display: true,
-        text: this.formattedTitle,
-        fontSize: 16,
-        fontStyle: "bold"
-      },
-
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              min: 0,
-
-              callback: (value: any, index: number, values: any[]) => {
-                return value + "%";
-              },
-            },
-            scaleLabel: {
-              display: true,
-              labelString: 'Percentage by race (includes random)',
-            },
-          },
-        ],
-      }
-    };
-  }
-
   get formattedTitle(): string {
     return `Hero Distribution for ${this.mode} (${this.pick} pick)`;
   }
@@ -158,5 +127,42 @@ export default class PlayedHeroesChart extends Vue {
     "rgba(180, 157, 72, 255)",
     "rgba(180, 157, 72, 255)",
   ];
+
+  private chartOptions: ChartOptions = {
+      legend: {
+        display: false,        
+      },
+      title: {
+        display: true,
+        text: this.formattedTitle,
+        fontSize: 16,
+        fontStyle: "bold"
+      },
+      scales: {        
+        yAxes: [
+          {
+            ticks: {
+              min: 0,
+
+              callback: (value: any, index: number, values: any[]) => {
+                return value + "%";
+              },
+            },
+            scaleLabel: {
+              display: false,
+            },
+          },
+        ],
+        xAxes: [
+        {
+          ticks: {
+            reverse: false,
+          },
+        },
+      ],
+      }
+    };
+
+    private mergedChartOptions: ChartOptions = Object.assign({}, DefaultOptions, this.chartOptions)
 }
 </script>
