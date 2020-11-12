@@ -47,6 +47,7 @@ import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
+import { SeasonGameModeGateWayForMMR } from '@/store/overallStats/types';
 
 @Component({
   components: {
@@ -83,6 +84,12 @@ export default class OverallStatisticsView extends Vue {
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
     }
+    const mMRDistributionPayload: SeasonGameModeGateWayForMMR ={season:  this.$store.direct.state.rankings.selectedSeason.id,
+                                                                gameMode: this.$store.direct.state.matches.gameMode,
+                                                                gateWay: this.$store.direct.state.gateway};
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
+      mMRDistributionPayload
+    );
   }
 }
 </script>

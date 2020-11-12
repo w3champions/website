@@ -128,7 +128,7 @@ export enum ECountries {
   Lithuania = "LT",
   Luxembourg = "LU",
   Macao = "MO",
-  Macedonia = "MK",
+  "North Macedonia" = "MK",
   Madagascar = "MG",
   Malawi = "MW",
   Malaysia = "MY",

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { Component, Prop, Mixins, Watch } from "vue-property-decorator";
-
 import { Bar, mixins } from "vue-chartjs";
 import { ChartData, ChartOptions } from "chart.js";
 import chartjsPluginAnnotation from "chartjs-plugin-annotation";
@@ -60,6 +59,11 @@ export default class BarChart extends Mixins(Bar) {
       this.addPlugin([chartjsPluginAnnotation]);
       this.renderChart(this.chartData, this.options);
     }
+  }
+
+  @Watch("chartOptions", { deep: true })
+  onOptionsChanged(newOptions: ChartOptions) {
+    if (this.chartData) this.renderChart(this.chartData, newOptions);
   }
 }
 </script>

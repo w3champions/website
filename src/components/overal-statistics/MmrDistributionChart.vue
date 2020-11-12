@@ -1,12 +1,14 @@
 <template>
   <bar-chart
-    :chartData="mmrDistributionChartData"
-    :chartOptions="mmrDistributionChartOptions"
+    :chart-data="mmrDistributionChartData"
+    :chart-options="mmrDistributionChartOptions"
   />
 </template>
 <script lang="ts">
+import minBy from "lodash/minBy";
+import maxBy from "lodash/maxBy";
+import clamp from "lodash/clamp";
 import { Component, Prop } from "vue-property-decorator";
-
 import { MmrDistribution } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import Vue from "vue";
@@ -20,6 +22,7 @@ import { Season } from "@/store/ranking/types";
 export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
+  @Prop() public selectedGameMode!: EGameMode;
 
   private colors() {
     const colors = [];
@@ -39,15 +42,15 @@ export default class MmrDistributionChart extends Vue {
     return colors;
   }
 
-  get mmrOfLoggedInPlayer() {
+  get mmrOfLoggedInPlayer(): number {
     if (!this.gameModeStats) return 0;
 
     return (
-      this.gameModeStats.filter(
+      this.gameModeStats.find(
         (g) =>
-          g.gameMode === EGameMode.GM_1ON1 &&
+          g.gameMode === this.selectedGameMode &&
           g.season === this.selectedSeason?.id
-      )[0]?.mmr ?? 0
+      )?.mmr ?? 0
     );
   }
 
@@ -55,15 +58,23 @@ export default class MmrDistributionChart extends Vue {
     return this.$store.direct.state.player.gameModeStats;
   }
 
-  get mmrGroupOfLoggedInPlayer() {
-    if (!this.mmrDistribution.distributedMmrs) {
-      return null;
+  get mmrGroupOfLoggedInPlayer(): number {
+    if (!this.mmrOfLoggedInPlayer || !this.mmrDistribution.distributedMmrs) {
+      return 0;
     }
 
-    const mmrGroup = this.mmrDistribution.distributedMmrs.find(
-      (d) => Math.abs(d.mmr + 25 - this.mmrOfLoggedInPlayer) <= 25
+    const minMMR = minBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr);
+    const maxMMR = maxBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr);
+    const clampedPlayerMMR = clamp(
+      this.mmrOfLoggedInPlayer,
+      minMMR!.mmr,
+      maxMMR!.mmr
     );
-    return mmrGroup ? mmrGroup.mmr : null;
+    const mmrGroup = this.mmrDistribution.distributedMmrs.find(
+      (d) => Math.abs(d.mmr + 25 - clampedPlayerMMR) <= 25
+    );
+
+    return mmrGroup ? mmrGroup.mmr : 0;
   }
 
   get mmrDistributionTotalPlayers(): number {
@@ -123,6 +134,29 @@ export default class MmrDistributionChart extends Vue {
       return null;
     }
 
+    const annotations = this.mmrGroupOfLoggedInPlayer
+      ? [
+          {
+            type: "line",
+            mode: "vertical",
+            scaleID: "x-axis-0",
+            value: `> ${this.mmrGroupOfLoggedInPlayer}`,
+            borderColor: "rgb(28,95,47, 0.7)",
+            borderWidth: 2,
+            borderDash: [10, 10],
+            label: {
+              content: "Your MMR",
+              backgroundColor: "rgb(28,95,47, 0.7)",
+              enabled: true,
+              yAdjust: 10,
+              xAdjust: this.isTop50percent ? 40 : -40, //Move label to left or right of line
+              position: "top",
+              cornerRadius: 0,
+            },
+          },
+        ]
+      : [];
+
     return {
       legend: {
         display: true,
@@ -181,26 +215,7 @@ export default class MmrDistributionChart extends Vue {
         ],
       },
       annotation: {
-        annotations: [
-          {
-            type: "line",
-            mode: "vertical",
-            scaleID: "x-axis-0",
-            value: `> ${this.mmrGroupOfLoggedInPlayer}`,
-            borderColor: "rgb(28,95,47, 0.7)",
-            borderWidth: 2,
-            borderDash: [10, 10],
-            label: {
-              content: "Your MMR",
-              backgroundColor: "rgb(28,95,47, 0.7)",
-              enabled: true,
-              yAdjust: 10,
-              xAdjust: this.isTop50percent ? 40 : -40, //Move label to left or right of line
-              position: "top",
-              cornerRadius: 0,
-            },
-          },
-        ],
+        annotations,
       },
     };
   }

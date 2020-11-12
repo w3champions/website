@@ -10,11 +10,13 @@ import {
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
+  SeasonGameModeGateWayForMMR,
   StatsPerWinrate,
   WinLoss,
 } from "./types";
-import { EGameMode, ERaceEnum, RootState } from "../typings";
+import { ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
+
 
 const mod = {
   namespaced: true,
@@ -136,12 +138,14 @@ const mod = {
     },
     async loadMmrDistribution(
       context: ActionContext<OveralStatisticState, RootState>,
-      season: number
+      payload: SeasonGameModeGateWayForMMR
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrieveMmrDistribution(
-        season
+        payload.season,
+        payload.gameMode,
+        payload.gateWay
       );
 
       commit.SET_MMR_DISTRIBUTION(stats);

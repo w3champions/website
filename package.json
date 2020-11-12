@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
-    "build:test": "vue-cli-service build --mode development",
-    "build:prod": "vue-cli-service build",
+    "serve:prod": "npm run build:prod && http-server ./dist",
+    "build:test": "rimraf ./dist && vue-cli-service build --mode development",
+    "build:prod": "rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
     "update": "npm install -g npm-check-updates && ncu --upgrade && npm install "
@@ -54,8 +55,10 @@
     "eslint": "^7.3.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
+    "http-server": "^0.12.3",
     "node-sass": "4.14.1",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "sass": "^1.26.9",
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.6",

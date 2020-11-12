@@ -1,7 +1,6 @@
 import { INGAME_STATIC_RESOURCES_URL } from '@/main';
 import { EAvatarCategory } from '@/store/typings';
 
-
 export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic: boolean) {
     if (category == EAvatarCategory.SPECIAL) {
       return `${INGAME_STATIC_RESOURCES_URL}icons/specialAvatars/SPECIAL_${picId}.jpg`;
@@ -12,3 +11,7 @@ export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic
       return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/${raceIconPrefix}${categoryString}_${picId}.jpg`;
     }
   }
+
+export function getProfileUrl(playerId: string) {
+  return  "/player/" + encodeURIComponent(`${playerId}`)
+}
