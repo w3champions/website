@@ -107,12 +107,9 @@ import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
 import { API_URL } from "@/main";
-<<<<<<< HEAD
+import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
-=======
-import { getProfileUrl } from '@/helpers/url-functions';
->>>>>>> a2f0639dd5ea57f8a55060c1fb46ff5b4dc7e2e8
 
 @Component({ components: { VueMarkdown, SocialBox, SupportBox } })
 export default class HomeView extends Vue {
