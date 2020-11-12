@@ -64,42 +64,6 @@
           <v-col cols="12" class="no-padding">
             <social-box></social-box>
             <support-box></support-box>
-            <!-- <v-card tile>
-              <v-card-title>Community</v-card-title>
-              <v-card-text class="filter-blur">
-                Join us
-                <br />
-                <a href="https://discord.gg/uJmQxG2" target="_blank">
-                  <img
-                    src="../assets/discord-small.png"
-                    style="margin-left: -8px;"
-                    height="50px"
-                  />
-                </a>
-                <br />
-                Social Media
-                <br />
-                <a href="https://twitter.com/W3ChampionsTeam" target="_blank">
-                  <img src="../assets/twitter.svg" height="24" />
-                </a>
-                <br />
-                Support us
-                <br />
-                <a href="https://www.patreon.com/w3champions" target="_blank">
-                  <img src="../assets/patreon.png" height="24" />
-                </a>
-                <br />
-                <div style="margin-top: 5px;">
-                  <a
-                    style="margin-top: 15px;"
-                    href="https://www.paypal.me/w3champions"
-                    target="_blank"
-                  >
-                    <img src="../assets/paypal.png" height="24" />
-                  </a>
-                </div>
-              </v-card-text>
-            </v-card> -->
           </v-col>
         </v-row>
         <v-row>
