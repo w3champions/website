@@ -9,7 +9,7 @@
       <v-card-title>
         Discord
         <v-spacer></v-spacer>
-        <img src="..\..\..\src\assets\discord-small.png" height="24px" />
+        <img src="../../../src/assets/discord-small.png" height="24px" />
       </v-card-title>
     </v-card>
 
