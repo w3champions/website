@@ -5,8 +5,9 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   ModeStat,
   RaceStat,
+  PlayerMmrTimeline,
 } from "./types";
-import { EGameMode, Match, RootState } from "../typings";
+import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season, Gateways } from "@/store/ranking/types";
 import GatewaysService from "@/services/GatewaysService";
@@ -22,12 +23,14 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
+    loadingMmrTimeline: false,
     opponentTag: "",
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
+    mmrTimeline: {} as PlayerMmrTimeline,
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -136,6 +139,25 @@ const mod = {
         await dispatch.loadGameModeStats({});
       }
     },
+    async loadPlayerMmrTimeline(
+      context: ActionContext<PlayerState, RootState>
+    ) {
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+      commit.SET_LOADING_MMR_TIMELINE(true);
+      const mmrTimeline = await rootGetters.profileService.retrievePlayerMmrTimeline(
+        state.battleTag,
+        // TOOD: replace race with something interactible
+        ERaceEnum.HUMAN,
+        rootState.gateway,
+        0, //state.selectedSeason?.id ?? -1,
+        1 //state.gameMode
+      );
+      commit.SET_MMR_TIMELINE(mmrTimeline);
+      commit.SET_LOADING_MMR_TIMELINE(false);
+    },
   },
   mutations: {
     SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
@@ -155,6 +177,9 @@ const mod = {
     },
     SET_LOADING_RECENT_MATCHES(state: PlayerState, loading: boolean) {
       state.loadingRecentMatches = loading;
+    },
+    SET_LOADING_MMR_TIMELINE(state: PlayerState, loading: boolean) {
+      state.loadingMmrTimeline = loading;
     },
     SET_BATTLE_TAG(state: PlayerState, battleTag: string) {
       state.battleTag = battleTag;
@@ -182,6 +207,9 @@ const mod = {
     },
     SET_RACE_STATS(state: PlayerState, stats: RaceStat[]) {
       state.raceStats = stats;
+    },
+    SET_MMR_TIMELINE(state: PlayerState, mmrTimeline: PlayerMmrTimeline) {
+      state.mmrTimeline = mmrTimeline;
     },
   },
 } as const;

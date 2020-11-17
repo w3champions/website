@@ -1,11 +1,13 @@
 import {
   ModeStat,
+  PlayerMmrTimeline,
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
 } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
+import { ERaceEnum, EGameMode } from "@/store/typings";
 
 export default class ProfileService {
   public async retrieveWinRate(
@@ -85,7 +87,6 @@ export default class ProfileService {
 
     return await response.json();
   }
-
   public async retrievePlayerStatsRaceVersusRaceOnMap(
     battleTag: string,
     season: number
@@ -93,6 +94,21 @@ export default class ProfileService {
     const url = `${API_URL}api/player-stats/${encodeURIComponent(
       battleTag
     )}/race-on-map-versus-race?season=${season}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async retrievePlayerMmrTimeline(
+    battleTag: string,
+    race: ERaceEnum,
+    gateWay: Gateways,
+    season: number,
+    gameMode: EGameMode
+  ): Promise<PlayerMmrTimeline> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/mmr-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();

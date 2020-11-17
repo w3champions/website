@@ -1,5 +1,6 @@
 import { EGameMode, ERaceEnum, Match } from "../typings";
 import { Season, Gateways, PlayerId } from "@/store/ranking/types";
+import { Moment } from "moment";
 
 export type PlayerState = {
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
@@ -10,12 +11,14 @@ export type PlayerState = {
   matches: Match[];
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
+  loadingMmrTimeline: boolean;
   opponentTag: string;
   selectedSeason: Season;
   gameMode: EGameMode;
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
+  mmrTimeline: PlayerMmrTimeline;
 };
 
 export type PlayerProfile = {
@@ -78,3 +81,17 @@ export interface PlayerStatsRaceOnMapVersusRace {
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
 }
+
+export type MmrAtTime = {
+  mmr: number;
+  mmrTime: Moment;
+};
+
+export type PlayerMmrTimeline = {
+  mmrAtTimes: MmrAtTime[];
+  // Are the following even needed?
+  battleTag: string;
+  race: ERaceEnum;
+  season: number;
+  gameMode: EGameMode;
+};
