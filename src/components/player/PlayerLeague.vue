@@ -20,8 +20,8 @@
         <br v-if="showAtPartner" />
       </div>
       <span v-if="isRanked">
-        <span v-if="!smallMode">Rank </span>
-        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} | </span>
+        <span v-if="!smallMode">Rank</span>
+        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
         <span class="won">{{ modeStat.wins }}</span>
         -
         <span class="lost">{{ modeStat.losses }}</span>
@@ -50,7 +50,7 @@
       </div>
     </div>
     <recent-performance
-      v-if="lastTenMatchesPerformance.length"
+      v-if="isRecentPerformanceVisible"
       :last-ten-matches-performance="lastTenMatchesPerformance"
     />
   </div>
@@ -62,7 +62,7 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import { EGameMode, Match } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({
   components: { RecentPerformance },
@@ -186,6 +186,13 @@ export default class PlayerLeague extends Vue {
       )
       .filter(Boolean)
       .map((team) => (team!.won ? "W" : "L"));
+  }
+
+  get isRecentPerformanceVisible(): boolean {
+    return (
+      this.gameMode !== EGameMode.GM_2ON2_AT &&
+      this.lastTenMatchesPerformance.length > 0
+    );
   }
 
   @Watch("seasonAndGameModeAndGateway", { immediate: true })
