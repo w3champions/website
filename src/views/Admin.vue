@@ -120,7 +120,7 @@
             <v-toolbar flat color="transparent">
               <v-toolbar-title>News for Launcher</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-dialog v-model="dialogNews" max-width="500px">
+              <v-dialog v-model="dialogNews">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
                     Add News
@@ -133,21 +133,18 @@
 
                   <v-card-text>
                     <v-container>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-textarea
-                            v-model="editedNewsItem.message"
-                            label="Message"
-                          ></v-textarea>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="12"></v-col>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field
-                            v-model="editedNewsItem.date"
-                            label="Date"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
+                      <v-text-field
+                        v-model="editedNewsItem.date"
+                        filled
+                        label="Headline"
+                      />
+                      <v-textarea
+                        auto-grow
+                        filled
+                        rows="1"
+                        v-model="editedNewsItem.message"
+                        label="Message"
+                      />
                     </v-container>
                   </v-card-text>
 
