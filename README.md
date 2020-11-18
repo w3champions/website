@@ -1,5 +1,3 @@
-# third
-
 ## Project setup
 
 ```
