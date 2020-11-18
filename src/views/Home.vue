@@ -15,16 +15,19 @@
             </v-col>
           </v-row>
           <v-card-text>
-            <v-row class="justify-center">
-              <v-col>
-                <v-card-title v-if="newsContent !== ''">
-                  {{ newsHeadline }}
+            <v-carousel v-model="model" :show-arrows="false">
+              <v-carousel-item
+                v-for="(newsItem) in news"
+                :key="newsItem.date"
+              >
+                <v-card-title>
+                  {{ newsItem.date }}
                 </v-card-title>
-                <vue-markdown v-if="newsContent !== ''">
-                  {{ newsContent }}
+                <vue-markdown>
+                  {{ newsItem.message }}
                 </vue-markdown>
-              </v-col>
-            </v-row>
+              </v-carousel-item>
+            </v-carousel>
           </v-card-text>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
@@ -144,17 +147,14 @@ import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
+  public model = 0;
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
 
-  get newsContent() {
-    return this.$store.direct.state.admin.news[0]?.message ?? '';
-  }
-
-  get newsHeadline() {
-    return this.$store.direct.state.admin.news[0]?.date ?? '';
+  get news() {
+    return this.$store.direct.state.admin.news;
   }
 
   async mounted() {
