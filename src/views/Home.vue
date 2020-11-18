@@ -140,45 +140,33 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
-import { API_URL } from "@/main";
 import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
-  public newsContent = "";
-  public newsHeadline = "";
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
 
+  get newsContent() {
+    return this.$store.direct.state.admin.news[0]?.message ?? '';
+  }
+
+  get newsHeadline() {
+    return this.$store.direct.state.admin.news[0]?.date ?? '';
+  }
+
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
-
-    if (API_URL.includes("test")) {
-      await this.setNewsContent("test");
-    } else {
-      await this.setNewsContent("prod");
-    }
+    await this.$store.direct.dispatch.admin.loadNews();
   }
 
   public goToSetupPage() {
     this.$router.push({
       path: "/getting-started/",
     });
-  }
-
-  private async setNewsContent(stage: string) {
-    const mdNewsResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`
-    );
-    this.newsContent = await mdNewsResponse.text();
-
-    const mdNewsDateResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-headline.md`
-    );
-    this.newsHeadline = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {
