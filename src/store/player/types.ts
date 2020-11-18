@@ -15,10 +15,11 @@ export type PlayerState = {
   opponentTag: string;
   selectedSeason: Season;
   gameMode: EGameMode;
+  race: ERaceEnum;
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
-  mmrTimeline: PlayerMmrTimeline;
+  mmrTimeline: PlayerMmrTimeline | undefined;
 };
 
 export type PlayerProfile = {
@@ -89,9 +90,4 @@ export type MmrAtTime = {
 
 export type PlayerMmrTimeline = {
   mmrAtTimes: MmrAtTime[];
-  // Are the following even needed?
-  battleTag: string;
-  race: ERaceEnum;
-  season: number;
-  gameMode: EGameMode;
 };

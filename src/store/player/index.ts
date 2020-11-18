@@ -27,10 +27,11 @@ const mod = {
     opponentTag: "",
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
+    race: 0 as ERaceEnum,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
-    mmrTimeline: {} as PlayerMmrTimeline,
+    mmrTimeline: {} as PlayerMmrTimeline | undefined,
   } as PlayerState,
   actions: {
     async loadProfile(
@@ -137,6 +138,7 @@ const mod = {
         await dispatch.loadMatches(1);
         await dispatch.loadRaceStats();
         await dispatch.loadGameModeStats({});
+        await dispatch.loadPlayerMmrTimeline();
       }
     },
     async loadPlayerMmrTimeline(
@@ -149,11 +151,10 @@ const mod = {
       commit.SET_LOADING_MMR_TIMELINE(true);
       const mmrTimeline = await rootGetters.profileService.retrievePlayerMmrTimeline(
         state.battleTag,
-        // TOOD: replace race with something interactible
-        ERaceEnum.HUMAN,
+        state.race,
         rootState.gateway,
-        0, //state.selectedSeason?.id ?? -1,
-        1 //state.gameMode
+        state.selectedSeason?.id ?? -1,
+        state.gameMode
       );
       commit.SET_MMR_TIMELINE(mmrTimeline);
       commit.SET_LOADING_MMR_TIMELINE(false);
@@ -199,6 +200,9 @@ const mod = {
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;
     },
+    SET_RACE(state: PlayerState, race: ERaceEnum) {
+      state.race = race;
+    },
     SET_ONGOING_MATCH(state: PlayerState, match: Match) {
       state.ongoingMatch = match;
     },
@@ -208,7 +212,10 @@ const mod = {
     SET_RACE_STATS(state: PlayerState, stats: RaceStat[]) {
       state.raceStats = stats;
     },
-    SET_MMR_TIMELINE(state: PlayerState, mmrTimeline: PlayerMmrTimeline) {
+    SET_MMR_TIMELINE(
+      state: PlayerState,
+      mmrTimeline: PlayerMmrTimeline | undefined
+    ) {
       state.mmrTimeline = mmrTimeline;
     },
   },
