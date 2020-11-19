@@ -17,7 +17,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ECountries, CountriesByCode } from "@/store/countries";
+import { CountriesByCode } from "@/store/countries";
 import CountryFlag from "vue-country-flag";
 
 @Component({ components: { CountryFlag } })

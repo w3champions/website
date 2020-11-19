@@ -523,22 +523,18 @@ td.header {
 
 .country-flag__container {
   position: relative;
-  width: 15px;
-  height: 10px;
   display: inline-block;
 }
 
 .twitch__container {
   position: relative;
-  width: 25px;
-  height: 5px;
   display: inline-block;
+  left: 8px;
 }
 
 ::v-deep .country-flag {
   position: absolute;
-  top: -15px;
-  left: -20px;
+  top: -10px;
 }
 
 .twitch-icon {
@@ -550,7 +546,7 @@ td.header {
 .swords {
   position: absolute;
   top: 0px;
-  left: 10px;
+  left: 18px;
   cursor: pointer;
 }
 
