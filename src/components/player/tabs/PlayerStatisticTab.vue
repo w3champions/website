@@ -8,6 +8,28 @@
         </v-card-text>
       </v-row>
     </div>
+    <v-card-title>Matchup Statistics</v-card-title>
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="md-3">
+        <v-card-text>
+          <v-select
+            :items="patches"
+            item-text="patchVersion"
+            item-value="patch"
+            v-model="selectedPatch"
+            @change="setSelectedPatch"
+            label="Select Patch"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="md-9">
+        <player-stats-race-versus-race-on-map
+          v-if="selectedSeason.id !== 0"
+          :stats="raceWithoutRandom"
+        />
+      </v-col>
+    </v-row>
     <v-card-title>Player MMR Timeline</v-card-title>
 
     <v-row v-if="selectedSeason.id !== 0">
@@ -44,29 +66,6 @@
             settings.
           </v-card-text>
         </v-card-text>
-      </v-col>
-    </v-row>
-
-    <v-card-title>Matchup Statistics</v-card-title>
-    <v-row v-if="selectedSeason.id !== 0">
-      <v-col cols="md-3">
-        <v-card-text>
-          <v-select
-            :items="patches"
-            item-text="patchVersion"
-            item-value="patch"
-            v-model="selectedPatch"
-            @change="setSelectedPatch"
-            label="Select Patch"
-            outlined
-          />
-        </v-card-text>
-      </v-col>
-      <v-col cols="md-9">
-        <player-stats-race-versus-race-on-map
-          v-if="selectedSeason.id !== 0"
-          :stats="raceWithoutRandom"
-        />
       </v-col>
     </v-row>
   </div>
