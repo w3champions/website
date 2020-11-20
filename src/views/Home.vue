@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid :dark="isDarkTheme">
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
@@ -15,16 +15,21 @@
             </v-col>
           </v-row>
           <v-card-text>
-            <v-row class="justify-center">
-              <v-col>
-                <v-card-title v-if="newsContent !== ''">
-                  {{ newsHeadline }}
+            <v-carousel
+              v-model="model"
+              :show-arrows="false"
+              :dark="$vuetify.theme.dark"
+              :light="!$vuetify.theme.dark"
+            >
+              <v-carousel-item v-for="newsItem in news" :key="newsItem.date">
+                <v-card-title>
+                  {{ newsItem.date }}
                 </v-card-title>
-                <vue-markdown v-if="newsContent !== ''">
-                  {{ newsContent }}
+                <vue-markdown>
+                  {{ newsItem.message }}
                 </vue-markdown>
-              </v-col>
-            </v-row>
+              </v-carousel-item>
+            </v-carousel>
           </v-card-text>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
@@ -140,45 +145,30 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
-import { API_URL } from "@/main";
 import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({ components: { VueMarkdown } })
 export default class HomeView extends Vue {
-  public newsContent = "";
-  public newsHeadline = "";
+  public model = 0;
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
 
+  get news() {
+    return this.$store.direct.state.admin.news;
+  }
+
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
-
-    if (API_URL.includes("test")) {
-      await this.setNewsContent("test");
-    } else {
-      await this.setNewsContent("prod");
-    }
+    await this.$store.direct.dispatch.admin.loadNews();
   }
 
   public goToSetupPage() {
     this.$router.push({
       path: "/getting-started/",
     });
-  }
-
-  private async setNewsContent(stage: string) {
-    const mdNewsResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`
-    );
-    this.newsContent = await mdNewsResponse.text();
-
-    const mdNewsDateResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-headline.md`
-    );
-    this.newsHeadline = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {

@@ -181,7 +181,8 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    right: 18px;
+    right: 35px;
+    top: 14px;
     height: 0px;
   }
 }
@@ -192,7 +193,8 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    left: 14px;
+    left: 33px;
+    top: 14px;
     height: 0px;
   }
 }

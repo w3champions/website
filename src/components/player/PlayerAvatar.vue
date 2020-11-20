@@ -577,8 +577,8 @@ export default class PlayerAvatar extends Vue {
   border-color: white;
   border-style: solid;
   border-width: thin;
-  bottom: 0px;
-  right: -5px;
+  bottom: 10px;
+  right: 10px;
 }
 
 .country__container {

@@ -40,7 +40,7 @@
           MMR:
           <span class="number-text">{{ modeStat.mmr }}</span>
         </span>
-        <span class="ml-2" style="font-size: 13px;">
+        <span class="ml-2" style="font-size: 13px">
           RP:
           <span class="number-text">{{ modeStat.rankingPoints }}</span>
         </span>
@@ -71,6 +71,7 @@ export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;
   @Prop() showAtPartner!: boolean;
   @Prop() smallMode!: boolean;
+  @Prop({ default: true }) showPerformance!: boolean;
 
   matches: Match[] = [];
 
@@ -190,6 +191,7 @@ export default class PlayerLeague extends Vue {
 
   get isRecentPerformanceVisible(): boolean {
     return (
+      this.showPerformance &&
       this.gameMode !== EGameMode.GM_2ON2_AT &&
       this.lastTenMatchesPerformance.length > 0
     );
