@@ -24,28 +24,32 @@
             @click="goToMatchDetailPage(item)"
           >
             <td>
-              <v-row v-if="item.gameMode === 5">
-                <v-col cols="3" v-if="alwaysLeftName">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="getPlayerTeam(item)"
-                    :unfinishedMatch="unfinished"
-                    :is-anonymous="true"
-                  ></team-match-info>
-                </v-col>
-                <v-col
-                  cols="6"
+              <div v-if="item.gameMode === 5" class="my-3">
+                <v-row justify="center" v-if="alwaysLeftName">
+                  <v-col offset="4" class="py-1">
+                    <team-match-info
+                      :not-clickable="!unfinished"
+                      :team="getPlayerTeam(item)"
+                      :unfinishedMatch="unfinished"
+                      :is-anonymous="true"
+                    ></team-match-info>
+                  </v-col>
+                </v-row>
+                <v-row
+                  justify="center"
                   v-for="(team, index) in getOpponentTeams(item)"
                   :key="index"
                 >
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="team"
-                    :unfinishedMatch="unfinished"
-                    :is-anonymous="true"
-                  ></team-match-info>
-                </v-col>
-              </v-row>
+                  <v-col offset="4" class="py-1">
+                    <team-match-info
+                      :not-clickable="!unfinished"
+                      :team="team"
+                      :unfinishedMatch="unfinished"
+                      :is-anonymous="true"
+                    ></team-match-info>
+                  </v-col>
+                </v-row>
+              </div>
               <v-row v-if="item.gameMode !== 5">
                 <v-col cols="5.5">
                   <team-match-info
