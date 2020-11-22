@@ -41,20 +41,18 @@ export default class LineChart extends Mixins(Line) {
   };
 
   mounted() {
-    let gradient = this.$refs.canvas
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      .getContext("2d")
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      .createLinearGradient(0, 0, 0, this.height);
-    gradient.addColorStop(0.1, "rgba(54, 162, 235, 0.5)");
-    gradient.addColorStop(0.3, "rgba(54, 162, 235, 0.25)");
-    gradient.addColorStop(0.6, "rgba(54, 162, 235, 0.1)");
-    gradient.addColorStop(0.85, "rgba(54, 162, 235, 0.0)");
+    const canv = document.getElementById("line-chart") as HTMLCanvasElement;
+    const gradient = canv
+      ?.getContext("2d")
+      ?.createLinearGradient(0, 0, 0, canv.height);
+    gradient?.addColorStop(0.1, "rgba(54, 162, 235, 0.5)");
+    gradient?.addColorStop(0.3, "rgba(54, 162, 235, 0.25)");
+    gradient?.addColorStop(0.6, "rgba(54, 162, 235, 0.1)");
+    gradient?.addColorStop(0.85, "rgba(54, 162, 235, 0.0)");
     if (this.chartData.datasets) {
       this.chartData.datasets[0].backgroundColor = gradient;
     }
+
     if (this.beginYAxisAtZero !== undefined) {
       this.options.scales.yAxes[0].ticks.beginAtZero = this.beginYAxisAtZero;
     }

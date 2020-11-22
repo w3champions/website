@@ -43,7 +43,6 @@ export default class PlayerMmrTimelineChart extends Vue {
           pointStyle: "circle",
           pointRadius: 1.2,
           pointBorderWidth: 1.8,
-          lineTension: 0.0,
         },
       ],
     };
