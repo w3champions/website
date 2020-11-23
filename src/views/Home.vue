@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid :dark="isDarkTheme">
+  <v-container fluid>
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
@@ -67,42 +67,8 @@
       <v-col cols="12" md="4">
         <v-row>
           <v-col cols="12" class="no-padding">
-            <v-card tile>
-              <v-card-title>Community</v-card-title>
-              <v-card-text class="filter-blur">
-                Join us
-                <br />
-                <a href="https://discord.gg/uJmQxG2" target="_blank">
-                  <img
-                    src="../assets/discord-small.png"
-                    style="margin-left: -8px;"
-                    height="50px"
-                  />
-                </a>
-                <br />
-                Social Media
-                <br />
-                <a href="https://twitter.com/W3ChampionsTeam" target="_blank">
-                  <img src="../assets/twitter.svg" height="24" />
-                </a>
-                <br />
-                Support us
-                <br />
-                <a href="https://www.patreon.com/w3champions" target="_blank">
-                  <img src="../assets/patreon.png" height="24" />
-                </a>
-                <br />
-                <div style="margin-top: 5px;">
-                  <a
-                    style="margin-top: 15px;"
-                    href="https://www.paypal.me/w3champions"
-                    target="_blank"
-                  >
-                    <img src="../assets/paypal.png" height="24" />
-                  </a>
-                </div>
-              </v-card-text>
-            </v-card>
+            <social-box></social-box>
+            <support-box></support-box>
           </v-col>
         </v-row>
         <v-row>
@@ -145,9 +111,12 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { API_URL } from "@/main";
+import { getProfileUrl } from "@/helpers/url-functions";
+import SocialBox from "@/components/common/SocialBox.vue";
+import SupportBox from "@/components/common/SupportBox.vue";
 
-@Component({ components: { VueMarkdown } })
+@Component({ components: { VueMarkdown, SocialBox, SupportBox } })
 export default class HomeView extends Vue {
   public model = 0;
 
