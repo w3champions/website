@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-card-title>Statistics</v-card-title>
-    <v-row v-if="selectedSeason.id === 0">
-      <v-col>
+    <div>
+      <v-row v-if="selectedSeason.id === 0">
         <v-card-text class="text-center">
           This noble person was part of our beta, therefore we hide his buggy
           stats and thank him for all eternity ;)
         </v-card-text>
-      </v-col>
-    </v-row>
+      </v-row>
+    </div>
+    <v-card-title>Matchup Statistics</v-card-title>
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="md-3">
         <v-card-text>
@@ -30,6 +30,44 @@
         />
       </v-col>
     </v-row>
+    <v-card-title>MMR and RP Timeline</v-card-title>
+
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="12" md="2">
+        <v-card-text>
+          <v-select
+            :items="gameModes"
+            item-text="modeName"
+            item-value="modeId"
+            v-model="selectedGameMode"
+            @change="setTimelineMode"
+            label="Select Mode"
+            outlined
+          />
+          <v-select
+            :items="races"
+            item-text="raceName"
+            item-value="raceId"
+            v-model="selectedRace"
+            @change="setTimelineRace"
+            label="Select Race"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="12" md="10">
+        <v-card-text v-if="!loadingMmrRpTimeline">
+          <player-mmr-rp-timeline-chart
+            style="position: relative;"
+            :mmrRpTimeline="playerMmrRpTimeline"
+          />
+          <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
+            This player hasn't played any matches fitting to the current
+            settings.
+          </v-card-text>
+        </v-card-text>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -37,16 +75,27 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
+  PlayerMmrRpTimeline,
   PlayerStatsRaceOnMapVersusRace,
+  RaceStat,
   RaceWinsOnMap,
 } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
+import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 
-@Component({ components: { PlayerStatsRaceVersusRaceOnMap, MatchesGrid } })
+@Component({
+  components: {
+    PlayerStatsRaceVersusRaceOnMap,
+    PlayerMmrRpTimelineChart,
+    MatchesGrid,
+  },
+})
 export default class PlayerStatisticTab extends Vue {
   public selectedPatch = "All";
+  public selectedGameMode = this.$store.direct.state.player.gameMode;
+  public selectedRace = this.$store.direct.state.player.race;
 
   get selectedSeason() {
     return this.$store.direct.state.player.selectedSeason;
@@ -54,6 +103,27 @@ export default class PlayerStatisticTab extends Vue {
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+  }
+
+  get loadingMmrRpTimeline(): boolean {
+    return this.$store.direct.state.player.loadingMmrRpTimeline;
+  }
+
+  get playerMmrRpTimeline(): PlayerMmrRpTimeline | undefined {
+    return this.$store.direct.state.player.mmrRpTimeline;
+  }
+
+  get isPlayerMmrRpTimelineEmpty(): boolean {
+    return this.$store.direct.state.player.mmrRpTimeline == undefined;
+  }
+
+  private async setTimelineMode(mode: EGameMode) {
+    this.$store.direct.commit.player.SET_GAMEMODE(mode);
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+  }
+  private async setTimelineRace(race: ERaceEnum) {
+    this.$store.direct.commit.player.SET_RACE(race);
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get patches() {
@@ -90,6 +160,70 @@ export default class PlayerStatisticTab extends Vue {
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
       this.selectedPatch
     ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
+  }
+
+  get gameModes() {
+    return [
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
+        modeId: EGameMode.GM_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
+        modeId: EGameMode.GM_2ON2,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
+        modeId: EGameMode.GM_4ON4,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
+        modeId: EGameMode.GM_FFA,
+      },
+    ];
+  }
+  get races() {
+    return [
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
+        raceId: ERaceEnum.HUMAN,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
+        raceId: ERaceEnum.ORC,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
+        raceId: ERaceEnum.NIGHT_ELF,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
+        raceId: ERaceEnum.UNDEAD,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
+        raceId: ERaceEnum.RANDOM,
+      },
+    ];
+  }
+  async mounted() {
+    // TODO: Fix bug: when directly loading the statistics site via URL the
+    // raceStats are broken, so the correct race can't be determined.
+    let raceStats = this.$store.direct.state.player.raceStats;
+    let maxRace = ERaceEnum.HUMAN;
+    let maxWins = 0;
+    raceStats.forEach((r) => {
+      if (r.wins > maxWins) {
+        maxWins = r.wins;
+        maxRace = r.race;
+      }
+    });
+    this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
+    this.$store.direct.commit.player.SET_RACE(maxRace);
+
+    this.selectedGameMode = EGameMode.GM_1ON1;
+    this.selectedRace = maxRace;
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 }
 </script>

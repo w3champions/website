@@ -3,9 +3,7 @@
     <div v-if="hasNoClan && !isLoggedInPlayer">
       <v-row class="justify-center">
         <v-col class="text-center">
-          <v-card-subtitle>
-            This player is not part of a clan
-          </v-card-subtitle>
+          <v-card-subtitle>This player is not part of a clan</v-card-subtitle>
         </v-col>
       </v-row>
     </div>
@@ -21,34 +19,20 @@
       <br />
       <br />
       <v-row v-if="clanIsFunded">
-        <v-col>
+        <v-col
+          v-for="mode in [
+            modeEnums.GM_1ON1,
+            modeEnums.GM_2ON2,
+            modeEnums.GM_2ON2_AT,
+            modeEnums.GM_4ON4,
+            modeEnums.GM_FFA,
+          ]"
+          :key="mode"
+        >
           <player-league
             :small-mode="true"
-            :mode-stat="getStats(modeEnums.GM_1ON1)"
-          />
-        </v-col>
-        <v-col>
-          <player-league
-            :small-mode="true"
-            :mode-stat="getStats(modeEnums.GM_2ON2)"
-          />
-        </v-col>
-        <v-col>
-          <player-league
-            :small-mode="true"
-            :mode-stat="getStats(modeEnums.GM_2ON2_AT)"
-          />
-        </v-col>
-        <v-col>
-          <player-league
-            :small-mode="true"
-            :mode-stat="getStats(modeEnums.GM_4ON4)"
-          />
-        </v-col>
-        <v-col>
-          <player-league
-            :small-mode="true"
-            :mode-stat="getStats(modeEnums.GM_FFA)"
+            :show-performance="false"
+            :mode-stat="getStats(mode)"
           />
         </v-col>
       </v-row>
@@ -70,7 +54,7 @@
                     :disabled="!getLeagueOrder(playersClan.chiefTain)"
                   >
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline;">
+                      <div v-on="on" style="display: inline">
                         <league-icon
                           v-on="on"
                           class="ml-4 mb-1"
@@ -78,9 +62,7 @@
                         />
                       </div>
                     </template>
-                    <div>
-                      1 vs 1
-                    </div>
+                    <div>1 vs 1</div>
                   </v-tooltip>
                 </v-col>
               </v-row>
@@ -102,7 +84,7 @@
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline;">
+                      <div v-on="on" style="display: inline">
                         <league-icon
                           v-on="on"
                           class="ml-4 mb-1"
@@ -110,9 +92,7 @@
                         />
                       </div>
                     </template>
-                    <div>
-                      1 vs 1
-                    </div>
+                    <div>1 vs 1</div>
                   </v-tooltip>
                 </v-col>
                 <v-col class="text-right pa-0">
@@ -142,7 +122,7 @@
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline;">
+                      <div v-on="on" style="display: inline">
                         <league-icon
                           v-on="on"
                           class="ml-4 mb-1"
@@ -150,9 +130,7 @@
                         />
                       </div>
                     </template>
-                    <div>
-                      1 vs 1
-                    </div>
+                    <div>1 vs 1</div>
                   </v-tooltip>
                 </v-col>
                 <v-col class="text-right pa-0">
@@ -213,7 +191,7 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat } from "@/store/player/types";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({
   components: {
@@ -232,6 +210,8 @@ import { getProfileUrl } from '@/helpers/url-functions';
 })
 export default class ClanOverview extends Vue {
   @Prop() public id!: string;
+
+  private modeEnums = Object.freeze(EGameMode);
 
   get battleTag() {
     return decodeURIComponent(this.id);
@@ -297,10 +277,6 @@ export default class ClanOverview extends Vue {
 
   get roleEnums() {
     return EClanRole;
-  }
-
-  get modeEnums() {
-    return EGameMode;
   }
 
   get clanValidationError() {

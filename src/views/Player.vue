@@ -206,6 +206,7 @@ export default class PlayerView extends Vue {
     this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get seasons() {
@@ -329,7 +330,6 @@ export default class PlayerView extends Vue {
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
-
     await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
       this.battleTag
     );
