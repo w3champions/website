@@ -11,7 +11,7 @@ export type PlayerState = {
   matches: Match[];
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
-  loadingMmrTimeline: boolean;
+  loadingMmrRpTimeline: boolean;
   opponentTag: string;
   selectedSeason: Season;
   gameMode: EGameMode;
@@ -19,7 +19,7 @@ export type PlayerState = {
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
-  mmrTimeline: PlayerMmrTimeline | undefined;
+  mmrRpTimeline: PlayerMmrRpTimeline | undefined;
 };
 
 export type PlayerProfile = {
@@ -83,11 +83,12 @@ export interface PlayerStatsRaceOnMapVersusRace {
   id: string;
 }
 
-export type MmrAtTime = {
+export type MmrRpAtDate = {
   mmr: number;
-  mmrTime: Moment;
+  rp: number;
+  date: Moment;
 };
 
-export type PlayerMmrTimeline = {
-  mmrAtTimes: MmrAtTime[];
+export type PlayerMmrRpTimeline = {
+  mmrRpAtDates: MmrRpAtDate[];
 };

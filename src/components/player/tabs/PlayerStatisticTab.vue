@@ -30,7 +30,7 @@
         />
       </v-col>
     </v-row>
-    <v-card-title>Player MMR Timeline</v-card-title>
+    <v-card-title>MMR and RP Timeline</v-card-title>
 
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="12" md="2">
@@ -56,12 +56,12 @@
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
-        <v-card-text v-if="!loadingMmrTimeline">
-          <player-mmr-timeline-chart
+        <v-card-text v-if="!loadingMmrRpTimeline">
+          <player-mmr-rp-timeline-chart
             style="position: relative;"
-            :mmrTimeline="playerMmrTimeline"
+            :mmrRpTimeline="playerMmrRpTimeline"
           />
-          <v-card-text v-if="isPlayerMmrTimelineEmpty">
+          <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
             This player hasn't played any matches fitting to the current
             settings.
           </v-card-text>
@@ -77,18 +77,18 @@ import { Component } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
-  PlayerMmrTimeline,
+  PlayerMmrRpTimeline,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
   RaceWinsOnMap,
 } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
-import PlayerMmrTimelineChart from "@/components/player/PlayerMmrTimelineChart.vue";
+import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 
 @Component({
   components: {
     PlayerStatsRaceVersusRaceOnMap,
-    PlayerMmrTimelineChart,
+    PlayerMmrRpTimelineChart,
     MatchesGrid,
   },
 })
@@ -105,25 +105,25 @@ export default class PlayerStatisticTab extends Vue {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
   }
 
-  get loadingMmrTimeline(): boolean {
-    return this.$store.direct.state.player.loadingMmrTimeline;
+  get loadingMmrRpTimeline(): boolean {
+    return this.$store.direct.state.player.loadingMmrRpTimeline;
   }
 
-  get playerMmrTimeline(): PlayerMmrTimeline | undefined {
-    return this.$store.direct.state.player.mmrTimeline;
+  get playerMmrRpTimeline(): PlayerMmrRpTimeline | undefined {
+    return this.$store.direct.state.player.mmrRpTimeline;
   }
 
-  get isPlayerMmrTimelineEmpty(): boolean {
-    return this.$store.direct.state.player.mmrTimeline == undefined;
+  get isPlayerMmrRpTimelineEmpty(): boolean {
+    return this.$store.direct.state.player.mmrRpTimeline == undefined;
   }
 
   private async setTimelineMode(mode: EGameMode) {
     this.$store.direct.commit.player.SET_GAMEMODE(mode);
-    await this.$store.direct.dispatch.player.loadPlayerMmrTimeline();
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
   private async setTimelineRace(race: ERaceEnum) {
     this.$store.direct.commit.player.SET_RACE(race);
-    await this.$store.direct.dispatch.player.loadPlayerMmrTimeline();
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get patches() {
@@ -223,7 +223,7 @@ export default class PlayerStatisticTab extends Vue {
 
     this.selectedGameMode = EGameMode.GM_1ON1;
     this.selectedRace = maxRace;
-    await this.$store.direct.dispatch.player.loadPlayerMmrTimeline();
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 }
 </script>

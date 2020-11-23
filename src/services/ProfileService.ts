@@ -1,6 +1,6 @@
 import {
   ModeStat,
-  PlayerMmrTimeline,
+  PlayerMmrRpTimeline,
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
@@ -99,16 +99,16 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrievePlayerMmrTimeline(
+  public async retrievePlayerMmrRpTimeline(
     battleTag: string,
     race: ERaceEnum,
     gateWay: Gateways,
     season: number,
     gameMode: EGameMode
-  ): Promise<PlayerMmrTimeline | undefined> {
+  ): Promise<PlayerMmrRpTimeline | undefined> {
     const url = `${API_URL}api/players/${encodeURIComponent(
       battleTag
-    )}/mmr-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
+    )}/mmr-rp-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     if (response.ok && response.status == 200) {
