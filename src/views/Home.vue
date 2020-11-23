@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid :dark="isDarkTheme">
+  <v-container fluid>
     <v-row>
       <v-col cols="12" md="8">
         <v-card tile>
