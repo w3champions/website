@@ -2,7 +2,7 @@ import { BlizzardToken, TwitchToken } from "@/store/oauth/types";
 import { API_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
-const BnetCookieKey = "BnetAuth";
+const w3CAuth = "W3CAuth";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<BlizzardToken> {
@@ -32,18 +32,18 @@ export default class AuthorizationService {
   }
 
   public async loadAuthCookie(): Promise<string> {
-    const cookie = Vue.cookies.get(BnetCookieKey);
+    const cookie = Vue.cookies.get(w3CAuth);
     return (cookie as string) ?? "";
   }
 
   public async saveAuthToken(token: BlizzardToken) {
-    Vue.cookies.set(BnetCookieKey, token.access_token, {
-      expires: token.expires_in,
+    Vue.cookies.set(w3CAuth, token.token, {
+      expires: Infinity,
     });
   }
 
   public deleteAuthCookie() {
-    Vue.cookies.remove(BnetCookieKey);
+    Vue.cookies.remove(w3CAuth);
   }
 
   public async getProfile(bearer: string): Promise<any> {

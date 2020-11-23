@@ -7,8 +7,8 @@ export type OauthState = {
 };
 
 export type BlizzardToken = {
-  access_token: string;
-  token_type: string;
+  token: string;
+  battleTag: string;
   expires_in: number;
 };
 
