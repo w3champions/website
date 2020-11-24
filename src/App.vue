@@ -149,8 +149,8 @@ export default class App extends Vue {
     }
   }
 
-  async logout() {
-    await this.$store.direct.dispatch.oauth.logout();
+  logout() {
+    this.$store.direct.dispatch.oauth.logout();
   }
 
   public visible(item: any): boolean {

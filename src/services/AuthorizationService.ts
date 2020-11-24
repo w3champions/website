@@ -18,7 +18,7 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public async logout(code: string): Promise<boolean> {
+  public async logoutEverywhere(code: string): Promise<boolean> {
     const url = `${API_URL}api/oauth/token?authorization=${code}`;
     const response = await fetch(url, {
       method: "DELETE",

@@ -65,10 +65,9 @@ const mod = {
         commit.SET_BEARER("");
       }
     },
-    async logout(context: ActionContext<OauthState, RootState>) {
-      const { commit, state, rootGetters } = moduleActionContext(context, mod);
+    logout(context: ActionContext<OauthState, RootState>) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      await rootGetters.oauthService.logout(state.token);
       rootGetters.oauthService.deleteAuthCookie();
       commit.SET_PROFILE_NAME("");
       commit.SET_IS_ADMIN(false);
