@@ -9,7 +9,7 @@
               :key="header.text"
               v-bind:style="{
                 width: header.width,
-                'min-width': isFfa ? header.ffaMinWidth : header.minWidth,
+                'min-width': header.minWidth,
                 'text-align': header.align,
               }"
             >
@@ -147,14 +147,6 @@ export default class MatchesGrid extends Vue {
     return this.value;
   }
 
-  get isFfa(): boolean {
-    return (
-      this.matches &&
-      this.matches.length > 0 &&
-      this.matches[0].gameMode == EGameMode.GM_FFA
-    );
-  }
-
   get currentMatchesLowRange() {
     if (this.totalMatches === 0) {
       return 0;
@@ -249,14 +241,12 @@ export default class MatchesGrid extends Vue {
       sortable: false,
       value: "players",
       minWidth: "475px",
-      ffaMinWidth: "850px",
     },
     {
       text: "Map",
       align: "start",
       sortable: false,
       value: "map",
-      ffaMinWidth: "100px",
     },
     {
       text: "Start Time",
@@ -264,14 +254,12 @@ export default class MatchesGrid extends Vue {
       sortable: false,
       value: "startTime",
       minWidth: "170px",
-      ffaMinWidth: "120px",
     },
     {
       text: "Duration",
       align: "start",
       sortable: false,
       value: "duration",
-      ffaMinWidth: "100px",
     },
   ];
 }
