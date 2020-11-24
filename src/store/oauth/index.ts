@@ -20,10 +20,10 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
-      commit.SET_BEARER(bearer.access_token);
+      commit.SET_BEARER(bearer.token);
 
       const profile = await rootGetters.oauthService.getProfile(
-        bearer.access_token
+        bearer.token
       );
       commit.SET_PROFILE_NAME(profile.battletag);
       commit.SET_IS_ADMIN(profile.isAdmin);

@@ -153,33 +153,11 @@ export default class App extends Vue {
     this.$store.direct.dispatch.oauth.logout();
   }
 
-  get chatApiKey(): string {
-    return this.$store.direct.state.chat.apiKey;
-  }
-
   public visible(item: any): boolean {
     if (item.title == "Admin" && !this.isAdmin) {
       return false;
     }
     return true;
-  }
-
-  public async downloadChatKey() {
-    await this.$store.direct.dispatch.chat.createApiKey();
-
-    var element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(this.chatApiKey)
-    );
-    element.setAttribute("download", "w3champions.key");
-
-    element.style.display = "none";
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
   }
 
   public openPlayerProfile() {

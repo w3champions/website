@@ -6,9 +6,9 @@ export type OauthState = {
   isAdmin: boolean;
 };
 
-export type BlizzardToken = {
-  access_token: string;
-  token_type: string;
+export type W3cToken = {
+  token: string;
+  battleTag: string;
   expires_in: number;
 };
 
