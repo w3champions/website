@@ -1,11 +1,11 @@
-import { BlizzardToken, TwitchToken } from "@/store/oauth/types";
+import { W3cToken, TwitchToken } from "@/store/oauth/types";
 import { API_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
 const w3CAuth = "W3CAuth";
 
 export default class AuthorizationService {
-  public async authorize(code: string): Promise<BlizzardToken> {
+  public async authorize(code: string): Promise<W3cToken> {
     const url = `${API_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}`;
     const response = await fetch(url, {
       method: "GET",
@@ -16,6 +16,19 @@ export default class AuthorizationService {
     });
 
     return await response.json();
+  }
+
+  public async logout(code: string): Promise<boolean> {
+    const url = `${API_URL}api/oauth/token?authorization=${code}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok;
   }
 
   public async authorizeWithTwitch(): Promise<TwitchToken> {
@@ -36,7 +49,7 @@ export default class AuthorizationService {
     return (cookie as string) ?? "";
   }
 
-  public async saveAuthToken(token: BlizzardToken) {
+  public async saveAuthToken(token: W3cToken) {
     Vue.cookies.set(w3CAuth, token.token, {
       expires: Infinity,
     });
@@ -46,7 +59,7 @@ export default class AuthorizationService {
     Vue.cookies.remove(w3CAuth);
   }
 
-  public async getProfile(bearer: string): Promise<any> {
+  public async getProfile(bearer: string): Promise<W3cToken> {
     const url = `${API_URL}api/oauth/battleTag?bearer=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
@@ -56,7 +69,6 @@ export default class AuthorizationService {
       },
     });
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   }
 }
