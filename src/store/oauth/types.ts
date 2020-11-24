@@ -9,7 +9,7 @@ export type OauthState = {
 export type W3cToken = {
   token: string;
   battleTag: string;
-  expires_in: number;
+  isAdmin: boolean;
 };
 
 export interface TwitchToken {

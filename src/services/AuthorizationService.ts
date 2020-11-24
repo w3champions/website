@@ -59,7 +59,7 @@ export default class AuthorizationService {
     Vue.cookies.remove(w3CAuth);
   }
 
-  public async getProfile(bearer: string): Promise<W3cToken> {
+  public async getProfile(bearer: string): Promise<W3cToken | null> {
     const url = `${API_URL}api/oauth/battleTag?bearer=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
@@ -69,6 +69,7 @@ export default class AuthorizationService {
       },
     });
 
-    return await response.json();
+    return response.status === 204 ? null : await response.json();
+
   }
 }
