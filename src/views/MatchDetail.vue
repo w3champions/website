@@ -53,7 +53,7 @@
           <v-card-title v-if="isJubileeGame" class="justify-center">
             Congratulations to W3C and the community!
           </v-card-title>
-          <v-card-title class="justify-center small-title" :class="isJubileeGame ? 'no-bg' : ''">
+          <v-card-title class="justify-center small-title">
             <v-card-subtitle>
               {{ $t(`mapNames.${match.map}`) }} ({{ matchDuration }})
               {{ playedDate }}
@@ -327,7 +327,7 @@ export default class MatchDetailView extends Vue {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 .small-title {
   margin-top: -30px !important;
   margin-bottom: -25px !important;
@@ -336,7 +336,13 @@ export default class MatchDetailView extends Vue {
 .jubilee {
   background-image: url("../assets/confetti-4.gif") !important;
   background-size: cover !important;
-  -webkit-box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
-  box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
+  -webkit-box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
+  box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
 }
+
+.jubilee::before{
+  -webkit-box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
+  box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
+}
+
 </style>
