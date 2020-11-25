@@ -48,7 +48,7 @@
 
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
-            This is our One Millionths game!
+            This is our {{ gameNumber }} Millionths game!
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
             Congratulations to W3C and the community!
@@ -223,6 +223,22 @@ export default class MatchDetailView extends Vue {
   get isJubileeGame() {
     // return this.match.number !== 0 && this.match.number % 999693 === 0;
     return this.match.number !== 0 && this.match.number % 1000000 === 0;
+  }
+
+  get gameNumber() {
+    let number = this.match.number / 1000000;
+    switch (number) {
+      case 1: return "one"
+      case 2: return "two"
+      case 3: return "three"
+      case 4: return "four"
+      case 5: return "five"
+      case 6: return "six"
+      case 7: return "seven"
+      case 8: return "eight"
+      case 9: return "nine"
+      default: return "bazillion"
+    }
   }
 
   get gateWay() {
