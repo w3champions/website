@@ -2,7 +2,7 @@
   <v-container class="profile">
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile>
+        <v-card tile :class="isJubileeGame ? 'jubilee' : ''">
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
@@ -22,6 +22,7 @@
               <v-col cols="1" class="text-center">
                 <span>VS</span>
               </v-col>
+
               <v-col v-if="!matchIsFFA" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
@@ -44,6 +45,13 @@
               </v-col>
               <v-col cols="1" />
             </v-row>
+
+          </v-card-title>
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            This is our One Millionths game!
+          </v-card-title>
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            Congratulations to W3C and the community!
           </v-card-title>
           <v-card-title class="justify-center small-title">
             <v-card-subtitle>
@@ -212,6 +220,10 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match;
   }
 
+  get isJubileeGame() {
+    return this.match.number !== 0 && this.match.number % 999693 === 0;
+  }
+
   get gateWay() {
     return Gateways[this.$store.direct.state.matches.matchDetail.match.gateWay];
   }
@@ -303,5 +315,10 @@ export default class MatchDetailView extends Vue {
 .small-title {
   margin-top: -30px !important;
   margin-bottom: -25px !important;
+}
+
+.jubilee {
+  background-image: url("../assets/confetti-4.gif") !important;
+  background-size: cover !important;
 }
 </style>
