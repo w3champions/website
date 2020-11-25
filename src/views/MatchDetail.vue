@@ -222,12 +222,11 @@ export default class MatchDetailView extends Vue {
   }
 
   get isJubileeGame() {
-    return true;
-    // if (!this.match?.number) {
-    //   return false;
-    // }
-    //
-    // return this.match.number !== 0 && this.match?.number % 1000000 === 0;
+    if (!this.match?.number) {
+      return false;
+    }
+
+    return this.match.number !== 0 && this.match?.number % 1000000 === 0;
   }
 
   get gameNumber() {
