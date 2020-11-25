@@ -41,8 +41,8 @@ export default class LineChart extends Mixins(Line) {
         {
           type: "time",
           time: {
+            unit: "day",
             displayFormats: {
-              unit: "day",
               day: "MMM DD, YYYY",
             },
           },
