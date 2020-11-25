@@ -1,8 +1,9 @@
 <template>
   <v-container class="profile">
+    <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile :class="isJubileeGame ? 'jubilee' : ''">
+        <v-card tile>
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
@@ -221,7 +222,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get isJubileeGame() {
-    return this.match.number !== 0 && this.match.number % 1000000 === 0;
+    return this.match?.number !== 0 && this.match?.number % 1000000 === 0;
   }
 
   get gameNumber() {
@@ -334,15 +335,14 @@ export default class MatchDetailView extends Vue {
 }
 
 .jubilee {
-  background-image: url("../assets/confetti-4.gif") !important;
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 6%;
+  z-index: 100;
+  background-image: url("../assets/confetti-3.gif") !important;
   background-size: cover !important;
-  -webkit-box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
-  box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
-}
-
-.jubilee::before{
-  -webkit-box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
-  box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0) !important;
 }
 
 </style>
