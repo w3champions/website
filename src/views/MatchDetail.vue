@@ -60,14 +60,16 @@
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
-          <match-detail-hero-row
-            v-for="(player, index) in scoresOfWinners"
-            v-bind:key="index"
-            :heroes-of-winner="scoresOfWinners[index].heroes"
-            :heroes-of-looser="scoresOfLoosers[index].heroes"
-            :scores-of-winner="scoresOfWinners[index].heroScore"
-            :scores-of-looser="scoresOfLoosers[index].heroScore"
-          />
+          <div v-if="isCompleteGame">
+            <match-detail-hero-row
+              v-for="(player, index) in scoresOfWinners"
+              v-bind:key="index"
+              :heroes-of-winner="scoresOfWinners[index].heroes"
+              :heroes-of-looser="scoresOfLoosers[index].heroes"
+              :scores-of-winner="scoresOfWinners[index].heroScore"
+              :scores-of-looser="scoresOfLoosers[index].heroScore"
+            />
+          </div>
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
             :not-color-winner="true"
@@ -264,8 +266,12 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores;
   }
 
+  get playerScores() {
+    return this.$store.direct.state.matches.matchDetail.playerScores ?? [];
+  }
+
   get scoresOfWinners() {
-    const scoresOfWinners = this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfWinners = this.playerScores.filter(
       (s) =>
         this.match.teams[0].players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
@@ -279,7 +285,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get scoresOfLoosers() {
-    const scoresOfLoosers = this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfLoosers = this.playerScores.filter(
       (s) =>
         this.match.teams[1].players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
@@ -293,31 +299,31 @@ export default class MatchDetailView extends Vue {
   }
 
   get ffaWinner() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[0].players[0].battleTag
     );
   }
 
   get ffaLoosers() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    return this.playerScores.filter(
       (s) => s.battleTag !== this.match.teams[0].players[0].battleTag
     );
   }
 
   get ffaLooser1() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[1].players[0].battleTag
     );
   }
 
   get ffaLooser2() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[2].players[0].battleTag
     );
   }
 
   get ffaLooser3() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[3].players[0].battleTag
     );
   }
