@@ -2,7 +2,7 @@
   <v-container class="profile">
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile>
+        <v-card tile :class="isJubileeGame ? 'jubilee' : ''">
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
@@ -22,6 +22,7 @@
               <v-col cols="1" class="text-center">
                 <span>VS</span>
               </v-col>
+
               <v-col v-if="!matchIsFFA" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
@@ -44,8 +45,15 @@
               </v-col>
               <v-col cols="1" />
             </v-row>
+
           </v-card-title>
-          <v-card-title class="justify-center small-title">
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            This is our {{ gameNumber }} Millionth game!
+          </v-card-title>
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            Congratulations to W3C and the community!
+          </v-card-title>
+          <v-card-title class="justify-center small-title" :class="isJubileeGame ? 'no-bg' : ''">
             <v-card-subtitle>
               {{ $t(`mapNames.${match.map}`) }} ({{ matchDuration }})
               {{ playedDate }}
@@ -212,6 +220,26 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match;
   }
 
+  get isJubileeGame() {
+    return this.match.number !== 0 && this.match.number % 1000000 === 0;
+  }
+
+  get gameNumber() {
+    let number = this.match.number / 1000000;
+    switch (number) {
+      case 1: return "one"
+      case 2: return "two"
+      case 3: return "three"
+      case 4: return "four"
+      case 5: return "five"
+      case 6: return "six"
+      case 7: return "seven"
+      case 8: return "eight"
+      case 9: return "nine"
+      default: return "bazillion"
+    }
+  }
+
   get gateWay() {
     return Gateways[this.$store.direct.state.matches.matchDetail.match.gateWay];
   }
@@ -303,5 +331,12 @@ export default class MatchDetailView extends Vue {
 .small-title {
   margin-top: -30px !important;
   margin-bottom: -25px !important;
+}
+
+.jubilee {
+  background-image: url("../assets/confetti-4.gif") !important;
+  background-size: cover !important;
+  -webkit-box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
+  box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
 }
 </style>
