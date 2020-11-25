@@ -48,12 +48,12 @@
 
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
-            This is our {{ gameNumber }} Millionths game!
+            This is our {{ gameNumber }} Millionth game!
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
             Congratulations to W3C and the community!
           </v-card-title>
-          <v-card-title class="justify-center small-title">
+          <v-card-title class="justify-center small-title" :class="isJubileeGame ? 'no-bg' : ''">
             <v-card-subtitle>
               {{ $t(`mapNames.${match.map}`) }} ({{ matchDuration }})
               {{ playedDate }}
@@ -221,7 +221,6 @@ export default class MatchDetailView extends Vue {
   }
 
   get isJubileeGame() {
-    // return this.match.number !== 0 && this.match.number % 999693 === 0;
     return this.match.number !== 0 && this.match.number % 1000000 === 0;
   }
 
@@ -337,5 +336,7 @@ export default class MatchDetailView extends Vue {
 .jubilee {
   background-image: url("../assets/confetti-4.gif") !important;
   background-size: cover !important;
+  -webkit-box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
+  box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 0) !important;
 }
 </style>
