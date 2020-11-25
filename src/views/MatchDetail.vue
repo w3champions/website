@@ -222,11 +222,12 @@ export default class MatchDetailView extends Vue {
   }
 
   get isJubileeGame() {
-    if (!this.match?.number) {
-      return false;
-    }
-
-    return this.match.number !== 0 && this.match?.number % 1000000 === 0;
+    return true;
+    // if (!this.match?.number) {
+    //   return false;
+    // }
+    //
+    // return this.match.number !== 0 && this.match?.number % 1000000 === 0;
   }
 
   get gameNumber() {
@@ -343,9 +344,8 @@ export default class MatchDetailView extends Vue {
   width: 80%;
   height: 80%;
   left: 10%;
-  top: 6%;
   z-index: 100;
-  background-image: url("../assets/confetti-3.gif") !important;
+  background-image: url("../assets/giphy.gif") !important;
   background-size: cover !important;
 }
 
