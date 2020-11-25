@@ -221,7 +221,8 @@ export default class MatchDetailView extends Vue {
   }
 
   get isJubileeGame() {
-    return this.match.number !== 0 && this.match.number % 999693 === 0;
+    // return this.match.number !== 0 && this.match.number % 999693 === 0;
+    return this.match.number !== 0 && this.match.number % 1000000 === 0;
   }
 
   get gateWay() {
