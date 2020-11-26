@@ -4,12 +4,12 @@
       :class="{ darkmode: isDarkTheme }"
       app
       :dark="isDarkTheme"
-      style="height: 60px;"
+      style="height: 60px"
     >
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
-        style="padding-top: 0px;"
+        style="padding-top: 0px"
       >
         <div class="d-none d-md-inline">
           <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
@@ -73,10 +73,10 @@
         </template>
         <v-list class="theme-selector">
           <v-list-item @click="theme = 'human'">
-            <v-list-item-title>{{ $t('races.HUMAN') }}</v-list-item-title>
+            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'orc'">
-            <v-list-item-title>{{ $t('races.ORC') }}</v-list-item-title>
+            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
             <v-list-item-title>Night Elf</v-list-item-title>
@@ -90,11 +90,18 @@
       <v-menu offset-y class="menu-button">
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
-              <locale-icon :locale="savedLocale" :showTwoLetterCode="false"></locale-icon>
+            <locale-icon
+              :locale="savedLocale"
+              :showTwoLetterCode="false"
+            ></locale-icon>
           </v-btn>
         </template>
         <v-list class="locale-selector pa-1">
-          <v-list-item v-for="(lang, i) in languages" :key=i @click="savedLocale = i">
+          <v-list-item
+            v-for="(lang, i) in languages"
+            :key="i"
+            @click="savedLocale = i"
+          >
             <locale-icon :locale="i"></locale-icon>
           </v-list-item>
         </v-list>
@@ -119,9 +126,8 @@ import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { getProfileUrl } from "./helpers/url-functions";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 
-@Component({ components: { localeIcon }})
+@Component({ components: { localeIcon } })
 export default class App extends Vue {
-  
   private _savedLocale = "en";
   private selectedTheme = "human";
 
@@ -224,11 +230,10 @@ export default class App extends Vue {
   }
 
   get savedLocale(): string {
-
     if (this.$store.direct.state.locale) {
       return this.$store.direct.state.locale;
     } else {
-      return 'en';
+      return "en";
     }
   }
 
