@@ -26,6 +26,7 @@ import ClanService from "@/services/ClanService";
 import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
+import LocaleService from "@/services/LocaleService";
 
 
 Vue.use(Vuex);
@@ -40,7 +41,8 @@ const services = {
   clanService: new ClanService(),
   twitchService: new TwitchService(),
   adminService: new AdminService(),
-  tournamentsService: new TournamentsService()
+  tournamentsService: new TournamentsService(),
+  localeService: new LocaleService()
 };
 
 const mod = {
@@ -69,6 +71,10 @@ const mod = {
       state.gateway = gateway;
       GatewaysService.setGateway(gateway);
     },
+    SET_LOCALE(state: RootState, locale: string) {
+      state.locale = locale;
+      LocaleService.setLocale(locale)
+    }
   },
   getters: {
     rankingService() {
@@ -100,6 +106,9 @@ const mod = {
     },
     tournamentsService() {
       return services.tournamentsService;
+    },
+    localeService() {
+      return services.localeService;
     }
   },
 } as const;
