@@ -86,6 +86,20 @@
           </v-list-item>
         </v-list>
       </v-menu>
+
+      <v-menu offset-y class="menu-button">
+        <template v-slot:activator="{ on }">
+          <v-btn text tile v-on="on" class="right-menu">
+            <v-icon>mdi-comment-text-outline</v-icon>
+          </v-btn>
+        </template>
+        <v-list class="locale-selector">
+          <v-list-item v-for="(lang, i) in languages" :key=i @click="locale = lang">
+            <!-- <locale-icon :locale="i"></locale-icon> -->
+            <locale-icon :locale="i"></locale-icon>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-main>
@@ -104,8 +118,9 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { getProfileUrl } from "./helpers/url-functions";
+import localeIcon from "@/components/common/LocaleIcon.vue";
 
-@Component({})
+@Component({ components: { localeIcon }})
 export default class App extends Vue {
   public items = [
     {
@@ -198,6 +213,16 @@ export default class App extends Vue {
     this.selectedTheme = val;
     this.$vuetify.theme.dark = this.isDarkTheme;
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
+  }
+
+  set locale(val: string) {
+    window.localStorage.setItem("locale", val);
+    this.locale = val
+    this.$store.direct.commit.SET_LOCALE(val)
+  }
+
+  get languages(): any {
+    return this.$i18n.messages;
   }
 
   async mounted() {

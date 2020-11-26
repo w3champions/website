@@ -4,6 +4,7 @@ import { Gateways } from "./ranking/types";
 export type RootState = {
   darkMode: boolean;
   gateway: Gateways;
+  locale: string;
 };
 
 export type DataTableOptions = {
@@ -140,4 +141,9 @@ export enum EAvatarCategory {
   UNDEAD = 8,
   TOTAL = 16,
   SPECIAL = 32
+}
+
+export enum ELocaleFlags {
+  EN = 'src/assets/localeFlags/en.svg',
+  DE = 'src/assets/localeFlags/de.svg'
 }
