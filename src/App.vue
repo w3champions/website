@@ -4,12 +4,12 @@
       :class="{ darkmode: isDarkTheme }"
       app
       :dark="isDarkTheme"
-      style="height: 60px;"
+      style="height: 60px"
     >
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
-        style="padding-top: 0px;"
+        style="padding-top: 0px"
       >
         <div class="d-none d-md-inline">
           <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
@@ -73,16 +73,36 @@
         </template>
         <v-list class="theme-selector">
           <v-list-item @click="theme = 'human'">
-            <v-list-item-title>Human</v-list-item-title>
+            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'orc'">
-            <v-list-item-title>Orc</v-list-item-title>
+            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
             <v-list-item-title>Night Elf</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'undead'">
             <v-list-item-title>Undead</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu offset-y class="menu-button">
+        <template v-slot:activator="{ on }">
+          <v-btn text tile v-on="on" class="right-menu">
+            <locale-icon
+              :locale="savedLocale"
+              :showTwoLetterCode="false"
+            ></locale-icon>
+          </v-btn>
+        </template>
+        <v-list class="locale-selector pa-1">
+          <v-list-item
+            v-for="(lang, i) in languages"
+            :key="i"
+            @click="savedLocale = i"
+          >
+            <locale-icon :locale="i"></locale-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -104,9 +124,13 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { getProfileUrl } from "./helpers/url-functions";
+import localeIcon from "@/components/common/LocaleIcon.vue";
 
-@Component({})
+@Component({ components: { localeIcon } })
 export default class App extends Vue {
+  private _savedLocale = "en";
+  private selectedTheme = "human";
+
   public items = [
     {
       title: "Tournaments",
@@ -182,8 +206,6 @@ export default class App extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  private selectedTheme = "human";
-
   get isDarkTheme() {
     const isDark = this.theme === "nightelf" || this.theme === "undead";
     return isDark;
@@ -224,6 +246,24 @@ export default class App extends Vue {
     this.$vuetify.theme.dark = this.isDarkTheme;
     this.setThemeColors();
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
+  }
+
+  set savedLocale(val: string) {
+    window.localStorage.setItem("locale", val);
+    this._savedLocale = val;
+    this.$store.direct.commit.SET_LOCALE(val);
+  }
+
+  get savedLocale(): string {
+    if (this.$store.direct.state.locale) {
+      return this.$store.direct.state.locale;
+    } else {
+      return "en";
+    }
+  }
+
+  get languages(): any {
+    return this.$i18n.messages;
   }
 
   async mounted() {
