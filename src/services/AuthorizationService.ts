@@ -1,12 +1,12 @@
 import { W3cToken, TwitchToken } from "@/store/oauth/types";
-import { API_URL, REDIRECT_URL } from "@/main";
+import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
 const w3CAuth = "W3CAuth";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<W3cToken> {
-    const url = `${API_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}`;
+    const url = `${IDENTIFICATION_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -19,7 +19,7 @@ export default class AuthorizationService {
   }
 
   public async logoutEverywhere(code: string): Promise<boolean> {
-    const url = `${API_URL}api/oauth/token?authorization=${code}`;
+    const url = `${IDENTIFICATION_URL}api/oauth/token?authorization=${code}`;
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -32,7 +32,7 @@ export default class AuthorizationService {
   }
 
   public async authorizeWithTwitch(): Promise<TwitchToken> {
-    const url = `${API_URL}api/oauth/twitch`;
+    const url = `${IDENTIFICATION_URL}api/oauth/twitch`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -60,7 +60,7 @@ export default class AuthorizationService {
   }
 
   public async getProfile(bearer: string): Promise<W3cToken | null> {
-    const url = `${API_URL}api/oauth/battleTag?bearer=${bearer}`;
+    const url = `${IDENTIFICATION_URL}api/oauth/battleTag?bearer=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

@@ -23,4 +23,4 @@ RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
 EXPOSE 80
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $BASE_URL $REDIRECT_URL $IS_LAUNCHER_ENABLED $LAUNCHER_UPDATE_URL $INGAME_STATIC_RESOURCES_URL $BNET_API_CLIENT_ID && nginx -g \"daemon off;\""]
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $BASE_URL $IDENTIFICATION_URL $REDIRECT_URL $IS_LAUNCHER_ENABLED $LAUNCHER_UPDATE_URL $INGAME_STATIC_RESOURCES_URL $BNET_API_CLIENT_ID && nginx -g \"daemon off;\""]
