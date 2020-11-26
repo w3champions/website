@@ -27,8 +27,7 @@ import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
-import en from '@/locales/en';
-
+import en from "@/locales/en";
 
 Vue.use(Vuex);
 
@@ -43,7 +42,7 @@ const services = {
   twitchService: new TwitchService(),
   adminService: new AdminService(),
   tournamentsService: new TournamentsService(),
-  localeService: new LocaleService()
+  localeService: new LocaleService(),
 };
 
 const mod = {
@@ -57,12 +56,12 @@ const mod = {
     clan,
     twitch,
     admin,
-    tournaments
+    tournaments,
   },
   state: {
     darkMode: false,
     gateway: GatewaysService.getGateway(),
-    locale: 'en',
+    locale: "en",
   } as RootState,
   actions: {},
   mutations: {
@@ -75,8 +74,8 @@ const mod = {
     },
     SET_LOCALE(state: RootState, locale: string) {
       state.locale = locale;
-      LocaleService.setLocale(locale)
-    }
+      LocaleService.setLocale(locale);
+    },
   },
   getters: {
     rankingService() {
@@ -111,7 +110,7 @@ const mod = {
     },
     localeService() {
       return services.localeService;
-    }
+    },
   },
 } as const;
 
