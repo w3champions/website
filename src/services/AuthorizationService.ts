@@ -2,7 +2,7 @@ import { W3cToken, TwitchToken } from "@/store/oauth/types";
 import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
-const w3CAuth = "W3CAuth";
+const w3CAuth = "W3CIdentityToken";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<W3cToken> {
