@@ -94,8 +94,7 @@
           </v-btn>
         </template>
         <v-list class="locale-selector pa-1">
-          <v-list-item v-for="(lang, i) in languages" :key=i @click="locale = lang">
-            <!-- <locale-icon :locale="i"></locale-icon> -->
+          <v-list-item v-for="(lang, i) in languages" :key=i @click="selectedLocale = i">
             <locale-icon :locale="i"></locale-icon>
           </v-list-item>
         </v-list>
@@ -122,6 +121,8 @@ import localeIcon from "@/components/common/LocaleIcon.vue";
 
 @Component({ components: { localeIcon }})
 export default class App extends Vue {
+  private _selectedLocale = 'en';
+
   public items = [
     {
       title: "Tournaments",
@@ -215,15 +216,13 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
-  get locale(): string {
-    console.log(this.locale)
-    return this.locale;
+  get selectedLocale(): string {
+    return this._selectedLocale;
   }
 
-  set locale(val: string) {
-    console.log(this.locale)
+  set selectedLocale(val: string) {
     window.localStorage.setItem("locale", val);
-    this.locale = val
+    this._selectedLocale = val
     this.$store.direct.commit.SET_LOCALE(val)
   }
 
