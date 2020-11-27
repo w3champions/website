@@ -90,7 +90,7 @@
       <v-menu offset-y class="menu-button">
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
-            <v-icon>mdi-comment-text-outline</v-icon>
+              <locale-icon :locale="savedLocale" :showTwoLetterCode="false"></locale-icon>
           </v-btn>
         </template>
         <v-list class="locale-selector pa-1">
@@ -165,6 +165,8 @@ export default class App extends Vue {
     }
   }
 
+  
+
   logout() {
     this.$store.direct.dispatch.oauth.logout();
   }
@@ -224,6 +226,15 @@ export default class App extends Vue {
     window.localStorage.setItem("locale", val);
     this._selectedLocale = val
     this.$store.direct.commit.SET_LOCALE(val)
+  }
+
+  get savedLocale(): string {
+    // to-do: make this work
+    if (this.$store.direct.state.locale) {
+      return this.$store.direct.state.locale;
+    } else {
+      return 'en';
+    }
   }
 
   get languages(): any {
