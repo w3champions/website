@@ -222,13 +222,6 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
-  set savedLocale(val: string) {
-    window.localStorage.setItem("locale", val);
-    this._savedLocale = val;
-    this.$i18n.locale = val;
-    this.$store.direct.commit.SET_LOCALE(val);
-  }
-
   get savedLocale(): string {
     if (this.$store.direct.state.locale) {
       return this.$store.direct.state.locale;
