@@ -73,6 +73,7 @@ const mod = {
     },
     SET_LOCALE(state: RootState, locale: string) {
       state.locale = locale;
+      console.log(locale)
       LocaleService.setLocale(locale)
     }
   },
