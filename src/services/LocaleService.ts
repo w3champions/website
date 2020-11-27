@@ -2,8 +2,6 @@ const localeLocalStorageKey = "w3c-locale";
 
 export default class LocaleService {
     public static setLocale(locale: string) {
-
-        console.log(`Locale set to: ${locale} from ${this.getLocale()}`)
         localStorage.setItem(localeLocalStorageKey, locale)
     }
 
@@ -13,6 +11,7 @@ export default class LocaleService {
         if (localeString) {
             return localeString;
         } else {
+            // default language is English
             return 'en';
         }
 
