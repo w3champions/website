@@ -93,7 +93,7 @@
             <v-icon>mdi-comment-text-outline</v-icon>
           </v-btn>
         </template>
-        <v-list class="locale-selector">
+        <v-list class="locale-selector pa-1">
           <v-list-item v-for="(lang, i) in languages" :key=i @click="locale = lang">
             <!-- <locale-icon :locale="i"></locale-icon> -->
             <locale-icon :locale="i"></locale-icon>
@@ -215,7 +215,13 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
+  get locale(): string {
+    console.log(this.locale)
+    return this.locale;
+  }
+
   set locale(val: string) {
+    console.log(this.locale)
     window.localStorage.setItem("locale", val);
     this.locale = val
     this.$store.direct.commit.SET_LOCALE(val)

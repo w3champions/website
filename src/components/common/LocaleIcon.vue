@@ -1,20 +1,22 @@
 <template>
-    <v-icon>{{ flag }}</v-icon>
+    <v-container class="pa-0">
+        <v-row class="pa-0" align="center" justify="center">
+            <v-col class= "pa-1"><img :src="flag()" width="30px" height="30px"/></v-col>
+            <v-col>{{ this.locale.toUpperCase() }}</v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { ELocaleFlags } from '@/store/typings.ts'
 import { Prop, Component } from "vue-property-decorator";
 
 @Component({})
 export default class LocaleIcon extends Vue {
     @Prop() locale!: string;
 
-    flagSvg = `../../${ELocaleFlags.EN}`
-
-    get flag(): string {
-        return `${this.locale}`;
+    flag(): string {
+        return require(`../../assets/localeFlags/${this.locale}.svg`);
     }
 }
 </script>
