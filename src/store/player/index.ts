@@ -36,14 +36,14 @@ const mod = {
   actions: {
     async loadProfile(
       context: ActionContext<PlayerState, RootState>,
-      battleTag: string
+      params: { battleTag: string, freshLogin: boolean }
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 
       const profile = await rootGetters.profileService.retrieveProfile(
-        battleTag
+        params.battleTag, params.freshLogin ? rootState.oauth.token : null
       );
 
       commit.SET_PROFILE(profile);

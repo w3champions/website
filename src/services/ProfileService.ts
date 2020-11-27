@@ -23,8 +23,12 @@ export default class ProfileService {
     return data.stats;
   }
 
-  public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+  public async retrieveProfile(battleTag: string, authCode: string | null): Promise<PlayerProfile> {
+    let url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+
+    if (authCode) {
+      url += `?authorization=${authCode}`
+    }
 
     const response = await fetch(url);
 

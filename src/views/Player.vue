@@ -181,6 +181,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 })
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
+  @Prop() public freshLogin!: boolean;
 
   public tabsModel = {};
   private _intervalRefreshHandle: any = {};
@@ -324,7 +325,7 @@ export default class PlayerView extends Vue {
   private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadProfile({battleTag: this.battleTag, freshLogin: this.freshLogin});
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(

@@ -353,7 +353,7 @@ export default class ClanOverview extends Vue {
   async mounted() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadProfile({ battleTag: this.battleTag, freshLogin: false});
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }

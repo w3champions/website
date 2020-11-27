@@ -74,12 +74,23 @@ const routes = [
   {
     path: "/player/:id",
     component: Player,
-    props: true,
+    props: (route: {
+      query: {
+        freshLogin: boolean;
+      },
+      params: {
+        id: string;
+      };
+    }) => ({
+      freshLogin: route.query.freshLogin,
+      id: route.params.id,
+    }),
     name: "Player",
     children: [
       {
         path: "",
         props: true,
+
         component: PlayerProfileTab,
       },
       {

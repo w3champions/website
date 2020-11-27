@@ -36,15 +36,15 @@ export default class LoginView extends Vue {
   private async init() {
     await this.$store.direct.dispatch.oauth.authorizeWithCode(this.code);
     await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
-    this.openPlayerProfile(this.account);
+    this.openPlayerProfile();
   }
 
-  public openPlayerProfile(playerName: string) {
+  public openPlayerProfile() {
     this.$router.push({
-      path: getProfileUrl(playerName),
+      path: getProfileUrl(this.account) + `?freshLogin=true`,
     });
   }
-  
+
 }
 </script>
 <style type="text/css" scoped>
