@@ -340,7 +340,7 @@ export default class PlayerView extends Vue {
         this.battleTag
       );
     }, AppConstants.ongoingMatchesRefreshInterval);
-
+  this.$store.direct.commit.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 

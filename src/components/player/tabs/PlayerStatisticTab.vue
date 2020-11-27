@@ -73,7 +73,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
@@ -115,6 +115,33 @@ export default class PlayerStatisticTab extends Vue {
 
   get isPlayerMmrRpTimelineEmpty(): boolean {
     return this.$store.direct.state.player.mmrRpTimeline == undefined;
+  }
+
+  get isPlayerInitialized(): boolean {
+    return this.$store.direct.state.player.isInitialized;
+  }
+
+  @Watch("isPlayerInitialized")
+  onPlayerInitialized(): void {
+    this.initMmrRpTimeline();
+  }
+
+  private async initMmrRpTimeline() {
+    let raceStats = this.$store.direct.state.player.raceStats;
+    let maxRace = ERaceEnum.HUMAN;
+    let maxWins = 0;
+    raceStats.forEach((r) => {
+      if (r.wins > maxWins) {
+        maxWins = r.wins;
+        maxRace = r.race;
+      }
+    });
+    await this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
+    await this.$store.direct.commit.player.SET_RACE(maxRace);
+    this.selectedGameMode = EGameMode.GM_1ON1;
+    this.selectedRace = maxRace;
+
+    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   private async setTimelineMode(mode: EGameMode) {
@@ -205,25 +232,6 @@ export default class PlayerStatisticTab extends Vue {
         raceId: ERaceEnum.RANDOM,
       },
     ];
-  }
-  async mounted() {
-    // TODO: Fix bug: when directly loading the statistics site via URL the
-    // raceStats are broken, so the correct race can't be determined.
-    let raceStats = this.$store.direct.state.player.raceStats;
-    let maxRace = ERaceEnum.HUMAN;
-    let maxWins = 0;
-    raceStats.forEach((r) => {
-      if (r.wins > maxWins) {
-        maxWins = r.wins;
-        maxRace = r.race;
-      }
-    });
-    this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
-    this.$store.direct.commit.player.SET_RACE(maxRace);
-
-    this.selectedGameMode = EGameMode.GM_1ON1;
-    this.selectedRace = maxRace;
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 }
 </script>

@@ -15,6 +15,7 @@ import GatewaysService from "@/services/GatewaysService";
 const mod = {
   namespaced: true,
   state: {
+    isInitialized: false,
     playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
     battleTag: "",
     page: 0,
@@ -36,14 +37,18 @@ const mod = {
   actions: {
     async loadProfile(
       context: ActionContext<PlayerState, RootState>,
-      params: { battleTag: string, freshLogin: boolean }
+      params: { battleTag: string; freshLogin: boolean }
     ) {
-      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootState, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
 
       commit.SET_LOADING_PROFILE(true);
 
       const profile = await rootGetters.profileService.retrieveProfile(
-        params.battleTag, params.freshLogin ? rootState.oauth.token : null
+        params.battleTag,
+        params.freshLogin ? rootState.oauth.token : null
       );
 
       commit.SET_PROFILE(profile);
@@ -161,6 +166,9 @@ const mod = {
     },
   },
   mutations: {
+    SET_INITIALIZED(state: PlayerState) {
+      state.isInitialized = true;
+    },
     SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
       state.playerProfile = profile;
     },
