@@ -58,7 +58,7 @@
       <v-col cols="12" md="10">
         <v-card-text v-if="!loadingMmrRpTimeline">
           <player-mmr-rp-timeline-chart
-            style="position: relative;"
+            style="position: relative"
             :mmrRpTimeline="playerMmrRpTimeline"
           />
           <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
@@ -121,6 +121,14 @@ export default class PlayerStatisticTab extends Vue {
     return this.$store.direct.state.player.isInitialized;
   }
 
+  mounted(): void {
+    if (this.isPlayerInitialized) {
+      this.initMmrRpTimeline();
+    }
+  }
+  // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
+  // is called before mounted of player, which this depends on. For this case isPlayerInitialized
+  // is being watched to init the mmrRpTimeline once player.vue init() has finished.
   @Watch("isPlayerInitialized")
   onPlayerInitialized(): void {
     this.initMmrRpTimeline();
@@ -141,16 +149,16 @@ export default class PlayerStatisticTab extends Vue {
     this.selectedGameMode = EGameMode.GM_1ON1;
     this.selectedRace = maxRace;
 
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   private async setTimelineMode(mode: EGameMode) {
     this.$store.direct.commit.player.SET_GAMEMODE(mode);
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
   private async setTimelineRace(race: ERaceEnum) {
     this.$store.direct.commit.player.SET_RACE(race);
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get patches() {
