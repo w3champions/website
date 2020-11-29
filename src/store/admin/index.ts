@@ -51,13 +51,27 @@ const mod = {
     async loadBannedPlayers(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
-      for (let i = 0; i < bannedPlayers.players.length; i++) {
-        const player = bannedPlayers.players[i];
+      const bannedChats = await rootGetters.adminService.getBannedChats();
+
+      bannedPlayers.players.forEach(player => {
         const formattedDate = moment(player.endDate, "YYYY-MM-DD").toISOString();
         if (formattedDate) {
           player.endDate = formattedDate.substr(0, 10);
         }
-      }
+      })
+
+      bannedChats.players.forEach(chatBan => {
+        const foundPlayer = bannedPlayers.players.find(p => p.battleTag === chatBan.battleTag);
+        if (!foundPlayer) {
+          const formattedDate = moment(chatBan.endDate, "YYYY-MM-DD").toISOString();
+          if (formattedDate) {
+            chatBan.endDate = formattedDate.substr(0, 10);
+          }
+          chatBan.isOnlyChatBan = true;
+          bannedPlayers.players.push(chatBan)
+        }
+      })
+
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
     async postBan(
@@ -68,8 +82,6 @@ const mod = {
         context,
         mod
       );
-
-
 
       if (!bannedPlayer.isOnlyChatBan) {
         await rootGetters.adminService.postBan(
@@ -83,15 +95,11 @@ const mod = {
         rootState.oauth.token
       );
 
-      let filterPlayer = state.players.find(
-        (p) => p.battleTag === bannedPlayer.battleTag
+      let filterPlayer = state.players.filter(
+        (p: BannedPlayer) => p.battleTag !== bannedPlayer.battleTag
       );
 
-      if (filterPlayer) {
-        filterPlayer = bannedPlayer;
-      } else {
-        commit.ADD_BANNED_PLAYER(bannedPlayer);
-      }
+      commit.SET_BANNED_PLAYERS([bannedPlayer, ...filterPlayer]);
     },
     async deleteBan(
       context: ActionContext<AdminState, RootState>,
@@ -103,6 +111,11 @@ const mod = {
       );
 
       await rootGetters.adminService.deleteBan(
+        bannedPlayer,
+        rootState.oauth.token
+      );
+
+      await rootGetters.adminService.deleteChatBan(
         bannedPlayer,
         rootState.oauth.token
       );
@@ -120,10 +133,7 @@ const mod = {
     },
     SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: BannedPlayer[]) {
       state.players = bannedPlayers;
-    },
-    ADD_BANNED_PLAYER(state: AdminState, bannedPlayer: BannedPlayer) {
-      state.players.push(bannedPlayer);
-    },
+    }
   },
 } as const;
 

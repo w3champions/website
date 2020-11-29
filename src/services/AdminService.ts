@@ -63,6 +63,19 @@ export default class AdminService {
     return await response.json();
   }
 
+  public async getBannedChats(): Promise<AdminState> {
+    const url = `${CHAT_SERVICE_URL}api/bans`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  }
+
   public async postBan(
     bannedPlayer: BannedPlayer,
     token: string
@@ -109,6 +122,22 @@ export default class AdminService {
     const response = await fetch(url, {
       method: "DELETE",
       body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.ok ? "" : (await response.json()).error;
+  }
+
+  public async deleteChatBan(
+    bannedPlayer: BannedPlayer,
+    token: string
+  ): Promise<string> {
+    const url = `${CHAT_SERVICE_URL}api/bans/${bannedPlayer.battleTag}?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
