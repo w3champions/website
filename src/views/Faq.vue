@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 
 interface Faq {
   qestion: string;
@@ -33,7 +33,7 @@ export default class FaqView extends Vue {
   public faqs = [] as Faq[];
 
   async mounted() {
-    if (API_URL.includes("test")) {
+    if (STATISTIC_SERVICE_URL.includes("test")) {
       await this.setNewsContent("test");
     } else {
       await this.setNewsContent("prod");

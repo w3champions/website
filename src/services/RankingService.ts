@@ -1,5 +1,5 @@
 import { Ranking, Gateways, Ladder, Season } from "@/store/ranking/types";
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 import { EGameMode } from "@/store/typings";
 
 export default class RankingService {
@@ -9,7 +9,7 @@ export default class RankingService {
     gameMode: EGameMode,
     season: number
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder/${leagueId}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
+    const url = `${STATISTIC_SERVICE_URL}api/ladder/${leagueId}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -21,21 +21,21 @@ export default class RankingService {
     gameMode: EGameMode,
     season: number
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}&gameMode=${gameMode}&season=${season}`;
+    const url = `${STATISTIC_SERVICE_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}&gameMode=${gameMode}&season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
   public async retrieveLadders(season: number): Promise<Ladder[]> {
-    const url = `${API_URL}api/ladder/league-constellation?season=${season}`;
+    const url = `${STATISTIC_SERVICE_URL}api/ladder/league-constellation?season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
   public async retrieveSeasons(): Promise<Season[]> {
-    const url = `${API_URL}api/ladder/seasons`;
+    const url = `${STATISTIC_SERVICE_URL}api/ladder/seasons`;
 
     const response = await fetch(url);
     return await response.json();

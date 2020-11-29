@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 import {
   PersonalSetting,
   ProfilePicture,
@@ -8,7 +8,7 @@ export default class PersonalSettingsService {
   public async retrievePersonalSetting(
     battleTag: string
   ): Promise<PersonalSetting> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/personal-settings/${encodeURIComponent(
       battleTag
     )}`;
 
@@ -22,7 +22,7 @@ export default class PersonalSettingsService {
     value: PersonalSetting,
     authToken: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/personal-settings/${encodeURIComponent(
       battleTag
     )}/?authorization=${authToken}`;
 
@@ -44,7 +44,7 @@ export default class PersonalSettingsService {
     value: ProfilePicture,
     authToken: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/personal-settings/${encodeURIComponent(
       battleTag
     )}/profile-picture?authorization=${authToken}`;
 

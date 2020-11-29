@@ -267,7 +267,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { LAUNCHER_UPDATE_URL } from "@/main";
+import { UPDATE_SERVICE_URL } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
@@ -277,19 +277,19 @@ export default class GettingStartedView extends Vue {
   }
 
   get webUiLink() {
-    return LAUNCHER_UPDATE_URL + "webui";
+    return UPDATE_SERVICE_URL + "webui";
   }
 
   get mapsLink() {
-    return LAUNCHER_UPDATE_URL + "maps";
+    return UPDATE_SERVICE_URL + "maps";
   }
 
   get launcherUrlMac() {
-    return LAUNCHER_UPDATE_URL + "launcher/mac";
+    return UPDATE_SERVICE_URL + "launcher/mac";
   }
 
   get launcherUrlWin() {
-    return LAUNCHER_UPDATE_URL + "launcher/win";
+    return UPDATE_SERVICE_URL + "launcher/win";
   }
 
   data() {

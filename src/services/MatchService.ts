@@ -1,5 +1,5 @@
 import { EGameMode, Match, MatchDetail } from "@/store/typings";
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 
 export default class MatchService {
@@ -15,7 +15,7 @@ export default class MatchService {
     gameMode: EGameMode
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}`;
+    const url = `${STATISTIC_SERVICE_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -42,14 +42,14 @@ export default class MatchService {
     gateway: number,
     gameMode: EGameMode
   ): Promise<{ count: number; matches: Match[] }> {
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}`;
+    const url = `${STATISTIC_SERVICE_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
   public async retrieveOnGoingPlayerMatch(playerId: string): Promise<Match> {
-    const url = `${API_URL}api/matches/ongoing/${encodeURIComponent(playerId)}`;
+    const url = `${STATISTIC_SERVICE_URL}api/matches/ongoing/${encodeURIComponent(playerId)}`;
 
     const response = await fetch(url);
 
@@ -61,7 +61,7 @@ export default class MatchService {
   }
 
   public async retrieveMatchDetail(matchId: string): Promise<MatchDetail> {
-    const url = `${API_URL}api/matches/${matchId}`;
+    const url = `${STATISTIC_SERVICE_URL}api/matches/${matchId}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -76,7 +76,7 @@ export default class MatchService {
     season: number
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
-    let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(
+    let url = `${STATISTIC_SERVICE_URL}api/matches/search?playerId=${encodeURIComponent(
       battleTag
     )}&gateway=${gateway}`;
 

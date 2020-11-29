@@ -1,9 +1,9 @@
-import { API_URL } from "@/main";
+import { CHAT_SERVICE_URL, STATISTIC_SERVICE_URL } from "@/main";
 import { AdminState, BannedPlayer, NewsMessage } from "@/store/admin/types";
 
 export default class AdminService {
   public async getNews(): Promise<NewsMessage[]> {
-    const url = `${API_URL}api/admin/news`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/news`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -19,7 +19,7 @@ export default class AdminService {
     newsMessage: NewsMessage,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
 
     const data = JSON.stringify(newsMessage);
     const response = await fetch(url, {
@@ -38,7 +38,7 @@ export default class AdminService {
     newsMessage: NewsMessage,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -51,7 +51,7 @@ export default class AdminService {
   }
 
   public async getBannedPlayers(): Promise<AdminState> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/bannedPlayers`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -67,7 +67,7 @@ export default class AdminService {
     bannedPlayer: BannedPlayer,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);
     const response = await fetch(url, {
@@ -81,11 +81,29 @@ export default class AdminService {
     return response.ok ? "" : (await response.json()).error;
   }
 
+  public async postChatBan(
+    bannedPlayer: BannedPlayer,
+    token: string
+  ): Promise<string> {
+    const url = `${CHAT_SERVICE_URL}api/bans?authorization=${token}`;
+
+    const data = JSON.stringify(bannedPlayer);
+    const response = await fetch(url, {
+      method: "PUT",
+      body: data,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.ok ? "" : (await response.json()).error;
+  }
+
   public async deleteBan(
     bannedPlayer: BannedPlayer,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
+    const url = `${STATISTIC_SERVICE_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);
     const response = await fetch(url, {

@@ -5,7 +5,7 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
 } from "@/store/player/types";
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 import { ERaceEnum, EGameMode } from "@/store/typings";
 
@@ -14,7 +14,7 @@ export default class ProfileService {
     battleTag: string,
     season: number
   ): Promise<RaceStat> {
-    const url = `${API_URL}api/players/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/players/${encodeURIComponent(
       battleTag
     )}/winrate?season=${season}`;
     const response = await fetch(url);
@@ -24,7 +24,7 @@ export default class ProfileService {
   }
 
   public async retrieveProfile(battleTag: string, authCode: string | null): Promise<PlayerProfile> {
-    let url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+    let url = `${STATISTIC_SERVICE_URL}api/players/${encodeURIComponent(battleTag)}`;
 
     if (authCode) {
       url += `?authorization=${authCode}`
@@ -36,7 +36,7 @@ export default class ProfileService {
   }
 
   public async searchPlayer(search: string): Promise<PlayerProfile[]> {
-    const url = `${API_URL}api/players/?search=${encodeURIComponent(search)}`;
+    const url = `${STATISTIC_SERVICE_URL}api/players/?search=${encodeURIComponent(search)}`;
 
     const response = await fetch(url);
 
@@ -48,7 +48,7 @@ export default class ProfileService {
     gateWay: Gateways,
     season: number
   ): Promise<ModeStat[]> {
-    const url = `${API_URL}api/players/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/players/${encodeURIComponent(
       battleTag
     )}/game-mode-stats?gateWay=${gateWay}&season=${season}`;
 
@@ -62,7 +62,7 @@ export default class ProfileService {
     gateWay: Gateways,
     season: number
   ): Promise<RaceStat[]> {
-    const url = `${API_URL}api/players/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/players/${encodeURIComponent(
       battleTag
     )}/race-stats?gateWay=${gateWay}&season=${season}`;
 
@@ -74,7 +74,7 @@ export default class ProfileService {
     battleTag: string,
     season: number
   ): Promise<PlayerStatsRaceOnMapVersusRace> {
-    const url = `${API_URL}api/player-stats/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/player-stats/${encodeURIComponent(
       battleTag
     )}/race-on-map-versus-race?season=${season}`;
 
@@ -89,7 +89,7 @@ export default class ProfileService {
     season: number,
     gameMode: EGameMode
   ): Promise<PlayerMmrRpTimeline | undefined> {
-    const url = `${API_URL}api/players/${encodeURIComponent(
+    const url = `${STATISTIC_SERVICE_URL}api/players/${encodeURIComponent(
       battleTag
     )}/mmr-rp-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
 

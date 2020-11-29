@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 import {
   GameDay,
   GameDayPerMode,
@@ -16,7 +16,7 @@ import { Gateways } from '@/store/ranking/types';
 
 export default class StatisticService {
   public async retrieveMapsPerSeason(): Promise<MatchesOnMapPerSeason[]> {
-    const url = `${API_URL}api/w3c-stats/matches-on-map`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/matches-on-map`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -29,7 +29,7 @@ export default class StatisticService {
   }
 
   public async retrieveGamesPerDay(): Promise<GameDayPerMode[][]> {
-    const url = `${API_URL}api/w3c-stats/games-per-day`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/games-per-day`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -42,7 +42,7 @@ export default class StatisticService {
   }
 
   public async retrievePlayersPerDay(): Promise<PlayersPerDay[]> {
-    const url = `${API_URL}api/w3c-stats/distinct-players-per-day`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/distinct-players-per-day`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -55,7 +55,7 @@ export default class StatisticService {
   }
 
   public async retrieveMapAndRaceStats(): Promise<StatsPerWinrate[]> {
-    const url = `${API_URL}api/w3c-stats/map-race-wins`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/map-race-wins`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -68,7 +68,7 @@ export default class StatisticService {
   }
 
   public async retrieveGameTimes(): Promise<GameLength[]> {
-    const url = `${API_URL}api/w3c-stats/games-lengths`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/games-lengths`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -82,7 +82,7 @@ export default class StatisticService {
   }
 
   public async retrievePlayedHeroes(): Promise<PlayedHeroByMode[]> {
-    const url = `${API_URL}api/w3c-stats/heroes-played`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/heroes-played`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -95,7 +95,7 @@ export default class StatisticService {
   }
 
   public async retrievePopularGameHours(): Promise<PopularGameHour[]> {
-    const url = `${API_URL}api/w3c-stats/play-hours`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/play-hours`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -112,7 +112,7 @@ export default class StatisticService {
     gameMode: EGameMode,
     gateWay:Gateways
   ): Promise<MmrDistribution> {
-    const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}&gateWay=${gateWay}&gameMode=${gameMode}`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/mmr-distribution?season=${season}&gateWay=${gateWay}&gameMode=${gameMode}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -132,7 +132,7 @@ export default class StatisticService {
     opSecond: string,
     opThird: string
   ): Promise<WinLoss> {
-    const url = `${API_URL}api/w3c-stats/heroes-winrate?first=${first}&second=${second}&third=${third}&opFirst=${opFirst}&opSecond=${opSecond}&opThird=${opThird}`;
+    const url = `${STATISTIC_SERVICE_URL}api/w3c-stats/heroes-winrate?first=${first}&second=${second}&third=${third}&opFirst=${opFirst}&opSecond=${opSecond}&opThird=${opThird}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

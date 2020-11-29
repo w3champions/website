@@ -69,7 +69,16 @@ const mod = {
         mod
       );
 
-      await rootGetters.adminService.postBan(
+
+
+      if (!bannedPlayer.isOnlyChatBan) {
+        await rootGetters.adminService.postBan(
+          bannedPlayer,
+          rootState.oauth.token
+        );
+      }
+
+      await rootGetters.adminService.postChatBan(
         bannedPlayer,
         rootState.oauth.token
       );

@@ -1,5 +1,5 @@
 import { ITournament } from './../store/tournaments/types';
-import { API_URL } from "@/main";
+import { STATISTIC_SERVICE_URL } from "@/main";
 
 export interface ITournamentsResponse{
   tournaments: ITournament[]
@@ -7,7 +7,7 @@ export interface ITournamentsResponse{
 
 export default class AdminService {
   public async getTournaments(): Promise<ITournamentsResponse> {
-    const url = `${API_URL}api/tournaments`;
+    const url = `${STATISTIC_SERVICE_URL}api/tournaments`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -27,7 +27,7 @@ export default class AdminService {
     tournament: ITournament,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/tournaments/${tournament.id}?authorization=${token}`;
+    const url = `${STATISTIC_SERVICE_URL}api/tournaments/${tournament.id}?authorization=${token}`;
 
     const data = JSON.stringify(tournament);
     const response = await fetch(url, {
