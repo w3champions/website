@@ -73,10 +73,10 @@
         </template>
         <v-list class="theme-selector">
           <v-list-item @click="theme = 'human'">
-            <v-list-item-title>Human</v-list-item-title>
+            <v-list-item-title>{{ $t('races.HUMAN') }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'orc'">
-            <v-list-item-title>Orc</v-list-item-title>
+            <v-list-item-title>{{ $t('races.ORC') }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
             <v-list-item-title>Night Elf</v-list-item-title>
@@ -218,8 +218,9 @@ export default class App extends Vue {
 
   set savedLocale(val: string) {
     window.localStorage.setItem("locale", val);
-    this._savedLocale = val
-    this.$store.direct.commit.SET_LOCALE(val)
+    this._savedLocale = val;
+    this.$i18n.locale = val;
+    this.$store.direct.commit.SET_LOCALE(val);
   }
 
   get savedLocale(): string {
