@@ -94,7 +94,7 @@
           </v-btn>
         </template>
         <v-list class="locale-selector pa-1">
-          <v-list-item v-for="(lang, i) in languages" :key=i @click="selectedLocale = i">
+          <v-list-item v-for="(lang, i) in languages" :key=i @click="savedLocale = i">
             <locale-icon :locale="i"></locale-icon>
           </v-list-item>
         </v-list>
@@ -121,7 +121,9 @@ import localeIcon from "@/components/common/LocaleIcon.vue";
 
 @Component({ components: { localeIcon }})
 export default class App extends Vue {
-  private _selectedLocale = 'en';
+  
+  private _savedLocale = "en";
+  private selectedTheme = "human";
 
   public items = [
     {
@@ -165,8 +167,6 @@ export default class App extends Vue {
     }
   }
 
-  
-
   logout() {
     this.$store.direct.dispatch.oauth.logout();
   }
@@ -200,8 +200,6 @@ export default class App extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  private selectedTheme = "human";
-
   get isDarkTheme() {
     const isDark = this.theme === "nightelf" || this.theme === "undead";
     return isDark;
@@ -218,18 +216,14 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
-  get selectedLocale(): string {
-    return this._selectedLocale;
-  }
-
-  set selectedLocale(val: string) {
+  set savedLocale(val: string) {
     window.localStorage.setItem("locale", val);
-    this._selectedLocale = val
+    this._savedLocale = val
     this.$store.direct.commit.SET_LOCALE(val)
   }
 
   get savedLocale(): string {
-    // to-do: make this work
+
     if (this.$store.direct.state.locale) {
       return this.$store.direct.state.locale;
     } else {

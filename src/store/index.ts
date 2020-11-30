@@ -27,6 +27,7 @@ import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
+import en from '@/locales/en';
 
 
 Vue.use(Vuex);
@@ -61,6 +62,7 @@ const mod = {
   state: {
     darkMode: false,
     gateway: GatewaysService.getGateway(),
+    locale: 'en',
   } as RootState,
   actions: {},
   mutations: {
