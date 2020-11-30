@@ -3,6 +3,7 @@ import { Season, Gateways, PlayerId } from "@/store/ranking/types";
 import { Moment } from "moment";
 
 export type PlayerState = {
+  isInitialized: boolean;
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
   page: number;
   battleTag: string;

@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overal-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
@@ -39,7 +39,25 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   public raceEnums = ERaceEnum;
   public selectedTab = "tab-1";
 
-  mounted() {
+  get isPlayerInitialized(): boolean {
+    return this.$store.direct.state.player.isInitialized;
+  }
+
+  mounted(): void {
+    if (this.isPlayerInitialized) {
+      this.setSelectedTab();
+    }
+  }
+
+  // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
+  // is called before mounted of player, which this depends on. For this case isPlayerInitialized
+  // is being watched to set the tab once player.vue init() has finished.
+  @Watch("isPlayerInitialized")
+  onPlayerInitialized(): void {
+    this.setSelectedTab();
+  }
+
+  setSelectedTab(): void {
     let maxRace = ERaceEnum.RANDOM;
     let maxGames = 0;
     this.stats

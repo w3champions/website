@@ -58,7 +58,7 @@
       <v-col cols="12" md="10">
         <v-card-text v-if="!loadingMmrRpTimeline">
           <player-mmr-rp-timeline-chart
-            style="position: relative;"
+            style="position: relative"
             :mmrRpTimeline="playerMmrRpTimeline"
           />
           <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
@@ -73,7 +73,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
@@ -117,13 +117,48 @@ export default class PlayerStatisticTab extends Vue {
     return this.$store.direct.state.player.mmrRpTimeline == undefined;
   }
 
+  get isPlayerInitialized(): boolean {
+    return this.$store.direct.state.player.isInitialized;
+  }
+
+  mounted(): void {
+    if (this.isPlayerInitialized) {
+      this.initMmrRpTimeline();
+    }
+  }
+  // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
+  // is called before mounted of player, which this depends on. For this case isPlayerInitialized
+  // is being watched to init the mmrRpTimeline once player.vue init() has finished.
+  @Watch("isPlayerInitialized")
+  onPlayerInitialized(): void {
+    this.initMmrRpTimeline();
+  }
+
+  private async initMmrRpTimeline() {
+    let raceStats = this.$store.direct.state.player.raceStats;
+    let maxRace = ERaceEnum.HUMAN;
+    let maxWins = 0;
+    raceStats.forEach((r) => {
+      if (r.wins > maxWins) {
+        maxWins = r.wins;
+        maxRace = r.race;
+      }
+    });
+    await this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
+    await this.$store.direct.commit.player.SET_RACE(maxRace);
+    this.selectedGameMode = EGameMode.GM_1ON1;
+    this.selectedRace = maxRace;
+
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+  }
+
   private async setTimelineMode(mode: EGameMode) {
     this.$store.direct.commit.player.SET_GAMEMODE(mode);
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
   private async setTimelineRace(race: ERaceEnum) {
     this.$store.direct.commit.player.SET_RACE(race);
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get patches() {
@@ -205,25 +240,6 @@ export default class PlayerStatisticTab extends Vue {
         raceId: ERaceEnum.RANDOM,
       },
     ];
-  }
-  async mounted() {
-    // TODO: Fix bug: when directly loading the statistics site via URL the
-    // raceStats are broken, so the correct race can't be determined.
-    let raceStats = this.$store.direct.state.player.raceStats;
-    let maxRace = ERaceEnum.HUMAN;
-    let maxWins = 0;
-    raceStats.forEach((r) => {
-      if (r.wins > maxWins) {
-        maxWins = r.wins;
-        maxRace = r.race;
-      }
-    });
-    this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
-    this.$store.direct.commit.player.SET_RACE(maxRace);
-
-    this.selectedGameMode = EGameMode.GM_1ON1;
-    this.selectedRace = maxRace;
-    await this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 }
 </script>
