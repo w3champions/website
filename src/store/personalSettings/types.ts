@@ -33,6 +33,8 @@ export type PersonalSetting = {
   twitch: string;
   youTube: string;
   twitter: string;
+  trovo?: string;
+  douyu?: string;
   country: string;
   countryCode: string;
   location?: string;
