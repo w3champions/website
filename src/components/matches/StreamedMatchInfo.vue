@@ -1,8 +1,10 @@
 <template>
   <div class="streamed-match-info">
-    <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank" :style="{order: isRightAligned ? 4 : 1}">
-      <v-icon color="purple accent-4">mdi-twitch</v-icon>&nbsp;
-    </v-btn>
+    <div v-if="player.twitch" class="streamed-match-info__icon">
+      <v-btn  icon :href="twitchLink" target="_blank">
+        <v-icon color="purple accent-4">mdi-twitch</v-icon>
+      </v-btn>
+    </div>
     <span class="streamed-match-info__name">{{ player.name }}</span>
     <span class="streamed-match-info__mmr">({{ player.oldMmr }})</span>
   </div>
@@ -16,28 +18,34 @@ import { PlayerInTeam } from "@/store/typings";
 
 @Component({})
 export default class StreamedMatchInfo extends Vue {
-  @Prop() private player!: PlayerInTeam;
-  @Prop() private isRightAligned = false;
+  @Prop() public player!: PlayerInTeam;
+  @Prop() public isRightAligned!: boolean;
 
-  get twitchLink(){
-    return `https://twitch.tv/${this.player.twitch}`
+  get twitchLink() {
+    return `https://twitch.tv/${this.player.twitch}`;
   }
 }
 </script>
 
 <style scoped lang="scss">
 .streamed-match-info {
-  display: flex;
+  display: grid;
+  grid-template-areas: "icon name" "icon mmr";
+  grid-template-columns: 36px auto;
   align-items: center;
-  font-size: 14px;
+
+  &__icon {
+    grid-area: icon;
+  }
 
   &__name {
-    order: 2;
-    margin: 0 5px;
+    grid-area: name;
+    font-size: 16px;
   }
 
   &__mmr {
-    order: 3;
+    grid-area: mmr;
+    font-size: 12px;
   }
 }
 </style>

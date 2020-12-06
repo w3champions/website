@@ -3,13 +3,11 @@
     <v-card-title>Top 5 matches live</v-card-title>
     <v-container>
       <v-row v-for="match in matchesSortedByMMR" :key="match.id" style="align-items: center">
-        <v-col cols="5">
-          <streamed-match-info :player="getPlayer(match, 0)" />
+        <v-col cols="6">
+          <streamed-match-info :player="getPlayer(match, 0)" :is-right-aligned="false" />
         </v-col>
 
-        <v-col cols="2">VS</v-col>
-
-        <v-col cols="5">
+        <v-col cols="6">
           <streamed-match-info :player="getPlayer(match, 1)" :is-right-aligned="true" />
         </v-col>
       </v-row>
