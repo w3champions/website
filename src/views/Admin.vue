@@ -169,14 +169,76 @@
           </template>
         </v-data-table>
       </v-card-text>
+
+      <v-card-text>
+        <v-data-table
+          :headers="headersTips"
+          :items="tips"
+          :items-per-page="5"
+          class="elevation-1"
+        >
+          <template v-slot:top>
+            <v-toolbar flat color="transparent">
+              <v-toolbar-title>Loading screen tips</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-dialog v-model="dialogTips">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
+                    Add Tip
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle() }}</span>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container>
+                      <v-textarea
+                        auto-grow
+                        filled
+                        rows="1"
+                        v-model="editedTipItem.message"
+                        label="Message"
+                      />
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeTips">
+                      Cancel
+                    </v-btn>
+                    <v-btn color="blue darken-1" text @click="saveTips">
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editTipItem(item)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="deleteTipItem(item)">mdi-delete</v-icon>
+          </template>
+        </v-data-table>
+      </v-card-text>
     </v-card>
   </v-container>
 </template>
 
 <script lang="ts">
+import store from "@/store";
+import moment from "moment";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { BannedPlayer, NewsMessage } from "../store/admin/types";
+import {
+  BannedPlayer,
+  LoadingScreenTip,
+  NewsMessage,
+} from "../store/admin/types";
 @Component({ components: {} })
 export default class Admin extends Vue {
   data() {
@@ -203,6 +265,16 @@ export default class Admin extends Vue {
         { text: "Date", align: "start", value: "date" },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      headersTips: [
+        {
+          text: "Author",
+          align: "start",
+          value: "author",
+        },
+        { text: "Creation Date", align: "start", value: "creationDate" },
+        { text: "Text", value: "message", align: "start" },
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
@@ -212,6 +284,10 @@ export default class Admin extends Vue {
 
   get news() {
     return this.$store.direct.state.admin.news;
+  }
+
+  get tips() {
+    return this.$store.direct.state.admin.tips;
   }
 
   get isAdmin(): boolean {
@@ -227,14 +303,23 @@ export default class Admin extends Vue {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
       await this.$store.direct.dispatch.admin.loadNews();
+      await this.$store.direct.dispatch.admin.loadTips();
     }
   }
 
   public dialog = false;
   public dialogNews = false;
+  public dialogTips = false;
   public dateMenu = false;
   public editedIndex = -1;
   public date = "";
+
+  public editedTipItem = {
+    message: "",
+    author: "",
+    creationDate: "",
+    bsonId: "",
+  };
   public editedNewsItem = {
     bsonId: "",
     message: "",
@@ -269,6 +354,11 @@ export default class Admin extends Vue {
     this.dialogNews = true;
   }
 
+  editTipItem(item: LoadingScreenTip) {
+    this.editedTipItem = item;
+    this.dialogTips = true;
+  }
+
   async deleteItem(item: BannedPlayer) {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
@@ -280,6 +370,12 @@ export default class Admin extends Vue {
     confirm("Are you sure you want to delete this item?") &&
       (await this.$store.direct.dispatch.admin.deleteNews(item));
     this.dialogNews = false;
+  }
+
+  async deleteTipItem(item: LoadingScreenTip) {
+    confirm("Are you sure you want to delete this item?") &&
+      (await this.$store.direct.dispatch.admin.deleteTip(item));
+    this.dialogTips = false;
   }
 
   formTitle() {
@@ -315,7 +411,31 @@ export default class Admin extends Vue {
     this.dialogNews = false;
     this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
+  async saveTips() {
+    this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    this.editedTipItem.creationDate = moment().format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    if (await this.$store.direct.dispatch.admin.editTip(this.editedTipItem)) {
+      this.dialogTips = false;
+      this.editedTipItem = {
+        message: "",
+        author: "",
+        creationDate: "",
+        bsonId: "",
+      };
+    }
+  }
 
+  closeTips() {
+    this.dialogTips = false;
+    this.editedTipItem = {
+      message: "",
+      author: "",
+      creationDate: "",
+      bsonId: "",
+    };
+  }
   async mounted() {
     await this.init();
   }
