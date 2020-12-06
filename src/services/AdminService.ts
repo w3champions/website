@@ -82,15 +82,12 @@ export default class AdminService {
       },
       body: data,
     });
-    if (response.ok && response.status == 200) {
-      return response.ok;
-    } else if (response.status == 400) {
+    if (response.status == 400) {
       alert(
         "The message was longer than 200 characters. We can't fit that on the loading screen tips frame."
       );
-    } else {
-      alert("Something went wrong when trying to add the tip to DB...");
     }
+    return response.ok;
   }
 
   public async deleteTip(
