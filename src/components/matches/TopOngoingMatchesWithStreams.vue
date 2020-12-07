@@ -45,21 +45,21 @@ export default class TopOngoingMatchesWithStreams extends Vue {
 
     if (streamerNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames as string[]);
-    }
 
-    const activeStreamers = this.$store.direct.state.twitch.twitchStreamResponse.data.map(
-      (stream) => stream.user_name.toLowerCase()
-    );
+      const activeStreamers = this.$store.direct.state.twitch.twitchStreamResponse.data.map(
+        (stream) => stream.user_name.toLowerCase()
+      );
 
-    this.matches = matchesWithStreamers.filter((match) =>
-      match.teams.some((team) =>
-        team.players.some((player) =>
-          player.twitch
-            ? activeStreamers.includes(player.twitch.toLowerCase())
-            : false
+      this.matches = matchesWithStreamers.filter((match) =>
+        match.teams.some((team) =>
+          team.players.some((player) =>
+            player.twitch
+              ? activeStreamers.includes(player.twitch.toLowerCase())
+              : false
+          )
         )
-      )
-    ).slice(0,5);
+      ).slice(0,5);
+    }
   }
 
   get matchesSortedByMMR(): Match[] {
