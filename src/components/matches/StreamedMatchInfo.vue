@@ -1,12 +1,8 @@
 <template>
   <div class="streamed-match-info">
-    <div v-if="player.twitch" class="streamed-match-info__icon">
-      <v-btn  icon :href="twitchLink" target="_blank">
-        <v-icon color="purple accent-4">mdi-twitch</v-icon>
-      </v-btn>
-    </div>
-    <span class="streamed-match-info__name">{{ player.name }}</span>
-    <span class="streamed-match-info__mmr">({{ player.oldMmr }})</span>
+    <streamed-match-player-info :player="match.teams[0].players[0]"/>
+    <span class="streamed-match-info__vs">VS</span>
+    <streamed-match-player-info :player="match.teams[1].players[0]" :align-right="true"/>
   </div>
 </template>
 
@@ -14,38 +10,23 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { PlayerInTeam } from "@/store/typings";
+import { Match } from "@/store/typings";
+import PlayerIcon from "@/components/matches/PlayerIcon.vue";
+import StreamedMatchPlayerInfo from "@/components/matches/StreamedMatchPlayerInfo.vue";
 
-@Component({})
+@Component({ components: { StreamedMatchPlayerInfo, PlayerIcon } })
 export default class StreamedMatchInfo extends Vue {
-  @Prop() public player!: PlayerInTeam;
-  @Prop() public isRightAligned!: boolean;
-
-  get twitchLink() {
-    return `https://twitch.tv/${this.player.twitch}`;
-  }
+  @Prop() private match!: Match;
 }
 </script>
 
 <style scoped lang="scss">
 .streamed-match-info {
-  display: grid;
-  grid-template-areas: "icon name" "icon mmr";
-  grid-template-columns: 36px auto;
+  display: flex;
   align-items: center;
 
-  &__icon {
-    grid-area: icon;
-  }
-
-  &__name {
-    grid-area: name;
-    font-size: 16px;
-  }
-
-  &__mmr {
-    grid-area: mmr;
-    font-size: 12px;
+  &__vs {
+    margin: 0 12px;
   }
 }
 </style>

@@ -1,14 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>Top 5 matches live</v-card-title>
+    <v-card-title>Top live 1v1 matches</v-card-title>
     <v-container>
       <v-row v-for="match in matchesSortedByMMR" :key="match.id" style="align-items: center">
-        <v-col cols="6">
-          <streamed-match-info :player="getPlayer(match, 0)" :is-right-aligned="false" />
-        </v-col>
-
-        <v-col cols="6">
-          <streamed-match-info :player="getPlayer(match, 1)" :is-right-aligned="true" />
+        <v-col cols="12">
+          <streamed-match-info :match="match" />
         </v-col>
       </v-row>
     </v-container>

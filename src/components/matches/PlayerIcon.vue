@@ -10,8 +10,24 @@ interface IProps {
 
 export default Vue.component<IProps>("PlayerIcon", {
   functional: true,
-  render(h: CreateElement, { props }: RenderContext<IProps>): VNode {
+  props: {
+    race: {
+      type: Number,
+      required: true
+    } ,
+    left: {
+      type: Boolean,
+      default: false
+    },
+    big: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  render(h: CreateElement, { props, data }: RenderContext<IProps>): VNode {
     const classes = [
+      data.class,
+      data.staticClass,
       "race-icon-" + ERaceEnum[props.race],
       props.big ? "race-icon-big" : "race-icon",
       props.left ? "alignLeft" : "alignRight",
