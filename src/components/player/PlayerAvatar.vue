@@ -89,7 +89,7 @@
               :href="'https://trovo.live/' + userProfile.trovo"
               target="_blank"
             >
-              <v-icon color="green darken-3">mdi-video</v-icon>
+              <v-icon color="green darken-3">$trovo</v-icon>
             </v-btn>
           </template>
           <span>https://trovo.live/{{ userProfile.trovo }}</span>
@@ -258,7 +258,7 @@
                       v-model="userProfile.twitter"
                     ></v-text-field>
                     <v-text-field
-                      prepend-icon="mdi-video"
+                      prepend-icon="$trovo"
                       color="green darken-3"
                       dense
                       clearable
