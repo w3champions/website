@@ -49,7 +49,7 @@ const mod = {
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
     },
-    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>) {
+    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>, gameMode?: EGameMode) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,
         mod
@@ -59,7 +59,7 @@ const mod = {
         0,
         200,
         rootState.gateway,
-        state.gameMode
+        gameMode || state.gameMode
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
