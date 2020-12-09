@@ -71,6 +71,13 @@
             <support-box></support-box>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <top-ongoing-matches-with-streams />
+          </v-col>
+        </v-row>
+
         <v-row>
           <v-col cols="12">
             <v-card tile>
@@ -101,11 +108,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="12">
-            <top-ongoing-matches-with-streams />
-          </v-col>
-        </v-row>
+        
       </v-col>
     </v-row>
   </v-container>
