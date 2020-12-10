@@ -3,6 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="stats"
+      :items-per-page="Number.POSITIVE_INFINITY"
       hide-default-footer
       :mobile-breakpoint="400"
       :hidden="stats.length === 0"
