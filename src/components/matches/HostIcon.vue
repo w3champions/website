@@ -10,11 +10,22 @@
       </span>
     </template>
     <span>{{ tooltip }}</span>
+    <table style="width: 100%">
+      <tr v-for="playerInfo in host.playerServerInfos" :key="playerInfo.battleTag">
+          <td>
+            {{stripTag(playerInfo.battleTag)}}
+          </td>
+          <td>
+            {{playerInfo.currentPing}}ms
+          </td>
+      </tr>
+    </table>
   </v-tooltip>
 </template>
 
 <script lang="ts">
 import { ServerInfo } from "@/store/typings";
+import { indexOf } from "lodash";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -23,11 +34,10 @@ export default class HostIcon extends Vue {
   @Prop({}) host!: ServerInfo;
 
   get icon(): unknown {
-    console.log(this.host.provider)
     if (this.host == undefined) {
-      return require(`@/assets/icons/hosterror.png`) 
+      return require(`@/assets/icons/hosterror.png`);
     }
-    return require(`@/assets/icons/${this.host.provider}.png`) 
+    return require(`@/assets/icons/${this.host.provider}.png`);
   }
 
   get tooltip(): string {
@@ -36,11 +46,24 @@ export default class HostIcon extends Vue {
     }
     
     if (this.host.provider == 'BNET') {
-      return "Hosted on Battle.net"
+      return "Hosted on Battle.net";
     } else {
-      return `Hosted on Flo: \
-              ${this.host.name}`
+      return `Hosted on Flo / ${this.host.name}`;
     }
+  }
+
+  stripTag(tag: string) {
+    if (!tag) {
+      return '';
+    }
+
+    const hashIndex = tag.indexOf('#');
+
+    if (hashIndex != -1) {
+      return tag.substring(0, hashIndex);
+    }
+
+    return tag;
   }
 }
 </script>

@@ -63,7 +63,7 @@
                 </v-col>
                 <v-col cols="1">
                   VS
-                  <host-icon :host="item.serverInfo"></host-icon>
+                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
                 <v-col cols="5.5">
                   <team-match-info
