@@ -144,10 +144,6 @@ export default class MatchesGrid extends Vue {
     };
   }
 
-  logItem(item: any) {
-    console.log(item);
-  }
-
   destroyed() {
     this.$emit("pageChanged", 1);
   }
