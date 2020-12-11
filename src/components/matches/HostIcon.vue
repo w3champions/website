@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip bottom>
+  <v-tooltip bottom style="white-space: pre-line;">
     <template v-slot:activator="{ on }">
       <span v-on="on">
         <v-img 
@@ -14,19 +14,20 @@
 </template>
 
 <script lang="ts">
+import { ServerInfo } from "@/store/typings";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class HostIcon extends Vue {
-  @Prop({}) host!: string;
+  @Prop({}) host!: ServerInfo;
 
   get icon(): unknown {
-    console.log(this.host)
+    console.log(this.host.provider)
     if (this.host == undefined) {
       return require(`@/assets/icons/hosterror.png`) 
     }
-    return require(`@/assets/icons/${this.host}.png`) 
+    return require(`@/assets/icons/${this.host.provider}.png`) 
   }
 
   get tooltip(): string {
@@ -34,10 +35,11 @@ export default class HostIcon extends Vue {
       return 'Error'
     }
     
-    if (this.host == 'BNET') {
-      return "Battle.net"
+    if (this.host.provider == 'BNET') {
+      return "Hosted on Battle.net"
     } else {
-      return "Flo"
+      return `Hosted on Flo: \
+              ${this.host.name}`
     }
   }
 }
