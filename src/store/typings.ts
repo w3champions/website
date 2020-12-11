@@ -41,7 +41,23 @@ export type Match = {
   teams: Team[];
   gateWay: number;
   season: number;
+  serverInfo: ServerInfo;
 };
+
+export type ServerInfo = {
+  provider: string;
+  countryCode: string;
+  location: string;
+  name: string;
+  nodeId: number;
+  playerServerInfos: PlayerServerInfo[];
+}
+
+export type PlayerServerInfo = {
+  battleTag: string;
+  averagePing: number;
+  currentPing: number;
+}
 
 export type MatchDetail = {
   match: Match;
