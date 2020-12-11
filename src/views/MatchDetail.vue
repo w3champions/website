@@ -22,6 +22,7 @@
               </v-col>
               <v-col cols="1" class="text-center">
                 <span>VS</span>
+                <!-- <host-icon :host="'bnet'"></host-icon> -->
               </v-col>
 
               <v-col v-if="!matchIsFFA" cols="4">
@@ -160,6 +161,7 @@ import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerforman
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import { EGameMode } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
+import HostIcon from "@/components/matches/HostIcon.vue";
 
 @Component({
   components: {
@@ -168,6 +170,7 @@ import { Gateways } from "@/store/ranking/types";
     HeroIcon,
     MatchHiglights,
     TeamMatchInfo,
+    HostIcon
   },
 })
 export default class MatchDetailView extends Vue {
