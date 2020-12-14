@@ -1,5 +1,5 @@
 <template>
-  <v-app class="w3app" :class="theme" :dark="isDark()">
+  <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar
       :class="{ darkmode: isDarkTheme }"
       app
