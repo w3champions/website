@@ -16,7 +16,7 @@
             {{stripTag(playerInfo.battleTag)}}
           </td>
           <td>
-            {{playerInfo.currentPing}}ms
+            {{playerInfo.averagePing}}ms
           </td>
       </tr>
     </table>
