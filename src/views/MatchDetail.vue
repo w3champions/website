@@ -12,6 +12,7 @@
                   <br />
                   Season: {{ season }}
                 </v-card-subtitle>
+                <host-icon v-if="match.serverInfo && match.serverInfo.provider" :host="match.serverInfo" style="padding-right: 0px;"></host-icon>
               </v-col>
               <v-col cols="4">
                 <team-match-info
@@ -22,7 +23,6 @@
               </v-col>
               <v-col cols="1" class="text-center">
                 <span>VS</span>
-                <!-- <host-icon :host="'bnet'"></host-icon> -->
               </v-col>
 
               <v-col v-if="!matchIsFFA" cols="4">

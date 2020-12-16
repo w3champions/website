@@ -25,7 +25,6 @@
 
 <script lang="ts">
 import { ServerInfo } from "@/store/typings";
-import { indexOf } from "lodash";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
