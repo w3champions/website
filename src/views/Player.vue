@@ -97,6 +97,13 @@
               {{ $t("mapNames." + ongoingMatch.map) }}
             </span>
           </div>
+
+          <v-container style="padding-top: 6px;">
+            <v-row align="center" justify="center">
+                <host-icon v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider" :host="ongoingMatch.serverInfo"></host-icon>
+            </v-row>
+          </v-container>
+          
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab
@@ -154,6 +161,7 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import HostIcon from "@/components/matches/HostIcon.vue";
 
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
@@ -177,6 +185,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
     ModeStatsGrid,
     GatewaySelect,
     TeamMatchInfo,
+    HostIcon,
   },
 })
 export default class PlayerView extends Vue {
