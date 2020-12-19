@@ -8,4 +8,5 @@ window._env_ = {
   LAUNCHER_UPDATE_URL: "https://update-service.test.w3champions.com/api/",
   INGAME_STATIC_RESOURCES_URL: "https://storage.googleapis.com/w3champions-prod/integration/",
   BNET_API_CLIENT_ID: "d7bd6dd46e2842c8a680866759ad34c2",
+  WEBSITE_ASSETS_URL: "@/assets"
 };

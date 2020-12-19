@@ -158,6 +158,7 @@ import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
+import { WEBSITE_ASSETS_URL } from "@/main";
 
 @Component({
   components: {
@@ -394,7 +395,7 @@ export default class RankingsGrid extends Vue {
   }
 
   raceIcon(race: ERaceEnum) {
-    return require("../../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
+    return `${WEBSITE_ASSETS_URL}/raceIcons/${ERaceEnum[race]}.jpg`;
   }
 
   public isTwitchLive(ranking: Ranking) {

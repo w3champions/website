@@ -9,4 +9,5 @@ echo "  REDIRECT_URL: \"${3}\","  >> ./env.js
 echo "  LAUNCHER_UPDATE_URL: \"${4}\","  >> ./env.js
 echo "  INGAME_STATIC_RESOURCES_URL: \"${5}\","  >> ./env.js
 echo "  BNET_API_CLIENT_ID: \"${6}\""  >> ./env.js
+echo "  WEBSITE_ASSETS_URL: \"${7}\"" >> ./env.js
 echo "};" >> ./env.js
