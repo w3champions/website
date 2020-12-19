@@ -1,7 +1,7 @@
 <template>
   <div class="streamed-match-info">
     <streamed-match-player-info :player="match.teams[0].players[0]"/>
-    <span class="streamed-match-info__vs">VS</span>
+    <span>VS</span>
     <streamed-match-player-info :player="match.teams[1].players[0]" :align-right="true"/>
   </div>
 </template>
@@ -22,11 +22,8 @@ export default class StreamedMatchInfo extends Vue {
 
 <style scoped lang="scss">
 .streamed-match-info {
-  display: flex;
-  align-items: center;
-
-  &__vs {
-    margin: 0 12px;
-  }
+  display: grid;
+  grid-template-columns: 1fr 25px 1fr;
+  grid-column-gap: 10px;
 }
 </style>
