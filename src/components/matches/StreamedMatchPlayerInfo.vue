@@ -63,7 +63,6 @@ export default class StreamedMatchPlayerInfo extends Vue{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: black;
     text-decoration: none;
   }
 
