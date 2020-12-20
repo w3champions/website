@@ -72,6 +72,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
+import { getAsset } from "@/helpers/url-functions";
 
 @Component({})
 export default class HeroPictureSelect extends Vue {
@@ -156,7 +157,7 @@ export default class HeroPictureSelect extends Vue {
 
   public parsePicture(hero: HeroPick) {
     try {
-      return require("../../assets/heroes/" + hero.heroId + ".png");
+      return getAsset(`heroes/${hero.heroId}.png`);
     } catch (e) {
       return null;
     }
