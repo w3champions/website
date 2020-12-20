@@ -20,14 +20,19 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
-      commit.SET_BEARER(bearer.access_token);
+      commit.SET_BEARER(bearer.token);
 
       const profile = await rootGetters.oauthService.getProfile(
-        bearer.access_token
+        bearer.token
       );
-      commit.SET_PROFILE_NAME(profile.battletag);
-      commit.SET_IS_ADMIN(profile.isAdmin);
-      await rootGetters.oauthService.saveAuthToken(bearer);
+
+      if (profile) {
+        commit.SET_PROFILE_NAME(profile.battleTag);
+        commit.SET_IS_ADMIN(profile.isAdmin);
+        await rootGetters.oauthService.saveAuthToken(bearer);
+      }
+
+      rootGetters.oauthService.deleteAuthCookie();
     },
     async authorizeWithTwitch(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
@@ -49,8 +54,16 @@ const mod = {
 
       const profile = await rootGetters.oauthService.getProfile(bearerToken);
 
-      commit.SET_PROFILE_NAME(profile.battletag);
-      commit.SET_IS_ADMIN(profile.isAdmin);
+      if (profile) {
+        commit.SET_PROFILE_NAME(profile.battleTag);
+        commit.SET_IS_ADMIN(profile.isAdmin);
+        await rootGetters.oauthService.saveAuthToken(profile);
+      } else {
+        rootGetters.oauthService.deleteAuthCookie();
+        commit.SET_PROFILE_NAME("");
+        commit.SET_IS_ADMIN(false);
+        commit.SET_BEARER("");
+      }
     },
     logout(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);

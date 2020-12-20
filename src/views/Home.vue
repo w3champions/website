@@ -15,16 +15,21 @@
             </v-col>
           </v-row>
           <v-card-text>
-            <v-row class="justify-center">
-              <v-col>
-                <v-card-title v-if="newsContent !== ''">
-                  {{ newsHeadline }}
+            <v-carousel
+              v-model="model"
+              :show-arrows="false"
+              :dark="$vuetify.theme.dark"
+              :light="!$vuetify.theme.dark"
+            >
+              <v-carousel-item v-for="newsItem in news" :key="newsItem.date">
+                <v-card-title>
+                  {{ newsItem.date }}
                 </v-card-title>
-                <vue-markdown v-if="newsContent !== ''">
-                  {{ newsContent }}
+                <vue-markdown>
+                  {{ newsItem.message }}
                 </vue-markdown>
-              </v-col>
-            </v-row>
+              </v-carousel-item>
+            </v-carousel>
           </v-card-text>
           <v-card-title>Come and join us!</v-card-title>
           <v-card-text>
@@ -51,7 +56,7 @@
               <v-col cols="12" md="6">
                 <img
                   src="../assets/w3championsScreenshot.png"
-                  style="max-width: 90%; max-height: 320px;"
+                  style="max-width: 90%; max-height: 320px"
                 />
               </v-col>
             </v-row>
@@ -62,46 +67,19 @@
       <v-col cols="12" md="4">
         <v-row>
           <v-col cols="12" class="no-padding">
-            <v-card tile>
-              <v-card-title>Community</v-card-title>
-              <v-card-text class="filter-blur">
-                Join us
-                <br />
-                <a href="https://discord.gg/uJmQxG2" target="_blank">
-                  <img
-                    src="../assets/discord-small.png"
-                    style="margin-left: -8px;"
-                    height="50px"
-                  />
-                </a>
-                <br />
-                Social Media
-                <br />
-                <a href="https://twitter.com/W3ChampionsTeam" target="_blank">
-                  <img src="../assets/twitter.svg" height="24" />
-                </a>
-                <br />
-                Support us
-                <br />
-                <a href="https://www.patreon.com/w3champions" target="_blank">
-                  <img src="../assets/patreon.png" height="24" />
-                </a>
-                <br />
-                <div style="margin-top: 5px;">
-                  <a
-                    style="margin-top: 15px;"
-                    href="https://www.paypal.me/w3champions"
-                    target="_blank"
-                  >
-                    <img src="../assets/paypal.png" height="24" />
-                  </a>
-                </div>
-              </v-card-text>
-            </v-card>
+            <social-box></social-box>
+            <support-box></support-box>
           </v-col>
         </v-row>
+
         <v-row>
-          <v-col cols="12" class>
+          <v-col cols="12">
+            <top-ongoing-matches-with-streams />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
             <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
               <table class="custom-table" dense>
@@ -113,11 +91,11 @@
                   <td>
                     <v-row class="justify-space-between">
                       <v-col cols="2">
-                        <span style="font-size: 15px;">{{ i + 1 }}.</span>
+                        <span style="font-size: 15px">{{ i + 1 }}.</span>
                       </v-col>
                       <v-col cols="10">
                         {{ rank.player.name }}
-                        <div style="font-size: 11px;">
+                        <div style="font-size: 11px">
                           Win/Loss/Total: {{ rank.player.wins }}/{{
                             rank.player.losses
                           }}/{{ rank.player.games }}
@@ -130,6 +108,7 @@
             </v-card>
           </v-col>
         </v-row>
+        
       </v-col>
     </v-row>
   </v-container>
@@ -140,45 +119,33 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
-import { API_URL } from "@/main";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
+import SocialBox from "@/components/common/SocialBox.vue";
+import SupportBox from "@/components/common/SupportBox.vue";
+import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 
-@Component({ components: { VueMarkdown } })
+@Component({ components: { TopOngoingMatchesWithStreams, VueMarkdown, SocialBox, SupportBox } })
 export default class HomeView extends Vue {
-  public newsContent = "";
-  public newsHeadline = "";
+  public model = 0;
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
 
+  get news() {
+    return this.$store.direct.state.admin.news;
+  }
+
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
-
-    if (API_URL.includes("test")) {
-      await this.setNewsContent("test");
-    } else {
-      await this.setNewsContent("prod");
-    }
+    await this.$store.direct.dispatch.admin.loadNews();
   }
 
   public goToSetupPage() {
     this.$router.push({
       path: "/getting-started/",
     });
-  }
-
-  private async setNewsContent(stage: string) {
-    const mdNewsResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news.md`
-    );
-    this.newsContent = await mdNewsResponse.text();
-
-    const mdNewsDateResponse = await fetch(
-      `https://raw.githubusercontent.com/modmoto/w3champions-news/master/${stage}/news-headline.md`
-    );
-    this.newsHeadline = await mdNewsDateResponse.text();
   }
 
   public goToProfile(rank: Ranking) {

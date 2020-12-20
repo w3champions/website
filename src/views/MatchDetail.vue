@@ -1,5 +1,6 @@
 <template>
   <v-container class="profile">
+    <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
         <v-card tile>
@@ -11,6 +12,7 @@
                   <br />
                   Season: {{ season }}
                 </v-card-subtitle>
+                <host-icon v-if="match.serverInfo && match.serverInfo.provider" :host="match.serverInfo" style="padding-right: 0px;"></host-icon>
               </v-col>
               <v-col cols="4">
                 <team-match-info
@@ -22,6 +24,7 @@
               <v-col cols="1" class="text-center">
                 <span>VS</span>
               </v-col>
+
               <v-col v-if="!matchIsFFA" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
@@ -44,6 +47,13 @@
               </v-col>
               <v-col cols="1" />
             </v-row>
+
+          </v-card-title>
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            This is our {{ gameNumber }} Millionth game!
+          </v-card-title>
+          <v-card-title v-if="isJubileeGame" class="justify-center">
+            Congratulations to W3C and the community!
           </v-card-title>
           <v-card-title class="justify-center small-title">
             <v-card-subtitle>
@@ -51,14 +61,16 @@
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
-          <match-detail-hero-row
-            v-for="(player, index) in scoresOfWinners"
-            v-bind:key="index"
-            :heroes-of-winner="scoresOfWinners[index].heroes"
-            :heroes-of-looser="scoresOfLoosers[index].heroes"
-            :scores-of-winner="scoresOfWinners[index].heroScore"
-            :scores-of-looser="scoresOfLoosers[index].heroScore"
-          />
+          <div v-if="isCompleteGame">
+            <match-detail-hero-row
+              v-for="(player, index) in scoresOfWinners"
+              v-bind:key="index"
+              :heroes-of-winner="scoresOfWinners[index].heroes"
+              :heroes-of-looser="scoresOfLoosers[index].heroes"
+              :scores-of-winner="scoresOfWinners[index].heroScore"
+              :scores-of-looser="scoresOfLoosers[index].heroScore"
+            />
+          </div>
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
             :not-color-winner="true"
@@ -149,6 +161,7 @@ import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerforman
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import { EGameMode } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
+import HostIcon from "@/components/matches/HostIcon.vue";
 
 @Component({
   components: {
@@ -157,6 +170,7 @@ import { Gateways } from "@/store/ranking/types";
     HeroIcon,
     MatchHiglights,
     TeamMatchInfo,
+    HostIcon
   },
 })
 export default class MatchDetailView extends Vue {
@@ -212,6 +226,30 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.match;
   }
 
+  get isJubileeGame() {
+    if (!this.match?.number) {
+      return false;
+    }
+
+    return this.match.number !== 0 && this.match?.number % 1000000 === 0;
+  }
+
+  get gameNumber() {
+    let number = this.match.number / 1000000;
+    switch (number) {
+      case 1: return "one"
+      case 2: return "two"
+      case 3: return "three"
+      case 4: return "four"
+      case 5: return "five"
+      case 6: return "six"
+      case 7: return "seven"
+      case 8: return "eight"
+      case 9: return "nine"
+      default: return "bazillion"
+    }
+  }
+
   get gateWay() {
     return Gateways[this.$store.direct.state.matches.matchDetail.match.gateWay];
   }
@@ -231,8 +269,12 @@ export default class MatchDetailView extends Vue {
     return this.$store.direct.state.matches.matchDetail.playerScores;
   }
 
+  get playerScores() {
+    return this.$store.direct.state.matches.matchDetail.playerScores ?? [];
+  }
+
   get scoresOfWinners() {
-    const scoresOfWinners = this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfWinners = this.playerScores.filter(
       (s) =>
         this.match.teams[0].players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
@@ -246,7 +288,7 @@ export default class MatchDetailView extends Vue {
   }
 
   get scoresOfLoosers() {
-    const scoresOfLoosers = this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    const scoresOfLoosers = this.playerScores.filter(
       (s) =>
         this.match.teams[1].players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
@@ -260,31 +302,31 @@ export default class MatchDetailView extends Vue {
   }
 
   get ffaWinner() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[0].players[0].battleTag
     );
   }
 
   get ffaLoosers() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.filter(
+    return this.playerScores.filter(
       (s) => s.battleTag !== this.match.teams[0].players[0].battleTag
     );
   }
 
   get ffaLooser1() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[1].players[0].battleTag
     );
   }
 
   get ffaLooser2() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[2].players[0].battleTag
     );
   }
 
   get ffaLooser3() {
-    return this.$store.direct.state.matches.matchDetail.playerScores.find(
+    return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[3].players[0].battleTag
     );
   }
@@ -299,9 +341,20 @@ export default class MatchDetailView extends Vue {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 .small-title {
   margin-top: -30px !important;
   margin-bottom: -25px !important;
 }
+
+.jubilee {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  z-index: 100;
+  background-image: url("../assets/giphy.gif") !important;
+  background-size: cover !important;
+}
+
 </style>

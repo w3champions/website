@@ -109,7 +109,7 @@ export default class PlayerActivityTab extends Vue {
     this.loadingData = true;
     this.selectedSeason = season;
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
+      await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
       await this.$store.direct.dispatch.player.loadGameModeStats({
         battleTag: this.verifiedBtag,
         season: season.id,
@@ -164,7 +164,7 @@ export default class PlayerActivityTab extends Vue {
   @Watch("verifiedBtag")
   async onBattleTagChanged(newBattleTag: string) {
     if (newBattleTag) {
-      await this.$store.direct.dispatch.player.loadProfile(newBattleTag);
+      await this.$store.direct.dispatch.player.loadProfile({battleTag: newBattleTag, freshLogin: false});
       await this.$store.direct.dispatch.player.loadGameModeStats({
         battleTag: newBattleTag,
         season: this.selectedSeason.id,

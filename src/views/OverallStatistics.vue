@@ -82,7 +82,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile(this.verifiedBtag);
+      await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
     }
     const mMRDistributionPayload: SeasonGameModeGateWayForMMR ={season:  this.$store.direct.state.rankings.selectedSeason.id,
                                                                 gameMode: this.$store.direct.state.matches.gameMode,

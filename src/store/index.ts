@@ -8,7 +8,6 @@ import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
-import chat from "./chat/index";
 import clan from "./clan/index";
 import twitch from "./twitch/index";
 import admin from "./admin/index";
@@ -23,7 +22,6 @@ import AuthorizationService from "@/services/AuthorizationService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
-import ChatService from "@/services/ChatService";
 import ClanService from "@/services/ClanService";
 import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
@@ -39,7 +37,6 @@ const services = {
   statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
-  chatService: new ChatService(),
   clanService: new ClanService(),
   twitchService: new TwitchService(),
   adminService: new AdminService(),
@@ -54,7 +51,6 @@ const mod = {
     overallStatistics,
     oauth,
     personalSettings,
-    chat,
     clan,
     twitch,
     admin,
@@ -92,9 +88,6 @@ const mod = {
     },
     personalSettingsService() {
       return services.personalSettingsService;
-    },
-    chatService() {
-      return services.chatService;
     },
     clanService() {
       return services.clanService;

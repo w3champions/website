@@ -4,8 +4,9 @@
       <v-col cols="5" md="12">
         <v-tooltip top v-bind:disabled="!avatarDescription">
           <template v-slot:activator="{ on }">
-            <v-card-text v-on="on"
-              style="cursor: pointer;"
+            <v-card-text
+              v-on="on"
+              style="cursor: pointer"
               @click.stop="openDialog"
               class="player-avatar text-center"
               :style="{
@@ -14,7 +15,7 @@
               }"
             />
           </template>
-          <span>{{avatarDescription}}</span>
+          <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -79,17 +80,32 @@
           <span>{{ userProfile.twitter }}</span>
         </v-tooltip>
       </v-col>
+      <v-col cols="2" v-if="userProfile.trovo != ''" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'https://trovo.live/' + userProfile.trovo"
+              target="_blank"
+            >
+              <v-icon color="green darken-3">$trovo</v-icon>
+            </v-btn>
+          </template>
+          <span>https://trovo.live/{{ userProfile.trovo }}</span>
+        </v-tooltip>
+      </v-col>
     </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px" class="scroll-v-dialog">
       <v-card>
         <v-checkbox
-         style="margin-left:25px"
+          style="margin-left: 25px"
           v-model="useClassicIcons"
           :label="`Use classic icons`"
         ></v-checkbox>
         <v-row
-          style="padding-left: 25px; padding-right: 25px;"
+          style="padding-left: 25px; padding-right: 25px"
           v-for="race in races"
           :key="race"
           align="center"
@@ -113,22 +129,38 @@
         </v-row>
         <v-row
           class="special-icons"
-          style="padding-left: 25px; padding-right: 25px;"
+          style="padding-left: 25px; padding-right: 25px"
           align="center"
         >
-          <v-col cols="1" v-for="specialPicture in specialPictures" :key="specialPicture.pictureId">
+          <v-col
+            cols="1"
+            v-for="specialPicture in specialPictures"
+            :key="specialPicture.pictureId"
+          >
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
                   v-on="on"
-                  class="player-avatar-choosing" v-bind:class="{pointer: isLoggedInPlayer}"
-                  @click="isLoggedInPlayer ? savePicture(specialAvatarCategory, specialPicture.pictureId, specialPicture.description) : null"
+                  class="player-avatar-choosing"
+                  v-bind:class="{ pointer: isLoggedInPlayer }"
+                  @click="
+                    isLoggedInPlayer
+                      ? savePicture(
+                          specialAvatarCategory,
+                          specialPicture.pictureId,
+                          specialPicture.description
+                        )
+                      : null
+                  "
                   :style="{
-                    'background-image': 'url(' + picture(specialAvatarCategory, specialPicture.pictureId) + ')',
+                    'background-image':
+                      'url(' +
+                      picture(specialAvatarCategory, specialPicture.pictureId) +
+                      ')',
                   }"
                 />
               </template>
-              <span>{{specialPicture.description}}</span>
+              <span>{{ specialPicture.description }}</span>
             </v-tooltip>
           </v-col>
         </v-row>
@@ -136,7 +168,7 @@
     </v-dialog>
 
     <v-row>
-      <v-col style="margin-top: -15px;">
+      <v-col style="margin-top: -15px">
         <h3>Games: {{ playerGames }}</h3>
       </v-col>
     </v-row>
@@ -226,6 +258,17 @@
                       v-model="userProfile.twitter"
                     ></v-text-field>
                     <v-text-field
+                      prepend-icon="$trovo"
+                      color="green darken-3"
+                      dense
+                      clearable
+                      single-line
+                      shaped
+                      hint="Enter your Trovo username!"
+                      prefix="https://trovo.live/"
+                      v-model="userProfile.trovo"
+                    ></v-text-field>
+                    <v-text-field
                       prepend-icon="mdi-home"
                       color="blue darken-2"
                       dense
@@ -307,9 +350,9 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import { PersonalSetting, SpecialPicture } from "../../store/personalSettings/types";
+import { SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
-import { getAvatarUrl } from '../../helpers/url-functions';
+import { getAvatarUrl } from "../../helpers/url-functions";
 
 @Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
@@ -355,6 +398,14 @@ export default class PlayerAvatar extends Vue {
     return this.personalSetting.twitter || "";
   }
 
+  get trovo(): string {
+    return this.personalSetting.trovo || "";
+  }
+
+  get douyu(): string {
+    return this.personalSetting.douyu || "";
+  }
+
   get homePageLinks(): Array<string> {
     if (!this.homePage || !this.homePage.includes("http")) {
       return [];
@@ -394,6 +445,8 @@ export default class PlayerAvatar extends Vue {
     twitch: this.twitch,
     youtube: this.youtube,
     twitter: this.twitter,
+    trovo: this.trovo,
+    douyu: this.douyu,
     about: this.savedMessageValue,
     homePage: this.homePage,
     editDialogOpened: false,
@@ -413,6 +466,8 @@ export default class PlayerAvatar extends Vue {
       about: this.savedMessageValue,
       youtube: this.youtube,
       twitter: this.twitter,
+      trovo: this.trovo,
+      douyu: this.douyu,
     };
   }
 
@@ -423,6 +478,8 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitch = this.userProfile.twitch;
     personalSetting.youTube = this.userProfile.youtube;
     personalSetting.twitter = this.userProfile.twitter;
+    personalSetting.trovo = this.userProfile.trovo;
+    personalSetting.douyu = this.userProfile.douyu;
 
     this.countries.map((c) => {
       if (c.country == this.selectedCountry) {
@@ -465,11 +522,13 @@ export default class PlayerAvatar extends Vue {
 
   get avatarDescription(): string {
     if (this.avatarCategory != EAvatarCategory.SPECIAL) {
-      return '';
+      return "";
     }
 
-    const specialPicture = this.specialPictures.find(x => x.pictureId == this.avatarIcon);
-    return specialPicture?.description ?? '';
+    const specialPicture = this.specialPictures.find(
+      (x) => x.pictureId == this.avatarIcon
+    );
+    return specialPicture?.description ?? "";
   }
 
   enabledIfEnoughWins(category: EAvatarCategory, iconId: number) {
@@ -480,8 +539,9 @@ export default class PlayerAvatar extends Vue {
     const raceCategory = (category as any) as ERaceEnum;
 
     return (
-      this.personalSetting.pickablePictures?.filter((r) => r.race == raceCategory)[0]
-        .max >= iconId
+      this.personalSetting.pickablePictures?.filter(
+        (r) => r.race == raceCategory
+      )[0].max >= iconId
     );
   }
 
@@ -510,13 +570,17 @@ export default class PlayerAvatar extends Vue {
     this.dialogOpened = true;
   }
 
-  async savePicture(avatarCategory: EAvatarCategory, picture: number, description?: string) {
+  async savePicture(
+    avatarCategory: EAvatarCategory,
+    picture: number,
+    description?: string
+  ) {
     if (!this.enabledIfEnoughWins(avatarCategory, picture)) return;
     await this.$store.direct.dispatch.personalSettings.saveAvatar({
       race: avatarCategory,
       pictureId: picture,
       isClassic: this.useClassicIcons,
-      description
+      description,
     });
 
     this.dialogOpened = false;
@@ -533,10 +597,13 @@ export default class PlayerAvatar extends Vue {
       about: this.savedMessageValue,
       youtube: this.youtube,
       twitter: this.twitter,
+      trovo: this.trovo,
+      douyu: this.douyu,
       editDialogOpened: false,
     };
 
-    this.useClassicIcons = this.personalSetting?.profilePicture?.isClassic ?? false;
+    this.useClassicIcons =
+      this.personalSetting?.profilePicture?.isClassic ?? false;
 
     // populate countries dropdown for combobox
     Object.keys(ECountries).map((key) => {
@@ -577,8 +644,8 @@ export default class PlayerAvatar extends Vue {
   border-color: white;
   border-style: solid;
   border-width: thin;
-  bottom: 0px;
-  right: -5px;
+  bottom: 10px;
+  right: 10px;
 }
 
 .country__container {

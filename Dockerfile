@@ -22,5 +22,21 @@ COPY env.sh .
 RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
+RUN apk add --no-cache \
+python py-pip \
+curl \
+which \
+bash
+
+RUN pip install python-dateutil python-magic && \
+  curl -L https://github.com/s3tools/s3cmd/releases/download/v2.1.0/s3cmd-2.1.0.zip --output /root/s3cmd-2.1.0.zip && \
+  unzip /root/s3cmd-2.1.0.zip -d /root && \
+  ln -s /root/s3cmd-2.1.0/s3cmd /usr/bin/s3cmd
+COPY s3config /etc/s3config
+RUN chmod +x /etc/s3config/sync_assets.sh
+
+ADD start.sh /
+RUN chmod +x /start.sh
+
 EXPOSE 80
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh $BASE_URL $REDIRECT_URL $IS_LAUNCHER_ENABLED $LAUNCHER_UPDATE_URL $INGAME_STATIC_RESOURCES_URL $BNET_API_CLIENT_ID && nginx -g \"daemon off;\""]
+CMD ["/bin/bash", "-c", "/start.sh && nginx -g \"daemon off;\""]

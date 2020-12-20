@@ -97,6 +97,13 @@
               {{ $t("mapNames." + ongoingMatch.map) }}
             </span>
           </div>
+
+          <v-container style="padding-top: 6px;">
+            <v-row align="center" justify="center">
+                <host-icon v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider" :host="ongoingMatch.serverInfo"></host-icon>
+            </v-row>
+          </v-container>
+          
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab
@@ -154,6 +161,7 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import HostIcon from "@/components/matches/HostIcon.vue";
 
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
@@ -177,10 +185,12 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
     ModeStatsGrid,
     GatewaySelect,
     TeamMatchInfo,
+    HostIcon,
   },
 })
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
+  @Prop() public freshLogin!: boolean;
 
   public tabsModel = {};
   private _intervalRefreshHandle: any = {};
@@ -206,6 +216,7 @@ export default class PlayerView extends Vue {
     this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
+    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
   get seasons() {
@@ -323,13 +334,12 @@ export default class PlayerView extends Vue {
   private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile(this.battleTag);
+    await this.$store.direct.dispatch.player.loadProfile({battleTag: this.battleTag, freshLogin: this.freshLogin});
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
-
     await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
       this.battleTag
     );
@@ -339,7 +349,7 @@ export default class PlayerView extends Vue {
         this.battleTag
       );
     }, AppConstants.ongoingMatchesRefreshInterval);
-
+  this.$store.direct.commit.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 

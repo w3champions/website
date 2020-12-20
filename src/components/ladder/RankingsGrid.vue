@@ -157,7 +157,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { getAvatarUrl } from "@/helpers/url-functions";
+import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 
 @Component({
   components: {
@@ -394,7 +394,7 @@ export default class RankingsGrid extends Vue {
   }
 
   raceIcon(race: ERaceEnum) {
-    return require("../../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
+    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
   public isTwitchLive(ranking: Ranking) {
@@ -523,22 +523,18 @@ td.header {
 
 .country-flag__container {
   position: relative;
-  width: 15px;
-  height: 10px;
   display: inline-block;
 }
 
 .twitch__container {
   position: relative;
-  width: 25px;
-  height: 5px;
   display: inline-block;
+  left: 8px;
 }
 
 ::v-deep .country-flag {
   position: absolute;
-  top: -15px;
-  left: -20px;
+  top: -10px;
 }
 
 .twitch-icon {
@@ -550,7 +546,7 @@ td.header {
 .swords {
   position: absolute;
   top: 0px;
-  left: 10px;
+  left: 18px;
   cursor: pointer;
 }
 

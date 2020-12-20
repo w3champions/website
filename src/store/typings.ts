@@ -22,6 +22,7 @@ export type PlayerInTeam = {
   won: boolean;
   location?: string;
   countryCode?: string;
+  twitch?: string;
 };
 
 export type Team = {
@@ -33,13 +34,30 @@ export type Match = {
   map: string;
   id: number;
   durationInSeconds: number;
+  number: number;
   startTime: Moment;
   endTime: Moment;
   gameMode: EGameMode;
   teams: Team[];
   gateWay: number;
   season: number;
+  serverInfo: ServerInfo;
 };
+
+export type ServerInfo = {
+  provider: string;
+  countryCode: string;
+  location: string;
+  name: string;
+  nodeId: number;
+  playerServerInfos: PlayerServerInfo[];
+}
+
+export type PlayerServerInfo = {
+  battleTag: string;
+  averagePing: number;
+  currentPing: number;
+}
 
 export type MatchDetail = {
   match: Match;

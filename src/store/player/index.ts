@@ -5,8 +5,9 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   ModeStat,
   RaceStat,
+  PlayerMmrRpTimeline,
 } from "./types";
-import { EGameMode, Match, RootState } from "../typings";
+import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season, Gateways } from "@/store/ranking/types";
 import GatewaysService from "@/services/GatewaysService";
@@ -14,6 +15,7 @@ import GatewaysService from "@/services/GatewaysService";
 const mod = {
   namespaced: true,
   state: {
+    isInitialized: false,
     playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
     battleTag: "",
     page: 0,
@@ -22,24 +24,31 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
+    loadingMmrRpTimeline: false,
     opponentTag: "",
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
+    race: 0 as ERaceEnum,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
+    mmrRpTimeline: {} as PlayerMmrRpTimeline | undefined,
   } as PlayerState,
   actions: {
     async loadProfile(
       context: ActionContext<PlayerState, RootState>,
-      battleTag: string
+      params: { battleTag: string; freshLogin: boolean }
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootState, rootGetters } = moduleActionContext(
+        context,
+        mod
+      );
 
       commit.SET_LOADING_PROFILE(true);
 
       const profile = await rootGetters.profileService.retrieveProfile(
-        battleTag
+        params.battleTag,
+        params.freshLogin ? rootState.oauth.token : null
       );
 
       commit.SET_PROFILE(profile);
@@ -134,10 +143,32 @@ const mod = {
         await dispatch.loadMatches(1);
         await dispatch.loadRaceStats();
         await dispatch.loadGameModeStats({});
+        await dispatch.loadPlayerMmrRpTimeline();
       }
+    },
+    async loadPlayerMmrRpTimeline(
+      context: ActionContext<PlayerState, RootState>
+    ) {
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+      commit.SET_LOADING_MMR_TIMELINE(true);
+      const mmrRpTimeline = await rootGetters.profileService.retrievePlayerMmrRpTimeline(
+        state.battleTag,
+        state.race,
+        rootState.gateway,
+        state.selectedSeason?.id ?? -1,
+        state.gameMode
+      );
+      commit.SET_MMR_RP_TIMELINE(mmrRpTimeline);
+      commit.SET_LOADING_MMR_TIMELINE(false);
     },
   },
   mutations: {
+    SET_INITIALIZED(state: PlayerState) {
+      state.isInitialized = true;
+    },
     SET_PROFILE(state: PlayerState, profile: PlayerProfile) {
       state.playerProfile = profile;
     },
@@ -155,6 +186,9 @@ const mod = {
     },
     SET_LOADING_RECENT_MATCHES(state: PlayerState, loading: boolean) {
       state.loadingRecentMatches = loading;
+    },
+    SET_LOADING_MMR_TIMELINE(state: PlayerState, loading: boolean) {
+      state.loadingMmrRpTimeline = loading;
     },
     SET_BATTLE_TAG(state: PlayerState, battleTag: string) {
       state.battleTag = battleTag;
@@ -174,6 +208,9 @@ const mod = {
     SET_GAMEMODE(state: PlayerState, gameMode: EGameMode) {
       state.gameMode = gameMode;
     },
+    SET_RACE(state: PlayerState, race: ERaceEnum) {
+      state.race = race;
+    },
     SET_ONGOING_MATCH(state: PlayerState, match: Match) {
       state.ongoingMatch = match;
     },
@@ -182,6 +219,12 @@ const mod = {
     },
     SET_RACE_STATS(state: PlayerState, stats: RaceStat[]) {
       state.raceStats = stats;
+    },
+    SET_MMR_RP_TIMELINE(
+      state: PlayerState,
+      mmrRpTimeline: PlayerMmrRpTimeline | undefined
+    ) {
+      state.mmrRpTimeline = mmrRpTimeline;
     },
   },
 } as const;

@@ -331,7 +331,5 @@ export default class TournamentBracket extends Vue {
 
 .bracket-wrapper .country-flag {
   position: absolute;
-    left: -22px;
-    top: -13px;
 }
 </style>

@@ -1,7 +1,12 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { AdminState, BannedPlayer, NewsMessage } from "./types";
+import {
+  AdminState,
+  BannedPlayer,
+  LoadingScreenTip,
+  NewsMessage,
+} from "./types";
 import moment from "moment";
 const mod = {
   namespaced: true,
@@ -9,6 +14,7 @@ const mod = {
     total: 0,
     players: [],
     news: [],
+    tips: [],
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -48,12 +54,54 @@ const mod = {
         await dispatch.loadNews();
       }
     },
+    async loadTips(context: ActionContext<AdminState, RootState>) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const tips = await rootGetters.adminService.getTips();
+      commit.SET_Tips(tips);
+    },
+    async editTip(
+      context: ActionContext<AdminState, RootState>,
+      loadingScreenTip: LoadingScreenTip
+    ) {
+      const { rootGetters, rootState, dispatch } = moduleActionContext(
+        context,
+        mod
+      );
+      const success = await rootGetters.adminService.editTip(
+        loadingScreenTip,
+        rootState.oauth.token
+      );
+      if (success) {
+        await dispatch.loadTips();
+        return true;
+      }
+      return false;
+    },
+    async deleteTip(
+      context: ActionContext<AdminState, RootState>,
+      loadingScreenTip: LoadingScreenTip
+    ) {
+      const { rootGetters, dispatch, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+      const success = await rootGetters.adminService.deleteTip(
+        loadingScreenTip,
+        rootState.oauth.token
+      );
+      if (success) {
+        await dispatch.loadTips();
+      }
+    },
     async loadBannedPlayers(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
       for (let i = 0; i < bannedPlayers.players.length; i++) {
         const player = bannedPlayers.players[i];
-        const formattedDate = moment(player.endDate, "YYYY-MM-DD").toISOString();
+        const formattedDate = moment(
+          player.endDate,
+          "YYYY-MM-DD"
+        ).toISOString();
         if (formattedDate) {
           player.endDate = formattedDate.substr(0, 10);
         }
@@ -108,6 +156,9 @@ const mod = {
   mutations: {
     SET_NEWS(state: AdminState, news: NewsMessage[]) {
       state.news = news;
+    },
+    SET_Tips(state: AdminState, tips: LoadingScreenTip[]) {
+      state.tips = tips;
     },
     SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: BannedPlayer[]) {
       state.players = bannedPlayers;

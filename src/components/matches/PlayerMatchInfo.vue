@@ -1,42 +1,43 @@
+<!--<template> -->
+  <!--<v-tooltip top :disabled="!showPlayerInfo">-->
 <template>
-  <v-tooltip top :disabled="!showPlayerInfo">
-    <template v-slot:activator="{ on }">
-      <div class="player-info" :class="textClass">
-        <player-icon
-          v-if="!left"
-          :race="race"
-          :big="bigRaceIcon"
-          class="mr-1"
+  <div class="player-info" :class="textClass">
+    <player-icon
+      v-if="!left"
+      :race="race"
+      :big="bigRaceIcon"
+      class="mr-1"
+    />
+    <div>
+      <!-- @mousover="lazyLoadWinrate" -->
+      <a
+        class="name-link"
+        :class="won"
+        v-on="on"
+        
+        @click="notClickable ? null : goToPlayer()"
+        @click.middle="openProfileInNewTab()"
+        @click.right="openProfileInNewTab()"
+      >
+        {{ nameWithoutBtag }}
+        <span class="number-text">({{ currentRating }})</span>
+        <span class="number-text" v-if="mmrChange !== 0" :class="won">
+          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+          <span v-else>{{ mmrChange }}</span>
+        </span>
+      </a>
+      <div class="flag-container">
+        <country-flag-extended
+          :countryCode="player.countryCode"
+          :location="player.location"
+          size="small"
         />
-        <div>
-          <a
-            class="name-link"
-            :class="won"
-            v-on="on"
-            @mouseover="lazyLoadWinrate"
-            @click="notClickable ? null : goToPlayer()"
-            @click.middle="openProfileInNewTab()"
-            @click.right="openProfileInNewTab()"
-          >
-            {{ nameWithoutBtag }}
-            <span class="number-text">({{ currentRating }})</span>
-            <span class="number-text" v-if="mmrChange !== 0" :class="won">
-              <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-              <span v-else>{{ mmrChange }}</span>
-            </span>
-          </a>
-          <div class="flag-container">
-            <country-flag-extended
-              :countryCode="player.countryCode"
-              :location="player.location"
-              size="small"
-            />
-          </div>
-        </div>
-        <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
       </div>
-    </template>
-    <div v-if="winrate">
+    </div>
+    <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
+  </div>
+</template>
+    <!-- <div v-if="winrate">
       <p>{{ battleTag }}</p>
       <p></p>
       Wins:
@@ -49,9 +50,9 @@
     <div v-else>
       <p>{{ battleTag }}</p>
       <p>Wins: ... | Losses: ... | Total: ...</p>
-    </div>
-  </v-tooltip>
-</template>
+    </div> -->
+  <!-- </v-tooltip>
+</template> -->
 
 <script lang="ts">
 import Vue from "vue";
@@ -181,7 +182,8 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    right: 18px;
+    right: 35px;
+    top: 14px;
     height: 0px;
   }
 }
@@ -192,7 +194,8 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    left: 14px;
+    left: 33px;
+    top: 14px;
     height: 0px;
   }
 }

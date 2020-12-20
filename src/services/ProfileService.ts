@@ -1,11 +1,13 @@
 import {
   ModeStat,
+  PlayerMmrRpTimeline,
   PlayerProfile,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
 } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
+import { ERaceEnum, EGameMode } from "@/store/typings";
 
 export default class ProfileService {
   public async retrieveWinRate(
@@ -21,8 +23,12 @@ export default class ProfileService {
     return data.stats;
   }
 
-  public async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
-    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+  public async retrieveProfile(battleTag: string, authCode: string | null): Promise<PlayerProfile> {
+    let url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
+
+    if (authCode) {
+      url += `?authorization=${authCode}`
+    }
 
     const response = await fetch(url);
 
@@ -85,7 +91,6 @@ export default class ProfileService {
 
     return await response.json();
   }
-
   public async retrievePlayerStatsRaceVersusRaceOnMap(
     battleTag: string,
     season: number
@@ -96,5 +101,24 @@ export default class ProfileService {
 
     const response = await fetch(url);
     return await response.json();
+  }
+
+  public async retrievePlayerMmrRpTimeline(
+    battleTag: string,
+    race: ERaceEnum,
+    gateWay: Gateways,
+    season: number,
+    gameMode: EGameMode
+  ): Promise<PlayerMmrRpTimeline | undefined> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/mmr-rp-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
+
+    const response = await fetch(url);
+    if (response.ok && response.status == 200) {
+      return await response.json();
+    } else {
+      return undefined;
+    }
   }
 }
