@@ -157,8 +157,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ECountries } from "@/store/countries";
 import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { getAvatarUrl } from "@/helpers/url-functions";
-import { WEBSITE_ASSETS_URL } from "@/main";
+import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 
 @Component({
   components: {
@@ -395,7 +394,7 @@ export default class RankingsGrid extends Vue {
   }
 
   raceIcon(race: ERaceEnum) {
-    return `${WEBSITE_ASSETS_URL}/raceIcons/${ERaceEnum[race]}.jpg`;
+    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
   public isTwitchLive(ranking: Ranking) {

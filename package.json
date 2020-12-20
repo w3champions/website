@@ -5,7 +5,6 @@
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "npm run build:prod && http-server ./dist",
-    "build:test": "rimraf ./dist && vue-cli-service build --mode development",
     "build:prod": "rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",

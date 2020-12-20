@@ -16,7 +16,7 @@
 import Vue from "vue";
 import { ERaceEnum } from "@/store/typings";
 import { Component, Prop } from "vue-property-decorator";
-import { WEBSITE_ASSETS_URL } from "@/main";
+import { getAsset } from "@/helpers/url-functions";
 
 @Component({})
 export default class RaceIcon extends Vue {
@@ -29,7 +29,7 @@ export default class RaceIcon extends Vue {
 
   get renderIcon() {
     if (ERaceEnum[this.race]) {
-      return `${WEBSITE_ASSETS_URL}/raceIcons/${ERaceEnum[this.race]}.png`;
+      return getAsset(`raceIcons/${ERaceEnum[this.race]}.png`);
     }
     return "";
   }

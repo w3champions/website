@@ -3,14 +3,14 @@
 </template>
 
 <script lang="ts">
-import { WEBSITE_ASSETS_URL } from "@/main";
+import { getAsset } from "@/helpers/url-functions";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class SwordIcon extends Vue {
   swordIcon() {
-    return `${WEBSITE_ASSETS_URL}/swords.svg`;
+    return getAsset(`swords.svg`);
   }
 }
 </script>

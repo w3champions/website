@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { WEBSITE_ASSETS_URL } from "@/main";
+import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/typings";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
@@ -35,9 +35,9 @@ export default class HostIcon extends Vue {
 
   get icon(): unknown {
     if (this.host == undefined) {
-      return `${WEBSITE_ASSETS_URL}/icons/hosterror.png`;
+      return getAsset(`icons/hosterror.png`);
     }
-    return `${WEBSITE_ASSETS_URL}/icons/${this.host.provider}.png`;
+    return getAsset(`icons/${this.host.provider}.png`);
   }
 
   get tooltip(): string {
