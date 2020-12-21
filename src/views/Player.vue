@@ -137,7 +137,9 @@
               Clan
             </v-tab>
           </v-tabs>
-          <router-view></router-view>
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
         </v-card>
       </v-col>
     </v-row>
