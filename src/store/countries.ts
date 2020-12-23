@@ -205,6 +205,7 @@ export enum ECountries {
   Somalia = "SO",
   "South Africa" = "ZA",
   "South Georgia And Sandwich Island" = "GS",
+  "Soviet Union" => "SU",
   Spain = "ES",
   SriLanka = "LK",
   Sudan = "SD",
