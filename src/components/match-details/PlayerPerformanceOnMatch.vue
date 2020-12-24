@@ -1,87 +1,75 @@
 <template>
   <div>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Units killed
+    <v-row dense :class="left ? 'justify-end' : 'justify-start'">
+      <!-- <v-col :order="0" cols="1"></v-col> -->
+      <v-col :order="left ? 1 : 3" class="col-md-auto">
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Units killed
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Units produced
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Gold mined
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Lumber harvested
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Upkeep lost
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :align="left ? 'right' : 'left'">
+            Largest army
+          </v-col>
+        </v-row>
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
-        :class="unitsKilledComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
+        class="col-md-auto"
+        :order="left ? 3 : 0"
         :align="left ? 'left' : 'right'"
       >
-        {{ unitScore.map((r) => r.unitsKilled).join(" + ") }}
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Units produced
-      </v-col>
-      <v-col :order="1" cols="1"></v-col>
-      <v-col
-        :class="unitsProducedComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
-        :align="left ? 'left' : 'right'"
-      >
-        {{ unitScore.map((r) => r.unitsProduced).join(" + ") }}
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Gold mined
-      </v-col>
-      <v-col :order="1" cols="1"></v-col>
-      <v-col
-        :class="goldComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
-        :align="left ? 'left' : 'right'"
-      >
-        {{ resourceScoure.map((r) => r.goldCollected).join(" + ") }}
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Lumber harvested
-      </v-col>
-      <v-col :order="1" cols="1"></v-col>
-      <v-col
-        :class="woodComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
-        :align="left ? 'left' : 'right'"
-      >
-        {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") }}
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Upkeep lost
-      </v-col>
-      <v-col :order="1" cols="1"></v-col>
-      <v-col
-        :class="upkeepComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
-        :align="left ? 'left' : 'right'"
-      >
-        {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") }}
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col :order="left ? 0 : 2" :align="left ? 'right' : 'left'">
-        Largest army
-      </v-col>
-      <v-col :order="1" cols="1"></v-col>
-      <v-col
-        :class="armyComparison"
-        :order="left ? 2 : 0"
-        :cols="is2v2 ? 3 : 2"
-        :align="left ? 'left' : 'right'"
-      >
-        {{ unitScore.map((r) => r.largestArmy).join(" / ") }}
+        <v-row dense>
+          <v-col :class="unitsKilledComparison" :align="left ? 'right' : 'left'">
+            {{ unitScore.map((r) => r.unitsKilled).join(" + ") }}
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :class="unitsProducedComparison" :align="left ? 'right' : 'left'">
+            {{ unitScore.map((r) => r.unitsProduced).join(" + ") }}
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :class="goldComparison" :align="left ? 'right' : 'left'">
+            {{ resourceScoure.map((r) => r.goldCollected).join(" + ") }}
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :class="woodComparison" :align="left ? 'right' : 'left'">
+            {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") }}
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :class="upkeepComparison" :align="left ? 'right' : 'left'">
+            {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") }}
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col :class="armyComparison" :align="left ? 'right' : 'left'">
+            {{ unitScore.map((r) => r.largestArmy).join(" / ") }}
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </div>
@@ -100,10 +88,6 @@ export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() unitScoreOpponent!: UnitScore[];
   @Prop() resourceScoure!: ResourceScore[];
   @Prop() resourceScoureOpponent!: ResourceScore[];
-
-  get is2v2() {
-    return this.unitScore.length > 1;
-  }
 
   get goldComparison() {
     return this.comparison(

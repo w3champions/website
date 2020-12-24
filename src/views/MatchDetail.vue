@@ -84,9 +84,8 @@
               Sorry, but this games seems to have incomplete data
             </v-card-subtitle>
           </v-row>
-          <v-row v-if="isCompleteGame && !matchIsFFA">
-            <v-col :cols="0"></v-col>
-            <v-col cols="5">
+          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
+            <v-col cols="5" class="mr-7">
               <player-performance-on-match
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
                 :resource-scoure="scoresOfWinners.map((h) => h.resourceScore)"
@@ -97,7 +96,7 @@
                 :left="true"
               />
             </v-col>
-            <v-col cols="5">
+            <v-col cols="5" class="ml-7">
               <player-performance-on-match
                 :unit-score="scoresOfLoosers.map((h) => h.unitScore)"
                 :resource-scoure="scoresOfLoosers.map((h) => h.resourceScore)"
@@ -107,7 +106,6 @@
                 "
               />
             </v-col>
-            <v-col cols="1"></v-col>
           </v-row>
           <v-row v-if="isCompleteGame && matchIsFFA">
             <v-col cols="2" />
