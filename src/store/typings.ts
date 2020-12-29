@@ -22,7 +22,7 @@ export type PlayerInTeam = {
   won: boolean;
   location?: string;
   countryCode?: string;
-  twitch?: string;
+  twitch?: string | null;
 };
 
 export type Team = {

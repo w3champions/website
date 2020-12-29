@@ -39,28 +39,12 @@ export default class TopOngoingMatchesWithStreams extends Vue {
       (match) =>
         match.teams.some((team) => team.players.some((player) => player.twitch))
     );
-    const streamerNames = matchesWithStreamers
-      .flatMap((match) =>
-        match.teams.flatMap((team) =>
-          team.players.map((player) => {
-            if (player.twitch) {
-              // sometimes players save their twitch names as https://twitch.tv/username
-              // in this case search will fail. we need to remove anything except for username itself
-              const twitchNameSplit = player.twitch.split("/");
-
-              return twitchNameSplit[twitchNameSplit.length - 1];
-            } else {
-              return "";
-            }
-          })
-        )
-      )
-      .filter(Boolean);
+    const streamerNames = matchesWithStreamers.flatMap((match) =>
+      match.teams.flatMap((team) => team.players.map((player) => player.twitch))
+    );
 
     if (streamerNames.length > 0) {
-      await this.$store.direct.dispatch.twitch.getStreamStatus(
-        streamerNames as string[]
-      );
+      await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames);
 
       const activeStreamers = this.$store.direct.state.twitch.twitchStreamResponse.data.map(
         (stream) => stream.user_name.toLowerCase()
