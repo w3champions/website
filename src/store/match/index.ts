@@ -15,6 +15,7 @@ const mod = {
     matchDetail: {} as MatchDetail,
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
+    map: "Overall"
   } as MatchState,
   actions: {
     async loadMatches(
@@ -36,20 +37,22 @@ const mod = {
         response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
           state.page,
           rootState.gateway,
-          state.gameMode
+          state.gameMode,
+          state.map
         );
       } else {
         response = await rootGetters.matchService.retrieveMatches(
           state.page,
           rootState.gateway,
-          state.gameMode
+          state.gameMode,
+          state.map
         );
       }
 
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
     },
-    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>, gameMode?: EGameMode) {
+    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>, gameMode?: EGameMode, map?: string) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,
         mod
@@ -59,7 +62,8 @@ const mod = {
         0,
         200,
         rootState.gateway,
-        gameMode || state.gameMode
+        gameMode || state.gameMode,
+        map || state.map
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
@@ -94,6 +98,15 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+    async setMap(
+      context: ActionContext<MatchState, RootState>,
+      map: string
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_MAP(map);
+      commit.SET_PAGE(0);
+      await dispatch.loadMatches(undefined);
+    }
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -120,6 +133,9 @@ const mod = {
     SET_GAME_MODE(state: MatchState, gameMode: EGameMode) {
       state.gameMode = gameMode;
     },
+    SET_MAP(state: MatchState, map: string) {
+      state.map = map;
+    }
   },
 } as const;
 

@@ -14,6 +14,11 @@
               :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
             ></game-mode-select>
+            <map-select
+              @mapChanged="mapChanged"
+              :map="map"
+            >
+            </map-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -39,6 +44,7 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
+import MapSelect from "@/components/common/MapSelect.vue";
 
 @Component({
   components: {
@@ -46,6 +52,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
     MatchesStatusSelect,
     GatewaySelect,
     GameModeSelect,
+    MapSelect
   },
 })
 export default class MatchesView extends Vue {
@@ -77,6 +84,10 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.gameMode;
   }
 
+  get map(): string {
+    return this.$store.direct.state.matches.map;
+  }
+
   public getMatches(page?: number) {
     this.$store.direct.dispatch.matches.loadMatches(page);
   }
@@ -91,6 +102,10 @@ export default class MatchesView extends Vue {
 
   gameModeChanged(gameMode: EGameMode) {
     this.$store.direct.dispatch.matches.setGameMode(gameMode);
+  }
+
+  mapChanged(map: string) {
+    this.$store.direct.dispatch.matches.setMap(map);
   }
 }
 </script>

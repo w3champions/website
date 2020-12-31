@@ -12,10 +12,11 @@ export default class MatchService {
   public async retrieveMatches(
     page: number,
     gateway: number,
-    gameMode: EGameMode
+    gameMode: EGameMode,
+    map: string
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -24,7 +25,8 @@ export default class MatchService {
   public async retrieveOnGoingMatchesPaged(
     page: number,
     gateway: number,
-    gameMode: EGameMode
+    gameMode: EGameMode,
+    map: string
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
 
@@ -32,7 +34,8 @@ export default class MatchService {
       offset,
       this.pageSize,
       gateway,
-      gameMode
+      gameMode,
+      map
     );
   }
 
@@ -40,9 +43,10 @@ export default class MatchService {
     offset: number,
     pageSize: number,
     gateway: number,
-    gameMode: EGameMode
+    gameMode: EGameMode,
+    map: string
   ): Promise<{ count: number; matches: Match[] }> {
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}`;
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}`;
 
     const response = await fetch(url);
     return await response.json();
