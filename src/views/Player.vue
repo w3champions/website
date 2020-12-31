@@ -249,16 +249,8 @@ export default class PlayerView extends Vue {
   }
 
   get tournaments() {
-    return [
-      { id: 1, seasonId: 2, place: 1 },
-      { id: 2, seasonId: 3, place: 3 },
-      { id: 3, seasonId: 4, place: 2 },
-      { id: 4, seasonId: 5, place: 7 },
-      { id: 5, seasonId: 6, place: 0 },
-      { id: 6, seasonId: 7, place: 100 },
-    ];
-    // return this.$store.direct.state.player.playerProfile
-    //   .participatedInTournaments;
+    return this.$store.direct.state.player.playerProfile
+      .participatedInTournaments;
   }
 
   get profile(): PlayerProfile {
