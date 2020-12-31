@@ -38,59 +38,28 @@ import { Component, Prop } from "vue-property-decorator";
 @Component({})
 export default class MapSelect extends Vue {
   @Prop() map = "Overall";
+  @Prop() mapKeys = [];
 
   get selected(): string | TranslateResult {
-      const match = this.maps.find(m => m.key === this.map)
-      return match ? match.mapName : "";
+      const match = this.maps.find(m => m.key === this.map);
+      return match ? match.mapName : "Overall";
   }
 
   get maps(): { mapName: TranslateResult, key: string }[] {
-    return [
-      {
-        mapName: this.$t("mapNames.Overall"),
-        key: "Overall"
-      },
-      {
-        mapName: this.$t("mapNames.amazonia"),
-        key: "amazonia"
-      },
-      {
-        mapName: this.$t("mapNames.autumnleaves201016"),
-        key: "autumnleaves201016"
-      },
-      {
-        mapName: this.$t("mapNames.concealedhill"),
-        key: "concealedhill"
-      },
-      {
-        mapName: this.$t("mapNames.echoisles"),
-        key: "echoisles"
-      },
-      {
-        mapName: this.$t("mapNames.lastrefuge"),
-        key: "lastrefuge"
-      },
-      {
-        mapName: this.$t("mapNames.northernisles"),
-        key: "northernisles",
-      },
-      {
-        mapName: this.$t("mapNames.ruinsofazshara201016"),
-        key: "ruinsofazshara201016"
-      },
-      {
-        mapName: this.$t("mapNames.terenasstand"),
-        key: "terenasstand"
-      },
-      {
-        mapName: this.$t("mapNames.turtlerock"),
-        key: "turtlerock"
-      },
-      {
-        mapName: this.$t("mapNames.twistedmeadows"),
-        key: "twistedmeadows"
-      },
-    ];
+    const maps = this.mapKeys
+      .map(key => ({ mapName: this.$t(`mapNames.${key}`), key }))
+      .sort((mapA, mapB) => {
+        const nameA = mapA.mapName.toString().toUpperCase();
+        const nameB = mapB.mapName.toString().toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      })
+    return [ { mapName: this.$t("mapNames.Overall"), key: "Overall" }, ...maps ];
   }
 
   public selectMap(map: string): void {
