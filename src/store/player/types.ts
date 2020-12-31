@@ -28,6 +28,7 @@ export type PlayerProfile = {
   name: string;
   battleTag: string;
   participatedInSeasons: Season[];
+  participatedInTournaments: Tournament[];
   winLosses: RaceStat[];
 };
 
@@ -92,4 +93,10 @@ export type MmrRpAtDate = {
 
 export type PlayerMmrRpTimeline = {
   mmrRpAtDates: MmrRpAtDate[];
+};
+
+export type Tournament = {
+  id: number;
+  seasonId: number;
+  place: number;
 };

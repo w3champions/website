@@ -5,17 +5,23 @@
         <v-card tile>
           <v-card-title class="justify-space-between">
             <div
-              style="display: flex; flex-direction: row; align-items: center;"
+              style="display: flex; flex-direction: row; align-items: center"
             >
               <span>Profile of {{ profile.battleTag }}</span>
               <div
-                style="display: flex; flex-direction: row; margin-left: 25px;"
+                style="display: flex; flex-direction: row; margin-left: 25px"
               >
                 <SeasonBadge
                   v-for="season in seasonsWithoutCurrentOne"
                   :season="season"
                   :key="season.id"
                   :on-click="selectSeason"
+                />
+                <TournamentBadge
+                  v-for="tournament in tournaments"
+                  :tournament="tournament"
+                  :key="'tournament' + tournament.id"
+                  :on-click="goToTournament"
                 />
               </div>
             </div>
@@ -27,7 +33,7 @@
                     tile
                     v-on="on"
                     class="ma-2"
-                    style="background-color: transparent;"
+                    style="background-color: transparent"
                   >
                     <span class="pa-0" v-if="selectedSeason">
                       Season {{ selectedSeason.id }}
@@ -98,12 +104,17 @@
             </span>
           </div>
 
-          <v-container style="padding-top: 6px;">
+          <v-container style="padding-top: 6px">
             <v-row align="center" justify="center">
-                <host-icon v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider" :host="ongoingMatch.serverInfo"></host-icon>
+              <host-icon
+                v-if="
+                  ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider
+                "
+                :host="ongoingMatch.serverInfo"
+              ></host-icon>
             </v-row>
           </v-container>
-          
+
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab
@@ -149,7 +160,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "@/store/player/types";
+import { PlayerProfile, Tournament } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
 
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
@@ -170,10 +181,12 @@ import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
+import TournamentBadge from "@/components/player/TournamentBadge.vue";
 
 @Component({
   components: {
     SeasonBadge,
+    TournamentBadge,
     PlayerStatisticTab,
     PlayerArrangedTeamsTab,
     PlayerProfileTab,
@@ -233,6 +246,19 @@ export default class PlayerView extends Vue {
         )
         .reverse() ?? []
     );
+  }
+
+  get tournaments() {
+    return [
+      { id: 1, seasonId: 2, place: 1 },
+      { id: 2, seasonId: 3, place: 3 },
+      { id: 3, seasonId: 4, place: 2 },
+      { id: 4, seasonId: 5, place: 7 },
+      { id: 5, seasonId: 6, place: 0 },
+      { id: 6, seasonId: 7, place: 100 },
+    ];
+    // return this.$store.direct.state.player.playerProfile
+    //   .participatedInTournaments;
   }
 
   get profile(): PlayerProfile {
@@ -325,6 +351,10 @@ export default class PlayerView extends Vue {
     );
   }
 
+  public goToTournament(tournament: Tournament) {
+    this.$router.push("/tournaments");
+  }
+
   public gatewayChanged() {
     this.$store.direct.dispatch.player.reloadPlayer();
   }
@@ -336,7 +366,10 @@ export default class PlayerView extends Vue {
   private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile({battleTag: this.battleTag, freshLogin: this.freshLogin});
+    await this.$store.direct.dispatch.player.loadProfile({
+      battleTag: this.battleTag,
+      freshLogin: this.freshLogin,
+    });
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
@@ -351,7 +384,7 @@ export default class PlayerView extends Vue {
         this.battleTag
       );
     }, AppConstants.ongoingMatchesRefreshInterval);
-  this.$store.direct.commit.player.SET_INITIALIZED();
+    this.$store.direct.commit.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 
