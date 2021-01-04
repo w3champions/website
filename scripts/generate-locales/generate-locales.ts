@@ -17,6 +17,9 @@ async function main() {
   await doc.useServiceAccountAuth(creds);
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
+  const firstSheet = doc.sheetsByIndex[0];
+  const rows = await firstSheet.getRows({ offset: 10, limit: 2 });
+  console.log(rows);
 }
 
 main();
