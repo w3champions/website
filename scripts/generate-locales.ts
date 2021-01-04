@@ -6,15 +6,16 @@
  *
  * Authentication docs: https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
  */
-const creds = require("./credentials.json");
+require("dotenv").config();
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const doc = new GoogleSpreadsheet(
   "1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok"
 );
+console.log({ apikey: process.env.GOOGLE_API_KEY });
+doc.useApiKey(process.env.GOOGLE_API_KEY);
 
 async function main() {
-  await doc.useServiceAccountAuth(creds);
   await doc.loadInfo(); // loads document properties and worksheets
   console.log(doc.title);
   const firstSheet = doc.sheetsByIndex[0];

@@ -4,6 +4,7 @@ node_modules
 /.VSCodeCounter
 
 # local env files
+.env
 .env.local
 .env.*.local
 
@@ -20,6 +21,3 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-
-# google api credentials
-credentials.json*
