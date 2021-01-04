@@ -39,6 +39,7 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@types/google-spreadsheet": "^3.0.2",
     "@types/lodash": "^4.14.165",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
