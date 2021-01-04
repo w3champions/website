@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col class="text-center">
         <v-card-subtitle>
-          You are not part of a clan, go ahead and create one!
+          {{ $t("components_clans_clancreationpanel.noclanmsg") }}
         </v-card-subtitle>
       </v-col>
     </v-row>
@@ -14,21 +14,23 @@
           :v-model="clanNameToCreate"
           @change="changeInsertedClanName"
           :rules="[mustBeBetween(3, 30, ' ')]"
-          label="Clan name"
-          hint="enter clan name"
+          label="{{$t(`components_clans_clancreationpanel.clanname`)}}"
+          hint="{{$t(`components_clans_clancreationpanel.enterclanname`)}}"
         />
         <v-text-field
           :v-model="clanAbbreviationToCreate"
           @change="changeInsertedClanAbbreviation"
           :rules="[mustBeBetween(2, 5, '')]"
-          label="Clan abbreviation"
-          hint="enter clan abbreviation"
+          label="{{$t(`components_clans_clancreationpanel.clanabbrev`)}}"
+          hint="{{$t(`components_clans_clancreationpanel.enterclanabbrev`)}}"
         />
       </v-col>
     </v-row>
     <v-row class="justify-center">
       <v-col class="text-center">
-        <v-btn @click="createClan">Create a clan!</v-btn>
+        <v-btn @click="createClan">
+          {{ $t("components_clans_clancreationpanel.createclan") }}
+        </v-btn>
       </v-col>
     </v-row>
     <v-alert
@@ -44,6 +46,7 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { LocaleMessage } from "vue-i18n";
 import { Component } from "vue-property-decorator";
 
 @Component({})
@@ -52,31 +55,35 @@ export default class ClanCreationPanel extends Vue {
   public clanAbbreviationToCreate = "";
 
   public mustBeBetween(min: number, max: number, space: string) {
-    return function (v: string) {
-      if (!v) return "Field is mandatory";
+    return (v: string): LocaleMessage => {
+      if (!v)
+        return this.$t("components_clans_clancreationpanel.fieldismandatory");
       if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
-        return `Must be between ${min} and ${max} numerical characters`;
-      return undefined;
+        return this.$t("components_clans_clancreationpanel.minmaxchars", {
+          min,
+          max,
+        });
+      return "";
     };
   }
 
-  public changeInsertedClanName(newName: string) {
+  public changeInsertedClanName(newName: string): void {
     this.clanNameToCreate = newName;
   }
 
-  public changeInsertedClanAbbreviation(newName: string) {
+  public changeInsertedClanAbbreviation(newName: string): void {
     this.clanAbbreviationToCreate = newName;
   }
 
-  get clanValidationError() {
+  get clanValidationError(): string {
     return this.$store.direct.state.clan.clanValidationError;
   }
 
-  get isValidationError() {
+  get isValidationError(): boolean {
     return this.$store.direct.state.clan.clanValidationError !== "";
   }
 
-  public async createClan() {
+  public async createClan(): Promise<void> {
     await this.$store.direct.dispatch.clan.createClan({
       clanName: this.clanNameToCreate.trim(),
       abbreviation: this.clanAbbreviationToCreate,

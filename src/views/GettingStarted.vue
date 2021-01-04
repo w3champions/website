@@ -4,17 +4,23 @@
       <v-container>
         <v-card tile>
           <v-card-title class="text-center">
-            How to Install W3 Champions
+            {{ $t("views_gettingstarted.howtoinstall")}}
           </v-card-title>
           <v-tabs v-model="tabsModel" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
-            <v-tab class="profileTab" :href="`#launcher`">Launcher</v-tab>
-            <v-tab class="profileTab" :href="`#windows-setup`">Manual Windows</v-tab>
-            <v-tab class="profileTab" :href="`#mac-setup`">Manual Mac</v-tab>
+            <v-tab class="profileTab" :href="`#launcher`">
+              {{ $t("views_gettingstarted.launcher") }}
+            </v-tab>
+            <v-tab class="profileTab" :href="`#windows-setup`">
+              {{ $t("views_gettingstarted.manualwin") }}
+            </v-tab>
+            <v-tab class="profileTab" :href="`#mac-setup`">
+              {{ $t("views_gettingstarted.manualmac") }}
+            </v-tab>
             <v-tabs-items v-model="tabsModel" touchless>
               <v-tab-item :value="'launcher'">
                 <v-card-text class="px-16">
-                  <h3>Download Warcraft III Champions</h3>
+                  <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
                   <v-card-text>
                     <v-btn
@@ -35,12 +41,8 @@
                     </v-btn>
                   </v-card-text>
                   <br/>
-                  <h3>After the Installation, open W3Champions and hit play!</h3>
-                  <br/>
-                  <br/>
-                  <div class="w3c-launcher-screenshot" />
-                  <br/>
-                  <br/>
+                  <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
+                  <br/><br/>
                   <div class="w3c-screenshot" />
                   <br/>
                   <br/>
@@ -49,19 +51,22 @@
                   <br/>
                   <div class="w3c-screenshot-map-select" />
                   <v-card-text>
-                    Launcher features:
+                    {{ $t("views_gettingstarted.launcherfeaturestitle") }}
                     <ul>
                       <li>
-                        Always have w3c installed, never have Problems with missing or outdated maps! Fixes problems of the Joinbug!
+                        {{ $t("views_gettingstarted.launcherfeaturesbody1") }}
                       </li>
                       <li>
-                        Remap item and hero hotkeys
+                        {{ $t("views_gettingstarted.launcherfeaturesbody2") }}
                       </li>
                       <li>
-                        Custom team coloring
+                        {{ $t("views_gettingstarted.launcherfeaturesbody3") }}
                       </li>
                       <li>
-                        Keep up with the scene by getting the latest news
+                        {{ $t("views_gettingstarted.launcherfeaturesbody4") }}
+                      </li>
+                      <li>
+                        {{ $t("views_gettingstarted.launcherfeaturesbody5") }}
                       </li>
                     </ul>
                   </v-card-text>
@@ -77,10 +82,9 @@
                   >
                     {{ alertMessage }}
                   </v-alert>
-                  <h3 class="mt-10">Manual Windows</h3>
+                  <h3 class="mt-10">{{ $t("views_gettingstarted.manualwintitle") }}</h3>
                   <p>
-                    1. Download the zip file and unpack it in your Warcraft
-                    Installation folder
+                    {{ $t("views_gettingstarted.manualwinbody1") }}
                   </p>
                   <v-btn
                     class="w3-background"
@@ -90,29 +94,17 @@
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">W3Champions</span>
+                    <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualwinbody2") }}</span>
                   </v-btn>
                   <p class="mt-2">
-                    2. Make sure to have a directory structure like:
-                    <br />
-                    <code>Warcraft III\webui\index.html</code>
+                    {{ $t("views_gettingstarted.manualwinbody3") }}<br />
+                    <code>{{ $t("views_gettingstarted.manualwinbody4") }}</code>
                   </p>
                   <p>
-                    If you have a folder called
-                    <i style="color: red;">_retail_</i>
-                    in your Warcraft III folder, make sure to have the following
-                    structure:
-                    <br />
-                    <code clas>
-                      Warcraft III\
-                      <span class="important-dark">_retail_</span>
-                      \webui\index.html
-                    </code>
+                    {{ $t("views_gettingstarted.manualwinbody5") }}<br />
+                    <code>{{ $t("views_gettingstarted.manualwinbody6") }}</code>
                   </p>
-                  <p>
-                    3. Download the Maps and unpack it to your Warcraft
-                    III Maps Folder
-                  </p>
+                  <p>{{ $t("views_gettingstarted.manualwinbody7") }}</p>
                   <v-btn
                     class="w3-background"
                     color="primary"
@@ -122,45 +114,44 @@
                   >
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">
-                      Download MAPS
+                      {{ $t("views_gettingstarted.manualwinbody8") }}
                     </span>
                   </v-btn>
                   <p class="mt-2">
-                    4. The folder structure after unpacking should be
+                    {{ $t("views_gettingstarted.manualwinbody9") }}
                     <br />
-                    <code>Documents\Warcraft III\Maps\W3Champions</code>
+                    <code>{{ $t("views_gettingstarted.manualwinbody10") }}</code>
                   </p>
                   <p>
-                    <i style="color: red;">Important</i> <br/>
-                    If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it. <br/>
-                    DELETE <code>Path-to-game/Maps </code> <br/>
-                    DELETE <code>Path-to-game/retail/maps </code> <br/>
+                    <i style="color: red;">{{ $t("views_gettingstarted.manualwinbody11") }}</i> <br/>
+                    {{ $t("views_gettingstarted.manualwinbody12") }}<br/>
+                    <code>{{ $t("views_gettingstarted.manualwinbody13") }}</code> <br/>
+                    <code>{{ $t("views_gettingstarted.manualwinbody14") }}</code> <br/>
 
-                    Example: <br/>
-                    DELETE <code>C:\Program Files (x86)\Warcraft III\Maps</code> <br/>
-                    DELETE <code>C:\Program Files (x86)\Warcraft III_retail_\Maps</code> <br/>
+                    {{ $t("views_gettingstarted.manualwinbody15") }}<br/>
+                    <code>{{ $t("views_gettingstarted.manualwinbody16") }}</code> <br/>
+                    <code>{{ $t("views_gettingstarted.manualwinbody17") }}</code> <br/>
                   </p>
                   <p class="mt-2">
-                    5. As of War3 version 1.32.7 you need to set a registry (Installer is doing this automatically)
+                    {{ $t("views_gettingstarted.manualwinbody18") }}
                     <br />
                   </p>
                   <p>
                     <ul>
                       <li>
-                        open regedit.exe
+                        {{ $t("views_gettingstarted.manualwinbody19") }}
                       </li>
                       <li>
-                        Find the registry
-                         <code>Computer\HKEY_CURRENT_USER\Software\Blizzard Entertainment\Warcraft III\</code>
+                        {{ $t("views_gettingstarted.manualwinbody20") }}
                       </li>
                       <li>
-                        Add DWORD key to this registry path
+                        {{ $t("views_gettingstarted.manualwinbody21") }}
                         <ul>
                           <li>
-                            name: <code>Allow Local Files</code>
+                            {{ $t("views_gettingstarted.manualwinbody22") }}
                           </li>
                           <li>
-                            decimal value: <code>1</code>
+                            {{ $t("views_gettingstarted.manualwinbody23") }}
                           </li>
                         </ul>
                       </li>
@@ -178,10 +169,9 @@
                   >
                     {{ alertMessage }}
                   </v-alert>
-                  <h3 class="mt-10">Manual Mac OS</h3>
+                  <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
                   <p>
-                    1. Download the zip file and unpack it in your Warcraft
-                    Installation folder
+                    {{ $t("views_gettingstarted.manualmacbody1") }}
                   </p>
                   <v-btn
                     class="w3-background"
@@ -191,28 +181,22 @@
                     outlined
                   >
                     <v-icon>mdi-download</v-icon>
-                    <span class="mr-2 hidden-xs-only">W3Champions</span>
+                    <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualmacbody2") }}</span>
                   </v-btn>
                   <p class="mt-2">
-                    2. Make sure to have a directory structure like:
+                    {{ $t("views_gettingstarted.manualmacbody3") }}
                     <br />
-                    <code>Warcraft III\webui\index.html</code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody4") }}</code>
                   </p>
                   <p>
-                    If you have a folder called
-                    <i style="color: red;">_retail_</i>
-                    in your Warcraft III folder, make sure to have the following
-                    structure:
+                    {{ $t("views_gettingstarted.manualmacbody5") }}
                     <br />
-                    <code clas>
-                      Warcraft III\
-                      <span class="important-dark">_retail_</span>
-                      \webui\index.html
+                    <code>
+                      {{ $t("views_gettingstarted.manualmacbody6") }}
                     </code>
                   </p>
                   <p>
-                    3. Download the Maps and unpack it to your Warcraft
-                    III Maps Folder
+                    {{ $t("views_gettingstarted.manualmacbody7") }}
                   </p>
                   <v-btn
                     class="w3-background"
@@ -223,41 +207,38 @@
                   >
                     <v-icon>mdi-download</v-icon>
                     <span class="mr-2 hidden-xs-only">
-                      Download MAPS
+                      {{ $t("views_gettingstarted.manualmacbody8") }}
                     </span>
                   </v-btn>
                   <p class="mt-2">
-                    4. The folder structure after unpacking should be
+                    {{ $t("views_gettingstarted.manualmacbody9") }}
                     <br />
-                    <code>Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions</code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody10") }}</code>
                   </p>
                   <p>
-                    <i style="color: red;">Important</i> <br/>
-                    If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it. <br/>
-                    DELETE <code>Path-to-game/Maps </code> <br/>
-                    DELETE <code>Path-to-game/retail/maps </code> <br/>
+                    <i style="color: red;">{{ $t("views_gettingstarted.manualmacbody11") }}</i> <br/>
+                    {{ $t("views_gettingstarted.manualmacbody12") }}<br/>
+                    <code>{{ $t("views_gettingstarted.manualmacbody13") }}</code> <br/>
+                    <code>{{ $t("views_gettingstarted.manualmacbody14") }}</code> <br/>
 
-                    Example: <br/>
-                    DELETE <code>Warcraft III\Maps</code> <br/>
-                    DELETE <code>Warcraft III_retail_\Maps</code> <br/>
+                    {{ $t("views_gettingstarted.manualmacbody15") }}<br/>
+                    <code>{{ $t("views_gettingstarted.manualmacbody16") }}</code> <br/>
+                    <code>{{ $t("views_gettingstarted.manualmacbody17") }}</code> <br/>
                   </p>
-                  <p class="mt-2">
-                    5. As of War3 version 1.32.7 you need to set a registry
-                    <br />
-                  </p>
+                  <p class="mt-2">{{ $t("views_gettingstarted.manualmacbody18") }}</p>
                   <p>
                     <ul>
                       <li>
-                        Copy command <code>defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1 </code>
+                        {{ $t("views_gettingstarted.manualmacbody19") }}<code>{{ $t("views_gettingstarted.manualmacbody19_1") }}</code>
                       </li>
                       <li>
-                        Open terminal
+                        {{ $t("views_gettingstarted.manualmacbody20") }}
                       </li>
                       <li>
-                        Paste command and execute by pressing Enter key.
+                        {{ $t("views_gettingstarted.manualmacbody21") }}
                       </li>
                       <li>
-                        Run Warcraft 3. You should see W3champions.
+                        {{ $t("views_gettingstarted.manualmacbody22") }}
                       </li>
                     </ul>
                   </p>

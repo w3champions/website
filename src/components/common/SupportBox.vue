@@ -1,17 +1,28 @@
 <template>
   <v-card class="support-card" tile>
     <v-card-text class="text-center text-primary" style="opacity: 0.87">
-      Support us at:
+      {{ $t("views_home.supportus") }}
     </v-card-text>
 
     <!-- PATREON -->
-    <v-card class="support-subcard" href="https://www.patreon.com/w3champions" tile outlined style="padding-bottom: 0px">
-        <v-img src="../../../src/assets/socials/Patreon_button.png" />
+    <v-card
+      class="support-subcard"
+      href="https://www.patreon.com/w3champions"
+      tile
+      outlined
+      style="padding-bottom: 0px"
+    >
+      <v-img src="../../../src/assets/socials/Patreon_button.png" />
     </v-card>
 
     <!-- PAYPAL -->
-    <v-card class="support-subcard" href="https://www.paypal.me/w3champions" tile outlined>
-        <v-img src="../../../src/assets/socials/PayPal_button.png" />
+    <v-card
+      class="support-subcard"
+      href="https://www.paypal.me/w3champions"
+      tile
+      outlined
+    >
+      <v-img src="../../../src/assets/socials/PayPal_button.png" />
     </v-card>
 
     <!-- MATCHERINO - TBD -->

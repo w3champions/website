@@ -5,12 +5,12 @@
         <v-card tile>
           <br />
           <v-card-title class="justify-center">
-            The ladder you have been waiting for!
+            {{ $t("views_home.w3c_motto") }}
           </v-card-title>
           <v-row class="justify-center">
             <v-col class="text-center">
               <button @click="goToSetupPage" class="join-button">
-                Join the Battlefield now!
+                {{ $t("views_home.join_button") }}
               </button>
             </v-col>
           </v-row>
@@ -31,27 +31,40 @@
               </v-carousel-item>
             </v-carousel>
           </v-card-text>
-          <v-card-title>Come and join us!</v-card-title>
+          <v-card-title>{{ $t("views_home.hometitle") }}</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
-                Finally your Warcraft III 1on1 Ladder is available, crafted by
-                and for the community!
+                {{ $t("views_home.homebody1") }}
                 <br />
                 <br />
-                The ladder contains:
+                {{ $t("views_home.homebody2") }}
                 <ul>
-                  <li>Improved Pings by non-global ladder</li>
-                  <li>Matchmaking (based on W3Arena)</li>
-                  <li>Ladder System (Check the RANKINGS tab top right)</li>
-                  <li>Seamless integration in your Warcraft III client</li>
-                  <li>Profiles</li>
-                  <li>Different Mappool</li>
+                  <li>{{ $t("views_home.homebody3") }}</li>
+                  <li>{{ $t("views_home.homebody4") }}</li>
+                  <li>{{ $t("views_home.homebody5") }}</li>
+                  <li>{{ $t("views_home.homebody6") }}</li>
+                  <li>{{ $t("views_home.homebody7") }}</li>
+                  <li>{{ $t("views_home.homebody8") }}</li>
+                  <li>{{ $t("views_home.homebody9") }}</li>
+                  <li>{{ $t("views_home.homebody10") }}</li>
+                  <li>{{ $t("views_home.homebody11") }}</li>
+                  <li>{{ $t("views_home.homebody13") }}</li>
                 </ul>
                 <br />
-                <b>Current Map Pool</b>
+                {{ $t("views_home.homebody12") }}
+                <ul>
+                  <li>{{ $t("views_home.homebody14") }}</li>
+                </ul>
                 <br />
-                TM,EI,TSLV,CH,NIS,AZ and LR
+                {{ $t("views_home.homebody15") }}
+                <br />
+                {{ $t("views_home.homebody16") }}
+                <br />
+                <br />
+                <b>{{ $t("views_home.mappooltitle") }}</b>
+                <br />
+                {{ $t("views_home.mappoolbody") }}
               </v-col>
               <v-col cols="12" md="6">
                 <img
@@ -81,7 +94,7 @@
         <v-row>
           <v-col cols="12">
             <v-card tile>
-              <v-card-title>Top Ranks</v-card-title>
+              <v-card-title>{{ $t("views_home.topranks") }}</v-card-title>
               <table class="custom-table" dense>
                 <tr
                   v-for="(rank, i) in topFive"
@@ -96,7 +109,7 @@
                       <v-col cols="10">
                         {{ rank.player.name }}
                         <div style="font-size: 11px">
-                          Win/Loss/Total: {{ rank.player.wins }}/{{
+                          {{ $t("views_home.wlt") }}: {{ rank.player.wins }}/{{
                             rank.player.losses
                           }}/{{ rank.player.games }}
                         </div>
@@ -108,7 +121,6 @@
             </v-card>
           </v-col>
         </v-row>
-
       </v-col>
     </v-row>
   </v-container>
@@ -124,7 +136,14 @@ import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 
-@Component({ components: { TopOngoingMatchesWithStreams, VueMarkdown, SocialBox, SupportBox } })
+@Component({
+  components: {
+    TopOngoingMatchesWithStreams,
+    VueMarkdown,
+    SocialBox,
+    SupportBox,
+  },
+})
 export default class HomeView extends Vue {
   public model = 0;
 
