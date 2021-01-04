@@ -1,0 +1,798 @@
+{
+  "en": {
+    "views_admin": {
+      "adminpage": "Administration Page",
+      "bannedplayers": "Banned Players",
+      "addplayer": "Add Player",
+      "banenddate": "Ban End Date",
+      "ok": "OK",
+      "onlybannedchat": "Is only banned from chat",
+      "banreason": "Ban Reason",
+      "newsforlauncher": "News for Launcher",
+      "addnews": "Add News",
+      "headline": "Headline",
+      "message": "Message",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "views_gettingstarted": {
+      "manualwarning": "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!",
+      "howtoinstall": "How to Install W3Champions",
+      "launcher": "Launcher",
+      "manualwin": "Manual Windows",
+      "manualmac": "Manual Mac",
+      "downloadw3ctitle": "Download W3Champions",
+      "launchertitle": "After the Installation, open W3Champions and join us!",
+      "launcherfeaturestitle": "Launcher features:",
+      "launcherfeaturesbody1": "Always have W3C installed and updated",
+      "launcherfeaturesbody2": "Custom inventory and hero hotkeys",
+      "launcherfeaturesbody3": "Graphical user interface for custom hotkeys",
+      "launcherfeaturesbody4": "Custom team coloring",
+      "launcherfeaturesbody5": "Keep up with the scene by getting the latest news",
+      "manualwintitle": "Manual Windows",
+      "manualwinbody1": "1. Download the zip file and unpack it in your Warcraft Installation folder",
+      "manualwinbody2": "W3Champions",
+      "manualwinbody3": "2. Make sure to have a directory structure like:",
+      "manualwinbody4": "Warcraft III\\webui\\index.html",
+      "manualwinbody5": "If you have a folder called _retail_ in your Warcraft III folder, make sure to have the following structure: ",
+      "manualwinbody6": "Warcraft III\\ _retail_ \\webui\\index.html",
+      "manualwinbody7": "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
+      "manualwinbody8": "Download MAPS",
+      "manualwinbody9": "4. The folder structure after unpacking should be",
+      "manualwinbody10": "Documents\\Warcraft III\\Maps\\W3Champions",
+      "manualwinbody11": "Important",
+      "manualwinbody12": "If you have a Maps folder inside your Warcraft III directory go ahead and delete it.",
+      "manualwinbody13": "DELETE Path-to-game/Maps",
+      "manualwinbody14": "DELETE Path-to-game/_retail_/Maps",
+      "manualwinbody15": "Example:",
+      "manualwinbody16": "DELETE C:\\Program Files (x86)\\Warcraft III\\Maps",
+      "manualwinbody17": "DELETE C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      "manualwinbody18": "5. You need to set a registry (Installer is doing this automatically)",
+      "manualwinbody19": "open regedit.exe",
+      "manualwinbody20": "Find the registry Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      "manualwinbody21": "Add DWORD key to this registry path",
+      "manualwinbody22": "name: Allow Local Files",
+      "manualwinbody23": "decimal value: 1",
+      "manualmactitle": "Manual Mac OS",
+      "manualmacbody1": "1. Download the zip file and unpack it in your Warcraft Installation folder",
+      "manualmacbody2": "W3Champions",
+      "manualmacbody3": "2. Make sure to have a directory structure like:",
+      "manualmacbody4": "Warcraft III\\webui\\index.html",
+      "manualmacbody5": "If you have a folder called _retail_ in your Warcraft III folder, make sure to have the following structure:",
+      "manualmacbody6": "Warcraft III\\ _retail_ \\webui\\index.html",
+      "manualmacbody7": "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
+      "manualmacbody8": "Download MAPS",
+      "manualmacbody9": "4. The folder structure after unpacking should be",
+      "manualmacbody10": "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      "manualmacbody11": "Important",
+      "manualmacbody12": "If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it.",
+      "manualmacbody13": "DELETE Path-to-game/Maps",
+      "manualmacbody14": "DELETE Path-to-game/retail/maps",
+      "manualmacbody15": "Example:",
+      "manualmacbody16": "DELETE Warcraft III\\Maps",
+      "manualmacbody17": "DELETE Warcraft III_retail_\\Maps",
+      "manualmacbody18": "5. You need to set a registry (Installer is doing this automatically)",
+      "manualmacbody19": "Copy command defaults write \"com.blizzard.Warcraft III\" \"Allow Local Files\" -int 1",
+      "manualmacbody20": "Open terminal",
+      "manualmacbody21": "Paste command and execute by pressing Enter key.",
+      "manualmacbody22": "Run Warcraft 3. You should see W3Champions."
+    },
+    "views_home": {
+      "w3c_motto": "The ladder you have been waiting for!",
+      "join_button": "Join the Battlefield now!",
+      "hometitle": "Come and join us!",
+      "homebody1": "W3Champions is the ladder made by and for the community.",
+      "homebody2": "It adds many new and old features to the game, such as:",
+      "homebody3": "- Sophisticated matchmaking system",
+      "homebody4": "- Fair skill matchups after five placement matches",
+      "homebody5": "- Improved pings",
+      "homebody6": "- Custom inventory hotkeys",
+      "homebody7": "- New interface in the old style",
+      "homebody8": "- Exciting end of season tournaments",
+      "homebody9": "- Detailed statistics",
+      "homebody10": "- Updated map pools",
+      "homebody11": "- Graphical interface for custom hotkeys",
+      "homebody12": "The W3C team is also working on the following features:",
+      "homebody13": "- Hostbots for interregional play",
+      "homebody14": "- Automated tournaments",
+      "homebody15": "Join W3Champions and enjoy Warcraft III in its full glory.",
+      "homebody16": "Support us for even more features!",
+      "mappooltitle": "Current Map Pool",
+      "mappoolbody": "TM,EI,TSLV,CH,NIS,AZ and LR",
+      "community": "Community",
+      "joinus": "Join us",
+      "socialmedia": "Social Media",
+      "supportus": "Support us",
+      "topranks": "Top Ranks",
+      "wlt": "Win/Loss/Total"
+    },
+    "views_login": {
+      "loggingyouin": "Logging you in..."
+    },
+    "views_matchdetail": {
+      "seasonsc": "Season:",
+      "vs": "VS",
+      "incompletedata": "Sorry, but this games seems to have incomplete data"
+    },
+    "views_statistics": {
+      "w3cstats": "Statistics of W3Champions",
+      "playeractivity": "Player Activity",
+      "mmr": "MMR",
+      "wrs": "Winrates",
+      "heroes": "Heroes"
+    },
+    "views_player": {
+      "prevseasons": "Previous seasons:",
+      "profile": "Profile",
+      "matchhistory": "Match History",
+      "teams": "Teams",
+      "statistics": "Statistics",
+      "clan": "Clan"
+    },
+    "views_rankings": {
+      "selectleague": "Select a league:",
+      "wlt": "Wins: | Losses: | Total:",
+      "unranked": "Unranked",
+      "prevseasons": "Previous seasons:",
+      "season": "Season",
+      "racedist": "Race distribution",
+      "stats": "Stats"
+    },
+    "views_tournaments": {
+      "tourney_donate": "Donate to prize pool",
+      "winnersbracket": "Winners' bracket",
+      "quarterfinals": "Quarterfinal",
+      "semifinals": "Semifinals",
+      "winnersfinals": "Winners' Finals",
+      "grandfinals": "Grand Finals",
+      "losersbracket": "Losers' bracket",
+      "losersround1": "Losers' Round 1",
+      "losersround2": "Losers' Round 2",
+      "losersround3": "Losers' Round 3",
+      "losersfinals": "Losers' Finals"
+    },
+    "components_clans_acceptinvitepanel": {
+      "invitemsg1": "You were invited by",
+      "invitemsg2": "to join their ranks!",
+      "join": "Join",
+      "reject": "Reject invite"
+    },
+    "components_clans_clancreationpanel": {
+      "noclanmsg": "You are not part of a clan, go ahead and create one!",
+      "clanname": "Clan name",
+      "enterclanname": "enter clan name",
+      "clanabbrev": "Clan abbreviation",
+      "enterclanabbrev": "enter clan abbreviation",
+      "createclan": "Create a clan!",
+      "fieldismandatory": "Field is mandatory",
+      "minmaxchars": "Must be between ${min} and ${max} numerical characters"
+    },
+    "components_clans_clanoverview": {
+      "playerhasnoclan": "This player is not part of a clan",
+      "signeecounter": "Signees"
+    },
+    "components_clans_deleteclanmodal": {
+      "delete": "Delete",
+      "areyousuredelete": "Are you sure you want to delete",
+      "close": "Close"
+    },
+    "components_clans_inviteplayermodal": {
+      "inviteplayer": "Invite player",
+      "invite": "Invite"
+    },
+    "components_clans_leaveclanmodal": {
+      "leaveclan": "Leave ",
+      "promotefirst": "Promote a Shaman first to leave the clan",
+      "areyousureleave": "Are you sure you want to leave",
+      "close": "Close"
+    },
+    "components_clans_pendinginvitespanel": {
+      "invitespending": "Invites Pending:",
+      "nonepending": "None pending"
+    },
+    "components_common_gamemodeselect": {
+      "selectgamemode": "Select a gamemode:"
+    },
+    "components_common_gatewayselect": {
+      "selectgateway": "Select a gateway:"
+    },
+    "components_ladder_rankingsgrid": {
+      "streamingmatch": "Streaming a match versus",
+      "streaminglive": "Stream is live!",
+      "nowplayingvs": "Now playing vs",
+      "rank": "Rank",
+      "player": "Player",
+      "race": "Race",
+      "clan": "Clan",
+      "wins": "Wins",
+      "losses": "Losses",
+      "total": "Total",
+      "winrate": "Winrate",
+      "mmr": "MMR",
+      "rp": "RP"
+    },
+    "components_ladder_rankingsracedistribution": {
+      "race": "Race",
+      "numberofplayers": "Number of players",
+      "percent": "Percent"
+    },
+    "components_match-details_matchhighlights": {
+      "heroeskilled": "Heroes killed",
+      "xpgained": "Experience gained",
+      "itemscollected": "Items collected"
+    },
+    "components_match-details_playerperformanceonmatch": {
+      "unitskilled": "Units killed",
+      "unitsproduced": "Units produced",
+      "goldmined": "Gold mined",
+      "lumbermined": "Lumber harvested",
+      "upkeeplost": "Upkeep lost",
+      "largestarmy": "Largest army"
+    },
+    "components_matches_matchesgrid": {
+      "nomatchesfound": "no matches found"
+    },
+    "components_matches_matchesstatusselect": {
+      "selectstatus": "Select a status:"
+    },
+    "components_matches_playermatchinfo": {
+      "wins": "Wins:",
+      "losses": "| Losses:",
+      "total": "| Total:",
+      "wltdotdotdot": "Wins: ... | Losses: ... | Total: ..."
+    },
+    "components_overal-statistics_tabs_herotab": {
+      "pickedheroes": "Picked Heroes"
+    },
+    "components_overal-statistics_tabs_mmrdistributiontab": {
+      "purplebarsdesc": "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
+      "greenbardesc": "The green line shows where you are in the distribution."
+    },
+    "components_overal-statistics_tabs_playeractivitytab": {
+      "gamemodedesc1": "Game Modes are normalized to compare their popularity more easily:",
+      "gamemodedesc2": "2v2 and FFA games are counted twice, 4v4 games are counted four times"
+    },
+    "components_overal-statistics_tabs_winratestab": {
+      "vshu": "vs Human",
+      "vsorc": "vs Orc",
+      "vsud": "vs Undead",
+      "vsne": "vs Night Elf"
+    },
+    "components_overal-statistics_heropictureselect": {
+      "anyhero": "Any hero selection"
+    },
+    "components_overal-statistics_herowinrate": {
+      "winratesofheromu": "Winrates of hero matchups"
+    },
+    "components_overal-statistics_racetomapstat": {
+      "nogamesplayed": "No games played with this race yet.",
+      "map": "Map",
+      "vshu": "vs Human",
+      "vsorc": "vs Orc",
+      "vsne": "vs Night Elf",
+      "vsud": "vs Undead",
+      "total": "Total"
+    },
+    "components_player_tabs_playerprofiletab": {
+      "betastats": "This noble person was part of our beta, therefore we hide their buggy stats and thank them for all eternity ;)",
+      "statsbygamemode": "Stats by game mode",
+      "winloss": "Win/Loss"
+    },
+    "components_player_tabs_playerstatistictab": {
+      "betastats": "This noble person was part of our beta, therefore we hide their buggy stats and thank them for all eternity ;)",
+      "playermmrtimeline": "Player MMR Timeline",
+      "playerhasnomatches": "This player hasn't played any matches fitting to the current settings."
+    },
+    "components_player_modestatsgrid": {
+      "mode": "Mode",
+      "modedesc": "Mode",
+      "winloss": "Win/Loss",
+      "winlossdesc": "Win/Loss",
+      "mmr": "MMR",
+      "mmrdesc": "MMR",
+      "rp": "RP",
+      "rpdesc": "RP stands for Ranking Points and \\ndetermines your rank in the ladder. \\nRP is calculated from your MMR and activity level."
+    },
+    "components_player_playeravatar": {
+      "games": "Games:",
+      "hp": "Homepage:",
+      "about": "About:",
+      "edit": "Edit Profile",
+      "userprofile": "User Profile",
+      "entertwitchname": "Enter your Twitch username!",
+      "enterytname": "Enter your YouTube username!",
+      "entertwattername": "Enter your Twitter handle!",
+      "entercustomhp": "Enter a custom homepage",
+      "aboutdesc": "Write something about yourself!",
+      "close": "Close",
+      "save": "Save"
+    },
+    "components_player_playerleague": {
+      "placementsplayed": "Placement matches played"
+    },
+    "components_player_recentperformance": {
+      "winsymbol": "W"
+    },
+    "components_player_seasonbadge": {
+      "participatedinseason": "participated in season"
+    },
+    "components_tournaments_TournamentMatchUpdate": {
+      "updatematch": "Update match",
+      "player1": "Player 1",
+      "player2": "Player 2"
+    },
+    "components_tournaments_tournamentselect": {
+      "selecttourney": "Select a tournament:"
+    },
+    "locales_en_races": {
+      "ORC": "Orc",
+      "HUMAN": "Human",
+      "UNDEAD": "Undead",
+      "NIGHT_ELF": "Night Elf",
+      "RANDOM": "Random",
+      "TOTAL": "Total"
+    },
+    "locales_en_racesShort": {
+      "ORC": "OC",
+      "HUMAN": "HU",
+      "UNDEAD": "UD",
+      "NIGHT_ELF": "NE",
+      "RANDOM": "RnD"
+    },
+    "locales_en_gameModes": {
+      "UNDEFINED": "All",
+      "GM_1ON1": "1 vs 1",
+      "GM_2ON2": "2 vs 2",
+      "GM_2ON2_AT": "2 vs 2 AT",
+      "GM_4ON4": "4 vs 4",
+      "GM_FFA": "FFA"
+    },
+    "locales_en_gatewayNames": {
+      "Europe": "Europe",
+      "America": "America"
+    },
+    "locales_en_mmrLeagueRanges": {
+      "MMR_0": "all",
+      "MMR_2200": "> 2200 (~Grandmaster)",
+      "MMR_2000": "> 2000 (~Master)",
+      "MMR_1800": "> 1800 (~Diamond)",
+      "MMR_1600": "> 1600 (~Platin)",
+      "MMR_1400": "> 1400 (~Gold)",
+      "MMR_1200": "> 1200 (~Silver)",
+      "MMR_1000": "> 1000 (~Bronze)"
+    },
+    "locales_en_mapNames": {
+      "Overall": "Overall"
+    },
+    "locales_en_heroNames": {
+      "all": "Any hero selection",
+      "none": "No hero selection",
+      "archmage": "Archmage",
+      "alchemist": "Goblin Alchemist",
+      "avatarofflame": "Firelord",
+      "bansheeranger": "Dark Ranger",
+      "beastmaster": "Beastmaster",
+      "blademaster": "Blademaster",
+      "cryptlord": "Crypt Lord",
+      "deathknight": "Death Knight",
+      "demonhunter": "Demon Hunter",
+      "dreadlord": "Dread Lord",
+      "farseer": "Farseer",
+      "keeperofthegrove": "Keeper of the Grove",
+      "lich": "Lich",
+      "mountainking": "Mountain King",
+      "paladin": "Paladin",
+      "pandarenbrewmaster": "Pandaren Brewmaster",
+      "pitlord": "Pit Lord",
+      "priestessofthemoon": "Priestress of the Moon",
+      "seawitch": "Naga Sea Witch",
+      "shadowhunter": "Shadow Hunter",
+      "sorceror": "Bloodmage",
+      "taurenchieftain": "Tauren Chieftain",
+      "tinker": "Goblin Tinker",
+      "warden": "Warden"
+    },
+    "locales_en_matchStatuses": {
+      "onGoing": "Now Playing",
+      "past": "Finished"
+    }
+  },
+  "de": {
+    "views_admin": {
+      "adminpage": "Administrationsseite",
+      "bannedplayers": "Gebannte Spieler",
+      "addplayer": "Spieler hinzufügen",
+      "banenddate": "Bannfrist",
+      "ok": "OK",
+      "onlybannedchat": "Ist nur vom Chat gebannt",
+      "banreason": "Banngrund",
+      "newsforlauncher": "Launcher-Nachrichten",
+      "addnews": "Nachrichten hinzufügen",
+      "headline": "Titel",
+      "message": "Nachricht",
+      "cancel": "Abbrechen",
+      "save": "Speichern"
+    },
+    "views_gettingstarted": {
+      "manualwarning": "Nur benötigt, wenn Du Probleme mit dem Launcher hast. In dem Fall, bitte auf discord melden!",
+      "howtoinstall": "Wie man W3Champions installiert",
+      "launcher": "Launcher",
+      "manualwin": "Windows manuell",
+      "manualmac": "Mac manuell",
+      "downloadw3ctitle": "W3Champions runterladen",
+      "launchertitle": "Nach der Installation, öffne W3Champions und mach' mit!",
+      "launcherfeaturestitle": "Launcher Features:",
+      "launcherfeaturesbody1": "W3C immer auf dem neuesten Stand",
+      "launcherfeaturesbody2": "Custom Inventar- und Heldenhotkeys",
+      "launcherfeaturesbody3": "Grafische Oberfläche für Custom Hotkeys",
+      "launcherfeaturesbody4": "Spielfarben selbst auswählen",
+      "launcherfeaturesbody5": "Bleib' mit Nachrichten über die Szene informiert",
+      "manualwintitle": "Windows manuell",
+      "manualwinbody1": "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
+      "manualwinbody2": "W3Champions",
+      "manualwinbody3": "2. Überprüfe, dass deine Ordnerstruktur so aussieht:",
+      "manualwinbody4": "Warcraft III\\webui\\index.html",
+      "manualwinbody5": "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
+      "manualwinbody6": "Warcraft III\\ _retail_ \\webui\\index.html",
+      "manualwinbody7": "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
+      "manualwinbody8": "Maps Runterladen",
+      "manualwinbody9": "4. Die Ordnerstruktur sollte danach so aussehen:",
+      "manualwinbody10": "Dokumente\\Warcraft III\\Maps\\W3Champions",
+      "manualwinbody11": "Wichtig",
+      "manualwinbody12": "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
+      "manualwinbody13": "LÖSCHEN: Pfad-zum-Spiel/Maps",
+      "manualwinbody14": "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
+      "manualwinbody15": "Beispiel:",
+      "manualwinbody16": "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\Maps",
+      "manualwinbody17": "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\_retail_\\Maps",
+      "manualwinbody18": "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
+      "manualwinbody19": "öffne regedit.exe",
+      "manualwinbody20": "Finde den Eintrag Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      "manualwinbody21": "Füge einen DWORD-Schlüssel zum Eintrag hinzu",
+      "manualwinbody22": "Name: Allow Local Files",
+      "manualwinbody23": "Dezimalwert: 1",
+      "manualmactitle": "Mac manuell",
+      "manualmacbody1": "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
+      "manualmacbody2": "W3Champions",
+      "manualmacbody3": "2. Überprüfe, dass deine Ordnerstruktur so aussieht:",
+      "manualmacbody4": "Warcraft III\\webui\\index.html",
+      "manualmacbody5": "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
+      "manualmacbody6": "Warcraft III\\ _retail_ \\webui\\index.html",
+      "manualmacbody7": "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
+      "manualmacbody8": "Maps Runterladen",
+      "manualmacbody9": "4. Die Ordnerstruktur sollte danach so aussehen:",
+      "manualmacbody10": "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      "manualmacbody11": "Wichtig",
+      "manualmacbody12": "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
+      "manualmacbody13": "LÖSCHEN: Pfad-zum-Spiel/Maps",
+      "manualmacbody14": "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
+      "manualmacbody15": "Beispiel:",
+      "manualmacbody16": "LÖSCHEN: Warcraft III\\Maps",
+      "manualmacbody17": "LÖSCHEN: Warcraft III\\_retail_\\Maps",
+      "manualmacbody18": "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
+      "manualmacbody19": "Kopiere den Befehl: defaults write \"com.blizzard.Warcraft III\" \"Allow Local Files\" -int 1",
+      "manualmacbody20": "Öffne ein Terminal",
+      "manualmacbody21": "Füge den Befehl ein und drück' Enter",
+      "manualmacbody22": "Starte Warcraft, Du solltest nun W3Champions sehen"
+    },
+    "views_home": {
+      "w3c_motto": "Die Ladder, auf die Du gewartet hast!",
+      "join_button": "Tritt dem Schlachtfeld bei!",
+      "hometitle": "Komm' und spiel mit!",
+      "homebody1": "W3Champions ist die Ladder von und für die Community.",
+      "homebody2": "W3C bietet viele neue und alte Features, z.B.:",
+      "homebody3": "- Ausgeklügeltes Matchmaking-System",
+      "homebody4": "- Faire Matchups gemäß Deinem Skill nach fünf Runden",
+      "homebody5": "- Verbesserter Ping",
+      "homebody6": "- Eigene Inventarhotkeys",
+      "homebody7": "- Neue Oberfläche im bewährten Stil",
+      "homebody8": "- Aufregende Turniere am Saisonende",
+      "homebody9": "- Detaillierte Statistiken",
+      "homebody10": "- Neueste Mappools",
+      "homebody11": "- Grafische Oberfläche für Custom Hotkeys",
+      "homebody12": "Das W3C-Team arbeitet zur Zeit zusätzlich an:",
+      "homebody13": "- Hostbots für guten Ping nach Asien und Amerika",
+      "homebody14": "- Automatische Turniere",
+      "homebody15": "Tritt W3Champions bei und erlebe Warcraft III im vollen Glanz.",
+      "homebody16": "Unterstütze uns für noch mehr Features!",
+      "mappooltitle": "Aktueller Mappool",
+      "mappoolbody": "TM,EI,TSLV,CH,NIS,AZ und LR",
+      "community": "Community",
+      "joinus": "Mach' mit!",
+      "socialmedia": "Soziale Medien",
+      "supportus": "Unterstütze uns",
+      "topranks": "Top Rangliste",
+      "wlt": "Siege/Niederlagen/Gesamt"
+    },
+    "views_login": {
+      "loggingyouin": "Logge Dich ein..."
+    },
+    "views_matchdetail": {
+      "seasonsc": "Saison:",
+      "vs": "VS",
+      "incompletedata": "Sorry, dieses Spiel hat unvollständige Daten"
+    },
+    "views_statistics": {
+      "w3cstats": "W3Champions Statistiken",
+      "playeractivity": "Spieleraktivität",
+      "mmr": "MMR",
+      "wrs": "Siegraten",
+      "heroes": "Helden"
+    },
+    "views_player": {
+      "prevseasons": "Vergangene Saisons:",
+      "profile": "Profil",
+      "matchhistory": "Vergangene Matches",
+      "teams": "Teams",
+      "statistics": "Statistiken",
+      "clan": "Clan"
+    },
+    "views_rankings": {
+      "selectleague": "Wähle eine Liga:",
+      "wlt": "Siege: | Niederlagen: | Gesamt:",
+      "unranked": "Ohne Rang",
+      "prevseasons": "Vergangene Saisons:",
+      "season": "Saison",
+      "racedist": "Rassenverteilung",
+      "stats": "Statistiken"
+    },
+    "views_tournaments": {
+      "tourney_donate": "Spende für's Preisgeld",
+      "winnersbracket": "Winners' bracket",
+      "quarterfinals": "Viertelfinale",
+      "semifinals": "Halbfinale",
+      "winnersfinals": "Finale der Sieger",
+      "grandfinals": "Grand Finals",
+      "losersbracket": "Losers' bracket",
+      "losersround1": "Verlierer Runde 1",
+      "losersround2": "Verlierer Runde 2",
+      "losersround3": "Verlierer Runde 3",
+      "losersfinals": "Finale der Verlierer"
+    },
+    "components_clans_acceptinvitepanel": {
+      "invitemsg1": "Du wurdest eingeladen von",
+      "invitemsg2": "um ihren Reihen beizutreten!",
+      "join": "Beitreten",
+      "reject": "Ablehnen"
+    },
+    "components_clans_clancreationpanel": {
+      "noclanmsg": "Du bist kein Mitglied eines Clans, erstelle einen!",
+      "clanname": "Clanname",
+      "enterclanname": "Clannamen eingeben",
+      "clanabbrev": "Clan-Abkürzung",
+      "enterclanabbrev": "Clan-Abkürzung eingeben",
+      "createclan": "Clan erstellen!",
+      "fieldismandatory": "Feld ist erforderlich",
+      "minmaxchars": "Muss zwischen ${min} und ${max} numerischen Zeichen sein"
+    },
+    "components_clans_clanoverview": {
+      "playerhasnoclan": "Dieser Spieler ist kein Clan-Mitglied",
+      "signeecounter": "Unterstützer"
+    },
+    "components_clans_deleteclanmodal": {
+      "delete": "Löschen",
+      "areyousuredelete": "Sicher, dass Du löschen willst",
+      "close": "Schließen"
+    },
+    "components_clans_inviteplayermodal": {
+      "inviteplayer": "Spieler einladen",
+      "invite": "Einladen"
+    },
+    "components_clans_leaveclanmodal": {
+      "leaveclan": "Verlassen",
+      "promotefirst": "Zuerst Schamanen ernennen, bevor Du den Clan verlässt",
+      "areyousureleave": "Bist du sicher, dass du verlassen willst?",
+      "close": "Schließen"
+    },
+    "components_clans_pendinginvitespanel": {
+      "invitespending": "Einladungen verbleibend:",
+      "nonepending": "Keine Einladungen"
+    },
+    "components_common_gamemodeselect": {
+      "selectgamemode": "Spielmodus auswählen:"
+    },
+    "components_common_gatewayselect": {
+      "selectgateway": "Region auswählen:"
+    },
+    "components_ladder_rankingsgrid": {
+      "streamingmatch": "Streamt ein Match gegen",
+      "streaminglive": "Streamt live!",
+      "nowplayingvs": "Spiel jetzt gegen",
+      "rank": "Rang",
+      "player": "Spieler",
+      "race": "Rasse",
+      "clan": "Clan",
+      "wins": "Siege",
+      "losses": "Niederlagen",
+      "total": "Gesamt",
+      "winrate": "Siegrate",
+      "mmr": "MMR",
+      "rp": "RP"
+    },
+    "components_ladder_rankingsracedistribution": {
+      "race": "Rasse",
+      "numberofplayers": "Spieleranzahl",
+      "percent": "Prozent"
+    },
+    "components_match-details_matchhighlights": {
+      "heroeskilled": "Helden getötet",
+      "xpgained": "Erfahrung erhalten",
+      "itemscollected": "Items gesammelt"
+    },
+    "components_match-details_playerperformanceonmatch": {
+      "unitskilled": "Einheiten getötet",
+      "unitsproduced": "Einheiten produziert",
+      "goldmined": "Gold geschürft",
+      "lumbermined": "Holz gehackt",
+      "upkeeplost": "Kosten bezahlt",
+      "largestarmy": "Größte Armee"
+    },
+    "components_matches_matchesgrid": {
+      "nomatchesfound": "Keine Matches gefunden"
+    },
+    "components_matches_matchesstatusselect": {
+      "selectstatus": "Status auswählen:"
+    },
+    "components_matches_playermatchinfo": {
+      "wins": "Siege:",
+      "losses": "| Niederlagen:",
+      "total": "| Gesamt:",
+      "wltdotdotdot": "Siege: ... | Niederlagen: ... | Gesamt: ..."
+    },
+    "components_overal-statistics_tabs_herotab": {
+      "pickedheroes": "Ausgewählte Helden"
+    },
+    "components_overal-statistics_tabs_mmrdistributiontab": {
+      "purplebarsdesc": "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
+      "greenbardesc": "Die grüne Linie zeigt deinen Platz in der Verteilung."
+    },
+    "components_overal-statistics_tabs_playeractivitytab": {
+      "gamemodedesc1": "Spielmodi werden nach ihrer Spieleranzahl genormt:",
+      "gamemodedesc2": "2vs2 und FFA zählen doppelt, 4vs4 zählt vierfach."
+    },
+    "components_overal-statistics_tabs_winratestab": {
+      "vshu": "vs Menschen",
+      "vsorc": "vs Orks",
+      "vsud": "vs Untote",
+      "vsne": "vs Nachtelfen"
+    },
+    "components_overal-statistics_heropictureselect": {
+      "anyhero": "Jegliche Helden"
+    },
+    "components_overal-statistics_herowinrate": {
+      "winratesofheromu": "Siegrate von Helden-Matchups"
+    },
+    "components_overal-statistics_racetomapstat": {
+      "nogamesplayed": "Noch kein Spiel mit dieser Rasse.",
+      "map": "Map",
+      "vshu": "vs Menschen",
+      "vsorc": "vs Orks",
+      "vsne": "vs Nachtelfen",
+      "vsud": "vs Untote",
+      "total": "Gesamt"
+    },
+    "components_player_tabs_playerprofiletab": {
+      "betastats": "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
+      "statsbygamemode": "Stats gemäß Spielmodus",
+      "winloss": "Sieg/Niederlage"
+    },
+    "components_player_tabs_playerstatistictab": {
+      "betastats": "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
+      "playermmrtimeline": "MMR-Zeitstrahl des Spielers",
+      "playerhasnomatches": "Dieser Spieler hat keine Spiele mit den angegeben Einstellungen."
+    },
+    "components_player_modestatsgrid": {
+      "mode": "Modus",
+      "modedesc": "Modus",
+      "winloss": "Sieg/Niederlage",
+      "winlossdesc": "Sieg/Niederlage",
+      "mmr": "MMR",
+      "mmrdesc": "MMR",
+      "rp": "RP",
+      "rpdesc": "RP steht für Rangpunkte und \\nbestimmt deinen Rang in der Ladder. \\nRP wird durch MMR und Aktivität berechnet."
+    },
+    "components_player_playeravatar": {
+      "games": "Spiele:",
+      "hp": "Homepage:",
+      "about": "Über mich:",
+      "edit": "Profil bearbeiten",
+      "userprofile": "Spielerprofil",
+      "entertwitchname": "Twitchnamen eingeben!",
+      "enterytname": "YouTubenamen eingeben!",
+      "entertwattername": "Twitterhandle eingeben!",
+      "entercustomhp": "Eigene Webseite eingeben",
+      "aboutdesc": "Schreib' etwas über Dich!",
+      "close": "Schließen",
+      "save": "Speichern"
+    },
+    "components_player_playerleague": {
+      "placementsplayed": "Platzierungsspiele gespielt"
+    },
+    "components_player_recentperformance": {
+      "winsymbol": "S"
+    },
+    "components_player_seasonbadge": {
+      "participatedinseason": "spielte in Saison"
+    },
+    "components_tournaments_TournamentMatchUpdate": {
+      "updatematch": "Match aktualisieren",
+      "player1": "Spieler 1",
+      "player2": "Spieler 2"
+    },
+    "components_tournaments_tournamentselect": {
+      "selecttourney": "Turnier auswählen:"
+    },
+    "locales_en_races": {
+      "ORC": "Orks",
+      "HUMAN": "Menschen",
+      "UNDEAD": "Untote",
+      "NIGHT_ELF": "Nachtelfen",
+      "RANDOM": "Zufall",
+      "TOTAL": "Gesamt"
+    },
+    "locales_en_racesShort": {
+      "ORC": "OC",
+      "HUMAN": "HU",
+      "UNDEAD": "UD",
+      "NIGHT_ELF": "NE",
+      "RANDOM": "RnD"
+    },
+    "locales_en_gameModes": {
+      "UNDEFINED": "Alle",
+      "GM_1ON1": "1 vs 1",
+      "GM_2ON2": "2 vs 2",
+      "GM_2ON2_AT": "2 vs 2 AT",
+      "GM_4ON4": "4 vs 4",
+      "GM_FFA": "FFA"
+    },
+    "locales_en_gatewayNames": {
+      "Europe": "Europa",
+      "America": "Amerika"
+    },
+    "locales_en_mmrLeagueRanges": {
+      "MMR_0": "alle",
+      "MMR_2200": "> 2200 (~Großmeister)",
+      "MMR_2000": "> 2000 (~Meister)",
+      "MMR_1800": "> 1800 (~Diamant)",
+      "MMR_1600": "> 1600 (~Platin)",
+      "MMR_1400": "> 1400 (~Gold)",
+      "MMR_1200": "> 1200 (~Silber)",
+      "MMR_1000": "> 1000 (~Bronze)"
+    },
+    "locales_en_mapNames": {
+      "Overall": "Gesamt"
+    },
+    "locales_en_heroNames": {
+      "all": "Jegliche Heldenauswahl",
+      "none": "Keine Heldenauswahl",
+      "archmage": "Erzmagier",
+      "alchemist": "Goblin Alchemist",
+      "avatarofflame": "Feuerlord",
+      "bansheeranger": "Dunkle Waldläuferin",
+      "beastmaster": "Bestienmeister",
+      "blademaster": "Klingenmeister",
+      "cryptlord": "Gruftlord",
+      "deathknight": "Todesritter",
+      "demonhunter": "Dämonenjäger",
+      "dreadlord": "Schreckenslord",
+      "farseer": "Scharfseher",
+      "keeperofthegrove": "Hüter des Hains",
+      "lich": "Lich",
+      "mountainking": "Bergkönig",
+      "paladin": "Paladin",
+      "pandarenbrewmaster": "Pandaren-Braumeister",
+      "pitlord": "Grubenlord",
+      "priestessofthemoon": "Mondpriesterin",
+      "seawitch": "Naga-Meerhexe",
+      "shadowhunter": "Schattenjäger",
+      "sorceror": "Blutmagier",
+      "taurenchieftain": "Tauren-Häuptling",
+      "tinker": "Goblin-Kesselflicker",
+      "warden": "Wächterin"
+    },
+    "locales_en_matchStatuses": {
+      "onGoing": "Spielt jetzt",
+      "past": "Beendet"
+    }
+  }
+}

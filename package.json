@@ -8,7 +8,8 @@
     "build:prod": "rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
-    "update": "npm install -g npm-check-updates && ncu --upgrade && npm install "
+    "update": "npm install -g npm-check-updates && ncu --upgrade && npm install ",
+    "generate-locales": "node_modules/.bin/ts-node scripts/generate-locales.ts"
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/chart.js": "^2.9.29",
     "@types/chartjs-plugin-annotation": "^0.5.1",
+    "@types/google-spreadsheet": "^3.0.2",
     "@types/lodash": "^4.14.165",
     "@types/moment": "^2.13.0",
     "@types/vue-markdown": "^2.2.1",
@@ -51,15 +53,19 @@
     "@vue/cli-service": "~4.4.6",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.1.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.13.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
+    "google-spreadsheet": "^3.1.15",
     "http-server": "^0.12.3",
+    "lodash.set": "^4.3.2",
     "node-sass": "4.14.1",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "sass": "^1.29.0",
     "sass-loader": "^8.0.2",
+    "ts-node": "^9.1.1",
     "typescript": "^3.9.7",
     "vue-cli-plugin-vuetify": "^2.0.7",
     "vue-template-compiler": "^2.6.12",
