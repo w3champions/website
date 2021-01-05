@@ -5,10 +5,11 @@
  * https://docs.google.com/spreadsheets/d/1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok/edit?pli=1#gid=0
  *
  * ⚠️ For this script to work you need to have a Google API key with Sheets enabled (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication)
- * Place it in a .env file as GOOGLE_API_KEY at the root of the project
+ * Place it in a .env file as GOOGLE_API_KEY
  */
 
 require("dotenv").config();
+const fs = require("fs");
 const set = require("lodash.set");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
@@ -31,7 +32,10 @@ async function main() {
     }
   }
 
-  console.log(locales);
+  await fs.writeFileSync(
+    "src/locales/data.json",
+    JSON.stringify(locales, null, 2)
+  );
 }
 
 main();
