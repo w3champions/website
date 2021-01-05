@@ -18,38 +18,15 @@
             >
               <div class="bracket-header">{{ round.name }}</div>
             </div>
-            <div
+            <tournamentMatch
               @click="matchSelected(match)"
-              class="bracket-game"
               v-for="(match, matchIndex) in round.matches"
               :key="matchIndex"
+              :topPlayer="match.players[0]"
+              :bottomPlayer="match.players[1]"
+              :cellHeight="round.dimensions.cellHeight"
             >
-              <div
-                class="bracket-cell"
-                v-bind:style="`height: ${round.dimensions.cellHeight}px;`"
-                v-for="(player, playerIndex) in match.players"
-                :key="playerIndex"
-              >
-                <div
-                  v-bind:class="getClass(player, playerIndex)"
-                  style="padding-right: 23px; cursor: pointer;"
-                >
-                  <div
-                    class="country-flag__container"
-                  >
-                    <country-flag-extended
-                      class="country-flag"
-                      :location="player.countryCode"
-                      size="small"
-                    />
-                  </div>
-                  <span style="vertical-align: -1px; padding-left:3px">
-                    {{ player.name }}
-                  </span>
-                  <div class="bracket-score" style="width: 21px;" >{{ player.score }}</div>
-                </div>
-              </div>
-            </div>
+            </tournamentMatch>
           </div>
           <tournamentRoundConnector
             :key="`conn${round.round}`"
@@ -74,15 +51,15 @@ import {
   ITournamentRound,
   ITournament,
   ConnectionType,
-} from "../../store/tournaments/types";
+} from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
+import TournamentMatch from "@/components/tournaments/TournamentMatch.vue";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
-import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 
 @Component({
   components: {
+    TournamentMatch,
     TournamentRoundConnector,
-    CountryFlagExtended,
   },
 })
 export default class TournamentBracket extends Vue {
@@ -97,7 +74,7 @@ export default class TournamentBracket extends Vue {
   }
 
   get bracketRoundsWithDimensions() {
-    for (let index = 0; index < this.bracketRounds.length; index++) {
+    for (let index = 0; index < this.totalRounds; index++) {
       const round = this.bracketRounds[index];
       const prevRound = this.bracketRounds[index - 1];
 
@@ -320,16 +297,5 @@ export default class TournamentBracket extends Vue {
 
 .bracket-ud {
   background: rgb(242, 184, 242);
-}
-
-.bracket-wrapper .country-flag__container {
-  position: relative;
-  width: 15px;
-  height: 10px;
-  display: inline-block;
-}
-
-.bracket-wrapper .country-flag {
-  position: absolute;
 }
 </style>
