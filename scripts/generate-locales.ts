@@ -9,6 +9,7 @@
  */
 
 require("dotenv").config();
+const set = require("lodash.set");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const doc = new GoogleSpreadsheet(
@@ -16,7 +17,8 @@ const doc = new GoogleSpreadsheet(
 );
 doc.useApiKey(process.env.GOOGLE_API_KEY);
 
-const languages = { en: {}, de: {} }; // , "kr", "zh"
+const languages = ["en", "de"]; // , "kr", "zh"
+const locales = {};
 
 async function main() {
   await doc.loadInfo();
@@ -24,17 +26,12 @@ async function main() {
   const rows = await firstSheet.getRows({ offset: 1 });
 
   for (const row of rows) {
-    for (const lang in languages) {
-      languages[lang][row.location][row.id] = row[lang];
+    for (const lang of languages) {
+      set(locales, [lang, row.location, row.id], row[lang]);
     }
   }
 
-  console.log(languages);
-
-  // [location]: { [id]: [langXrow cell value]}
-
-  // for each row
-  //
+  console.log(locales);
 }
 
 main();
