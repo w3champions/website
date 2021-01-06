@@ -56,7 +56,7 @@ export default class TournamentYConnector extends Vue {
     const middle_offset = 3;
     const arc_height = 6;
     const between_offset = 11;
-    const height = this.round.dimensions?.cellHeight
+    const height = this.round?.dimensions?.cellHeight ?? 20
       - 2 * arc_height
       - between_offset
       - middle_offset;
