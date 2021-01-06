@@ -73,7 +73,7 @@ import {
   ITournamentRound,
   ITournament,
   ConnectionType,
-} from "../store/tournaments/types";
+} from "@/store/tournaments/types";
 import { ERaceEnum, EGameMode } from "@/store/typings";
 
 import { Gateways } from "@/store/ranking/types";

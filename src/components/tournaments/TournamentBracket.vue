@@ -19,9 +19,11 @@
               <div class="bracket-header">{{ round.name }}</div>
             </div>
             <tournamentMatch
-              @click="matchSelected(match)"
               v-for="(match, matchIndex) in round.matches"
+              style="cursor: pointer"
+              v-on:click.native="matchSelected(match)"
               :key="matchIndex"
+              :date="match.date"
               :topPlayer="match.players[0]"
               :bottomPlayer="match.players[1]"
               :cellHeight="round.dimensions.cellHeight"
@@ -114,11 +116,11 @@ export default class TournamentBracket extends Vue {
     round: ITournamentRound,
     prevRound: ITournamentRound
   ) {
-    let previousHeight = 18;
+    let previousHeight = 20;
     let multiplier = 2;
 
     if (prevRound) {
-      previousHeight = prevRound?.dimensions?.cellHeight || 18;
+      previousHeight = prevRound?.dimensions?.cellHeight || 20;
 
       if (
         prevRound.connectionType == ConnectionType.StraightOpen ||

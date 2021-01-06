@@ -7,6 +7,18 @@
       <v-card-text>
         <v-container>
           <v-row v-if="tournamentMatch">
+            <v-col cols="12">
+              <p>Date</p>
+              <v-text-field
+                color="accent-4"
+                dense
+                clearable
+                single-line
+                shaped
+                label="Date"
+                v-model="date"
+              ></v-text-field>
+            </v-col>
             <v-col cols="12" md="5" v-if="player1">
               <p>Player 1</p>
               <div v-if="player1">
@@ -140,8 +152,24 @@ export default class PlayerAvatar extends Vue {
   public countries: { country: string; countryCode: string }[] = [];
   public races: { name: string; id: ERaceEnum }[] = [];
 
+  public _date: string | undefined;
   public _player1Copy?: ITournamentPlayer;
   public _player2Copy?: ITournamentPlayer;
+
+  get date() {
+    if (!this._date &&
+      this.tournamentMatch &&
+      this.tournamentMatch.date) {
+      this._date = JSON.parse(
+        JSON.stringify(this.tournamentMatch.date)
+      );
+    }
+    return this._date;
+  }
+
+  set date(d) {
+    this._date = d;
+  }
 
   get player1() {
     if (
@@ -171,6 +199,7 @@ export default class PlayerAvatar extends Vue {
 
   saveMatch() {
     if (this.tournamentMatch) {
+      this.tournamentMatch.date = this._date;
       if (this._player1Copy && this._player1Copy.score) {
         this._player1Copy.score = parseInt(this._player1Copy.score?.toString());
       }
@@ -187,6 +216,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   close() {
+    this.date = undefined;
     this._player1Copy = undefined;
     this._player2Copy = undefined;
     this.$emit("modalClosed");

@@ -1,7 +1,7 @@
 <template>
   <div class="bracket-match" v-bind:style="`height: ${cellHeight * 2}px;`">
     <div class="match-part match-top">
-      <div class="match-date" v-if="date">{{ date }}</div>
+      <div class="match-date" v-if="date">{{ formatDate() }}</div>
       <div v-bind:class="getClass(topPlayer, 0)">
         <div class="match-player-name">
           <div class="country-flag__container">
@@ -37,6 +37,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import moment from "moment";
 import {
   ITournamentPlayer,
   ITournamentMatch,
@@ -67,6 +68,12 @@ export default class TournamentMatch extends Vue {
       "match-ud": player.race == ERaceEnum.UNDEAD,
       "match-elf": player.race == ERaceEnum.NIGHT_ELF
     };
+  }
+
+  formatDate() {
+    return moment(this.date).format(
+      this.$t("dateFormats.dateTime").toString()
+    )
   }
 }
 </script>
