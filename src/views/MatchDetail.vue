@@ -12,7 +12,11 @@
                   <br />
                   Season: {{ season }}
                 </v-card-subtitle>
-                <host-icon v-if="match.serverInfo && match.serverInfo.provider" :host="match.serverInfo" style="padding-right: 0px;"></host-icon>
+                <host-icon
+                  v-if="match.serverInfo && match.serverInfo.provider"
+                  :host="match.serverInfo"
+                  style="padding-right: 0px"
+                ></host-icon>
               </v-col>
               <v-col cols="4">
                 <team-match-info
@@ -47,7 +51,6 @@
               </v-col>
               <v-col cols="1" />
             </v-row>
-
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
             This is our {{ gameNumber }} Millionth game!
@@ -168,7 +171,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
     HeroIcon,
     MatchHiglights,
     TeamMatchInfo,
-    HostIcon
+    HostIcon,
   },
 })
 export default class MatchDetailView extends Vue {
@@ -235,16 +238,26 @@ export default class MatchDetailView extends Vue {
   get gameNumber() {
     let number = this.match.number / 1000000;
     switch (number) {
-      case 1: return "one"
-      case 2: return "two"
-      case 3: return "three"
-      case 4: return "four"
-      case 5: return "five"
-      case 6: return "six"
-      case 7: return "seven"
-      case 8: return "eight"
-      case 9: return "nine"
-      default: return "bazillion"
+      case 1:
+        return "one";
+      case 2:
+        return "two";
+      case 3:
+        return "three";
+      case 4:
+        return "four";
+      case 5:
+        return "five";
+      case 6:
+        return "six";
+      case 7:
+        return "seven";
+      case 8:
+        return "eight";
+      case 9:
+        return "nine";
+      default:
+        return "bazillion";
     }
   }
 
@@ -272,12 +285,45 @@ export default class MatchDetailView extends Vue {
   }
 
   get scoresOfWinners() {
-    const scoresOfWinners = this.playerScores.filter(
-      (s) =>
-        this.match.teams[0].players.some((player) =>
+    const winningTeam = this.match.teams[0];
+    let scoresOfWinners = this.playerScores
+      .filter((s) =>
+        winningTeam.players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
         )
-    );
+      )
+      .map((s) => {
+        return {
+          ...s,
+          battleTag: winningTeam.players.find((p) =>
+            p.battleTag.startsWith(s.battleTag)
+          )?.battleTag,
+        };
+      });
+
+    //Check if winners found
+    if (scoresOfWinners.length === 0) {
+      //Winners not found, so try matching without '#' portion of battleTag
+      scoresOfWinners = this.playerScores
+        .filter((s) =>
+          winningTeam.players.some((player) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
+          )
+        )
+        .map((s) => {
+          return {
+            ...s,
+            battleTag: winningTeam.players.find((p) =>
+              s.battleTag
+                .toLowerCase()
+                .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+            )?.battleTag,
+          };
+        });
+    }
+
     const scoresOfWinnersByBattleTag = _keyBy(scoresOfWinners, "battleTag");
 
     return this.match.teams[0].players.map(
@@ -286,12 +332,47 @@ export default class MatchDetailView extends Vue {
   }
 
   get scoresOfLoosers() {
-    const scoresOfLoosers = this.playerScores.filter(
-      (s) =>
-        this.match.teams[1].players.some((player) =>
+    const losingTeam = this.match.teams[1];
+    let scoresOfLoosers = this.playerScores
+      .filter((s) =>
+        losingTeam.players.some((player) =>
           player.battleTag.startsWith(s.battleTag)
         )
-    );
+      )
+      .map((s) => {
+        return {
+          ...s,
+          battleTag: losingTeam.players.find((p) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+          )?.battleTag,
+        };
+      });
+
+    //Check if losers found
+    if (scoresOfLoosers.length === 0) {
+      //Winners not found, so try matching without '#' portion of battleTag
+      scoresOfLoosers = this.playerScores
+        .filter((s) =>
+          losingTeam.players.some((player) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
+          )
+        )
+        .map((s) => {
+          return {
+            ...s,
+            battleTag: losingTeam.players.find((p) =>
+              s.battleTag
+                .toLowerCase()
+                .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+            )?.battleTag,
+          };
+        });
+    }
+    
     const scoresOfLoosersByBattleTag = _keyBy(scoresOfLoosers, "battleTag");
 
     return this.match.teams[1].players.map(
@@ -354,5 +435,4 @@ export default class MatchDetailView extends Vue {
   background-image: url("../assets/giphy.gif") !important;
   background-size: cover !important;
 }
-
 </style>
