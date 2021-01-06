@@ -105,6 +105,8 @@ export default class TournamentMatch extends Vue {
 
 .match-date {
   text-align: center;
+  background: #ebebeb;
+  border: 1px solid #aaaaaa;
 }
 
 .match-player-top,
