@@ -358,7 +358,12 @@ export default class RankingsGrid extends Vue {
         playerInfo.isClassicPicture
       );
     } else {
-      return this.raceIcon(playerInfo.calculatedRace);
+      return getAvatarUrl(
+        playerInfo.selectedRace,
+        playerInfo.pictureId,
+        playerInfo.isClassicPicture
+      );
+      // old way to get race icon: return this.raceIcon(playerInfo.calculatedRace);
     }
   }
 
