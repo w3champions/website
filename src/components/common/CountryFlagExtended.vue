@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom>
     <template v-slot:activator="{ on }">
-      <span v-on="on">
+      <span v-on="on" @click="goToCountryRankings()" class="clickable">
         <country-flag
           v-if="selectedCountryCode"
           class="country-flag"
@@ -44,7 +44,16 @@ export default class CountryFlagExtended extends Vue {
 
     return "";
   }
+
+  goToCountryRankings() {
+    this.$store.direct.dispatch.rankings.setCountry(this.selectedCountryCode);
+    this.$router.push("/Countries");
+  }
 }
 </script>
 
-<style></style>
+<style>
+.clickable {
+  cursor: pointer;
+}
+</style>

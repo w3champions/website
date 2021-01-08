@@ -1,5 +1,5 @@
 import { moduleActionContext } from "..";
-import { Ladder, Ranking, RankingState, Season } from "./types";
+import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -14,9 +14,12 @@ const mod = {
     rankings: [],
     topFive: [],
     searchRanks: [],
+    countryRankings: [],
+    countryRankingsLoading: false,
     gameMode: EGameMode.GM_1ON1,
     seasons: [] as Season[],
     selectedSeason: {} as Season,
+    selectedCountry: "",
   } as RankingState,
   actions: {
     async retrieveRankings(
@@ -55,6 +58,22 @@ const mod = {
         state.selectedSeason.id
       );
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
+    },
+    async getCountryRankings(context: ActionContext<RankingState, RootState>) {
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      commit.SET_COUNTRY_RANKINGS_LOADING(true);
+      const rankings = await rootGetters.rankingService.retrieveCountryRankings(
+        state.selectedCountry,
+        rootState.gateway,
+        EGameMode.GM_1ON1,
+        state.selectedSeason.id
+      );
+      commit.SET_COUNTRY_RANKINGS(rankings);
+      commit.SET_COUNTRY_RANKINGS_LOADING(false);
     },
     async search(
       context: ActionContext<RankingState, RootState>,
@@ -95,6 +114,13 @@ const mod = {
 
       await dispatch.retrieveLeagueConstellation();
       await dispatch.retrieveRankings(undefined);
+    },
+    async setCountry(
+      context: ActionContext<RankingState, RootState>,
+      country: string
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_COUNTRY(country);
     },
     async setGameMode(
       context: ActionContext<RankingState, RootState>,
@@ -140,6 +166,12 @@ const mod = {
     SET_SEARCH_RANKINGS(state: RankingState, rankings: Ranking[]) {
       state.searchRanks = rankings;
     },
+    SET_COUNTRY_RANKINGS(state: RankingState, rankings: CountryRanking[]) {
+      state.countryRankings = rankings;
+    },
+    SET_COUNTRY_RANKINGS_LOADING(state: RankingState, isLoading: boolean) {
+      state.countryRankingsLoading = isLoading;
+    },
     SET_LEAGUE(state: RankingState, league: number) {
       state.league = league;
     },
@@ -154,6 +186,9 @@ const mod = {
     },
     SET_SELECTED_SEASON(state: RankingState, season: Season) {
       state.selectedSeason = season;
+    },
+    SET_COUNTRY(state: RankingState, country: string) {
+      state.selectedCountry = country;
     },
   },
 } as const;
