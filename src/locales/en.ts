@@ -9,7 +9,7 @@ const en = {
   races: {
     ORC: "Orc",
     HUMAN: "Human",
-    UNDEAD: "Undead",
+    UNDEAD: "CoilNovaBoys",
     NIGHT_ELF: "Night Elf",
     RANDOM: "Random",
     TOTAL: "Total",
@@ -162,7 +162,7 @@ const en = {
     wellspringtemple201016: "Wellspring Temple",
     ferocity201016: "Ferocity",
     synergyw3c: "Synergy",
-    featherville: "Featherville"
+    featherville: "Featherville",
   },
 
   heroNames: {

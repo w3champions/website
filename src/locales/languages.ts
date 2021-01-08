@@ -1,9 +1,11 @@
+import localizationData from "./data";
+
 import en from "./en";
-import de from "./de";
+
+// Deep merge localizationData with custom files
 
 const languages = {
-  en: en,
-  de: de
+  en,
 };
 
 export default languages;
