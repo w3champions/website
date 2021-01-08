@@ -151,7 +151,6 @@ import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
 import { EAvatarCategory, EGameMode, ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
-
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";

@@ -69,7 +69,7 @@ const mod = {
       const rankings = await rootGetters.rankingService.retrieveCountryRankings(
         state.selectedCountry,
         rootState.gateway,
-        EGameMode.GM_1ON1,
+        state.gameMode,
         state.selectedSeason.id
       );
       commit.SET_COUNTRY_RANKINGS(rankings);
@@ -121,6 +121,7 @@ const mod = {
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_COUNTRY(country);
+      await dispatch.getCountryRankings();
     },
     async setGameMode(
       context: ActionContext<RankingState, RootState>,

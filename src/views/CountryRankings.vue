@@ -3,6 +3,10 @@
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
         <gateway-select @gatewayChanged="onGatewayChanged" />
+        <game-mode-select
+          :gameMode="selectedGameMode"
+          @gameModeChanged="onGameModeChanged"
+        ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent">
@@ -119,6 +123,7 @@ import { ECountries, Countries } from "@/store/countries";
 import CountryFlag from "vue-country-flag";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
+import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
@@ -127,6 +132,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
   components: {
     LeagueIcon,
     GatewaySelect,
+    GameModeSelect,
     CountryRankingsGrid,
     CountryFlag,
   },
@@ -169,6 +175,10 @@ export default class CountryRankingsView extends Vue {
     );
   }
 
+  get selectedGameMode() {
+    return this.$store.direct.state.rankings.gameMode;
+  }
+
   get selectedSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
   }
@@ -193,6 +203,11 @@ export default class CountryRankingsView extends Vue {
 
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
+    this.refreshRankings();
+  }
+
+  public async onGameModeChanged(gameMode: EGameMode) {
+    await this.$store.direct.dispatch.rankings.setGameMode(gameMode);
     this.refreshRankings();
   }
 
@@ -276,7 +291,6 @@ export default class CountryRankingsView extends Vue {
 
   async setCountry(countryCode: string) {
     await this.$store.direct.dispatch.rankings.setCountry(countryCode);
-    this.refreshRankings();
   }
 
   public playerIsRanked(rank: Ranking): boolean {
@@ -298,7 +312,7 @@ export default class CountryRankingsView extends Vue {
 .country-flag__container {
   margin-right: 10px;
 }
-::v-deep .country-flag {
+.country-flag {
   margin-bottom: -13px !important;
   margin-top: -10px !important;
 }
