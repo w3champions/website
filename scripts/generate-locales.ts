@@ -11,6 +11,7 @@
 require("dotenv").config();
 const fs = require("fs");
 const set = require("lodash.set");
+const prettier = require("prettier");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const doc = new GoogleSpreadsheet(
@@ -32,10 +33,12 @@ async function main() {
     }
   }
 
-  await fs.writeFileSync(
-    "src/locales/data.json",
-    JSON.stringify(locales, null, 2)
+  const fileContent = prettier.format(
+    `const data = ${JSON.stringify(locales, null, 2)};export default data;`,
+    { parser: "babel" }
   );
+
+  await fs.writeFileSync("src/locales/data.ts", fileContent);
 }
 
 main();
