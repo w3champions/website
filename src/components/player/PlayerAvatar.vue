@@ -20,7 +20,11 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <div v-on="on" class="country__container">
+            <div
+              v-on="on"
+              class="country__container clickable"
+              @click="goToCountryRankings()"
+            >
               <country-flag
                 v-if="selectedCountryCode != ''"
                 class="player-country"
@@ -585,6 +589,12 @@ export default class PlayerAvatar extends Vue {
 
     this.dialogOpened = false;
   }
+
+  goToCountryRankings() {
+    this.$store.direct.dispatch.rankings.setCountry(this.selectedCountryCode);
+    this.$router.push("/Countries");
+  }
+
   mounted() {
     this.init();
   }
