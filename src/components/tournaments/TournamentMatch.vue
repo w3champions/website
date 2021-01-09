@@ -78,7 +78,7 @@ export default class TournamentMatch extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .match-top,
 .match-bottom {
   height: 50%;
