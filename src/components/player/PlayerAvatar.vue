@@ -591,8 +591,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   goToCountryRankings() {
-    this.$store.direct.dispatch.rankings.setCountry(this.selectedCountryCode);
-    this.$router.push("/Countries");
+    this.$router.push(`/Countries?country=${this.selectedCountryCode}`);
   }
 
   mounted() {

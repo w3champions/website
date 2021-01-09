@@ -35,7 +35,7 @@
                 <v-list-item
                   v-for="item in countries"
                   :key="item.countryCode"
-                  @click="setCountry(item.countryCode)"
+                  @click="selectCountry(item.countryCode)"
                 >
                   <v-list-item-content>
                     <v-list-item-title>
@@ -110,7 +110,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import {
   CountryRanking,
   Gateways,
@@ -146,6 +146,12 @@ export default class CountryRankingsView extends Vue {
   @Prop() season!: number;
   @Prop() gateway!: Gateways;
   @Prop() country!: string;
+
+  @Watch("country")
+  onCountryChanged(newValue: string, oldValue: string) {
+    this.setCountry(newValue);
+  }
+
   private _intervalRefreshHandle: any = {};
 
   get selectedCountryCode() {
@@ -211,14 +217,12 @@ export default class CountryRankingsView extends Vue {
     this.refreshRankings();
   }
 
+  selectCountry(countryCode: string) {
+    this.$router.push(`/Countries?country=${countryCode}`);
+  }
+
   async mounted() {
     window.scrollTo(0, 0);
-
-    let country =
-      this.country || this.selectedCountryCode || this.countries[0].countryCode;
-
-    await this.$store.direct.commit.rankings.SET_COUNTRY_RANKINGS_LOADING(true);
-    await this.$store.direct.dispatch.rankings.setCountry(country);
 
     if (this.season) {
       this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
@@ -229,9 +233,15 @@ export default class CountryRankingsView extends Vue {
       this.$store.direct.commit.SET_GATEWAY(this.gateway);
     }
 
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    await this.refreshRankings();
+    let country =
+      this.country || this.selectedCountryCode || this.countries[0].countryCode;
+
+    await this.$store.direct.dispatch.rankings.setCountry(country);
     this.initialized = true;
+
+    await this.loadOngoingMatches();
+    await this.getLadders();
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
