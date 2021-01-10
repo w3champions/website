@@ -32,7 +32,9 @@
         :to="item.to"
         :class="item.class"
       >
-        <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
+        <span class="mr-2 hidden-xs-only">
+          {{ $t(`views_app.${item.title}`) }}
+        </span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
@@ -79,10 +81,10 @@
             <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
-            <v-list-item-title>Night Elf</v-list-item-title>
+            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'undead'">
-            <v-list-item-title>Undead</v-list-item-title>
+            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -133,32 +135,32 @@ export default class App extends Vue {
 
   public items = [
     {
-      title: "Tournaments",
+      title: "tournaments",
       icon: "mdi-trophy",
       to: "/tournaments",
     },
     {
-      title: "Rankings",
+      title: "rankings",
       icon: "mdi-view-list",
       to: `/Rankings`,
     },
     {
-      title: "Matches",
+      title: "matches",
       icon: "mdi-controller-classic",
       to: "/Matches",
     },
     {
-      title: "Statistics",
+      title: "statistics",
       icon: "mdi-chart-areaspline",
       to: "/OverallStatistics",
     },
     {
-      title: "Admin",
+      title: "admin",
       icon: "mdi-account-tie",
       to: "/AdminOnlyView",
     },
     {
-      title: "FAQ",
+      title: "faq",
       icon: "mdi-help-circle-outline",
       to: "/Faq",
       class: "d-none d-md-flex",

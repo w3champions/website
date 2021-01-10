@@ -1,5 +1,13 @@
 const data = {
   en: {
+    views_app: {
+      tournaments: "Tournaments",
+      rankings: "Rankings",
+      matches: "Matches",
+      statistics: "Statistics",
+      admin: "Admin",
+      faq: "FAQ",
+    },
     views_admin: {
       adminpage: "Administration Page",
       bannedplayers: "Banned Players",
@@ -347,7 +355,7 @@ const data = {
     components_tournaments_tournamentselect: {
       selecttourney: "Select a tournament:",
     },
-    locales_en_races: {
+    races: {
       ORC: "Orc",
       HUMAN: "Human",
       UNDEAD: "Undead",
@@ -355,14 +363,14 @@ const data = {
       RANDOM: "Random",
       TOTAL: "Total",
     },
-    locales_en_racesShort: {
+    racesShort: {
       ORC: "OC",
       HUMAN: "HU",
       UNDEAD: "UD",
       NIGHT_ELF: "NE",
       RANDOM: "RnD",
     },
-    locales_en_gameModes: {
+    gameModes: {
       UNDEFINED: "All",
       GM_1ON1: "1 vs 1",
       GM_2ON2: "2 vs 2",
@@ -370,11 +378,11 @@ const data = {
       GM_4ON4: "4 vs 4",
       GM_FFA: "FFA",
     },
-    locales_en_gatewayNames: {
+    gatewayNames: {
       Europe: "Europe",
       America: "America",
     },
-    locales_en_mmrLeagueRanges: {
+    mmrLeagueRanges: {
       MMR_0: "all",
       MMR_2200: "> 2200 (~Grandmaster)",
       MMR_2000: "> 2000 (~Master)",
@@ -384,10 +392,10 @@ const data = {
       MMR_1200: "> 1200 (~Silver)",
       MMR_1000: "> 1000 (~Bronze)",
     },
-    locales_en_mapNames: {
+    mapNames: {
       Overall: "Overall",
     },
-    locales_en_heroNames: {
+    heroNames: {
       all: "Any hero selection",
       none: "No hero selection",
       archmage: "Archmage",
@@ -415,12 +423,20 @@ const data = {
       tinker: "Goblin Tinker",
       warden: "Warden",
     },
-    locales_en_matchStatuses: {
+    matchStatuses: {
       onGoing: "Now Playing",
       past: "Finished",
     },
   },
   de: {
+    views_app: {
+      tournaments: "",
+      rankings: "",
+      matches: "",
+      statistics: "",
+      admin: "",
+      faq: "",
+    },
     views_admin: {
       adminpage: "Administrationsseite",
       bannedplayers: "Gebannte Spieler",
@@ -766,7 +782,7 @@ const data = {
     components_tournaments_tournamentselect: {
       selecttourney: "Turnier auswählen:",
     },
-    locales_en_races: {
+    races: {
       ORC: "Orks",
       HUMAN: "Menschen",
       UNDEAD: "Untote",
@@ -774,14 +790,14 @@ const data = {
       RANDOM: "Zufall",
       TOTAL: "Gesamt",
     },
-    locales_en_racesShort: {
+    racesShort: {
       ORC: "OC",
       HUMAN: "HU",
       UNDEAD: "UD",
       NIGHT_ELF: "NE",
       RANDOM: "RnD",
     },
-    locales_en_gameModes: {
+    gameModes: {
       UNDEFINED: "Alle",
       GM_1ON1: "1 vs 1",
       GM_2ON2: "2 vs 2",
@@ -789,11 +805,11 @@ const data = {
       GM_4ON4: "4 vs 4",
       GM_FFA: "FFA",
     },
-    locales_en_gatewayNames: {
+    gatewayNames: {
       Europe: "Europa",
       America: "Amerika",
     },
-    locales_en_mmrLeagueRanges: {
+    mmrLeagueRanges: {
       MMR_0: "alle",
       MMR_2200: "> 2200 (~Großmeister)",
       MMR_2000: "> 2000 (~Meister)",
@@ -803,10 +819,10 @@ const data = {
       MMR_1200: "> 1200 (~Silber)",
       MMR_1000: "> 1000 (~Bronze)",
     },
-    locales_en_mapNames: {
+    mapNames: {
       Overall: "Gesamt",
     },
-    locales_en_heroNames: {
+    heroNames: {
       all: "Jegliche Heldenauswahl",
       none: "Keine Heldenauswahl",
       archmage: "Erzmagier",
@@ -834,12 +850,20 @@ const data = {
       tinker: "Goblin-Kesselflicker",
       warden: "Wächterin",
     },
-    locales_en_matchStatuses: {
+    matchStatuses: {
       onGoing: "Spielt jetzt",
       past: "Beendet",
     },
   },
   kr: {
+    views_app: {
+      tournaments: "토너먼트",
+      rankings: "랭킹",
+      matches: "경기",
+      statistics: "통계",
+      admin: "관리",
+      faq: "문의사항",
+    },
     views_admin: {
       adminpage: "관리 페이지",
       bannedplayers: "정지 플레이어",
@@ -1181,7 +1205,7 @@ const data = {
     components_tournaments_tournamentselect: {
       selecttourney: "토너먼트 선택",
     },
-    locales_en_races: {
+    races: {
       ORC: "오크",
       HUMAN: "휴먼",
       UNDEAD: "언데드",
@@ -1189,14 +1213,14 @@ const data = {
       RANDOM: "무작위",
       TOTAL: "합계",
     },
-    locales_en_racesShort: {
+    racesShort: {
       ORC: "OC",
       HUMAN: "HU",
       UNDEAD: "UD",
       NIGHT_ELF: "NE",
       RANDOM: "RD",
     },
-    locales_en_gameModes: {
+    gameModes: {
       UNDEFINED: "전체",
       GM_1ON1: "1 대 1",
       GM_2ON2: "2 대 2",
@@ -1204,11 +1228,11 @@ const data = {
       GM_4ON4: "4 대 4",
       GM_FFA: "FFA",
     },
-    locales_en_gatewayNames: {
+    gatewayNames: {
       Europe: "유럽",
       America: "북미",
     },
-    locales_en_mmrLeagueRanges: {
+    mmrLeagueRanges: {
       MMR_0: "전체",
       MMR_2200: "> 2200 (~그랜드마스터)",
       MMR_2000: "> 2000 (~마스터)",
@@ -1218,10 +1242,10 @@ const data = {
       MMR_1200: "> 1200 (~실버)",
       MMR_1000: "> 1000 (~브론즈)",
     },
-    locales_en_mapNames: {
+    mapNames: {
       Overall: "전체",
     },
-    locales_en_heroNames: {
+    heroNames: {
       all: "영웅 선택",
       none: "영웅 선택 없음",
       archmage: "아크메이지",
@@ -1249,7 +1273,7 @@ const data = {
       tinker: "고블린 팅커",
       warden: "워든",
     },
-    locales_en_matchStatuses: {
+    matchStatuses: {
       onGoing: "게임 중",
       past: "종료",
     },
