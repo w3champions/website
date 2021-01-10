@@ -6,48 +6,6 @@ const en = {
     timeLong: "H:mm:ss",
   },
 
-  races: {
-    ORC: "Orc",
-    HUMAN: "Human",
-    UNDEAD: "CoilNovaBoys",
-    NIGHT_ELF: "Night Elf",
-    RANDOM: "Random",
-    TOTAL: "Total",
-  },
-
-  racesShort: {
-    ORC: "OC",
-    HUMAN: "HU",
-    UNDEAD: "UD",
-    NIGHT_ELF: "NE",
-    RANDOM: "RnD",
-  },
-
-  gameModes: {
-    UNDEFINED: "All",
-    GM_1ON1: "1 vs 1",
-    GM_2ON2: "2 vs 2",
-    GM_2ON2_AT: "2 vs 2 AT",
-    GM_4ON4: "4 vs 4",
-    GM_FFA: "FFA",
-  },
-
-  gatewayNames: {
-    Europe: "Europe",
-    America: "America",
-  },
-
-  mmrLeagueRanges: {
-    MMR_0: "all",
-    MMR_2200: "> 2200 (~Grandmaster)",
-    MMR_2000: "> 2000 (~Master)",
-    MMR_1800: "> 1800 (~Diamond)",
-    MMR_1600: "> 1600 (~Platin)",
-    MMR_1400: "> 1400 (~Gold)",
-    MMR_1200: "> 1200 (~Silver)",
-    MMR_1000: "> 1000 (~Bronze)",
-  },
-
   mapNames: {
     Overall: "Overall",
     twistedmeadows: "Twisted Meadows",
@@ -192,11 +150,6 @@ const en = {
     taurenchieftain: "Tauren Chieftain",
     tinker: "Goblin Tinker",
     warden: "Warden",
-  },
-
-  matchStatuses: {
-    onGoing: "Now Playing",
-    past: "Finished",
   },
 };
 
