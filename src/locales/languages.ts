@@ -5,5 +5,4 @@ import en from "./en";
 export const ACTIVE_LANGUAGES = ["en", "de"];
 
 const languages = deepmerge(localizationData, { en });
-
 export default languages;
