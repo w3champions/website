@@ -13,13 +13,14 @@ const fs = require("fs");
 const set = require("lodash.set");
 const prettier = require("prettier");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
+import constants from "../src/constants";
 
 const doc = new GoogleSpreadsheet(
   "1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok"
 );
 doc.useApiKey(process.env.GOOGLE_API_KEY);
 
-const languages = ["en", "de"]; // , "kr", "zh"
+const languages = constants.activeLanguages || ["en", "de"];
 const locales = {};
 
 async function main() {
