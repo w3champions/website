@@ -1,11 +1,9 @@
+import deepmerge from "deepmerge";
 import localizationData from "./data";
-
 import en from "./en";
 
-// Deep merge localizationData with custom files
+export const ACTIVE_LANGUAGES = ["en", "de"];
 
-const languages = {
-  en,
-};
+const languages = deepmerge(localizationData, { en });
 
 export default languages;
