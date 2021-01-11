@@ -275,7 +275,7 @@ export default class MatchDetailView extends Vue {
     const scoresOfWinners = this.playerScores.filter(
       (s) =>
         this.match.teams[0].players.some((player) =>
-          player.battleTag.startsWith(s.battleTag)
+          s.battleTag.startsWith(player.battleTag)
         )
     );
     const scoresOfWinnersByBattleTag = _keyBy(scoresOfWinners, "battleTag");
@@ -289,7 +289,7 @@ export default class MatchDetailView extends Vue {
     const scoresOfLoosers = this.playerScores.filter(
       (s) =>
         this.match.teams[1].players.some((player) =>
-          player.battleTag.startsWith(s.battleTag)
+          s.battleTag.startsWith(player.battleTag)
         )
     );
     const scoresOfLoosersByBattleTag = _keyBy(scoresOfLoosers, "battleTag");
