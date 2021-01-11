@@ -5,11 +5,13 @@
         <v-card tile>
           <v-card-title class="justify-space-between">
             <div
-              style="display: flex; flex-direction: row; align-items: center;"
+              style="display: flex; flex-direction: row; align-items: center"
             >
-              <span>Profile of {{ profile.battleTag }}</span>
+              <span>
+                {{ $t("views_player.profile") }} {{ profile.battleTag }}
+              </span>
               <div
-                style="display: flex; flex-direction: row; margin-left: 25px;"
+                style="display: flex; flex-direction: row; margin-left: 25px"
               >
                 <SeasonBadge
                   v-for="season in seasonsWithoutCurrentOne"
@@ -27,10 +29,10 @@
                     tile
                     v-on="on"
                     class="ma-2"
-                    style="background-color: transparent;"
+                    style="background-color: transparent"
                   >
                     <span class="pa-0" v-if="selectedSeason">
-                      Season {{ selectedSeason.id }}
+                      {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
                     </span>
                   </v-btn>
                 </template>
@@ -38,7 +40,9 @@
                   <v-card-text>
                     <v-list>
                       <v-list-item-content>
-                        <v-list-item-title>Previous seasons:</v-list-item-title>
+                        <v-list-item-title>
+                          {{ $t("views_player.prevseasons") }}
+                        </v-list-item-title>
                       </v-list-item-content>
                     </v-list>
                     <v-list dense>
@@ -49,7 +53,7 @@
                       >
                         <v-list-item-content>
                           <v-list-item-title>
-                            Season {{ item.id }}
+                            {{ $t("views_rankings.season") }} {{ item.id }}
                           </v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
@@ -91,50 +95,55 @@
               </div>
             </div>
             <div v-if="isOngoingMatchFFA" class="live-match__ffa">
-              Playing FFA
+              {{ $t("views_player.playingFFA") }}
             </div>
             <span class="live-match__map">
               {{ $t("mapNames." + ongoingMatch.map) }}
             </span>
           </div>
 
-          <v-container style="padding-top: 6px;">
+          <v-container style="padding-top: 6px">
             <v-row align="center" justify="center">
-                <host-icon v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider" :host="ongoingMatch.serverInfo"></host-icon>
+              <host-icon
+                v-if="
+                  ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider
+                "
+                :host="ongoingMatch.serverInfo"
+              ></host-icon>
             </v-row>
           </v-container>
-          
+
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}`"
             >
-              Profile
+              {{ $t("views_player.profile") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
             >
-              Match History
+              {{ $t("views_player.matchhistory") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
             >
-              Teams
+              {{ $t("views_player.teams") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
             >
-              Statistics
+              {{ $t("views_player.statistics") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
             >
-              Clan
+              {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
           <keep-alive>
@@ -336,7 +345,10 @@ export default class PlayerView extends Vue {
   private async init() {
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile({battleTag: this.battleTag, freshLogin: this.freshLogin});
+    await this.$store.direct.dispatch.player.loadProfile({
+      battleTag: this.battleTag,
+      freshLogin: this.freshLogin,
+    });
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
@@ -351,7 +363,7 @@ export default class PlayerView extends Vue {
         this.battleTag
       );
     }, AppConstants.ongoingMatchesRefreshInterval);
-  this.$store.direct.commit.player.SET_INITIALIZED();
+    this.$store.direct.commit.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 
