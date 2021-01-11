@@ -95,8 +95,9 @@ const data = {
       manualmacbody17: "DELETE Warcraft III_retail_\\Maps",
       manualmacbody18:
         "5. You need to set a registry (Installer is doing this automatically)",
-      manualmacbody19:
-        'Copy command defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19: "Copy command",
+      manualmacbody19_1:
+        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Open terminal",
       manualmacbody21: "Paste command and execute by pressing Enter key.",
       manualmacbody22: "Run Warcraft 3. You should see W3Champions.",
@@ -134,9 +135,11 @@ const data = {
       loggingyouin: "Logging you in...",
     },
     views_matchdetail: {
-      seasonsc: "Season:",
+      season: "Season:",
       vs: "VS",
       incompletedata: "Sorry, but this games seems to have incomplete data",
+      jubileeGameNumber: "This is our {gameNumber} Millionth game!",
+      jubileeGameMessage: "Congratulations to W3C and the community!",
     },
     views_statistics: {
       w3cstats: "Statistics of W3Champions",
@@ -563,7 +566,7 @@ const data = {
       loggingyouin: "Logge Dich ein...",
     },
     views_matchdetail: {
-      seasonsc: "Saison:",
+      season: "Saison:",
       vs: "VS",
       incompletedata: "Sorry, dieses Spiel hat unvollständige Daten",
     },
@@ -989,7 +992,7 @@ const data = {
       loggingyouin: "접속중입니다.",
     },
     views_matchdetail: {
-      seasonsc: "시즌",
+      season: "시즌",
       vs: "대전",
       incompletedata: "경기 데이터가 부족합니다.",
     },
