@@ -7,13 +7,13 @@
         indeterminate
         class="loader"
       >
-        <div class="inner-text">Logging you in...</div>
+        <div class="inner-text">{{ $t("views_login.loggingyouin") }}</div>
       </v-progress-circular>
     </v-card>
   </v-container>
 </template>
 <script lang="ts">
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -44,7 +44,6 @@ export default class LoginView extends Vue {
       path: getProfileUrl(this.account) + `?freshLogin=true`,
     });
   }
-
 }
 </script>
 <style type="text/css" scoped>
