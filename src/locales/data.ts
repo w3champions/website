@@ -268,33 +268,33 @@ const data = {
       total: "| Total:",
       wltdotdotdot: "Wins: ... | Losses: ... | Total: ...",
     },
-    "components_overal-statistics_tabs_herotab": {
+    "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Picked Heroes",
     },
-    "components_overal-statistics_tabs_mmrdistributiontab": {
+    "components_overall-statistics_tabs_mmrdistributiontab": {
       purplebarsdesc:
         "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
       greenbardesc: "The green line shows where you are in the distribution.",
     },
-    "components_overal-statistics_tabs_playeractivitytab": {
+    "components_overall-statistics_tabs_playeractivitytab": {
       gamemodedesc1:
         "Game Modes are normalized to compare their popularity more easily:",
       gamemodedesc2:
         "2v2 and FFA games are counted twice, 4v4 games are counted four times",
     },
-    "components_overal-statistics_tabs_winratestab": {
+    "components_overall-statistics_tabs_winratestab": {
       vshu: "vs Human",
       vsorc: "vs Orc",
       vsud: "vs Undead",
       vsne: "vs Night Elf",
     },
-    "components_overal-statistics_heropictureselect": {
+    "components_overall-statistics_heropictureselect": {
       anyhero: "Any hero selection",
     },
-    "components_overal-statistics_herowinrate": {
+    "components_overall-statistics_herowinrate": {
       winratesofheromu: "Winrates of hero matchups",
     },
-    "components_overal-statistics_racetomapstat": {
+    "components_overall-statistics_racetomapstat": {
       nogamesplayed: "No games played with this race yet.",
       map: "Map",
       vshu: "vs Human",
@@ -697,31 +697,31 @@ const data = {
       total: "| Gesamt:",
       wltdotdotdot: "Siege: ... | Niederlagen: ... | Gesamt: ...",
     },
-    "components_overal-statistics_tabs_herotab": {
+    "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Ausgewählte Helden",
     },
-    "components_overal-statistics_tabs_mmrdistributiontab": {
+    "components_overall-statistics_tabs_mmrdistributiontab": {
       purplebarsdesc:
         "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
       greenbardesc: "Die grüne Linie zeigt deinen Platz in der Verteilung.",
     },
-    "components_overal-statistics_tabs_playeractivitytab": {
+    "components_overall-statistics_tabs_playeractivitytab": {
       gamemodedesc1: "Spielmodi werden nach ihrer Spieleranzahl genormt:",
       gamemodedesc2: "2vs2 und FFA zählen doppelt, 4vs4 zählt vierfach.",
     },
-    "components_overal-statistics_tabs_winratestab": {
+    "components_overall-statistics_tabs_winratestab": {
       vshu: "vs Menschen",
       vsorc: "vs Orks",
       vsud: "vs Untote",
       vsne: "vs Nachtelfen",
     },
-    "components_overal-statistics_heropictureselect": {
+    "components_overall-statistics_heropictureselect": {
       anyhero: "Jegliche Helden",
     },
-    "components_overal-statistics_herowinrate": {
+    "components_overall-statistics_herowinrate": {
       winratesofheromu: "Siegrate von Helden-Matchups",
     },
-    "components_overal-statistics_racetomapstat": {
+    "components_overall-statistics_racetomapstat": {
       nogamesplayed: "Noch kein Spiel mit dieser Rasse.",
       map: "Map",
       vshu: "vs Menschen",
@@ -1123,31 +1123,31 @@ const data = {
       total: "합계",
       wltdotdotdot: "승: ... | 패: ... | 합계: ...",
     },
-    "components_overal-statistics_tabs_herotab": {
+    "components_overall-statistics_tabs_herotab": {
       pickedheroes: "영웅 선택",
     },
-    "components_overal-statistics_tabs_mmrdistributiontab": {
+    "components_overall-statistics_tabs_mmrdistributiontab": {
       purplebarsdesc:
         "보라색 바는 상위 2%, 5%, 10%, 25% and 50% 를 표시 합니다",
       greenbardesc: "녹색 선은 당신의 위치를 나타냅니다",
     },
-    "components_overal-statistics_tabs_playeractivitytab": {
+    "components_overall-statistics_tabs_playeractivitytab": {
       gamemodedesc1: "게임모드는 인기를 쉽게 비교할 수 있도록 표준화 됩니다.",
       gamemodedesc2: "2대2와 FFA는 2번, 4대4는 4번 계산됩니다.",
     },
-    "components_overal-statistics_tabs_winratestab": {
+    "components_overall-statistics_tabs_winratestab": {
       vshu: "vs 휴먼",
       vsorc: "vs 오크",
       vsud: "vs 언데드",
       vsne: "vs 나이트엘프",
     },
-    "components_overal-statistics_heropictureselect": {
+    "components_overall-statistics_heropictureselect": {
       anyhero: "영웅 선택",
     },
-    "components_overal-statistics_herowinrate": {
+    "components_overall-statistics_herowinrate": {
       winratesofheromu: "상대 영웅별 승률",
     },
-    "components_overal-statistics_racetomapstat": {
+    "components_overall-statistics_racetomapstat": {
       nogamesplayed: "종족 플레이 기록 없음",
       map: "맵",
       vshu: "vs 휴먼",
