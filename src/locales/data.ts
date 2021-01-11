@@ -155,15 +155,19 @@ const data = {
       teams: "Teams",
       statistics: "Statistics",
       clan: "Clan",
+      playingFFA: "Playing FFA",
     },
     views_rankings: {
       selectleague: "Select a league:",
-      wlt: "Wins: | Losses: | Total:",
+      wins: "Wins:",
+      losses: "Losses:",
+      total: "Total:",
       unranked: "Unranked",
       prevseasons: "Previous seasons:",
       season: "Season",
       racedist: "Race distribution",
       stats: "Stats",
+      searchPlaceholder: "Start typing to Search",
     },
     views_tournaments: {
       tourney_donate: "Donate to prize pool",
@@ -587,7 +591,7 @@ const data = {
     },
     views_rankings: {
       selectleague: "Wähle eine Liga:",
-      wlt: "Siege: | Niederlagen: | Gesamt:",
+      wins: "Siege: | Niederlagen: | Gesamt:",
       unranked: "Ohne Rang",
       prevseasons: "Vergangene Saisons:",
       season: "Saison",
@@ -1013,7 +1017,7 @@ const data = {
     },
     views_rankings: {
       selectleague: "리그 선택",
-      wlt: "승리: | 패배 : | 합계:",
+      wins: "승리: | 패배 : | 합계:",
       unranked: "배치 전",
       prevseasons: "지난 시즌",
       season: "시즌",
