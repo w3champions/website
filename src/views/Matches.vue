@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            Matches
+            {{ $t("views_app.matches") }}
           </v-card-title>
           <v-card-text>
             <matches-status-select />
