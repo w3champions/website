@@ -333,47 +333,36 @@ export default class MatchDetailView extends Vue {
     await this.$store.direct.dispatch.matches.loadMatchDetail(this.matchId);
   }
 
-  private getPlayerScores(team: Team) : PlayerScore[] {
+  private getPlayerScores(team: Team): PlayerScore[] {
     let scores: PlayerScore[] = this.playerScores
       .filter((s) =>
-        team.players.some((player) =>
-          player.battleTag.startsWith(s.battleTag)
-        )
-      );
-
-    //Check if losers found
-    if (scores.length === 0) {
-      //Winners not found, so try matching without '#' portion of battleTag
-      scores = this.playerScores
-        .filter((s) =>
-          team.players.some((player) =>
+        team.players.some(
+          (player) =>
+            player.battleTag.startsWith(s.battleTag) ||
             s.battleTag
               .toLowerCase()
               .includes(player.battleTag.toLowerCase().split("#", 1)[0])
-          )
         )
-        .map((s) => {
-          const matchedPlayer = team.players.find((p) =>
-            s.battleTag
-              .toLowerCase()
-              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-          );
-          return {
-            ...s,
-            battleTag: matchedPlayer?.battleTag ?? "",
-          };
-        });
-    }
+      )
+      .map((s) => {
+        // Use the battleTag from the Player record
+        // since it is sometimes incorrect on the PlayerScore record
+        const matchedPlayer = team.players.find((p) =>
+          s.battleTag
+            .toLowerCase()
+            .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+        );
+        return {
+          ...s,
+          battleTag: matchedPlayer?.battleTag ?? "",
+        };
+      });
 
     const playerScoreDictionary = _keyBy(scores, "battleTag");
 
     return team.players.map(
       (player) => playerScoreDictionary[player.battleTag]
     );
-  }
-
-  private findPlayerScore() {
-    
   }
 }
 </script>
