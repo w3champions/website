@@ -160,9 +160,10 @@ import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode, PlayerScore, Team } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
+import { Dictionary } from "vue-router/types/router";
 
 @Component({
   components: {
@@ -286,98 +287,12 @@ export default class MatchDetailView extends Vue {
 
   get scoresOfWinners() {
     const winningTeam = this.match.teams[0];
-    let scoresOfWinners = this.playerScores
-      .filter((s) =>
-        winningTeam.players.some((player) =>
-          player.battleTag.startsWith(s.battleTag)
-        )
-      )
-      .map((s) => {
-        return {
-          ...s,
-          battleTag: winningTeam.players.find((p) =>
-            p.battleTag.startsWith(s.battleTag)
-          )?.battleTag,
-        };
-      });
-
-    //Check if winners found
-    if (scoresOfWinners.length === 0) {
-      //Winners not found, so try matching without '#' portion of battleTag
-      scoresOfWinners = this.playerScores
-        .filter((s) =>
-          winningTeam.players.some((player) =>
-            s.battleTag
-              .toLowerCase()
-              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
-          )
-        )
-        .map((s) => {
-          return {
-            ...s,
-            battleTag: winningTeam.players.find((p) =>
-              s.battleTag
-                .toLowerCase()
-                .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-            )?.battleTag,
-          };
-        });
-    }
-
-    const scoresOfWinnersByBattleTag = _keyBy(scoresOfWinners, "battleTag");
-
-    return this.match.teams[0].players.map(
-      (player) => scoresOfWinnersByBattleTag[player.battleTag]
-    );
+    return this.getPlayerScores(winningTeam);
   }
 
   get scoresOfLoosers() {
     const losingTeam = this.match.teams[1];
-    let scoresOfLoosers = this.playerScores
-      .filter((s) =>
-        losingTeam.players.some((player) =>
-          player.battleTag.startsWith(s.battleTag)
-        )
-      )
-      .map((s) => {
-        return {
-          ...s,
-          battleTag: losingTeam.players.find((p) =>
-            s.battleTag
-              .toLowerCase()
-              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-          )?.battleTag,
-        };
-      });
-
-    //Check if losers found
-    if (scoresOfLoosers.length === 0) {
-      //Winners not found, so try matching without '#' portion of battleTag
-      scoresOfLoosers = this.playerScores
-        .filter((s) =>
-          losingTeam.players.some((player) =>
-            s.battleTag
-              .toLowerCase()
-              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
-          )
-        )
-        .map((s) => {
-          return {
-            ...s,
-            battleTag: losingTeam.players.find((p) =>
-              s.battleTag
-                .toLowerCase()
-                .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-            )?.battleTag,
-          };
-        });
-    }
-    
-    const scoresOfLoosersByBattleTag = _keyBy(scoresOfLoosers, "battleTag");
-
-    return this.match.teams[1].players.map(
-      (player) => scoresOfLoosersByBattleTag[player.battleTag]
-    );
+    return this.getPlayerScores(losingTeam);
   }
 
   get ffaWinner() {
@@ -416,6 +331,49 @@ export default class MatchDetailView extends Vue {
 
   private async init() {
     await this.$store.direct.dispatch.matches.loadMatchDetail(this.matchId);
+  }
+
+  private getPlayerScores(team: Team) : PlayerScore[] {
+    let scores: PlayerScore[] = this.playerScores
+      .filter((s) =>
+        team.players.some((player) =>
+          player.battleTag.startsWith(s.battleTag)
+        )
+      );
+
+    //Check if losers found
+    if (scores.length === 0) {
+      //Winners not found, so try matching without '#' portion of battleTag
+      scores = this.playerScores
+        .filter((s) =>
+          team.players.some((player) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
+          )
+        )
+        .map((s) => {
+          const matchedPlayer = team.players.find((p) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+          );
+          return {
+            ...s,
+            battleTag: matchedPlayer?.battleTag ?? "",
+          };
+        });
+    }
+
+    const playerScoreDictionary = _keyBy(scores, "battleTag");
+
+    return team.players.map(
+      (player) => playerScoreDictionary[player.battleTag]
+    );
+  }
+
+  private findPlayerScore() {
+    
   }
 }
 </script>
