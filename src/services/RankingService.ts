@@ -1,4 +1,10 @@
-import { Ranking, Gateways, Ladder, Season } from "@/store/ranking/types";
+import {
+  Ranking,
+  Gateways,
+  Ladder,
+  Season,
+  CountryRanking,
+} from "@/store/ranking/types";
 import { API_URL } from "@/main";
 import { EGameMode } from "@/store/typings";
 
@@ -10,6 +16,18 @@ export default class RankingService {
     season: number
   ): Promise<Ranking[]> {
     const url = `${API_URL}api/ladder/${leagueId}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public async retrieveCountryRankings(
+    countryCode: string,
+    gateway: Gateways,
+    gameMode: EGameMode,
+    season: number
+  ): Promise<CountryRanking[]> {
+    const url = `${API_URL}api/ladder/country/${countryCode}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
