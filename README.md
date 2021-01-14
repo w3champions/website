@@ -27,8 +27,8 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Authenticating as Admin
-1) Clone the backend https://github.com/w3champions/w3champions-statistic-service
-2) Open this file https://github.com/w3champions/w3champions-statistic-service/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs and just return an Object that Contains your battletag and IsAdmin = true like
+1) Clone the backend https://github.com/w3champions/w3champions-chat-service
+2) Open this file https://github.com/w3champions/w3champions-chat-service/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs and just return an Object that Contains your battletag and IsAdmin = true like
 ```
 public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 {
@@ -44,3 +44,6 @@ public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 3) Run the project (F5) in visual studio. This usually opens a browser window with blank page. Copy the url of the page (eg. https://localhost:44336/).
 4) Change the `BASE_URL` of ui to the backend url you just copied: https://github.com/w3champions/w3champions-ui/blob/master/public/env.js#L3
 6) You should be able to login as admin.
+
+### Running a Pull Request Environment
+- rename the file _pull-request-docker-compose.yml to pull-request-docker-compose.yml and create the PR
