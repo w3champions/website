@@ -17,10 +17,12 @@ steps:
           Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IsLatest]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
-          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
+          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_"))) {
             $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
             Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
             Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
+          } else {
+            Remove-Item docker-compose.token.yml
           }
         }
 
