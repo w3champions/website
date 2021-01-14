@@ -4,7 +4,6 @@ pool:
   vmImage: "ubuntu-18.04"
 
 variables:
-  - group: Secrets
   - name: TAG
     value: dev-$(System.PullRequest.PullRequestNumber)
   - name: PR_NAME
@@ -19,8 +18,6 @@ steps:
 
   - task: PowerShell@2
     displayName: set docker tag and pipeline tag
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
     inputs:
       targetType: "inline"
       script: |
