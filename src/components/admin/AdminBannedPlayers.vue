@@ -11,7 +11,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
-              Add Player
+              {{ $t("views_admin.addplayer") }}
             </v-btn>
           </template>
           <v-card>
@@ -38,7 +38,7 @@
                         <v-text-field
                           v-model="editedItem.endDate"
                           readonly
-                          label="Ban End Date"
+                          label="{{ $t(`views_admin.banenddate`) }}"
                           v-bind="attrs"
                           v-on="on"
                         />
@@ -53,18 +53,14 @@
                           text
                           color="primary"
                           @click="
-                                  editedItem.endDate = '';
-                                  dateMenu = false;
-                                "
+                            editedItem.endDate = '';
+                            dateMenu = false;
+                          "
                         >
-                          Cancel
+                          {{ $t(`views_admin.cancel`) }}
                         </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="dateMenu = false"
-                        >
-                          OK
+                        <v-btn text color="primary" @click="dateMenu = false">
+                          {{ $t(`views_admin.ok`) }}
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
@@ -72,13 +68,13 @@
                   <v-col cols="12" sm="6" md="12">
                     <v-checkbox
                       v-model="editedItem.isOnlyChatBan"
-                      label="Is only banned from chat"
+                      label="{{ $t(`views_admin.onlybannedchat`) }}"
                     />
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.banReason"
-                      label="Ban Reason"
+                      label="{{ $t(`views_admin.banreason`) }}"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -88,18 +84,18 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">
-                Cancel
+                {{ $t(`views_admin.cancel`) }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="save">
+                {{ $t(`views_admin.save`) }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
+      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -108,12 +104,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import {
-  BannedPlayer
-} from "@/store/admin/types";
+import { BannedPlayer } from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {
       headers: [
@@ -121,17 +116,17 @@ export default class AdminBannedPlayers extends Vue {
           text: "BattleTag",
           align: "start",
           sortable: false,
-          value: "battleTag"
+          value: "battleTag",
         },
         { text: "Ban End Date", value: "endDate" },
         { text: "Is only banned from chat?", value: "isOnlyChatBan" },
         { text: "Ban reason", value: "banReason" },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
-  get bannedPlayers() {
+  get bannedPlayers(): BannedPlayer[] {
     return this.$store.direct.state.admin.players;
   }
 
@@ -140,7 +135,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() {
+  onBattleTagChanged(): void {
     this.init();
   }
 
@@ -161,13 +156,13 @@ export default class AdminBannedPlayers extends Vue {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
   public defaultItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
 
   editItem(item: BannedPlayer) {
@@ -181,18 +176,18 @@ export default class AdminBannedPlayers extends Vue {
     this.dialog = true;
   }
 
-  async deleteItem(item: BannedPlayer) {
+  async deleteItem(item: BannedPlayer): void {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
-    this.bannedPlayers.splice(index, 1);
+      this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
   }
 
-  formTitle() {
+  formTitle(): string {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
-  async save() {
+  async save(): Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
     } else {
@@ -203,7 +198,7 @@ export default class AdminBannedPlayers extends Vue {
     this.close();
   }
 
-  close() {
+  close(): void {
     this.dialog = false;
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
@@ -211,12 +206,10 @@ export default class AdminBannedPlayers extends Vue {
     });
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     await this.init();
   }
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
