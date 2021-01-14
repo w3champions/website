@@ -32,3 +32,11 @@ steps:
       tags: |
         $(BuildVersioning)
         $(IsLatest)
+
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*docker-compose.yml'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(Build.ArtifactStagingDirectory)
