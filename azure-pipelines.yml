@@ -12,10 +12,10 @@ variables:
 
 steps:
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-      displayName: 'Replace tokens'
-      inputs:
-        targetFiles: |
-          **/*.token.yml => **.yml
+    displayName: 'Replace tokens'
+    inputs:
+      targetFiles: |
+        **/*.token.yml => **.yml
 
   - task: PowerShell@2
     displayName: set docker and pipeline tag
