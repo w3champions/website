@@ -5,12 +5,11 @@ pool:
 
 variables:
   - group: Secrets
+  cli_secret: $(AZURE_CLI)
 
 steps:
   - task: PowerShell@2
     displayName: set docker and pipeline tag
-    variables:
-      cli_secret: $(AZURE_CLI)
     inputs:
       targetType: "inline"
       script: |
