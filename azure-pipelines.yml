@@ -17,7 +17,7 @@ steps:
           Write-Host "##vso[task.setvariable variable=IsLatest]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host $(System.PullRequest.SourceBranch)
-          if($(System.PullRequest.SourceBranch).StartsWith("PR_DEPL_")) {
+          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
             az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment
           }
         }
