@@ -5,8 +5,18 @@ pool:
 
 variables:
   - group: Secrets
+  - name: TAG
+    value: dev-$(System.PullRequest.PullRequestNumber)
+  - name: PR_NAME
+    value: $(System.PullRequest.SourceBranch)
 
 steps:
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens'
+      inputs:
+        targetFiles: |
+          **/*.token.yml => **.yml
+
   - task: PowerShell@2
     displayName: set docker and pipeline tag
     env:

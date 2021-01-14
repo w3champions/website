@@ -1,14 +1,14 @@
 version: '3.1'
 services:
   w3champions-ui-dev:
-    image: modmoto/w3champions-ui:${TAG}
+    image: modmoto/w3champions-ui:{{TAG}}
     container_name: w3champions-ui-dev
     restart: always
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=pr${PR_NAME}.ui.w3champions.com
-      - LETSENCRYPT_HOST=pr${PR_NAME}.ui.w3champions.com
+      - VIRTUAL_HOST=pr{{PR_NAME}}.ui.w3champions.com
+      - LETSENCRYPT_HOST=pr__PR_NAME__.ui.w3champions.com
       - LETSENCRYPT_EMAIL=simonheiss87@gmail.com
       - BASE_URL=https://statistic-service.test.w3champions.com/
       - IDENTIFICATION_URL=https://identification-service.test.w3champions.com/
