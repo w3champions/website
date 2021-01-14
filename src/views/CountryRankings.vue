@@ -237,11 +237,11 @@ export default class CountryRankingsView extends Vue {
       this.country || this.selectedCountryCode || this.countries[0].countryCode;
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.getLadders();
     await this.$store.direct.dispatch.rankings.setCountry(country);
     this.initialized = true;
 
     await this.loadOngoingMatches();
-    await this.getLadders();
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
