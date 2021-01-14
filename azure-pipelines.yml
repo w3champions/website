@@ -3,19 +3,7 @@ name: $(Build.BuildID)
 pool:
   vmImage: "ubuntu-18.04"
 
-variables:
-  - name: TAG
-    value: dev-$(System.PullRequest.PullRequestNumber)
-  - name: PR_NAME
-    value: $(System.PullRequest.SourceBranch)
-
 steps:
-  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-    displayName: 'Replace tokens'
-    inputs:
-      targetFiles: |
-        **/*.token.yml => *.yml
-
   - task: PowerShell@2
     displayName: set docker tag and pipeline tag
     inputs:
@@ -29,7 +17,18 @@ steps:
           Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IsLatest]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
+          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
+            $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
+            Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
+            Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
+          }
         }
+
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens'
+      inputs:
+        targetFiles: |
+          **/*.token.yml => *.yml
 
   - task: Docker@2
     inputs:
