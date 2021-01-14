@@ -26,7 +26,6 @@ steps:
             $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
             Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
 
-            az devops login --organization https://dev.azure.com/w3champions/
             az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
           } else {
             Remove-Item docker-compose.token.yml
