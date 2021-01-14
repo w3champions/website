@@ -8,7 +8,7 @@ services:
       - 80
     environment:
       - VIRTUAL_HOST=pr-#{PR_NAME}#.ui.w3champions.com
-      - LETSENCRYPT_HOST=pr-__PR_NAME__.ui.w3champions.com
+      - LETSENCRYPT_HOST=pr-#{PR_NAME}#.ui.w3champions.com
       - LETSENCRYPT_EMAIL=simonheiss87@gmail.com
       - BASE_URL=https://statistic-service.test.w3champions.com/
       - IDENTIFICATION_URL=https://identification-service.test.w3champions.com/
