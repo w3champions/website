@@ -34,10 +34,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeTips">
-                Cancel
+                {{ $t(`views_admin.cancel`) }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="saveTips">
-                Save
+                {{ $t(`views_admin.save`) }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -45,9 +45,7 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editTipItem(item)">
-        mdi-pencil
-      </v-icon>
+      <v-icon small class="mr-2" @click="editTipItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteTipItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -57,26 +55,31 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import moment from "moment";
-import { BannedPlayer, LoadingScreenTip, NewsMessage } from "@/store/admin/types";
+import {
+  BannedPlayer,
+  LoadingScreenTip,
+  NewsMessage,
+} from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {
       headersTips: [
         {
           text: "Author",
           align: "start",
-          value: "author"
+          value: "author",
         },
         { text: "Creation Date", align: "start", value: "creationDate" },
         { text: "Text", value: "message", align: "start" },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
-  get tips() {
+  get tips(): LoadingScreenTip[] {
     return this.$store.direct.state.admin.tips;
   }
 
@@ -85,7 +88,7 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() {
+  onBattleTagChanged(): void {
     this.init();
   }
 
@@ -106,42 +109,42 @@ export default class AdminLoadingScreenTips extends Vue {
     message: "",
     author: "",
     creationDate: "",
-    bsonId: ""
+    bsonId: "",
   };
   public editedNewsItem = {
     bsonId: "",
     message: "",
-    date: ""
+    date: "",
   };
   public editedItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
   public defaultItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
 
-  editTipItem(item: LoadingScreenTip) {
+  editTipItem(item: LoadingScreenTip): void {
     this.editedTipItem = item;
     this.dialogTips = true;
   }
 
-  async deleteTipItem(item: LoadingScreenTip) {
+  async deleteTipItem(item: LoadingScreenTip): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-    (await this.$store.direct.dispatch.admin.deleteTip(item));
+      (await this.$store.direct.dispatch.admin.deleteTip(item));
     this.dialogTips = false;
   }
 
-  formTitle() {
+  formTitle(): string {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
-  async saveTips() {
+  async saveTips(): Promise<void> {
     this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
     this.editedTipItem.creationDate = moment().format(
       "MMMM Do YYYY, h:mm:ss a"
@@ -152,27 +155,25 @@ export default class AdminLoadingScreenTips extends Vue {
         message: "",
         author: "",
         creationDate: "",
-        bsonId: ""
+        bsonId: "",
       };
     }
   }
 
-  closeTips() {
+  closeTips(): void {
     this.dialogTips = false;
     this.editedTipItem = {
       message: "",
       author: "",
       creationDate: "",
-      bsonId: ""
+      bsonId: "",
     };
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     await this.init();
   }
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
