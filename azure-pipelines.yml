@@ -10,7 +10,7 @@ steps:
   - task: PowerShell@2
     displayName: set docker and pipeline tag
     env:
-      cli_secret: $(AZURE_CLI)
+      AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
     inputs:
       targetType: "inline"
       script: |
@@ -24,7 +24,6 @@ steps:
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host $(System.PullRequest.SourceBranch)
           if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
-            $env:AZURE_DEVOPS_EXT_PAT = $env:cli_secret
             az devops login --organization https://dev.azure.com/w3champions/
             az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
           }
