@@ -22,11 +22,11 @@ steps:
           Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IsLatest]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
-          Write-Host $(System.PullRequest.SourceBranch)
-          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
-            az devops login --organization https://dev.azure.com/w3champions/
-            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
-          }
+#          Write-Host $(System.PullRequest.SourceBranch)
+#          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
+#            az devops login --organization https://dev.azure.com/w3champions/
+#            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
+#          }
         }
 
   - task: Docker@2
