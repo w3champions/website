@@ -10,17 +10,16 @@ steps:
       targetType: "inline"
       script: |
         if(!("$(Build.Reason)".Equals("PullRequest"))){
-          Write-Host "##vso[task.setvariable variable=BuildVersioning]$(Build.BuildID)"
-          Write-Host "##vso[task.setvariable variable=IsLatest]latest"
+          Write-Host "##vso[task.setvariable variable=TAG]$(Build.BuildID)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]latest"
           Write-Host "Masterversion: $(Build.BuildID)"
         } else {
-          Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
-          Write-Host "##vso[task.setvariable variable=IsLatest]"
+          Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
           if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
             $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
             Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
-            Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
           } else {
             Remove-Item docker-compose.token.yml
           }
@@ -40,8 +39,8 @@ steps:
       Dockerfile: "**/Dockerfile"
       buildContext: "."
       tags: |
-        $(BuildVersioning)
-        $(IsLatest)
+        $(TAG)
+        $(IS_LATEST)
 
   - task: CopyFiles@2
     displayName: publish docker-compose files
