@@ -5,7 +5,7 @@ pool:
 
 steps:
   - task: PowerShell@2
-    name: 'set docker tag and pipeline tag'
+    displayName: 'set docker tag and pipeline tag'
     inputs:
       targetType: "inline"
       script: |
@@ -35,7 +35,7 @@ steps:
         $(IsLatest)
 
   - task: CopyFiles@2
-    name: 'publish docker-compose files'
+    displayName: 'publish docker-compose files'
     inputs:
       contents: '**/*docker-compose.yml'
       targetFolder: $(Build.ArtifactStagingDirectory)
