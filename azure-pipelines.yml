@@ -16,9 +16,9 @@ steps:
           Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IsLatest]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
-          dir
-          if(Test-Path('pull-request-docker-compose.yml')) {
-            az pipelines build tag add --build-id --tags pr-deployment
+          Write-Host $(System.PullRequest.SourceBranch)
+          if($(System.PullRequest.SourceBranch).StartsWith("PR_DEPL_")) {
+            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment
           }
         }
 
