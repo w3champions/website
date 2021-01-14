@@ -1,8 +1,8 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent;">
-        <v-icon style="margin-right: 5px;">mdi-pencil</v-icon>
+      <v-btn tile v-on="on" style="background-color: transparent">
+        <v-icon style="margin-right: 5px">mdi-pencil</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -34,28 +34,28 @@ export default class MemberManagementMenu extends Vue {
 
   public kickPlayer = {
     name: "kick player",
-    action: async () =>
+    action: async (): Promise<void> =>
       await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag),
   };
 
   public promoteToShaman = {
     name: "promote to shaman",
-    action: async () =>
+    action: async (): Promise<void> =>
       await this.$store.direct.dispatch.clan.addShaman(this.battleTag),
   };
   public demoteShaman = {
     name: "demote to member",
-    action: async () =>
+    action: async (): Promise<void> =>
       await this.$store.direct.dispatch.clan.removeShaman(this.battleTag),
   };
 
   public makeChiefTain = {
     name: "make chieftain",
-    action: async () =>
+    action: async (): Promise<void> =>
       await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag),
   };
 
-  get actions() {
+  get actions(): Array<{ name: string; action: () => Promise<void> }> {
     switch (this.role) {
       case EClanRole.Member:
         switch (this.loggedInUserRole) {
@@ -80,7 +80,7 @@ export default class MemberManagementMenu extends Vue {
     }
   }
 
-  public async invoke(f: () => Promise<never>) {
+  public async invoke(f: () => Promise<never>): Promise<void> {
     await f();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
