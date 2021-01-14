@@ -15,7 +15,7 @@ steps:
     displayName: 'Replace tokens'
     inputs:
       targetFiles: |
-        **/*.token.yml => **.yml
+        **/*.token.yml => *.yml
 
   - task: PowerShell@2
     displayName: set docker tag and pipeline tag
