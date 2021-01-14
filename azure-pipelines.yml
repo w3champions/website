@@ -6,69 +6,55 @@ pool:
 variables:
   - group: Secrets
 
-stages:
-  - stage: Build
-    jobs:
-      - job: Build
-      steps:
-        - task: PowerShell@2
-          displayName: set docker and pipeline tag
-          env:
-            AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
-          inputs:
-            targetType: "inline"
-            script: |
-              if(!("$(Build.Reason)".Equals("PullRequest"))){
-                Write-Host "##vso[task.setvariable variable=TAG]$(Build.BuildID)"
-                Write-Host "##vso[task.setvariable variable=IS_LATEST]latest"
-                Write-Host "Masterversion: $(Build.BuildID)"
-              } else {
-                Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
-                Write-Host "##vso[task.setvariable variable=IS_LATEST]"
-                Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
-                if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
-                  $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
-                  Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
+steps:
+  - task: PowerShell@2
+    displayName: set docker and pipeline tag
+    env:
+      AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
+    inputs:
+      targetType: "inline"
+      script: |
+        if(!("$(Build.Reason)".Equals("PullRequest"))){
+          Write-Host "##vso[task.setvariable variable=TAG]$(Build.BuildID)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]latest"
+          Write-Host "Masterversion: $(Build.BuildID)"
+        } else {
+          Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]"
+          Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
+          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
+            $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
+            Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
 
-                  az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
-                } else {
-                  Remove-Item docker-compose.token.yml
-                }
-              }
+            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
+          } else {
+            Remove-Item docker-compose.token.yml
+          }
+        }
 
-        - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-          displayName: 'Replace tokens'
-          inputs:
-            targetFiles: |
-              **/*.token.yml => *.yml
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    displayName: 'Replace tokens'
+    inputs:
+      targetFiles: |
+        **/*.token.yml => *.yml
 
-        - task: Docker@2
-          inputs:
-            containerRegistry: "official-docker-modmoto"
-            repository: "modmoto/w3champions-ui"
-            command: "buildAndPush"
-            Dockerfile: "**/Dockerfile"
-            buildContext: "."
-            tags: |
-              $(TAG)
-              $(IS_LATEST)
+  - task: Docker@2
+    inputs:
+      containerRegistry: "official-docker-modmoto"
+      repository: "modmoto/w3champions-ui"
+      command: "buildAndPush"
+      Dockerfile: "**/Dockerfile"
+      buildContext: "."
+      tags: |
+        $(TAG)
+        $(IS_LATEST)
 
-        - task: CopyFiles@2
-          displayName: publish docker-compose files
-          inputs:
-            contents: '**/*docker-compose.yml'
-            targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: CopyFiles@2
+    displayName: publish docker-compose files
+    inputs:
+      contents: '**/*docker-compose.yml'
+      targetFolder: $(Build.ArtifactStagingDirectory)
 
-        - task: PublishBuildArtifacts@1
-          inputs:
-            pathToPublish: $(Build.ArtifactStagingDirectory)
-
-  - stage: Deploy Test
-    jobs:
-      - job: Deploy
-        steps:
-
-  - stage: Deploy Prod
-      jobs:
-        - job: Deploy
-          steps:
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(Build.ArtifactStagingDirectory)
