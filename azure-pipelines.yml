@@ -18,7 +18,7 @@ steps:
         **/*.token.yml => **.yml
 
   - task: PowerShell@2
-    displayName: set docker and pipeline tag
+    displayName: set docker tag and pipeline tag
     env:
       AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
     inputs:
