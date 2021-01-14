@@ -5,7 +5,7 @@ pool:
 
 steps:
   - task: PowerShell@2
-    displayName: 'set docker tag and pipeline tag'
+    displayName: 'set docker and pipeline tag'
     inputs:
       targetType: "inline"
       script: |
