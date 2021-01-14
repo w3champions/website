@@ -22,8 +22,7 @@ steps:
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host $(System.PullRequest.SourceBranch)
           if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
-            Write-Host $(AZURE_CLI)
-            $env:AZURE_DEVOPS_EXT_PAT = $env:AZURE_CLI
+            $env:AZURE_DEVOPS_EXT_PAT = 3zj4erqpglfbkkuxtuscesoyq4tfa22mee2eyxlkj3i2h2lxm4ra
             az devops login --organization https://dev.azure.com/w3champions/
             az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
           }
