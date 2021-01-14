@@ -45,5 +45,9 @@ public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 4) Change the `BASE_URL` of ui to the backend url you just copied: https://github.com/w3champions/w3champions-ui/blob/master/public/env.js#L3
 6) You should be able to login as admin.
 
-### Running a Pull Request Environment
-- rename the file _pull-request-docker-compose.yml to pull-request-docker-compose.yml and create the PR
+### Deploying to a Pull Request Environment
+If you branch starts with "DEPLOY_" azure will create a automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://pr.add-new-language.ui.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
+
+If you need any other connection strings, just update the docker-dompose.toke.yaml file accordingliy, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
+
+When you are done, please contact one of the older devs, because they can delete the unused containers again.

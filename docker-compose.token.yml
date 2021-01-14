@@ -7,18 +7,16 @@ services:
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=pr.#{PR_NAME}#.ui.w3champions.com
-      - LETSENCRYPT_HOST=pr.#{PR_NAME}#.ui.w3champions.com
+      - VIRTUAL_HOST=#{PR_NAME}#.ui.w3champions.com
+      - LETSENCRYPT_HOST=#{PR_NAME}#.ui.w3champions.com
       - LETSENCRYPT_EMAIL=simonheiss87@gmail.com
       - BASE_URL=https://statistic-service.test.w3champions.com/
       - IDENTIFICATION_URL=https://identification-service.test.w3champions.com/
-      - FEATURE_FLAG_CLANS=true
-      - TAG=latest
       - LAUNCHER_UPDATE_URL=https://update-service.test.w3champions.com/api/
       - INGAME_STATIC_RESOURCES_URL=https://w3champions.wc3.tools/test/integration/
       - BNET_API_CLIENT_ID=d7bd6dd46e2842c8a680866759ad34c2
-      - S3_ACESS_KEY=E7K3YD3GYWUHIIC6DWJ9
-      - S3_SECRET_KEY=ABZP9QNRxU9pb2NoyFFi1D4SdSWoSrPbKAdbXilI
+      - S3_ACESS_KEY=#{S3_ACESS_KEY}#
+      - S3_SECRET_KEY=#{S3_SECRET_KEY}#
       - STAGE=dev
       - SITE_CDN_URL=https://w3champions.wc3.tools/test/site
 
