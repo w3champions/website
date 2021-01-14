@@ -18,7 +18,7 @@ steps:
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
           dir
           if(Test-Path('pull-request-docker-compose.yml')) {
-            az pipelines build tag add --tags pr-deployment
+            az pipelines build tag add --build-id --tags pr-deployment
           }
         }
 
