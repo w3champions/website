@@ -253,3 +253,10 @@ Object.keys(ECountries).forEach((key) => {
   const cCode: string = (ECountries as any)[key] as string;
   CountriesByCode[cCode] = key;
 });
+
+export const Countries = Object.keys(ECountries).map((key) => {
+  return {
+    country: key,
+    countryCode: (ECountries as any)[key] as string,
+  };
+});
