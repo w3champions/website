@@ -130,7 +130,6 @@ import localeIcon from "@/components/common/LocaleIcon.vue";
 
 @Component({ components: { localeIcon } })
 export default class App extends Vue {
-  private _savedLocale = "en";
   private selectedTheme = "human";
 
   public items = [
@@ -225,17 +224,12 @@ export default class App extends Vue {
   }
 
   set savedLocale(val: string) {
-    window.localStorage.setItem("locale", val);
-    this._savedLocale = val;
-    this.$store.direct.commit.SET_LOCALE(val);
+    this.$i18n.locale = val;
+    this.$store.direct.dispatch.saveLocale(val);
   }
 
   get savedLocale(): string {
-    if (this.$store.direct.state.locale) {
-      return this.$store.direct.state.locale;
-    } else {
-      return "en";
-    }
+    return this.$store.direct.state.locale;
   }
 
   get languages(): any {
@@ -247,6 +241,8 @@ export default class App extends Vue {
   }
 
   private async init() {
+    this.$store.direct.dispatch.loadLocale();
+    this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
