@@ -8,7 +8,6 @@
  * Place it in a .env file as GOOGLE_API_KEY
  */
 
-require("dotenv").config();
 const fs = require("fs");
 const set = require("lodash.set");
 const prettier = require("prettier");
@@ -19,6 +18,7 @@ const doc = new GoogleSpreadsheet(
   "1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok"
 );
 
+console.log("ENVVVV")
 console.log(process.env.GOOGLE_API_KEY)
 
 doc.useApiKey(process.env.GOOGLE_API_KEY);
