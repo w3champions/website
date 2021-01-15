@@ -23,12 +23,10 @@ steps:
           Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
           Write-Host "##vso[task.setvariable variable=IS_LATEST]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
-          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
-            $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
-            Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
+          $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
+          Write-Host "##vso[task.setvariable variable=PR_NAME]locale-test"
 
-            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
-          }
+          az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
         }
 
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
