@@ -36,6 +36,7 @@ steps:
     inputs:
       targetFiles: |
         **/*.token.yml => *.yml
+        **/*.ts.token => *.ts
 
   - task: Docker@2
     inputs:
