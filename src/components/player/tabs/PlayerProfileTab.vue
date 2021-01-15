@@ -21,14 +21,21 @@
           <v-row v-if="isBetaSeason">
             <v-col>
               <v-card-text>
-                This noble person was part of our beta, therefore we hide their
-                buggy stats and thank them for all eternity ;)
+                {{
+                  $t(
+                    "components_player_tabs_playerprofiletab.betaText"
+                  )
+                }}
               </v-card-text>
             </v-col>
           </v-row>
           <v-row class="filter-none" v-if="!isBetaSeason">
             <v-col cols="12" md="4">
-              <h4 style="position: relative;">Stats by race</h4>
+              <h4 style="position: relative;">{{
+                  $t(
+                    "components_player_tabs_playerprofiletab.statsByRace"
+                  )
+                }}</h4>
               <v-data-table
                 hide-default-footer
                 :headers="raceHeaders"
@@ -50,7 +57,9 @@
               </v-data-table>
             </v-col>
             <v-col cols="12" md="6">
-              <h4 style="position: relative;">Stats by game mode</h4>
+              <h4 style="position: relative;">$t(
+                "components_player_tabs_playerprofiletab.statsByMode"
+                )</h4>
               <mode-stats-grid :stats="gameModeStats" />
             </v-col>
           </v-row>

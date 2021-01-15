@@ -8,7 +8,11 @@
             :items="seasons"
             item-text="id"
             @change="setSelectedSeason"
-            label="Select Season"
+            :label="
+              $t(
+                `components_overall-statistics_tabs_mmrdistributiontab.selectseason`
+              )
+            "
             return-object
             outlined
           />
@@ -20,7 +24,9 @@
             item-text="modeName"
             item-value="modeId"
             @change="gameModeChanged"
-            label="Mode"
+            :label="
+              $t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)
+            "
             outlined
           />
         </v-card-text>
@@ -29,10 +35,18 @@
         </v-card-text>
 
         <v-card-text>
-          The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.
+          {{
+            $t(
+              "components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc"
+            )
+          }}
         </v-card-text>
         <v-card-text v-if="authCode">
-          The green line shows where you are in the distribution.
+          {{
+            $t(
+              "components_overall-statistics_tabs_mmrdistributiontab.greenbardesc"
+            )
+          }}
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
@@ -109,7 +123,10 @@ export default class PlayerActivityTab extends Vue {
     this.loadingData = true;
     this.selectedSeason = season;
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
+      await this.$store.direct.dispatch.player.loadProfile({
+        battleTag: this.verifiedBtag,
+        freshLogin: false,
+      });
       await this.$store.direct.dispatch.player.loadGameModeStats({
         battleTag: this.verifiedBtag,
         season: season.id,
@@ -165,7 +182,10 @@ export default class PlayerActivityTab extends Vue {
   @Watch("verifiedBtag")
   async onBattleTagChanged(newBattleTag: string) {
     if (newBattleTag) {
-      await this.$store.direct.dispatch.player.loadProfile({battleTag: newBattleTag, freshLogin: false});
+      await this.$store.direct.dispatch.player.loadProfile({
+        battleTag: newBattleTag,
+        freshLogin: false,
+      });
       await this.$store.direct.dispatch.player.loadGameModeStats({
         battleTag: newBattleTag,
         season: this.selectedSeason.id,

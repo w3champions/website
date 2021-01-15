@@ -1,23 +1,20 @@
 <template>
-  <v-tooltip bottom style="white-space: pre-line;">
+  <v-tooltip bottom style="white-space: pre-line">
     <template v-slot:activator="{ on }">
       <span v-on="on">
-        <v-img 
-          :src="icon"
-          :max-height="18"
-          :max-width="18"
-        ></v-img>
+        <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
       </span>
     </template>
     <span>{{ tooltip }}</span>
     <table style="width: 100%">
-      <tr v-for="playerInfo in host.playerServerInfos" :key="playerInfo.battleTag">
-          <td>
-            {{stripTag(playerInfo.battleTag)}}
-          </td>
-          <td>
-            {{playerInfo.averagePing}}ms
-          </td>
+      <tr
+        v-for="playerInfo in host.playerServerInfos"
+        :key="playerInfo.battleTag"
+      >
+        <td>
+          {{ stripTag(playerInfo.battleTag) }}
+        </td>
+        <td>{{ playerInfo.averagePing }}ms</td>
       </tr>
     </table>
   </v-tooltip>
@@ -27,6 +24,7 @@
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/typings";
 import Vue from "vue";
+import { LocaleMessage } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
@@ -40,24 +38,26 @@ export default class HostIcon extends Vue {
     return getAsset(`icons/${this.host.provider}.png`);
   }
 
-  get tooltip(): string {
+  get tooltip(): LocaleMessage {
     if (this.host == undefined) {
-      return 'Error'
+      return this.$t("components_matches_hosticon.error");
     }
-    
-    if (this.host.provider == 'BNET') {
-      return "Hosted on Battle.net";
+
+    if (this.host.provider == "BNET") {
+      return this.$t("components_matches_hosticon.hostedonbnet");
     } else {
-      return `Hosted on Flo / ${this.host.name}`;
+      return `${this.$t("components_matches_hosticon.hostedonflo")} / ${
+        this.host.name
+      }`;
     }
   }
 
-  stripTag(tag: string) {
+  stripTag(tag: string): string {
     if (!tag) {
-      return '';
+      return "";
     }
 
-    const hashIndex = tag.indexOf('#');
+    const hashIndex = tag.indexOf("#");
 
     if (hashIndex != -1) {
       return tag.substring(0, hashIndex);

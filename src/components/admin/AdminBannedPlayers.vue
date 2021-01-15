@@ -43,7 +43,7 @@
                         <v-text-field
                           v-model="editedItem.endDate"
                           readonly
-                          label="{{ $t(`views_admin.banenddate`) }}"
+                          :label="$t(`views_admin.banenddate`)"
                           v-bind="attrs"
                           v-on="on"
                         />
@@ -76,13 +76,13 @@
                   <v-col cols="12" sm="6" md="12">
                     <v-checkbox
                       v-model="editedItem.isOnlyChatBan"
-                      label="{{ $t(`views_admin.onlybannedchat`) }}"
+                      :label="$t(`views_admin.onlybannedchat`)"
                     />
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.banReason"
-                      label="{{ $t(`views_admin.banreason`) }}"
+                      :label="$t(`views_admin.banreason`)"
                     ></v-text-field>
                   </v-col>
                 </v-row>

@@ -14,15 +14,15 @@
           :v-model="clanNameToCreate"
           @change="changeInsertedClanName"
           :rules="[mustBeBetween(3, 30, ' ')]"
-          label="{{$t(`components_clans_clancreationpanel.clanname`)}}"
-          hint="{{$t(`components_clans_clancreationpanel.enterclanname`)}}"
+          :label="$t(`components_clans_clancreationpanel.clanname`)"
+          :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
         />
         <v-text-field
           :v-model="clanAbbreviationToCreate"
           @change="changeInsertedClanAbbreviation"
           :rules="[mustBeBetween(2, 5, '')]"
-          label="{{$t(`components_clans_clancreationpanel.clanabbrev`)}}"
-          hint="{{$t(`components_clans_clancreationpanel.enterclanabbrev`)}}"
+          :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
+          :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
         />
       </v-col>
     </v-row>

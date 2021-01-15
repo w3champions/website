@@ -58,7 +58,7 @@
           :no-data-text="noDataText"
           item-text="player.name"
           item-value="player.id"
-          placeholder="{{$t(`views_rankings.searchPlaceholder`)}}"
+          :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
           <template v-slot:item="data">
@@ -88,10 +88,10 @@
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                  {{ $t(`views_rankings.wins`) }} {{ data.item.player.wins }} |
-                  {{ $t(`views_rankings.losses`) }}
+                  {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
+                  {{ $t(`common.losses`) }}
                   {{ data.item.player.losses }} |
-                  {{ $t(`views_rankings.total`) }}
+                  {{ $t(`common.total`) }}
                   {{ data.item.player.games }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>
