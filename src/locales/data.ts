@@ -265,6 +265,11 @@ const data = {
       lost: "lost",
       largestarmy: "Largest army",
     },
+    components_matches_hosticon: {
+      error: "Error",
+      hostedonbnet: "Hosted on Battle.net",
+      hostedonflo: "Hosted on Flo",
+    },
     components_matches_matchesgrid: {
       nomatchesfound: "no matches found",
     },
@@ -695,6 +700,7 @@ const data = {
       upkeeplost: "Kosten bezahlt",
       largestarmy: "Größte Armee",
     },
+    components_matches_hosticon: {},
     components_matches_matchesgrid: {
       nomatchesfound: "Keine Matches gefunden",
     },
@@ -1122,6 +1128,7 @@ const data = {
       upkeeplost: "유지비 손실",
       largestarmy: "최대 인구수",
     },
+    components_matches_hosticon: {},
     components_matches_matchesgrid: {
       nomatchesfound: "경기를 찾을수 없음",
     },
