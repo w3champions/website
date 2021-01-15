@@ -8,17 +8,18 @@
  * Place it in a .env file as GOOGLE_API_KEY
  */
 
-require("dotenv").config();
 const fs = require("fs");
 const set = require("lodash.set");
 const prettier = require("prettier");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 import constants from "../src/constants";
+import keyConstant from "./key";
 
 const doc = new GoogleSpreadsheet(
   "1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok"
 );
-doc.useApiKey(process.env.GOOGLE_API_KEY);
+
+doc.useApiKey(keyConstant);
 
 const languages = constants.activeLanguages || ["en", "de"];
 const locales = {};

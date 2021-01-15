@@ -11,6 +11,7 @@ steps:
     displayName: set docker and pipeline tag
     env:
       AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
+      GOOGLE_API_KEY: $(GOOGLE_API_KEY)
     inputs:
       targetType: "inline"
       script: |
@@ -27,8 +28,6 @@ steps:
             Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
 
             az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
-          } else {
-            Remove-Item docker-compose.token.yml
           }
         }
 
@@ -37,6 +36,7 @@ steps:
     inputs:
       targetFiles: |
         **/*.token.yml => *.yml
+        **/*.ts.token => *.ts
 
   - task: Docker@2
     inputs:

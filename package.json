@@ -5,14 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "npm run build:prod && http-server ./dist",
-    "build:prod": "rimraf ./dist && vue-cli-service build",
+    "build:prod": "npm run generate-locales && rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
     "update": "npm install -g npm-check-updates && ncu --upgrade && npm install ",
     "generate-locales": "node_modules/.bin/ts-node scripts/generate-locales.ts"
   },
   "dependencies": {
-    "@aspnet/signalr": "^1.1.4",
     "babel-runtime": "^6.26.0",
     "chart.js": "^2.9.4",
     "chartjs-plugin-annotation": "^0.5.7",
