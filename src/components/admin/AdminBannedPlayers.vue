@@ -176,7 +176,7 @@ export default class AdminBannedPlayers extends Vue {
     this.dialog = true;
   }
 
-  async deleteItem(item: BannedPlayer): void {
+  async deleteItem(item: BannedPlayer): Promise<void> {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);

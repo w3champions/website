@@ -227,6 +227,9 @@ const data = {
     components_common_gatewayselect: {
       selectgateway: "Select a gateway:",
     },
+    components_ladder_countryrankingsgrid: {
+      noplayerfound: "No players found for this country",
+    },
     components_ladder_rankingsgrid: {
       streamingmatch: "Streaming a match versus",
       streaminglive: "Stream is live!",
@@ -258,6 +261,8 @@ const data = {
       goldmined: "Gold mined",
       lumbermined: "Lumber harvested",
       upkeeplost: "Upkeep lost",
+      won: "won",
+      lost: "lost",
       largestarmy: "Largest army",
     },
     components_matches_matchesgrid: {
@@ -656,6 +661,7 @@ const data = {
     components_common_gatewayselect: {
       selectgateway: "Region auswählen:",
     },
+    components_ladder_countryrankingsgrid: {},
     components_ladder_rankingsgrid: {
       streamingmatch: "Streamt ein Match gegen",
       streaminglive: "Streamt live!",
@@ -1082,6 +1088,7 @@ const data = {
     components_common_gatewayselect: {
       selectgateway: "게이트웨이 선택",
     },
+    components_ladder_countryrankingsgrid: {},
     components_ladder_rankingsgrid: {
       streamingmatch: "대전 생방송",
       streaminglive: "생방송 중!",

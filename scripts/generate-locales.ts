@@ -18,6 +18,9 @@ import constants from "../src/constants";
 const doc = new GoogleSpreadsheet(
   "1WCFB8n_DufVuPIS86Le33gKos6QIR99S0kLI_c-QMok"
 );
+
+console.log(process.env.GOOGLE_API_KEY)
+
 doc.useApiKey(process.env.GOOGLE_API_KEY);
 
 const languages = constants.activeLanguages || ["en", "de"];

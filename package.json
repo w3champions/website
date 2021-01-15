@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "npm run build:prod && http-server ./dist",
-    "build:prod": "rimraf ./dist && vue-cli-service build",
+    "build:prod": "npm run generate-locales && rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
     "update": "npm install -g npm-check-updates && ncu --upgrade && npm install ",
