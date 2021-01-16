@@ -58,7 +58,7 @@
           :no-data-text="noDataText"
           item-text="player.name"
           item-value="player.id"
-          placeholder="{{$t(`views_rankings.searchPlaceholder`)}}"
+          :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
           <template v-slot:item="data">

@@ -216,11 +216,6 @@ import { getProfileUrl } from "@/helpers/url-functions";
 export default class ClanOverview extends Vue {
   @Prop() public id!: string;
 
-  constructor() {
-    super();
-    console.log("ClanOverview");
-  }
-
   private modeEnums = Object.freeze(EGameMode);
 
   get battleTag(): string {

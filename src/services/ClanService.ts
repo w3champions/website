@@ -126,14 +126,7 @@ export default class ClanService {
     battleTag: string
   ): Promise<ClanMembership> {
     const url = `${API_URL}api/memberships/${encodeURIComponent(battleTag)}`;
-
     const response = await fetch(url);
-    try {
-      const json = await response.json();
-      console.log({ json });
-    } catch (error) {
-      console.log({ url, error });
-    }
     return await response.json();
   }
 
