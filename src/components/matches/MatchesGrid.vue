@@ -238,27 +238,27 @@ export default class MatchesGrid extends Vue {
 
   public headers = [
     {
-      text: "Players",
+      text: this.$t("components_matches_matchesgrid.players"),
       align: "center",
       sortable: false,
       value: "players",
       minWidth: "475px",
     },
     {
-      text: "Map",
+      text: this.$t("components_matches_matchesgrid.map"),
       align: "start",
       sortable: false,
       value: "map",
     },
     {
-      text: "Start Time",
+      text: this.$t("components_matches_matchesgrid.starttime"),
       align: "start",
       sortable: false,
       value: "startTime",
       minWidth: "170px",
     },
     {
-      text: "Duration",
+      text: this.$t("components_matches_matchesgrid.duration"),
       align: "start",
       sortable: false,
       value: "duration",

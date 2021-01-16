@@ -272,6 +272,10 @@ const data = {
     },
     components_matches_matchesgrid: {
       nomatchesfound: "no matches found",
+      players: "Players",
+      map: "Map",
+      starttime: "Start time",
+      duration: "Duration",
     },
     components_matches_matchesstatusselect: {
       selectstatus: "Select a status:",
