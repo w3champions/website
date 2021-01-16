@@ -63,7 +63,10 @@
                 </v-col>
                 <v-col cols="1">
                   VS
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
+                  <host-icon
+                    v-if="item.serverInfo && item.serverInfo.provider"
+                    :host="item.serverInfo"
+                  ></host-icon>
                 </v-col>
                 <v-col cols="5.5">
                   <team-match-info
@@ -90,7 +93,7 @@
           </tr>
           <tr v-if="!matches || matches.length == 0">
             <td colspan="4" class="text-center">
-              no matches found
+              {{ $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
         </tbody>
@@ -113,14 +116,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  Match,
-  DataTableOptions,
-  Team,
-  PlayerInTeam,
-  EGameMode,
-} from "@/store/typings";
+import { Component, Prop } from "vue-property-decorator";
+import { Match, Team, PlayerInTeam } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
@@ -128,7 +125,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 @Component({
   components: {
     TeamMatchInfo,
-    HostIcon
+    HostIcon,
   },
 })
 export default class MatchesGrid extends Vue {
@@ -226,7 +223,7 @@ export default class MatchesGrid extends Vue {
 
   public getDuration(match: Match) {
     if (this.unfinished) {
-      return "ongoing";
+      return this.$t("matchStatuses.onGoing");
     }
 
     const format =
