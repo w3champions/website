@@ -280,27 +280,36 @@ const data = {
     components_matches_matchesstatusselect: {
       selectstatus: "Select a status:",
     },
-    components_matches_playermatchinfo: {
-      wins: "Wins:",
-      losses: "| Losses:",
-      total: "| Total:",
-      wltdotdotdot: "Wins: ... | Losses: ... | Total: ...",
+    components_matches_topongoingmatcheswithstreams: {
+      toplive1v1matches: "Top live 1v1 matches",
     },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Picked Heroes",
+      mode: "Mode",
+      pick: "Pick",
     },
     "components_overall-statistics_tabs_mmrdistributiontab": {
+      selectseason: "Select Season",
+      mode: "Mode",
       purplebarsdesc:
         "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
       greenbardesc: "The green line shows where you are in the distribution.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      selectmode: "Select Mode",
       gamemodedesc1:
         "Game Modes are normalized to compare their popularity more easily:",
       gamemodedesc2:
         "2v2 and FFA games are counted twice, 4v4 games are counted four times",
+      playersperday: "Players per Day",
+      playedmaps: "Played Maps",
+      popularhours: "Popular Hours",
+      gamelengths: "Game Lengths",
     },
     "components_overall-statistics_tabs_winratestab": {
+      selectmap: "Select Map",
+      selectmmr: "Select MMR",
+      selectpatch: "Select Patch",
       vshu: "vs Human",
       vsorc: "vs Orc",
       vsud: "vs Undead",
@@ -447,6 +456,10 @@ const data = {
     matchStatuses: {
       onGoing: "Now Playing",
       past: "Finished",
+    },
+    common: {
+      all: "All",
+      overall: "Overall",
     },
   },
   de: {
@@ -711,12 +724,7 @@ const data = {
     components_matches_matchesstatusselect: {
       selectstatus: "Status auswählen:",
     },
-    components_matches_playermatchinfo: {
-      wins: "Siege:",
-      losses: "| Niederlagen:",
-      total: "| Gesamt:",
-      wltdotdotdot: "Siege: ... | Niederlagen: ... | Gesamt: ...",
-    },
+    components_matches_topongoingmatcheswithstreams: {},
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Ausgewählte Helden",
     },
@@ -877,6 +885,7 @@ const data = {
       onGoing: "Spielt jetzt",
       past: "Beendet",
     },
+    common: {},
   },
   kr: {
     views_app: {
@@ -1139,12 +1148,7 @@ const data = {
     components_matches_matchesstatusselect: {
       selectstatus: "상태 선택",
     },
-    components_matches_playermatchinfo: {
-      wins: "승",
-      losses: "패",
-      total: "합계",
-      wltdotdotdot: "승: ... | 패: ... | 합계: ...",
-    },
+    components_matches_topongoingmatcheswithstreams: {},
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "영웅 선택",
     },
@@ -1302,6 +1306,7 @@ const data = {
       onGoing: "게임 중",
       past: "종료",
     },
+    common: {},
   },
 };
 export default data;
