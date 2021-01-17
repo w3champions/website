@@ -8,7 +8,9 @@
             item-text="mapName"
             item-value="mapId"
             @change="setSelectedMap"
-            label="Select Map"
+            :label="
+              $t(`components_overall-statistics_tabs_winratestab.selectmap`)
+            "
             outlined
           />
           <v-select
@@ -16,7 +18,9 @@
             item-text="league"
             item-value="mmr"
             @change="setSelectedMMR"
-            label="Select MMR"
+            :label="
+              $t(`components_overall-statistics_tabs_winratestab.selectmmr`)
+            "
             outlined
           />
           <v-select
@@ -25,7 +29,9 @@
             item-value="patch"
             v-model="selectedPatch"
             @change="setSelectedPatch"
-            label="Select Patch"
+            :label="
+              $t(`components_overall-statistics_tabs_winratestab.selectpatch`)
+            "
             outlined
           />
         </v-card-text>
@@ -94,7 +100,7 @@ export default class WinratesTab extends Vue {
   public raceEnums = ERaceEnum;
   public selectedPatch = "All";
   public selectedMmr = 0;
-  public selectedMap = "Overall";
+  public selectedMap = this.$t("common.overall");
 
   public headers = [
     {
@@ -104,22 +110,22 @@ export default class WinratesTab extends Vue {
       value: "race",
     },
     {
-      text: "VS Human",
+      text: this.$t("components_overall-statistics_tabs_winratestab.vshu"),
       align: "start",
       sortable: false,
     },
     {
-      text: "VS Orc",
+      text: this.$t("components_overall-statistics_tabs_winratestab.vsorc"),
       align: "start",
       sortable: false,
     },
     {
-      text: "VS Undead",
+      text: this.$t("components_overall-statistics_tabs_winratestab.vsud"),
       align: "start",
       sortable: false,
     },
     {
-      text: "VS Night Elf",
+      text: this.$t("components_overall-statistics_tabs_winratestab.vsne"),
       align: "start",
       sortable: false,
     },
