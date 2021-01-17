@@ -1,5 +1,3 @@
-<!--<template> -->
-<!--<v-tooltip top :disabled="!showPlayerInfo">-->
 <template>
   <div class="player-info" :class="textClass">
     <player-icon
@@ -10,7 +8,6 @@
       class="mr-1"
     />
     <div>
-      <!-- @mousover="lazyLoadWinrate" -->
       <a
         class="name-link"
         :class="won"
@@ -43,22 +40,6 @@
     />
   </div>
 </template>
-<!-- <div v-if="winrate">
-      <p>{{ battleTag }}</p>
-      <p></p>
-      Wins:
-      <span class="number-text">{{ winrate.wins }}</span>
-      | Losses:
-      <span class="number-text">{{ winrate.losses }}</span>
-      | Total:
-      <span class="number-text">{{ winrate.games }}</span>
-    </div>
-    <div v-else>
-      <p>{{ battleTag }}</p>
-      <p>Wins: ... | Losses: ... | Total: ...</p>
-    </div> -->
-<!-- </v-tooltip>
-</template> -->
 
 <script lang="ts">
 import Vue from "vue";

@@ -26,14 +26,14 @@
                 <v-text-field
                   v-model="editedNewsItem.date"
                   filled
-                  label="{{ $t(`views_admin.headline`) }}"
+                  :label="$t(`views_admin.headline`)"
                 />
                 <v-textarea
                   auto-grow
                   filled
                   rows="1"
                   v-model="editedNewsItem.message"
-                  label="{{ $t(`views_admin.message`) }}"
+                  :label="$t(`views_admin.message`)"
                 />
               </v-container>
             </v-card-text>
