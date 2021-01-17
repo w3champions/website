@@ -24,6 +24,7 @@ export default class AmountPerDayChart extends Vue {
   }
 
   get gameHourChartData(): ChartData {
+    console.log({ gameDayCounts: this.gameDayCounts });
     return {
       labels: this.gameDayDates,
       datasets: [

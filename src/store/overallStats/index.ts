@@ -17,7 +17,6 @@ import {
 import { ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
-
 const mod = {
   namespaced: true,
   state: {
@@ -51,7 +50,6 @@ const mod = {
       commit.SET_LOADING_GAMES_PER_DAY(true);
 
       const games = await rootGetters.statisticService.retrieveGamesPerDay();
-
       commit.SET_GAMES_PER_DAY(games);
       commit.SET_LOADING_GAMES_PER_DAY(false);
     },
