@@ -31,7 +31,7 @@
             </v-tab>
           </v-tabs>
           <keep-alive>
-            <router-view></router-view>
+            <router-view ></router-view>
           </keep-alive>
         </v-card>
       </v-col>
@@ -49,7 +49,7 @@ import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
-import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
+import { SeasonGameModeGateWayForMMR } from '@/store/overallStats/types';
 
 @Component({
   components: {
@@ -82,16 +82,11 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile({
-        battleTag: this.verifiedBtag,
-        freshLogin: false,
-      });
+      await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
     }
-    const mMRDistributionPayload: SeasonGameModeGateWayForMMR = {
-      season: this.$store.direct.state.rankings.selectedSeason.id,
-      gameMode: this.$store.direct.state.matches.gameMode,
-      gateWay: this.$store.direct.state.gateway,
-    };
+    const mMRDistributionPayload: SeasonGameModeGateWayForMMR ={season:  this.$store.direct.state.rankings.selectedSeason.id,
+                                                                gameMode: this.$store.direct.state.matches.gameMode,
+                                                                gateWay: this.$store.direct.state.gateway};
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       mMRDistributionPayload
     );
