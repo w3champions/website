@@ -34,9 +34,6 @@ export default class MultipleAmountPerDayChart extends Vue {
           return c.gameMode !== 9 && c.gameMode !== 6;
         })
         .map((c) => {
-          console.log("EGameMode[c.gameMode]", EGameMode[c.gameMode]);
-          console.log("c.gameMode", c.gameMode);
-
           return {
             label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
             data: c.gameDays
