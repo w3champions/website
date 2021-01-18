@@ -284,6 +284,23 @@
                       hint="Enter a custom homepage"
                       label="Homepage"
                     ></v-text-field>
+                    <v-container>
+                      <v-checkbox dense
+                        prepend-icon="mdi-account-check"
+                        v-model="userProfile.aliasSettings.showAka"
+                        :label="`Show Alias`"
+                      ></v-checkbox>
+                      <v-checkbox dense
+                        prepend-icon="mdi-account-check"
+                        v-model="userProfile.aliasSettings.showW3info"
+                        :label="`Show Warcraft3.info Link`"
+                      ></v-checkbox>
+                      <v-checkbox dense
+                        prepend-icon="mdi-account-check"
+                        v-model="userProfile.aliasSettings.showLiquipedia"
+                        :label="`Show Liquipedia Link`"
+                      ></v-checkbox>
+                    </v-container>
                   </v-row>
                   <v-row no-gutters class="countryInput">
                     <v-col md="12">
@@ -354,7 +371,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import { SpecialPicture } from "../../store/personalSettings/types";
+import { AkaSettings, SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
 import { getAvatarUrl } from "../../helpers/url-functions";
 
@@ -410,6 +427,10 @@ export default class PlayerAvatar extends Vue {
     return this.personalSetting.douyu || "";
   }
 
+  get aliasSettings(): AkaSettings {
+    return this.personalSetting.aliasSettings || {showAka: true, showW3info: true, showLiquipedia: true};
+  }
+
   get homePageLinks(): Array<string> {
     if (!this.homePage || !this.homePage.includes("http")) {
       return [];
@@ -451,6 +472,7 @@ export default class PlayerAvatar extends Vue {
     twitter: this.twitter,
     trovo: this.trovo,
     douyu: this.douyu,
+    aliasSettings: this.aliasSettings,
     about: this.savedMessageValue,
     homePage: this.homePage,
     editDialogOpened: false,
@@ -472,6 +494,7 @@ export default class PlayerAvatar extends Vue {
       twitter: this.twitter,
       trovo: this.trovo,
       douyu: this.douyu,
+      aliasSettings: this.aliasSettings,
     };
   }
 
@@ -484,6 +507,7 @@ export default class PlayerAvatar extends Vue {
     personalSetting.twitter = this.userProfile.twitter;
     personalSetting.trovo = this.userProfile.trovo;
     personalSetting.douyu = this.userProfile.douyu;
+    personalSetting.aliasSettings = this.userProfile.aliasSettings;
 
     this.countries.map((c) => {
       if (c.country == this.selectedCountry) {
@@ -608,6 +632,7 @@ export default class PlayerAvatar extends Vue {
       twitter: this.twitter,
       trovo: this.trovo,
       douyu: this.douyu,
+      aliasSettings: this.aliasSettings,
       editDialogOpened: false,
     };
 

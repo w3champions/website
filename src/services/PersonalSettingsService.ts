@@ -28,6 +28,7 @@ export default class PersonalSettingsService {
 
     const post = value;
     const data = JSON.stringify(post);
+    console.log(data);
     const response = await fetch(url, {
       method: "PUT",
       body: data,
