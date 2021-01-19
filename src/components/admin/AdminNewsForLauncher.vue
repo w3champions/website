@@ -69,13 +69,8 @@ export default class AdminNewsForLauncher extends Vue {
   data() {
     return {
       headersNews: [
-        {
-          text: "Id",
-          align: "start",
-          value: "bsonId"
-        },
         { text: "Text", value: "message", align: "start" },
-        { text: "Date", align: "start", value: "date" },
+        { text: "Headline", align: "start", value: "date" },
         { text: "Actions", value: "actions", sortable: false }
       ]
     };
