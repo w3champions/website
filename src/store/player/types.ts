@@ -29,6 +29,7 @@ export type PlayerProfile = {
   battleTag: string;
   participatedInSeasons: Season[];
   winLosses: RaceStat[];
+  aliasData: AliasData;
 };
 
 export type RaceStat = {
@@ -40,6 +41,14 @@ export type RaceStat = {
   games: number;
   winrate: number;
 };
+
+export type AliasData = {
+  id: number,
+  name: null,
+  main_race: null,
+  country: null,
+  liquipedia: null
+}
 
 export type ModeStat = {
   id: string;

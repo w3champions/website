@@ -99,6 +99,36 @@
           <span>https://trovo.live/{{ userProfile.trovo }}</span>
         </v-tooltip>
       </v-col>
+      <v-col cols="2" v-if="true && userProfile.aliasSettings.showW3info" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'https://warcraft3.info/stats/player/' + 204"
+              target="_blank"
+            >
+              <v-icon color="light-green accent-3">$w3info</v-icon>
+            </v-btn>
+          </template>
+          <span>ALIAS GOES HERE</span>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="2" v-if="true && userProfile.aliasSettings.showLiquipedia" class="socialIcon">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+              :href="'https://liquipedia.net/warcraft/' + 'Lyn'"
+              target="_blank"
+            >
+              <v-icon>$liquipedia</v-icon>
+            </v-btn>
+          </template>
+          <span>ALIAS GOES HERE</span>
+        </v-tooltip>
+      </v-col>
     </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px" class="scroll-v-dialog">
@@ -285,18 +315,18 @@
                       label="Homepage"
                     ></v-text-field>
                     <v-container>
-                      <v-checkbox dense
+                      <v-checkbox dense class="alias-checkbox"
                         prepend-icon="mdi-account-check"
                         v-model="userProfile.aliasSettings.showAka"
                         :label="`Show Alias`"
                       ></v-checkbox>
-                      <v-checkbox dense
-                        prepend-icon="mdi-account-check"
+                      <v-checkbox dense class="alias-checkbox"
+                        prepend-icon="$w3info"
                         v-model="userProfile.aliasSettings.showW3info"
                         :label="`Show Warcraft3.info Link`"
                       ></v-checkbox>
-                      <v-checkbox dense
-                        prepend-icon="mdi-account-check"
+                      <v-checkbox dense class="alias-checkbox"
+                        prepend-icon="$liquipedia"
                         v-model="userProfile.aliasSettings.showLiquipedia"
                         :label="`Show Liquipedia Link`"
                       ></v-checkbox>
@@ -745,5 +775,10 @@ export default class PlayerAvatar extends Vue {
   .col:first-child {
     margin-left: 0;
   }
+}
+
+.alias-checkbox {
+  margin-top: 0px;
+  padding-top: 0px;
 }
 </style>
