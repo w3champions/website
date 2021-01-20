@@ -1,0 +1,20 @@
+{
+    "SpecialPictures": [
+        {
+            "PictureId": 1001,
+            "Description": "Bronze Tier Supporter"
+        },
+        {
+            "PictureId": 1002,
+            "Description": "Bronze Tier Supporter"
+        },
+        {
+            "PictureId": 1003,
+            "Description": "Bronze Tier Supporter"
+        },
+        {
+            "PictureId": 1004,
+            "Description": "Bronze Tier Supporter"
+        }
+    ]
+}
