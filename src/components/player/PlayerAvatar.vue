@@ -99,34 +99,35 @@
           <span>https://trovo.live/{{ userProfile.trovo }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" v-if="true && userProfile.aliasSettings.showW3info" class="socialIcon">
+      <!-- TODO - check if the player has an alias -->
+      <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showW3info && w3infoId != 0" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
               icon
               v-on="on"
-              :href="'https://warcraft3.info/stats/player/' + 204"
+              :href="`https://warcraft3.info/stats/player/${w3infoId}`"
               target="_blank"
             >
               <v-icon color="light-green accent-3">$w3info</v-icon>
             </v-btn>
           </template>
-          <span>ALIAS GOES HERE</span>
+          <span>{{ aliasOrW3infoId }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" v-if="true && userProfile.aliasSettings.showLiquipedia" class="socialIcon">
+      <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showLiquipedia && liquipediaString != ''" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
               icon
               v-on="on"
-              :href="'https://liquipedia.net/warcraft/' + 'Lyn'"
+              :href="`https://liquipedia.net/warcraft/${liquipediaString}`"
               target="_blank"
             >
               <v-icon>$liquipedia</v-icon>
             </v-btn>
           </template>
-          <span>ALIAS GOES HERE</span>
+          <span>{{ liquipediaString }}</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -323,12 +324,12 @@
                       <v-checkbox dense class="alias-checkbox"
                         prepend-icon="$w3info"
                         v-model="userProfile.aliasSettings.showW3info"
-                        :label="`Show Warcraft3.info Link`"
+                        :label="`Show Warcraft3.info Profile Link`"
                       ></v-checkbox>
                       <v-checkbox dense class="alias-checkbox"
                         prepend-icon="$liquipedia"
                         v-model="userProfile.aliasSettings.showLiquipedia"
-                        :label="`Show Liquipedia Link`"
+                        :label="`Show Liquipedia Page Link`"
                       ></v-checkbox>
                     </v-container>
                   </v-row>
@@ -459,6 +460,38 @@ export default class PlayerAvatar extends Vue {
 
   get aliasSettings(): AkaSettings {
     return this.personalSetting.aliasSettings || {showAka: true, showW3info: true, showLiquipedia: true};
+  }
+
+  get hasAnAlias(): boolean {
+    // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
+    let playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
+
+    if (playerAkaData == null) return false;
+    
+    if (playerAkaData.id != 0 || playerAkaData.name != null || playerAkaData.liquipedia != null) {
+      return true; // player has an alias in W3info db, and has NOT opted out of at least one alias option
+    }
+    
+    return false; // might be opted out - might not have an alias
+  }
+
+  get w3infoId(): any {
+    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? '';
+  }
+
+  get liquipediaString(): string {
+    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? '';
+  }
+
+  get aliasOrW3infoId(): string {
+
+    let name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
+
+    if (name != null) {
+      return name
+    }
+
+    return "";
   }
 
   get homePageLinks(): Array<string> {
