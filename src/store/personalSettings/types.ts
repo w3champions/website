@@ -27,6 +27,12 @@ export type SpecialPicture = {
   description: string;
 }
 
+export type AkaSettings = {
+  showAka: boolean;
+  showW3info: boolean;
+  showLiquipedia: boolean;
+}
+
 export type PersonalSetting = {
   profileMessage: string;
   homePage?: string;
@@ -44,4 +50,5 @@ export type PersonalSetting = {
   winLosses: RaceStat[];
   specialPictures: SpecialPicture[];
   id: string;
+  aliasSettings: AkaSettings;
 };
