@@ -99,8 +99,8 @@
           <span>https://trovo.live/{{ userProfile.trovo }}</span>
         </v-tooltip>
       </v-col>
-      <!-- TODO - check if the player has an alias -->
-      <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showW3info && w3infoId != 0" class="socialIcon">
+      <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
+      <!-- <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showW3info && w3infoId != 0" class="socialIcon">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -129,7 +129,7 @@
           </template>
           <span>{{ liquipediaString }}</span>
         </v-tooltip>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-dialog v-model="dialogOpened" max-width="1400px" class="scroll-v-dialog">
@@ -321,7 +321,8 @@
                         v-model="userProfile.aliasSettings.showAka"
                         :label="`Show Alias`"
                       ></v-checkbox>
-                      <v-checkbox dense class="alias-checkbox"
+                      <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
+                      <!-- <v-checkbox dense class="alias-checkbox"
                         prepend-icon="$w3info"
                         v-model="userProfile.aliasSettings.showW3info"
                         :label="`Show Warcraft3.info Profile Link`"
@@ -330,7 +331,7 @@
                         prepend-icon="$liquipedia"
                         v-model="userProfile.aliasSettings.showLiquipedia"
                         :label="`Show Liquipedia Page Link`"
-                      ></v-checkbox>
+                      ></v-checkbox> -->
                     </v-container>
                   </v-row>
                   <v-row no-gutters class="countryInput">
