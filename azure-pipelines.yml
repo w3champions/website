@@ -47,7 +47,6 @@ steps:
       buildContext: "."
       tags: |
         $(TAG)
-        $(IS_LATEST)
 
   - task: CopyFiles@2
     displayName: publish docker-compose files
