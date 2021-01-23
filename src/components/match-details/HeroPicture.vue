@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts">
+import { getAsset } from "@/helpers/url-functions";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -21,7 +22,7 @@ export default class HeroPicture extends Vue {
 
   public parsePicture(hero: string) {
     try {
-      return require("../../assets/heroes/" + hero + ".png");
+      return getAsset(`heroes/${hero}.png`);
     } catch (e) {
       return null;
     }

@@ -1,3 +1,11 @@
+function getPublicPath() {
+  if (process.env.NODE_ENV === "development") {
+    return '/';
+  }
+
+  return 'SITE_CDN_URL';
+}
+
 module.exports = {
   transpileDependencies: ["vuetify"],
   productionSourceMap: false,
@@ -6,4 +14,5 @@ module.exports = {
       config.devtool = "source-map";
     }
   },
+  publicPath: getPublicPath()
 };

@@ -89,7 +89,7 @@
     </v-app-bar>
 
     <v-main>
-      <router-view :key="$route.fullPath" />
+      <router-view />
     </v-main>
     <v-footer padless class>
       <v-row justify="center" no-gutters>

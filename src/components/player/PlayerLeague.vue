@@ -7,7 +7,7 @@
   >
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
-      {{ modeStat.division !== 0 ? this.modeStat.division : null }}
+      {{ modeStat.division !== 0 ? modeStat.division : null }}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">

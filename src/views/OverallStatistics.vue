@@ -30,7 +30,9 @@
               Heroes
             </v-tab>
           </v-tabs>
-          <router-view></router-view>
+          <keep-alive>
+            <router-view ></router-view>
+          </keep-alive>
         </v-card>
       </v-col>
     </v-row>
@@ -77,10 +79,8 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
-    await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
-    await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
     }

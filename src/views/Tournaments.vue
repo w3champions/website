@@ -4,8 +4,8 @@
       <v-card-title class="search-bar">
         <v-row>
           <v-col cols="12" md="5">
-            <tournament-select 
-              :tournaments="tournaments" 
+            <tournament-select
+              :tournaments="tournaments"
               :selectedTournament="tournament"
               @tournamentSelected="tournamentSelected"
             />
@@ -43,13 +43,16 @@
           >
           </tournament-match-update>
           <div style="min-width: 800px;">
-            <p class="mt-4">Winner bracket</p>
+            <p
+              class="mt-4"
+              v-if="tournament.winnerBracketRounds && tournament.loserBracketRounds"
+            >Winner bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
               :bracketRounds="tournament.winnerBracketRounds"
             ></tournamentBracket>
 
-            <p>Losers bracket</p>
+            <p v-if="tournament.winnerBracketRounds && tournament.loserBracketRounds">Losers bracket</p>
             <tournamentBracket
               @matchSelected="matchSelected"
               :bracketRounds="tournament.loserBracketRounds"
@@ -70,7 +73,7 @@ import {
   ITournamentRound,
   ITournament,
   ConnectionType,
-} from "../store/tournaments/types";
+} from "@/store/tournaments/types";
 import { ERaceEnum, EGameMode } from "@/store/typings";
 
 import { Gateways } from "@/store/ranking/types";

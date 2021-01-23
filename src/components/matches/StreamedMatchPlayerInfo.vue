@@ -1,15 +1,15 @@
 <template>
   <div class="streamed-match-player-info">
-    <div v-if="player.twitch" :style="{order: this.alignRight ? 3 : 1}">
-      <v-btn icon :href="twitchLink" target="_blank">
+    <div class="streamed-match-player-info__twitch" :style="{order: this.alignRight ? 3 : 1}">
+      <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank">
         <v-icon color="purple accent-4">mdi-twitch</v-icon>
       </v-btn>
     </div>
     <div class="streamed-match-player-info__player">
       <player-icon class="streamed-match-player-info__race" :race="player.race" />
-      <span class="streamed-match-player-info__name" :title="player.name">
+      <router-link :to="playerProfilePage" class="streamed-match-player-info__name" :title="player.name">
         {{ player.name }}
-      </span>
+      </router-link>
       <span class="streamed-match-player-info__mmr">({{ player.oldMmr }})</span>
     </div>
   </div>
@@ -22,11 +22,16 @@ import { PlayerInTeam } from "../../store/typings";
 
 @Component({})
 export default class StreamedMatchPlayerInfo extends Vue{
-  @Prop() private player!: PlayerInTeam;
-  @Prop() private alignRight = false
+  @Prop() readonly player!: PlayerInTeam;
+  @Prop({default: false}) readonly alignRight!: boolean
 
   get twitchLink():string {
     return `https://twitch.tv/${this.player.twitch}`
+  }
+
+  get playerProfilePage(){
+    const playerId = encodeURIComponent(this.player.battleTag)
+    return `/player/${playerId}`
   }
 }
 </script>
@@ -34,6 +39,10 @@ export default class StreamedMatchPlayerInfo extends Vue{
 <style scoped lang="scss">
 .streamed-match-player-info {
   display: inline-flex;
+
+  &__twitch {
+    width: 36px;
+  }
 
   &__player {
     order: 2;
@@ -50,10 +59,11 @@ export default class StreamedMatchPlayerInfo extends Vue{
   &__name {
     grid-area: name;
     font-size: 14px;
-    max-width: 75px;
+    width: 75px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
   }
 
   &__mmr {

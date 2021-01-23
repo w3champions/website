@@ -19,10 +19,11 @@ export type PlayerInTeam = {
   name: string;
   mmrGain: number;
   race: ERaceEnum;
+  rndRace: ERaceEnum;
   won: boolean;
   location?: string;
   countryCode?: string;
-  twitch?: string;
+  twitch?: string | null;
 };
 
 export type Team = {
@@ -41,6 +42,22 @@ export type Match = {
   teams: Team[];
   gateWay: number;
   season: number;
+  serverInfo: ServerInfo;
+};
+
+export type ServerInfo = {
+  provider: string;
+  countryCode: string;
+  location: string;
+  name: string;
+  nodeId: number;
+  playerServerInfos: PlayerServerInfo[];
+};
+
+export type PlayerServerInfo = {
+  battleTag: string;
+  averagePing: number;
+  currentPing: number;
 };
 
 export type MatchDetail = {
@@ -123,5 +140,5 @@ export enum EAvatarCategory {
   NIGHT_ELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
-  SPECIAL = 32
+  SPECIAL = 32,
 }
