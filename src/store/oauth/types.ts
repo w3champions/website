@@ -7,7 +7,7 @@ export type OauthState = {
 };
 
 export type W3cToken = {
-  token: string;
+  jwt: string;
   battleTag: string;
   isAdmin: boolean;
 };

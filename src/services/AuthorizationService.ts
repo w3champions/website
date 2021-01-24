@@ -2,7 +2,7 @@ import { W3cToken, TwitchToken } from "@/store/oauth/types";
 import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
-const w3CAuth = "W3CIdentityToken";
+const w3CAuth = "W3ChampionsJWT";
 
 export default class AuthorizationService {
   public async authorize(code: string): Promise<W3cToken> {
@@ -50,7 +50,7 @@ export default class AuthorizationService {
   }
 
   public async saveAuthToken(token: W3cToken) {
-    Vue.cookies.set(w3CAuth, token.token, {
+    Vue.cookies.set(w3CAuth, token.jwt, {
       expires: Infinity,
     });
   }
@@ -60,7 +60,7 @@ export default class AuthorizationService {
   }
 
   public async getProfile(bearer: string): Promise<W3cToken | null> {
-    const url = `${IDENTIFICATION_URL}api/oauth/battleTag?bearer=${bearer}`;
+    const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${bearer}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
