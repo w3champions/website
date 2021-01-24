@@ -15,7 +15,7 @@
             v-on:click="sortRankings(header.text, header.sortFunction)"
           >
             {{ header.text }}
-            <div v-if="header.text == sortColumn" class="sort-icon">
+            <div v-if="header.text === sortColumn" class="sort-icon">
               <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
               <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
             </div>
@@ -68,7 +68,7 @@
               <div class="twitch__container" v-if="isTwitchLive(item)">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                    <span style="display: inline;" class="pointer" v-on="on">
+                    <span style="display: inline" class="pointer" v-on="on">
                       <v-btn
                         icon
                         v-on="on"
@@ -106,14 +106,14 @@
               </div>
             </div>
             <span
-              style="position: relative;"
+              style="position: relative"
               v-if="
                 isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
               "
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <span style="display: inline;" class="pointer" v-on="on">
+                  <span style="display: inline" class="pointer" v-on="on">
                     <sword-icon class="swords blinker" />
                   </span>
                 </template>
@@ -148,16 +148,15 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, EGameMode, ERaceEnum, Match } from "@/store/typings";
+import { EAvatarCategory, EGameMode, ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
-import { ECountries } from "@/store/countries";
-import { TwitchStreamResponse } from "../../store/twitch/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { getAvatarUrl } from "@/helpers/url-functions";
+import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
+import { TranslateResult } from "vue-i18n";
 
 @Component({
   components: {
@@ -181,7 +180,7 @@ export default class RankingsGrid extends Vue {
       align: "start",
       sortable: false,
       width: "25px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.rankNumber - a.rankNumber;
       },
     },
@@ -190,7 +189,7 @@ export default class RankingsGrid extends Vue {
       align: "start",
       sortable: false,
       minWidth: "170px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return ("" + b.player.name).localeCompare(a.player.name);
       },
     },
@@ -199,7 +198,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.race - a.race;
       },
     },
@@ -208,7 +207,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return ("" + b.playersInfo[0].clanId).localeCompare(
           a.playersInfo[0].clanId
         );
@@ -219,7 +218,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.player.wins - a.player.wins;
       },
     },
@@ -228,7 +227,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.player.losses - a.player.losses;
       },
     },
@@ -237,7 +236,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.player.games - a.player.games;
       },
     },
@@ -246,7 +245,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "50px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.player.winrate - a.player.winrate;
       },
     },
@@ -255,7 +254,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "25px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.player.mmr - a.player.mmr;
       },
     },
@@ -264,7 +263,7 @@ export default class RankingsGrid extends Vue {
       align: "end",
       sortable: false,
       width: "25px",
-      sortFunction: (a: Ranking, b: Ranking) => {
+      sortFunction: (a: Ranking, b: Ranking): number => {
         return b.rankingPoints - a.rankingPoints;
       },
     },
@@ -273,10 +272,10 @@ export default class RankingsGrid extends Vue {
   public sortedRankings: Ranking[] = this.rankings;
   public sortColumn = "Rank";
   public isSortedAsc = true;
-  private _lastSortFunction: any = null;
+  private _lastSortFunction: (() => void) | null = null;
 
   @Watch("selectedRank")
-  public onSelectedRankChanged(newVal: Ranking) {
+  public onSelectedRankChanged(newVal: Ranking): void {
     if (!newVal) {
       return;
     }
@@ -285,7 +284,7 @@ export default class RankingsGrid extends Vue {
   }
 
   @Watch("rankings")
-  public onRankingsChanged(newVal: Ranking[], oldVal: Ranking[]) {
+  public onRankingsChanged(newVal: Ranking[], oldVal: Ranking[]): void {
     if (!newVal) {
       return;
     }
@@ -316,12 +315,8 @@ export default class RankingsGrid extends Vue {
     }
   }
 
-  public async getStreamStatus() {
-    let twitchNames = this.rankings
-      .map((r) => r.playersInfo[0].twitchName)
-      .filter((r) => {
-        return r != null && r != "";
-      });
+  public async getStreamStatus(): Promise<void> {
+    let twitchNames = this.rankings.map((r) => r.playersInfo[0].twitchName);
 
     if (twitchNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
@@ -329,7 +324,7 @@ export default class RankingsGrid extends Vue {
   }
 
   // get properties
-  get selectedRankBattleTag() {
+  get selectedRankBattleTag(): string {
     if (!this.selectedRank || !this.selectedRank.player) {
       return "";
     }
@@ -338,7 +333,7 @@ export default class RankingsGrid extends Vue {
   }
 
   // methods
-  public async goToRank(rank: Ranking) {
+  public goToRank(rank: Ranking): void {
     setTimeout(() => {
       const listItemOfPlayer = document.getElementById(
         `listitem_${rank.rankNumber}`
@@ -352,11 +347,11 @@ export default class RankingsGrid extends Vue {
     }, 500);
   }
 
-  public getRaceIcon(ranking: Ranking, playerIndex: number) {
+  public getRaceIcon(ranking: Ranking, playerIndex: number): string {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
-    if (this.hasSelectedIcon(playerInfo)) {
+    if (RankingsGrid.hasSelectedIcon(playerInfo)) {
       return getAvatarUrl(
         playerInfo.selectedRace,
         playerInfo.pictureId,
@@ -367,12 +362,12 @@ export default class RankingsGrid extends Vue {
     }
   }
 
-  public getTitleRace(ranking: Ranking, playerIndex: number) {
+  public getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
     if (
-      this.hasSelectedIcon(playerInfo) &&
+      RankingsGrid.hasSelectedIcon(playerInfo) &&
       playerInfo.selectedRace <= ERaceEnum.UNDEAD
     ) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
@@ -381,7 +376,7 @@ export default class RankingsGrid extends Vue {
     }
   }
 
-  private hasSelectedIcon(playerInfo: PlayerInfo) {
+  private static hasSelectedIcon(playerInfo: PlayerInfo) {
     if (
       playerInfo.selectedRace !== undefined &&
       playerInfo.selectedRace != null &&
@@ -394,12 +389,13 @@ export default class RankingsGrid extends Vue {
   }
 
   raceIcon(race: ERaceEnum) {
-    return require("../../assets/raceIcons/" + ERaceEnum[race] + ".jpg");
+    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
-  public isTwitchLive(ranking: Ranking) {
-    var twitchName = ranking.playersInfo[0].twitchName;
-    var streamData = this.$store.direct.state.twitch.twitchStreamResponse.data;
+  public isTwitchLive(ranking: Ranking): boolean {
+    const twitchName = ranking.playersInfo[0].twitchName;
+    const streamData = this.$store.direct.state.twitch.twitchStreamResponse
+      .data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
         let stream = streamData[i];
@@ -415,7 +411,7 @@ export default class RankingsGrid extends Vue {
     return false;
   }
 
-  public isCurrentlyLive(playerIds: PlayerId[]) {
+  public isCurrentlyLive(playerIds: PlayerId[]): boolean {
     if (!this.ongoingMatches) {
       return false;
     }
@@ -437,7 +433,7 @@ export default class RankingsGrid extends Vue {
     return false;
   }
 
-  public getLiveOpponent(playerIds: PlayerId[]) {
+  public getLiveOpponent(playerIds: PlayerId[]): boolean | string {
     if (!this.ongoingMatches) {
       return false;
     }
@@ -454,7 +450,10 @@ export default class RankingsGrid extends Vue {
     return "";
   }
 
-  public sortRankings(columnName: string, sortFunction: any) {
+  public sortRankings(
+    columnName: string,
+    sortFunction: <T>(a: T, b: T) => number
+  ): void {
     if (sortFunction) {
       if (this.sortColumn === columnName) {
         this.isSortedAsc = !this.isSortedAsc;
@@ -472,16 +471,6 @@ export default class RankingsGrid extends Vue {
       this._lastSortFunction = sortFn;
       sortFn();
     }
-  }
-
-  getCountryCode(playerInfo: PlayerInfo): string {
-    if (playerInfo.countryCode) {
-      return playerInfo.countryCode;
-    } else if (playerInfo.location) {
-      return playerInfo.location;
-    }
-
-    return "";
   }
 }
 </script>
@@ -507,7 +496,7 @@ export default class RankingsGrid extends Vue {
 @media (max-width: 768px) {
   .rank-icon-container {
     margin-top: 5px;
-    margin-left: 0px !important;
+    margin-left: 0 !important;
   }
 }
 
@@ -545,7 +534,7 @@ td.header {
 
 .swords {
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 18px;
   cursor: pointer;
 }

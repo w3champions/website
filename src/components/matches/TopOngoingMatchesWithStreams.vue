@@ -2,7 +2,11 @@
   <v-card>
     <v-card-title>Top live 1v1 matches</v-card-title>
     <v-container>
-      <v-row v-for="match in matchesSortedByMMR" :key="match.id" style="align-items: center">
+      <v-row
+        v-for="match in matchesSortedByMMR"
+        :key="match.id"
+        style="align-items: center"
+      >
         <v-col cols="12">
           <streamed-match-info :match="match" />
         </v-col>
@@ -35,30 +39,28 @@ export default class TopOngoingMatchesWithStreams extends Vue {
       (match) =>
         match.teams.some((team) => team.players.some((player) => player.twitch))
     );
-    const streamerNames = matchesWithStreamers
-      .flatMap((match) =>
-        match.teams.flatMap((team) =>
-          team.players.map((player) => player.twitch)
-        )
-      )
-      .filter(Boolean);
+    const streamerNames = matchesWithStreamers.flatMap((match) =>
+      match.teams.flatMap((team) => team.players.map((player) => player.twitch))
+    );
 
     if (streamerNames.length > 0) {
-      await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames as string[]);
+      await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames);
 
       const activeStreamers = this.$store.direct.state.twitch.twitchStreamResponse.data.map(
         (stream) => stream.user_name.toLowerCase()
       );
 
-      this.matches = matchesWithStreamers.filter((match) =>
-        match.teams.some((team) =>
-          team.players.some((player) =>
-            player.twitch
-              ? activeStreamers.includes(player.twitch.toLowerCase())
-              : false
+      this.matches = matchesWithStreamers
+        .filter((match) =>
+          match.teams.some((team) =>
+            team.players.some((player) =>
+              player.twitch
+                ? activeStreamers.includes(player.twitch.toLowerCase())
+                : false
+            )
           )
         )
-      ).slice(0,5);
+        .slice(0, 5);
     }
   }
 
@@ -76,7 +78,7 @@ export default class TopOngoingMatchesWithStreams extends Vue {
   }
 
   public getPlayer(match: Match, index: number): PlayerInTeam {
-    return match.teams[index].players[0]
+    return match.teams[index].players[0];
   }
 }
 </script>
