@@ -51,8 +51,7 @@ export default class GatewaySelect extends Vue {
   }
 
   public setGateway(gateway: Gateways) {
-        this.$store.direct.commit.SET_GATEWAY(gateway);
-
+    this.$store.direct.commit.SET_GATEWAY(gateway);
     this.$emit("gatewayChanged", gateway);
   }
 }

@@ -24,7 +24,7 @@
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
-              <v-menu offset-x v-if="seasons.length > 0">
+              <v-menu offset-x v-if="!!seasons && seasons.length > 0">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     tile
