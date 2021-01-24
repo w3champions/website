@@ -38,11 +38,6 @@
             style="position: relative"
             :game-days="gameDays"
           />
-          <amount-per-gateway-per-day-chart
-            v-if="!isAllMode"
-            style="position: relative"
-            :game-days="gameDaysForGateways"
-          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -178,13 +173,11 @@ import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
 import { EGameMode } from "@/store/typings";
 import MultipleAmountPerDayChart from "@/components/overal-statistics/MultipleAmountPerDayChart.vue";
-import AmountPerGatewayPerDayChart from "@/components/overal-statistics/AmountPerGatewayPerDayChart.vue";
 import MapsPerSeasonChart from "@/components/overal-statistics/MapsPerSeasonChart.vue";
 
 @Component({
   components: {
     MapsPerSeasonChart,
-    AmountPerGatewayPerDayChart,
     MultipleAmountPerDayChart,
     GameLengthChart,
     AmountPerDayChart,
