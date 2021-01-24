@@ -86,7 +86,7 @@
             @change="setSelectedSeasonForMaps"
             :label="
               $t(
-                `components_overall-statistics_tabs_mmrdistributiontab.selectseason`
+                `components_overall-statistics_tabs_playeractivitytab.selectseason`
               )
             "
             outlined
@@ -105,7 +105,7 @@
 
     <v-card-title>
       {{
-        $t(`components_overall-statistics_tabs_mmrdistributiontab.popularhours`)
+        $t(`components_overall-statistics_tabs_playeractivitytab.popularhours`)
       }}
     </v-card-title>
     <v-row>
@@ -134,7 +134,7 @@
 
     <v-card-title>
       {{
-        $t(`components_overall-statistics_tabs_mmrdistributiontab.gamelengths`)
+        $t(`components_overall-statistics_tabs_playeractivitytab.gamelengths`)
       }}
     </v-card-title>
     <v-row>
