@@ -24,7 +24,7 @@
             </div>
             <div>
               <gateway-select @gatewayChanged="gatewayChanged" />
-              <v-menu offset-x>
+              <v-menu offset-x v-if="seasons.length > 0">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     tile
@@ -39,13 +39,8 @@
                 </template>
                 
                 <v-card>
-                  <v-card-text>
                     <v-list>
-                      <v-list-item-content>
-                        <v-list-item-title>Previous seasons:</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list>
-                    <v-list dense>
+                        <v-subheader>Select a season</v-subheader>
                       <v-list-item
                         v-for="item in seasons"
                         :key="item.id"
@@ -58,7 +53,6 @@
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
-                  </v-card-text>
                 </v-card>
               </v-menu>
             </div>
@@ -229,7 +223,7 @@ export default class PlayerView extends Vue {
     return this.$store.direct.state.player.playerProfile.participatedInSeasons;
   }
 
-  get aliasName() : any {
+  get aliasName() : string | false {
     if (this.$store.direct.state.player.playerProfile.playerAkaData != null) {
       return this.$store.direct.state.player.playerProfile.playerAkaData.name ?? false;
     }

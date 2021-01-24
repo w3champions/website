@@ -6,15 +6,9 @@
         {{ gateway }}
       </v-btn>
     </template>
-    <v-card>
-      <v-card-text>
+    <v-card >
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>Select a gateway:</v-list-item-title>
-          </v-list-item-content>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list dense>
+          <v-subheader>Select a gateway</v-subheader>
           <v-list-item
             v-for="mode in gateWays"
             :key="mode.gateway"
@@ -25,7 +19,6 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-card-text>
     </v-card>
   </v-menu>
 </template>
@@ -58,7 +51,7 @@ export default class GatewaySelect extends Vue {
   }
 
   public setGateway(gateway: Gateways) {
-    this.$store.direct.commit.SET_GATEWAY(gateway);
+        this.$store.direct.commit.SET_GATEWAY(gateway);
 
     this.$emit("gatewayChanged", gateway);
   }
