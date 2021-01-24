@@ -3,20 +3,40 @@ name: $(Build.BuildID)
 pool:
   vmImage: "ubuntu-18.04"
 
+variables:
+  - group: Secrets
+
 steps:
   - task: PowerShell@2
+    displayName: set docker and pipeline tag
+    env:
+      AZURE_DEVOPS_EXT_PAT: $(AZURE_CLI)
     inputs:
       targetType: "inline"
       script: |
         if(!("$(Build.Reason)".Equals("PullRequest"))){
-          Write-Host "##vso[task.setvariable variable=BuildVersioning]$(Build.BuildID)"
-          Write-Host "##vso[task.setvariable variable=IsLatest]latest"
+          Write-Host "##vso[task.setvariable variable=TAG]$(Build.BuildID)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]latest"
           Write-Host "Masterversion: $(Build.BuildID)"
         } else {
-          Write-Host "##vso[task.setvariable variable=BuildVersioning]dev-$(System.PullRequest.PullRequestNumber)"
-          Write-Host "##vso[task.setvariable variable=IsLatest]"
+          Write-Host "##vso[task.setvariable variable=TAG]dev-$(System.PullRequest.PullRequestNumber)"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]"
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
+          if("$(System.PullRequest.SourceBranch)".StartsWith("DEPLOY_")) {
+            $pr_name = "$(System.PullRequest.SourceBranch)".Split("_")[1]
+            Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
+
+            az pipelines build tag add --build-id $(Build.BuildID) --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
+          } else {
+            Remove-Item docker-compose.token.yml
+          }
         }
+
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    displayName: 'Replace tokens'
+    inputs:
+      targetFiles: |
+        **/*.token.yml => *.yml
 
   - task: Docker@2
     inputs:
@@ -26,5 +46,14 @@ steps:
       Dockerfile: "**/Dockerfile"
       buildContext: "."
       tags: |
-        $(BuildVersioning)
-        $(IsLatest)
+        $(TAG)
+
+  - task: CopyFiles@2
+    displayName: publish docker-compose files
+    inputs:
+      contents: '**/*docker-compose.yml'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(Build.ArtifactStagingDirectory)

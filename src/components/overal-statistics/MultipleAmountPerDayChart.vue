@@ -27,17 +27,23 @@ export default class MultipleAmountPerDayChart extends Vue {
   get gameHourChartData(): ChartData {
     return {
       labels: this.gameDayDates,
-      datasets: this.gameDays.map((c) => {
-        return {
-          label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
-          data: c.gameDays
-            .map((g) => g.gamesPlayed * this.multiplier(c.gameMode))
-            .splice(0, c.gameDays.length - 1),
-          backgroundColor: "rgba(126,126,126,0.08)",
-          borderColor: this.mapColor(c.gameMode),
-          borderWidth: 1,
-        };
-      }),
+      datasets: this.gameDays
+        .filter((c) => {
+          // Filter out gameMode 9 as it does not exist
+          // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
+          return c.gameMode !== 9 && c.gameMode !== 6;
+        })
+        .map((c) => {
+          return {
+            label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
+            data: c.gameDays
+              .map((g) => g.gamesPlayed * this.multiplier(c.gameMode))
+              .splice(0, c.gameDays.length - 1),
+            backgroundColor: "rgba(126,126,126,0.08)",
+            borderColor: this.mapColor(c.gameMode),
+            borderWidth: 1,
+          };
+        }),
     };
   }
 

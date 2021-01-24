@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Rankings from "@/views/Rankings.vue";
+import CountryRankings from "@/views/CountryRankings.vue";
 import Tournaments from "@/views/Tournaments.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
@@ -72,12 +73,30 @@ const routes = [
     component: Rankings,
   },
   {
+    path: "/countries",
+    name: "Country Rankings",
+    props: (route: {
+      query: {
+        season: string;
+        gateway: string;
+        league: string;
+        country: string;
+      };
+    }) => ({
+      gateway: parseInt(route.query.gateway),
+      league: parseInt(route.query.league),
+      season: parseInt(route.query.season),
+      country: route.query.country,
+    }),
+    component: CountryRankings,
+  },
+  {
     path: "/player/:id",
     component: Player,
     props: (route: {
       query: {
         freshLogin: boolean;
-      },
+      };
       params: {
         id: string;
       };

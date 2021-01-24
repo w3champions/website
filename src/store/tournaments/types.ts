@@ -19,6 +19,7 @@ export interface ITournamentPlayer {
 
 export interface ITournamentMatch {
     id?: string,
+    date?: string,
     players: ITournamentPlayer[]
 }
 

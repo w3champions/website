@@ -1,35 +1,49 @@
 <template>
   <div class="custom-table-wrapper elevation-1">
-    <table class="custom-table">
+    <table
+      class="custom-table"
+      v-for="countryRank in rankings"
+      :key="countryRank.league"
+    >
+      <thead>
+        <tr>
+          <td
+            colspan="100%"
+            class="text-uppercase font-weight-bold"
+            v-if="leagueMap.get(countryRank.league)"
+          >
+            <league-icon :league="leagueMap.get(countryRank.league).order" />
+            <div class="d-inline-block ml-2 my-4">
+              {{ leagueMap.get(countryRank.league).name }}
+              {{
+                leagueMap.get(countryRank.league).division !== 0
+                  ? leagueMap.get(countryRank.league).division
+                  : null
+              }}
+            </div>
+          </td>
+        </tr>
+      </thead>
       <thead>
         <tr>
           <td
             class="header"
-            v-bind:class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
             :key="header.text"
             v-bind:style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
-            v-on:click="sortRankings(header.text, header.sortFunction)"
           >
             {{ header.text }}
-            <div v-if="header.text === sortColumn" class="sort-icon">
-              <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
-              <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
-            </div>
           </td>
         </tr>
       </thead>
       <tbody>
         <tr
           :id="`listitem_${item.rankNumber}`"
-          v-for="item in sortedRankings"
+          v-for="item in countryRank.ranks"
           :key="item.player.id"
-          :class="{
-            searchedItem: item.player.id === selectedRankBattleTag,
-          }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td>
@@ -40,69 +54,87 @@
               :key="playerId.battleTag + '_' + item.race"
             >
               <div
-                class="player-avatar mr-1 alignRight race-icon"
-                :title="getTitleRace(item, index)"
-                :style="{
-                  'background-image': 'url(' + getRaceIcon(item, index) + ')',
-                }"
-              />
-              <player-rank-info
-                :player-id="playerId"
-                :clan-id="item.playersInfo[index].clanId"
-                :player-race="item.race"
-              />
-              <div
-                class="country-flag__container"
                 v-if="
-                  (item.playersInfo && item.playersInfo[index].countryCode) ||
-                  item.playersInfo[index].location
+                  item.playersInfo &&
+                  (item.playersInfo[index].countryCode ||
+                    item.playersInfo[index].location) === selectedCountry
                 "
               >
-                <country-flag-extended
-                  class="country-flag"
-                  :countryCode="item.playersInfo[index].countryCode"
-                  :location="item.playersInfo[index].location"
-                  size="small"
+                <div
+                  class="player-avatar mr-1 alignRight race-icon"
+                  :title="getTitleRace(item, index)"
+                  :style="{
+                    'background-image': 'url(' + getRaceIcon(item, index) + ')',
+                  }"
                 />
-              </div>
-              <div class="twitch__container" v-if="isTwitchLive(item)">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
-                      <v-btn
-                        icon
-                        v-on="on"
-                        :href="
-                          'http://twitch.tv/' +
-                          item.playersInfo[index].twitchName
-                        "
-                        target="_blank"
-                      >
-                        <v-icon
-                          v-if="!isCurrentlyLive(item.player.playerIds)"
-                          color="purple accent-4"
-                        >
-                          mdi-twitch
-                        </v-icon>
-                        <v-icon
-                          v-if="isCurrentlyLive(item.player.playerIds)"
-                          class="blinker"
-                          color="red accent-4"
-                        >
-                          mdi-twitch
-                        </v-icon>
-                      </v-btn>
-                    </span>
-                  </template>
 
-                  <div v-if="isCurrentlyLive(item.player.playerIds)">
-                    Streaming a match versus
-                    {{ getLiveOpponent(item.player.playerIds) }}
-                  </div>
-                  <div v-if="!isCurrentlyLive(item.player.playerIds)">
-                    Stream is live!
-                  </div>
-                </v-tooltip>
+                <player-rank-info
+                  :player-id="playerId"
+                  :clan-id="item.playersInfo[index].clanId"
+                  :player-race="item.race"
+                />
+                <div class="twitch__container" v-if="isTwitchLive(item)">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <span style="display: inline" class="pointer" v-on="on">
+                        <v-btn
+                          icon
+                          v-on="on"
+                          :href="
+                            'http://twitch.tv/' +
+                            item.playersInfo[index].twitchName
+                          "
+                          target="_blank"
+                        >
+                          <v-icon
+                            v-if="!isCurrentlyLive(item.player.playerIds)"
+                            color="purple accent-4"
+                          >
+                            mdi-twitch
+                          </v-icon>
+                          <v-icon
+                            v-if="isCurrentlyLive(item.player.playerIds)"
+                            class="blinker"
+                            color="red accent-4"
+                          >
+                            mdi-twitch
+                          </v-icon>
+                        </v-btn>
+                      </span>
+                    </template>
+
+                    <div v-if="isCurrentlyLive(item.player.playerIds)">
+                      Streaming a match versus
+                      {{ getLiveOpponent(item.player.playerIds) }}
+                    </div>
+                    <div v-if="!isCurrentlyLive(item.player.playerIds)">
+                      Stream is live!
+                    </div>
+                  </v-tooltip>
+                </div>
+              </div>
+              <div v-else class="teammate__container">
+                (
+                <player-rank-info
+                  :player-id="playerId"
+                  :clan-id="item.playersInfo[index].clanId"
+                  :player-race="item.race"
+                />
+                <div
+                  class="country-flag__container"
+                  v-if="
+                    (item.playersInfo && item.playersInfo[index].countryCode) ||
+                    item.playersInfo[index].location
+                  "
+                >
+                  <country-flag-extended
+                    class="country-flag"
+                    :countryCode="item.playersInfo[index].countryCode"
+                    :location="item.playersInfo[index].location"
+                    size="small"
+                  />
+                </div>
+                )
               </div>
             </div>
             <span
@@ -141,19 +173,39 @@
         </tr>
       </tbody>
     </table>
+    <table
+      class="custom-table"
+      v-if="!this.rankings || this.rankings.length === 0"
+    >
+      <tbody>
+        <tr>
+          <td colspan="100%" class="text-center">
+            no players found for this country
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import * as _ from "lodash";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, EGameMode, ERaceEnum } from "@/store/typings";
+import {
+  Ranking,
+  PlayerId,
+  PlayerInfo,
+  CountryRanking,
+  League,
+} from "@/store/ranking/types";
+import { EAvatarCategory, ERaceEnum } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
+import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 
@@ -162,18 +214,17 @@ import { TranslateResult } from "vue-i18n";
     RaceIcon,
     PlayerIcon,
     SwordIcon,
+    LeagueIcon,
     PlayerRankInfo,
     CountryFlagExtended,
   },
 })
-export default class RankingsGrid extends Vue {
-  @Prop() rankings!: Ranking[];
+export default class CountryRankingsGrid extends Vue {
+  @Prop() rankings!: CountryRanking[];
   @Prop() ongoingMatches!: any;
-  @Prop() selectedRank!: Ranking;
+  @Prop() selectedCountry!: string;
 
-  public gameModes = EGameMode;
-
-  public headers = [
+  headers = [
     {
       text: "Rank",
       align: "start",
@@ -268,101 +319,71 @@ export default class RankingsGrid extends Vue {
     },
   ];
 
-  public sortedRankings: Ranking[] = this.rankings;
-  public sortColumn = "Rank";
-  public isSortedAsc = true;
-  private _lastSortFunction: (() => void) | null = null;
+  leagueMap: Map<number, League> = new Map();
 
-  @Watch("selectedRank")
-  public onSelectedRankChanged(newVal: Ranking): void {
-    if (!newVal) {
-      return;
-    }
+  get groupedRankings() {
+    return this.rankings;
+  }
 
-    this.goToRank(newVal);
+  mounted() {
+    this.initLeagueMap();
   }
 
   @Watch("rankings")
-  public onRankingsChanged(newVal: Ranking[], oldVal: Ranking[]): void {
+  public onRankingsChanged(
+    newVal: CountryRanking[],
+    oldVal: CountryRanking[]
+  ): void {
     if (!newVal) {
-      return;
-    }
-
-    if (newVal == this.sortedRankings) {
       return;
     }
 
     let triggerTwitchLookup = false;
     if (newVal.length != oldVal.length) {
       triggerTwitchLookup = true;
-    } else {
-      for (let i = 0; i < newVal.length; i++) {
-        if (newVal[i].player.name != oldVal[i].player.name) {
-          triggerTwitchLookup = true;
-        }
-      }
     }
 
     if (triggerTwitchLookup) {
       this.getStreamStatus();
     }
 
-    this.sortedRankings = newVal;
-
-    if (this._lastSortFunction) {
-      this._lastSortFunction();
-    }
+    this.initLeagueMap();
   }
 
-  public async getStreamStatus(): Promise<void> {
-    let twitchNames = this.rankings.map((r) => r.playersInfo[0].twitchName);
+  async getStreamStatus(): Promise<void> {
+    let twitchNames = _.flatMap(this.rankings, (cr) => cr.ranks).map(
+      (r) => r.playersInfo[0].twitchName
+    );
 
     if (twitchNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
     }
   }
 
-  // get properties
-  get selectedRankBattleTag(): string {
-    if (!this.selectedRank || !this.selectedRank.player) {
-      return "";
-    }
-
-    return this.selectedRank.player.id;
-  }
-
   // methods
-  public goToRank(rank: Ranking): void {
-    setTimeout(() => {
-      const listItemOfPlayer = document.getElementById(
-        `listitem_${rank.rankNumber}`
-      );
-
-      if (!listItemOfPlayer) return;
-
-      this.$vuetify.goTo(listItemOfPlayer, {
-        offset: window.innerHeight - 150,
-      });
-    }, 500);
+  initLeagueMap() {
+    let map = new Map();
+    const league = this.$store.direct.state.rankings.ladders?.filter(
+      (l) =>
+        l.gateway === this.$store.direct.state.gateway &&
+        l.gameMode === this.$store.direct.state.rankings.gameMode &&
+        l.season === this.$store.direct.state.rankings.selectedSeason.id
+    )[0];
+    this.leagueMap = new Map(league?.leagues.map((l) => [l.id, l]));
   }
 
   public getRaceIcon(ranking: Ranking, playerIndex: number): string {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
-    if (RankingsGrid.hasSelectedIcon(playerInfo)) {
+    if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
       return getAvatarUrl(
         playerInfo.selectedRace,
         playerInfo.pictureId,
         playerInfo.isClassicPicture
       );
     } else {
-      return getAvatarUrl(
-        playerInfo.selectedRace,
-        playerInfo.pictureId,
-        playerInfo.isClassicPicture
-      );
-      // old way to get race icon: return this.raceIcon(playerInfo.calculatedRace);
+      return this.raceIcon(playerInfo.calculatedRace);
     }
   }
 
@@ -371,7 +392,7 @@ export default class RankingsGrid extends Vue {
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
     if (
-      RankingsGrid.hasSelectedIcon(playerInfo) &&
+      CountryRankingsGrid.hasSelectedIcon(playerInfo) &&
       playerInfo.selectedRace <= ERaceEnum.UNDEAD
     ) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
@@ -396,7 +417,7 @@ export default class RankingsGrid extends Vue {
     return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
-  public isTwitchLive(ranking: Ranking): boolean {
+  isTwitchLive(ranking: Ranking): boolean {
     const twitchName = ranking.playersInfo[0].twitchName;
     const streamData = this.$store.direct.state.twitch.twitchStreamResponse
       .data;
@@ -415,7 +436,7 @@ export default class RankingsGrid extends Vue {
     return false;
   }
 
-  public isCurrentlyLive(playerIds: PlayerId[]): boolean {
+  isCurrentlyLive(playerIds: PlayerId[]): boolean {
     if (!this.ongoingMatches) {
       return false;
     }
@@ -437,7 +458,7 @@ export default class RankingsGrid extends Vue {
     return false;
   }
 
-  public getLiveOpponent(playerIds: PlayerId[]): boolean | string {
+  getLiveOpponent(playerIds: PlayerId[]): boolean | string {
     if (!this.ongoingMatches) {
       return false;
     }
@@ -453,46 +474,10 @@ export default class RankingsGrid extends Vue {
 
     return "";
   }
-
-  public sortRankings(
-    columnName: string,
-    sortFunction: <T>(a: T, b: T) => number
-  ): void {
-    if (sortFunction) {
-      if (this.sortColumn === columnName) {
-        this.isSortedAsc = !this.isSortedAsc;
-      } else {
-        this.isSortedAsc = true;
-      }
-
-      const sortFn = () => {
-        this.sortColumn = columnName;
-        this.sortedRankings.sort(sortFunction);
-        if (this.isSortedAsc) {
-          this.sortedRankings = this.sortedRankings.reverse();
-        }
-      };
-      this._lastSortFunction = sortFn;
-      sortFn();
-    }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-.theme--light {
-  tr.searchedItem,
-  tr.searchedItem:hover {
-    background-color: lightblue !important;
-  }
-}
-.theme--dark {
-  tr.searchedItem,
-  tr.searchedItem:hover {
-    background-color: #310e6f !important;
-  }
-}
-
 .red {
   left: 10px;
 }
@@ -506,12 +491,10 @@ export default class RankingsGrid extends Vue {
 
 td.header {
   position: relative;
+}
 
-  .sort-icon {
-    position: absolute;
-    top: 10px;
-    right: -7px;
-  }
+.teammate__container {
+  font-size: small;
 }
 
 .country-flag__container {
@@ -519,15 +502,14 @@ td.header {
   display: inline-block;
 }
 
+.country-flag {
+  top: -10px;
+}
+
 .twitch__container {
   position: relative;
   display: inline-block;
   left: 8px;
-}
-
-::v-deep .country-flag {
-  position: absolute;
-  top: -10px;
 }
 
 .twitch-icon {
