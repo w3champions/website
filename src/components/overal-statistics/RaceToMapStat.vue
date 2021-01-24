@@ -32,7 +32,7 @@
       </template>
     </v-data-table>
     <v-card-text :hidden="stats.length !== 0">
-      No games played with this race yet.
+      {{ $t("components_overall-statistics_racetomapstat.nogamesplayed") }}
     </v-card-text>
   </div>
 </template>
@@ -60,37 +60,37 @@ export default class RaceToMapStat extends Vue {
 
   public headers = [
     {
-      text: "Map",
+      text: this.$t("components_overall-statistics_racetomapstat.map"),
       align: "start",
       sortable: false,
       width: "25px",
     },
     {
-      text: "vs Human",
+      text: this.$t("components_overall-statistics_racetomapstat.vshu"),
       align: "start",
       sortable: false,
       width: "25px",
     },
     {
-      text: "vs Orc",
+      text: this.$t("components_overall-statistics_racetomapstat.vsorc"),
       align: "start",
       sortable: false,
       width: "25px",
     },
     {
-      text: "vs Nightelf",
+      text: this.$t("components_overall-statistics_racetomapstat.vsne"),
       align: "start",
       sortable: false,
       width: "25px",
     },
     {
-      text: "vs Undead",
+      text: this.$t("components_overall-statistics_racetomapstat.vsud"),
       align: "start",
       sortable: false,
       width: "25px",
     },
     {
-      text: "Total",
+      text: this.$t("components_overall-statistics_racetomapstat.total"),
       align: "start",
       sortable: false,
       width: "25px",

@@ -315,6 +315,9 @@ const data = {
       vsud: "vs Undead",
       vsne: "vs Night Elf",
     },
+    "components_overall-statistics_gamelengthchart": {
+      amountofgames: "amount of games",
+    },
     "components_overall-statistics_heropictureselect": {
       anyhero: "Any hero selection",
     },
@@ -472,7 +475,9 @@ const data = {
       all: "All",
       overall: "Overall",
       wins: "Wins:",
+      won: "won",
       losses: "Losses:",
+      lost: "lost",
       total: "Total:",
     },
   },
@@ -756,6 +761,7 @@ const data = {
       vsud: "vs Untote",
       vsne: "vs Nachtelfen",
     },
+    "components_overall-statistics_gamelengthchart": {},
     "components_overall-statistics_heropictureselect": {
       anyhero: "Jegliche Helden",
     },
@@ -911,7 +917,7 @@ const data = {
     },
     common: {
       wins: "Siege:",
-      losses: "Niederlagen:",
+      lost: "Niederlagen:",
       total: "Gesamt:",
     },
   },
@@ -1194,6 +1200,7 @@ const data = {
       vsud: "vs 언데드",
       vsne: "vs 나이트엘프",
     },
+    "components_overall-statistics_gamelengthchart": {},
     "components_overall-statistics_heropictureselect": {
       anyhero: "영웅 선택",
     },
@@ -1342,7 +1349,7 @@ const data = {
     },
     common: {
       wins: "승리: ",
-      losses: " 패배 :",
+      lost: " 패배 :",
       total: "합계:",
     },
   },
