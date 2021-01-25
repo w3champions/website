@@ -42,7 +42,7 @@ export default class FaqView extends Vue {
 
   private async setNewsContent(stage: string) {
     const mdNewsResponse = await fetch(
-      `https://raw.githubusercontent.com/Miyagi1337/w3champions-news/master/${stage}/faqs.json`
+      `https://raw.githubusercontent.com/w3champions/w3champions-news/master/${stage}/faqs.json`
     );
     this.faqs = await mdNewsResponse.json();
   }
