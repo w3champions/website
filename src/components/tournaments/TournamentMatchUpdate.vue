@@ -7,6 +7,10 @@
       <v-card-text>
         <v-container>
           <v-row v-if="tournamentMatch">
+            <v-col cols="12">
+              <p>Date</p>
+              <v-datetime-picker ref="datetimePicker" label="Select Datetime" v-model="date"> </v-datetime-picker>
+            </v-col>
             <v-col cols="12" md="5" v-if="player1">
               <p>Player 1</p>
               <div v-if="player1">
@@ -140,8 +144,22 @@ export default class PlayerAvatar extends Vue {
   public countries: { country: string; countryCode: string }[] = [];
   public races: { name: string; id: ERaceEnum }[] = [];
 
+  public _date: Date | null = null;
   public _player1Copy?: ITournamentPlayer;
   public _player2Copy?: ITournamentPlayer;
+
+  get date() {
+    if (!this._date &&
+      this.tournamentMatch &&
+      this.tournamentMatch.date) {
+      this._date = new Date(this.tournamentMatch.date);
+    }
+    return this._date;
+  }
+
+  set date(d) {
+    this._date = d;
+  }
 
   get player1() {
     if (
@@ -171,6 +189,7 @@ export default class PlayerAvatar extends Vue {
 
   saveMatch() {
     if (this.tournamentMatch) {
+      this.tournamentMatch.date = this._date?.toISOString();
       if (this._player1Copy && this._player1Copy.score) {
         this._player1Copy.score = parseInt(this._player1Copy.score?.toString());
       }
@@ -187,6 +206,8 @@ export default class PlayerAvatar extends Vue {
   }
 
   close() {
+    this._date = null;
+    (this.$refs.datetimePicker as any).clearHandler();
     this._player1Copy = undefined;
     this._player2Copy = undefined;
     this.$emit("modalClosed");

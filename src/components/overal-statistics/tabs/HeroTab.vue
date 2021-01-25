@@ -59,6 +59,10 @@ export default class HeroTab extends Vue {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
 
+  async mounted(){
+    await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+  }
+
   get picks() {
     return [
       {
