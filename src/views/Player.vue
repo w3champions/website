@@ -7,7 +7,10 @@
             <div
               style="display: flex; flex-direction: row; align-items: center;"
             >
+              <div flex-column>
               <span>Profile of {{ profile.battleTag }}</span>
+              <div v-if="aliasName">({{ aliasName }})</div>
+              </div>
               <div
                 style="display: flex; flex-direction: row; margin-left: 25px;"
               >
@@ -33,6 +36,7 @@
                     </span>
                   </v-btn>
                 </template>
+                
                 <v-card>
                   <v-card-text>
                     <v-list>
@@ -223,6 +227,13 @@ export default class PlayerView extends Vue {
 
   get seasons() {
     return this.$store.direct.state.player.playerProfile.participatedInSeasons;
+  }
+
+  get aliasName() : any {
+    if (this.$store.direct.state.player.playerProfile.playerAkaData != null) {
+      return this.$store.direct.state.player.playerProfile.playerAkaData.name ?? false;
+    }
+    return false;
   }
 
   get seasonsWithoutCurrentOne() {

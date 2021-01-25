@@ -10,9 +10,12 @@ export type RankingState = {
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
+  countryRankings: CountryRanking[];
+  countryRankingsLoading: boolean;
   gameMode: EGameMode;
   seasons: Season[];
   selectedSeason: Season;
+  selectedCountry: string;
 };
 
 export type Ladder = {
@@ -48,6 +51,14 @@ export type Ranking = {
   gameMode: EGameMode;
   player: PlayerOverview;
   playersInfo: PlayerInfo[];
+};
+
+export type CountryRanking = {
+  league: number;
+  leagueName: string;
+  leagueDivision: number;
+  leagueOrder: number;
+  ranks: Ranking[];
 };
 
 export interface PlayerInfo {

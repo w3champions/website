@@ -1,10 +1,11 @@
 <!--<template> -->
-  <!--<v-tooltip top :disabled="!showPlayerInfo">-->
+<!--<v-tooltip top :disabled="!showPlayerInfo">-->
 <template>
   <div class="player-info" :class="textClass">
     <player-icon
       v-if="!left"
       :race="race"
+      :rndRace="rndRace"
       :big="bigRaceIcon"
       class="mr-1"
     />
@@ -33,10 +34,16 @@
         />
       </div>
     </div>
-    <player-icon v-if="left" :race="race" :big="bigRaceIcon" class="ml-2" />
+    <player-icon
+      v-if="left"
+      :race="race"
+      :rndRace="rndRace"
+      :big="bigRaceIcon"
+      class="ml-2"
+    />
   </div>
 </template>
-    <!-- <div v-if="winrate">
+<!-- <div v-if="winrate">
       <p>{{ battleTag }}</p>
       <p></p>
       Wins:
@@ -50,7 +57,7 @@
       <p>{{ battleTag }}</p>
       <p>Wins: ... | Losses: ... | Total: ...</p>
     </div> -->
-  <!-- </v-tooltip>
+<!-- </v-tooltip>
 </template> -->
 
 <script lang="ts">
@@ -60,7 +67,7 @@ import { PlayerInTeam } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({
   components: { PlayerIcon, CountryFlagExtended },
@@ -90,6 +97,10 @@ export default class PlayerMatchInfo extends Vue {
 
   get race() {
     return this.player.race;
+  }
+
+  get rndRace() {
+    return this.player.rndRace;
   }
 
   get mmrChange() {

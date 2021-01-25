@@ -24,3 +24,11 @@ export interface BannedPlayer {
   isOnlyChatBan: boolean;
   banReason: string;
 }
+
+export interface NavigationItem {
+  key?: string,
+  title: string,
+  icon?: string,
+  component?: string,
+  items?: Array<NavigationItem>
+}
