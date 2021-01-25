@@ -57,9 +57,12 @@
               </v-data-table>
             </v-col>
             <v-col cols="12" md="6">
-              <h4 style="position: relative;">$t(
-                "components_player_tabs_playerprofiletab.statsByMode"
-                )</h4>
+              <h4 style="position: relative;">
+                {{ 
+                  $t(
+                    "components_player_tabs_playerprofiletab.statsByMode"
+                  ) 
+                }}</h4>
               <mode-stats-grid :stats="gameModeStats" />
             </v-col>
           </v-row>
