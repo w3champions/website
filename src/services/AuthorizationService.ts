@@ -69,7 +69,7 @@ export default class AuthorizationService {
       },
     });
 
-    return response.status === 204 ? null : await response.json();
+    return response.status === 200 ? await response.json() : null;
 
   }
 }
