@@ -8,7 +8,7 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab class="profileTab" :to="`/OverallStatistics/`">
+            <v-tab class="profileTab" exact :to="`/OverallStatistics/`">
               Player Activity
             </v-tab>
             <v-tab

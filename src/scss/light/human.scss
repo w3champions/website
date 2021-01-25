@@ -1,13 +1,13 @@
-@import "./vars.scss";
 @import "../shared/index.scss";
 
-$w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
+// #1976d2 blue
 
 .theme--light.v-application {
+  --w3-bg-glass: rgba(233, 233, 233, 0.9);
+
   @font-face {
     * {
       font-family: "Friz Quadrata Std Bold";
-      color: $w3-light-color;
     }
   }
 
@@ -16,48 +16,6 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
-
-  .v-app-bar:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-human-glass;
-  }
-
-  .w3-background {
-    box-shadow: $w3-human-glass;
-  }
-
-  .w3-background:hover {
-    box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 1) !important;
-  }
-
-  .theme-selector.v-list {
-    box-shadow: $w3-human-glass;
-  }
-
-  .v-card {
-    color: $w3-light-color !important;
-  }
-
-  .v-card__text {
-    color: $w3-light-color !important;
-  }
-
-  .v-card:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-human-glass;
-  }
-
-  .v-list {
-    box-shadow: $w3-human-glass;
-  }
-
-  .v-tabs-bar {
-    a {
-      color: $w3-light-color !important;
-    }
-  }
 
   .v-data-table,
   .custom-table {
@@ -68,18 +26,5 @@ $w3-human-glass: inset 0 0 0 3000px rgba(233, 233, 233, 0.9) !important;
 
   .v-expansion-panel {
     background-color: transparent !important;
-  }
-
-  .v-footer {
-    background-color: transparent !important;
-    box-shadow: $w3-human-glass;
-  }
-}
-
-.human {
-  header.v-app-bar--is-scrolled + main {
-    .search-bar {
-      background-color: rgba(223, 229, 233, 0.9);
-    }
   }
 }

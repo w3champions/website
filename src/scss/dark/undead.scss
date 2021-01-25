@@ -1,21 +1,19 @@
-@import "./vars.scss";
 @import "../shared/index.scss";
-
-$w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
 
 .w3-yellow-text {
   font-family: "Friz Quadrata Std Medium" !important;
-  color: rgb(255, 212, 40) !important;
+  // color: rgb(255, 212, 40) !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
   text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
 }
 
 .theme--dark.v-application {
+  --w3-bg-glass: rgba(0, 0, 0, 0.9);
+
   @font-face {
     * {
       font-family: "Friz Quadrata Std Medium";
-      color: $w3-dark-color;
     }
   }
 
@@ -25,98 +23,24 @@ $w3-undead-glass: inset 0 0 0 3000px rgba(0, 0, 0, 0.9) !important;
   align-items: center !important;
   justify-content: center !important;
 
-  .v-btn {
-    color: rgb(255, 212, 40) !important;
-    text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-  }
+  // .v-btn {
+    // color: rgb(255, 212, 40) !important;
+    // text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
+  // }
 
-  .w3-background {
-    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.1) !important;
-  }
 
-  .w3-background:hover {
-    box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 1) !important;
-  }
+  // .v-card__title {
+  //   @extend .w3-yellow-text;
+  // }
 
-  .v-app-bar:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-undead-glass;
-  }
-
-  .v-app-bar.v-toolbar.v-sheet.darkmode {
-    background-color: transparent !important;
-  }
-
-  .theme-selector.v-list {
-    box-shadow: $w3-undead-glass;
-  }
-
-  .v-list {
-    box-shadow: $w3-undead-glass;
-  }
-
-  .v-card {
-    color: $w3-dark-color !important;
-  }
-
-  .v-card__title {
-    @extend .w3-yellow-text;
-  }
-
-  h3 {
-    @extend .w3-yellow-text;
-  }
-
-  .v-card__text {
-    color: $w3-dark-color !important;
-  }
-
-  .v-card:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-undead-glass;
-  }
-
-  .v-tabs-bar {
-    a {
-      color: $w3-dark-color !important;
-    }
-  }
-
-  .v-tabs-slider-wrapper {
-    color: $w3-dark-color !important;
-  }
-
-  .v-tabs-items {
-    background-color: transparent !important;
-  }
-
-  .v-tab {
-    background-color: transparent !important;
-  }
+  // h3 {
+  //   @extend .w3-yellow-text;
+  // }
 
   .v-data-table,
   .custom-table {
     tr:hover {
       box-shadow: 0 0 17px grey;
-    }
-  }
-
-  .v-footer {
-    background-color: transparent !important;
-    box-shadow: $w3-undead-glass;
-  }
-}
-
-.v-app-bar.v-toolbar.v-sheet.darkmode {
-  background-color: #292b2f !important;
-}
-
-.undead {
-  header.v-app-bar--is-scrolled + main {
-    .search-bar {
-      background: rgba(0, 0, 0, 0.9);
     }
   }
 }

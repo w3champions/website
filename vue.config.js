@@ -14,5 +14,12 @@ module.exports = {
       config.devtool = "source-map";
     }
   },
-  publicPath: getPublicPath()
+  publicPath: getPublicPath(),
+  css: {
+    loaderOptions: {
+      scss: {
+        prependData: `@import '@/scss/variables.scss';`
+      }
+    }
+  }
 };

@@ -12,7 +12,6 @@
 
 .v-btn {
   font-family: "Friz Quadrata Std Medium" !important;
-  color: $w3-light-color !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
 }
@@ -28,22 +27,16 @@ h3 {
   text-transform: uppercase !important;
 }
 
-.v-app-bar {
-  background-color: transparent !important;
-  font-family: "Friz Quadrata Std Bold";
-}
 
 .v-btn:before {
   background-color: transparent !important;
 }
 
 .v-card {
-  background: inherit !important;
   overflow: hidden !important;
 }
 
 .v-list {
-  background-color: transparent !important;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
@@ -56,8 +49,6 @@ h3 {
 
 .v-tabs-bar {
   background-color: transparent !important;
-  a {
-  }
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
@@ -69,7 +60,6 @@ h3 {
 }
 
 .v-tabs-slider-wrapper {
-  color: $w3-light-color !important;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   -webkit-transform: translate3d(0, 0, 0);
@@ -140,10 +130,6 @@ h3 {
   overflow-y: scroll !important;
 }
 
-$color-black: #000000;
-$color-white: #ffffff;
-$color-grey: #dddddd;
-
 .editor {
   position: relative;
   margin: 0 auto;
@@ -152,12 +138,12 @@ $color-grey: #dddddd;
     padding: 0.5rem;
 
     .ProseMirror {
-      outline: 2px solid rgba(0,0,0,0.1);
+      outline: 1px solid;
       outline-offset: 0.5rem;
     }
 
     .ProseMirror-focused {
-      outline: 2px solid rgba(0,0,0,0.3);
+      outline: 2px solid;
     }
 
     overflow-wrap: break-word;
@@ -172,7 +158,6 @@ $color-grey: #dddddd;
 }
 
 .menubar {
-
   margin-bottom: 1rem;
   transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
 
@@ -192,22 +177,27 @@ $color-grey: #dddddd;
     display: inline-flex;
     background: transparent;
     border: 0;
-    color: $color-black;
     padding: 0.2rem 0.5rem;
     margin-right: 0.2rem;
     border-radius: 3px;
     cursor: pointer;
 
     &:hover {
-      background-color: rgba($color-black, 0.05);
+      outline: 1px solid;
     }
 
     &.is-active {
-      background-color: rgba($color-black, 0.1);
+      outline: 1px solid;
     }
   }
 
   span#{&}__button {
     font-size: 13.3333px;
+  }
+}
+
+header.v-app-bar--is-scrolled + main {
+  .search-bar {
+    background-color: var(--w3-bg-glass);
   }
 }

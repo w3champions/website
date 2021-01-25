@@ -6,7 +6,16 @@ Vue.use(Vuetify);
 
 export default new Vuetify({
   theme: {
-    dark: false,
+    dark: true,
+    options: { customProperties: true },
+    themes: {
+      dark: {
+        "w3-race-bg": "#e9e9e9",
+      },
+      light: {
+        "w3-race-bg": "#e9e9e9",
+      }
+    }
   },
   icons: {
     values: {

@@ -1,11 +1,5 @@
-.w3-glass {
-  content: "" !important;
-  background: inherit !important;
-  position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  top: 0 !important;
-  bottom: 0 !important;
+:root {
+  --w3-bg-glass: rgba(233, 233, 233, 0.9);
 }
 
 .pointer {
@@ -58,7 +52,7 @@ header.v-app-bar--is-scrolled + main {
 
     .search-bar {
       position: sticky;
-      top: 50px;
+      top: 64px;
       z-index: 10;
     }
   }

@@ -13,7 +13,6 @@
       <a
         class="name-link"
         :class="won"
-        v-on="on"
         
         @click="notClickable ? null : goToPlayer()"
         @click.middle="openProfileInNewTab()"

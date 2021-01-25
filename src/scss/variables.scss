@@ -1,0 +1,30 @@
+@import '~vuetify/src/styles/styles.sass';
+
+$container-max-widths: (
+    'md': none,
+    'lg': 1185px,
+    'xl': 1185px
+);
+
+$material-light: (
+    'background': var(--w3-bg-glass),
+    'surface': var(--v-w3-race-bg-base),
+    'bottom-navigation': var(--v-w3-race-bg-base),
+    'cards': var(--w3-bg-glass),
+    'text': (
+        'theme': var(--v-w3-race-bg-base),
+    ),
+    'bg-color': var(--v-w3-race-bg-base),
+    'toolbar': var(--v-w3-race-bg-base),
+    'app-bar': var(--w3-bg-glass),
+);
+
+$material-dark: (
+    'background': var(--w3-bg-glass),
+    'surface': var(--v-w3-race-bg-base),
+    'bottom-navigation': var(--v-w3-race-bg-base),
+    'cards': var(--w3-bg-glass),
+    'bg-color': var(--v-w3-race-bg-base),
+    'toolbar': var(--v-w3-race-bg-base),
+    'app-bar': var(--w3-bg-glass),
+)
