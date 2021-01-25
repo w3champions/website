@@ -15,3 +15,7 @@ export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic
 export function getProfileUrl(playerId: string) {
   return  "/player/" + encodeURIComponent(`${playerId}`)
 }
+
+export function getAsset(path: string) {
+  return require(`../assets/${path}`);
+}

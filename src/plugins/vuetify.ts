@@ -1,10 +1,28 @@
 import Vue from "vue";
+import DatetimePicker from "vuetify-datetime-picker";
 import Vuetify from "vuetify/lib";
+import TrovoIcon from "@/components/player/TrovoIcon.vue";
+import LiquipediaIcon from "@/components/player/LiquipediaIcon.vue";
+import W3infoIcon from "@/components/player/W3infoIcon.vue";
 
 Vue.use(Vuetify);
+Vue.use(DatetimePicker);
 
 export default new Vuetify({
   theme: {
     dark: false,
   },
+  icons: {
+    values: {
+      trovo: {
+        component: TrovoIcon,
+      },
+      liquipedia: {
+        component: LiquipediaIcon,
+      },
+      w3info: {
+        component: W3infoIcon,
+      },
+    }
+  }
 });

@@ -56,7 +56,7 @@
               <v-col cols="12" md="6">
                 <img
                   src="../assets/w3championsScreenshot.png"
-                  style="max-width: 90%; max-height: 320px;"
+                  style="max-width: 90%; max-height: 320px"
                 />
               </v-col>
             </v-row>
@@ -71,8 +71,15 @@
             <support-box></support-box>
           </v-col>
         </v-row>
+
         <v-row>
-          <v-col cols="12" class>
+          <v-col cols="12">
+            <top-ongoing-matches-with-streams />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
             <v-card tile>
               <v-card-title>Top Ranks</v-card-title>
               <table class="custom-table" dense>
@@ -84,11 +91,11 @@
                   <td>
                     <v-row class="justify-space-between">
                       <v-col cols="2">
-                        <span style="font-size: 15px;">{{ i + 1 }}.</span>
+                        <span style="font-size: 15px">{{ i + 1 }}.</span>
                       </v-col>
                       <v-col cols="10">
                         {{ rank.player.name }}
-                        <div style="font-size: 11px;">
+                        <div style="font-size: 11px">
                           Win/Loss/Total: {{ rank.player.wins }}/{{
                             rank.player.losses
                           }}/{{ rank.player.games }}
@@ -101,6 +108,7 @@
             </v-card>
           </v-col>
         </v-row>
+        
       </v-col>
     </v-row>
   </v-container>
@@ -111,12 +119,12 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { Ranking } from "@/store/ranking/types";
 import VueMarkdown from "vue-markdown";
-import { API_URL } from "@/main";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
+import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 
-@Component({ components: { VueMarkdown, SocialBox, SupportBox } })
+@Component({ components: { TopOngoingMatchesWithStreams, VueMarkdown, SocialBox, SupportBox } })
 export default class HomeView extends Vue {
   public model = 0;
 

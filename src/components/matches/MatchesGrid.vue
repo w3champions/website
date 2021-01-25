@@ -61,7 +61,10 @@
                     left="true"
                   ></team-match-info>
                 </v-col>
-                <v-col cols="1">VS</v-col>
+                <v-col cols="1">
+                  VS
+                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
+                </v-col>
                 <v-col cols="5.5">
                   <team-match-info
                     :not-clickable="!unfinished"
@@ -120,10 +123,12 @@ import {
 } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
+import HostIcon from "@/components/matches/HostIcon.vue";
 
 @Component({
   components: {
     TeamMatchInfo,
+    HostIcon
   },
 })
 export default class MatchesGrid extends Vue {

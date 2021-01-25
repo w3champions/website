@@ -16,6 +16,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Season } from "@/store/ranking/types";
+import { getAsset } from "@/helpers/url-functions";
 
 @Component({})
 export default class SeasonBadge extends Vue {
@@ -27,7 +28,7 @@ export default class SeasonBadge extends Vue {
   }
 
   get seasonBadgeBg() {
-    return require(`../../assets/seasonBadges/Season_${this.season.id}.png`);
+    return getAsset(`seasonBadges/Season_${this.season.id}.png`);
   }
 }
 </script>

@@ -1,5 +1,5 @@
 const constants = {
-  ongoingMatchesRefreshInterval: 20000,
+  ongoingMatchesRefreshInterval: 60000,
 };
 
 export default constants;

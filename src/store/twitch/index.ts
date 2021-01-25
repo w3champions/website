@@ -11,7 +11,7 @@ const mod = {
   actions: {
     async getStreamStatus(
       context: ActionContext<TwitchState, RootState>,
-      twitchNames: string[]
+      twitchNames: Array<string | null | undefined>
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
@@ -22,9 +22,12 @@ const mod = {
 
       token = await rootGetters.oauthService.authorizeWithTwitch();
 
+      const sanitizedTwitchNames = twitchNames
+        .map((name) => name ? name.replace("https://twitch.tv/", ""): '')
+        .filter((name) => !!name && encodeURIComponent(name) === name);
       const response = await rootGetters.twitchService.getStreamStatus(
         token,
-        twitchNames
+        sanitizedTwitchNames
       );
 
       commit.SET_TWITCH_STREAM_RESPONSE(response);
