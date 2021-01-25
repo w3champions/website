@@ -1,13 +1,5 @@
 @import "../shared/index.scss";
 
-.w3-yellow-text {
-  font-family: "Friz Quadrata Std Medium" !important;
-  // color: rgb(255, 212, 40) !important;
-  letter-spacing: 1.56px !important;
-  text-transform: uppercase !important;
-  text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-}
-
 .theme--dark.v-application {
   --w3-bg-glass: rgba(0, 0, 0, 0.9);
 
@@ -22,20 +14,6 @@
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
-
-  // .v-btn {
-    // color: rgb(255, 212, 40) !important;
-    // text-shadow: rgb(0, 0, 0) 0px 3px 1px !important;
-  // }
-
-
-  // .v-card__title {
-  //   @extend .w3-yellow-text;
-  // }
-
-  // h3 {
-  //   @extend .w3-yellow-text;
-  // }
 
   .v-data-table,
   .custom-table {
