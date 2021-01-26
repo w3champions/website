@@ -160,10 +160,16 @@ const en = {
     phantomgrovew3c201016: "Phantom Grove W3C",
     vilereef201016: "Vile Reef",
     wellspringtemple201016: "Wellspring Temple",
+    wellspringtemple: "Wellspring Temple",
     ferocity201016: "Ferocity",
     synergyw3c: "Synergy",
     featherville: "Featherville",
-    tidehunters: "Tidehunters"
+    tidehunters: "Tidehunters",
+    fortpearl: "Fort Pearl",
+    synergy: "Synergy",
+    phantomgrove: "Phantom Grove",
+    royalgardens: "Royal Gardens",
+    dragonisland: "Dragon Island",
   },
 
   heroNames: {
