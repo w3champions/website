@@ -162,7 +162,13 @@ const en = {
     wellspringtemple201016: "Wellspring Temple",
     ferocity201016: "Ferocity",
     synergyw3c: "Synergy",
-    featherville: "Featherville"
+    featherville: "Featherville",
+    tidehunters: "Tidehunters",
+    ruinsofazshara: "Ruins of Azshara",
+    royalgardens: "Royal Gardens",
+    fortpearl: "Fort Pearl",
+    synergy: "Synergy",
+    dragonisland: "Dragon Island"
   },
 
   heroNames: {
