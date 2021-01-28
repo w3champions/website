@@ -35,9 +35,19 @@
                     </v-btn>
                   </v-card-text>
                   <br/>
-                  <h3>After the Installation, open W3Champions and join us!</h3>
+                  <h3>After the Installation, open W3Champions and hit play!</h3>
+                  <br/>
+                  <br/>
+                  <div class="w3c-launcher-screenshot" />
+                  <br/>
                   <br/>
                   <div class="w3c-screenshot" />
+                  <br/>
+                  <br/>
+                  <div class="w3c-screenshot-chat" />
+                  <br/>
+                  <br/>
+                  <div class="w3c-screenshot-map-select" />
                   <v-card-text>
                     Launcher features:
                     <ul>
@@ -338,7 +348,28 @@ export default class GettingStartedView extends Vue {
 .w3c-screenshot {
   width: 100%;
   padding-bottom: 56%;
-  background-image: url("../assets/w3championsScreenshot.png");
+  background-image: url("../assets/gettingStarted/startButton.png");
+  background-size: cover;
+}
+
+.w3c-launcher-screenshot {
+   width: 100%;
+   padding-bottom: 64.5%;
+   background-image: url("../assets/gettingStarted/launcher.png");
+   background-size: cover;
+ }
+
+.w3c-screenshot-chat {
+  width: 100%;
+  padding-bottom: 56%;
+  background-image: url("../assets/gettingStarted/chatOverview.png");
+  background-size: cover;
+}
+
+.w3c-screenshot-map-select {
+  width: 100%;
+  padding-bottom: 56%;
+  background-image: url("../assets/gettingStarted/mapSelection.png");
   background-size: cover;
 }
 </style>

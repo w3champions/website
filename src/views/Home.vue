@@ -55,7 +55,7 @@
               </v-col>
               <v-col cols="12" md="6">
                 <img
-                  src="../assets/w3championsScreenshot.png"
+                  src="../assets/gettingStarted/startButton.png"
                   style="max-width: 90%; max-height: 320px"
                 />
               </v-col>
@@ -108,7 +108,7 @@
             </v-card>
           </v-col>
         </v-row>
-        
+
       </v-col>
     </v-row>
   </v-container>
