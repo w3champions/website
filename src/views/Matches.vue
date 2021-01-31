@@ -14,6 +14,12 @@
               :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
             ></game-mode-select>
+            <map-select
+              @mapChanged="mapChanged"
+              :mapKeys="maps"
+              :map="map"
+            >
+            </map-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -39,6 +45,8 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
+import MapSelect from "@/components/common/MapSelect.vue";
+import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 
 @Component({
   components: {
@@ -46,6 +54,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
     MatchesStatusSelect,
     GatewaySelect,
     GameModeSelect,
+    MapSelect
   },
 })
 export default class MatchesView extends Vue {
@@ -69,6 +78,38 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.matches;
   }
 
+  get currentSeason() {
+    return this.$store.direct.state.rankings.seasons[0].id;
+  }
+
+  get maps() {
+    const maps = this.mapsByGameMode[this.gameMode] || [];
+    return Array.from(maps);
+  }
+
+  get mapsByGameMode() {
+    const filterSeasons = this.$store.direct.state.matches.status == MatchStatus.onGoing
+      ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === this.currentSeason
+      : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
+
+    return this.$store.direct.state.overallStatistics.matchesOnMapPerSeason
+      .filter(filterSeasons)
+      .reduce<Record<EGameMode, Set<any>>>((mapsByMode, matchesOnMapPerSeason) => {
+        for (let modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+          // just get the map name and ignore the count
+          const mapNames = modes.maps.map(m => m.map);
+
+          if (!mapsByMode[modes.gameMode]) {
+            mapsByMode[modes.gameMode] = new Set(mapNames)
+          } else {
+            // combine this seasons mode maps with other seasons modes maps without dupes
+            mapsByMode[modes.gameMode] = new Set([ ...mapsByMode[modes.gameMode], ...mapNames  ]);
+          }
+        }
+        return mapsByMode;
+      }, {} as Record<EGameMode, Set<any>>);
+  }
+
   get unfinished(): boolean {
     return this.$store.direct.state.matches.status == MatchStatus.onGoing;
   }
@@ -77,12 +118,21 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.gameMode;
   }
 
+  get map(): string {
+    return this.$store.direct.state.matches.map;
+  }
+
   public getMatches(page?: number) {
     this.$store.direct.dispatch.matches.loadMatches(page);
   }
 
+  public getMaps() {
+    this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
+  }
+
   mounted() {
     this.getMatches(1);
+    this.getMaps();
   }
 
   gatewayChanged() {
@@ -90,7 +140,12 @@ export default class MatchesView extends Vue {
   }
 
   gameModeChanged(gameMode: EGameMode) {
+    this.mapChanged("Overall");
     this.$store.direct.dispatch.matches.setGameMode(gameMode);
+  }
+
+  mapChanged(map: string) {
+    this.$store.direct.dispatch.matches.setMap(map);
   }
 }
 </script>
