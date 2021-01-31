@@ -140,7 +140,6 @@ export default class MatchesView extends Vue {
   }
 
   gameModeChanged(gameMode: EGameMode) {
-    this.mapChanged("Overall");
     this.$store.direct.dispatch.matches.setGameMode(gameMode);
   }
 

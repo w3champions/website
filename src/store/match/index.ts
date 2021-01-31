@@ -95,6 +95,7 @@ const mod = {
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_GAME_MODE(gameMode);
+      commit.SET_MAP("Overall");
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
