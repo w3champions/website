@@ -20,10 +20,10 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const bearer = await rootGetters.oauthService.authorize(code);
-      commit.SET_BEARER(bearer.token);
+      commit.SET_BEARER(bearer.jwt);
 
       const profile = await rootGetters.oauthService.getProfile(
-        bearer.token
+        bearer.jwt
       );
 
       if (profile) {
