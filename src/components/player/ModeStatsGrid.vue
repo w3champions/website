@@ -10,7 +10,7 @@
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ header.text }}</span>
         </template>
-        <span style="white-space: pre-line;">{{ header.tooltip }}</span>
+        <span style="white-space: pre-line">{{ header.tooltip }}</span>
       </v-tooltip>
     </template>
     <template v-slot:body="{ items }">
@@ -18,7 +18,10 @@
         <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
           <td>
             <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</span>
-            <race-icon style="display: inline; padding-left: 10px;" :race="item.race" />
+            <race-icon
+              style="display: inline; padding-left: 10px"
+              :race="item.race"
+            />
           </td>
           <td class="number-text text-start">
             <div class="text-center">
@@ -140,34 +143,33 @@ export default class ModeStatsGrid extends Vue {
       return "";
     }
 
-    return `top ${Math.max(topPerc, 0.1).toFixed(1)}%`;
+    return `${this.$t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
   }
 
   public headers = [
     {
-      text: "Mode",
+      text: this.$t("components_player_modestatsgrid.mode"),
       align: "center",
       sortable: false,
-      tooltip: "Mode",
+      tooltip: this.$t("components_player_modestatsgrid.mode"),
     },
     {
-      text: "Win/Loss",
+      text: this.$t("components_player_modestatsgrid.winloss"),
       align: "center",
       sortable: false,
-      tooltip: "Win/Loss"
+      tooltip: this.$t("components_player_modestatsgrid.winloss"),
     },
     {
-      text: "MMR",
+      text: this.$t("components_player_modestatsgrid.mmr"),
       align: "center",
       sortable: false,
-      tooltip: "MMR",
+      tooltip: this.$t("components_player_modestatsgrid.mmr"),
     },
     {
-      text: "RP",
+      text: this.$t("components_player_modestatsgrid.rp"),
       align: "center",
       sortable: false,
-      tooltip:
-        "RP stands for Ranking Points and \ndetermines your rank in the ladder. \nRP is calculated from your MMR and activity level.",
+      tooltip: this.$t("components_player_modestatsgrid.rpdesc"),
     },
   ];
 }
