@@ -392,8 +392,11 @@ const data = {
     components_player_playerleague: {
       placementsplayed: "Placement matches played",
     },
+    components_player_seasonbadge: {
+      participatedinseason: "participated in season",
+    },
     components_player_recentperformance: {
-      winsymbol: "W",
+      recentperformance: "Recent Performance",
     },
     components_player_tabs_playerarrangedteamtab: {
       title: "Teams",
@@ -401,11 +404,13 @@ const data = {
     components_player_tabs_matchhistorytab: {
       title: "Match History",
     },
-    components_player_seasonbadge: {
-      participatedinseason: "participated in season",
-    },
     components_tournaments_TournamentMatchUpdate: {
       updatematch: "Update match",
+      date: "Date",
+      name: "Name",
+      race: "Race",
+      country: "Country",
+      score: "Score",
       player1: "Player 1",
       player2: "Player 2",
     },
@@ -494,6 +499,8 @@ const data = {
       total: "Total:",
       top: "Top",
       allraces: "All races",
+      close: "Close",
+      save: "Save",
     },
   },
   de: {
@@ -841,17 +848,15 @@ const data = {
     components_player_playerleague: {
       placementsplayed: "Platzierungsspiele gespielt",
     },
-    components_player_recentperformance: {
-      winsymbol: "S",
+    components_player_seasonbadge: {
+      participatedinseason: "spielte in Saison",
     },
+    components_player_recentperformance: {},
     components_player_tabs_playerarrangedteamtab: {
       title: "Teams",
     },
     components_player_tabs_matchhistorytab: {
       title: "Vergangene Matches",
-    },
-    components_player_seasonbadge: {
-      participatedinseason: "spielte in Saison",
     },
     components_tournaments_TournamentMatchUpdate: {
       updatematch: "Match aktualisieren",
@@ -1276,17 +1281,15 @@ const data = {
     components_player_playerleague: {
       placementsplayed: "순위",
     },
-    components_player_recentperformance: {
-      winsymbol: "승",
+    components_player_seasonbadge: {
+      participatedinseason: "시즌에 참가",
     },
+    components_player_recentperformance: {},
     components_player_tabs_playerarrangedteamtab: {
       title: "팀",
     },
     components_player_tabs_matchhistorytab: {
       title: "매치 기록",
-    },
-    components_player_seasonbadge: {
-      participatedinseason: "시즌에 참가",
     },
     components_tournaments_TournamentMatchUpdate: {
       updatematch: "매치 업데이트",
