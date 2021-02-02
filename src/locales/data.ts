@@ -324,6 +324,15 @@ const data = {
     "components_overall-statistics_herowinrate": {
       winratesofheromu: "Winrates of hero matchups",
     },
+    "components_overall-statistics_mapsperseasonchart": {
+      playedmaps: "Played maps",
+    },
+    "components_overall-statistics_playedheroeschart": {
+      playedheroes: "Played heroes",
+    },
+    "components_overall-statistics_populargametimechart": {
+      accgameslast2weeks: "accumulated games over the last two weeks",
+    },
     "components_overall-statistics_racetomapstat": {
       nogamesplayed: "No games played with this race yet.",
       map: "Map",
@@ -363,15 +372,19 @@ const data = {
         "RP stands for Ranking Points and \\ndetermines your rank in the ladder. \\nRP is calculated from your MMR and activity level.",
     },
     components_player_playeravatar: {
+      useClassicIcons: "Use classic icons",
       games: "Games:",
-      hp: "Homepage:",
+      homepage: "Homepage:",
       about: "About:",
       edit: "Edit Profile",
       userprofile: "User Profile",
       entertwitchname: "Enter your Twitch username!",
       enterytname: "Enter your YouTube username!",
-      entertwattername: "Enter your Twitter handle!",
+      entertwittername: "Enter your Twitter handle!",
+      entertrovoname: "Enter your Trovo username!",
       entercustomhp: "Enter a custom homepage",
+      showalias: "Show Alias",
+      selectcountry: "Select your country",
       aboutdesc: "Write something about yourself!",
       close: "Close",
       save: "Save",
@@ -479,6 +492,7 @@ const data = {
       losses: "Losses:",
       lost: "lost",
       total: "Total:",
+      top: "Top",
     },
   },
   de: {
@@ -768,6 +782,9 @@ const data = {
     "components_overall-statistics_herowinrate": {
       winratesofheromu: "Siegrate von Helden-Matchups",
     },
+    "components_overall-statistics_mapsperseasonchart": {},
+    "components_overall-statistics_playedheroeschart": {},
+    "components_overall-statistics_populargametimechart": {},
     "components_overall-statistics_racetomapstat": {
       nogamesplayed: "Noch kein Spiel mit dieser Rasse.",
       map: "Map",
@@ -808,13 +825,13 @@ const data = {
     },
     components_player_playeravatar: {
       games: "Spiele:",
-      hp: "Homepage:",
+      homepage: "Homepage:",
       about: "Über mich:",
       edit: "Profil bearbeiten",
       userprofile: "Spielerprofil",
       entertwitchname: "Twitchnamen eingeben!",
       enterytname: "YouTubenamen eingeben!",
-      entertwattername: "Twitterhandle eingeben!",
+      entertwittername: "Twitterhandle eingeben!",
       entercustomhp: "Eigene Webseite eingeben",
       aboutdesc: "Schreib' etwas über Dich!",
       close: "Schließen",
@@ -1207,6 +1224,9 @@ const data = {
     "components_overall-statistics_herowinrate": {
       winratesofheromu: "상대 영웅별 승률",
     },
+    "components_overall-statistics_mapsperseasonchart": {},
+    "components_overall-statistics_playedheroeschart": {},
+    "components_overall-statistics_populargametimechart": {},
     "components_overall-statistics_racetomapstat": {
       nogamesplayed: "종족 플레이 기록 없음",
       map: "맵",
@@ -1240,13 +1260,13 @@ const data = {
     },
     components_player_playeravatar: {
       games: "게임",
-      hp: "홈페이지",
+      homepage: "홈페이지",
       about: "정보",
       edit: "프로필 수정",
       userprofile: "사용자 프로필",
       entertwitchname: "당신의 트위치 주소를 입력하세요",
       enterytname: "당신의 유튜브 주소을 입력하세요",
-      entertwattername: "당신의 트위터를 입력하세요",
+      entertwittername: "당신의 트위터를 입력하세요",
       entercustomhp: "홈페이지 주소 입력",
       aboutdesc: "자기 소개",
       close: "닫기",

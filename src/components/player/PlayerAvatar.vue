@@ -44,7 +44,7 @@
         <v-checkbox
           style="margin-left: 25px"
           v-model="useClassicIcons"
-          :label="`Use classic icons`"
+          :label="$t('components_player_playeravatar.useClassicIcons')"
         ></v-checkbox>
         <v-row
           style="padding-left: 25px; padding-right: 25px"
@@ -111,12 +111,15 @@
 
     <v-row>
       <v-col style="margin-top: -15px">
-        <h3>Games: {{ playerGames }}</h3>
+        <h3>
+          {{ $t("components_player_playeravatar.games") }}
+          {{ playerGames }}
+        </h3>
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <h3>Homepage:</h3>
+        <h3>{{ $t("components_player_playeravatar.homepage") }}</h3>
         <div v-if="homePageLinks && homePageLinks.length > 0">
           <a
             class="d-block"
@@ -134,7 +137,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <h3>About:</h3>
+        <h3>{{ $t("components_player_playeravatar.about") }}</h3>
         <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
       </v-col>
     </v-row>
@@ -156,12 +159,14 @@
                 color="primary"
               >
                 <v-icon left>mdi-pencil</v-icon>
-                Edit Profile
+                {{ $t("components_player_playeravatar.edit") }}
               </v-btn>
             </template>
             <v-card>
               <v-card-title>
-                <span class="headline">User Profile</span>
+                <span class="headline">
+                  {{ $t("components_player_playeravatar.userprofile") }}
+                </span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -174,7 +179,9 @@
                       single-line
                       shaped
                       prefix="https://twitch.tv/"
-                      hint="Enter your Twitch username!"
+                      :hint="
+                        $t('components_player_playeravatar.entertwitchname')
+                      "
                       v-model="userProfile.twitch"
                     ></v-text-field>
                     <v-text-field
@@ -184,7 +191,7 @@
                       clearable
                       single-line
                       shaped
-                      hint="Enter your YouTube username!"
+                      :hint="$t('components_player_playeravatar.enterytname')"
                       prefix="https://www.youtube.com/"
                       v-model="userProfile.youtube"
                     ></v-text-field>
@@ -195,7 +202,9 @@
                       clearable
                       single-line
                       shaped
-                      hint="Enter your Twitter handle!"
+                      :hint="
+                        $t('components_player_playeravatar.entertwittername')
+                      "
                       prefix="https://www.twitter.com/"
                       v-model="userProfile.twitter"
                     ></v-text-field>
@@ -206,7 +215,9 @@
                       clearable
                       single-line
                       shaped
-                      hint="Enter your Trovo username!"
+                      :hint="
+                        $t('components_player_playeravatar.entertrovoname')
+                      "
                       prefix="https://trovo.live/"
                       v-model="userProfile.trovo"
                     ></v-text-field>
@@ -219,14 +230,16 @@
                       clearable
                       v-model="userProfile.homePage"
                       shaped
-                      hint="Enter a custom homepage"
+                      :hint="$t('components_player_playeravatar.entercustomhp')"
                       label="Homepage"
                     ></v-text-field>
                     <v-container>
-                      <v-checkbox dense class="alias-checkbox"
+                      <v-checkbox
+                        dense
+                        class="alias-checkbox"
                         prepend-icon="mdi-account-check"
                         v-model="userProfile.aliasSettings.showAka"
-                        :label="`Show Alias`"
+                        :label="$t('components_player_playeravatar.showalias')"
                       ></v-checkbox>
                       <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
                       <!-- <v-checkbox dense class="alias-checkbox"
@@ -249,12 +262,14 @@
                         :item-value="countryCode"
                         :items="countries"
                         :filter="countryFilter"
-                        label="Select your country"
+                        :label="
+                          $t('components_player_playeravatar.selectcountry')
+                        "
                         item-text="country"
                         v-model="selectedCountry"
                         :return-object="false"
                       >
-                        <template v-slot:item="{ index, item }">
+                        <template v-slot:item="{ item }">
                           <country-flag
                             :country="item.countryCode"
                             size="normal"
@@ -262,7 +277,7 @@
                           {{ item.country }}
                           <v-spacer></v-spacer>
                         </template>
-                        <template v-slot:selection="{ attrs, item }">
+                        <template v-slot:selection="{ item }">
                           <country-flag
                             :country="item.countryCode"
                             size="normal"
@@ -282,7 +297,7 @@
                         :rules="[rules.maxLength(300)]"
                         value
                         v-model="userProfile.about"
-                        hint="Write something about yourself!"
+                        :hint="$t('components_player_playeravatar.aboutdesc')"
                       ></v-textarea>
                     </v-col>
                   </v-row>
@@ -291,10 +306,10 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="resetUserProfile">
-                  Close
+                  {{ $t("components_player_playeravatar.close") }}
                 </v-btn>
                 <v-btn color="blue darken-1" text @click="saveUserProfile">
-                  Save
+                  {{ $t("components_player_playeravatar.save") }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -310,7 +325,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import { AkaSettings, SpecialPicture } from "../../store/personalSettings/types";
+import {
+  AkaSettings,
+  SpecialPicture,
+} from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "../../helpers/url-functions";
@@ -368,36 +386,49 @@ export default class PlayerAvatar extends Vue {
   }
 
   get aliasSettings(): AkaSettings {
-    return this.personalSetting.aliasSettings || {showAka: true, showW3info: true, showLiquipedia: true};
+    return (
+      this.personalSetting.aliasSettings || {
+        showAka: true,
+        showW3info: true,
+        showLiquipedia: true,
+      }
+    );
   }
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    let playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
+    let playerAkaData = this.$store.direct.state.player.playerProfile
+      .playerAkaData;
 
     if (playerAkaData == null) return false;
-    
-    if (playerAkaData.id != 0 || playerAkaData.name != null || playerAkaData.liquipedia != null) {
+
+    if (
+      playerAkaData.id != 0 ||
+      playerAkaData.name != null ||
+      playerAkaData.liquipedia != null
+    ) {
       return true; // player has an alias in W3info db, and has NOT opted out of at least one alias option
     }
-    
+
     return false; // might be opted out - might not have an alias
   }
 
   get w3infoId(): any {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? '';
+    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? "";
   }
 
   get liquipediaString(): string {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? '';
+    return (
+      this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ??
+      ""
+    );
   }
 
   get aliasOrW3infoId(): string {
-
     let name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
 
     if (name != null) {
-      return name
+      return name;
     }
 
     return "";
