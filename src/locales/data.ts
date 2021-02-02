@@ -493,6 +493,7 @@ const data = {
       lost: "lost",
       total: "Total:",
       top: "Top",
+      allraces: "All races",
     },
   },
   de: {
