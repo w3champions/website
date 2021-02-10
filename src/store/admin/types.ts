@@ -40,43 +40,12 @@ export interface QueueData {
 }
 
 export interface QueuedPlayer {
+  battleTag : string,
   mmr: number,
-  quantiles: QueueQuantiles,
-  queueTime: number,
-  isFloConnected: boolean;
-  playerData: QueuedPlayerData,
-}
-
-export interface QueueQuantiles {
   quantile: number,
   activityQuantile: number,
-}
-
-export interface QueuedPlayerData {
-  battleTag: string,
-  floInfo: FloInfo,
+  queueTime: number,
+  isFloConnected: boolean,
   location: string,
   serverOption: string,
-}
-
-export interface FloInfo {
-  floPings: FloPingData[],
-  closestNode: FloClosestServerData,
-}
-
-export interface FloPingData {
-  nodeId: number,
-  currentPing: number,
-  avgPing: number,
-  lossRate: number,
-  pingFilter: number,
-}
-
-export interface FloClosestServerData {
-  country_id: string,
-  id: number,
-  location: string,
-  name: string,
-  isDisabled: boolean,
-  isCnOptimized: boolean,
 }

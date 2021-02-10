@@ -11,6 +11,7 @@
               <template>
                 <div v-if="getPlayerDataInGamemode(mode.modeId) != null">
                   <v-data-table
+                  :headers="headers"
                   :items="getPlayerDataInGamemode(mode.modeId)">
                   </v-data-table>
                 </div>
@@ -58,9 +59,9 @@ export default class AdminQueueData extends Vue {
         sortable: true,
       },
       {
-        text: "Server Option",
+        text: "Queue Time",
         align: "start",
-        sortable: true
+        sortable: true,
       },
       {
         text: "Flo Connected",
@@ -68,15 +69,20 @@ export default class AdminQueueData extends Vue {
         sortable: true,
       },
       {
-        text: "Closest Server",
+        text: "Location",
+        align: "start",
+        sortable: false,
+      },
+      {
+        text: "Server Option",
         align: "start",
         sortable: true,
-      },
+      }
     ]
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() {
+  onBattleTagChanged() : void {
     this.init();
   }
 
@@ -115,18 +121,21 @@ export default class AdminQueueData extends Vue {
     ];
   }
 
-  getPlayerDataInGamemode(modeId : number) : QueueData {
+  getPlayerDataInGamemode(modeId : number) : Array<unknown> {
 
     for (let i=0; i<this.queueData.length; i++) {
       if (this.queueData[i].gameMode == modeId) {
-        return this.queueData[i];
+        
+      console.log(this.queueData[i])
+        return this.queueData[i].snapshot;
       }
+
     }
     
-    return this.queueData[0];
+    return this.queueData[0].snapshot;
   }
 
-  async mounted() {
+  async mounted() : Promise<void> {
     await this.init();
   }
 
