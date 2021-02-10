@@ -1,18 +1,29 @@
 <template>
-  <div>
+  <div v-if="gameModeStatsAt && gameModeStatsAt.length > 0">
     <v-card-title>Teams</v-card-title>
     <br />
+    
     <v-card-text>
       <v-row>
         <v-col
+          class="mb-10"
           cols="12"
           md="3"
           v-for="atPartner in gameModeStatsAt"
           :key="atPartner.id"
         >
           <player-league :mode-stat="atPartner" :show-at-partner="true" />
-          <br />
         </v-col>
+      </v-row>
+      
+    </v-card-text>
+  </div>
+  <div v-else>
+    <v-card-text>
+      <v-row class="justify-center">
+          <v-col class="text-center">
+            <v-card-subtitle>This player is not part of a team</v-card-subtitle>
+          </v-col>
       </v-row>
     </v-card-text>
   </div>

@@ -10,6 +10,7 @@ export type MatchState = {
   loadingMatchDetail: boolean;
   status: MatchStatus;
   gameMode: EGameMode;
+  map: string;
 };
 
 export enum MatchStatus {
