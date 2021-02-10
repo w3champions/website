@@ -4,6 +4,7 @@ import {
   BannedPlayer,
   LoadingScreenTip,
   NewsMessage,
+  QueueData
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -154,4 +155,18 @@ export default class AdminService {
     });
     return response.ok ? "" : (await response.json()).error;
   }
+
+  public async getQueueData(
+    token: string
+    ): Promise<QueueData[]> {
+      const url = `${API_URL}api/admin/queue-data/?authorization=${token}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      return await response.json();
+    }
 }
