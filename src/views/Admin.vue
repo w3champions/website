@@ -1,5 +1,5 @@
 <template>
-  <v-container v-show="isAdmin" style="height: 100%">
+  <v-container fluid v-show="isAdmin" style="height: 100%">
     <div class="admin-page-wrapper">
       <admin-navigation :items="navItems" v-on:itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>

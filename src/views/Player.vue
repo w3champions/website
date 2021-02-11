@@ -29,8 +29,7 @@
                   <v-btn
                     tile
                     v-on="on"
-                    class="ma-2"
-                    style="background-color: transparent;"
+                    class="ma-2 transparent"
                   >
                     <span class="pa-0" v-if="selectedSeason">
                       Season {{ selectedSeason.id }}
@@ -105,6 +104,7 @@
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
             <v-tab
+              exact
               class="profileTab"
               :to="`/player/${encodeURIComponent(this.battleTag)}`"
             >

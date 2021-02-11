@@ -10,7 +10,7 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialogTips">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn color="primary" class="mb-2 w3-race-bg--text" v-bind="attrs" v-on="on">
               Add Tip
             </v-btn>
           </template>
@@ -33,10 +33,10 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeTips">
+              <v-btn text @click="closeTips">
                 Cancel
               </v-btn>
-              <v-btn color="blue darken-1" text @click="saveTips">
+              <v-btn color="primary" class="w3-race-bg--text" text @click="saveTips">
                 Save
               </v-btn>
             </v-card-actions>
@@ -44,7 +44,7 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editTipItem(item)">
         mdi-pencil
       </v-icon>

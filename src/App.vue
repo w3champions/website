@@ -189,6 +189,31 @@ export default class App extends Vue {
     return isDark;
   }
 
+  get themeColors() {
+    switch(this.theme) {
+      case "nightelf":
+        return {
+          primary: "#ffd428",
+          "w3-race-bg": "#0d0718"
+        };
+      case "undead":
+        return {
+          primary: "#ffd428",
+          "w3-race-bg": "#000",
+        };
+      case "orc":
+        return {
+          primary: "#5c2604",
+          "w3-race-bg": "#c7baa1"
+        };
+      default:
+        return {
+          primary: "#1976d2",
+          "w3-race-bg": "#e9e9e9"
+        };
+    }
+  }
+
   get theme(): string {
     return this.selectedTheme;
   }
@@ -197,6 +222,7 @@ export default class App extends Vue {
     window.localStorage.setItem("theme", val);
     this.selectedTheme = val;
     this.$vuetify.theme.dark = this.isDarkTheme;
+    this.setThemeColors();
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
@@ -211,12 +237,17 @@ export default class App extends Vue {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
     }
   }
+  private setThemeColors() {
+    this.$vuetify.theme.themes[ this.isDarkTheme ? "dark" : "light"] =
+      Object.assign({}, this.$vuetify.theme.themes[ this.isDarkTheme ? "dark" : "light"], this.themeColors)
+  }
 
   created() {
     const t = window.localStorage.getItem("theme");
     if (t && t.length > 0) {
       this.theme = t;
     }
+    this.setThemeColors();
   }
 }
 </script>

@@ -9,7 +9,7 @@
         ></game-mode-select>
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent;">
+            <v-btn tile v-on="on" class="transparent">
               <league-icon :league="selectedLeageueOrder" />
               {{ selectedLeagueName }}
               {{
@@ -103,8 +103,7 @@
           <v-btn
             tile
             v-on="on"
-            class="ma-4"
-            style="background-color: transparent;"
+            class="ma-4 transparent"
           >
             <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
