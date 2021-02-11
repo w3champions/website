@@ -12,7 +12,10 @@
                 <div v-if="getPlayerDataInGamemode(mode.modeId) != null">
                   <v-data-table
                   :headers="headers"
-                  :items="getPlayerDataInGamemode(mode.modeId)">
+                  :items="getPlayerDataInGamemode(mode.modeId)"
+                  :items-per-page="-1"
+                  :disable-pagination="true"
+                  :hide-default-footer="true">
                   </v-data-table>
                 </div>
                 <div v-else>
@@ -40,41 +43,49 @@ export default class AdminQueueData extends Vue {
     return [
       {
         text: "Battletag",
+        value: "battleTag",
         align: "start",
         sortable: false,
       },
       {
         text: "MMR",
+        value: "mmr",
         align: "start",
         sortable: true,
       },
       {
         text: "Quantile",
+        value: "quantile",
         align: "start",
         sortable: true,
       },
       {
         text: "Activity Quantile",
+        value: "activityQuantile",
         align: "start",
         sortable: true,
       },
       {
         text: "Queue Time",
+        value: "queueTime",
         align: "start",
         sortable: true,
       },
       {
         text: "Flo Connected",
+        value: "isFloConnected",
         align: "start",
         sortable: true,
       },
       {
         text: "Location",
+        value: "location",
         align: "start",
         sortable: false,
       },
       {
         text: "Server Option",
+        value: "serverOption",
         align: "start",
         sortable: true,
       }
@@ -121,7 +132,7 @@ export default class AdminQueueData extends Vue {
     ];
   }
 
-  getPlayerDataInGamemode(modeId : number) : Array<unknown> {
+  getPlayerDataInGamemode(modeId : number) : any {
 
     for (let i=0; i<this.queueData.length; i++) {
       if (this.queueData[i].gameMode == modeId) {
@@ -132,7 +143,7 @@ export default class AdminQueueData extends Vue {
 
     }
     
-    return this.queueData[0].snapshot;
+    return null;
   }
 
   async mounted() : Promise<void> {
