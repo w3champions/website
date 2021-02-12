@@ -13,6 +13,7 @@ $material-light: (
     'cards': var(--w3-bg-glass),
     'text': (
         'theme': var(--v-w3-race-bg-base),
+        'secondary': rgba(0, 0, 0, 0.75),
     ),
     'bg-color': var(--v-w3-race-bg-base),
     'toolbar': var(--v-w3-race-bg-base),
