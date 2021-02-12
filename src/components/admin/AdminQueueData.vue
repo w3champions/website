@@ -139,7 +139,7 @@ export default class AdminQueueData extends Vue {
     ];
   }
 
-  getPlayerDataInGamemode(modeId : number) : Array<unknown> {
+  getPlayerDataInGamemode(modeId : number) : unknown {
 
     for (let i=0; i<this.queueData.length; i++) {
       if (this.queueData[i].gameMode == modeId) { 
@@ -149,6 +149,7 @@ export default class AdminQueueData extends Vue {
     }
     
     return null;
+    
   }
 
   async mounted() : Promise<void> {
