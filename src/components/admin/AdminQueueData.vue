@@ -142,9 +142,7 @@ export default class AdminQueueData extends Vue {
   getPlayerDataInGamemode(modeId : number) : Array<unknown> {
 
     for (let i=0; i<this.queueData.length; i++) {
-      if (this.queueData[i].gameMode == modeId) {
-        
-      console.log(this.queueData[i])
+      if (this.queueData[i].gameMode == modeId) { 
         return this.queueData[i].snapshot;
       }
 
