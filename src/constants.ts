@@ -1,5 +1,6 @@
 const constants = {
-  ongoingMatchesRefreshInterval: 60000,
+  ongoingMatchesRefreshInterval: 20000,
+  queueDataRefresh: 10000,
 };
 
 export default constants;

@@ -3,6 +3,7 @@ export type AdminState = {
   players: BannedPlayer[];
   news: NewsMessage[];
   tips: LoadingScreenTip[];
+  queuedata: QueueData[];
 };
 
 export interface NewsMessage {
@@ -31,4 +32,20 @@ export interface NavigationItem {
   icon?: string,
   component?: string,
   items?: Array<NavigationItem>
+}
+
+export interface QueueData {
+  gameMode: number,
+  snapshot: QueuedPlayer[]
+}
+
+export interface QueuedPlayer {
+  battleTag : string,
+  mmr: number,
+  quantile: number,
+  activityQuantile: number,
+  queueTime: number,
+  isFloConnected: boolean,
+  location: string,
+  serverOption: string,
 }

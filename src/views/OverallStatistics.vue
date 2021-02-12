@@ -50,6 +50,7 @@ import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
 import { SeasonGameModeGateWayForMMR } from '@/store/overallStats/types';
+import { Season } from '@/store/ranking/types.ts'
 
 @Component({
   components: {
@@ -63,15 +64,15 @@ import { SeasonGameModeGateWayForMMR } from '@/store/overallStats/types';
   },
 })
 export default class OverallStatisticsView extends Vue {
-  get seasons() {
+  get seasons() : Season[] {
     return this.$store.direct.state.rankings.seasons;
   }
 
-  get verifiedBtag() {
+  get verifiedBtag() : string {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
-  mounted() {
+  mounted() : void {
     this.init();
   }
 
