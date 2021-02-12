@@ -40,7 +40,7 @@ import AppConstants from "@/constants.ts";
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
 
-  _intervalRefreshHandle : any;
+  _intervalRefreshHandle : unknown;
 
   get headers() : Array<unknown> {
     return [
@@ -139,12 +139,10 @@ export default class AdminQueueData extends Vue {
     ];
   }
 
-  getPlayerDataInGamemode(modeId : number) : any {
+  getPlayerDataInGamemode(modeId : number) : Array<unknown> {
 
     for (let i=0; i<this.queueData.length; i++) {
-      if (this.queueData[i].gameMode == modeId) {
-        
-      console.log(this.queueData[i])
+      if (this.queueData[i].gameMode == modeId) { 
         return this.queueData[i].snapshot;
       }
 
