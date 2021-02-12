@@ -1,52 +1,14 @@
+// #c12b12 orc red
+// #5c2604 orc brown
+
 @import "../shared/index.scss";
 
-$w3-orc-glass: inset 0 0 0 3000px rgba(199, 186, 161, 0.9) !important;
-
 .theme--light.v-application.orc {
+  --w3-bg-glass: rgba(199, 186, 161, 0.9);
+
   background: url(./assets/backgrounds/orc.jpg) no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
-
-  .v-app-bar:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-orc-glass;
-  }
-
-  .w3-background {
-    box-shadow: $w3-orc-glass;
-  }
-
-  .w3-background:hover {
-    box-shadow: inset 0 0 0 3000px rgba(233, 233, 233, 1) !important;
-  }
-
-  .theme-selector.v-list {
-    box-shadow: $w3-orc-glass;
-  }
-
-  .v-list {
-    box-shadow: $w3-orc-glass;
-  }
-
-  .v-card:before {
-    @extend .w3-glass;
-
-    box-shadow: $w3-orc-glass;
-  }
-
-  .v-footer {
-    background-color: transparent !important;
-    box-shadow: $w3-orc-glass;
-  }
-}
-
-.orc {
-  header.v-app-bar--is-scrolled + main {
-    .search-bar {
-      background-color: rgba(199, 183, 159, 0.9);
-    }
-  }
 }

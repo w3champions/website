@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent;">
+      <v-btn tile v-on="on" class="transparent">
         <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
         {{ gameModeName }}
       </v-btn>
