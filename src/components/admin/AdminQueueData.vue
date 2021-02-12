@@ -35,9 +35,12 @@ import { QueueData } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
+import AppConstants from "@/constants.ts";
 
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
+
+  _intervalRefreshHandle : any;
 
   get headers() : Array<unknown> {
     return [
@@ -103,6 +106,10 @@ export default class AdminQueueData extends Vue {
     }
   }
 
+  private async refresh() : Promise<void> {
+    await this.$store.direct.dispatch.admin.loadQueueData(this.$store.direct.state.oauth.token);
+  }
+
   get queueData() : QueueData[] {
     return this.$store.direct.state.admin.queuedata;
   }
@@ -148,6 +155,10 @@ export default class AdminQueueData extends Vue {
 
   async mounted() : Promise<void> {
     await this.init();
+
+    this._intervalRefreshHandle = setInterval(async () => {
+      await this.refresh();
+    }, AppConstants.queueDataRefresh)
   }
 
 }
