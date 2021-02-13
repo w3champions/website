@@ -1,20 +1,18 @@
 <template>
-  <v-row justify="space-between">
-    <v-col cols="1"></v-col>
-    <v-col v-if="heroesOfWinner.length <= 2" cols="1" />
-    <v-col v-if="heroesOfWinner.length <= 1" cols="1" />
+  <v-row justify="center">
+    <v-col v-if="heroesOfWinner.length !== 3" :cols="heroesOfWinner.length === 1 ? 2 : 1" />
+    <v-col cols="1" v-if="heroesOfWinner.length === 3">
+      <hero-icon :hero="this.heroesOfWinner[2]" />
+    </v-col>
+    <v-col cols="1" v-if="heroesOfWinner.length >= 2">
+      <hero-icon :hero="this.heroesOfWinner[1]" />
+    </v-col>
     <v-col cols="1">
       <hero-icon
         :first-hero="true"
         :hero="this.heroesOfWinner[0]"
         v-if="heroesOfWinner.length >= 1"
       />
-    </v-col>
-    <v-col cols="1" v-if="heroesOfWinner.length >= 2">
-      <hero-icon :hero="this.heroesOfWinner[1]" />
-    </v-col>
-    <v-col cols="1" v-if="heroesOfWinner.length === 3">
-      <hero-icon :hero="this.heroesOfWinner[2]" />
     </v-col>
     <v-col cols="2">
       <match-higlights
@@ -42,13 +40,13 @@
     <v-col cols="1">
       <hero-icon :first-hero="true" :hero="heroesOfLooser[0]" />
     </v-col>
-    <v-col cols="1">
+    <v-col cols="1" v-if="heroesOfLooser.length >= 2">
       <hero-icon :hero="heroesOfLooser[1]" />
     </v-col>
-    <v-col cols="1">
+    <v-col cols="1" v-if="heroesOfLooser.length === 3">
       <hero-icon :hero="heroesOfLooser[2]" />
     </v-col>
-    <v-col cols="1"></v-col>
+    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length === 1 ? 2 : 1" />
   </v-row>
 </template>
 
