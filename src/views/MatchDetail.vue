@@ -287,13 +287,11 @@ export default class MatchDetailView extends Vue {
 
   get scoresOfWinners() {
     const winningTeam = this.match.teams[0];
-    console.log("winningTeam",this.getPlayerScores(winningTeam))
     return this.getPlayerScores(winningTeam);
   }
 
   get scoresOfLoosers() {
     const losingTeam = this.match.teams[1];
-    console.log("losingTeam",this.getPlayerScores(losingTeam))
     return this.getPlayerScores(losingTeam);
   }
 
