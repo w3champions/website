@@ -42,32 +42,32 @@
       >
         <v-row dense>
           <v-col :class="unitsKilledComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsKilled).join(" + ") }}
+            {{ unitScore.map((r) => r.unitsKilled).join(" + ") || "N/A"}}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="unitsProducedComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsProduced).join(" + ") }}
+            {{ unitScore.map((r) => r.unitsProduced).join(" + ") || "N/A" }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="goldComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldCollected).join(" + ") }}
+            {{ resourceScoure.map((r) => r.goldCollected).join(" + ") || "N/A" }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="woodComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") }}
+            {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") || "N/A" }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="upkeepComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") }}
+            {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") || "N/A" }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="armyComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.largestArmy).join(" / ") }}
+            {{ unitScore.map((r) => r.largestArmy).join(" / ") || "N/A" }}
           </v-col>
         </v-row>
       </v-col>
