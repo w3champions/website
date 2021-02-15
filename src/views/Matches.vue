@@ -47,6 +47,7 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
+import AppConstants from "@/constants";
 
 @Component({
   components: {
@@ -58,11 +59,11 @@ import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
   },
 })
 export default class MatchesView extends Vue {
-  onPageChanged(page: number) {
+  onPageChanged(page: number) : void {
     this.getMatches(page);
   }
 
-  get disabledGameModes() {
+  get disabledGameModes() : Array<number> {
     if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
       return [EGameMode.GM_2ON2_AT];
     }
@@ -78,7 +79,7 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.matches;
   }
 
-  get currentSeason() {
+  get currentSeason() : number {
     return this.$store.direct.state.rankings.seasons[0].id;
   }
 
@@ -94,7 +95,7 @@ export default class MatchesView extends Vue {
 
     return this.$store.direct.state.overallStatistics.matchesOnMapPerSeason
       .filter(filterSeasons)
-      .reduce<Record<EGameMode, Set<any>>>((mapsByMode, matchesOnMapPerSeason) => {
+      .reduce<Record<EGameMode, Set<unknown>>>((mapsByMode, matchesOnMapPerSeason) => {
         for (let modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
           // just get the map name and ignore the count
           const mapNames = modes.maps.map(m => m.map);
@@ -107,7 +108,7 @@ export default class MatchesView extends Vue {
           }
         }
         return mapsByMode;
-      }, {} as Record<EGameMode, Set<any>>);
+      }, {} as Record<EGameMode, Set<unknown>>);
   }
 
   get unfinished(): boolean {
@@ -122,28 +123,37 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.map;
   }
 
-  public getMatches(page?: number) {
-    this.$store.direct.dispatch.matches.loadMatches(page);
+  public async getMatches(page?: number) : Promise<void> {
+    await this.$store.direct.dispatch.matches.loadMatches(page);
   }
 
-  public getMaps() {
+  public getMaps() : void {
     this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
   }
 
-  mounted() {
+  _intervalRefreshHandle : unknown;
+
+  private refreshMatches() : void {
+    this._intervalRefreshHandle = setInterval(async () => {
+      await this.getMatches();
+    }, AppConstants.ongoingMatchesRefreshInterval);
+  }
+
+  mounted() : void {
     this.getMatches(1);
     this.getMaps();
+    this.refreshMatches();
   }
 
-  gatewayChanged() {
+  gatewayChanged() : void {
     this.getMatches(1);
   }
 
-  gameModeChanged(gameMode: EGameMode) {
+  gameModeChanged(gameMode: EGameMode) : void {
     this.$store.direct.dispatch.matches.setGameMode(gameMode);
   }
 
-  mapChanged(map: string) {
+  mapChanged(map: string) : void {
     this.$store.direct.dispatch.matches.setMap(map);
   }
 }
