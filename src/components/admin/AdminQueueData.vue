@@ -157,7 +157,7 @@ export default class AdminQueueData extends Vue {
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refresh();
-    }, AppConstants.queueDataRefresh)
+    }, AppConstants.queueDataRefreshInterval)
   }
 
 }
