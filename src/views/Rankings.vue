@@ -346,7 +346,7 @@ export default class RankingsView extends Vue {
     }, AppConstants.ongoingMatchesRefreshInterval);
   }
 
-  destroyed() {
+  destroyed() : void {
     clearInterval(this._intervalRefreshHandle);
   }
 

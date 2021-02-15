@@ -131,7 +131,7 @@ export default class MatchesView extends Vue {
     this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
   }
 
-  _intervalRefreshHandle : unknown;
+  _intervalRefreshHandle : any = {};
 
   private refreshMatches() : void {
     this._intervalRefreshHandle = setInterval(async () => {
@@ -143,6 +143,10 @@ export default class MatchesView extends Vue {
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();
+  }
+
+  destroyed() : void {
+    clearInterval(this._intervalRefreshHandle);
   }
 
   gatewayChanged() : void {
