@@ -40,7 +40,7 @@ import AppConstants from "@/constants.ts";
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
 
-  _intervalRefreshHandle : unknown;
+  _intervalRefreshHandle : any = {} ;
 
   get headers() : Array<unknown> {
     return [
@@ -157,7 +157,11 @@ export default class AdminQueueData extends Vue {
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refresh();
-    }, AppConstants.queueDataRefresh)
+    }, AppConstants.queueDataRefreshInterval)
+  }
+
+  destroyed() : void {
+    clearInterval(this._intervalRefreshHandle);
   }
 
 }
