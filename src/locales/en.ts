@@ -176,7 +176,7 @@ const en = {
     Amazonia: "Amazonia",
     ConcealedHill: "Concealed Hill",
     EchoIsles: "Echo Isles",
-    LastRefuge: "Last Reguge",
+    LastRefuge: "Last Refuge",
     NorthernIsles: "Northern Isles",
     TerenasStandLV: "Terenas Stand LV",
     TwistedMeadows: "Twisted Meadows",
