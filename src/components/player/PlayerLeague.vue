@@ -159,15 +159,19 @@ export default class PlayerLeague extends Vue {
       case 1:
         return "master";
       case 2:
-        return "diamond";
+        return "adept";
       case 3:
-        return "platinum";
+        return "diamond";
       case 4:
-        return "gold";
+        return "platinum";
       case 5:
-        return "silver";
+        return "gold";
       case 6:
+        return "silver";
+      case 7:
         return "bronze";
+      case 8:
+        return "grass";
       default:
         return "";
     }
@@ -209,6 +213,9 @@ export default class PlayerLeague extends Vue {
 .grandmaster:after {
   background-image: url(../../assets/leagueFlags/grandmaster.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.grandmaster:before {
@@ -219,9 +226,25 @@ export default class PlayerLeague extends Vue {
 .master:after {
   background-image: url(../../assets/leagueFlags/master.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.master:before {
+  border-top: 2px solid #593ba8 !important;
+}
+
+// adept
+.adept:after {
+  background-image: url(../../assets/leagueFlags/adept.png);
+  background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
+}
+
+.LadderSummaryShowcase-card.adept:before {
   border-top: 2px solid #593ba8 !important;
 }
 
@@ -229,6 +252,9 @@ export default class PlayerLeague extends Vue {
 .diamond:after {
   background-image: url(../../assets/leagueFlags/diamond.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.diamond:before {
@@ -239,6 +265,9 @@ export default class PlayerLeague extends Vue {
 .platinum:after {
   background-image: url(../../assets/leagueFlags/platinum.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.platinum:before {
@@ -249,6 +278,9 @@ export default class PlayerLeague extends Vue {
 .gold:after {
   background-image: url(../../assets/leagueFlags/gold.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.gold:before {
@@ -259,6 +291,9 @@ export default class PlayerLeague extends Vue {
 .silver:after {
   background-image: url(../../assets/leagueFlags/silver.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.silver:before {
@@ -269,10 +304,26 @@ export default class PlayerLeague extends Vue {
 .bronze:after {
   background-image: url(../../assets/leagueFlags/bronze.png);
   background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
 }
 
 .LadderSummaryShowcase-card.bronze:before {
   border-top: 2px solid #955941 !important;
+}
+
+// grass
+.grass:after {
+  background-image: url(../../assets/leagueFlags/grass.png);
+  background-repeat: no-repeat;
+  zoom: 0.4;
+  height: 250px !important;
+  margin-top: -80px;
+}
+
+.LadderSummaryShowcase-card.grass:before {
+  border-top: 2px solid #593ba8 !important;
 }
 
 // unranked
@@ -285,7 +336,7 @@ export default class PlayerLeague extends Vue {
 // common
 
 .LadderSummaryShowcase-card:after {
-  width: 100px;
+  width: 250px;
   height: 100px;
   -ms-flex: 0 0 100px;
   flex: 0 0 100px;
