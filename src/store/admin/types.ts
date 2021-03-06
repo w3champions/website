@@ -42,6 +42,7 @@ export interface QueueData {
 export interface QueuedPlayer {
   battleTag : string,
   mmr: number,
+  rd: number,
   quantile: number,
   activityQuantile: number,
   queueTime: number,
