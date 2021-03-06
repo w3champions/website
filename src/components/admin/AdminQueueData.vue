@@ -57,6 +57,12 @@ export default class AdminQueueData extends Vue {
         sortable: true,
       },
       {
+        text: "RD",
+        value: "rd",
+        align: "start",
+        sortable: true,
+      },
+      {
         text: "Quantile",
         value: "quantile",
         align: "start",
