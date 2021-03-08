@@ -1,3 +1,3 @@
 const constants = { ongoingMatchesRefreshInterval: 20000,
-queueDataRefreshInterval: 10000, activeLanguages: ["en", "de", "kr"], }; export
-default constants;
+queueDataRefreshInterval: 10000, activeLanguages: ["en", "de", "kr", "zh"], };
+export default constants;
