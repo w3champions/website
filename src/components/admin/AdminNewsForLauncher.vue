@@ -29,7 +29,7 @@
               <v-text-field
                 v-model="editedNewsItem.date"
                 filled
-                label="{{ $t(`views_admin.headline`) }}"
+                :label="$t(`views_admin.headline`)"
               />
               <div class="editor">
                 <editor-menu-bar
