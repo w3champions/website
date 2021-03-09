@@ -3,7 +3,6 @@
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title>
-          Administration Page
           {{ $t("views_admin.adminpage") }}
         </v-list-item-title>
       </v-list-item-content>

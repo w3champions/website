@@ -39,6 +39,8 @@ import { Component, Prop } from "vue-property-decorator";
 // this would require adding the link to the state management
 // then checking the latest season.
 
+// This could also be an admin function.
+
 @Component({})
 export default class SupportBox extends Vue {
   @Prop() title!: string;
