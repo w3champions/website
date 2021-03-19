@@ -141,7 +141,7 @@ export default class PlayerMatchesTab extends Vue {
     return decodeURIComponent(this.id);
   }
 
-  public async mounted() {
+  public async activated() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     setTimeout(async () => await this.getMatches(), 500);
   }
