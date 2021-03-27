@@ -41,7 +41,14 @@ export default class Admin extends Vue {
         {
           key: "banned_players",
           title: "Banned Players",
+          icon: "mdi-account-remove",
           component: "admin-banned-players"
+        },
+        {
+          key: "proxy_settings",
+          title: "Proxy Settings",
+          icon: "mdi-account-network",
+          component: "admin-proxy-settings"
         }
       ]
     },
@@ -52,6 +59,7 @@ export default class Admin extends Vue {
         {
           key: "news",
           title: "News for Launcher",
+          icon: "mdi-rss",
           component: "admin-news-for-launcher"
         }
       ]
