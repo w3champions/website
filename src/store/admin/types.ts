@@ -4,6 +4,7 @@ export type AdminState = {
   news: NewsMessage[];
   tips: LoadingScreenTip[];
   queuedata: QueueData[];
+  availableProxies: Proxy[];
 };
 
 export interface NewsMessage {
@@ -37,6 +38,11 @@ export interface NavigationItem {
 export interface QueueData {
   gameMode: number,
   snapshot: QueuedPlayer[]
+}
+
+export interface Proxy {
+  id: string,
+  nodeId: number,
 }
 
 export interface QueuedPlayer {

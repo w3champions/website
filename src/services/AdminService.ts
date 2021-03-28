@@ -4,7 +4,8 @@ import {
   BannedPlayer,
   LoadingScreenTip,
   NewsMessage,
-  QueueData
+  QueueData,
+  Proxy
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -169,4 +170,18 @@ export default class AdminService {
       })
       return await response.json();
     }
+
+  public async getAvailableProxies(
+    token: string
+  ): Promise<Proxy[]> {
+    const url = `${API_URL}api/admin/proxies/?authorization=${token}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    return await response.json();
+  }
 }

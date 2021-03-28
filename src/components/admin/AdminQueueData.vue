@@ -35,7 +35,7 @@ import { QueueData } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
-import AppConstants from "@/constants.ts";
+import AppConstants from "@/constants";
 
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {

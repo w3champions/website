@@ -6,6 +6,7 @@ import {
   BannedPlayer,
   LoadingScreenTip,
   NewsMessage,
+  Proxy,
   QueueData
 } from "./types";
 import moment from "moment";
@@ -16,7 +17,8 @@ const mod = {
     players: [],
     news: [],
     tips: [],
-    queuedata: []
+    queuedata: [],
+    availableProxies: []
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -161,6 +163,14 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const queuedata = await rootGetters.adminService.getQueueData(token);
       commit.SET_QUEUEDATA(queuedata);
+    },
+    async loadAvailableProxies(
+      context: ActionContext<AdminState, RootState>,
+      token: string,
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const availableProxies = await rootGetters.adminService.getAvailableProxies(token);
+      commit.SET_AVAILABLEPROXIES(availableProxies);
     }
   },
   mutations: {
@@ -178,6 +188,9 @@ const mod = {
     },
     SET_QUEUEDATA(state: AdminState, queuedata: QueueData[]) {
       state.queuedata = queuedata;
+    },
+    SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
+      state.availableProxies = availableProxies;
     }
   },
 } as const;

@@ -27,7 +27,7 @@ export default class AdminProxies extends Vue {
 
   private async init() {
     if (this.isAdmin) {
-      //await this.$store.direct.dispatch.admin.loadProxies();
+      await this.$store.direct.dispatch.admin.loadAvailableProxies(this.$store.direct.state.oauth.token);
     }
   }
 

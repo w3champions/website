@@ -63,12 +63,19 @@ export default class Admin extends Vue {
           component: "admin-news-for-launcher"
         }
       ]
-    },
-    {
-      key: "tips",
-      title: "Loading screen tips",
-      component: "admin-loading-screen-tips"
-    },
+    },{
+      title: "In-Game Settings",
+      icon: "mdi-monitor-dashboard",
+      items: [
+        {
+          key: "tips",
+          icon: "mdi-tooltip-text-outline",
+          title: "Loading screen tips",
+          component: "admin-loading-screen-tips"
+        }
+      ]
+    }
+    ,
     {
       title: "Data Science",
       icon: "mdi-chart-line",
