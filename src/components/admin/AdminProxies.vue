@@ -1,10 +1,10 @@
 <template>
   <v-container>
-      <v-card>
-          <v-card-title>
-              Proxy Settings
-          </v-card-title>
-      </v-card>
+            <v-text-field
+              label="BattleNet Tag"
+              hint="Please Note: Battlenet tags are Case sensitive">
+            </v-text-field>
+            
   </v-container>
 </template>
 
@@ -21,7 +21,7 @@ export default class AdminProxies extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() {
+  onBattleTagChanged() : void {
     this.init();
   }
 
