@@ -6,71 +6,83 @@
 
     <!-- PATREON -->
     <v-card class="support-subcard" href="https://www.patreon.com/w3champions" tile outlined style="padding-bottom: 0px">
-        <v-img src="../../../src/assets/socials/Patreon_button.png" />
+        <v-img src="@/assets/socials/Patreon_button.png" />
     </v-card>
 
     <!-- PAYPAL -->
     <v-card class="support-subcard" href="https://www.paypal.me/w3champions" tile outlined>
-        <v-img src="../../../src/assets/socials/PayPal_button.png" />
+        <v-img src="@/assets/socials/PayPal_button.png" />
     </v-card>
 
-    <!-- BTC -->
-    <v-card class="support-subcard" tile outlined>
-      <template>
-        <div @click.stop="openCryptoDialog = true">
-          <v-img src="../../../src/assets/socials/Bitcoin_button.png" />
-          <crypto-dialog :Crypto="`BTC`"></crypto-dialog>
-        </div>
-      </template>
+    <!-- CRYPTOCURRENCIES -->
+
+    <v-card 
+      v-for="crypto in cryptos"
+      v-bind:key="crypto.coin" 
+      class="support-subcard" 
+      tile 
+      outlined
+      @click.stop="openCryptoDialog = true">
+        <v-img
+          :src="button(crypto.coin)">
+        </v-img>
+        <crypto-dialog
+          v-model="openCryptoDialog" 
+          :crypto="crypto.coin" 
+          :cryptoName="crypto.name"></crypto-dialog>
     </v-card>
 
-    <!-- ETH -->
-    <v-card class="support-subcard" href="https://www.paypal.me/w3champions" tile outlined>
-        <v-img src="../../../src/assets/socials/Ethereum_button.png" />
-    </v-card>
-
-    <!-- LTC -->
-    <v-card class="support-subcard" href="https://www.paypal.me/w3champions" tile outlined>
-        <v-img src="../../../src/assets/socials/Litecoin_button.png" />
-    </v-card>
-
-    <!-- MATCHERINO - TBD -->
   </v-card>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import CryptoDialog from "@/components/common/CryptoDialog.vue"
-
-// In the long term, I want the current matcherino link for the
-// latest end-of-season tournament to be auto-updated here.
-
-// this would require adding the link to the state management
-// then checking the latest season.
+import CryptoDialog from "@/components/common/CryptoDialog.vue";
 
 @Component({ components: { CryptoDialog } })
 export default class SupportBox extends Vue {
   @Prop() title!: string;
   @Prop() text!: string;
 
-  SupportBox() : void {
-    this.openCryptoDialog = false;
+  openCryptoDialog = false;
+  
+  set clickedCoin(value : number) {
+    this.clickedCoin = value;
   }
 
-  set openCryptoDialog(value : boolean) {
-    this.openCryptoDialog = value;
-  };
-
-  get openCryptoDialog() : boolean {
-    return this.openCryptoDialog;
+  get clickedCoin() : number {
+    return this.clickedCoin;
   }
+
+  private button(coin : string) : NodeRequire {
+    return require(`@/assets/socials/${coin}_button.png`);
+  }
+
+  get cryptos() : unknown {
+        return [
+            {
+                coin: `BTC`,
+                name: "Bitcoin",
+                address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`,
+            },
+            {
+                coin: `ETH`,
+                name: "Ethereum",
+                address: `0x284a0e918e126dF38cFc0207c00D5564CAFbe658`,
+            },
+            {
+                coin: `LTC`,
+                name: "Litecoin",
+                address: `ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0`,
+            }
+        ];
+    } 
 
   get patreon(): string {
     return "https://www.patreon.com/w3champions";
   }
 
-  
 }
 </script>
 
