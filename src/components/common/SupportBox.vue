@@ -17,19 +17,20 @@
     <!-- CRYPTOCURRENCIES -->
 
     <v-card 
-      v-for="crypto in cryptos"
+      v-for="(crypto, index) in cryptos"
       v-bind:key="crypto.coin" 
       class="support-subcard" 
       tile 
       outlined
-      @click.stop="openCryptoDialog = true">
+      @click.stop="updateTracker(index)">
         <v-img
           :src="button(crypto.coin)">
         </v-img>
         <crypto-dialog
-          v-model="openCryptoDialog" 
+          v-model="dialogTracker[index]" 
           :crypto="crypto.coin" 
-          :cryptoName="crypto.name"></crypto-dialog>
+          :cryptoName="crypto.name"
+          :cryptoAddress="crypto.address"></crypto-dialog>
     </v-card>
 
   </v-card>
@@ -46,13 +47,14 @@ export default class SupportBox extends Vue {
   @Prop() text!: string;
 
   openCryptoDialog = false;
-  
-  set clickedCoin(value : number) {
-    this.clickedCoin = value;
-  }
 
-  get clickedCoin() : number {
-    return this.clickedCoin;
+  dialogTracker : Array<boolean> = [false, false, false];
+
+  private updateTracker(index : number) : void {
+    for (let i=0; i<this.dialogTracker.length; i++) {
+      Vue.set(this.dialogTracker, i , false)
+    }
+    Vue.set(this.dialogTracker, index, true)
   }
 
   private button(coin : string) : NodeRequire {
