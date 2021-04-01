@@ -1,17 +1,40 @@
 <template>
-    <v-dialog v-model="show" max-width="300">
+    <v-dialog v-model="show" max-width="500">
         <v-card>
             <v-card-title class="justify-center">
                 {{ this.cryptoName }}
             </v-card-title>
                 <v-container>
+                    
                     <v-row>
                         <v-img :src="require(`@/assets/socials/QR/${crypto}_QR.png`)"></v-img>
                     </v-row>
-                    <v-row>
-                        <!-- Put the wallet copy/paste string component here -->
+
+                    <v-row class="mt-2">
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            small 
+                            @click="copyAddress">
+                            <v-icon>
+                                mdi-content-copy
+                            </v-icon>
+                        </v-btn>
+                        <v-spacer></v-spacer>
                     </v-row>
-                    <v-row>
+
+                    <v-row class="mt-2">
+                        <v-spacer></v-spacer>
+                        <v-card elevation="0" max-width="500">
+                            <v-spacer></v-spacer>
+                                <v-card-text>
+                                    {{ cryptoAddress }}
+                                </v-card-text>
+                            <v-spacer></v-spacer>
+                        </v-card>
+                        <v-spacer></v-spacer>
+                    </v-row>
+                    
+                    <v-row class="mt-2">
                         <v-spacer></v-spacer>
                         <v-btn @click.stop="show=false">Close</v-btn>    
                         <v-spacer></v-spacer>
@@ -29,10 +52,11 @@ import { Component, Prop } from "vue-property-decorator";
 export default class CryptoDialog extends Vue {
     @Prop() crypto! : string;
     @Prop() cryptoName! : string;
+    @Prop() cryptoAddress! : string;
     @Prop() value! : boolean;
 
-    get cryptoQrSrc() : string {
-        return `@/assets/socials/QR/${this.crypto}_QR.png`
+    private copyAddress() {
+        navigator.clipboard.writeText(this.cryptoAddress);
     }
 
     get show() : boolean {
