@@ -25,7 +25,6 @@
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
     "vue-class-component": "^7.2.6",
-    "vue-clipboard2": "^0.3.1",
     "vue-cookies-ts": "^1.5.19",
     "vue-country-flag": "^2.0.2",
     "vue-i18n": "^8.22.2",
