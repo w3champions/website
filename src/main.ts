@@ -7,12 +7,10 @@ import vueMoment from "vue-moment";
 import VueI18n from "vue-i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies-ts";
-import VueClipboard from "vue-clipboard2";
 
 Vue.use(VueCookies);
 Vue.use(vueMoment);
 Vue.use(VueI18n);
-Vue.use(VueClipboard)
 
 Vue.config.productionTip = false;
 
