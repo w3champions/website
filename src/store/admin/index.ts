@@ -6,6 +6,7 @@ import {
   BannedPlayer,
   LoadingScreenTip,
   NewsMessage,
+  QueueData
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -15,6 +16,7 @@ const mod = {
     players: [],
     news: [],
     tips: [],
+    queuedata: []
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -152,6 +154,14 @@ const mod = {
 
       commit.SET_BANNED_PLAYERS(bannedPlayers);
     },
+    async loadQueueData(
+      context: ActionContext<AdminState, RootState>,
+      token: string,
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const queuedata = await rootGetters.adminService.getQueueData(token);
+      commit.SET_QUEUEDATA(queuedata);
+    }
   },
   mutations: {
     SET_NEWS(state: AdminState, news: NewsMessage[]) {
@@ -166,6 +176,9 @@ const mod = {
     ADD_BANNED_PLAYER(state: AdminState, bannedPlayer: BannedPlayer) {
       state.players.push(bannedPlayer);
     },
+    SET_QUEUEDATA(state: AdminState, queuedata: QueueData[]) {
+      state.queuedata = queuedata;
+    }
   },
 } as const;
 

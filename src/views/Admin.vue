@@ -1,5 +1,5 @@
 <template>
-  <v-container v-show="isAdmin" style="height: 100%">
+  <v-container fluid v-show="isAdmin" style="height: 100%">
     <div class="admin-page-wrapper">
       <admin-navigation :items="navItems" v-on:itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
@@ -21,13 +21,15 @@ import AdminNavigation from "@/components/admin/AdminNavigation.vue";
 import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
 import AdminLoadingScreenTips from "@/components/admin/AdminLoadingScreenTips.vue";
 import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
+import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 
 @Component({
   components: {
     AdminNavigation,
     AdminBannedPlayers,
     AdminLoadingScreenTips,
-    AdminNewsForLauncher
+    AdminNewsForLauncher,
+    AdminQueueData
   }
 })
 export default class Admin extends Vue {
@@ -44,14 +46,32 @@ export default class Admin extends Vue {
       ]
     },
     {
-      key: "news",
-      title: "News for Launcher",
-      component: "admin-news-for-launcher"
+      title: "Launcher",
+      icon: "mdi-rocket",
+      items: [
+        {
+          key: "news",
+          title: "News for Launcher",
+          component: "admin-news-for-launcher"
+        }
+      ]
     },
     {
       key: "tips",
       title: "Loading screen tips",
       component: "admin-loading-screen-tips"
+    },
+    {
+      title: "Data Science",
+      icon: "mdi-chart-line",
+      items: [
+      {
+        key: "queue",
+        title: "Live Queue Data",
+        icon: "mdi-table",
+        component: "admin-queue-data",
+      }
+      ]
     }
   ];
   selectedNavItem = {};
