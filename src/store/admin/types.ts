@@ -1,3 +1,5 @@
+import { PlayerOverview } from "@/store/ranking/types";
+
 export type AdminState = {
   total: number;
   players: BannedPlayer[];
@@ -5,6 +7,7 @@ export type AdminState = {
   tips: LoadingScreenTip[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
+  playerInfoForProxy: PlayerInfoForProxy[];
 };
 
 export interface NewsMessage {
@@ -56,3 +59,8 @@ export interface QueuedPlayer {
   location: string,
   serverOption: string,
 }
+
+export type PlayerInfoForProxy = {
+  id: string;
+  player: PlayerOverview;
+};

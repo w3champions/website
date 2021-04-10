@@ -171,6 +171,21 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const availableProxies = await rootGetters.adminService.getAvailableProxies(token);
       commit.SET_AVAILABLEPROXIES(availableProxies);
+    },
+    async searchBnetTag(
+      context: ActionContext<AdminState, RootState>,
+      search: { searchText: string }
+    ) {
+      const { commit, rootGetters, state, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const rankings = await rootGetters.adminService.searchForTag(
+        search.searchText
+      );
+
+      commit.SET_PROXY_SEARCH_TAG_RANKINGS(rankings);
     }
   },
   mutations: {

@@ -1,11 +1,62 @@
 <template>
-  <v-container>
-            <v-text-field
-              label="BattleNet Tag"
-              hint="Please Note: Battlenet tags are Case sensitive">
-            </v-text-field>
-            
-  </v-container>
+    <v-container>
+      <v-row>
+        <v-autocomplete 
+          class="ml-5 mr-5"
+          v-model="searchModel"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          clearable
+          :items="searchRanks"
+          :loading="isLoading"
+          :search-input.sync="search"
+          :no-data-text="noDataText"
+          item-text="player.name"
+          item-value="player.id"
+          placeholder="Start typing to Search"
+          return-object
+        >
+          <template v-slot:item="data">
+            <template v-if="typeof data.item !== 'object'">
+              <v-list-item-content v-text="data.item"></v-list-item-content>
+            </template>
+            <template v-else>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="!isDuplicateName(data.item.player.name)">
+                    {{ data.item.player.name }}
+                  </span>
+                  <span v-if="isDuplicateName(data.item.player.name)">
+                    {{
+                      data.item.player.playerIds
+                        .map((p) => p.battleTag)
+                        .join(" & ")
+                    }}
+                  </span>
+                  <span
+                    v-if="
+                      data.item.player.gameMode === gameModes.GM_1ON1 &&
+                      data.item.player.race
+                    "
+                  >
+                    ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
+                  </span>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="playerIsRanked(data.item)">
+                  Wins: {{ data.item.player.wins }} | Losses:
+                  {{ data.item.player.losses }} | Total:
+                  {{ data.item.player.games }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>
+                  Unranked
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </template>
+          </template>
+        </v-autocomplete>
+      </v-row>
+    </v-container>
 </template>
 
 <script lang="ts">

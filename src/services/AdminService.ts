@@ -5,7 +5,8 @@ import {
   LoadingScreenTip,
   NewsMessage,
   QueueData,
-  Proxy
+  Proxy,
+  PlayerInfoForProxy
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -182,6 +183,15 @@ export default class AdminService {
         "Content-Type": "application/json",
       },
     })
+    return await response.json();
+  }
+
+  public async searchForTag(
+    str: string
+  ): Promise<PlayerInfoForProxy[]> {
+    const url = `${API_URL}api/ladder/search?searchFor=${str}`;
+
+    const response = await fetch(url);
     return await response.json();
   }
 }
