@@ -7,7 +7,8 @@ import {
   LoadingScreenTip,
   NewsMessage,
   Proxy,
-  QueueData
+  QueueData,
+  PlayerInfoForProxy
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -18,7 +19,8 @@ const mod = {
     news: [],
     tips: [],
     queuedata: [],
-    availableProxies: []
+    availableProxies: [],
+    playerInfoForProxy: []
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -181,11 +183,11 @@ const mod = {
         mod
       );
 
-      const rankings = await rootGetters.adminService.searchForTag(
+      const playerInfoForProxy = await rootGetters.adminService.searchForTag(
         search.searchText
       );
 
-      commit.SET_PROXY_SEARCH_TAG_RANKINGS(rankings);
+      commit.SET_PROXY_SEARCH_TAG_RANKINGS(playerInfoForProxy);
     }
   },
   mutations: {
@@ -206,6 +208,9 @@ const mod = {
     },
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
+    },
+    SET_PROXY_SEARCH_TAG_RANKINGS(state: AdminState, playerInfoForProxy: PlayerInfoForProxy[]) {
+      state.playerInfoForProxy = playerInfoForProxy;
     }
   },
 } as const;

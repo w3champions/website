@@ -1,7 +1,16 @@
 <template>
     <v-container>
       <v-row>
-        <v-autocomplete 
+        <v-card>
+          <div 
+            v-for="proxy in availableProxies"
+            :key="proxy.id">
+            <!-- {{ this.$t(`proxies.${sanitizeString(proxy.id)}`) }} -->
+            {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
+          </div>
+        </v-card>
+        
+        <!-- <v-autocomplete 
           class="ml-5 mr-5"
           v-model="searchModel"
           append-icon="mdi-magnify"
@@ -54,7 +63,7 @@
               </v-list-item-content>
             </template>
           </template>
-        </v-autocomplete>
+        </v-autocomplete> -->
       </v-row>
     </v-container>
 </template>
@@ -62,10 +71,21 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-//import { BannedPlayer, LoadingScreenTip, NewsMessage } from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminProxies extends Vue {
+
+  public sanitizeString(string : string) : string {
+
+    let str = string;
+    str = str.replace(/-/g, `_`)
+
+    return str;
+  }
+
+  get availableProxies() {
+    return this.$store.direct.state.admin.availableProxies;
+  }
 
   get isAdmin(): boolean {
     return this.$store.direct.state.oauth.isAdmin;
