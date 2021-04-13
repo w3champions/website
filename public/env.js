@@ -1,6 +1,6 @@
 window._env_ = {
-  // BASE_URL: "http://localhost:5000/",
-  BASE_URL: "https://statistic-service.w3champions.com/",
+  BASE_URL: "http://localhost:5000/",
+  // BASE_URL: "https://statistic-service.test.w3champions.com/",
   // BASE_URL: "https://statistic-service-test.w3champions.com/",
   // IDENTIFICATION_URL: "http://localhost:5000/",
   IDENTIFICATION_URL: "https://identification-service.w3champions.com/",
