@@ -8,7 +8,7 @@ import {
   NewsMessage,
   Proxy,
   QueueData,
-  PlayerInfoForProxy
+  SearchedPlayer
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -20,7 +20,7 @@ const mod = {
     tips: [],
     queuedata: [],
     availableProxies: [],
-    playerInfoForProxy: []
+    searchedPlayers: []
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -178,18 +178,37 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
+      const { commit, rootGetters } = moduleActionContext(
         context,
         mod
       );
 
-      const playerInfoForProxy = await rootGetters.adminService.searchForTag(
+      const searchedPlayers = await rootGetters.adminService.searchByTag(
         search.searchText
       );
 
-      commit.SET_PROXY_SEARCH_TAG_RANKINGS(playerInfoForProxy);
-    }
+      commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
+    },
+    async clearSearch(context: ActionContext<AdminState, RootState>) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_SEARCH_FOR_BNET_TAG([]);
+    },
+    async getProxiesForPlayer(
+      context: ActionContext<AdminState, RootState>,
+      player: { battleTag: string }
+      ) {
+        const { commit, rootGetters } = moduleActionContext(
+          context,
+          mod
+        );
+  
+        const proxiesForBattletag = await rootGetters.adminService.getProxiesForBattletag(
+          player.battleTag
+        );
+      }
+
   },
+  
   mutations: {
     SET_NEWS(state: AdminState, news: NewsMessage[]) {
       state.news = news;
@@ -209,8 +228,8 @@ const mod = {
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
     },
-    SET_PROXY_SEARCH_TAG_RANKINGS(state: AdminState, playerInfoForProxy: PlayerInfoForProxy[]) {
-      state.playerInfoForProxy = playerInfoForProxy;
+    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
+      state.searchedPlayers = searchedPlayers;
     }
   },
 } as const;

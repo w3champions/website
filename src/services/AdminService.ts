@@ -6,7 +6,9 @@ import {
   NewsMessage,
   QueueData,
   Proxy,
-  PlayerInfoForProxy
+  PlayerInfoForProxy,
+  SearchedPlayer,
+  ProxySettings
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -186,12 +188,22 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async searchForTag(
-    str: string
-  ): Promise<PlayerInfoForProxy[]> {
-    const url = `${API_URL}api/ladder/search?searchFor=${str}`;
+  public async searchByTag(
+    battleTagFragment: string
+  ): Promise<SearchedPlayer[]> {
+    const url = `${API_URL}api/admin/search/${encodeURIComponent(battleTagFragment)}`;
 
     const response = await fetch(url);
     return await response.json();
   }
+
+  public async getProxiesForBattletag(
+    battleTag: string
+  ): Promise<ProxySettings> {
+    const url = `${API_URL}api/admin/proxies-for/${battleTag}`
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+  
 }

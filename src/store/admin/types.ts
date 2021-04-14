@@ -1,4 +1,4 @@
-import { PlayerOverview } from "@/store/ranking/types";
+import { PlayerOverview, Ranking } from "@/store/ranking/types";
 
 export type AdminState = {
   total: number;
@@ -7,7 +7,7 @@ export type AdminState = {
   tips: LoadingScreenTip[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
-  playerInfoForProxy: PlayerInfoForProxy[];
+  searchedPlayers: SearchedPlayer[];
 };
 
 export interface NewsMessage {
@@ -44,6 +44,11 @@ export interface QueueData {
   snapshot: QueuedPlayer[]
 }
 
+export interface ProxySettings {
+  nodeOverrides?: Proxy[],
+  automaticNodeOverrides?: Proxy[],
+}
+
 export interface Proxy {
   id: string,
   nodeId: number,
@@ -64,4 +69,10 @@ export interface QueuedPlayer {
 export type PlayerInfoForProxy = {
   id: string;
   player: PlayerOverview;
-};
+}
+
+export type SearchedPlayer = {
+  gameMode: number,
+  player: PlayerOverview,
+}
+;

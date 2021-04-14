@@ -84,6 +84,9 @@ export interface PlayerOverview extends WinLoss {
   mmr: number;
   gateWay: number;
   playerIds: PlayerId[];
+  gameMode?: number;
+  season?: number;
+  race?: string;
 }
 
 export enum Gateways {

@@ -1,6 +1,27 @@
 <template>
     <v-container>
       <v-row>
+        <!-- Autocomplete -->
+        <v-autocomplete
+          class="ml-5 mr-5"
+          v-model="searchPlayerProxiesModel"
+          append-icon="mdi-magnify"
+          label="Search BattleNet Tag"
+          clearable
+          placeholder=" "
+          :items="searchedPlayers"
+          :loading="isLoading"
+          :search-input.sync="search"
+          :no-data-text="noDataText"
+          item-text="player.playerIds[0].battleTag"
+          item-value="player.playerIds[0].id"
+          return-object>
+
+        </v-autocomplete>
+      </v-row>
+
+      <v-row>
+        <!-- Node override cards -->
         <v-col>
           <v-card class="px-1 m-0">
             <node-overrides-card></node-overrides-card>
@@ -78,15 +99,40 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
-import { Proxy } from "@/store/admin/types";
+import { Proxy, SearchedPlayer } from "@/store/admin/types";
 
 @Component({ components: { nodeOverridesCard } })
 export default class AdminProxies extends Vue {
 
+  public searchPlayerProxyModel = {} as SearchedPlayer;
+  public search = "";
+  
+  @Watch("searchPlayerProxyModel")
+  onSearchStringChanged(searchedPlayer : SearchedPlayer) : void {
+    if (!searchedPlayer) return
+
+    // call the proxies for this player
+  }
+
+  @Watch("search")
+  public onSearchChanged(newValue: string) : void{
+    if (newValue && newValue.length > 2) {
+      this.$store.direct.dispatch.admin.searchBnetTag({
+        searchText: newValue.toLowerCase()
+      });
+    } else {
+      this.$store.direct.dispatch.admin.clearSearch();
+    }
+  }  
+
+  get searchedPlayers(): SearchedPlayer[] {
+    return this.$store.direct.state.admin.searchedPlayers;
+  }
+
   public sanitizeString(string : string) : string {
 
     let str = string;
-    str = str.replace(/-/g, `_`)
+    str = str.replace(/-/g, `_`);
 
     return str;
   }
