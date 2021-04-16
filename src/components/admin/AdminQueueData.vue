@@ -142,6 +142,10 @@ export default class AdminQueueData extends Vue {
         text: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
         modeId: EGameMode.GM_FFA,
       },
+      {
+        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_FOOTMEN_FRENZY]}`),
+        modeId: EGameMode.GM_FOOTMEN_FRENZY,
+      },
     ];
   }
 

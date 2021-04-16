@@ -65,7 +65,7 @@ export default class GameModeSelect extends Vue {
       },
       {
         modeName: `Footmen Frenzy`,
-        gameMode: EGameMode.GM_FOOTMAN_FRENZY,
+        gameMode: EGameMode.GM_FOOTMEN_FRENZY,
       },
     ];
 

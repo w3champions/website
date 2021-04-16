@@ -115,7 +115,7 @@ export enum EGameMode {
   GM_2ON2_AT = 6,
   GM_4ON4 = 4,
   GM_FFA = 5,
-  GM_FOOTMAN_FRENZY = 101,
+  GM_FOOTMEN_FRENZY = 101,
 }
 
 export enum EPick {
