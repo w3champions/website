@@ -2,6 +2,9 @@ import { INGAME_STATIC_RESOURCES_URL } from '@/main';
 import { EAvatarCategory } from '@/store/typings';
 
 export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic: boolean) {
+    if (picId == undefined || picId == null) {
+      return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/RANDOM_0.jpg`;
+    }
     if (category == EAvatarCategory.SPECIAL) {
       return `${INGAME_STATIC_RESOURCES_URL}icons/specialAvatars/SPECIAL_${picId}.jpg`;
     }
