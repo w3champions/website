@@ -1,7 +1,7 @@
 <template>
     <v-container>
       <v-row>
-        <!-- Autocomplete -->
+        <!-- Autocomplete Btag search -->
         <v-autocomplete
           class="ml-5 mr-5"
           v-model="searchPlayerProxiesModel"
@@ -10,88 +10,17 @@
           clearable
           placeholder=" "
           :items="searchedPlayers"
-          :loading="isLoading"
           :search-input.sync="search"
-          :no-data-text="noDataText"
           item-text="player.playerIds[0].battleTag"
           item-value="player.playerIds[0].id"
           return-object>
-
         </v-autocomplete>
       </v-row>
 
-      <v-row>
-        <!-- Node override cards -->
-        <v-col>
-          <v-card class="px-1 m-0">
-            <node-overrides-card></node-overrides-card>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card class="px-1 m-0" >
-            <node-overrides-card
-              :automaticNodes="true">
-            </node-overrides-card>
-          </v-card>
-        </v-col>
-      </v-row>
-      
-      
-      
-      <!-- <v-autocomplete 
-        class="ml-5 mr-5"
-        v-model="searchModel"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        clearable
-        :items="searchRanks"
-        :loading="isLoading"
-        :search-input.sync="search"
-        :no-data-text="noDataText"
-        item-text="player.name"
-        item-value="player.id"
-        placeholder="Start typing to Search"
-        return-object
-      >
-        <template v-slot:item="data">
-          <template v-if="typeof data.item !== 'object'">
-            <v-list-item-content v-text="data.item"></v-list-item-content>
-          </template>
-          <template v-else>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-if="!isDuplicateName(data.item.player.name)">
-                  {{ data.item.player.name }}
-                </span>
-                <span v-if="isDuplicateName(data.item.player.name)">
-                  {{
-                    data.item.player.playerIds
-                      .map((p) => p.battleTag)
-                      .join(" & ")
-                  }}
-                </span>
-                <span
-                  v-if="
-                    data.item.player.gameMode === gameModes.GM_1ON1 &&
-                    data.item.player.race
-                  "
-                >
-                  ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                Wins: {{ data.item.player.wins }} | Losses:
-                {{ data.item.player.losses }} | Total:
-                {{ data.item.player.games }}
-              </v-list-item-subtitle>
-              <v-list-item-subtitle v-else>
-                Unranked
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </template>
-        </template>
-      </v-autocomplete> -->
+      <review-proxies 
+        v-if="showProxyOptions"
+        :proxies="availableProxies">
+      </review-proxies>
     </v-container>
 </template>
 
@@ -99,19 +28,28 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
-import { Proxy, SearchedPlayer } from "@/store/admin/types";
+import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
+import { Proxy, ProxySettings, SearchedPlayer } from "@/store/admin/types";
 
-@Component({ components: { nodeOverridesCard } })
+@Component({ components: { nodeOverridesCard, reviewProxies } })
 export default class AdminProxies extends Vue {
 
-  public searchPlayerProxyModel = {} as SearchedPlayer;
+  public searchPlayerProxiesModel = {} as SearchedPlayer;
   public search = "";
+  public showProxyOptions = false;
   
-  @Watch("searchPlayerProxyModel")
-  onSearchStringChanged(searchedPlayer : SearchedPlayer) : void {
+  @Watch("searchPlayerProxiesModel")
+  public async onSearchStringChanged(searchedPlayer : SearchedPlayer) : Promise<void> {
     if (!searchedPlayer) return
 
-    // call the proxies for this player
+    let bTag = searchedPlayer.player.playerIds[0].battleTag;
+
+    await this.$store.direct.dispatch.admin.getProxiesForPlayer({ battleTag: bTag });
+    this.showProxyOptions = true;
+  }
+
+  get proxiesOnSearchedTag() : ProxySettings {
+    return this.$store.direct.state.admin.proxiesSetForSearchedPlayer;
   }
 
   @Watch("search")

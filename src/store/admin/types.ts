@@ -8,6 +8,8 @@ export type AdminState = {
   queuedata: QueueData[];
   availableProxies: Proxy[];
   searchedPlayers: SearchedPlayer[];
+  proxiesSetForSearchedPlayer: ProxySettings;
+  searchedBattletag: string;
 };
 
 export interface NewsMessage {

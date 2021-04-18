@@ -9,7 +9,6 @@
       <div 
         v-for="proxy in availableProxies"
         :key="proxy.id">
-        <!-- {{ this.$t(`proxies.${sanitizeString(proxy.id)}`) }} -->
         {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
       </div>
     </v-container>

@@ -8,7 +8,8 @@ import {
   NewsMessage,
   Proxy,
   QueueData,
-  SearchedPlayer
+  SearchedPlayer,
+  ProxySettings,
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -20,7 +21,9 @@ const mod = {
     tips: [],
     queuedata: [],
     availableProxies: [],
-    searchedPlayers: []
+    searchedPlayers: [],
+    proxiesSetForSearchedPlayer: {},
+    searchedBattletag: "",
   } as AdminState,
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
@@ -202,9 +205,12 @@ const mod = {
           mod
         );
   
-        const proxiesForBattletag = await rootGetters.adminService.getProxiesForBattletag(
+        const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
           player.battleTag
         );
+
+        commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
+        commit.SET_SEARCHED_PLAYER_BTAG(player.battleTag);
       }
 
   },
@@ -230,6 +236,12 @@ const mod = {
     },
     SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
       state.searchedPlayers = searchedPlayers;
+    },
+    SET_SEARCHED_PROXIES_FOR_BATTLETAG(state: AdminState, proxies: ProxySettings) {
+      state.proxiesSetForSearchedPlayer = proxies;
+    },
+    SET_SEARCHED_PLAYER_BTAG(state: AdminState, battleTag: string) {
+      state.searchedBattletag = battleTag;
     }
   },
 } as const;

@@ -6,7 +6,6 @@ import {
   NewsMessage,
   QueueData,
   Proxy,
-  PlayerInfoForProxy,
   SearchedPlayer,
   ProxySettings
 } from "@/store/admin/types";
