@@ -30,6 +30,7 @@ const en = {
     GM_2ON2_AT: "2 vs 2 AT",
     GM_4ON4: "4 vs 4",
     GM_FFA: "FFA",
+    GM_FOOTMEN_FRENZY: 'Footmen Frenzy'
   },
 
   gatewayNames: {
@@ -242,7 +243,7 @@ const en = {
     TerenasStandLVtourney: "Terenas Stand LV",
     AutumnLeavestourney: "Autumn Leaves",
     RuinsOfAzsharatourney: "Ruins Of Azshara",
-    Tidehunterstourney: "Tidehunters"
+    Tidehunterstourney: "Tidehunters",
   },
 
   heroNames: {
