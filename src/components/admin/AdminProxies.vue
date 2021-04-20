@@ -38,9 +38,11 @@ export default class AdminProxies extends Vue {
   public searchPlayerProxiesModel = {} as SearchedPlayer;
   public search = "";
   public showProxyOptions = false;
+  public oldSearchTerm = "";
 
   public revertToDefault() : void {
     this.showProxyOptions = false;
+    this.oldSearchTerm = "";
     this.$store.direct.dispatch.admin.clearSearch()
   }
   
@@ -51,7 +53,7 @@ export default class AdminProxies extends Vue {
     if (searchedPlayer) {
       let bTag = searchedPlayer.player.playerIds[0].battleTag;
 
-      let proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer({ battleTag: bTag })
+      let proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag)
 
       if (proxies._id != null || undefined) {
         this.showProxyOptions = true;
@@ -68,10 +70,11 @@ export default class AdminProxies extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) : void{
-    if (newValue && newValue.length > 2) {
+    if (newValue && newValue.length > 2 && newValue >= this.oldSearchTerm) {
       this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: newValue.toLowerCase()
       });
+      this.oldSearchTerm = newValue;
     } else {
       this.revertToDefault()
     }

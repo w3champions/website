@@ -50,6 +50,7 @@ export default class reviewProxies extends Vue {
     private async init() : Promise<void> {
         this.setNewProxies = this.$store.direct.state.admin.proxiesSetForSearchedPlayer
         this.searchedPlayerTag = this.$store.direct.state.admin.searchedBattletag
+        await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
     }
 
     async mounted() : Promise<void> {

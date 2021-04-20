@@ -196,11 +196,10 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_FOR_BNET_TAG([]);
       commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({});
-      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({});
     },
     async getProxiesForPlayer(
       context: ActionContext<AdminState, RootState>,
-      player: { battleTag: string }
+      battleTag: string
       ) : Promise<ProxySettings> {
         const { commit, rootGetters } = moduleActionContext(
           context,
@@ -208,11 +207,11 @@ const mod = {
         );
   
         const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
-          player.battleTag
+          battleTag
         );
 
         commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
-        commit.SET_SEARCHED_PLAYER_BTAG(player.battleTag);
+        commit.SET_SEARCHED_PLAYER_BTAG(battleTag);
 
         return proxiesSet;
       }

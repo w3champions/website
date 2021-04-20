@@ -192,16 +192,28 @@ export default class AdminService {
   ): Promise<SearchedPlayer[]> {
     const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
     return await response.json();
   }
 
   public async getProxiesForBattletag(
     battleTag: string
   ): Promise<ProxySettings> {
-    const url = `${API_URL}api/admin/proxies-for/${battleTag}`
+    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}`
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
     return await response.json();
   }
   
