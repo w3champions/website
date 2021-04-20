@@ -195,11 +195,13 @@ const mod = {
     async clearSearch(context: ActionContext<AdminState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_FOR_BNET_TAG([]);
+      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({});
+      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({});
     },
     async getProxiesForPlayer(
       context: ActionContext<AdminState, RootState>,
       player: { battleTag: string }
-      ) {
+      ) : Promise<ProxySettings> {
         const { commit, rootGetters } = moduleActionContext(
           context,
           mod
@@ -211,6 +213,8 @@ const mod = {
 
         commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
         commit.SET_SEARCHED_PLAYER_BTAG(player.battleTag);
+
+        return proxiesSet;
       }
 
   },

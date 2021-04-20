@@ -49,6 +49,9 @@ export interface QueueData {
 export interface ProxySettings {
   nodeOverrides?: Proxy[],
   automaticNodeOverrides?: Proxy[],
+  _id?: string,
+  _created_at?: string,
+  _updated_at?: string,
 }
 
 export interface Proxy {

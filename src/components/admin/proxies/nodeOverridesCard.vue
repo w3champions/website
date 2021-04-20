@@ -1,21 +1,30 @@
 <template>
     <v-container>
-      <v-card-title class="mx-0" v-if="setter">
-        Set Node Overrides
-      </v-card-title>
-      <v-card-title class="mx-0" v-else-if="isAutomaticNode">
-        Auto Node Overrides
-      </v-card-title>
-      <v-card-title class="mx-0" v-else>
-        Node Overrides
-      </v-card-title>
-      <div 
-        v-for="proxy in availableProxies"
-        :key="proxy.id">
-        <div>
-          {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
-        </div>
-      </div>
+      <v-row>
+        <v-card-title class="mx-0" v-if="isAutomaticNode">
+          Auto Node Overrides
+        </v-card-title>
+        <v-card-title class="mx-0" v-else>
+          Node Overrides
+        </v-card-title>
+      </v-row>
+
+      <v-row>
+        <v-chip-group
+              class="ma-2"
+              active-class="info--text"
+              column
+              multiple>
+          <v-chip
+            v-for="proxy in availableProxies"
+            :key="proxy.id"
+            label
+            small>
+            {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
+          </v-chip>
+        </v-chip-group>
+      </v-row>
+
     </v-container>
 </template>
 
@@ -28,7 +37,10 @@ import { Proxy, ProxySettings } from "@/store/admin/types"
 export default class nodeOverridesCard extends Vue {
   @Prop() public automaticNodes?: boolean;
   @Prop() public setNewProxies?: ProxySettings;
-  @Prop({ default: false }) public setter? : boolean;
+
+  public isProxyActive(proxy : Proxy) : boolean {
+    return true;
+  }
 
   // how the logic should work:
 
@@ -81,9 +93,8 @@ export default class nodeOverridesCard extends Vue {
     }
   }
 
-  public mounted() {
-    console.log(`isSetter: ${this.setter}`)
-    console.log(`isAutomaticNode: ${this.isAutomaticNode}`)
+  public mounted() : void {
+    this.init();
   }
 }
 </script>

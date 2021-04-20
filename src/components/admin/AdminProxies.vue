@@ -13,7 +13,8 @@
           :search-input.sync="search"
           item-text="player.playerIds[0].battleTag"
           item-value="player.playerIds[0].id"
-          return-object>
+          return-object
+          @click:clear="revertToDefault">
         </v-autocomplete>
       </v-row>
 
@@ -37,15 +38,28 @@ export default class AdminProxies extends Vue {
   public searchPlayerProxiesModel = {} as SearchedPlayer;
   public search = "";
   public showProxyOptions = false;
+
+  public revertToDefault() : void {
+    this.showProxyOptions = false;
+    this.$store.direct.dispatch.admin.clearSearch()
+  }
   
   @Watch("searchPlayerProxiesModel")
   public async onSearchStringChanged(searchedPlayer : SearchedPlayer) : Promise<void> {
     if (!searchedPlayer) return
+    
+    if (searchedPlayer) {
+      let bTag = searchedPlayer.player.playerIds[0].battleTag;
 
-    let bTag = searchedPlayer.player.playerIds[0].battleTag;
+      let proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer({ battleTag: bTag })
 
-    await this.$store.direct.dispatch.admin.getProxiesForPlayer({ battleTag: bTag });
-    this.showProxyOptions = true;
+      if (proxies._id != null || undefined) {
+        this.showProxyOptions = true;
+      } else {
+        this.revertToDefault()
+      }
+      
+    }
   }
 
   get proxiesOnSearchedTag() : ProxySettings {
@@ -59,7 +73,7 @@ export default class AdminProxies extends Vue {
         searchText: newValue.toLowerCase()
       });
     } else {
-      this.$store.direct.dispatch.admin.clearSearch();
+      this.revertToDefault()
     }
   }  
 

@@ -190,7 +190,7 @@ export default class AdminService {
   public async searchByTag(
     battleTagFragment: string
   ): Promise<SearchedPlayer[]> {
-    const url = `${API_URL}api/admin/search/${encodeURIComponent(battleTagFragment)}`;
+    const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}`;
 
     const response = await fetch(url);
     return await response.json();
