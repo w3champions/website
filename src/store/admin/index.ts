@@ -22,7 +22,7 @@ const mod = {
     queuedata: [],
     availableProxies: [],
     searchedPlayers: [],
-    proxiesSetForSearchedPlayer: {},
+    proxiesSetForSearchedPlayer: {} as ProxySettings,
     searchedBattletag: "",
   } as AdminState,
   actions: {
@@ -195,7 +195,7 @@ const mod = {
     async clearSearch(context: ActionContext<AdminState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_FOR_BNET_TAG([]);
-      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({});
+      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({} as ProxySettings);
     },
     async getProxiesForPlayer(
       context: ActionContext<AdminState, RootState>,

@@ -1,5 +1,6 @@
 <template>
-    <v-container>
+    <v-container v-if="setOverrides != undefined">
+      
       <v-row>
         <v-card-title class="mx-0" v-if="isAutomaticNode">
           Auto Node Overrides
@@ -18,6 +19,8 @@
           <v-chip
             v-for="proxy in availableProxies"
             :key="proxy.id"
+            :input-value="isNodeSelected(proxy.id, isAutomaticNode)"
+            @click="updateProxies(proxy.id)"
             label
             small>
             {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
@@ -35,36 +38,65 @@ import { Proxy, ProxySettings } from "@/store/admin/types"
 
 @Component({ components: {} })
 export default class nodeOverridesCard extends Vue {
-  @Prop() public automaticNodes?: boolean;
-  @Prop() public setNewProxies?: ProxySettings;
+  @Prop({default: false}) public automaticNodes?: boolean;
+  @Prop() public passedOverrides!: string[];
 
-  public isProxyActive(proxy : Proxy) : boolean {
-    return true;
+  public setOverrides = [] as string[];
+  //public initOverrides = [] as string[];
+
+  public updateProxies(node : string) : void {
+    if (this.proxyIsSet(node)) {
+      this.removeFromSetProxy(node);
+    } else {
+      this.addToSetProxy(node);
+    }
   }
 
-  // how the logic should work:
+  public addToSetProxy(node : string) : void {
+    if (!this.proxyIsSet(node)) {
+      // add to proxy
+      this.setOverrides.push(node);
+    }
+    console.log(this.setOverrides);
+  }
 
-  // Grab array with all the proxies the player currently has - this is held in state value:
-  // this.$store.direct.state.admin.proxiesSetForSearchedPlayer()
-  
-  // if that value matches a value in availableProxies - also held in state value:
-  // this.$store.direct.state.admin.availableProxies
+  public removeFromSetProxy(node : string) : void {
+    
+    const index = this.setOverrides.indexOf(node);
+    
+    if (index > -1 && this.proxyIsSet(node)) {
+      this.setOverrides.splice(index, 1);
+      console.log(this.setOverrides)
+    }
+    
+  }
 
-  // set this as a SELECTED proxy
-  // take note to separate automaticNodeOverrides and nodeOverride
-  
-  // show selected proxies as SELECTED v-chip components
-  // on event update SELECT or DESELECT chip components - update setNewProxies variable (this is v-model to this comp)
+  public proxyIsSet(node : string ) : boolean {
+    return this.setOverrides.includes(node);
+  } 
 
-  // on click CONFIRM button
-  // have adminService do a PUT request for the new selections.
+  public isNodeSelected(node : string, isAutomatic : boolean) : boolean {
+    // matches the proxies saved in the state for the searched player against the proxy parameter
 
-  // bonus: have a modal pop up with the newly set proxies to let the user know
+    if (isAutomatic && this.proxyIsSet(node)) {
+      return true;
+    }
+
+    if (this.proxyIsSet(node)) {
+      return true;
+    }
+
+    return false;
+  }
 
   public sanitizeString(string : string) : string {
     let str = string;
     str = str.replace(/-/g, `_`)
     return str;
+  }
+
+  get searchedPlayersSetProxies() : ProxySettings {
+    return this.$store.direct.state.admin.proxiesSetForSearchedPlayer
   }
   
   get isAutomaticNode() : boolean {
@@ -90,6 +122,8 @@ export default class nodeOverridesCard extends Vue {
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(this.$store.direct.state.oauth.token);
+      this.setOverrides = this.passedOverrides;
+      //this.initOverrides = this.passedOverrides;
     }
   }
 

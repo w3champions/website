@@ -47,8 +47,8 @@ export interface QueueData {
 }
 
 export interface ProxySettings {
-  nodeOverrides?: Proxy[],
-  automaticNodeOverrides?: Proxy[],
+  nodeOverrides: String[],
+  automaticNodeOverrides: String[],
   _id?: string,
   _created_at?: string,
   _updated_at?: string,
@@ -69,11 +69,6 @@ export interface QueuedPlayer {
   isFloConnected: boolean,
   location: string,
   serverOption: string,
-}
-
-export type PlayerInfoForProxy = {
-  id: string;
-  player: PlayerOverview;
 }
 
 export type SearchedPlayer = {

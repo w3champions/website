@@ -3,13 +3,22 @@
         <v-row>
             Proxies for: {{ searchedPlayerTag }}
         </v-row>
+
+        <v-row>
+            {{ setNewProxies.nodeOverrides}}
+        </v-row>
+
+        <v-row>
+            {{ setNewProxies.automaticNodeOverrides}}
+        </v-row>
+        
         <v-row>
 
             <!-- nodeOverrides -->
             <v-col>
                 <v-card class="px-1 m-0">
                     <node-overrides-card 
-                        :v-model="setNewProxies">
+                        :passedOverrides="setNewProxies.nodeOverrides">
                     </node-overrides-card>
                 </v-card>
             </v-col>
@@ -18,7 +27,7 @@
             <v-col>
                 <v-card class="px-1 m-0" >
                     <node-overrides-card 
-                        :v-model="setNewProxies"
+                        :passedOverrides="setNewProxies.automaticNodeOverrides"
                         :automaticNodes="true">
                     </node-overrides-card>
                 </v-card>
@@ -38,8 +47,6 @@ export default class reviewProxies extends Vue {
     @Prop() public proxies! : ProxySettings;
 
     public searchedPlayerTag = ``;
-
-    public initialPlayersProxies = this.$store.direct.state.admin.proxiesSetForSearchedPlayer;
     public setNewProxies = {} as ProxySettings;
     // initiate setNewProxies as the proxies the player already has
 
@@ -48,9 +55,8 @@ export default class reviewProxies extends Vue {
     }
 
     private async init() : Promise<void> {
-        this.setNewProxies = this.$store.direct.state.admin.proxiesSetForSearchedPlayer
-        this.searchedPlayerTag = this.$store.direct.state.admin.searchedBattletag
-        await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
+        this.searchedPlayerTag = this.$store.direct.state.admin.searchedBattletag;
+        this.setNewProxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
     }
 
     async mounted() : Promise<void> {
