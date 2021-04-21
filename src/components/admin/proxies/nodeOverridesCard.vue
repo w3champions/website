@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="setOverrides != undefined">
+    <v-container v-if="isLoaded">
       
       <v-row>
         <v-card-title class="mx-0" v-if="isAutomaticNode">
@@ -12,15 +12,16 @@
 
       <v-row>
         <v-chip-group
+              v-model="chipGroupIndex"
               class="ma-2"
               active-class="info--text"
               column
               multiple>
           <v-chip
-            v-for="proxy in availableProxies"
+            v-for="(proxy, index) in availableProxies"
             :key="proxy.id"
-            :input-value="isNodeSelected(proxy.id, isAutomaticNode)"
             @click="updateProxies(proxy.id)"
+            :input-value="showAsChecked(index)"
             label
             small>
             {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
@@ -42,50 +43,31 @@ export default class nodeOverridesCard extends Vue {
   @Prop() public passedOverrides!: string[];
 
   public setOverrides = [] as string[];
-  //public initOverrides = [] as string[];
+  public chipGroupIndex = [] as number[];
+  public isLoaded = false;
+
+  // todo:
+  // 1. add button that appears when nodes have been set different to what they were initated at
+  // 2. add warning about modifying auto-node overrides
+  // 3. create modal for "are you sure" dialog
+  // 4. link "confirm" button on modal to PUT request
+  // 5. format PUT request to endpoint using setOverrides
 
   public updateProxies(node : string) : void {
-    if (this.proxyIsSet(node)) {
-      this.removeFromSetProxy(node);
+    if (this.setOverrides.includes(node)) {
+      const index = this.setOverrides.indexOf(node);
+      if (index > -1) {
+        this.setOverrides.splice(index, 1);
+      }
     } else {
-      this.addToSetProxy(node);
-    }
-  }
-
-  public addToSetProxy(node : string) : void {
-    if (!this.proxyIsSet(node)) {
-      // add to proxy
       this.setOverrides.push(node);
     }
-    console.log(this.setOverrides);
   }
 
-  public removeFromSetProxy(node : string) : void {
-    
-    const index = this.setOverrides.indexOf(node);
-    
-    if (index > -1 && this.proxyIsSet(node)) {
-      this.setOverrides.splice(index, 1);
-      console.log(this.setOverrides)
-    }
-    
-  }
-
-  public proxyIsSet(node : string ) : boolean {
-    return this.setOverrides.includes(node);
-  } 
-
-  public isNodeSelected(node : string, isAutomatic : boolean) : boolean {
-    // matches the proxies saved in the state for the searched player against the proxy parameter
-
-    if (isAutomatic && this.proxyIsSet(node)) {
+  public showAsChecked(index : number) : boolean {
+    if (this.chipGroupIndex.includes(index)) {
       return true;
     }
-
-    if (this.proxyIsSet(node)) {
-      return true;
-    }
-
     return false;
   }
 
@@ -119,11 +101,24 @@ export default class nodeOverridesCard extends Vue {
     this.init();
   }
 
+  public initiateChipGroupIndex() : void {
+
+    // sets the intial index array for the V-Chip-Group component to use
+    for (let i=0; i<this.availableProxies.length; i++) {
+      for (let j=0; j<this.passedOverrides.length; j++) {
+        if (this.passedOverrides[j] === this.availableProxies[i].id) {
+          this.chipGroupIndex.push(i);
+        }
+      }
+    }
+  }
+
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(this.$store.direct.state.oauth.token);
       this.setOverrides = this.passedOverrides;
-      //this.initOverrides = this.passedOverrides;
+      this.initiateChipGroupIndex();
+      this.isLoaded = true;
     }
   }
 
