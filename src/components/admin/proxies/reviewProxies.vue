@@ -1,7 +1,15 @@
 <template>
     <v-container>
+        <v-row >
+            <v-card-title class="ma-0 pa-0">
+                Proxy settings for: {{ searchedPlayerTag }}
+            </v-card-title>
+        </v-row>
+
         <v-row>
-            Proxies for: {{ searchedPlayerTag }}
+            <v-subheader class="ma-0 pa-0">
+                Do not modify the automated nodes unless you know what you're doing.
+            </v-subheader>
         </v-row>
 
         <v-row>
@@ -15,8 +23,8 @@
         <v-row>
 
             <!-- nodeOverrides -->
-            <v-col>
-                <v-card class="px-1 m-0">
+            <v-col class="px-0">
+                <v-card class="px-1 m-1">
                     <node-overrides-card 
                         :passedOverrides="initProxySettings.nodeOverrides">
                     </node-overrides-card>
@@ -24,7 +32,7 @@
             </v-col>
 
             <!-- automaticNodeOverrides -->
-            <v-col>
+            <v-col class="px-0">
                 <v-card class="px-1 m-0" >
                     <node-overrides-card 
                         :passedOverrides="initProxySettings.automaticNodeOverrides"
@@ -34,9 +42,32 @@
             </v-col>
         </v-row>
 
-        <v-row v-if="!isProxyListUnmodified()">
-            Proxies are modified
+        <v-row v-if="getProxyModified()">
+            <v-spacer></v-spacer>
+                <v-dialog
+                    v-model="dialog"
+                    width=500>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                            color="primary"
+                            v-bind="attrs"
+                            v-on="on">
+                                Update Proxies
+                        </v-btn>
+                    </template>
+
+                    <v-card>
+                        <v-card-title>
+                            Update Proxies
+                        </v-card-title>
+                        <v-card-subtitle>
+                            Set the following proxies for this player:
+                        </v-card-subtitle>
+                    </v-card>
+                </v-dialog>
+            <v-spacer></v-spacer>
         </v-row>
+        
     </v-container>
 </template>
 
@@ -52,6 +83,8 @@ export default class reviewProxies extends Vue {
 
     public searchedPlayerTag = ``;
     public initProxySettings = { nodeOverrides:[], automaticNodeOverrides:[] } as ProxySettings;
+    public originalProxySettings = { nodeOverrides:[], automaticNodeOverrides:[] } as ProxySettings;
+    public dialog = false;
 
     get availableProxies() : ProxySettings {
         return this.proxies;
@@ -61,19 +94,8 @@ export default class reviewProxies extends Vue {
         return this.$store.direct.state.admin.modifiedProxies
     }
 
-    public isProxyListUnmodified() : boolean {
-        // todo - WIP
-        if (
-            this.modifiedProxies.nodeOverrides.length !== this.initProxySettings.nodeOverrides.length &&
-            this.modifiedProxies.automaticNodeOverrides.length !== this.initProxySettings.automaticNodeOverrides.length
-            ) return false;
-        
-        if(this.checkOverridesAreSame(this.initProxySettings.nodeOverrides, this.modifiedProxies.nodeOverrides)) 
-            return true;
-        if(this.checkOverridesAreSame(this.initProxySettings.automaticNodeOverrides, this.modifiedProxies.automaticNodeOverrides)) 
-            return true;
-        
-        return false;
+    public getProxyModified() : boolean {
+        return this.$store.direct.state.admin.proxyModified;
     }
 
     public checkOverridesAreSame(initOverrides : string[], modifiedOverrides : string[]) : boolean {
@@ -94,6 +116,9 @@ export default class reviewProxies extends Vue {
         this.initProxySettings = await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
         await this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: this.initProxySettings.nodeOverrides, isAutomatic: false});
         await this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: this.initProxySettings.automaticNodeOverrides, isAutomatic: true});
+        this.originalProxySettings = JSON.parse(JSON.stringify(this.initProxySettings));
+        this.$store.direct.dispatch.admin.proxyModified(false);
+
     }
 
     async mounted() : Promise<void> {

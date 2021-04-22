@@ -26,6 +26,7 @@ const mod = {
     proxiesSetForSearchedPlayer: {} as ProxySettings,
     searchedBattletag: "",
     modifiedProxies: {nodeOverrides: [], automaticNodeOverrides: []} as ProxySettings,
+    proxyModified: false,
   } as AdminState,
   
   actions: {
@@ -232,16 +233,28 @@ const mod = {
         return proxiesSet;
       },
 
-      async updateModifiedProxies(
+      updateModifiedProxies(
         context: ActionContext<AdminState, RootState>,
         overrides: OverridesList
-      ) : Promise<void> {
+      ) : void {
         const { commit } = moduleActionContext(
           context,
           mod
         );
         
         commit.SET_MODIFIED_PROXIES(overrides);
+      },
+
+      proxyModified(
+        context: ActionContext<AdminState, RootState>,
+        val: boolean,
+      ) : void {
+        const { commit } = moduleActionContext(
+          context,
+          mod
+        );
+
+        commit.SET_PROXY_MODIFIED(val);
       }
 
   },
@@ -280,6 +293,9 @@ const mod = {
       } else {
         state.modifiedProxies.nodeOverrides = overridesList.overrides;
       }
+    },
+    SET_PROXY_MODIFIED(state: AdminState, val: boolean) {
+      state.proxyModified = val;
     }
   },
 } as const;

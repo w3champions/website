@@ -28,7 +28,6 @@
           </v-chip>
         </v-chip-group>
       </v-row>
-
     </v-container>
 </template>
 
@@ -42,7 +41,6 @@ export default class nodeOverridesCard extends Vue {
   @Prop({default: false}) public automaticNodes?: boolean;
   @Prop() public passedOverrides!: string[];
 
-  //public setOverrides = [] as string[];
   public chipGroupIndex = [] as number[];
   public isLoaded = false;
   public isProxyListChanged = false;
@@ -55,19 +53,24 @@ export default class nodeOverridesCard extends Vue {
   // todo: 4. link "confirm" button on modal to PUT request
   // todo: 5. format PUT request to endpoint using setOverrides
 
+
   public isProxyListModified() : boolean {
 
-    if (this.passedOverrides.length !== this.modifiedOverrides.length) return false;
+    if (this.passedOverrides.length !== this.modifiedOverrides.length) return true;
     
     const uniqueValues = new Set([...this.modifiedOverrides, ...this.passedOverrides]);
     
     for (const v of uniqueValues) {
       const modifiedOverridesCount = this.modifiedOverrides.filter(e => e === v).length;
       const passedOverridesCount = this.passedOverrides.filter(e => e === v).length;
-      if (modifiedOverridesCount !== passedOverridesCount) return false;
+      if (modifiedOverridesCount !== passedOverridesCount) return true;
     }
 
-    return true;
+    return false;
+  }
+
+  public setProxyModified(val : boolean) : void {
+    this.$store.direct.dispatch.admin.proxyModified(val);
   }
 
   public updateProxies(node : string) : void {
@@ -85,6 +88,7 @@ export default class nodeOverridesCard extends Vue {
 
   public updateProxyState(newOverrides : string[]) : void {
     this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: newOverrides, isAutomatic: this.isAutomaticNode});
+    this.$store.direct.dispatch.admin.proxyModified(this.isProxyListModified());
   }
 
   public showAsChecked(index : number) : boolean {

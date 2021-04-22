@@ -11,6 +11,7 @@ export type AdminState = {
   proxiesSetForSearchedPlayer: ProxySettings;
   searchedBattletag: string;
   modifiedProxies: ProxySettings;
+  proxyModified: boolean;
 };
 
 export interface NewsMessage {
