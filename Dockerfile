@@ -23,7 +23,7 @@ RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
 RUN apk add --no-cache \
-python py-pip \
+python2 py-pip \
 curl \
 which \
 bash
