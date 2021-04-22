@@ -42,26 +42,49 @@ export default class nodeOverridesCard extends Vue {
   @Prop({default: false}) public automaticNodes?: boolean;
   @Prop() public passedOverrides!: string[];
 
-  public setOverrides = [] as string[];
+  //public setOverrides = [] as string[];
   public chipGroupIndex = [] as number[];
   public isLoaded = false;
+  public isProxyListChanged = false;
+  public modifiedOverrides = [] as string[];
 
   // todo:
-  // 1. add button that appears when nodes have been set different to what they were initated at
-  // 2. add warning about modifying auto-node overrides
-  // 3. create modal for "are you sure" dialog
-  // 4. link "confirm" button on modal to PUT request
-  // 5. format PUT request to endpoint using setOverrides
+  // todo: 1. add button that appears when nodes have been set different to what they were initated at
+  // todo: 2. add warning about modifying auto-node overrides
+  // todo: 3. create modal for "are you sure" dialog
+  // todo: 4. link "confirm" button on modal to PUT request
+  // todo: 5. format PUT request to endpoint using setOverrides
+
+  public isProxyListModified() : boolean {
+
+    if (this.passedOverrides.length !== this.modifiedOverrides.length) return false;
+    
+    const uniqueValues = new Set([...this.modifiedOverrides, ...this.passedOverrides]);
+    
+    for (const v of uniqueValues) {
+      const modifiedOverridesCount = this.modifiedOverrides.filter(e => e === v).length;
+      const passedOverridesCount = this.passedOverrides.filter(e => e === v).length;
+      if (modifiedOverridesCount !== passedOverridesCount) return false;
+    }
+
+    return true;
+  }
 
   public updateProxies(node : string) : void {
-    if (this.setOverrides.includes(node)) {
-      const index = this.setOverrides.indexOf(node);
+    if (this.modifiedOverrides.includes(node)) {
+      const index = this.modifiedOverrides.indexOf(node);
       if (index > -1) {
-        this.setOverrides.splice(index, 1);
+        this.modifiedOverrides.splice(index, 1);
+        this.updateProxyState(this.modifiedOverrides);
       }
     } else {
-      this.setOverrides.push(node);
+      this.modifiedOverrides.push(node);
+      this.updateProxyState(this.modifiedOverrides)
     }
+  }
+
+  public updateProxyState(newOverrides : string[]) : void {
+    this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: newOverrides, isAutomatic: this.isAutomaticNode});
   }
 
   public showAsChecked(index : number) : boolean {
@@ -111,14 +134,15 @@ export default class nodeOverridesCard extends Vue {
         }
       }
     }
+    
+    this.isLoaded = true;
   }
 
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(this.$store.direct.state.oauth.token);
-      this.setOverrides = this.passedOverrides;
+      this.modifiedOverrides = JSON.parse(JSON.stringify(this.passedOverrides));
       this.initiateChipGroupIndex();
-      this.isLoaded = true;
     }
   }
 

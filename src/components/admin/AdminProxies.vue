@@ -54,6 +54,7 @@ export default class AdminProxies extends Vue {
       let bTag = searchedPlayer.player.playerIds[0].battleTag;
 
       let proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag)
+      await this.setPlayerProxies(proxies);
 
       if (proxies._id != null || undefined) {
         this.showProxyOptions = true;
@@ -62,6 +63,11 @@ export default class AdminProxies extends Vue {
       }
       
     }
+  }
+
+  public async  setPlayerProxies(proxies : ProxySettings) : Promise<void> {
+    this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: proxies.nodeOverrides, isAutomatic: false})
+    this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: proxies.automaticNodeOverrides, isAutomatic: true})
   }
 
   get proxiesOnSearchedTag() : ProxySettings {

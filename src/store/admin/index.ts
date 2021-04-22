@@ -10,6 +10,7 @@ import {
   QueueData,
   SearchedPlayer,
   ProxySettings,
+  OverridesList,
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -24,13 +25,16 @@ const mod = {
     searchedPlayers: [],
     proxiesSetForSearchedPlayer: {} as ProxySettings,
     searchedBattletag: "",
+    modifiedProxies: {nodeOverrides: [], automaticNodeOverrides: []} as ProxySettings,
   } as AdminState,
+  
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const news = await rootGetters.adminService.getNews();
       commit.SET_NEWS(news);
     },
+
     async editNews(
       context: ActionContext<AdminState, RootState>,
       newsMessage: NewsMessage
@@ -47,6 +51,7 @@ const mod = {
         await dispatch.loadNews();
       }
     },
+
     async deleteNews(
       context: ActionContext<AdminState, RootState>,
       newsMessage: NewsMessage
@@ -63,11 +68,13 @@ const mod = {
         await dispatch.loadNews();
       }
     },
+
     async loadTips(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const tips = await rootGetters.adminService.getTips();
       commit.SET_Tips(tips);
     },
+
     async editTip(
       context: ActionContext<AdminState, RootState>,
       loadingScreenTip: LoadingScreenTip
@@ -86,6 +93,7 @@ const mod = {
       }
       return false;
     },
+
     async deleteTip(
       context: ActionContext<AdminState, RootState>,
       loadingScreenTip: LoadingScreenTip
@@ -102,6 +110,7 @@ const mod = {
         await dispatch.loadTips();
       }
     },
+
     async loadBannedPlayers(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
@@ -117,6 +126,7 @@ const mod = {
       }
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
+
     async postBan(
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
@@ -141,6 +151,7 @@ const mod = {
         commit.ADD_BANNED_PLAYER(bannedPlayer);
       }
     },
+
     async deleteBan(
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
@@ -161,6 +172,7 @@ const mod = {
 
       commit.SET_BANNED_PLAYERS(bannedPlayers);
     },
+
     async loadQueueData(
       context: ActionContext<AdminState, RootState>,
       token: string,
@@ -169,6 +181,7 @@ const mod = {
       const queuedata = await rootGetters.adminService.getQueueData(token);
       commit.SET_QUEUEDATA(queuedata);
     },
+
     async loadAvailableProxies(
       context: ActionContext<AdminState, RootState>,
       token: string,
@@ -177,6 +190,7 @@ const mod = {
       const availableProxies = await rootGetters.adminService.getAvailableProxies(token);
       commit.SET_AVAILABLEPROXIES(availableProxies);
     },
+
     async searchBnetTag(
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
@@ -192,11 +206,13 @@ const mod = {
 
       commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
     },
+
     async clearSearch(context: ActionContext<AdminState, RootState>) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_FOR_BNET_TAG([]);
       commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG({} as ProxySettings);
     },
+
     async getProxiesForPlayer(
       context: ActionContext<AdminState, RootState>,
       battleTag: string
@@ -214,6 +230,18 @@ const mod = {
         commit.SET_SEARCHED_PLAYER_BTAG(battleTag);
 
         return proxiesSet;
+      },
+
+      async updateModifiedProxies(
+        context: ActionContext<AdminState, RootState>,
+        overrides: OverridesList
+      ) : Promise<void> {
+        const { commit } = moduleActionContext(
+          context,
+          mod
+        );
+        
+        commit.SET_MODIFIED_PROXIES(overrides);
       }
 
   },
@@ -245,6 +273,13 @@ const mod = {
     },
     SET_SEARCHED_PLAYER_BTAG(state: AdminState, battleTag: string) {
       state.searchedBattletag = battleTag;
+    },
+    SET_MODIFIED_PROXIES(state: AdminState, overridesList: OverridesList) {
+      if(overridesList.isAutomatic) {
+        state.modifiedProxies.automaticNodeOverrides = overridesList.overrides;
+      } else {
+        state.modifiedProxies.nodeOverrides = overridesList.overrides;
+      }
     }
   },
 } as const;

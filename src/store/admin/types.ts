@@ -10,6 +10,7 @@ export type AdminState = {
   searchedPlayers: SearchedPlayer[];
   proxiesSetForSearchedPlayer: ProxySettings;
   searchedBattletag: string;
+  modifiedProxies: ProxySettings;
 };
 
 export interface NewsMessage {
@@ -47,8 +48,8 @@ export interface QueueData {
 }
 
 export interface ProxySettings {
-  nodeOverrides: String[],
-  automaticNodeOverrides: String[],
+  nodeOverrides: string[],
+  automaticNodeOverrides: string[],
   _id?: string,
   _created_at?: string,
   _updated_at?: string,
@@ -74,5 +75,10 @@ export interface QueuedPlayer {
 export type SearchedPlayer = {
   gameMode: number,
   player: PlayerOverview,
+}
+
+export type OverridesList = {
+  overrides: string[],
+  isAutomatic: boolean,
 }
 ;

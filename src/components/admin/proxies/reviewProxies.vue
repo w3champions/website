@@ -5,11 +5,11 @@
         </v-row>
 
         <v-row>
-            {{ setNewProxies.nodeOverrides}}
+            nodeOverrides: {{ initProxySettings.nodeOverrides}}
         </v-row>
 
         <v-row>
-            {{ setNewProxies.automaticNodeOverrides}}
+            automaticNodeOverrides: {{ initProxySettings.automaticNodeOverrides}}
         </v-row>
         
         <v-row>
@@ -18,7 +18,7 @@
             <v-col>
                 <v-card class="px-1 m-0">
                     <node-overrides-card 
-                        :passedOverrides="setNewProxies.nodeOverrides">
+                        :passedOverrides="initProxySettings.nodeOverrides">
                     </node-overrides-card>
                 </v-card>
             </v-col>
@@ -27,11 +27,15 @@
             <v-col>
                 <v-card class="px-1 m-0" >
                     <node-overrides-card 
-                        :passedOverrides="setNewProxies.automaticNodeOverrides"
+                        :passedOverrides="initProxySettings.automaticNodeOverrides"
                         :automaticNodes="true">
                     </node-overrides-card>
                 </v-card>
             </v-col>
+        </v-row>
+
+        <v-row v-if="!isProxyListUnmodified()">
+            Proxies are modified
         </v-row>
     </v-container>
 </template>
@@ -47,16 +51,49 @@ export default class reviewProxies extends Vue {
     @Prop() public proxies! : ProxySettings;
 
     public searchedPlayerTag = ``;
-    public setNewProxies = {} as ProxySettings;
-    // initiate setNewProxies as the proxies the player already has
+    public initProxySettings = { nodeOverrides:[], automaticNodeOverrides:[] } as ProxySettings;
 
     get availableProxies() : ProxySettings {
         return this.proxies;
     }
 
+    get modifiedProxies() : ProxySettings {
+        return this.$store.direct.state.admin.modifiedProxies
+    }
+
+    public isProxyListUnmodified() : boolean {
+        // todo - WIP
+        if (
+            this.modifiedProxies.nodeOverrides.length !== this.initProxySettings.nodeOverrides.length &&
+            this.modifiedProxies.automaticNodeOverrides.length !== this.initProxySettings.automaticNodeOverrides.length
+            ) return false;
+        
+        if(this.checkOverridesAreSame(this.initProxySettings.nodeOverrides, this.modifiedProxies.nodeOverrides)) 
+            return true;
+        if(this.checkOverridesAreSame(this.initProxySettings.automaticNodeOverrides, this.modifiedProxies.automaticNodeOverrides)) 
+            return true;
+        
+        return false;
+    }
+
+    public checkOverridesAreSame(initOverrides : string[], modifiedOverrides : string[]) : boolean {
+        
+        const uniqueValues = new Set([...initOverrides, ...modifiedOverrides]);
+
+        for (const v of uniqueValues) {
+            const initOverridesCount = initOverrides.filter(e => e === v).length;
+            const modifiedOverridesCount = modifiedOverrides.filter(e => e === v).length;
+            if (initOverridesCount !== modifiedOverridesCount) return false;
+        }
+
+        return true;
+    }
+
     private async init() : Promise<void> {
         this.searchedPlayerTag = this.$store.direct.state.admin.searchedBattletag;
-        this.setNewProxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
+        this.initProxySettings = await this.$store.direct.dispatch.admin.getProxiesForPlayer(this.searchedPlayerTag);
+        await this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: this.initProxySettings.nodeOverrides, isAutomatic: false});
+        await this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: this.initProxySettings.automaticNodeOverrides, isAutomatic: true});
     }
 
     async mounted() : Promise<void> {
