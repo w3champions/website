@@ -46,7 +46,7 @@
             <v-spacer></v-spacer>
                 <v-dialog
                     v-model="dialog"
-                    width=500>
+                    width=600>
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn 
                             color="primary"
@@ -57,12 +57,81 @@
                     </template>
 
                     <v-card>
-                        <v-card-title>
-                            Update Proxies
-                        </v-card-title>
-                        <v-card-subtitle>
-                            Set the following proxies for this player:
-                        </v-card-subtitle>
+                        <v-container>
+                            
+                            <!-- title + subtitle -->
+                            <v-row class="my-0 py-0">
+                                <v-card-title class="my-0 py=0">
+                                    Update Proxies
+                                </v-card-title>
+                            </v-row>
+                            <v-row class="my-0 py-0">
+                                <v-card-subtitle class="my-0 py=0">
+                                    Set the following proxies for this player:
+                                </v-card-subtitle>
+                            </v-row>
+
+                            <!-- Show selected nodes container -->
+                            <v-container class="mb-4">
+                                <v-row>
+                                    <v-spacer></v-spacer>
+                                    <v-card-subtitle class="font-weight-bold">
+                                        Node Overrides:
+                                    </v-card-subtitle>
+                                    <v-spacer></v-spacer>
+
+                                    <template v-for="node in newNodeOverrides(false)">
+                                        <v-container
+                                            class="py-0 my-0 justify-center"
+                                            v-bind="node"
+                                            :key="node">
+                                            <v-card-text class="py-0 my-0">
+                                                {{ $t(`proxies.${sanitizeString(node)}`) }}
+                                            </v-card-text>
+                                        </v-container>
+                                    </template>
+
+                                </v-row>
+
+                                <v-row>
+
+                                    <v-spacer></v-spacer>
+                                    <v-card-subtitle class="font-weight-bold">
+                                        Auto Node Overrides:
+                                    </v-card-subtitle>
+                                    <v-spacer></v-spacer>
+                                    
+                                    <template v-for="node in newNodeOverrides(false)">
+                                        <v-container
+                                            class="py-0 my-0 justify-center"
+                                            v-bind="node"
+                                            :key="node">
+                                            <v-card-text class="py-0 my-0">
+                                                {{ $t(`proxies.${sanitizeString(node)}`) }}
+                                            </v-card-text>
+                                        </v-container>
+                                    </template>
+
+                                </v-row>
+                            </v-container>
+                            
+                            <!-- Confirm/deny row -->
+                            <v-row>
+                                <v-col class="d-flex justify-center">
+                                    <v-btn
+                                        color="primary">
+                                        Confirm
+                                    </v-btn>
+                                </v-col>
+
+                                <v-col class="d-flex justify-center">
+                                    <v-btn
+                                        color="error">
+                                        Cancel
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                     </v-card>
                 </v-dialog>
             <v-spacer></v-spacer>
@@ -84,7 +153,7 @@ export default class reviewProxies extends Vue {
     public searchedPlayerTag = ``;
     public initProxySettings = { nodeOverrides:[], automaticNodeOverrides:[] } as ProxySettings;
     public originalProxySettings = { nodeOverrides:[], automaticNodeOverrides:[] } as ProxySettings;
-    public dialog = false;
+    public dialog = false;  
 
     get availableProxies() : ProxySettings {
         return this.proxies;
@@ -92,6 +161,20 @@ export default class reviewProxies extends Vue {
 
     get modifiedProxies() : ProxySettings {
         return this.$store.direct.state.admin.modifiedProxies
+    }
+
+    public sanitizeString(string : string) : string {
+        let str = string;
+        str = str.replace(/-/g, `_`)
+        return str;
+    }
+
+    public newNodeOverrides(auto : boolean) : string[] {
+        if (auto) {
+            return this.$store.direct.state.admin.modifiedProxies.automaticNodeOverrides
+        }
+
+        return this.$store.direct.state.admin.modifiedProxies.nodeOverrides
     }
 
     public getProxyModified() : boolean {

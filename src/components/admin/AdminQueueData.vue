@@ -1,9 +1,14 @@
 <template >
   <v-container>
     <v-card>
-      <v-expansion-panels tile>
+      <v-expansion-panels 
+        tile
+        multiple>
         <template>
-          <v-expansion-panel tile v-for="(mode, index) in gameModes" :key="index">
+          <v-expansion-panel 
+            tile 
+            v-for="(mode, index) in gameModes" 
+            :key="index">
             <v-expansion-panel-header>
               {{ mode.text }}
             </v-expansion-panel-header>
