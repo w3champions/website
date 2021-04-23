@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="isLoaded">
+    <v-container>
       
       <v-row>
         <v-card-title class="mx-0" v-if="isAutomaticNode">
@@ -10,7 +10,7 @@
         </v-card-title>
       </v-row>
 
-      <v-row>
+      <v-row v-if="isLoaded">
         <v-chip-group
               v-model="chipGroupIndex"
               class="ma-2"
@@ -47,11 +47,10 @@ export default class nodeOverridesCard extends Vue {
   public modifiedOverrides = [] as string[];
 
   // todo:
-  // todo: 1. add button that appears when nodes have been set different to what they were initated at
-  // todo: 2. add warning about modifying auto-node overrides
-  // todo: 3. create modal for "are you sure" dialog
-  // todo: 4. link "confirm" button on modal to PUT request
-  // todo: 5. format PUT request to endpoint using setOverrides
+  // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
+  // todo: 1.1. think this happens when you select the username too quickly before loading the reviewProxies component - need a break in it.
+  // todo: 2. link "confirm" button on modal to PUT request
+  // todo: 3. format PUT request to endpoint using setOverrides
 
 
   public isProxyListModified() : boolean {
@@ -110,7 +109,7 @@ export default class nodeOverridesCard extends Vue {
   
   get isAutomaticNode() : boolean {
     if (this.automaticNodes) {
-      return this.automaticNodes;
+      return true;
     }
     return false;
   }
@@ -128,7 +127,7 @@ export default class nodeOverridesCard extends Vue {
     this.init();
   }
 
-  public initiateChipGroupIndex() : void {
+  public async initiateChipGroupIndex() : Promise<void> {
 
     // sets the intial index array for the V-Chip-Group component to use
     for (let i=0; i<this.availableProxies.length; i++) {
@@ -138,20 +137,24 @@ export default class nodeOverridesCard extends Vue {
         }
       }
     }
-    
-    this.isLoaded = true;
   }
 
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(this.$store.direct.state.oauth.token);
       this.modifiedOverrides = JSON.parse(JSON.stringify(this.passedOverrides));
-      this.initiateChipGroupIndex();
+      await this.initiateChipGroupIndex();
+      this.updateProxyState(this.passedOverrides);
+      setTimeout(this.setLoaded, 100);
     }
   }
 
   public mounted() : void {
     this.init();
+  }
+
+  public setLoaded() : void {
+    this.isLoaded = true;
   }
 }
 </script>

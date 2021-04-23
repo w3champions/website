@@ -47,10 +47,9 @@
                 <v-dialog
                     v-model="dialog"
                     width=600>
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ on }">
                         <v-btn 
                             color="primary"
-                            v-bind="attrs"
                             v-on="on">
                                 Update Proxies
                         </v-btn>
@@ -73,7 +72,8 @@
 
                             <!-- Show selected nodes container -->
                             <v-container class="mb-4">
-                                <v-row>
+                                
+                                <v-row v-if="newNodeOverrides(false).length > 0">
                                     <v-spacer></v-spacer>
                                     <v-card-subtitle class="font-weight-bold">
                                         Node Overrides:
@@ -83,50 +83,49 @@
                                     <template v-for="node in newNodeOverrides(false)">
                                         <v-container
                                             class="py-0 my-0 justify-center"
-                                            v-bind="node"
                                             :key="node">
                                             <v-card-text class="py-0 my-0">
                                                 {{ $t(`proxies.${sanitizeString(node)}`) }}
                                             </v-card-text>
                                         </v-container>
                                     </template>
-
                                 </v-row>
 
-                                <v-row>
-
+                                <v-row v-if="newNodeOverrides(true).length > 0">
                                     <v-spacer></v-spacer>
                                     <v-card-subtitle class="font-weight-bold">
                                         Auto Node Overrides:
                                     </v-card-subtitle>
                                     <v-spacer></v-spacer>
                                     
-                                    <template v-for="node in newNodeOverrides(false)">
+                                    <template v-for="node in newNodeOverrides(true)">
                                         <v-container
                                             class="py-0 my-0 justify-center"
-                                            v-bind="node"
                                             :key="node">
-                                            <v-card-text class="py-0 my-0">
+                                            <v-card-text 
+                                                class="py-0 my-0">
                                                 {{ $t(`proxies.${sanitizeString(node)}`) }}
                                             </v-card-text>
                                         </v-container>
                                     </template>
-
                                 </v-row>
+
                             </v-container>
                             
                             <!-- Confirm/deny row -->
                             <v-row>
                                 <v-col class="d-flex justify-center">
                                     <v-btn
-                                        color="primary">
+                                        color="primary"
+                                        @click="dialog = false, putNewProxies()">
                                         Confirm
                                     </v-btn>
                                 </v-col>
 
                                 <v-col class="d-flex justify-center">
                                     <v-btn
-                                        color="error">
+                                        color="error"
+                                        @click="dialog = false">
                                         Cancel
                                     </v-btn>
                                 </v-col>
@@ -161,6 +160,10 @@ export default class reviewProxies extends Vue {
 
     get modifiedProxies() : ProxySettings {
         return this.$store.direct.state.admin.modifiedProxies
+    }
+
+    public putNewProxies() : void {
+        console.log("sent!")
     }
 
     public sanitizeString(string : string) : string {
