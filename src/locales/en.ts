@@ -233,6 +233,7 @@ const en = {
     RoyalGardens: "Royal Gardens",
     Ferocity: "Ferocity",
     Arathor: "Arathor",
+    NorthernFelwood: "Northern Felwood",
 
     // tour
     Amazoniatourney: "Amazonia",
@@ -244,6 +245,22 @@ const en = {
     AutumnLeavestourney: "Autumn Leaves",
     RuinsOfAzsharatourney: "Ruins Of Azshara",
     Tidehunterstourney: "Tidehunters",
+
+    // S7
+
+    ShallowGrave: "Shallow Grave",
+    KingAndCountry: "King and Country",
+    NorthmarshRuin: "Northmarsh Ruin",
+    BoomTown: "Boomtown",
+    GreenvilleWoods: "Greenville Woods",
+    ImaginaryFriends: "Imaginary Friends",
+    MesonDeLaTaberna: "Meson De La Taberna",
+
+    // tour
+    ShallowGravetourney: "Shallow Grave",
+    TwistedMeadowstourney: "Twisted Meadows"
+
+    
   },
 
   heroNames: {
