@@ -218,13 +218,14 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       battleTag: string
       ) : Promise<ProxySettings> {
-        const { commit, rootGetters } = moduleActionContext(
+        const { commit, rootGetters, rootState } = moduleActionContext(
           context,
           mod
         );
   
         const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
-          battleTag
+          battleTag,
+          rootState.oauth.token,
         );
 
         commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
@@ -255,6 +256,28 @@ const mod = {
         );
 
         commit.SET_PROXY_MODIFIED(val);
+      },
+
+      async putNewProxies(
+        context: ActionContext<AdminState, RootState>,
+        proxies: ProxySettings,
+      ) : Promise<void> {
+        const { commit, rootGetters, rootState } = moduleActionContext(
+          context,
+          mod
+        );
+
+        if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
+          return;
+        }
+        const response = await rootGetters.adminService.postProxies(
+          proxies, 
+          mod.state.proxiesSetForSearchedPlayer._id,
+          rootState.oauth.token);
+
+        if (response.status == 200){
+          commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies);
+        }
       }
 
   },

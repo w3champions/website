@@ -203,9 +203,10 @@ export default class AdminService {
   }
 
   public async getProxiesForBattletag(
-    battleTag: string
+    battleTag: string,
+    token: string,
   ): Promise<ProxySettings> {
-    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}`
+    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}?authorization=${token}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -216,5 +217,27 @@ export default class AdminService {
     });
     return await response.json();
   }
+
+  public async postProxies(
+    proxies: ProxySettings,
+    battleTag: string,
+    token: string,
+  ): Promise<Response> {
+    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}}`
+    
+    const data = JSON.stringify(proxies);
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: data,
+    });
+
+    return response;
+  }
+
+    
   
 }

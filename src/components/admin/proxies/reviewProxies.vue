@@ -145,6 +145,10 @@ import { Prop, Component } from 'vue-property-decorator'
 import nodeOverridesCard from '@/components/admin/proxies/nodeOverridesCard.vue'
 import { ProxySettings } from '@/store/admin/types'
 
+//! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
+//! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
+//! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
+
 @Component({ components: { nodeOverridesCard } })
 export default class reviewProxies extends Vue {
     @Prop() public proxies! : ProxySettings;
@@ -163,7 +167,9 @@ export default class reviewProxies extends Vue {
     }
 
     public putNewProxies() : void {
-        console.log("sent!")
+        if (this.getProxyModified()) {
+            this.$store.direct.dispatch.admin.putNewProxies(this.$store.direct.state.admin.modifiedProxies)
+        }
     }
 
     public sanitizeString(string : string) : string {
