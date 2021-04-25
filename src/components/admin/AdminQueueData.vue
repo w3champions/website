@@ -1,9 +1,14 @@
 <template >
   <v-container>
     <v-card>
-      <v-expansion-panels tile>
+      <v-expansion-panels 
+        tile
+        multiple>
         <template>
-          <v-expansion-panel tile v-for="(mode, index) in gameModes" :key="index">
+          <v-expansion-panel 
+            tile 
+            v-for="(mode, index) in gameModes" 
+            :key="index">
             <v-expansion-panel-header>
               {{ mode.text }}
             </v-expansion-panel-header>
@@ -35,12 +40,12 @@ import { QueueData } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { EGameMode } from "@/store/typings";
-import AppConstants from "@/constants.ts";
+import AppConstants from "@/constants";
 
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
 
-  _intervalRefreshHandle : any = {} ;
+  _intervalRefreshHandle = {} as number;
 
   get headers() : Array<unknown> {
     return [

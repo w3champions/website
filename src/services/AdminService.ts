@@ -4,7 +4,10 @@ import {
   BannedPlayer,
   LoadingScreenTip,
   NewsMessage,
-  QueueData
+  QueueData,
+  Proxy,
+  SearchedPlayer,
+  ProxySettings
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -169,4 +172,72 @@ export default class AdminService {
       })
       return await response.json();
     }
+
+  public async getAvailableProxies(
+    token: string
+  ): Promise<Proxy[]> {
+    const url = `${API_URL}api/admin/proxies/?authorization=${token}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    return await response.json();
+  }
+
+  public async searchByTag(
+    battleTagFragment: string
+  ): Promise<SearchedPlayer[]> {
+    const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  }
+
+  public async getProxiesForBattletag(
+    battleTag: string,
+    token: string,
+  ): Promise<ProxySettings> {
+    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}?authorization=${token}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  }
+
+  public async postProxies(
+    proxies: ProxySettings,
+    battleTag: string,
+    token: string,
+  ): Promise<Response> {
+    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}}`
+    
+    const data = JSON.stringify(proxies);
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: data,
+    });
+
+    return response;
+  }
+
+    
+  
 }

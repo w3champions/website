@@ -30,7 +30,7 @@
         <v-list-group
           :key="index"
           v-if="item.items && item.items.length > 0"
-          :value="true"
+          :value="false"
           v-bind:prepend-icon="item.icon"
           no-action
         >

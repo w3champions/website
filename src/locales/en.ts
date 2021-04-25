@@ -296,6 +296,20 @@ const en = {
     onGoing: "Now Playing",
     past: "Finished",
   },
+
+  proxies: {
+    eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
+    asia_east_via_cn_east: "Asia East via CN East",
+    russia_central_via_cn_east: "Russia Central via CN East",
+    us_west5_via_oceania2: "US West 5 via Oceania 2",
+    asia_east2_via_oceania2: "Asia East 2 via Oceania 2",
+    us_east_via_us_central2: "US East via US Central 2",
+    us_east_via_eu_west: "US East via EU West",
+    russia_central_via_eu_west: "Russia Central via EU West",
+    us_east_via_south_america: "US East via South America",
+    us_central2_via_south_america: "US Central 2 via South America",
+    eu_east4_via_ucloud_pathx: "EU East 4 via ucloud pathx",
+  }
 };
 
 export default en;
