@@ -191,7 +191,7 @@ export default class AdminService {
     battleTagFragment: string,
     token: string
   ): Promise<SearchedPlayer[]> {
-    const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}?authorization=${token}`;
+    const url = `${API_URL}api/admin/search/${encodeURIComponent(battleTagFragment)}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
