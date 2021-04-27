@@ -16,21 +16,37 @@
 
     <!-- CRYPTOCURRENCIES -->
 
-    <v-card 
+    <v-card
       v-for="(crypto, index) in cryptos"
       v-bind:key="crypto.coin" 
       class="support-subcard" 
       tile 
       outlined
-      @click.stop="updateTracker(index)">
+      @click.stop="updateTracker(index, cryptoDialogTracker)">
         <v-img
           :src="button(crypto.coin)">
         </v-img>
         <crypto-dialog
-          v-model="dialogTracker[index]" 
+          v-model="cryptoDialogTracker[index]" 
           :crypto="crypto.coin" 
           :cryptoName="crypto.name"
           :cryptoAddress="crypto.address"></crypto-dialog>
+        
+    </v-card>
+
+
+    <!-- Alipay -->
+    <v-card
+      v-for="(name, index) in alternates"
+      v-bind:key="index"
+      class="support-subcard"
+      tile
+      outlined
+      @click.stop="updateTracker(index, alternateDialogTracker)">
+      <alternate-payments-dialog 
+        v-model="alternateDialogTracker[index]"
+        :name="name"></alternate-payments-dialog>
+      <v-img :src="button(name)"></v-img>
     </v-card>
 
   </v-card>
@@ -40,28 +56,35 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import CryptoDialog from "@/components/common/CryptoDialog.vue";
+import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 
-@Component({ components: { CryptoDialog } })
+@Component({ components: { CryptoDialog, AlternatePaymentsDialog } })
 export default class SupportBox extends Vue {
   @Prop() title!: string;
   @Prop() text!: string;
 
   openCryptoDialog = false;
 
-  dialogTracker : Array<boolean> = [false, false, false];
+  cryptoDialogTracker: boolean[] = [false, false, false];
+  alternateDialogTracker: boolean[] = [false, false];
+  
 
-  private updateTracker(index : number) : void {
-    for (let i=0; i<this.dialogTracker.length; i++) {
-      Vue.set(this.dialogTracker, i , false)
+  updateTracker(index : number, dialogTracker : boolean[]) : void {
+    for (let i=0; i<dialogTracker.length; i++) {
+      Vue.set(dialogTracker, i , false)
     }
-    Vue.set(this.dialogTracker, index, true)
+    Vue.set(dialogTracker, index, true)
   }
 
-  private button(coin : string) : NodeRequire {
-    return require(`@/assets/socials/${coin}_button.png`);
+  button(button : string) : NodeRequire {
+    return require(`@/assets/socials/${button}_button.png`);
   }
 
-  get cryptos() : unknown {
+  get alternates(): string[] {
+    return ['AliPay', 'WeChat'] 
+  }
+
+  get cryptos(): {coin: string, name: string, address: string}[] {
         return [
             {
                 coin: `BTC`,
@@ -91,10 +114,10 @@ export default class SupportBox extends Vue {
 <style>
 .support-subcard {
   border: none !important;
-  padding: 2px;
+  padding: 1px;
 }
 
 .support-card {
-  padding: 2px;
+  padding: 1px;
 }
 </style>
