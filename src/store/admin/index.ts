@@ -196,13 +196,14 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters } = moduleActionContext(
+      const { commit, rootGetters, rootState } = moduleActionContext(
         context,
         mod
       );
 
       const searchedPlayers = await rootGetters.adminService.searchByTag(
-        search.searchText
+        search.searchText,
+        rootState.oauth.token
       );
 
       commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
@@ -270,7 +271,7 @@ const mod = {
         if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
           return;
         }
-        const response = await rootGetters.adminService.postProxies(
+        const response = await rootGetters.adminService.putProxies(
           proxies, 
           mod.state.proxiesSetForSearchedPlayer._id,
           rootState.oauth.token);

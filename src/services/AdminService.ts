@@ -188,9 +188,10 @@ export default class AdminService {
   }
 
   public async searchByTag(
-    battleTagFragment: string
+    battleTagFragment: string,
+    token: string
   ): Promise<SearchedPlayer[]> {
-    const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}`;
+    const url = `${API_URL}api/admin/search?battleTag=${encodeURIComponent(battleTagFragment)}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -218,7 +219,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async postProxies(
+  public async putProxies(
     proxies: ProxySettings,
     battleTag: string,
     token: string,
