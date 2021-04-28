@@ -224,7 +224,7 @@ export default class AdminService {
     battleTag: string,
     token: string,
   ): Promise<Response> {
-    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}}`
+    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}`
     
     const data = JSON.stringify(proxies);
     const response = await fetch(url, {
