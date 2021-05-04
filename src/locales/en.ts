@@ -31,7 +31,8 @@ const en = {
     GM_4ON4: "4 vs 4",
     GM_FFA: "FFA",
     GM_FOOTMEN_FRENZY: 'Footmen Frenzy',
-    GM_LEGION_4v4_x3: 'Legion TD 4v4 x3',
+    GM_LEGION_4v4_X3: 'Legion TD 4v4 x3',
+    GM_LEGION_4v4_x20: 'Legion TD 4v4 x20',
   },
 
   gatewayNames: {
