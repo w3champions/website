@@ -116,6 +116,8 @@ export enum EGameMode {
   GM_4ON4 = 4,
   GM_FFA = 5,
   GM_FOOTMEN_FRENZY = 101,
+
+  GM_LEGION_4v4_x3 = 201,
 }
 
 export enum EPick {
