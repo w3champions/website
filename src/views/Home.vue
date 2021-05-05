@@ -123,6 +123,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
+import { NewsMessage } from "@/store/admin/types";
 
 @Component({ components: { TopOngoingMatchesWithStreams, VueMarkdown, SocialBox, SupportBox } })
 export default class HomeView extends Vue {
@@ -132,23 +133,23 @@ export default class HomeView extends Vue {
     return this.$store.direct.state.rankings.topFive;
   }
 
-  get news() {
+  get news(): NewsMessage[] {
     return this.$store.direct.state.admin.news;
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
     await this.$store.direct.dispatch.admin.loadNews();
   }
 
-  public goToSetupPage() {
+  public goToSetupPage(): void {
     this.$router.push({
       path: "/getting-started/",
     });
   }
 
-  public goToProfile(rank: Ranking) {
+  public goToProfile(rank: Ranking): void {
     this.$router.push({
       path: getProfileUrl(rank.player.playerIds[0].battleTag),
     });
