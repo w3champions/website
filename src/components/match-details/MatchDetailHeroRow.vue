@@ -46,7 +46,7 @@
     <v-col cols="1" v-if="heroesOfLooser.length === 3">
       <hero-icon :hero="heroesOfLooser[2]" />
     </v-col>
-    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length === 1 ? 2 : 1" />
+    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length <= 1 ? 2 : 1" />
   </v-row>
 </template>
 

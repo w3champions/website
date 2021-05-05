@@ -42,32 +42,32 @@
       >
         <v-row dense>
           <v-col :class="unitsKilledComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsKilled).join(" + ") || "N/A"}}
+            <number-display :object="unitScore" value="unitsKilled" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="unitsProducedComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsProduced).join(" + ") || "N/A" }}
+            <number-display :object="unitScore" value="unitsProduced" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="goldComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldCollected).join(" + ") || "N/A" }}
+            <number-display :object="resourceScoure" value="goldCollected" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="woodComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") || "N/A" }}
+            <number-display :object="resourceScoure" value="lumberCollected" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="upkeepComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") || "N/A" }}
+            <number-display :object="resourceScoure" value="goldUpkeepLost" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="armyComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.largestArmy).join(" / ") || "N/A" }}
+            <number-display :object="unitScore" value="largestArmy" :delimiter="AddValuesDelimiter.SLASH" />
           </v-col>
         </v-row>
       </v-col>
@@ -79,15 +79,22 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ResourceScore, UnitScore } from "@/store/typings";
+import NumberDisplay from "./NumberDisplay.vue";
 
-@Component({})
+export enum AddValuesDelimiter {
+  PLUS = " + ",
+  SLASH = " / "
+}
+
+@Component({components: {NumberDisplay}})
 export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() left!: boolean;
-
   @Prop() unitScore!: UnitScore[];
   @Prop() unitScoreOpponent!: UnitScore[];
   @Prop() resourceScoure!: ResourceScore[];
   @Prop() resourceScoureOpponent!: ResourceScore[];
+  
+  public AddValuesDelimiter = AddValuesDelimiter
 
   get goldComparison() {
     return this.comparison(
