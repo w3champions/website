@@ -19,7 +19,7 @@
               multiple>
           <v-chip
             v-for="(proxy, index) in availableProxies"
-            :key="proxy.id"
+            :key="index"
             @click="updateProxies(proxy.id)"
             :input-value="showAsChecked(index)"
             label
@@ -91,7 +91,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   public showAsChecked(index : number) : boolean {
-    if (this.chipGroupIndex.includes(index)) {
+    if (this.chipGroupIndex[index]) {
       return true;
     }
     return false;
