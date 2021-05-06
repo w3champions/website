@@ -244,6 +244,11 @@ const mod = {
           mod
         );
         
+        if (overrides.isAutomatic) {
+          commit.SET_MODIFIED_AUTO_PROXIES(overrides);
+          return
+        }
+        
         commit.SET_MODIFIED_PROXIES(overrides);
       },
 
@@ -312,11 +317,11 @@ const mod = {
       state.searchedBattletag = battleTag;
     },
     SET_MODIFIED_PROXIES(state: AdminState, overridesList: OverridesList) {
-      if(overridesList.isAutomatic) {
-        state.modifiedProxies.automaticNodeOverrides = overridesList.overrides;
-      } else {
-        state.modifiedProxies.nodeOverrides = overridesList.overrides;
-      }
+      state.modifiedProxies.nodeOverrides = overridesList.overrides;
+      
+    },
+    SET_MODIFIED_AUTO_PROXIES(state: AdminState, overridesList: OverridesList) {
+      state.modifiedProxies.automaticNodeOverrides = overridesList.overrides
     },
     SET_PROXY_MODIFIED(state: AdminState, val: boolean) {
       state.proxyModified = val;
