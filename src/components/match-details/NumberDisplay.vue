@@ -1,7 +1,7 @@
 <template>
-    <v-tooltip right>
-        <template v-slot:activator="{ on, attrs }">
-            <div v-bind="attrs" v-on={on}>{{stringValues}}</div>
+    <v-tooltip :right="align === 'right'" :left="align === 'left'" >
+        <template v-slot:activator="{ on }">
+            <span v-on="on">{{stringValues}}</span>
         </template>
         <div>{{addValues}}</div>
     </v-tooltip>
@@ -17,6 +17,8 @@ export default class NumberDisplay extends Vue {
   @Prop() object!: Record<string,number>[]
   @Prop() value!: string
   @Prop() delimiter: AddValuesDelimiter | undefined
+  @Prop()
+  align: 'left' | 'right' = 'left';
 
   get getArray(){return this.object.map(o => o[this.value]).filter(Boolean)}
   get stringValues(){return this.getArray.join(this.delimiter || AddValuesDelimiter.PLUS)}
