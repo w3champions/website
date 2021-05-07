@@ -119,6 +119,7 @@ export enum EGameMode {
 
   GM_LEGION_4v4_X3 = 201,
   GM_LEGION_4v4_X20 = 202,
+  GM_ROC_1ON1 = 301
 }
 
 export enum EPick {
