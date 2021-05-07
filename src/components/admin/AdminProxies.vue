@@ -65,7 +65,7 @@ export default class AdminProxies extends Vue {
     }
   }
 
-  public async  setPlayerProxies(proxies : ProxySettings) : Promise<void> {
+  public async setPlayerProxies(proxies : ProxySettings) : Promise<void> {
     this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: proxies.nodeOverrides, isAutomatic: false})
     this.$store.direct.dispatch.admin.updateModifiedProxies({overrides: proxies.automaticNodeOverrides, isAutomatic: true})
   }
