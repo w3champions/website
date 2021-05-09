@@ -22,6 +22,7 @@ import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
 import AdminLoadingScreenTips from "@/components/admin/AdminLoadingScreenTips.vue";
 import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
+import AdminProxies from "@/components/admin/AdminProxies.vue";
 
 @Component({
   components: {
@@ -29,7 +30,8 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
     AdminBannedPlayers,
     AdminLoadingScreenTips,
     AdminNewsForLauncher,
-    AdminQueueData
+    AdminQueueData,
+    AdminProxies
   }
 })
 export default class Admin extends Vue {
@@ -41,7 +43,14 @@ export default class Admin extends Vue {
         {
           key: "banned_players",
           title: "Banned Players",
+          icon: "mdi-account-remove",
           component: "admin-banned-players"
+        },
+        {
+          key: "proxy_settings",
+          title: "Proxy Settings",
+          icon: "mdi-account-network",
+          component: "admin-proxies"
         }
       ]
     },
@@ -52,15 +61,23 @@ export default class Admin extends Vue {
         {
           key: "news",
           title: "News for Launcher",
+          icon: "mdi-rss",
           component: "admin-news-for-launcher"
         }
       ]
-    },
-    {
-      key: "tips",
-      title: "Loading screen tips",
-      component: "admin-loading-screen-tips"
-    },
+    },{
+      title: "In-Game Settings",
+      icon: "mdi-monitor-dashboard",
+      items: [
+        {
+          key: "tips",
+          icon: "mdi-tooltip-text-outline",
+          title: "Loading screen tips",
+          component: "admin-loading-screen-tips"
+        }
+      ]
+    }
+    ,
     {
       title: "Data Science",
       icon: "mdi-chart-line",
@@ -80,11 +97,11 @@ export default class Admin extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  navItemSelected(item: any) {
+  navItemSelected(item: NavigationItem) : void {
     this.selectedNavItem = item;
   }
 
-  getFirstItem(items: Array<NavigationItem>): NavigationItem | undefined {
+  getFirstItem(items: Array<NavigationItem>): NavigationItem {
     for (let item of items) {
       if (!item.items) {
         return item;
@@ -94,9 +111,10 @@ export default class Admin extends Vue {
         return subItem;
       }
     }
+    return this.navItems[0];
   }
 
-  mounted() {
+  mounted() : void {
     this.navItemSelected(this.getFirstItem(this.navItems));
   }
 }
