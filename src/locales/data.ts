@@ -347,6 +347,7 @@ const data = {
         "This noble person was part of our beta, therefore we hide their buggy stats and thank them for all eternity ;)",
       statsbygamemode: "Stats by game mode",
       winloss: "Win/Loss",
+      race: "Race",
       betaText:
         "This noble person was part of our beta, therefore we hide their buggy stats and thank them for all eternity ;)",
       statsByRace: "Stats by race",
@@ -501,6 +502,7 @@ const data = {
       allraces: "All races",
       close: "Close",
       save: "Save",
+      selectmap: "Select a map:",
     },
   },
   ru: {
@@ -852,6 +854,7 @@ const data = {
         "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен :)",
       statsbygamemode: "Статистика по режимам игры",
       winloss: "Победы/Поражения",
+      race: "Раса",
       betaText:
         "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен :)",
       statsByRace: "Статистика по расам",
@@ -1006,6 +1009,7 @@ const data = {
       allraces: "Все расы",
       close: "Закрыть",
       save: "Сохранить",
+      selectmap: "выберите карту:",
     },
   },
   kr: {
@@ -1310,6 +1314,7 @@ const data = {
       betastats: "이 선수는 베타 테스트 유저로 데이터를 숨깁니다",
       statsbygamemode: "게임 모드별 통계",
       winloss: "승/패",
+      race: "종족",
       statsByMode: "게임 모드별 통계",
     },
     components_player_tabs_playerstatistictab: {
@@ -1725,6 +1730,7 @@ const data = {
       betastats: "该玩家是beta测试时期的玩家，所以我们隐藏了他的数据",
       statsbygamemode: "游戏模式数据统计",
       winloss: "胜/负",
+      race: "种族",
       statsByMode: "游戏模式数据统计",
     },
     components_player_tabs_playerstatistictab: {
@@ -2152,6 +2158,7 @@ const data = {
         "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
       statsbygamemode: "Stats gemäß Spielmodus",
       winloss: "Sieg/Niederlage",
+      race: "Rasse",
       betaText:
         "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats und sind ihm auf ewig dankbar . ;)",
       statsByRace: "Statistiken nach Volk",
@@ -2287,6 +2294,7 @@ const data = {
       wins: "Siege:",
       lost: "Niederlagen:",
       total: "Gesamt:",
+      selectmap: "Wähle eine Map aus:",
     },
   },
 };

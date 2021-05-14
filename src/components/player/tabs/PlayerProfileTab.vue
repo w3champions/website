@@ -103,7 +103,7 @@ export default class PlayerProfileTab extends Vue {
   get raceHeaders () {
     return [
     {
-      text: this.$t("components_ladder_rankingsgrid.race"),
+      text: this.$t("components_player_tabs_playerprofiletab.race"),
       align: "start",
       sortable: false,
       value: "race",
