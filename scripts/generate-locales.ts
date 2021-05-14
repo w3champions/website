@@ -31,7 +31,9 @@ async function main() {
 
   for (const row of rows) {
     for (const lang of languages) {
-      set(locales, [lang, row.location, row.id], row[lang]);
+      // we dont want empty strings inside our translation file
+      let value = !row[lang]?.trim() ? undefined : row[lang]
+      set(locales, [lang, row.location, row.id], value);
     }
   }
 

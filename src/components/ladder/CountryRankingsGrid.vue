@@ -224,7 +224,8 @@ export default class CountryRankingsGrid extends Vue {
   @Prop() ongoingMatches!: any;
   @Prop() selectedCountry!: string;
 
-  headers = [
+  get headers() {
+    return [
     {
       text: this.$t("components_ladder_rankingsgrid.rank"),
       align: "start",
@@ -318,6 +319,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
   ];
+  }
 
   leagueMap: Map<number, League> = new Map();
 

@@ -102,7 +102,8 @@ export default class WinratesTab extends Vue {
   public selectedMmr = 0;
   public selectedMap = this.$t("common.overall");
 
-  public headers = [
+  get headers() {
+    return [
     {
       text: "",
       align: "start",
@@ -130,6 +131,7 @@ export default class WinratesTab extends Vue {
       sortable: false,
     },
   ];
+  }
 
   get mmrs() {
     const mmrsSorted = this.statsPerRaceAndMap
