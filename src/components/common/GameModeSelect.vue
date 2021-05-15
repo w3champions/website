@@ -72,6 +72,10 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_LEGION_4v4_X3,
       },
       {
+        modeName: `Legion TD 1v1 x20`,
+        gameMode: EGameMode.GM_LEGION_1v1_x20,
+      },
+      {
         modeName: `Legion TD 4v4 x20`,
         gameMode: EGameMode.GM_LEGION_4v4_X20,
       },
