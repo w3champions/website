@@ -40,6 +40,7 @@ const en = {
   gatewayNames: {
     Europe: "Europe",
     America: "America",
+    China: "China",
   },
 
   mmrLeagueRanges: {

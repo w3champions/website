@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { OauthState, TwitchToken } from "@/store/oauth/types";
+import { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 
 const mod = {
   namespaced: true,
@@ -19,7 +19,9 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const bearer = await rootGetters.oauthService.authorize(code);
+      const region = await rootGetters.oauthService.loadAuthRegionCookie();
+      const bearer = await rootGetters.oauthService.authorize(code, region);
+
       commit.SET_BEARER(bearer.jwt);
 
       const profile = await rootGetters.oauthService.getProfile(
@@ -64,6 +66,13 @@ const mod = {
         commit.SET_IS_ADMIN(false);
         commit.SET_BEARER("");
       }
+    },
+    async saveLoginRegion(
+      context: ActionContext<OauthState, RootState>,
+      region: BnetOAuthRegion
+    ) {
+      const { rootGetters } = moduleActionContext(context, mod);
+      await rootGetters.oauthService.saveAuthRegion(region);
     },
     logout(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
