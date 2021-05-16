@@ -46,6 +46,7 @@
         <v-icon v-if="!authCode" class="mr-2">
           mdi-account-circle-outline
         </v-icon>
+        <sign-in-dialog v-model="showSignInDialog" v-on:region-change="saveLoginRegion"></sign-in-dialog>
       </v-btn>
 
       <v-menu offset-y v-if="authCode">
@@ -102,10 +103,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { getProfileUrl } from "./helpers/url-functions";
+import SignInDialog from "@/components/common/SignInDialog.vue";
+import { BnetOAuthRegion } from "./store/oauth/types";
 
-@Component({})
+@Component({ components: { SignInDialog } })
 export default class App extends Vue {
   public items = [
     {
@@ -145,9 +147,14 @@ export default class App extends Vue {
     if (this.authCode) {
       this.openPlayerProfile();
     } else {
-      location.href = `https://eu.battle.net/oauth/authorize?region=eu&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
+      this.showSignInDialog = true;
     }
   }
+
+  async saveLoginRegion({region, done}: {region: BnetOAuthRegion, done: () => void}) {
+    await this.$store.direct.dispatch.oauth.saveLoginRegion(region);
+    done()
+  }    
 
   logout() {
     this.$store.direct.dispatch.oauth.logout();
@@ -241,6 +248,8 @@ export default class App extends Vue {
     this.$vuetify.theme.themes[ this.isDarkTheme ? "dark" : "light"] =
       Object.assign({}, this.$vuetify.theme.themes[ this.isDarkTheme ? "dark" : "light"], this.themeColors)
   }
+
+  private showSignInDialog = false;
 
   created() {
     const t = window.localStorage.getItem("theme");
