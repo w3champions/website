@@ -173,7 +173,8 @@ export default class RankingsGrid extends Vue {
 
   public gameModes = EGameMode;
 
-  public headers = [
+  get headers() {
+    return [
     {
       text: this.$t("components_ladder_rankingsgrid.rank"),
       align: "start",
@@ -266,7 +267,7 @@ export default class RankingsGrid extends Vue {
         return b.rankingPoints - a.rankingPoints;
       },
     },
-  ];
+  ];}
 
   public sortedRankings: Ranking[] = this.rankings;
   public sortColumn = "Rank";

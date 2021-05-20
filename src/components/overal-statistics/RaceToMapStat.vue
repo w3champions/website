@@ -58,7 +58,8 @@ export default class RaceToMapStat extends Vue {
     return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
   }
 
-  public headers = [
+  get headers() {
+    return [
     {
       text: this.$t("components_overall-statistics_racetomapstat.map"),
       align: "start",
@@ -96,5 +97,6 @@ export default class RaceToMapStat extends Vue {
       width: "25px",
     },
   ];
+  }
 }
 </script>

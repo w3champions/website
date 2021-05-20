@@ -146,7 +146,8 @@ export default class ModeStatsGrid extends Vue {
     return `${this.$t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
   }
 
-  public headers = [
+  get headers() {
+    return [
     {
       text: this.$t("components_player_modestatsgrid.mode"),
       align: "center",
@@ -172,6 +173,7 @@ export default class ModeStatsGrid extends Vue {
       tooltip: this.$t("components_player_modestatsgrid.rpdesc"),
     },
   ];
+  }
 }
 </script>
 

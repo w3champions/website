@@ -100,20 +100,22 @@ import { EGameMode } from "@/store/typings";
 export default class PlayerProfileTab extends Vue {
   @Prop() public id!: string;
 
-  public raceHeaders = [
+  get raceHeaders () {
+    return [
     {
-      text: "Race",
+      text: this.$t("components_player_tabs_playerprofiletab.race"),
       align: "start",
       sortable: false,
       value: "race",
     },
     {
-      text: "Win/Loss",
+      text: this.$t("components_player_tabs_playerprofiletab.winloss"),
       align: "start",
       sortable: false,
       value: "wins",
     },
   ];
+  }
 
   get isBetaSeason() {
     return this.selectedSeason?.id === 0;

@@ -116,8 +116,7 @@ import { BannedPlayer } from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  data() {
+  data() : unknown {
     return {
       headers: [
         {
@@ -128,13 +127,14 @@ export default class AdminBannedPlayers extends Vue {
         },
         { text: "Ban End Date", value: "endDate" },
         { text: "Is only banned from chat?", value: "isOnlyChatBan" },
+        { text: "Is IP banned?", value: "isIpBan"},
         { text: "Ban reason", value: "banReason" },
         { text: "Actions", value: "actions", sortable: false },
       ],
     };
   }
 
-  get bannedPlayers(): BannedPlayer[] {
+  get bannedPlayers() : BannedPlayer[] {
     return this.$store.direct.state.admin.players;
   }
 
@@ -143,7 +143,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged(): void {
+  onBattleTagChanged() : void {
     this.init();
   }
 
@@ -164,16 +164,18 @@ export default class AdminBannedPlayers extends Vue {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: "",
+    isIpBan: false,
+    banReason: ""
   };
   public defaultItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: "",
+    isIpBan: false,
+    banReason: ""
   };
 
-  editItem(item: BannedPlayer) {
+  editItem(item: BannedPlayer) : void {
     this.editedIndex = this.bannedPlayers.indexOf(item);
 
     if (this.editedIndex === -1) {
@@ -184,18 +186,18 @@ export default class AdminBannedPlayers extends Vue {
     this.dialog = true;
   }
 
-  async deleteItem(item: BannedPlayer): Promise<void> {
+  async deleteItem(item: BannedPlayer) : Promise<void> {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
   }
 
-  formTitle(): string {
+  formTitle() : unknown {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
-  async save(): Promise<void> {
+  async save() : Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
     } else {
@@ -206,7 +208,7 @@ export default class AdminBannedPlayers extends Vue {
     this.close();
   }
 
-  close(): void {
+  close() : void {
     this.dialog = false;
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
@@ -214,7 +216,7 @@ export default class AdminBannedPlayers extends Vue {
     });
   }
 
-  async mounted(): Promise<void> {
+  async mounted() : Promise<void> {
     await this.init();
   }
 }

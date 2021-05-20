@@ -236,7 +236,8 @@ export default class MatchesGrid extends Vue {
       .toString();
   }
 
-  public headers = [
+  get headers() {
+    return [
     {
       text: this.$t("components_matches_matchesgrid.players"),
       align: "center",
@@ -264,6 +265,7 @@ export default class MatchesGrid extends Vue {
       value: "duration",
     },
   ];
+  }
 }
 </script>
 

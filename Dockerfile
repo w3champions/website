@@ -23,15 +23,12 @@ RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
 RUN apk add --no-cache \
-python py-pip \
+python3 py3-pip \
 curl \
 which \
 bash
 
-RUN pip install python-dateutil python-magic && \
-  curl -L https://github.com/s3tools/s3cmd/releases/download/v2.1.0/s3cmd-2.1.0.zip --output /root/s3cmd-2.1.0.zip && \
-  unzip /root/s3cmd-2.1.0.zip -d /root && \
-  ln -s /root/s3cmd-2.1.0/s3cmd /usr/bin/s3cmd
+RUN pip install python-dateutil python-magic s3cmd
 COPY s3config /etc/s3config
 RUN chmod +x /etc/s3config/sync_assets.sh
 
