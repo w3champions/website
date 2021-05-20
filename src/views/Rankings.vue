@@ -145,7 +145,7 @@
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
             <div class="mt-10">
-              <h3 class="pl-5">Race distribution</h3>
+              <h3 class="pl-5">{{ $t("views_rankings.racedist") }}</h3>
               <rankings-race-distribution
                 :rankings="rankings"
               ></rankings-race-distribution>
