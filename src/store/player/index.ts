@@ -9,8 +9,7 @@ import {
 } from "./types";
 import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
-import { Season, Gateways } from "@/store/ranking/types";
-import GatewaysService from "@/services/GatewaysService";
+import { Season } from "@/store/ranking/types";
 
 const mod = {
   namespaced: true,

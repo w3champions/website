@@ -28,7 +28,6 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
-import GatewaysService from "@/services/GatewaysService";
 
 @Component({})
 export default class GatewaySelect extends Vue {

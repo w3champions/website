@@ -126,7 +126,7 @@ export default class PlayerMatchesTab extends Vue {
   public raceEnums = ERaceEnum;
 
   @Watch("searchModel")
-  public onSearchModelChanged(newVal: Ranking) {
+  public onSearchModelChanged(newVal?: Ranking) {
     if (newVal) {
       this.$store.direct.commit.player.SET_OPPONENT_TAG(
         `${newVal.player.playerIds[0].battleTag}`
@@ -155,7 +155,7 @@ export default class PlayerMatchesTab extends Vue {
       });
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
-      this.onSearchModelChanged(null as any);
+      this.onSearchModelChanged(undefined);
     }
   }
 

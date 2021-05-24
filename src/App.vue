@@ -106,10 +106,16 @@ import { Component } from "vue-property-decorator";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
-
+export type ItemType= {
+  title: string;
+  icon: string;
+  to: string;
+  class?: string;
+}
 @Component({ components: { SignInDialog } })
 export default class App extends Vue {
-  public items = [
+  
+  public items:ItemType[] = [
     {
       title: "Tournaments",
       icon: "mdi-trophy",
@@ -160,7 +166,7 @@ export default class App extends Vue {
     this.$store.direct.dispatch.oauth.logout();
   }
 
-  public visible(item: any): boolean {
+  public visible(item: ItemType): boolean {
     if (item.title == "Admin" && !this.isAdmin) {
       return false;
     }

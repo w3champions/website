@@ -79,7 +79,6 @@ import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
   PlayerMmrRpTimeline,
   PlayerStatsRaceOnMapVersusRace,
-  RaceStat,
   RaceWinsOnMap,
 } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
@@ -194,7 +193,7 @@ export default class PlayerStatisticTab extends Vue {
 
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
       this.selectedPatch
-    ].filter((r: any) => r.race !== ERaceEnum.RANDOM);
+    ].filter((r: { race: ERaceEnum; }) => r.race !== ERaceEnum.RANDOM);
   }
 
   get gameModes() {

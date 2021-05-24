@@ -113,13 +113,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import {
   Match,
-  DataTableOptions,
   Team,
   PlayerInTeam,
-  EGameMode,
 } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";

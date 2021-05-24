@@ -190,7 +190,7 @@ export default class PlayerLeague extends Vue {
         )
       )
       .filter(Boolean)
-      .map((team) => (team!.won ? "W" : "L"));
+      .map((team) => (team?.won ? "W" : "L"));
   }
 
   get isRecentPerformanceVisible(): boolean {

@@ -314,6 +314,9 @@ import { AkaSettings, SpecialPicture } from "../../store/personalSettings/types"
 import CountryFlag from "vue-country-flag";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "../../helpers/url-functions";
+import { enumKeys } from "../../helpers/general"
+
+type CountryType = { country: string; countryCode: string }
 
 @Component({ components: { CountryFlag, PlayerSocials } })
 export default class PlayerAvatar extends Vue {
@@ -330,7 +333,7 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.RANDOM,
   ];
 
-  public countries: { country: string; countryCode: string }[] = [];
+  public countries: CountryType[] = [];
   public picNumbers = Array.from(Array(11).keys());
 
   get playerGames() {
@@ -384,7 +387,7 @@ export default class PlayerAvatar extends Vue {
     return false; // might be opted out - might not have an alias
   }
 
-  get w3infoId(): any {
+  get w3infoId(): string|number {
     return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? '';
   }
 
@@ -450,7 +453,7 @@ export default class PlayerAvatar extends Vue {
     editDialogOpened: false,
   };
 
-  countryFilter(item: any, queryText: any, itemText: any) {
+  countryFilter(item: CountryType, queryText: string) {
     const textOne = item.country.toLowerCase();
     const searchText = queryText.toLowerCase();
     return textOne.includes(searchText);
@@ -536,7 +539,7 @@ export default class PlayerAvatar extends Vue {
       return true;
     }
 
-    const raceCategory = (category as any) as ERaceEnum;
+    const raceCategory = (category) as unknown as ERaceEnum;
 
     return (
       this.personalSetting.pickablePictures?.filter(
@@ -612,10 +615,10 @@ export default class PlayerAvatar extends Vue {
       this.personalSetting?.profilePicture?.isClassic ?? false;
 
     // populate countries dropdown for combobox
-    Object.keys(ECountries).map((key) => {
+    enumKeys(ECountries).map((key) => {
       let country = {
         country: key,
-        countryCode: (ECountries as any)[key] as string,
+        countryCode: ECountries[key],
       };
 
       if (this.countryCode && this.countryCode == country.countryCode) {
@@ -628,13 +631,13 @@ export default class PlayerAvatar extends Vue {
 
     if (!this.selectedCountryCode && this.personalSetting?.location) {
       this.selectedCountryCode = this.personalSetting.location;
-
-      for (const key in ECountries) {
-        const element = (ECountries as any)[key] as string;
+      
+      enumKeys(ECountries).map((key) => {
+        const element = ECountries[key] as string;
         if (element == this.selectedCountryCode) {
           this.selectedCountry = key;
         }
-      }
+      })
     }
   }
 }

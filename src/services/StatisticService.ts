@@ -1,6 +1,5 @@
 import { API_URL } from "@/main";
 import {
-  GameDay,
   GameDayPerMode,
   GameLength,
   MatchesOnMapPerSeason,

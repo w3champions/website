@@ -1,4 +1,4 @@
-import { PlayerOverview, Ranking } from "@/store/ranking/types";
+import { PlayerOverview } from "@/store/ranking/types";
 
 export type AdminState = {
   total: number;

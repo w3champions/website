@@ -39,12 +39,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import moment from "moment";
 import {
-  ITournamentPlayer,
-  ITournamentMatch,
-  ITournamentRound,
-  ITournament,
-  ConnectionType
-} from "@/store/tournaments/types";
+  ITournamentPlayer} from "@/store/tournaments/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/typings";
 
