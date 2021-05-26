@@ -32,12 +32,15 @@ const en = {
     GM_FFA: "FFA",
     GM_FOOTMEN_FRENZY: 'Footmen Frenzy',
     GM_LEGION_4v4_X3: 'Legion TD 4v4 x3',
+    GM_LEGION_1v1_x20: 'Legion TD 1v1 x20',
     GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
+    GM_ROC_1ON1: 'RoC 1vs1',
   },
 
   gatewayNames: {
     Europe: "Europe",
     America: "America",
+    China: "China",
   },
 
   mmrLeagueRanges: {
