@@ -94,7 +94,7 @@
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
             <locale-icon
-              :locale="savedLocale"
+              :locale="_savedLocale"
               :showTwoLetterCode="false"
             ></locale-icon>
           </v-btn>
@@ -103,7 +103,7 @@
           <v-list-item
             v-for="(lang, i) in languages"
             :key="i"
-            @click="savedLocale = i"
+            @click="_savedLocale = i"
           >
             <locale-icon :locale="i"></locale-icon>
           </v-list-item>
@@ -129,6 +129,7 @@ import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
+import VueI18n from "node_modules/vue-i18n/types";
 
 @Component({ components: { SignInDialog, localeIcon } })
 export default class App extends Vue {
@@ -137,32 +138,32 @@ export default class App extends Vue {
 
   public items = [
     {
-      title: "Tournaments",
+      title: "tournaments",
       icon: "mdi-trophy",
       to: "/tournaments",
     },
     {
-      title: "Rankings",
+      title: "rankings",
       icon: "mdi-view-list",
       to: `/Rankings`,
     },
     {
-      title: "Matches",
+      title: "matches",
       icon: "mdi-controller-classic",
       to: "/Matches",
     },
     {
-      title: "Statistics",
+      title: "statistics",
       icon: "mdi-chart-areaspline",
       to: "/OverallStatistics",
     },
     {
-      title: "Admin",
+      title: "admin",
       icon: "mdi-account-tie",
       to: "/AdminOnlyView",
     },
     {
-      title: "FAQ",
+      title: "faq",
       icon: "mdi-help-circle-outline",
       to: "/Faq",
       class: "d-none d-md-flex",
@@ -193,7 +194,7 @@ export default class App extends Vue {
     return true;
   }
 
-  public openPlayerProfile() {
+  public openPlayerProfile(): void {
     this.$router.push({
       path: getProfileUrl(this.battleTag),
     });
@@ -215,12 +216,12 @@ export default class App extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  get isDarkTheme() {
+  get isDarkTheme(): boolean {
     const isDark = this.theme === "nightelf" || this.theme === "undead";
     return isDark;
   }
 
-  get themeColors() {
+  get themeColors(): unknown {
     switch(this.theme) {
       case "nightelf":
         return {
@@ -266,17 +267,17 @@ export default class App extends Vue {
     return this.$store.direct.state.locale;
   }
 
-  get languages(): any {
+  get languages(): VueI18n.LocaleMessages {
     return this.$i18n.messages;
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     await this.init();
   }
 
   private async init() {
     this.$store.direct.dispatch.loadLocale();
-    this.$i18n.locale = this.savedLocale;
+    this.$i18n.locale = this._savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
@@ -290,7 +291,7 @@ export default class App extends Vue {
 
   private showSignInDialog = false;
 
-  created() {
+  created(): void {
     const t = window.localStorage.getItem("theme");
     if (t && t.length > 0) {
       this.theme = t;
