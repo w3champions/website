@@ -94,7 +94,7 @@
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
             <locale-icon
-              :locale="_savedLocale"
+              :locale="savedLocale"
               :showTwoLetterCode="false"
             ></locale-icon>
           </v-btn>
@@ -103,7 +103,7 @@
           <v-list-item
             v-for="(lang, i) in languages"
             :key="i"
-            @click="_savedLocale = i"
+            @click="savedLocale = i"
           >
             <locale-icon :locale="i"></locale-icon>
           </v-list-item>
@@ -277,7 +277,7 @@ export default class App extends Vue {
 
   private async init() {
     this.$store.direct.dispatch.loadLocale();
-    this.$i18n.locale = this._savedLocale;
+    this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
