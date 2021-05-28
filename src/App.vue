@@ -32,9 +32,7 @@
         :to="item.to"
         :class="item.class"
       >
-        <span class="mr-2 hidden-xs-only">
-          {{ $t(`views_app.${item.title}`) }}
-        </span>
+        <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
@@ -82,10 +80,10 @@
             <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
-            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
+            <v-list-item-title>Night Elf</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'undead'">
-            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
+            <v-list-item-title>Undead</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -128,39 +126,41 @@ import { Component } from "vue-property-decorator";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
+import localeIcon from "@/components/common/LocaleIcon.vue";
 
-@Component({ components: { SignInDialog } })
+@Component({ components: { SignInDialog, localeIcon } })
 export default class App extends Vue {
+  private _savedLocale = "en";
   private selectedTheme = "human";
 
   public items = [
     {
-      title: "tournaments",
+      title: "Tournaments",
       icon: "mdi-trophy",
       to: "/tournaments",
     },
     {
-      title: "rankings",
+      title: "Rankings",
       icon: "mdi-view-list",
       to: `/Rankings`,
     },
     {
-      title: "matches",
+      title: "Matches",
       icon: "mdi-controller-classic",
       to: "/Matches",
     },
     {
-      title: "statistics",
+      title: "Statistics",
       icon: "mdi-chart-areaspline",
       to: "/OverallStatistics",
     },
     {
-      title: "admin",
+      title: "Admin",
       icon: "mdi-account-tie",
       to: "/AdminOnlyView",
     },
     {
-      title: "faq",
+      title: "FAQ",
       icon: "mdi-help-circle-outline",
       to: "/Faq",
       class: "d-none d-md-flex",
@@ -256,12 +256,17 @@ export default class App extends Vue {
   }
 
   set savedLocale(val: string) {
-    this.$i18n.locale = val;
-    this.$store.direct.dispatch.saveLocale(val);
+    window.localStorage.setItem("locale", val);
+    this._savedLocale = val;
+    this.$store.direct.commit.SET_LOCALE(val);
   }
 
   get savedLocale(): string {
-    return this.$store.direct.state.locale;
+    if (this.$store.direct.state.locale) {
+      return this.$store.direct.state.locale;
+    } else {
+      return "en";
+    }
   }
 
   get languages(): any {
@@ -273,8 +278,6 @@ export default class App extends Vue {
   }
 
   private async init() {
-    this.$store.direct.dispatch.loadLocale();
-    this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
