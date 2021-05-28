@@ -188,7 +188,7 @@ export default class App extends Vue {
   }
 
   public visible(item: any): boolean {
-    if (item.title == "Admin" && !this.isAdmin) {
+    if (item.title == "admin" && !this.isAdmin) {
       return false;
     }
     return true;
