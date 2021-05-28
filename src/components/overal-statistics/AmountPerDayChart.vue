@@ -28,7 +28,11 @@ export default class AmountPerDayChart extends Vue {
       labels: this.gameDayDates,
       datasets: [
         {
-          label: "Players per day",
+          label: String(
+            this.$t(
+              "components_overall-statistics_tabs_playeractivitytab.playersperday"
+            )
+          ),
           data: this.gameDayCounts,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

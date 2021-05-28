@@ -30,7 +30,11 @@ export default class MapsPerSeasonChart extends Vue {
       labels: this.mapNames,
       datasets: [
         {
-          label: "played maps",
+          label: String(
+            this.$t(
+              "components_overall-statistics_mapsperseasonchart.playedmaps"
+            )
+          ),
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

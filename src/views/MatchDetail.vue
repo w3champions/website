@@ -10,7 +10,7 @@
                 <v-card-subtitle class="pa-0">
                   {{ $t(`gatewayNames.${gateWay}`) }}
                   <br />
-                  Season: {{ season }}
+                  {{ $t(`views_matchdetail.season`) }}: {{ season }}
                 </v-card-subtitle>
                 <host-icon
                   v-if="match.serverInfo && match.serverInfo.provider"
@@ -26,9 +26,8 @@
                 />
               </v-col>
               <v-col cols="1" class="text-center">
-                <span>VS</span>
+                <span>{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
-
               <v-col v-if="!matchIsFFA" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
@@ -53,10 +52,10 @@
             </v-row>
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
-            This is our {{ gameNumber }} Millionth game!
+            {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
-            Congratulations to W3C and the community!
+            {{ $t(`views_matchdetail.jubileeGameMessage`) }}
           </v-card-title>
           <v-card-title class="justify-center small-title">
             <v-card-subtitle>
@@ -84,7 +83,7 @@
           />
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
-              Sorry, but this games seems to have incomplete data
+              {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
           <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">

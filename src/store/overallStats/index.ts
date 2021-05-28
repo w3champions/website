@@ -17,7 +17,6 @@ import {
 import { ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
-
 const mod = {
   namespaced: true,
   state: {
@@ -34,12 +33,36 @@ const mod = {
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     heroPicks: [
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
-      { name: "Any hero selection", heroId: "all", race: ERaceEnum.TOTAL },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
+      {
+        name: "anyhero",
+        heroId: "all",
+        race: ERaceEnum.TOTAL,
+      },
     ] as HeroPick[],
   } as OveralStatisticState,
   actions: {

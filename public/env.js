@@ -1,4 +1,4 @@
-window._env_ = {
+window._env_ = { 
   // BASE_URL: "http://localhost:5000/",
   BASE_URL: "https://website-backend.w3champions.com/",
   // BASE_URL: "https://statistic-service-test.w3champions.com/",

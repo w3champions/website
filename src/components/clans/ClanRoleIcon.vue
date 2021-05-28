@@ -11,7 +11,7 @@ import { EClanRole } from "@/store/clan/types";
 export default class ClanRoleIcon extends Vue {
   @Prop() role!: EClanRole;
 
-  icon() {
+  icon(): string {
     const images = require.context(
       "../../assets/clanRoleIcon/",
       false,
