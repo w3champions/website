@@ -32,7 +32,9 @@
         :to="item.to"
         :class="item.class"
       >
-        <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
+        <span class="mr-2 hidden-xs-only">
+          {{ $t(`views_app.${item.title}`) }}
+        </span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
@@ -80,10 +82,10 @@
             <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
-            <v-list-item-title>Night Elf</v-list-item-title>
+            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'undead'">
-            <v-list-item-title>Undead</v-list-item-title>
+            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -256,17 +258,12 @@ export default class App extends Vue {
   }
 
   set savedLocale(val: string) {
-    window.localStorage.setItem("locale", val);
-    this._savedLocale = val;
-    this.$store.direct.commit.SET_LOCALE(val);
+    this.$i18n.locale = val;
+    this.$store.direct.dispatch.saveLocale(val);
   }
 
   get savedLocale(): string {
-    if (this.$store.direct.state.locale) {
-      return this.$store.direct.state.locale;
-    } else {
-      return "en";
-    }
+    return this.$store.direct.state.locale;
   }
 
   get languages(): any {
@@ -278,6 +275,8 @@ export default class App extends Vue {
   }
 
   private async init() {
+    this.$store.direct.dispatch.loadLocale();
+    this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
