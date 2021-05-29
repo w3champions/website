@@ -10,8 +10,13 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" class="mb-2 w3-race-bg--text" v-bind="attrs" v-on="on">
-              Add Player
+            <v-btn
+              color="primary"
+              class="mb-2 w3-race-bg--text"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ $t("views_admin.addplayer") }}
             </v-btn>
           </template>
           <v-card>
@@ -38,7 +43,7 @@
                         <v-text-field
                           v-model="editedItem.endDate"
                           readonly
-                          label="Ban End Date"
+                          :label="$t(`views_admin.banenddate`)"
                           v-bind="attrs"
                           v-on="on"
                         />
@@ -52,18 +57,18 @@
                         <v-btn
                           text
                           @click="
-                                  editedItem.endDate = '';
-                                  dateMenu = false;
-                                "
+                            editedItem.endDate = '';
+                            dateMenu = false;
+                          "
                         >
-                          Cancel
+                          {{ $t(`views_admin.cancel`) }}
                         </v-btn>
                         <v-btn
                           color="primary"
                           class="w3-race-bg--text"
                           @click="dateMenu = false"
                         >
-                          OK
+                          {{ $t(`views_admin.ok`) }}
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
@@ -71,13 +76,13 @@
                   <v-col cols="12" sm="6" md="12">
                     <v-checkbox
                       v-model="editedItem.isOnlyChatBan"
-                      label="Is only banned from chat"
+                      :label="$t(`views_admin.onlybannedchat`)"
                     />
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.banReason"
-                      label="Ban Reason"
+                      :label="$t(`views_admin.banreason`)"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -87,18 +92,18 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="close">
-                Cancel
+                {{ $t(`views_admin.cancel`) }}
               </v-btn>
-              <v-btn color="primary" class="w3-race-bg--text" @click="save">Save</v-btn>
+              <v-btn color="primary" class="w3-race-bg--text" @click="save">
+                {{ $t(`views_admin.save`) }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
+      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -107,9 +112,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import {
-  BannedPlayer
-} from "@/store/admin/types";
+import { BannedPlayer } from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
@@ -120,14 +123,14 @@ export default class AdminBannedPlayers extends Vue {
           text: "BattleTag",
           align: "start",
           sortable: false,
-          value: "battleTag"
+          value: "battleTag",
         },
         { text: "Ban End Date", value: "endDate" },
         { text: "Is only banned from chat?", value: "isOnlyChatBan" },
         { text: "Is IP banned?", value: "isIpBan"},
         { text: "Ban reason", value: "banReason" },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
@@ -186,7 +189,7 @@ export default class AdminBannedPlayers extends Vue {
   async deleteItem(item: BannedPlayer) : Promise<void> {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
-    this.bannedPlayers.splice(index, 1);
+      this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
   }
 
@@ -219,6 +222,4 @@ export default class AdminBannedPlayers extends Vue {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

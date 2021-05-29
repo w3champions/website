@@ -3,12 +3,21 @@
     <div>
       <v-row v-if="selectedSeason.id === 0">
         <v-card-text class="text-center">
-          This noble person was part of our beta, therefore we hide his buggy
-          stats and thank him for all eternity ;)
+          {{
+            $t(
+              "components_player_tabs_playerprofiletab.betaText"
+            )
+          }}
         </v-card-text>
       </v-row>
     </div>
-    <v-card-title>Matchup Statistics</v-card-title>
+    <v-card-title>
+      {{
+        $t(
+          "components_player_tabs_playerstatistictab.title"
+        )
+      }}
+    </v-card-title>
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="md-3">
         <v-card-text>
@@ -30,8 +39,13 @@
         />
       </v-col>
     </v-row>
-    <v-card-title>MMR and RP Timeline</v-card-title>
-
+    <v-card-title>
+      {{
+        $t(
+          "components_player_tabs_playerstatistictab.playermmrtimeline"
+        )
+      }}
+    </v-card-title>
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="12" md="2">
         <v-card-text>
@@ -62,8 +76,11 @@
             :mmrRpTimeline="playerMmrRpTimeline"
           />
           <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
-            This player hasn't played any matches fitting to the current
-            settings.
+            {{
+              $t(
+                "components_player_tabs_playerstatistictab.playerhasnomatches"
+              )
+            }}
           </v-card-text>
         </v-card-text>
       </v-col>

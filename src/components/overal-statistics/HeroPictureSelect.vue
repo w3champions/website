@@ -120,7 +120,7 @@ export default class HeroPictureSelect extends Vue {
         this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
           index: this.heroIndex + 1,
           heroPick: {
-            name: "Any hero selection",
+            name: "anyhero",
             heroId: "all",
             race: ERaceEnum.TOTAL,
           },
@@ -128,7 +128,7 @@ export default class HeroPictureSelect extends Vue {
         this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
           index: this.heroIndex + 2,
           heroPick: {
-            name: "Any hero selection",
+            name: "anyhero",
             heroId: "all",
             race: ERaceEnum.TOTAL,
           },
@@ -142,7 +142,7 @@ export default class HeroPictureSelect extends Vue {
         this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
           index: this.heroIndex + 2,
           heroPick: {
-            name: "Any hero selection",
+            name: "anyhero",
             heroId: "all",
             race: ERaceEnum.TOTAL,
           },
@@ -245,7 +245,11 @@ export default class HeroPictureSelect extends Vue {
   }
 
   get heroPickName() {
-    return this.heroPicks[this.heroIndex].name;
+    const heroName = this.heroPicks[this.heroIndex].name;
+    if (heroName === "anyhero") {
+      return this.$t("components_overall-statistics_heropictureselect.anyhero");
+    }
+    return heroName;
   }
 
   get possibleHeroPickRows() {

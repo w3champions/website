@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
+        <v-icon style="margin-right: 5px">mdi-controller-classic</v-icon>
         {{ status }}
       </v-btn>
     </template>
@@ -10,7 +10,9 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>Select a status:</v-list-item-title>
+            <v-list-item-title>
+              {{ $t("components_matches_matchesstatusselect.selectstatus") }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>

@@ -10,29 +10,29 @@
               @tournamentSelected="tournamentSelected"
             />
             <div>
-              <a style="font-size: 16px" v-bind:href="tournament.matcherinoLink">
-                Donate to prize pool
+              <a
+                style="font-size: 16px"
+                v-bind:href="tournament.matcherinoLink"
+              >
+                {{ $t("views_tournaments.tourney_donate") }}
               </a>
             </div>
           </v-col>
           <v-col cols="12" md="3">
             <div>
-              <v-icon style="margin-right: 5px;">mdi-calendar</v-icon>
-              {{startDate}}
+              <v-icon style="margin-right: 5px">mdi-calendar</v-icon>
+              {{ startDate }}
             </div>
             <div>
-              <v-icon style="margin-right: 5px;">mdi-clock</v-icon>
-                {{startTime}}
+              <v-icon style="margin-right: 5px">mdi-clock</v-icon>
+              {{ startTime }}
             </div>
           </v-col>
         </v-row>
-
       </v-card-title>
 
       <div class="pl-4 filter-blur tourney-content">
-        <div class="mb-2">
-
-        </div>
+        <div class="mb-2"></div>
 
         <div v-if="tournament">
           <tournament-match-update
@@ -40,19 +40,28 @@
             :isModalOpened="isEditMatchModalOpened"
             @modalClosed="closeModal"
             @saveChanges="updateTournament"
-          >
-          </tournament-match-update>
-          <div style="min-width: 800px;">
+          ></tournament-match-update>
+          <div style="min-width: 800px">
             <p
               class="mt-4"
-              v-if="tournament.winnerBracketRounds && tournament.loserBracketRounds"
-            >Winner bracket</p>
+              v-if="
+                tournament.winnerBracketRounds && tournament.loserBracketRounds
+              "
+            >
+              {{ $t("views_tournaments.winnersbracket") }}
+            </p>
             <tournamentBracket
               @matchSelected="matchSelected"
               :bracketRounds="tournament.winnerBracketRounds"
             ></tournamentBracket>
 
-            <p v-if="tournament.winnerBracketRounds && tournament.loserBracketRounds">Losers bracket</p>
+            <p
+              v-if="
+                tournament.winnerBracketRounds && tournament.loserBracketRounds
+              "
+            >
+              {{ $t("views_tournaments.losersbracket") }}
+            </p>
             <tournamentBracket
               @matchSelected="matchSelected"
               :bracketRounds="tournament.loserBracketRounds"
@@ -82,14 +91,14 @@ import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
 import TournamentMatchUpdate from "@/components/tournaments/TournamentMatchUpdate.vue";
 import TournamentSelect from "@/components/tournaments/TournamentSelect.vue";
-import moment from 'moment';
+import moment from "moment";
 
 @Component({
   components: {
     TournamentSelect,
     TournamentBracket,
     TournamentRoundConnector,
-    TournamentMatchUpdate
+    TournamentMatchUpdate,
   },
 })
 export default class TournamentsView extends Vue {
@@ -99,7 +108,7 @@ export default class TournamentsView extends Vue {
   selectedTournament? = {} as ITournament;
 
   get tournament() {
-    return this.tournaments.find(x => x.id == this.selectedTournament?.id);
+    return this.tournaments.find((x) => x.id == this.selectedTournament?.id);
   }
 
   get tournaments() {
@@ -111,11 +120,11 @@ export default class TournamentsView extends Vue {
   }
 
   get startDate() {
-    return moment(this.selectedTournament?.startsOn).format('DD-MM-YYYY')
+    return moment(this.selectedTournament?.startsOn).format("DD-MM-YYYY");
   }
 
   get startTime() {
-    return moment(this.selectedTournament?.startsOn).format('HH:mm:ss');
+    return moment(this.selectedTournament?.startsOn).format("HH:mm:ss");
   }
 
   tournamentSelected(tournament: ITournament) {
@@ -135,7 +144,9 @@ export default class TournamentsView extends Vue {
   }
 
   async updateTournament() {
-      await this.$store.direct.dispatch.tournaments.saveTournament(this.tournament as any);
+    await this.$store.direct.dispatch.tournaments.saveTournament(
+      this.tournament as any
+    );
   }
 
   async mounted() {

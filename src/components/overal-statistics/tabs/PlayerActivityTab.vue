@@ -10,40 +10,55 @@
               item-text="modeName"
               item-value="modeId"
               @change="setSelectedGamesPerDayMode"
-              label="Select Mode"
+              :label="
+                $t(
+                  `components_overall-statistics_tabs_playeractivitytab.selectmode`
+                )
+              "
               outlined
             />
           </v-card-text>
           <div v-if="isAllMode">
-            Game Modes are normalized to compare their popularity more easily:
-            2v2 and FFA games are counted twice, 4v4 games are counted four
-            times
+            {{
+              $t(
+                "components_overall-statistics_tabs_playeractivitytab.gamemodedesc1"
+              )
+            }}
+            <br />
+            {{
+              $t(
+                "components_overall-statistics_tabs_playeractivitytab.gamemodedesc2"
+              )
+            }}
           </div>
         </v-col>
         <v-col cols="12" md="10">
           <multiple-amount-per-day-chart
             v-if="isAllMode"
-            style="position: relative;"
+            style="position: relative"
             :game-days="gameDays"
-          />
-          <amount-per-gateway-per-day-chart
-            v-if="!isAllMode"
-            style="position: relative;"
-            :game-days="gameDaysForGateways"
           />
         </v-col>
       </v-row>
     </v-card-text>
-    <v-card-title>Players per Day</v-card-title>
+    <v-card-title>
+      {{
+        $t("components_overall-statistics_tabs_playeractivitytab.playersperday")
+      }}
+    </v-card-title>
 
     <v-card-text v-if="!loadingPlayersPerDayStats">
       <amount-per-day-chart
-        style="position: relative;"
+        style="position: relative"
         :game-days="playersPerDay"
       />
     </v-card-text>
 
-    <v-card-title>Played Maps</v-card-title>
+    <v-card-title>
+      {{
+        $t("components_overall-statistics_tabs_playeractivitytab.playedmaps")
+      }}
+    </v-card-title>
     <v-row>
       <v-col cols="12" md="2">
         <v-card-text>
@@ -52,7 +67,11 @@
             item-text="modeName"
             item-value="modeId"
             @change="setSelectedModeForMaps"
-            label="Select Mode"
+            :label="
+              $t(
+                `components_overall-statistics_tabs_playeractivitytab.selectmode`
+              )
+            "
             outlined
           />
           <v-select
@@ -60,7 +79,11 @@
             item-text="id"
             item-value="id"
             @change="setSelectedSeasonForMaps"
-            label="Select Season"
+            :label="
+              $t(
+                `components_overall-statistics_tabs_playeractivitytab.selectseason`
+              )
+            "
             outlined
           />
         </v-card-text>
@@ -68,14 +91,18 @@
       <v-col cols="12" md="10">
         <v-card-text>
           <maps-per-season-chart
-            style="position: relative;"
+            style="position: relative"
             :maps-per-season="mapsPerSeason"
           />
         </v-card-text>
       </v-col>
     </v-row>
 
-    <v-card-title>Popular Hours</v-card-title>
+    <v-card-title>
+      {{
+        $t(`components_overall-statistics_tabs_playeractivitytab.popularhours`)
+      }}
+    </v-card-title>
     <v-row>
       <v-col cols="12" md="2">
         <v-card-text>
@@ -84,7 +111,11 @@
             item-text="modeName"
             item-value="modeId"
             @change="setSelectedModeGameHour"
-            label="Select Mode"
+            :label="
+              $t(
+                `components_overall-statistics_tabs_playeractivitytab.selectmode`
+              )
+            "
             outlined
           />
         </v-card-text>
@@ -96,7 +127,11 @@
       </v-col>
     </v-row>
 
-    <v-card-title>Game Lengths</v-card-title>
+    <v-card-title>
+      {{
+        $t(`components_overall-statistics_tabs_playeractivitytab.gamelengths`)
+      }}
+    </v-card-title>
     <v-row>
       <v-col cols="12" md="2">
         <v-card-text>
@@ -105,7 +140,11 @@
             item-text="modeName"
             item-value="modeId"
             @change="setSelectedLengthMode"
-            label="Select Mode"
+            :label="
+              $t(
+                `components_overall-statistics_tabs_playeractivitytab.selectmode`
+              )
+            "
             outlined
           />
         </v-card-text>
@@ -134,13 +173,11 @@ import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
 import { EGameMode } from "@/store/typings";
 import MultipleAmountPerDayChart from "@/components/overal-statistics/MultipleAmountPerDayChart.vue";
-import AmountPerGatewayPerDayChart from "@/components/overal-statistics/AmountPerGatewayPerDayChart.vue";
 import MapsPerSeasonChart from "@/components/overal-statistics/MapsPerSeasonChart.vue";
 
 @Component({
   components: {
     MapsPerSeasonChart,
-    AmountPerGatewayPerDayChart,
     MultipleAmountPerDayChart,
     GameLengthChart,
     AmountPerDayChart,
