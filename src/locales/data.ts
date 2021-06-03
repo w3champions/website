@@ -28,7 +28,7 @@ const data = {
     },
     views_gettingstarted: {
       manualwarning:
-        "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!",
+        "Those steps are only needed, if you have problems with the normal W3Champions App. In that case, please reach out on discord!",
       howtoinstall: "How to Install W3Champions",
       launcher: "Launcher",
       manualwin: "Manual Windows",
@@ -130,6 +130,7 @@ const data = {
       community: "Community",
       joinus: "Join us",
       socialmedia: "Social Media",
+      partners: "Partners",
       supportus: "Support us",
       topranks: "Top Ranks",
       wlt: "Win/Loss/Total",
@@ -531,22 +532,20 @@ const data = {
     },
     views_gettingstarted: {
       manualwarning:
-        "Эти шаги нужны, только если у вас возикли проблемы с обычной установкой приложения w3chmpions. в этом случае свяжитесь с нами через discord",
-      howtoinstall: "Как установить W3Cahmpions",
+        "Эти шаги нужны, только если у вас возикли проблемы с обычной установкой приложения W3Champions. В этом случае свяжитесь с нами через discord",
+      howtoinstall: "Как установить W3Champions",
       launcher: "Лаунчер",
       manualwin: "Руководство Windows",
       manualmac: "Руководство Mac",
       downloadw3ctitle: "Скачать W3Champions",
-      launchertitle:
-        "После утсановки, запустите W3Champions и присоединяйтесь!",
-      launcherfeaturestitle: "Особенности лаунчера:",
+      launchertitle: "После установки запустите W3Champions и присоединяйтесь!",
+      launcherfeaturestitle: "Преимущества лаунчера:",
       launcherfeaturesbody1: "Всегда последняя версия W3C",
-      launcherfeaturesbody2:
-        "Пользовательские настройки для хоткеев героев и инвентаря",
-      launcherfeaturesbody3: "Графически интерфейс переопределения хоткеев",
-      launcherfeaturesbody4: "Пользовательские настройки командных цветов",
-      launcherfeaturesbody5: "Следите за событиями с последними новостями",
-      manualwintitle: "Руководство Windows",
+      launcherfeaturesbody2: "Настройки хоткеев героев и инвентаря",
+      launcherfeaturesbody3: "Графический интерфейс переопределения хоткеев",
+      launcherfeaturesbody4: "Настройки цветов команд",
+      launcherfeaturesbody5: "Последние новости W3C",
+      manualwintitle: "Руководство для Windows",
       manualwinbody1:
         "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
       manualwinbody2: "W3Champions",
@@ -563,8 +562,8 @@ const data = {
       manualwinbody11: "Важно",
       manualwinbody12:
         "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
-      manualwinbody13: "Удалите <ПУть-к-игре>/Maps",
-      manualwinbody14: "Удалите <ПУть-к-игре>/_retail_/Maps",
+      manualwinbody13: "Удалите <Путь-к-игре>/Maps",
+      manualwinbody14: "Удалите <Путь-к-игре>/_retail_/Maps",
       manualwinbody15: "Например:",
       manualwinbody16: "Удалите C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
@@ -633,10 +632,10 @@ const data = {
         "Присоединяйтесь к W3Champions и насладитесь Warcraft III во всем его величии.",
       homebody16: "Поддержите нас ради еще больших возможностей!",
       mappooltitle: "Текущий набор карт",
-      mappoolbody: "TM,EI,TSLV,CH,NIS,AZ and LR",
+      mappoolbody: "TM,EI,TSLV,CH,NIS,AZ и LR",
       community: "Сообщество",
       joinus: "Присоединяйтесь",
-      socialmedia: "Соц сети",
+      socialmedia: "Соцсети",
       supportus: "Поддержать нас",
       topranks: "Топ рейтинг",
       wlt: "Победы/Проигрыши/Всего",
@@ -677,8 +676,8 @@ const data = {
       searchPlaceholder: "Начните писать для поиска",
     },
     views_tournaments: {
-      tourney_donate: "Задонатить в призовой фонд",
-      winnersbracket: "Сетка винеров",
+      tourney_donate: "Пополнить призовой фонд",
+      winnersbracket: "Сетка виннеров",
       quarterfinals: "Четвертьфиналы",
       semifinals: "Полуфиналы",
       winnersfinals: "Финал винеров",
@@ -725,7 +724,7 @@ const data = {
       close: "Закрыть",
     },
     components_clans_pendinginvitespanel: {
-      invitespending: "Приглашения в стадии ожидания",
+      invitespending: "Приглашения в стадии ожидания:",
       nonepending: "Нет в стадии ожидания",
     },
     components_common_gamemodeselect: {
@@ -799,18 +798,18 @@ const data = {
       selectseason: "Выберите сезон",
       mode: "Режим",
       purplebarsdesc:
-        "Фиолетовая полоса отмечает топ: 2%, 5%, 10%, 25% и 50% игроков.",
+        "Фиолетовая полоса отмечает топ 2%, 5%, 10%, 25% и 50% игроков.",
       greenbardesc: "Зеленая полоса отмечает вашу позицию на графике",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
-      selectmode: "ВЫберите режим",
+      selectmode: "Выберите режим",
       gamemodedesc1:
         "Игровые режимы нормализованы, чтобы легче сравнивать их популярность:",
       gamemodedesc2:
         "Игры 2 на 2 и FFA засчитываются 2 раза, игры 4 на 4 засчитываются 4 раза",
       playersperday: "Игроков в день",
       playedmaps: "Сыгранные карты",
-      popularhours: "Поулярное время",
+      popularhours: "Популярное время",
       gamelengths: "Длина матчей",
     },
     "components_overall-statistics_tabs_winratestab": {
@@ -851,19 +850,19 @@ const data = {
     },
     components_player_tabs_playerprofiletab: {
       betastats:
-        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен :)",
+        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен ;)",
       statsbygamemode: "Статистика по режимам игры",
       winloss: "Победы/Поражения",
       race: "Раса",
       betaText:
-        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен :)",
+        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен ;)",
       statsByRace: "Статистика по расам",
       statsByMode: "Статистика по режимам игры",
     },
     components_player_tabs_playerstatistictab: {
       betastats:
-        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен :)",
-      playermmrtimeline: "Таймлайн MMR игрока",
+        "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен ;)",
+      playermmrtimeline: "График MMR игрока",
       playerhasnomatches:
         "Этот игрок не провел ни одного матча согласно выбранным настройкам.",
       title: "Статистика матчапа",
@@ -891,7 +890,7 @@ const data = {
       entertwittername: "Введите Ваш ник на Twitter!",
       entertrovoname: "Введите Ваш ник на Trovo!",
       entercustomhp: "Введите адрес домашней страницы",
-      showalias: "Показывать альяс",
+      showalias: "Показывать псевдоним",
       selectcountry: "Выберите страну",
       aboutdesc: "Расскажите что-нибудь о себе",
       close: "Закрыть",
@@ -954,13 +953,13 @@ const data = {
     },
     mmrLeagueRanges: {
       MMR_0: "Все",
-      MMR_2200: "> 2200 (~Grandmaster)",
-      MMR_2000: "> 2000 (~Master)",
-      MMR_1800: "> 1800 (~Diamond)",
-      MMR_1600: "> 1600 (~Platin)",
-      MMR_1400: "> 1400 (~Gold)",
-      MMR_1200: "> 1200 (~Silver)",
-      MMR_1000: "> 1000 (~Bronze)",
+      MMR_2200: "> 2200 (~Гроссмейстер)",
+      MMR_2000: "> 2000 (~Мастер)",
+      MMR_1800: "> 1800 (~Алмаз)",
+      MMR_1600: "> 1600 (~Платина)",
+      MMR_1400: "> 1400 (~Золото)",
+      MMR_1200: "> 1200 (~Серебро)",
+      MMR_1000: "> 1000 (~Бронза)",
     },
     mapNames: {
       Overall: "Всего",
@@ -1009,7 +1008,7 @@ const data = {
       allraces: "Все расы",
       close: "Закрыть",
       save: "Сохранить",
-      selectmap: "выберите карту:",
+      selectmap: "Выберите карту:",
     },
   },
   kr: {
@@ -1447,7 +1446,14 @@ const data = {
     },
   },
   zh: {
-    views_app: {},
+    views_app: {
+      tournaments: "锦标赛",
+      rankings: "排行榜",
+      matches: "比赛",
+      statistics: "数据统计",
+      admin: "管理员",
+      faq: "常见问题",
+    },
     views_admin: {
       adminpage: "管理员页面",
       bannedplayers: "黑名单玩家",
@@ -1981,6 +1987,7 @@ const data = {
       community: "Community",
       joinus: "Mach' mit!",
       socialmedia: "Soziale Medien",
+      partners: "Partner",
       supportus: "Unterstütze uns",
       topranks: "Top Rangliste",
       wlt: "Siege/Niederlagen/Gesamt",
