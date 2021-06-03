@@ -80,8 +80,9 @@
       <v-col cols="12" md="4">
         <v-row>
           <v-col cols="12" class="no-padding">
-            <social-box></social-box>
-            <support-box></support-box>
+            <social-box />
+            <support-box />
+            <partner-box />
           </v-col>
         </v-row>
 
@@ -134,6 +135,7 @@ import VueMarkdown from "vue-markdown";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
+import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 import { NewsMessage } from "@/store/admin/types";
 
@@ -143,6 +145,7 @@ import { NewsMessage } from "@/store/admin/types";
     VueMarkdown,
     SocialBox,
     SupportBox,
+    PartnerBox,
   },
 })
 export default class HomeView extends Vue {
