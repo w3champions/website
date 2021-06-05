@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :items="bannedPlayers"
-    :items-per-page="5"
+    :items-per-page="-1"
     class="elevation-1"
   >
     <template v-slot:top>
