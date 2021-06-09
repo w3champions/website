@@ -263,7 +263,27 @@ const en = {
 
     // tour
     ShallowGravetourney: "Shallow Grave",
-    TwistedMeadowstourney: "Twisted Meadows"
+    TwistedMeadowstourney: "Twisted Meadows",
+
+    // customs
+    tmenFrenzyv5_8_0W3C: "Footmen Frenzy 5.8",
+    iomTD3_45eW3CV2: "LegionTD x3 3.45e",
+    ionTD6_4bTeamOZEW3C: "LegionTD x20 6.4b",
+    ionTD6_4TeamOZEW3C: "LegionTD x20 6.4",
+    Frostsabreroc: "Frostsabre (ROC)",
+    GnollWoodroc: "Gnoll Wood (ROC)",
+    Legendsroc: "Legends (ROC)",
+    LostTempleroc: "Lost Temple (ROC)",
+    Moongladeroc: "Moonglade (ROC)",
+    Outskirtsroc: "Outskirts (ROC)",
+    Plunderisleroc: "Plunder Isle (ROC)",
+    RiftValleyroc: "Rift Valley (ROC)",
+    ScorchedBasinroc: "Scorched Basin (ROC)",
+    SecretValleyroc: "Secret Valley (ROC)",
+    TranquilPathsroc: "Tranquil Paths (ROC)",
+    TwistedMeadowsroc: "Twisted Meadows (ROC)",
+
+
 
     
   },
