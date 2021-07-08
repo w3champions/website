@@ -36,7 +36,11 @@ export default class PlayedHeroesChart extends Vue {
       labels: this.orderedHeroes.map((p) => p.icon),
       datasets: [
         {
-          label: "played heroes",
+          label: String(
+            this.$t(
+              "components_overall-statistics_playedheroeschart.playedheroes"
+            )
+          ),
           data: this.orderedHeroes.map((p) => p.count),
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

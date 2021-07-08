@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px;">mdi-controller-classic</v-icon>
+        <v-icon style="margin-right: 5px">mdi-controller-classic</v-icon>
         {{ gameModeName }}
       </v-btn>
     </template>
@@ -10,7 +10,9 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>Select a gamemode:</v-list-item-title>
+            <v-list-item-title>
+              {{ $t("components_common_gamemodeselect.selectgamemode") }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>
@@ -32,6 +34,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { LocaleMessage } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
 
 import { EGameMode } from "../../store/typings";
@@ -41,7 +44,7 @@ export default class GameModeSelect extends Vue {
   @Prop() gameMode?: EGameMode;
   @Prop() disabledModes?: EGameMode[];
 
-  get gameModes() {
+  get gameModes(): Array<{ modeName: LocaleMessage; gameMode: number }> {
     let modes = [
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
@@ -68,6 +71,14 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_FOOTMEN_FRENZY,
       },
       {
+        modeName: `Legion TD 4v4 x3`,
+        gameMode: EGameMode.GM_LEGION_4v4_X3,
+      },
+      {
+        modeName: `Legion TD 1v1 x20`,
+        gameMode: EGameMode.GM_LEGION_1v1_x20,
+      },
+      {
         modeName: `Legion TD 4v4 x20`,
         gameMode: EGameMode.GM_LEGION_4v4_X20,
       },
@@ -78,27 +89,27 @@ export default class GameModeSelect extends Vue {
     ];
 
     if (this.disabledModes) {
-      modes = modes.filter(x => !this.disabledModes?.includes(x.gameMode))
+      modes = modes.filter((x) => !this.disabledModes?.includes(x.gameMode));
     }
 
     return modes;
   }
 
-  get gameModeName() {
+  get gameModeName(): LocaleMessage {
     if (!this.gameMode) {
-      return '';
+      return "";
     }
 
     const mode = this.gameModes.filter((g) => g.gameMode == this.gameMode)[0];
 
     if (!mode) {
-      return 'Not Supported';
+      return "Not Supported";
     }
 
     return mode.modeName;
   }
 
-  public selectGameMode(gameMode: EGameMode) {
+  public selectGameMode(gameMode: EGameMode): void {
     this.$emit("gameModeChanged", gameMode);
   }
 }

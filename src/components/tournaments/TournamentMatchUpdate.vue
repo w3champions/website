@@ -2,17 +2,27 @@
   <v-dialog v-model="isModalOpened" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Update match</span>
+        <span class="headline">
+          {{ $t("components_tournaments_TournamentMatchUpdate.updatematch") }}
+        </span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row v-if="tournamentMatch">
             <v-col cols="12">
-              <p>Date</p>
-              <v-datetime-picker ref="datetimePicker" label="Select Datetime" v-model="date"> </v-datetime-picker>
+              <p>
+                {{ $t("components_tournaments_TournamentMatchUpdate.date") }}
+              </p>
+              <v-datetime-picker
+                ref="datetimePicker"
+                label="Select Datetime"
+                v-model="date"
+              ></v-datetime-picker>
             </v-col>
             <v-col cols="12" md="5" v-if="player1">
-              <p>Player 1</p>
+              <p>
+                {{ $t("components_tournaments_TournamentMatchUpdate.player1") }}
+              </p>
               <div v-if="player1">
                 <v-text-field
                   color="accent-4"
@@ -20,15 +30,19 @@
                   clearable
                   single-line
                   shaped
-                  label="Name"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.name')
+                  "
                   v-model="player1.name"
                 ></v-text-field>
                 <v-autocomplete
                   clearable
                   :item-value="(obj) => obj.id"
                   :items="races"
-                  label="Race"
-                  item-text="name"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.race')
+                  "
+                  item-text="race"
                   v-model="player1.race"
                   :return-object="false"
                 ></v-autocomplete>
@@ -36,7 +50,9 @@
                   clearable
                   :item-value="(obj) => obj.countryCode"
                   :items="countries"
-                  label="Country"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.country')
+                  "
                   item-text="country"
                   v-model="player1.countryCode"
                   :return-object="false"
@@ -56,14 +72,18 @@
                   clearable
                   single-line
                   shaped
-                  label="Score"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.score')
+                  "
                   v-model="player1.score"
                 ></v-text-field>
               </div>
             </v-col>
             <v-col cols="0" md="1"></v-col>
             <v-col cols="12" md="5">
-              <p>Player 2</p>
+              <p>
+                {{ $t("components_tournaments_TournamentMatchUpdate.player2") }}
+              </p>
               <div v-if="player2">
                 <v-text-field
                   color="accent-4"
@@ -71,15 +91,19 @@
                   clearable
                   single-line
                   shaped
-                  label="Name"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.name')
+                  "
                   v-model="player2.name"
                 ></v-text-field>
                 <v-autocomplete
                   clearable
                   :item-value="(obj) => obj.id"
                   :items="races"
-                  label="Race"
-                  item-text="name"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.race')
+                  "
+                  item-text="race"
                   v-model="player2.race"
                   :return-object="false"
                 ></v-autocomplete>
@@ -87,7 +111,9 @@
                   clearable
                   :item-value="(obj) => obj.countryCode"
                   :items="countries"
-                  label="Country"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.country')
+                  "
                   item-text="country"
                   v-model="player2.countryCode"
                   :return-object="false"
@@ -107,7 +133,9 @@
                   clearable
                   single-line
                   shaped
-                  label="Score"
+                  :label="
+                    $t('components_tournaments_TournamentMatchUpdate.score')
+                  "
                   v-model="player2.score"
                 ></v-text-field>
               </div>
@@ -118,10 +146,10 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="close">
-          Close
+          {{ $t("common.close") }}
         </v-btn>
         <v-btn color="blue darken-1" text @click="saveMatch">
-          Save
+          {{ $t("common.save") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -149,9 +177,7 @@ export default class PlayerAvatar extends Vue {
   public _player2Copy?: ITournamentPlayer;
 
   get date() {
-    if (!this._date &&
-      this.tournamentMatch &&
-      this.tournamentMatch.date) {
+    if (!this._date && this.tournamentMatch && this.tournamentMatch.date) {
       this._date = new Date(this.tournamentMatch.date);
     }
     return this._date;

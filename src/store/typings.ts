@@ -4,6 +4,7 @@ import { Gateways } from "./ranking/types";
 export type RootState = {
   darkMode: boolean;
   gateway: Gateways;
+  locale: string;
 };
 
 export type DataTableOptions = {
@@ -119,6 +120,8 @@ export enum EGameMode {
 
   GM_LEGION_4v4_X3 = 201,
   GM_LEGION_4v4_X20 = 202,
+  GM_LEGION_1v1_x20 = 203,
+  
   GM_ROC_1ON1 = 301
 }
 
@@ -146,4 +149,9 @@ export enum EAvatarCategory {
   UNDEAD = 8,
   TOTAL = 16,
   SPECIAL = 32,
+}
+
+export enum ELocaleFlags {
+  EN = 'src/assets/localeFlags/en.svg',
+  DE = 'src/assets/localeFlags/de.svg'
 }

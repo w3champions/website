@@ -1,8 +1,6 @@
 <template>
   <v-card-text>
-    <v-card-title>
-      Winrates of hero matchups
-    </v-card-title>
+    <v-card-title>Winrates of hero matchups</v-card-title>
     <v-row>
       <v-col cols="2">
         <hero-picture-select :hero-index="0" />

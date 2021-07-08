@@ -5,32 +5,52 @@
       <v-col :order="left ? 1 : 3" class="col-md-auto">
         <v-row dense>
           <v-col :align="align">
-            Units killed
+            {{
+              $t(
+                "components_match-details_playerperformanceonmatch.unitskilled"
+              )
+            }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            Units produced
+            {{
+              $t(
+                "components_match-details_playerperformanceonmatch.unitsproduced"
+              )
+            }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            Gold mined
+            {{
+              $t("components_match-details_playerperformanceonmatch.goldmined")
+            }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            Lumber harvested
+            {{
+              $t(
+                "components_match-details_playerperformanceonmatch.lumbermined"
+              )
+            }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            Upkeep lost
+            {{
+              $t("components_match-details_playerperformanceonmatch.upkeeplost")
+            }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            Largest army
+            {{
+              $t(
+                "components_match-details_playerperformanceonmatch.largestarmy"
+              )
+            }}
           </v-col>
         </v-row>
       </v-col>
@@ -159,7 +179,9 @@ export default class PlayerPerformanceOnMatch extends Vue {
   public comparison(opponent: number, me: number) {
     const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
     if (!percentageDiff || percentageDiff < 0.25) return "";
-    return opponent > me ? "lost" : "won";
+    return opponent > me
+      ? this.$t("components_match-details_playerperformanceonmatch.lost")
+      : this.$t("components_match-details_playerperformanceonmatch.won");
   }
 }
 </script>

@@ -7,23 +7,26 @@
         <v-dialog v-model="invitePlayerDialog" persistent max-width="600px">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="isChieftain" v-on="on" outlined color="error">
-              Leave {{ clanName }}
+              {{ $t("components_clans_leaveclanmodal.leaveclan") }}
+              {{ clanName }}
             </v-btn>
             <v-card-subtitle class="pr-0" v-if="isChieftain">
-              Promote a Shaman first to leave the clan
+              {{ $t("components_clans_leaveclanmodal.promotefirst") }}
             </v-card-subtitle>
           </template>
           <v-card>
             <v-card-title>
-              Are you sure you want to leave {{ clanName }}?
+              {{ $t("components_clans_leaveclanmodal.areyousureleave") }}
+              {{ clanName }}?
             </v-card-title>
             <v-card-actions>
               <v-spacer />
               <v-btn color="blue darken-1" text @click="closeDialog">
-                Close
+                {{ $t("components_clans_leaveclanmodal.close") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="leaveClan">
-                Leave {{ clanName }}
+                {{ $t("components_clans_leaveclanmodal.leaveclan") }}
+                {{ clanName }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -41,15 +44,15 @@ export default class LeaveClanModal extends Vue {
   public invitePlayerDialog = false;
   @Prop() isChieftain!: boolean;
 
-  public closeDialog() {
+  public closeDialog(): void {
     this.invitePlayerDialog = false;
   }
 
-  get clanName() {
+  get clanName(): string {
     return this.$store.direct.state.clan.playersClan.clanName;
   }
 
-  public async leaveClan() {
+  public async leaveClan(): Promise<void> {
     await this.$store.direct.dispatch.clan.leaveClan();
     this.invitePlayerDialog = false;
     await this.$store.direct.dispatch.clan.retrievePlayersClan();

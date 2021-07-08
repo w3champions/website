@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex from "vuex";
+import Vuex, { ActionContext } from "vuex";
 import { createDirectStore } from "direct-vuex";
 
 import tournaments from "./tournaments/index";
@@ -26,7 +26,9 @@ import ClanService from "@/services/ClanService";
 import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
-
+import LocaleService from "@/services/LocaleService";
+import en from "@/locales/en";
+import { OauthState } from "@/store/oauth/types";
 
 Vue.use(Vuex);
 
@@ -40,7 +42,8 @@ const services = {
   clanService: new ClanService(),
   twitchService: new TwitchService(),
   adminService: new AdminService(),
-  tournamentsService: new TournamentsService()
+  tournamentsService: new TournamentsService(),
+  localeService: new LocaleService(),
 };
 
 const mod = {
@@ -54,13 +57,32 @@ const mod = {
     clan,
     twitch,
     admin,
-    tournaments
+    tournaments,
   },
   state: {
     darkMode: false,
     gateway: GatewaysService.getGateway(),
+    locale: "en",
   } as RootState,
-  actions: {},
+  actions: {
+    loadLocale(
+      context: ActionContext<OauthState, RootState>
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      const locale = rootGetters.localeService.getLocale();
+      commit.SET_LOCALE(locale);
+    },
+    saveLocale(
+      context: ActionContext<OauthState, RootState>,
+      locale: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+
+      rootGetters.localeService.setLocale(locale);
+      commit.SET_LOCALE(locale);
+    }
+  },
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
       state.darkMode = darkMode;
@@ -68,6 +90,9 @@ const mod = {
     SET_GATEWAY(state: RootState, gateway: Gateways) {
       state.gateway = gateway;
       GatewaysService.setGateway(gateway);
+    },
+    SET_LOCALE(state: RootState, locale: string) {
+      state.locale = locale;
     },
   },
   getters: {
@@ -100,7 +125,10 @@ const mod = {
     },
     tournamentsService() {
       return services.tournamentsService;
-    }
+    },
+    localeService() {
+      return services.localeService;
+    },
   },
 } as const;
 

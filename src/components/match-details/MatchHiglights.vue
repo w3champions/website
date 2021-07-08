@@ -7,7 +7,7 @@
             <v-icon class="mr-4 ml-4" v-on="on">mdi-skull</v-icon>
           </template>
           <div>
-            Heroes killed
+            {{ $t("components_match-details_matchhighlights.heroeskilled") }}
           </div>
         </v-tooltip>
       </v-col>
@@ -22,7 +22,7 @@
             <v-icon class="mr-4 ml-4" v-on="on">mdi-chevron-triple-up</v-icon>
           </template>
           <div>
-            Experience gained
+            {{ $t("components_match-details_matchhighlights.xpgained") }}
           </div>
         </v-tooltip>
       </v-col>
@@ -37,7 +37,7 @@
             <v-icon class="mr-4 ml-4" v-on="on">mdi-treasure-chest</v-icon>
           </template>
           <div>
-            Items collected
+            {{ $t("components_match-details_matchhighlights.itemscollected") }}
           </div>
         </v-tooltip>
       </v-col>

@@ -17,3 +17,8 @@ export interface TwitchToken {
   expires_in: number;
   token_type: string;
 }
+
+export enum BnetOAuthRegion {
+  eu = 'eu',
+  cn = 'cn',
+}

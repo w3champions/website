@@ -5,7 +5,9 @@
         <hero-winrate />
       </v-col>
     </v-row>
-    <v-card-title>Picked Heroes</v-card-title>
+    <v-card-title>
+      {{ $t("components_overall-statistics_tabs_herotab.pickedheroes") }}
+    </v-card-title>
     <v-row>
       <v-col cols="12" md="2">
         <v-card-text>
@@ -14,7 +16,7 @@
             item-text="modeName"
             item-value="modeId"
             @change="setSelectedHeroesPlayedMode"
-            label="Mode"
+            :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
             outlined
           />
           <v-select
@@ -22,7 +24,7 @@
             item-text="pickName"
             item-value="pickId"
             @change="setSelectedHeroesPlayedPick"
-            label="Pick"
+            :label="$t(`components_overall-statistics_tabs_herotab.pick`)"
             outlined
           />
         </v-card-text>
@@ -59,7 +61,7 @@ export default class HeroTab extends Vue {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
 
-  async mounted(){
+  async mounted() {
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
   }
 

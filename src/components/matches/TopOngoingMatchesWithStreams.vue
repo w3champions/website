@@ -1,6 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>Top live 1v1 matches</v-card-title>
+    <v-card-title>
+      {{
+        $t("components_matches_topongoingmatcheswithstreams.toplive1v1matches")
+      }}
+    </v-card-title>
     <v-container>
       <v-row
         v-for="match in matchesSortedByMMR"

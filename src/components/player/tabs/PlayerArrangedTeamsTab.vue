@@ -1,8 +1,10 @@
 <template>
   <div v-if="gameModeStatsAt && gameModeStatsAt.length > 0">
-    <v-card-title>Teams</v-card-title>
+    <v-card-title>
+      {{ $t("components_player_tabs_playerarrangedteamtab.title") }}
+    </v-card-title>
     <br />
-    
+
     <v-card-text>
       <v-row>
         <v-col
@@ -15,15 +17,14 @@
           <player-league :mode-stat="atPartner" :show-at-partner="true" />
         </v-col>
       </v-row>
-      
     </v-card-text>
   </div>
   <div v-else>
     <v-card-text>
       <v-row class="justify-center">
-          <v-col class="text-center">
-            <v-card-subtitle>This player is not part of a team</v-card-subtitle>
-          </v-col>
+        <v-col class="text-center">
+          <v-card-subtitle>This player is not part of a team</v-card-subtitle>
+        </v-col>
       </v-row>
     </v-card-text>
   </div>

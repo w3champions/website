@@ -10,7 +10,12 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialogTips">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" class="mb-2 w3-race-bg--text" v-bind="attrs" v-on="on">
+            <v-btn
+              color="primary"
+              class="mb-2 w3-race-bg--text"
+              v-bind="attrs"
+              v-on="on"
+            >
               Add Tip
             </v-btn>
           </template>
@@ -33,11 +38,14 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text @click="closeTips">
-                Cancel
-              </v-btn>
-              <v-btn color="primary" class="w3-race-bg--text" text @click="saveTips">
-                Save
+              <v-btn text @click="closeTips">Cancel</v-btn>
+              <v-btn
+                color="primary"
+                class="w3-race-bg--text"
+                text
+                @click="saveTips"
+              >
+                {{ $t(`views_admin.save`) }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -45,9 +53,7 @@
       </v-toolbar>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editTipItem(item)">
-        mdi-pencil
-      </v-icon>
+      <v-icon small class="mr-2" @click="editTipItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteTipItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -67,12 +73,12 @@ export default class AdminLoadingScreenTips extends Vue {
         {
           text: "Author",
           align: "start",
-          value: "author"
+          value: "author",
         },
         { text: "Creation Date", align: "start", value: "creationDate" },
         { text: "Text", value: "message", align: "start" },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   }
 
@@ -106,24 +112,24 @@ export default class AdminLoadingScreenTips extends Vue {
     message: "",
     author: "",
     creationDate: "",
-    bsonId: ""
+    bsonId: "",
   };
   public editedNewsItem = {
     bsonId: "",
     message: "",
-    date: ""
+    date: "",
   };
   public editedItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
   public defaultItem = {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
-    banReason: ""
+    banReason: "",
   };
 
   editTipItem(item: LoadingScreenTip) : void {
@@ -133,7 +139,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   async deleteTipItem(item: LoadingScreenTip) : Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-    (await this.$store.direct.dispatch.admin.deleteTip(item));
+      (await this.$store.direct.dispatch.admin.deleteTip(item));
     this.dialogTips = false;
   }
 
@@ -152,7 +158,7 @@ export default class AdminLoadingScreenTips extends Vue {
         message: "",
         author: "",
         creationDate: "",
-        bsonId: ""
+        bsonId: "",
       };
     }
   }
@@ -163,7 +169,7 @@ export default class AdminLoadingScreenTips extends Vue {
       message: "",
       author: "",
       creationDate: "",
-      bsonId: ""
+      bsonId: "",
     };
   }
 
@@ -173,6 +179,4 @@ export default class AdminLoadingScreenTips extends Vue {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
