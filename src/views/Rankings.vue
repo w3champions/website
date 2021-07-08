@@ -21,7 +21,9 @@
             <v-card-text>
               <v-list>
                 <v-list-item-content>
-                  <v-list-item-title>Select a league:</v-list-item-title>
+                  <v-list-item-title>
+                    {{ $t("views_rankings.selectleague") }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list>
               <v-divider></v-divider>
@@ -56,7 +58,7 @@
           :no-data-text="noDataText"
           item-text="player.name"
           item-value="player.id"
-          placeholder="Start typing to Search"
+          :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
           <template v-slot:item="data">
@@ -86,12 +88,14 @@
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                  Wins: {{ data.item.player.wins }} | Losses:
-                  {{ data.item.player.losses }} | Total:
+                  {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
+                  {{ $t(`common.losses`) }}
+                  {{ data.item.player.losses }} |
+                  {{ $t(`common.total`) }}
                   {{ data.item.player.games }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>
-                  Unranked
+                  {{ $t(`views_rankings.unranked`) }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </template>
@@ -100,12 +104,10 @@
       </v-card-title>
       <v-menu offset-x>
         <template v-slot:activator="{ on }">
-          <v-btn
-            tile
-            v-on="on"
-            class="ma-4 transparent"
-          >
-            <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
+          <v-btn tile v-on="on" class="ma-4 transparent">
+            <h2 class="pa-0">
+              {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
+            </h2>
             <v-icon class="ml-4">mdi-chevron-right</v-icon>
           </v-btn>
         </template>
@@ -113,7 +115,9 @@
           <v-card-text>
             <v-list>
               <v-list-item-content>
-                <v-list-item-title>Previous seasons:</v-list-item-title>
+                <v-list-item-title>
+                  {{ $t("views_rankings.prevseasons") }}
+                </v-list-item-title>
               </v-list-item-content>
             </v-list>
             <v-list dense>
@@ -123,7 +127,9 @@
                 @click="selectSeason(item)"
               >
                 <v-list-item-content>
-                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
+                  <v-list-item-title>
+                    {{ $t("views_rankings.season") }} {{ item.id }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -139,7 +145,7 @@
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
             <div class="mt-10">
-              <h3 class="pl-5">Race distribution</h3>
+              <h3 class="pl-5">{{ $t("views_rankings.racedist") }}</h3>
               <rankings-race-distribution
                 :rankings="rankings"
               ></rankings-race-distribution>
@@ -151,7 +157,7 @@
     <v-row>
       <v-col cols="12" md="3" v-if="false">
         <v-card tile>
-          <v-card-title>Stats</v-card-title>
+          <v-card-title>{{ $t("views_rankings.stats") }}</v-card-title>
           <v-list class="transparent">
             <v-list-item v-for="(stat, index) in stats" :key="index">
               <v-list-item-title>{{ stat.name }}</v-list-item-title>
@@ -177,7 +183,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants from "../constants";
-import { getProfileUrl  } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({
   components: {
@@ -210,7 +216,7 @@ export default class RankingsView extends Vue {
     if (!rank) return;
 
     if (!this.playerIsRanked(rank)) {
-      this.routeToProfilePage(rank.player.playerIds[0].battleTag)
+      this.routeToProfilePage(rank.player.playerIds[0].battleTag);
     }
 
     this.setLeague(rank.league);
@@ -346,7 +352,7 @@ export default class RankingsView extends Vue {
     }, AppConstants.ongoingMatchesRefreshInterval);
   }
 
-  destroyed() : void {
+  destroyed(): void {
     clearInterval(this._intervalRefreshHandle);
   }
 
@@ -401,13 +407,13 @@ export default class RankingsView extends Vue {
   }
 
   public playerIsRanked(rank: Ranking): boolean {
-    return rank.player.games > 0        
+    return rank.player.games > 0;
   }
 
   public routeToProfilePage(playerId: string) {
-    this.$router.push({ 
-      path: getProfileUrl(playerId)
-    })
+    this.$router.push({
+      path: getProfileUrl(playerId),
+    });
   }
 }
 </script>

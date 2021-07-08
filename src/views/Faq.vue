@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card tile>
-      <v-card-title>FAQ</v-card-title>
+      <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
       <v-card-text>
         <v-expansion-panels tile>
           <v-expansion-panel tile v-for="(faq, i) in faqs" :key="i">

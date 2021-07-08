@@ -46,7 +46,11 @@ export default class PopularGameTimeChart extends Vue {
       labels: this.passedTime,
       datasets: [
         {
-          label: "accumulated games over the last two weeks",
+          label: String(
+            this.$t(
+              "components_overall-statistics_populargametimechart.accgameslast2weeks"
+            )
+          ),
           data: this.gamesCount,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

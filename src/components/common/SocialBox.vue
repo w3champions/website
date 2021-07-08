@@ -1,17 +1,32 @@
 <template>
   <v-card tile class="socials-card">
-    <v-card-text class="text-center" style="opacity: 0.87 ">
-      Find us on:
+    <v-card-text class="text-center" style="opacity: 0.87">
+      {{ $t("views_home.joinus") }}
     </v-card-text>
 
     <!-- DISCORD -->
-    <v-card class="socials-subcard" href="https://discord.gg/uJmQxG2" tile outlined style="padding-bottom: 0px">
-        <v-img src="../../../src/assets/socials/Discord_button.png" />
+    <v-card
+      class="socials-subcard"
+      href="https://discord.gg/uJmQxG2"
+      tile
+      outlined
+      style="padding-bottom: 0px"
+    >
+      <v-img src="../../../src/assets/socials/Discord_button.png" />
     </v-card>
 
+    <v-card-text class="text-center" style="opacity: 0.87">
+      {{ $t("views_home.socialmedia") }}
+    </v-card-text>
+
     <!-- TWITTER -->
-    <v-card class="socials-subcard" href="https://twitter.com/W3ChampionsTeam" tile outlined>
-        <v-img src="../../assets/socials/Twitter_button.png" />
+    <v-card
+      class="socials-subcard"
+      href="https://twitter.com/W3ChampionsTeam"
+      tile
+      outlined
+    >
+      <v-img src="../../assets/socials/Twitter_button.png" />
     </v-card>
   </v-card>
 </template>

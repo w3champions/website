@@ -46,7 +46,7 @@
         </span>
       </div>
       <div class="text-center" v-if="!isRanked && !smallMode">
-        <span>Placement matches played</span>
+        <span>{{ $t("components_player_playerleague.placementsplayed") }}</span>
       </div>
     </div>
     <recent-performance

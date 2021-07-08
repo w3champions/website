@@ -63,7 +63,10 @@
                 </v-col>
                 <v-col cols="1">
                   VS
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
+                  <host-icon
+                    v-if="item.serverInfo && item.serverInfo.provider"
+                    :host="item.serverInfo"
+                  ></host-icon>
                 </v-col>
                 <v-col cols="5.5">
                   <team-match-info
@@ -90,7 +93,7 @@
           </tr>
           <tr v-if="!matches || matches.length == 0">
             <td colspan="4" class="text-center">
-              no matches found
+              {{ $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
         </tbody>
@@ -114,11 +117,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {
-  Match,
-  Team,
-  PlayerInTeam,
-} from "@/store/typings";
+import { Match, Team, PlayerInTeam } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
@@ -126,7 +125,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 @Component({
   components: {
     TeamMatchInfo,
-    HostIcon
+    HostIcon,
   },
 })
 export default class MatchesGrid extends Vue {
@@ -224,7 +223,7 @@ export default class MatchesGrid extends Vue {
 
   public getDuration(match: Match) {
     if (this.unfinished) {
-      return "ongoing";
+      return this.$t("matchStatuses.onGoing");
     }
 
     const format =
@@ -237,34 +236,36 @@ export default class MatchesGrid extends Vue {
       .toString();
   }
 
-  public headers = [
+  get headers() {
+    return [
     {
-      text: "Players",
+      text: this.$t("components_matches_matchesgrid.players"),
       align: "center",
       sortable: false,
       value: "players",
       minWidth: "475px",
     },
     {
-      text: "Map",
+      text: this.$t("components_matches_matchesgrid.map"),
       align: "start",
       sortable: false,
       value: "map",
     },
     {
-      text: "Start Time",
+      text: this.$t("components_matches_matchesgrid.starttime"),
       align: "start",
       sortable: false,
       value: "startTime",
       minWidth: "170px",
     },
     {
-      text: "Duration",
+      text: this.$t("components_matches_matchesgrid.duration"),
       align: "start",
       sortable: false,
       value: "duration",
     },
   ];
+  }
 }
 </script>
 

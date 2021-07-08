@@ -112,14 +112,14 @@ export default class MmrDistributionChart extends Vue {
       labels: this.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
       datasets: [
         {
-          label: "mmr",
+          label: "MMR",
           data: this.mmrDistribution.distributedMmrs.map((d) => d.count),
           borderColor: "rgba(54, 162, 235, 1)",
           borderWidth: 1,
           backgroundColor: this.colors,
         },
         {
-          label: "cumulative",
+          label: "Cumulative",
           data: this.cumulativeSumData,
           borderColor: "rgb(60,208,88)",
           type: "line",

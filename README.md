@@ -46,7 +46,7 @@ public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 6) You should be able to login as admin.
 
 ### Deploying to a Pull Request Environment
-If you branch starts with "DEPLOY_" azure will create a automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://pr.add-new-language.ui.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
+If you branch starts with "DEPLOY_" azure will create a automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://add-new-language.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
 
 If you need any other connection strings, just update the docker-dompose.toke.yaml file accordingliy, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
 

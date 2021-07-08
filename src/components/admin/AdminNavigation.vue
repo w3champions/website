@@ -3,15 +3,12 @@
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title>
-          Administration Page
+          {{ $t("views_admin.adminpage") }}
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
-    <v-list
-      dense
-      nav
-    >
+    <v-list dense nav>
       <template v-for="(item, index) in items">
         <v-list-item
           :key="index"
@@ -52,8 +49,6 @@
 
             <v-list-item-title v-text="subItem.title"></v-list-item-title>
           </v-list-item>
-
-
         </v-list-group>
       </template>
     </v-list>
@@ -72,9 +67,7 @@ export default class AdminNavigation extends Vue {
   itemSelected(item: ItemType, index: number) {
     this.$emit("itemSelected", item, index);
   }
-};
+}
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

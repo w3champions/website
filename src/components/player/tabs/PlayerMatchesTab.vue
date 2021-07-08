@@ -2,7 +2,13 @@
   <div>
     <v-card-title>
       <v-row align="center">
-        <v-col cols="12" md="5">Match History</v-col>
+        <v-col cols="12" md="5">
+          {{
+            $t(
+              "components_player_tabs_matchhistorytab.title"
+            )
+          }}
+        </v-col>
         <v-col cols="12" md="5">
           <v-autocomplete
             v-model="searchModel"
@@ -56,8 +62,22 @@
                     </span>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    Wins: {{ data.item.player.wins }} | Losses:
-                    {{ data.item.player.losses }} | Total:
+                    {{
+                      $t(
+                        "common.wins"
+                      )
+                    }} {{ data.item.player.wins }} |
+                    {{
+                      $t(
+                        "common.losses"
+                      )
+                    }}
+                    {{ data.item.player.losses }} |
+                    {{
+                      $t(
+                        "common.total"
+                      )
+                    }}
                     {{ data.item.player.games }}
                   </v-list-item-subtitle>
                 </v-list-item-content>

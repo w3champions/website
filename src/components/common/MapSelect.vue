@@ -10,7 +10,7 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>Select a map:</v-list-item-title>
+            <v-list-item-title>{{ $t("common.selectmap")}}</v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>

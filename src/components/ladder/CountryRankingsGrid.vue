@@ -104,11 +104,11 @@
                     </template>
 
                     <div v-if="isCurrentlyLive(item.player.playerIds)">
-                      Streaming a match versus
+                      {{ $t("components_ladder_rankingsgrid.streamingmatch") }}
                       {{ getLiveOpponent(item.player.playerIds) }}
                     </div>
                     <div v-if="!isCurrentlyLive(item.player.playerIds)">
-                      Stream is live!
+                      {{ $t("components_ladder_rankingsgrid.streaminglive") }}
                     </div>
                   </v-tooltip>
                 </div>
@@ -150,7 +150,7 @@
                   </span>
                 </template>
                 <div>
-                  Now playing vs
+                  {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
                   {{ getLiveOpponent(item.player.playerIds) }}
                 </div>
               </v-tooltip>
@@ -180,7 +180,7 @@
       <tbody>
         <tr>
           <td colspan="100%" class="text-center">
-            no players found for this country
+            {{ $t("components_ladder_countryrankingsgrid.noplayerfound") }}
           </td>
         </tr>
       </tbody>
@@ -224,9 +224,10 @@ export default class CountryRankingsGrid extends Vue {
   @Prop() ongoingMatches!: OngoingMatches;
   @Prop() selectedCountry!: string;
 
-  headers = [
+  get headers() {
+    return [
     {
-      text: "Rank",
+      text: this.$t("components_ladder_rankingsgrid.rank"),
       align: "start",
       sortable: false,
       width: "25px",
@@ -235,7 +236,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Player",
+      text: this.$t("components_ladder_rankingsgrid.player"),
       align: "start",
       sortable: false,
       minWidth: "170px",
@@ -244,7 +245,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Race",
+      text: this.$t("components_ladder_rankingsgrid.race"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -253,7 +254,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Clan",
+      text: this.$t("components_ladder_rankingsgrid.clan"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -264,7 +265,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Wins",
+      text: this.$t("components_ladder_rankingsgrid.wins"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -273,7 +274,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Losses",
+      text: this.$t("components_ladder_rankingsgrid.losses"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -282,7 +283,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Total",
+      text: this.$t("components_ladder_rankingsgrid.total"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -291,7 +292,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "Winrate",
+      text: this.$t("components_ladder_rankingsgrid.winrate"),
       align: "end",
       sortable: false,
       width: "50px",
@@ -300,7 +301,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "MMR",
+      text: this.$t("components_ladder_rankingsgrid.mmr"),
       align: "end",
       sortable: false,
       width: "25px",
@@ -309,7 +310,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
     {
-      text: "RP",
+      text: this.$t("components_ladder_rankingsgrid.rp"),
       align: "end",
       sortable: false,
       width: "25px",
@@ -318,6 +319,7 @@ export default class CountryRankingsGrid extends Vue {
       },
     },
   ];
+  }
 
   leagueMap: Map<number, League> = new Map();
 
@@ -388,7 +390,7 @@ export default class CountryRankingsGrid extends Vue {
 
   public getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
     const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return "Random";
+    if (!playersInfo) return this.$t("races.RANDOM");
     const playerInfo = playersInfo[playerIndex];
     if (
       CountryRankingsGrid.hasSelectedIcon(playerInfo) &&

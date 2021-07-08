@@ -4,34 +4,34 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title>
-            <span>Statistics of W3Champions</span>
+            <span>{{ $t("views_statistics.w3cstats") }}</span>
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
             <v-tab class="profileTab" exact :to="`/OverallStatistics/`">
-              Player Activity
+              {{ $t("views_statistics.playeractivity") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/OverallStatistics/mmr-distribution`"
             >
-              MMR
+              {{ $t("views_statistics.mmr") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/OverallStatistics/winrates-per-race-and-map`"
             >
-              Winrates
+              {{ $t("views_statistics.wrs") }}
             </v-tab>
             <v-tab
               class="profileTab"
               :to="`/OverallStatistics/heroes-winrates`"
             >
-              Heroes
+              {{ $t("views_statistics.heroes") }}
             </v-tab>
           </v-tabs>
           <keep-alive>
-            <router-view ></router-view>
+            <router-view></router-view>
           </keep-alive>
         </v-card>
       </v-col>
@@ -49,8 +49,8 @@ import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
-import { SeasonGameModeGateWayForMMR } from '@/store/overallStats/types';
-import { Season } from '@/store/ranking/types.ts'
+import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
+import { Season } from "@/store/ranking/types.ts";
 
 @Component({
   components: {
@@ -64,15 +64,15 @@ import { Season } from '@/store/ranking/types.ts'
   },
 })
 export default class OverallStatisticsView extends Vue {
-  get seasons() : Season[] {
+  get seasons(): Season[] {
     return this.$store.direct.state.rankings.seasons;
   }
 
-  get verifiedBtag() : string {
+  get verifiedBtag(): string {
     return this.$store.direct.state.oauth.blizzardVerifiedBtag;
   }
 
-  mounted() : void {
+  mounted(): void {
     this.init();
   }
 
@@ -83,11 +83,16 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile({battleTag: this.verifiedBtag, freshLogin: false});
+      await this.$store.direct.dispatch.player.loadProfile({
+        battleTag: this.verifiedBtag,
+        freshLogin: false,
+      });
     }
-    const mMRDistributionPayload: SeasonGameModeGateWayForMMR ={season:  this.$store.direct.state.rankings.selectedSeason.id,
-                                                                gameMode: this.$store.direct.state.matches.gameMode,
-                                                                gateWay: this.$store.direct.state.gateway};
+    const mMRDistributionPayload: SeasonGameModeGateWayForMMR = {
+      season: this.$store.direct.state.rankings.selectedSeason.id,
+      gameMode: this.$store.direct.state.matches.gameMode,
+      gateWay: this.$store.direct.state.gateway,
+    };
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
       mMRDistributionPayload
     );

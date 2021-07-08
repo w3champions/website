@@ -2,7 +2,9 @@
   <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
-      <span v-if="stat.race === raceEnums.TOTAL">All races</span>
+      <span v-if="stat.race === raceEnums.TOTAL">
+        {{ $t("common.allraces") }}
+      </span>
       <race-icon :race="stat.race" />
     </v-tab>
 

@@ -3,15 +3,24 @@
     <table class="custom-table">
       <thead>
         <tr>
-          <td>Race</td>
-          <td>Number of players</td>
-          <td>Percent</td>
+          <td>{{ $t("components_ladder_rankingsracedistribution.race") }}</td>
+          <td>
+            {{
+              $t("components_ladder_rankingsracedistribution.numberofplayers")
+            }}
+          </td>
+          <td>
+            {{ $t("components_ladder_rankingsracedistribution.percent") }}
+          </td>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in raceDistributions" :key="item.race">
           <td>
-            <race-icon style="display: inline; padding-right: 10px;" :race="item.race" />
+            <race-icon
+              style="display: inline; padding-right: 10px"
+              :race="item.race"
+            />
             <span>{{ getRaceName(item.race) }}</span>
           </td>
           <td>

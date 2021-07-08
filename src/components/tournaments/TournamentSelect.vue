@@ -1,8 +1,8 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent;">
-        <v-icon style="margin-right: 5px;">mdi-trophy</v-icon>
+      <v-btn tile v-on="on" style="background-color: transparent">
+        <v-icon style="margin-right: 5px">mdi-trophy</v-icon>
         {{ selectedTournamentText }}
       </v-btn>
     </template>
@@ -10,7 +10,9 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>Select a tournament:</v-list-item-title>
+            <v-list-item-title>
+              {{ $t("components_tournaments_tournamentselect.selecttourney") }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>
@@ -31,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { ITournament } from '@/store/tournaments/types';
+import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -41,13 +43,14 @@ export default class TournamentSelect extends Vue {
   @Prop() selectedTournament!: ITournament;
 
   get selectedTournamentText() {
-    return this.selectedTournament ? this.selectedTournament.name : 'Select tournament';
+    return this.selectedTournament
+      ? this.selectedTournament.name
+      : "Select tournament";
   }
 
   public selectTournament(tournament: ITournament) {
     this.$emit("tournamentSelected", tournament);
   }
-
 }
 </script>
 

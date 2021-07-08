@@ -1,6 +1,8 @@
 <template>
   <div class="recent-performance">
-    <h5 class="recent-performance__title">Recent Performance</h5>
+    <h5 class="recent-performance__title">
+      {{ $t("components_player_recentperformance.recentperformance") }}
+    </h5>
     <ul class="recent-performance__results">
       <li
         v-for="(resultSymbol, index) in lastTenMatchesPerformance"

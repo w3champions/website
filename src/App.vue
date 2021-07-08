@@ -4,12 +4,12 @@
       :class="{ darkmode: isDarkTheme }"
       app
       :dark="isDarkTheme"
-      style="height: 60px;"
+      style="height: 60px"
     >
       <div
         @click="$router.push({ path: '/' })"
         class="d-flex align-center pointer"
-        style="padding-top: 0px;"
+        style="padding-top: 0px"
       >
         <div class="d-none d-md-inline">
           <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
@@ -32,7 +32,9 @@
         :to="item.to"
         :class="item.class"
       >
-        <span class="mr-2 hidden-xs-only">{{ item.title }}</span>
+        <span class="mr-2 hidden-xs-only">
+          {{ $t(`views_app.${item.title}`) }}
+        </span>
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
@@ -74,16 +76,36 @@
         </template>
         <v-list class="theme-selector">
           <v-list-item @click="theme = 'human'">
-            <v-list-item-title>Human</v-list-item-title>
+            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'orc'">
-            <v-list-item-title>Orc</v-list-item-title>
+            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'nightelf'">
-            <v-list-item-title>Night Elf</v-list-item-title>
+            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="theme = 'undead'">
-            <v-list-item-title>Undead</v-list-item-title>
+            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu offset-y class="menu-button">
+        <template v-slot:activator="{ on }">
+          <v-btn text tile v-on="on" class="right-menu">
+            <locale-icon
+              :locale="savedLocale"
+              :showTwoLetterCode="false"
+            ></locale-icon>
+          </v-btn>
+        </template>
+        <v-list class="locale-selector pa-1">
+          <v-list-item
+            v-for="(lang, i) in languages"
+            :key="i"
+            @click="savedLocale = i"
+          >
+            <locale-icon :locale="i"></locale-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -106,43 +128,49 @@ import { Component } from "vue-property-decorator";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
+import localeIcon from "@/components/common/LocaleIcon.vue";
+import VueI18n from "node_modules/vue-i18n/types";
+
 export type ItemType= {
   title: string;
   icon: string;
   to: string;
   class?: string;
 }
-@Component({ components: { SignInDialog } })
+
+@Component({ components: { SignInDialog, localeIcon } })
 export default class App extends Vue {
-  
-  public items:ItemType[] = [
+  private _savedLocale = "en";
+  private selectedTheme = "human";
+
+  public items: ItemType[] = [
     {
-      title: "Tournaments",
+      title: "tournaments",
       icon: "mdi-trophy",
       to: "/tournaments",
     },
     {
-      title: "Rankings",
+      title: "rankings",
       icon: "mdi-view-list",
       to: `/Rankings`,
     },
     {
-      title: "Matches",
+      title: "matches",
       icon: "mdi-controller-classic",
       to: "/Matches",
     },
     {
-      title: "Statistics",
+      title: "statistics",
       icon: "mdi-chart-areaspline",
       to: "/OverallStatistics",
     },
     {
-      title: "Admin",
+      title: "admin",
       icon: "mdi-account-tie",
       to: "/AdminOnlyView",
     },
     {
-      title: "FAQ",
+      title: "faq",
       icon: "mdi-help-circle-outline",
       to: "/Faq",
       class: "d-none d-md-flex",
@@ -166,14 +194,14 @@ export default class App extends Vue {
     this.$store.direct.dispatch.oauth.logout();
   }
 
-  public visible(item: ItemType): boolean {
-    if (item.title == "Admin" && !this.isAdmin) {
+  public visible(item: any): boolean {
+    if (item.title == "admin" && !this.isAdmin) {
       return false;
     }
     return true;
   }
 
-  public openPlayerProfile() {
+  public openPlayerProfile(): void {
     this.$router.push({
       path: getProfileUrl(this.battleTag),
     });
@@ -195,14 +223,12 @@ export default class App extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  private selectedTheme = "human";
-
-  get isDarkTheme() {
+  get isDarkTheme(): boolean {
     const isDark = this.theme === "nightelf" || this.theme === "undead";
     return isDark;
   }
 
-  get themeColors() {
+  get themeColors(): unknown {
     switch(this.theme) {
       case "nightelf":
         return {
@@ -239,11 +265,26 @@ export default class App extends Vue {
     this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
   }
 
-  async mounted() {
+  set savedLocale(val: string) {
+    this.$i18n.locale = val;
+    this.$store.direct.dispatch.saveLocale(val);
+  }
+
+  get savedLocale(): string {
+    return this.$store.direct.state.locale;
+  }
+
+  get languages(): VueI18n.LocaleMessages {
+    return this.$i18n.messages;
+  }
+
+  async mounted(): Promise<void> {
     await this.init();
   }
 
   private async init() {
+    this.$store.direct.dispatch.loadLocale();
+    this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
@@ -257,7 +298,7 @@ export default class App extends Vue {
 
   private showSignInDialog = false;
 
-  created() {
+  created(): void {
     const t = window.localStorage.getItem("theme");
     if (t && t.length > 0) {
       this.theme = t;
