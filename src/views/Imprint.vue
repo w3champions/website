@@ -32,6 +32,9 @@
             <p>
               https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit
             </p>
+            <p>
+              Country flags: <a href="https://github.com/HatScripts/circle-flags" target="_blank" rel="noopener noreferrer">https://github.com/HatScripts/circle-flags</a>
+              </p>
           </v-card-text>
           <v-card-text>
             <h3>Disclaimer</h3>
