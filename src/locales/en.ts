@@ -337,6 +337,7 @@ const en = {
     eu_east4_via_ucloud_pathx: "EU East 4 via ucloud pathx",
     eu_east4_via_eu_central2: "EU East 4 via EU Central 2",
     west_india_via_oceania2: "West India via Oceania 2",
+    us_west_7_via_ucloud_pathx: "US West 7 via ucloud pathx",
   }
 };
 
