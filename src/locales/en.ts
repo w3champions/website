@@ -261,6 +261,13 @@ const en = {
     ImaginaryFriends: "Imaginary Friends",
     MesonDeLaTaberna: "Meson De La Taberna",
 
+    // S8
+
+    ShallowGravev1_4: "Shallow Grave",
+    ShatteredExilev2_06: "Shattered Exile",
+    MurgulOasisLV: "Mur'gul Oasis LV",
+    BanditsRetreatv1_1: "Bandits Retreat",
+
     // tour
     ShallowGravetourney: "Shallow Grave",
     TwistedMeadowstourney: "Twisted Meadows",
