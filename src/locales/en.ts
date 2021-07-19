@@ -279,6 +279,7 @@ const en = {
     ionTD6_4bTeamOZEW3C: "LegionTD x20 6.4b",
     ionTD6_4TeamOZEW3C: "LegionTD x20 6.4",
     ionTD7_0bTeamOZEW3C: "LegionTD x20 7.0b",
+    ionTD7_0c1TeamOZEW3C: "LegionTD x20 7.0c",
     Frostsabreroc: "Frostsabre (ROC)",
     GnollWoodroc: "Gnoll Wood (ROC)",
     Legendsroc: "Legends (ROC)",
