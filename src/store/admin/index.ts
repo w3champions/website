@@ -284,6 +284,23 @@ const mod = {
         if (response.status == 200){
           commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies);
         }
+      },
+
+      async getAltsForPlayer (
+        context: ActionContext<AdminState, RootState>,
+        btag: string,
+      ) : Promise<string[]> {
+        const { commit, rootGetters, rootState } = moduleActionContext(
+          context,
+          mod
+        );
+
+        const getAlts = await rootGetters.adminService.getAltsForBattletag(
+          btag,
+          rootState.oauth.token,
+        );
+
+        return getAlts;
       }
 
   },

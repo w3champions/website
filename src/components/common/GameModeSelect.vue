@@ -86,6 +86,10 @@ export default class GameModeSelect extends Vue {
         modeName: `RoC 1vs1`,
         gameMode: EGameMode.GM_ROC_1ON1,
       },
+      {
+        modeName: `Line Tower Wars 1vs1`,
+        gameMode: EGameMode.GM_LTW_1ON1,
+      },
     ];
 
     if (this.disabledModes) {
