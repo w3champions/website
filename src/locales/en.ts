@@ -35,6 +35,7 @@ const en = {
     GM_LEGION_1v1_x20: 'Legion TD 1v1 x20',
     GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
     GM_ROC_1ON1: 'RoC 1vs1',
+    GM_LTW_1ON1: 'Line Tower Wars 1vs1',
   },
 
   gatewayNames: {
@@ -261,6 +262,13 @@ const en = {
     ImaginaryFriends: "Imaginary Friends",
     MesonDeLaTaberna: "Meson De La Taberna",
 
+    // S8
+
+    ShallowGravev1_4: "Shallow Grave",
+    ShatteredExilev2_06: "Shattered Exile",
+    MurgulOasisLV: "Mur'gul Oasis LV",
+    BanditsRetreatv1_1: "Bandits Retreat",
+
     // tour
     ShallowGravetourney: "Shallow Grave",
     TwistedMeadowstourney: "Twisted Meadows",
@@ -270,6 +278,8 @@ const en = {
     iomTD3_45eW3CV2: "LegionTD x3 3.45e",
     ionTD6_4bTeamOZEW3C: "LegionTD x20 6.4b",
     ionTD6_4TeamOZEW3C: "LegionTD x20 6.4",
+    ionTD7_0bTeamOZEW3C: "LegionTD x20 7.0b",
+    ionTD7_0c1TeamOZEW3C: "LegionTD x20 7.0c",
     Frostsabreroc: "Frostsabre (ROC)",
     GnollWoodroc: "Gnoll Wood (ROC)",
     Legendsroc: "Legends (ROC)",
@@ -336,6 +346,7 @@ const en = {
     eu_east4_via_ucloud_pathx: "EU East 4 via ucloud pathx",
     eu_east4_via_eu_central2: "EU East 4 via EU Central 2",
     west_india_via_oceania2: "West India via Oceania 2",
+    us_west_7_via_ucloud_pathx: "US West 7 via ucloud pathx",
   }
 };
 

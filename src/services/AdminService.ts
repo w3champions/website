@@ -239,6 +239,20 @@ export default class AdminService {
     return response;
   }
 
+  public async getAltsForBattletag(
+    btag: string,
+    token: string,
+  ): Promise<string[]> {
+    const url = `${API_URL}api/admin/alts/${encodeURIComponent(btag)}?authorization=${token}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
     
-  
+    return await response.json();
+  }
 }
