@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="md-3">
+      <v-col cols="md-4">
         <v-card-text>
           <v-select
             :items="maps"
@@ -36,7 +36,7 @@
           />
         </v-card-text>
       </v-col>
-      <v-col cols="md-9">
+      <v-col cols="md-8">
         <v-card-text>
           <v-data-table
             hide-default-footer
