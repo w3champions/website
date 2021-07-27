@@ -73,6 +73,20 @@
                       </v-date-picker>
                     </v-menu>
                   </v-col>
+
+                  <v-col>
+                    <v-select
+                      v-model="editedItem.gameModes"
+                      :items="gameModesEnumValues"
+                      item-text="text"
+                      item-value="value"
+                      :menu-props="{ maxHeight: '400' }"
+                      label="Game modes"
+                      multiple
+                      hint="Which game modes to ban from?"
+                    ></v-select>
+                  </v-col>
+
                   <v-col cols="12" sm="6" md="12">
                     <v-checkbox
                       v-model="editedItem.isOnlyChatBan"
@@ -113,25 +127,33 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { BannedPlayer } from "@/store/admin/types";
+import { EGameMode } from "@/store/typings";
+import { LocaleMessage } from "vue-i18n";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
-  data() : unknown {
-    return {
-      headers: [
-        {
-          text: "BattleTag",
-          align: "start",
-          sortable: false,
-          value: "battleTag",
-        },
+  
+  // gets an object from the enum "EGameMode" as a 2D array of name/values, e.g. ["GM_1ON1", 1]
+  public gameModesEnumValues = this.translateGametypes(Object.entries(EGameMode).slice(- (Object.keys(EGameMode).length / 2)));
+
+  public headers = [
+        { text: "BattleTag", align: "start", sortable: false, value: "battleTag",},
         { text: "Ban End Date", value: "endDate" },
         { text: "Is only banned from chat?", value: "isOnlyChatBan" },
-        { text: "Is IP banned?", value: "isIpBan"},
+        { text: "Game modes", value: "gameModes" },
+        { text: "Is IP banned?", value: "isIpBan" },
         { text: "Ban reason", value: "banReason" },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-    };
+        { text: "Actions", value: "actions", sortable: false }
+      ];
+
+  public translateGametypes(enumObject : [string, string | EGameMode][]) : { text: LocaleMessage, value: string | EGameMode }[] {
+
+    let translatedEnums = [] as { text: LocaleMessage, value: string | EGameMode }[]
+
+    for (let item in enumObject) {
+      translatedEnums.push({ text: this.$t(`gameModes.${enumObject[item][0]}`), value: enumObject[item][1]})
+    }
+    return translatedEnums;
   }
 
   get bannedPlayers() : BannedPlayer[] {
@@ -152,7 +174,7 @@ export default class AdminBannedPlayers extends Vue {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
     }
   }
-
+  
   public dialog = false;
   public dialogNews = false;
   public dialogTips = false;
@@ -164,6 +186,7 @@ export default class AdminBannedPlayers extends Vue {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
+    gameModes: [] as number[],
     isIpBan: false,
     banReason: ""
   };
@@ -171,6 +194,7 @@ export default class AdminBannedPlayers extends Vue {
     battleTag: "",
     endDate: "",
     isOnlyChatBan: false,
+    gameModes: [] as number[],
     isIpBan: false,
     banReason: ""
   };
@@ -200,6 +224,7 @@ export default class AdminBannedPlayers extends Vue {
   async save() : Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
+      console.log(this.editedItem)
     } else {
       this.bannedPlayers.push(this.editedItem);
     }
