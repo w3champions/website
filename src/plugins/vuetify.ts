@@ -10,7 +10,8 @@ Vue.use(DatetimePicker);
 
 export default new Vuetify({
   theme: {
-    dark: true,
+    // This needs to be kept in sync the default selectedTheme in App.vue
+    dark: false,
     options: { customProperties: true },
     themes: {
       dark: {
