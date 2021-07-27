@@ -133,7 +133,7 @@ import { LocaleMessage } from "vue-i18n";
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
   
-  public gameModesEnumValues = this.translateGametypes(Object.entries(EGameMode).slice(- (Object.keys(EGameMode).length / 2)));
+  public gameModesEnumValues = this.translateGametypes();
 
   public headers = [
         { text: "BattleTag", align: "start", sortable: false, value: "battleTag",},
@@ -145,11 +145,14 @@ export default class AdminBannedPlayers extends Vue {
         { text: "Actions", value: "actions", sortable: false }
       ];
 
-  public translateGametypes(enumObject : [string, string | EGameMode][]) : { text: LocaleMessage, value: string | EGameMode }[] {
+  public translateGametypes() : { text: LocaleMessage, value: string | EGameMode }[] {
     let translatedEnums = [] as { text: LocaleMessage, value: string | EGameMode }[]
 
-    for (let item in enumObject) {
-      translatedEnums.push({ text: this.$t(`gameModes.${enumObject[item][0]}`), value: enumObject[item][1]})
+    const keys = Object.keys(EGameMode).filter(k => typeof EGameMode[k as any] === "number")
+    const values = keys.map(k => EGameMode[k as any])
+
+    for (let item in keys) {
+      translatedEnums.push({ text: this.$t(`gameModes.${keys[item]}`), value: values[item]})
     }
     return translatedEnums;
   }
@@ -171,6 +174,7 @@ export default class AdminBannedPlayers extends Vue {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
     }
+    console.log()
   }
   
   public dialog = false;
