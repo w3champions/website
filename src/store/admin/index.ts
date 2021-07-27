@@ -290,7 +290,7 @@ const mod = {
         context: ActionContext<AdminState, RootState>,
         btag: string,
       ) : Promise<string[]> {
-        const { commit, rootGetters, rootState } = moduleActionContext(
+        const { rootGetters, rootState } = moduleActionContext(
           context,
           mod
         );
