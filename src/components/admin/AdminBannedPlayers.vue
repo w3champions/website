@@ -133,7 +133,6 @@ import { LocaleMessage } from "vue-i18n";
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
   
-  // gets an object from the enum "EGameMode" as a 2D array of name/values, e.g. ["GM_1ON1", 1]
   public gameModesEnumValues = this.translateGametypes(Object.entries(EGameMode).slice(- (Object.keys(EGameMode).length / 2)));
 
   public headers = [
@@ -147,7 +146,6 @@ export default class AdminBannedPlayers extends Vue {
       ];
 
   public translateGametypes(enumObject : [string, string | EGameMode][]) : { text: LocaleMessage, value: string | EGameMode }[] {
-
     let translatedEnums = [] as { text: LocaleMessage, value: string | EGameMode }[]
 
     for (let item in enumObject) {
@@ -224,7 +222,6 @@ export default class AdminBannedPlayers extends Vue {
   async save() : Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
-      console.log(this.editedItem)
     } else {
       this.bannedPlayers.push(this.editedItem);
     }
