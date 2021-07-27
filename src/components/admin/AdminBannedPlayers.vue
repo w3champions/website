@@ -174,7 +174,6 @@ export default class AdminBannedPlayers extends Vue {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
     }
-    console.log()
   }
   
   public dialog = false;
