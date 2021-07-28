@@ -75,16 +75,25 @@
                   </v-col>
 
                   <v-col>
-                    <v-select
-                      v-model="editedItem.gameModes"
-                      :items="gameModesEnumValues"
-                      item-text="text"
-                      item-value="value"
-                      :menu-props="{ maxHeight: '400' }"
-                      label="Game modes"
-                      multiple
-                      hint="Which game modes to ban from?"
-                    ></v-select>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-select
+                          v-on="on"
+                          v-model="editedItem.gameModes"
+                          :items="gameModesEnumValues"
+                          item-text="text"
+                          item-value="value"
+                          :menu-props="{ maxHeight: '400' }"
+                          :label="$t(`views_admin.gameMode`)"
+                          multiple
+                          hint="Which game modes to ban from?"
+                        ></v-select>
+                      </template>
+                      <span>
+                        To ban from all game modes, leave this field blank
+                      </span>
+                    </v-tooltip>
+                    
                   </v-col>
 
                   <v-col cols="12" sm="6" md="12">
@@ -151,6 +160,9 @@ export default class AdminBannedPlayers extends Vue {
     const keys = Object.keys(EGameMode).filter(k => typeof EGameMode[k as any] === "number")
     const values = keys.map(k => EGameMode[k as any])
 
+    keys.shift()
+    values.shift()
+
     for (let item in keys) {
       translatedEnums.push({ text: this.$t(`gameModes.${keys[item]}`), value: values[item]})
     }
@@ -173,7 +185,7 @@ export default class AdminBannedPlayers extends Vue {
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
-    }
+    } 
   }
   
   public dialog = false;

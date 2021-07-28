@@ -25,6 +25,7 @@ const data = {
       message: "Message",
       cancel: "Cancel",
       save: "Save",
+      gameMode: "Game mode",
     },
     views_gettingstarted: {
       manualwarning:
