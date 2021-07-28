@@ -249,8 +249,6 @@ export default class AdminGlobalMute extends Vue {
       expiresAt: this.banExpiry
     } as GlobalMute
 
-    console.log(mute)
-
     await this.$store.direct.dispatch.admin.addGlobalMute(mute);
     this.loadMutes();
   }
