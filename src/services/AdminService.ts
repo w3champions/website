@@ -7,7 +7,9 @@ import {
   QueueData,
   Proxy,
   SearchedPlayer,
-  ProxySettings
+  ProxySettings,
+  GloballyMutedPlayer,
+  GlobalMute
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -254,5 +256,57 @@ export default class AdminService {
     });
     
     return await response.json();
+  }
+
+  public async getGlobalMutes(
+    token: string,
+  ): Promise<GloballyMutedPlayer[]> {
+    const url = `${API_URL}api/admin/globalChatBans?authorization=${token}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-type": "application/json",
+      },
+    });
+
+    return await response.json();
+  }
+
+  public async deleteGlobalMute(
+    token: string,
+    id: string,
+  ): Promise<number> {
+    const url = `${API_URL}api/admin/globalChatBans/${id}?authorization=${token}`;
+    
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.status;
+  }
+
+  public async PutGlobalMute(
+    token: string,
+    globalMutedPlayer: GlobalMute,
+  ): Promise<number> {
+    const url = `${API_URL}api/admin/globalChatBans/?authorization=${token}`;
+
+    const data = JSON.stringify(globalMutedPlayer)
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: data
+    })
+
+    return response.status;
   }
 }

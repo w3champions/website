@@ -12,6 +12,7 @@ export type AdminState = {
   searchedBattletag: string;
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
+  globallyMutedPlayers: GloballyMutedPlayer[];
 };
 
 export interface NewsMessage {
@@ -55,6 +56,15 @@ export interface ProxySettings {
   _id?: string,
   _created_at?: string,
   _updated_at?: string,
+}
+
+export interface GlobalMute {
+  battleTag: string,
+  expiresAt: string | null,
+}
+
+export interface GloballyMutedPlayer extends GlobalMute {
+  id: string,
 }
 
 export interface Proxy {
