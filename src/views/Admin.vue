@@ -23,6 +23,8 @@ import AdminLoadingScreenTips from "@/components/admin/AdminLoadingScreenTips.vu
 import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
+import AdminAlts from "@/components/admin/AdminAlts.vue";
+import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 
 @Component({
   components: {
@@ -31,13 +33,15 @@ import AdminProxies from "@/components/admin/AdminProxies.vue";
     AdminLoadingScreenTips,
     AdminNewsForLauncher,
     AdminQueueData,
-    AdminProxies
+    AdminProxies,
+    AdminAlts,
+    AdminGlobalMute
   }
 })
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
     {
-      title: "Player Management",
+      title: "Moderation",
       icon: "mdi-account-group",
       items: [
         {
@@ -46,6 +50,24 @@ export default class Admin extends Vue {
           icon: "mdi-account-remove",
           component: "admin-banned-players"
         },
+        {
+          key: "alts",
+          title: "Smurf Checker",
+          icon: "mdi-account-question",
+          component: "admin-alts"
+        },
+        {
+          key: "mute",
+          title: "Global Mute",
+          icon: "mdi-chat-remove",
+          component: "admin-global-mute",
+        }
+      ]
+    },
+    {
+      title: "Player Settings",
+      icon: "mdi-cog",
+      items: [
         {
           key: "proxy_settings",
           title: "Proxy Settings",

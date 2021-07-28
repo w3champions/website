@@ -4,7 +4,7 @@
       <!-- <v-col :order="0" cols="1"></v-col> -->
       <v-col :order="left ? 1 : 3" class="col-md-auto">
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t(
                 "components_match-details_playerperformanceonmatch.unitskilled"
@@ -13,7 +13,7 @@
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t(
                 "components_match-details_playerperformanceonmatch.unitsproduced"
@@ -22,14 +22,14 @@
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t("components_match-details_playerperformanceonmatch.goldmined")
             }}
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t(
                 "components_match-details_playerperformanceonmatch.lumbermined"
@@ -38,14 +38,14 @@
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t("components_match-details_playerperformanceonmatch.upkeeplost")
             }}
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="left ? 'right' : 'left'">
+          <v-col :align="align">
             {{
               $t(
                 "components_match-details_playerperformanceonmatch.largestarmy"
@@ -61,33 +61,33 @@
         :align="left ? 'left' : 'right'"
       >
         <v-row dense>
-          <v-col :class="unitsKilledComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsKilled).join(" + ") || "N/A"}}
+          <v-col :class="unitsKilledComparison" :align="align">
+            <number-display :object="unitScore" value="unitsKilled" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="unitsProducedComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.unitsProduced).join(" + ") || "N/A" }}
+          <v-col :class="unitsProducedComparison" :align="align">
+            <number-display :object="unitScore" value="unitsProduced" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="goldComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldCollected).join(" + ") || "N/A" }}
+          <v-col :class="goldComparison" :align="align">
+            <number-display :object="resourceScoure" value="goldCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="woodComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.lumberCollected).join(" + ") || "N/A" }}
+          <v-col :class="woodComparison" :align="align">
+            <number-display :object="resourceScoure" value="lumberCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="upkeepComparison" :align="left ? 'right' : 'left'">
-            {{ resourceScoure.map((r) => r.goldUpkeepLost).join(" + ") || "N/A" }}
+          <v-col :class="upkeepComparison" :align="align">
+            <number-display :object="resourceScoure" value="goldUpkeepLost" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="armyComparison" :align="left ? 'right' : 'left'">
-            {{ unitScore.map((r) => r.largestArmy).join(" / ") || "N/A" }}
+          <v-col :class="armyComparison" :align="align">
+            <number-display :object="unitScore" value="largestArmy" :delimiter="AddValuesDelimiter.SLASH" :align="align" />
           </v-col>
         </v-row>
       </v-col>
@@ -99,15 +99,24 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ResourceScore, UnitScore } from "@/store/typings";
+import NumberDisplay from "./NumberDisplay.vue";
 
-@Component({})
+export enum AddValuesDelimiter {
+  PLUS = " + ",
+  SLASH = " / "
+}
+
+@Component({components: {NumberDisplay}})
 export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() left!: boolean;
-
   @Prop() unitScore!: UnitScore[];
   @Prop() unitScoreOpponent!: UnitScore[];
   @Prop() resourceScoure!: ResourceScore[];
   @Prop() resourceScoureOpponent!: ResourceScore[];
+  
+  public AddValuesDelimiter = AddValuesDelimiter
+
+  public align = this.left ? 'right':'left'
 
   get goldComparison() {
     return this.comparison(
