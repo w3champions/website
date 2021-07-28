@@ -82,6 +82,7 @@ export default class OverallStatisticsView extends Vue {
     await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
     await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
+    await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile({
         battleTag: this.verifiedBtag,
