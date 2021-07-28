@@ -18,23 +18,23 @@
       <match-higlights
         :left="true"
         :not-color-winner="notColorWinner"
-        :experience="scoresOfWinner.expGained || 'N/A'"
-        :hero-kills="scoresOfWinner.heroesKilled || 'N/A'"
-        :items-collected="scoresOfWinner.itemsObtained || 'N/A'"
-        :hero-kills-opponent="scoresOfLooser.heroesKilled || 'N/A'"
-        :experience-opponent="scoresOfLooser.expGained || 'N/A'"
-        :items-collected-opponent="scoresOfLooser.itemsObtained || 'N/A'"
+        :experience="getDescription(scoresOfWinner.expGained)"
+        :hero-kills="getDescription(scoresOfWinner.heroesKilled)"
+        :items-collected="getDescription(scoresOfWinner.itemsObtained)"
+        :hero-kills-opponent="getDescription(scoresOfLooser.heroesKilled)"
+        :experience-opponent="getDescription(scoresOfLooser.expGained)"
+        :items-collected-opponent="getDescription(scoresOfLooser.itemsObtained)"
       />
     </v-col>
     <v-col cols="2">
       <match-higlights
         :not-color-winner="notColorWinner"
-        :experience="scoresOfLooser.expGained || 'N/A'"
-        :hero-kills="scoresOfLooser.heroesKilled || 'N/A'"
-        :items-collected="scoresOfLooser.itemsObtained || 'N/A'"
-        :hero-kills-opponent="scoresOfWinner.heroesKilled || 'N/A'"
-        :experience-opponent="scoresOfWinner.expGained || 'N/A'"
-        :items-collected-opponent="scoresOfWinner.itemsObtained || 'N/A'"
+        :experience="getDescription(scoresOfLooser.expGained)"
+        :hero-kills="getDescription(scoresOfLooser.heroesKilled)"
+        :items-collected="getDescription(scoresOfLooser.itemsObtained)"
+        :hero-kills-opponent="getDescription(scoresOfWinner.heroesKilled)"
+        :experience-opponent="getDescription(scoresOfWinner.expGained)"
+        :items-collected-opponent="getDescription(scoresOfWinner.itemsObtained)"
       />
     </v-col>
     <v-col cols="1">
@@ -46,7 +46,7 @@
     <v-col cols="1" v-if="heroesOfLooser.length === 3">
       <hero-icon :hero="heroesOfLooser[2]" />
     </v-col>
-    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length === 1 ? 2 : 1" />
+    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length <= 1 ? 2 : 1" />
   </v-row>
 </template>
 
@@ -66,5 +66,7 @@ export default class MatchDetailHeroRow extends Vue {
   @Prop() public heroesOfLooser!: Hero[];
   @Prop() public scoresOfWinner!: HeroScore;
   @Prop() public scoresOfLooser!: HeroScore;
+
+  public getDescription = (value?:number) => !!value || value === 0 ? value : "N/A"
 }
 </script>
