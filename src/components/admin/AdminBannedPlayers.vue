@@ -228,6 +228,7 @@ export default class AdminBannedPlayers extends Vue {
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
+    await this.$store.direct.dispatch.admin.loadBannedPlayers();
   }
 
   formTitle() : unknown {

@@ -24,6 +24,7 @@ import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
+import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 
 @Component({
   components: {
@@ -33,7 +34,8 @@ import AdminAlts from "@/components/admin/AdminAlts.vue";
     AdminNewsForLauncher,
     AdminQueueData,
     AdminProxies,
-    AdminAlts
+    AdminAlts,
+    AdminGlobalMute
   }
 })
 export default class Admin extends Vue {
@@ -53,6 +55,12 @@ export default class Admin extends Vue {
           title: "Smurf Checker",
           icon: "mdi-account-question",
           component: "admin-alts"
+        },
+        {
+          key: "mute",
+          title: "Global Mute",
+          icon: "mdi-chat-remove",
+          component: "admin-global-mute",
         }
       ]
     },
