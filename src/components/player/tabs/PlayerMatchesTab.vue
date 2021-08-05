@@ -182,10 +182,6 @@ export default class PlayerMatchesTab extends Vue {
   get gameModes() {
     return [
       {
-        modeName: "All",
-        modeId: EGameMode.UNDEFINED,
-      },
-      {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
         modeId: EGameMode.GM_1ON1,
       },
@@ -203,8 +199,36 @@ export default class PlayerMatchesTab extends Vue {
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA,
+        gameMode: EGameMode.GM_FFA,
       },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FOOTMEN_FRENZY]}`),
+        modeId: EGameMode.GM_FOOTMEN_FRENZY,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X3]}`),
+        modeId: EGameMode.GM_LEGION_4v4_X3,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
+        modeId: EGameMode.GM_LEGION_1v1_x20,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
+        modeId: EGameMode.GM_LEGION_4v4_X20,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
+        modeId: EGameMode.GM_ROC_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LTW_1ON1]}`),
+        modeId: EGameMode.GM_LTW_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
+        modeId: EGameMode.GM_FROSTCRAFT_4ON4,
+      }
     ];
   }
 
