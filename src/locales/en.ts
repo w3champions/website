@@ -299,7 +299,7 @@ const en = {
     TranquilPathsROC: "Tranquil Paths (ROC)",
     TwistedMeadowsROC: "Twisted Meadows (ROC)",
 
-    // I can't believe you've done this to be abe
+    // I can't believe you've done this to me abe
     Frostsabreroc: "Frostsabre (ROC)",
     GnollWoodroc: "Gnoll Wood (ROC)",
     Legendsroc: "Legends (ROC)",
