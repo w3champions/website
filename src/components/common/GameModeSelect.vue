@@ -67,29 +67,33 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: `Footmen Frenzy`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FOOTMEN_FRENZY]}`),
         gameMode: EGameMode.GM_FOOTMEN_FRENZY,
       },
       {
-        modeName: `Legion TD 4v4 x3`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X3]}`),
         gameMode: EGameMode.GM_LEGION_4v4_X3,
       },
       {
-        modeName: `Legion TD 1v1 x20`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
         gameMode: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        modeName: `Legion TD 4v4 x20`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
         gameMode: EGameMode.GM_LEGION_4v4_X20,
       },
       {
-        modeName: `RoC 1vs1`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
         gameMode: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: `Line Tower Wars 1vs1`,
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LTW_1ON1]}`),
         gameMode: EGameMode.GM_LTW_1ON1,
       },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
+        gameMode: EGameMode.GM_FROSTCRAFT_4ON4,
+      }
     ];
 
     if (this.disabledModes) {
