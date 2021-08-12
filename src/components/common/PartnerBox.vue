@@ -11,7 +11,8 @@
       :href="partner.link"
       target="_blank"
       outlined>
-      <v-img :src="imgSource(partner.img)"></v-img>
+      <v-img 
+        :src="imgSource(partner.img)"></v-img>
     </v-card>
     
   </v-card>
@@ -32,6 +33,10 @@ export default class PartnerBox extends Vue {
           { 
             img:"hive",
             link:"https://www.hiveworkshop.com/"
+          },
+          {
+            img:"gym",
+            link:"https://warcraft-gym.com"
           }
       ]
   }
