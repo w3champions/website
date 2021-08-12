@@ -371,11 +371,16 @@ const en = {
     eu_east4_via_eu_central2: "EU East 4 via EU Central 2",
     west_india_via_oceania2: "West India via Oceania 2",
     us_west_7_via_ucloud_pathx: "US West 7 via ucloud pathx",
+<<<<<<< HEAD
     asia_east2_via_asia_east: "Asia East 2 via Asia East",
     west_india_via_eu_central2: "West India via EU Central 2",
     russia_east_via_asia_east2: "Russia East via Asia East 2",
     russia_central_via_korea_central2: "Russia Central via Korea Central 2",
     africa_east_via_sg: "Africa East via Singapore",    
+=======
+    asia_east2_via_asia_east: "Asia East 2 via Asia East 1",
+    west_india_via_eu_central2: "West India via EU Central 2",
+>>>>>>> fb9b59557933e813edfe8c07688823b7133967bf
   }
 };
 
