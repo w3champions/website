@@ -317,7 +317,7 @@ const en = {
     LTWR5_8aP1: "Line Tower Wars 5.8",
 
     // Frostcraft
-    Frostcraft4v4_LV: "Frostcraft"
+    stCraft4v4LV: "Frostcraft"
 
     
   },
