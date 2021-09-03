@@ -36,6 +36,7 @@ const en = {
     GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
     GM_ROC_1ON1: 'RoC 1vs1',
     GM_LTW_1ON1: 'Line Tower Wars 1vs1',
+    GM_FROSTCRAFT_4ON4: 'Frostcraft 4v4',
   },
 
   gatewayNames: {
@@ -275,25 +276,48 @@ const en = {
 
     // customs
     tmenFrenzyv5_8_0W3C: "Footmen Frenzy 5.8",
-    iomTD3_45eW3CV2: "LegionTD x3 3.45e",
+
+    // LTD
+    ionTD3_45eW3CV2: "LegionTD x3 3.45e",
     ionTD6_4bTeamOZEW3C: "LegionTD x20 6.4b",
     ionTD6_4TeamOZEW3C: "LegionTD x20 6.4",
     ionTD7_0bTeamOZEW3C: "LegionTD x20 7.0b",
     ionTD7_0c1TeamOZEW3C: "LegionTD x20 7.0c",
+    ionTD7_0dTeamOZEW3C: "LegionTD x20 7.0d",
+
+    // ROC
+    FrostsabreROC: "Frostsabre (ROC)",
+    GnollWoodROC: "Gnoll Wood (ROC)",
+    LegendsROC: "Legends (ROC)",
+    LostTempleROC: "Lost Temple (ROC)",
+    MoongladeROC: "Moonglade (ROC)",
+    OutskirtsROC: "Outskirts (ROC)",
+    PlunderIsleROC : "Plunder Isle (ROC)",
+    RiftValleyROC: "Rift Valley (ROC)",
+    ScorchedBasinROC: "Scorched Basin (ROC)",
+    SecretValleyROC: "Secret Valley (ROC)",
+    TranquilPathsROC: "Tranquil Paths (ROC)",
+    TwistedMeadowsROC: "Twisted Meadows (ROC)",
+
+    // I can't believe you've done this to me abe
     Frostsabreroc: "Frostsabre (ROC)",
     GnollWoodroc: "Gnoll Wood (ROC)",
     Legendsroc: "Legends (ROC)",
     LostTempleroc: "Lost Temple (ROC)",
     Moongladeroc: "Moonglade (ROC)",
     Outskirtsroc: "Outskirts (ROC)",
-    Plunderisleroc: "Plunder Isle (ROC)",
+    PlunderIsleroc : "Plunder Isle (ROC)",
     RiftValleyroc: "Rift Valley (ROC)",
     ScorchedBasinroc: "Scorched Basin (ROC)",
     SecretValleyroc: "Secret Valley (ROC)",
     TranquilPathsroc: "Tranquil Paths (ROC)",
     TwistedMeadowsroc: "Twisted Meadows (ROC)",
 
+    // LTW
+    LTWR5_8aP1: "Line Tower Wars 5.8",
 
+    // Frostcraft
+    Frostcraft4v4_LV: "Frostcraft"
 
     
   },

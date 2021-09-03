@@ -261,7 +261,7 @@ export default class PlayerActivityTab extends Vue {
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA,
+        gameMode: EGameMode.GM_FFA,
       },
     ];
   }
