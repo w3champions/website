@@ -299,7 +299,7 @@ const en = {
     TranquilPathsROC: "Tranquil Paths (ROC)",
     TwistedMeadowsROC: "Twisted Meadows (ROC)",
 
-    // I can't believe you've done this to me abe
+    // roc
     Frostsabreroc: "Frostsabre (ROC)",
     GnollWoodroc: "Gnoll Wood (ROC)",
     Legendsroc: "Legends (ROC)",
@@ -317,9 +317,8 @@ const en = {
     LTWR5_8aP1: "Line Tower Wars 5.8",
 
     // Frostcraft
-    stCraft4v4LV: "Frostcraft"
-
-    
+    stCraftLV: "Frostcraft",
+    stCraftLVc: "Frostcraft",
   },
 
   heroNames: {
