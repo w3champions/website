@@ -317,8 +317,9 @@ const en = {
     LTWR5_8aP1: "Line Tower Wars 5.8",
 
     // Frostcraft
-    stCraftLV: "Frostcraft",
-    stCraftLVc: "Frostcraft",
+    stCraftLV: "FrostCraft",
+    stCraftLVc: "FrostCraft",
+    stCraftLVd: "FrostCraft",
   },
 
   heroNames: {
