@@ -101,11 +101,11 @@
         </template>
         <v-list class="locale-selector pa-1">
           <v-list-item
-            v-for="(lang, i) in languages"
-            :key="i"
-            @click="savedLocale = i"
+            v-for="lang in languages"
+            :key="lang"
+            @click="savedLocale = lang"
           >
-            <locale-icon :locale="i"></locale-icon>
+            <locale-icon :locale="lang"></locale-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -268,7 +268,7 @@ export default class App extends Vue {
   }
 
   get languages(): VueI18n.LocaleMessages {
-    return this.$i18n.messages;
+    return Object.keys(this.$i18n.messages);
   }
 
   async mounted(): Promise<void> {
