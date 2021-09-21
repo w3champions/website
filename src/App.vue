@@ -267,7 +267,7 @@ export default class App extends Vue {
     return this.$store.direct.state.locale;
   }
 
-  get languages(): VueI18n.LocaleMessages {
+  get languages(): Array<string> {
     return Object.keys(this.$i18n.messages);
   }
 
