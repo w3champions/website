@@ -25,6 +25,7 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
+import AdminPlayerSearch from "@/components/admin/AdminPlayerSearch.vue";
 
 @Component({
   components: {
@@ -35,82 +36,41 @@ import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
     AdminQueueData,
     AdminProxies,
     AdminAlts,
-    AdminGlobalMute
+    AdminGlobalMute,
+    AdminPlayerSearch
   }
 })
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
     {
-      title: "Moderation",
-      icon: "mdi-account-group",
-      items: [
-        {
-          key: "banned_players",
-          title: "Banned Players",
-          icon: "mdi-account-remove",
-          component: "admin-banned-players"
-        },
-        {
-          key: "alts",
-          title: "Smurf Checker",
-          icon: "mdi-account-question",
-          component: "admin-alts"
-        },
-        {
-          key: "mute",
-          title: "Global Mute",
-          icon: "mdi-chat-remove",
-          component: "admin-global-mute",
-        }
-      ]
+      title: "Search Player",
+      icon: "mdi-account-search",
+      key: "search",
+      component: "admin-player-search",
     },
     {
-      title: "Player Settings",
-      icon: "mdi-cog",
-      items: [
-        {
-          key: "proxy_settings",
-          title: "Proxy Settings",
-          icon: "mdi-account-network",
-          component: "admin-proxies"
-        }
-      ]
+      title: "Ban List",
+      key: "banned_players",
+      icon: "mdi-account-remove",
+      component: "admin-banned-players",
     },
     {
-      title: "Launcher",
+      title: "Launcher & News",
       icon: "mdi-rocket",
-      items: [
-        {
-          key: "news",
-          title: "News for Launcher",
-          icon: "mdi-rss",
-          component: "admin-news-for-launcher"
-        }
-      ]
-    },{
-      title: "In-Game Settings",
-      icon: "mdi-monitor-dashboard",
-      items: [
-        {
-          key: "tips",
-          icon: "mdi-tooltip-text-outline",
-          title: "Loading screen tips",
-          component: "admin-loading-screen-tips"
-        }
-      ]
-    }
-    ,
+      key: "news",
+      component: "admin-news-for-launcher"
+    },
     {
-      title: "Data Science",
+      title: "Loading Screen Tips",
+      icon: "mdi-monitor-dashboard",
+      component: "admin-loading-screen-tips",
+      key: "tips",
+    },
+    {
+      title: "Live Queues",
       icon: "mdi-chart-line",
-      items: [
-      {
-        key: "queue",
-        title: "Live Queue Data",
-        icon: "mdi-table",
-        component: "admin-queue-data",
-      }
-      ]
+      key: "queue",
+      component: "admin-queue-data",
     }
   ];
   selectedNavItem = {};
