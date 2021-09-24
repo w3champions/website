@@ -175,7 +175,7 @@ export default class PlayerAvatar extends Vue {
   @Prop() tournamentMatch?: ITournamentMatch;
 
   public countries: { country: string; countryCode: string }[] = [];
-  public races: { name: string; id: ERaceEnum }[] = [];
+  public races: { race: string; id: ERaceEnum }[] = [];
 
   public _date: Date | null = null;
   public _player1Copy?: ITournamentPlayer;
@@ -264,7 +264,7 @@ export default class PlayerAvatar extends Vue {
         key !== undefined
       ) {
         let race = {
-          name: raceName,
+          race: raceName,
           id: enumValue,
         };
 

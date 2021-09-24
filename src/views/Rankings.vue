@@ -35,7 +35,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title>
-                      <league-icon :league="item.order" />
+                      <league-icon :league="listLeagueIcon(item)" />
                       {{ item.name }}
                       {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
@@ -265,7 +265,19 @@ export default class RankingsView extends Vue {
   }
 
   get selectedLeageueOrder(): number {
+    const season = this.$store.direct.state.rankings.selectedSeason;
+    if (season?.id < 5 && this.selectedLeague?.order > 1) {
+      return this.selectedLeague.order + 1;
+    }
     return !this.selectedLeague?.order ? 0 : this.selectedLeague?.order;
+  }
+
+  listLeagueIcon(item: League): number {
+    const season = this.$store.direct.state.rankings.selectedSeason;
+    if (season?.id < 5 && item.order > 1) {
+      return item.order + 1;
+    }
+    return item.order;
   }
 
   get noDataText(): string {

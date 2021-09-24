@@ -24,7 +24,7 @@ export default class NumberDisplay extends Vue {
 
   public AddValuesDelimiter = AddValuesDelimiter
 
-  get getArray(){ return this.object.map(o => o[this.value]).filter(Boolean) }
+  get getArray(){ return this.object.map(o => o[this.value]).filter(v => v !== undefined || v !== null ) }
   get stringValues(){ return this.getArray.join(this.delimiter || AddValuesDelimiter.PLUS)}
   get addValues(){ return this.getArray.reduce((a,b) => a + b, 0).toString( )}
 }
