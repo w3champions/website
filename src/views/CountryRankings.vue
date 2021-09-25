@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gateway-select @gatewayChanged="onGatewayChanged" />
+        <gateway-select @gatewayChanged="onGatewayChanged" v-if="isGatewayNeeded()"/>
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
@@ -210,6 +210,10 @@ export default class CountryRankingsView extends Vue {
   public async onGatewayChanged() {
     this.$store.direct.commit.rankings.SET_PAGE(0);
     this.refreshRankings();
+  }
+
+  public isGatewayNeeded() {
+    return this.$store.direct.state.rankings.selectedSeason.id <= 5;
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {

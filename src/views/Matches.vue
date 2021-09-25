@@ -8,7 +8,6 @@
           </v-card-title>
           <v-card-text>
             <matches-status-select />
-            <gateway-select @gatewayChanged="gatewayChanged" />
             <game-mode-select
               :disabledModes="disabledGameModes"
               :gameMode="gameMode"
@@ -43,7 +42,6 @@ import { MatchStatus } from "@/store/match/types";
 
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
-import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
@@ -53,7 +51,6 @@ import AppConstants from "@/constants";
   components: {
     MatchesGrid,
     MatchesStatusSelect,
-    GatewaySelect,
     GameModeSelect,
     MapSelect
   },

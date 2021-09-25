@@ -31,7 +31,7 @@
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats">
-          <gateway-select @gatewayChanged="gatewayChanged" />
+          <gateway-select @gatewayChanged="gatewayChanged" v-if="isGatewayNeeded()"/>
         </v-card-text>
 
         <v-card-text>
@@ -182,6 +182,10 @@ export default class PlayerActivityTab extends Vue {
   gatewayChanged(gateWay: Gateways) {
     this.selectedGateWay = gateWay;
     this.updateMMRDistribution();
+  }
+
+  public isGatewayNeeded() {
+    return this.selectedSeason.id <= 5;
   }
 
   mounted() {

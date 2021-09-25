@@ -254,6 +254,7 @@ export default class RankingsView extends Vue {
     return this.$store.direct.state.rankings.gameMode;
   }
 
+
   get selectedLeague(): League {
     if (!this.ladders) return {} as League;
 
