@@ -320,6 +320,7 @@ const en = {
     stCraftLV: "FrostCraft",
     stCraftLVc: "FrostCraft",
     stCraftLVd: "FrostCraft",
+    stCraftLVf: "FrostCraft",
   },
 
   heroNames: {
