@@ -196,7 +196,7 @@ export default class PlayerView extends Vue {
   @Prop() public freshLogin!: boolean;
 
   public tabsModel = {};
-  private _intervalRefreshHandle: any = {};
+  private _intervalRefreshHandle?: number = undefined;
 
   @Watch("battleTag")
   onBattleTagChanged() {

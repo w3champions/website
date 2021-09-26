@@ -199,7 +199,7 @@ import {
   CountryRanking,
   League,
 } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum } from "@/store/typings";
+import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -221,7 +221,7 @@ import { TranslateResult } from "vue-i18n";
 })
 export default class CountryRankingsGrid extends Vue {
   @Prop() rankings!: CountryRanking[];
-  @Prop() ongoingMatches!: any;
+  @Prop() ongoingMatches!: OngoingMatches;
   @Prop() selectedCountry!: string;
 
   get headers() {
@@ -364,7 +364,6 @@ export default class CountryRankingsGrid extends Vue {
 
   // methods
   initLeagueMap() {
-    let map = new Map();
     const league = this.$store.direct.state.rankings.ladders?.filter(
       (l) =>
         l.gateway === this.$store.direct.state.gateway &&

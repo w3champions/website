@@ -21,7 +21,7 @@ declare module 'tiptap-commands' {
     export function wrappingInputRule(
       regexp: RegExp,
       nodeType: NodeType,
-      getAttrs?: (arg: {} | string[]) => object | undefined,
+      getAttrs?: (arg: unknown | string[]) => object | undefined,
       joinPredicate?: (strs: string[], node: Node) => boolean
     ): InputRule
   

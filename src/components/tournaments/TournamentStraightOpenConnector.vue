@@ -11,14 +11,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import {
-  ITournamentPlayer,
-  ITournamentMatch,
-  ITournamentRound,
-  ITournament,
-  ConnectionType
-} from "@/store/tournaments/types";
-import { ERaceEnum } from "@/store/typings";
-import router from "@/router";
+  ITournamentRound} from "@/store/tournaments/types";
 
 @Component({
   components: {}

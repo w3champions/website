@@ -45,7 +45,7 @@ import AppConstants from "@/constants";
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
 
-  _intervalRefreshHandle = {} as number;
+  _intervalRefreshHandle?: number = undefined;
 
   get headers() : Array<unknown> {
     return [

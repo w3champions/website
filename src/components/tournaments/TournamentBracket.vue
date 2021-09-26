@@ -51,7 +51,6 @@ import {
   ITournamentPlayer,
   ITournamentMatch,
   ITournamentRound,
-  ITournament,
   ConnectionType,
 } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
@@ -80,7 +79,7 @@ export default class TournamentBracket extends Vue {
       const round = this.bracketRounds[index];
       const prevRound = this.bracketRounds[index - 1];
 
-      round.dimensions = round.dimensions || ({} as any);
+      round.dimensions = round.dimensions || undefined;
 
       if (round.dimensions) {
         round.dimensions.headerHeight = this.calculateHeaderHeight(

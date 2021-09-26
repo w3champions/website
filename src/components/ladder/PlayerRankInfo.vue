@@ -23,7 +23,6 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerId } from "@/store/ranking/types";
-import { ERaceEnum } from "@/store/typings";
 import { getProfileUrl } from '@/helpers/url-functions';
 
 @Component({})

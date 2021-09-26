@@ -32,17 +32,12 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import {
-  ITournamentPlayer,
-  ITournamentMatch,
-  ITournamentRound,
-  ITournament,
+   ITournamentRound,
   ConnectionType
 } from "@/store/tournaments/types";
-import { ERaceEnum } from "@/store/typings";
 import TournamentStraightConnector from "@/components/tournaments/TournamentStraightOpenConnector.vue";
 import TournamentStraightOpenDownConnector from "@/components/tournaments/TournamentStraightOpenDownConnector.vue";
 import TournamentYConnector from "@/components/tournaments/TournamentYConnector.vue";
-import router from "@/router";
 import TournamentStraightOpenConnector from "@/components/tournaments/TournamentStraightOpenConnector.vue";
 
 @Component({

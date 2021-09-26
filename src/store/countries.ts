@@ -1,3 +1,5 @@
+import { enumKeys } from "@/helpers/general";
+
 export enum ECountries {
   Afghanistan = "AF",
   "Aland Islands" = "AX",
@@ -247,16 +249,16 @@ export enum ECountries {
   Zimbabwe = "ZW",
 }
 
-export const CountriesByCode = {} as any;
+export const CountriesByCode: Record<string, string> = {};
 
-Object.keys(ECountries).forEach((key) => {
-  const cCode: string = (ECountries as any)[key] as string;
+enumKeys(ECountries).forEach((key) => {
+  const cCode = ECountries[key];
   CountriesByCode[cCode] = key;
 });
 
-export const Countries = Object.keys(ECountries).map((key) => {
+export const Countries = enumKeys(ECountries).map((key) => {
   return {
     country: key,
-    countryCode: (ECountries as any)[key] as string,
+    countryCode: ECountries[key],
   };
 });

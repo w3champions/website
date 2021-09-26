@@ -63,12 +63,13 @@ export default class MmrDistributionChart extends Vue {
       return 0;
     }
 
-    const minMMR = minBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr);
-    const maxMMR = maxBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr);
+    const minMMR = minBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr) || { mmr: 0 ,count: 0};
+    const maxMMR = maxBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr) || { mmr: 0 ,count: 0};
+
     const clampedPlayerMMR = clamp(
       this.mmrOfLoggedInPlayer,
-      minMMR!.mmr,
-      maxMMR!.mmr
+      minMMR.mmr,
+      maxMMR.mmr
     );
     const mmrGroup = this.mmrDistribution.distributedMmrs.find(
       (d) => Math.abs(d.mmr + 25 - clampedPlayerMMR) <= 25
@@ -169,8 +170,8 @@ export default class MmrDistributionChart extends Vue {
         },
         callbacks: {
           label: (tooltipItem: {
-            xLabel: any;
-            yLabel: any;
+            xLabel: string;
+            yLabel: number;
             datasetIndex: number;
           }) => {
             if (tooltipItem.datasetIndex === 0) {

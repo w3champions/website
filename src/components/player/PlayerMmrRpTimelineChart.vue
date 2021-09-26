@@ -10,7 +10,7 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import LineChart from "@/components/overal-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
@@ -37,7 +37,7 @@ export default class PlayerMmrRpTimelineChart extends Vue {
     );
   }
 
-  get YAxesSettings(): any {
+  get YAxesSettings() {
     return [
       {
         id: "y-axis-0",
