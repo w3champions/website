@@ -109,6 +109,11 @@ export interface PlayerScore {
   resourceScore: ResourceScore;
 }
 
+export type OngoingMatches=Record<string,{
+  players: string[];
+  opponents: string[];
+}>
+
 export enum EGameMode {
   UNDEFINED,
   GM_1ON1 = 1,

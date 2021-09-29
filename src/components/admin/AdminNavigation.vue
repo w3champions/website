@@ -56,14 +56,15 @@
 </template>
 
 <script lang="ts">
+import { ItemType } from "@/App.vue";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({ components: {} })
 export default class AdminNavigation extends Vue {
-  @Prop() items!: Array<any>;
+  @Prop() items!: ItemType[];
 
-  itemSelected(item: any, index: number): void {
+  itemSelected(item: ItemType, index: number) {
     this.$emit("itemSelected", item, index);
   }
 }

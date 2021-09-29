@@ -8,7 +8,12 @@ import { ChartData, TimeUnit } from "chart.js";
 })
 export default class LineChart extends Mixins(Line) {
   @Prop() public chartData!: ChartData;
-  @Prop() public customYAxes?: any;
+  @Prop() public customYAxes?: 
+  {
+    ticks: {
+      beginAtZero: true,
+    },
+  }[];
 
   private options = {
     legend: {
@@ -20,7 +25,7 @@ export default class LineChart extends Mixins(Line) {
         tooltip.displayColors = false;
       },
       callbacks: {
-        label: function (tooltipItem: { xLabel: any; yLabel: any }) {
+        label: function (tooltipItem: { xLabel: string; yLabel: string }) {
           return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
         },
         title: function () {

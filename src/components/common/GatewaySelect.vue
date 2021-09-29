@@ -30,7 +30,6 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
-import GatewaysService from "@/services/GatewaysService";
 import { LocaleMessage } from "vue-i18n";
 
 @Component({})

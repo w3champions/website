@@ -118,8 +118,8 @@ import {
   Ranking,
   Season,
 } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum } from "@/store/typings";
-import { ECountries, Countries } from "@/store/countries";
+import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { Countries } from "@/store/countries";
 import CountryFlag from "vue-country-flag";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -139,7 +139,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 })
 export default class CountryRankingsView extends Vue {
   initialized = false;
-  ongoingMatchesMap: any = {};
+  ongoingMatchesMap: OngoingMatches = {};
   races = ERaceEnum;
   countries: { country: string; countryCode: string }[] = Countries;
 
@@ -148,11 +148,11 @@ export default class CountryRankingsView extends Vue {
   @Prop() country!: string;
 
   @Watch("country")
-  onCountryChanged(newValue: string, oldValue: string) {
+  onCountryChanged(newValue: string) {
     this.setCountry(newValue);
   }
 
-  private _intervalRefreshHandle: any = {};
+  private _intervalRefreshHandle?: number = undefined;
 
   get selectedCountryCode() {
     return this.$store.direct.state.rankings.selectedCountry;

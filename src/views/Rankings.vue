@@ -176,7 +176,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -198,7 +198,7 @@ export default class RankingsView extends Vue {
   public search = "";
   public searchModel = {} as Ranking;
   public isLoading = false;
-  public ongoingMatchesMap: any = {};
+  public ongoingMatchesMap: OngoingMatches = {};
   public gameModes = EGameMode;
   public races = ERaceEnum;
 
@@ -209,7 +209,7 @@ export default class RankingsView extends Vue {
   @Prop({ default: "" })
   public playerId!: string;
 
-  private _intervalRefreshHandle: any = {};
+  private _intervalRefreshHandle?: number = undefined;
 
   @Watch("searchModel")
   public onSearchModelChanged(rank: Ranking) {

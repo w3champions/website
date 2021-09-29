@@ -158,11 +158,16 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { ECountries } from "@/store/countries";
 import CountryFlag from "vue-country-flag";
 import { ITournamentMatch, ITournamentPlayer } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
+import { enumKeys } from "@/helpers/general";
+
+interface DateTimePickerProps extends Element {
+  clearHandler: () => void;
+}
 
 @Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
@@ -223,8 +228,8 @@ export default class PlayerAvatar extends Vue {
       if (this._player2Copy && this._player2Copy.score) {
         this._player2Copy.score = parseInt(this._player2Copy.score?.toString());
       }
-      this.tournamentMatch.players[0] = this._player1Copy as any;
-      this.tournamentMatch.players[1] = this._player2Copy as any;
+      this.tournamentMatch.players[0] = this._player1Copy || this.tournamentMatch.players[0];
+      this.tournamentMatch.players[1] = this._player2Copy || this.tournamentMatch.players[1];
     }
 
     this.$emit("saveChanges");
@@ -233,17 +238,17 @@ export default class PlayerAvatar extends Vue {
 
   close() {
     this._date = null;
-    (this.$refs.datetimePicker as any).clearHandler();
+    (this.$refs.datetimePicker as DateTimePickerProps).clearHandler();
     this._player1Copy = undefined;
     this._player2Copy = undefined;
     this.$emit("modalClosed");
   }
 
   mounted() {
-    Object.keys(ECountries).map((key) => {
+    enumKeys(ECountries).map((key) => {
       let country = {
         country: key,
-        countryCode: (ECountries as any)[key] as string,
+        countryCode: ECountries[key] as string,
       };
 
       this.countries.push(country);

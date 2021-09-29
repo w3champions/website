@@ -131,12 +131,19 @@ import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import VueI18n from "node_modules/vue-i18n/types";
 
+export type ItemType= {
+  title: string;
+  icon: string;
+  to: string;
+  class?: string;
+}
+
 @Component({ components: { SignInDialog, localeIcon } })
 export default class App extends Vue {
   private _savedLocale = "en";
   private selectedTheme = "human";
 
-  public items = [
+  public items: ItemType[] = [
     {
       title: "tournaments",
       icon: "mdi-trophy",

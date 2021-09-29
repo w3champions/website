@@ -8,15 +8,15 @@ import chartjsPluginAnnotation from "chartjs-plugin-annotation";
   mixins: [mixins.reactiveProp],
 })
 export default class BarChart extends Mixins(Bar) {
+  @Prop() public chartOptions: ChartOptions|undefined;
   @Prop() public chartData!: ChartData;
-  @Prop() public chartOptions: any;
 
   get options() {
     return this.chartOptions ?? this.defaultOptions;
   }
 
   //default options
-  private defaultOptions = {
+  private defaultOptions:ChartOptions = {
     legend: {
       display: true,
     },
@@ -27,7 +27,7 @@ export default class BarChart extends Mixins(Bar) {
         tooltip.displayColors = false;
       },
       callbacks: {
-        label: function (tooltipItem: { xLabel: any; yLabel: any }) {
+        label: function (tooltipItem: { xLabel: string; yLabel: string }) {
           return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
         },
         title: function () {
