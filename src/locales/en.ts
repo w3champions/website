@@ -284,7 +284,7 @@ const en = {
     ionTD7_0bTeamOZEW3C: "LegionTD x20 7.0b",
     ionTD7_0c1TeamOZEW3C: "LegionTD x20 7.0c",
     ionTD7_0dTeamOZEW3C: "LegionTD x20 7.0d",
-    ionTD70dTeamOZEW3C: "LegionTD x20 7.0e",
+    ionTD70dTeamOZE: "LegionTD x20 7.0e",
 
     // ROC
     FrostsabreROC: "Frostsabre (ROC)",
