@@ -24,12 +24,12 @@ npm run lint
 
 ### Customize configuration
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
 ### Authenticating as Admin
-1) Clone the backend https://github.com/w3champions/w3champions-chat-service
-2) Open this file https://github.com/w3champions/w3champions-chat-service/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs and just return an Object that Contains your battletag and IsAdmin = true like
-```
+1) Clone the [website-backend](https://github.com/w3champions/website-backend)
+2) Open the file [`W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs`](https://github.com/w3champions/website-backend/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs) and just return an object which contains your battletag and `IsAdmin = true` like
+```csharp
 public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 {
     return new W3CUserAuthenticationDto
