@@ -26,7 +26,7 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
-## Optional: Setup website backend server
+## Optional: Setup website backend server (and authenticate as admin)
 By default the website you started using `yarn run serve` will connect to the productive
 backend of [www.w3champions.com](https://www.w3champions.com/). The API serving the dynamic content
 is available at [website-backend.w3champions.com/api/](https://website-backend.w3champions.com/api/). 
@@ -36,10 +36,17 @@ actions you might require a local instance of the website backend:
 
 1) Clone (and fork) the [w3champions/website-backend](https://github.com/w3champions/website-backend)
 2) Follow the [setup instructions](https://github.com/w3champions/website-backend#readme) and spin up your local website backend api server
-3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (eg. https://localhost:44336/).
-4) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL.
+3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (eg. https://localhost:44336/)
+4) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL
 
 ### Authenticating as Admin
+
+Granting yourself admin permissions consists of two steps:
+
+#### Granting API admin scope (JWT manipulation)
+
+Permission is validated using a JWT, to intercept the process you can skip the 
+JWT validation and return a valid `W3CUserAuthenticationDto` object which grants you `IsAdmin` rights.
 
 Open the file [`W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs`](https://github.com/w3champions/website-backend/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs) and just return an object which contains your battletag and `IsAdmin = true` like
 
@@ -50,9 +57,27 @@ public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
     {
         BattleTag = "modmoto#123",
         Name = "modmoto",
-        isAdmin = true
+        IsAdmin = true
     };
 }
+```
+
+After restarting the backend server you're granted access to all routes protected
+by the `[CheckIfBattleTagIsAdmin]` attribute.
+
+#### Granting frontend admin permission
+
+In order to set the `isAdmin` state in the frontend you have several options. Since the original
+permission request is send to the [w3champions/identification-service](https://github.com/w3champions/identification-service) (see `IDENTIFICATION_URL`) you
+could spin up your own local identification server and grant yourself admin permission.
+
+A more convenient option is to overwrite the vue mutation which sets the
+`isAdmin` property in the [`oauth` store](src/store/oauth/index.ts):
+
+```javascript
+SET_IS_ADMIN(state: OauthState, isAdmin: boolean) {
+    state.isAdmin = true; // state.isAdmin = isAdmin;
+},
 ```
 
 ### Deploying to a Pull Request Environment
