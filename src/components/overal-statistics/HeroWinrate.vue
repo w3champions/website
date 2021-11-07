@@ -1,27 +1,27 @@
 <template>
   <v-card-text>
     <v-card-title>Winrates of hero matchups</v-card-title>
-    <v-row>
-      <v-col cols="2">
+    <v-row no-gutters>
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="0" />
       </v-col>
-      <v-col cols="2">
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="1" />
       </v-col>
-      <v-col cols="2">
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="2" />
       </v-col>
-      <v-col cols="2">
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="3" />
       </v-col>
-      <v-col cols="2">
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="4" />
       </v-col>
-      <v-col cols="2">
+      <v-col :cols="4" :sm="2">
         <hero-picture-select :hero-index="5" />
       </v-col>
     </v-row>
-    <h2 class="justify-center text-center">
+    <h2 class="justify-center text-center mt-4">
       <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">
         {{
           wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%"

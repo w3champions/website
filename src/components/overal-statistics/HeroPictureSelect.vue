@@ -1,5 +1,5 @@
 <template>
-  <v-card-text>
+  <v-card-text :class="{'pa-1': $vuetify.breakpoint.xsOnly}">
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <div v-on="on">
