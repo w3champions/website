@@ -1,5 +1,5 @@
 <template>
-  <v-card-text>
+  <v-card-text :class="{'pa-1': $vuetify.breakpoint.xsOnly}">
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <div v-on="on">
@@ -23,37 +23,28 @@
       <span>{{ (heroIndex % 3) + 1 }}</span>
     </div>
     <v-dialog v-model="dialogOpened" max-width="300px">
-      <v-card>
-        <v-row
-          class="ml-2 mr-1"
+      <v-card class="pa-1">
+        <v-row no-gutters :justify="'space-between'"
           v-for="heroPickPerRace in possibleHeroPickRows"
           :key="heroPickPerRace.map((h) => h.heroId).join('_')"
         >
-          <v-col
+          <v-col :cols="3"
             v-for="heroPickSelection in heroPickPerRace"
-            :key="heroPickSelection.heroId"
-          >
+            :key="heroPickSelection.heroId">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <div v-on="on">
-                  <v-card-text
-                    class="hero-icon-select"
-                    :class="
-                      isEnabledForSelect(heroPickSelection)
-                        ? ''
-                        : 'hero-icon-disabled'
-                    "
-                    @click="
+                <div v-on="on" class="ma-1">
+                  <v-responsive :aspect-ratio="1/1">
+                    <div :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
+                         class="hero-icon-select"
+                         :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
+                         @click="
                       () => {
                         if (isEnabledForSelect(heroPickSelection))
                           pickHero(heroPickSelection);
                       }
-                    "
-                    :style="{
-                      'background-image':
-                        'url(' + parsePicture(heroPickSelection) + ')',
-                    }"
-                  />
+                    " />
+                  </v-responsive>
                 </div>
               </template>
               <div>
@@ -418,10 +409,10 @@ export default class HeroPictureSelect extends Vue {
 }
 
 .hero-icon-select {
-  height: 48px;
-  width: 48px;
+  height: 100%;
+  width: 100%;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .hero-icon-disabled {
