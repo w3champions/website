@@ -1,7 +1,7 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
     <v-app-bar
-      :class="{ darkmode: isDarkTheme }"
+      :class="{ 'darkmode': isDarkTheme }"
       app
       :dark="isDarkTheme"
       style="height: 60px"
@@ -12,11 +12,8 @@
         style="padding-top: 0px"
       >
         <div class="d-none d-md-inline">
-          <div v-if="(theme == 'human') | (theme == 'orc')" id="app">
-            <img src="./assets/logos/small-logo-full-black.png" />
-          </div>
-          <div v-else id="app">
-            <img src="./assets/logos/small-logo-full.png" />
+          <div id="app">
+            <img :src="isDarkTheme ? require('./assets/logos/small-logo-full.png') : require('./assets/logos/small-logo-full-black.png')" />
           </div>
         </div>
       </div>
