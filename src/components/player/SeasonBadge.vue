@@ -4,7 +4,7 @@
       <div
         @click="() => onClick(season)"
         v-on="on"
-        :class="['season-badge','pointer',{'size-xs': size == 'xs'},{'size-sm': size == 'sm'},{'size-lg': size == 'lg'}]"
+        :class="[ 'season-badge', 'pointer' ]"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
       />
     </template>
@@ -24,7 +24,6 @@ import { getAsset } from "@/helpers/url-functions";
 @Component({})
 export default class SeasonBadge extends Vue {
   @Prop() season!: Season;
-  @Prop() size!: string;
   @Prop() onClick!: (season: Season) => void;
 
   get seasonId() {
@@ -43,21 +42,7 @@ export default class SeasonBadge extends Vue {
   height: 24px;
   background-size: cover;
   display: inline-block;
-
-  &.size-xs {
-    width: 12px;
-    height: 12px;
-  }
-
-  &.size-sm {
-    width: 15px;
-    height: 15px;
-  }
-
-  &.size-lg {
-    width: 32px;
-    height: 32px;
-  }
+  vertical-align: middle;
 }
 
 </style>

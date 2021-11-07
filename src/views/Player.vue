@@ -9,9 +9,9 @@
                 <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
                 <span class="mr-2" /> <!-- add some space between name and season badges -->
-                <span v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1">
-                  <SeasonBadge :season="season" :on-click="selectSeason" :size="'sm'" />
-                </span>
+                <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block" >
+                  <SeasonBadge :season="season" :on-click="selectSeason" />
+                </div>
               </v-col>
               <v-col :cols="12" :sm="'auto'">
                 <div class="ml-3">
