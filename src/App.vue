@@ -5,8 +5,10 @@
                          v-model="isNavigationDrawerOpen">
       <v-list dense>
         <v-list-item>
-          <v-list-item-content @click="$router.push({ path: '/' })">
-            <brand-logo :is-dark-theme="isDarkTheme"/>
+          <v-list-item-content>
+            <router-link :to="{ name: 'Home'}">
+              <brand-logo :is-dark-theme="isDarkTheme"/>
+            </router-link>
           </v-list-item-content>
           <v-list-item-icon>
             <v-icon class="ml-5" @click="isNavigationDrawerOpen=false">mdi-close</v-icon>
@@ -29,9 +31,11 @@
     <v-app-bar :class="{ 'darkmode': isDarkTheme }" :dark="isDarkTheme" app>
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon @click.stop="isNavigationDrawerOpen=true" class="d-lg-none"></v-app-bar-nav-icon>
-      <v-app-bar-title>
-        <brand-logo :is-dark-theme="isDarkTheme" @click="$router.push({ path: '/' })" style="max-height: 30px" class="ml-2 d-none d-sm-flex" />
-      </v-app-bar-title>
+      <v-toolbar-title class="pa-0">
+        <router-link :to="{ name: 'Home'}">
+          <brand-logo :is-dark-theme="isDarkTheme"  style="max-height: 30px" class="ml-2 d-none d-sm-flex" />
+        </router-link>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
 
       <!-- alternative menu for lg+ only -->
