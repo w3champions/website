@@ -1,58 +1,67 @@
 <template>
   <v-app class="w3app" :class="theme" :dark="isDarkTheme">
-    <v-app-bar
-      :class="{ 'darkmode': isDarkTheme }"
-      app
-      :dark="isDarkTheme"
-      style="height: 60px"
-    >
-      <div
-        @click="$router.push({ path: '/' })"
-        class="d-flex align-center pointer"
-        style="padding-top: 0px"
-      >
-        <div class="d-none d-md-inline">
-          <div id="app">
-            <img :src="isDarkTheme ? require('./assets/logos/small-logo-full.png') : require('./assets/logos/small-logo-full-black.png')" />
-          </div>
-        </div>
-      </div>
+    <v-navigation-drawer  temporary absolute
+                         transition="slide-x-transition"
+                         v-model="isNavigationDrawerOpen">
+      <v-list dense>
+        <v-list-item>
+          <v-list-item-content @click="$router.push({ path: '/' })">
+            <brand-logo :is-dark-theme="isDarkTheme"/>
+          </v-list-item-content>
+          <v-list-item-icon>
+            <v-icon class="ml-5" @click="isNavigationDrawerOpen=false">mdi-close</v-icon>
+          </v-list-item-icon>
+        </v-list-item>
+      </v-list>
+      <v-divider />
+      <v-list dense nav>
+        <v-list-item v-for="item in items" :key="item.title" v-show="visible(item)" link :to="item.to">
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ $t(`views_app.${item.title}`) }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar :class="{ 'darkmode': isDarkTheme }" :dark="isDarkTheme" app>
+      <!-- toggle button for drawer menu, only for lower than lg -->
+      <v-app-bar-nav-icon @click.stop="isNavigationDrawerOpen=true" class="d-lg-none"></v-app-bar-nav-icon>
+      <v-app-bar-title>
+        <brand-logo :is-dark-theme="isDarkTheme" @click="$router.push({ path: '/' })" style="max-height: 30px" class="ml-2 d-none d-sm-flex" />
+      </v-app-bar-title>
       <v-spacer></v-spacer>
 
-      <v-btn
-        class="button-margin"
-        v-for="item in items"
-        v-show="visible(item)"
-        :key="item.title"
-        text
-        tile
-        :to="item.to"
-        :class="item.class"
-      >
-        <span class="mr-2 hidden-xs-only">
-          {{ $t(`views_app.${item.title}`) }}
-        </span>
-        <v-icon>{{ item.icon }}</v-icon>
-      </v-btn>
+      <!-- alternative menu for lg+ only -->
+      <span class="d-none d-lg-flex">
+        <v-btn
+          v-for="item in items"
+          v-show="visible(item)"
+          :key="item.title"
+          text
+          tile
+          :to="item.to"
+          :class="item.class">
+          <span class="mr-2">
+            {{ $t(`views_app.${item.title}`) }}
+          </span>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-btn>
+        <v-divider vertical />
+      </span>
 
-      <v-btn
-        text
-        tile
-        @click="loginOrGoToProfile"
-        v-if="!authCode"
-        class="right-menu"
-      >
-        <v-icon v-if="!authCode" class="mr-2">
-          mdi-account-circle-outline
-        </v-icon>
+      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode" >
+        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
         <sign-in-dialog v-model="showSignInDialog" v-on:region-change="saveLoginRegion"></sign-in-dialog>
       </v-btn>
 
-      <v-menu offset-y v-if="authCode">
+      <v-menu v-if="authCode">
         <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
-            <v-icon class="mr-2">mdi-account-circle</v-icon>
-            <span class="mr-2 hidden-xs-only">{{ loginName }}</span>
+          <v-btn text tile v-on="on">
+            <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
+            <v-icon>mdi-account-circle</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -65,47 +74,48 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-y class="menu-button">
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
-            <v-icon>mdi-invert-colors</v-icon>
-          </v-btn>
-        </template>
-        <v-list class="theme-selector">
-          <v-list-item @click="theme = 'human'">
-            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="theme = 'orc'">
-            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="theme = 'nightelf'">
-            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="theme = 'undead'">
-            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+            <v-menu offset-y>
+              <template v-slot:activator="{ on }">
+                <v-btn text tile v-on="on" class="right-menu">
+                  <v-icon>mdi-invert-colors</v-icon>
+                </v-btn>
+              </template>
+              <v-list class="theme-selector">
+                <v-list-item @click="theme = 'human'">
+                  <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="theme = 'orc'">
+                  <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="theme = 'nightelf'">
+                  <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="theme = 'undead'">
+                  <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
 
-      <v-menu offset-y class="menu-button">
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
-            <locale-icon
-              :locale="savedLocale"
-              :showTwoLetterCode="false"
-            ></locale-icon>
-          </v-btn>
-        </template>
-        <v-list class="locale-selector pa-1">
-          <v-list-item
-            v-for="lang in languages"
-            :key="lang"
-            @click="savedLocale = lang"
-          >
-            <locale-icon :locale="lang"></locale-icon>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+            <v-menu>
+              <template v-slot:activator="{ on }">
+                <v-btn text tile v-on="on" style="margin-top: 2px">
+                  <locale-icon
+                    :locale="savedLocale"
+                    :showTwoLetterCode="false"
+                  ></locale-icon>
+                </v-btn>
+              </template>
+              <v-list class="locale-selector">
+                <v-list-item
+                  v-for="lang in languages"
+                  :key="lang"
+                  @click="savedLocale = lang"
+                >
+                  <locale-icon :locale="lang"></locale-icon>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
     </v-app-bar>
 
     <v-main>
@@ -127,6 +137,7 @@ import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import VueI18n from "node_modules/vue-i18n/types";
+import BrandLogo from "@/components/common/BrandLogo.vue";
 
 export type ItemType= {
   title: string;
@@ -135,11 +146,11 @@ export type ItemType= {
   class?: string;
 }
 
-@Component({ components: { SignInDialog, localeIcon } })
+@Component({ components: {BrandLogo, SignInDialog, localeIcon } })
 export default class App extends Vue {
   private _savedLocale = "en";
   private selectedTheme = "human";
-
+  private isNavigationDrawerOpen = false;
   public items: ItemType[] = [
     {
       title: "tournaments",
@@ -308,10 +319,6 @@ export default class App extends Vue {
 <style lang="scss">
 @import "./scss/main.scss";
 
-.right-menu {
-  top: 10px;
-}
-
 .level {
   color: white;
   text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black,
@@ -391,8 +398,4 @@ export default class App extends Vue {
   border-color: #36393f !important;
 }
 
-.v-toolbar__content {
-  overflow: auto;
-  top: -8px;
-}
 </style>
