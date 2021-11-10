@@ -86,3 +86,19 @@ If you branch starts with "DEPLOY_" azure will create a automatic deployment for
 If you need any other connection strings, just update the docker-dompose.toke.yaml file accordingliy, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
 
 When you are done, please contact one of the older devs, because they can delete the unused containers again.
+
+### Working with Localization
+The website rebuilds localizations on each new deployment, running this script:
+
+https://github.com/w3champions/website/blob/master/scripts/generate-locales.ts
+
+this works by gathering all the localization strings from this google drive document:
+
+https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc
+
+It then merges with the existing localizations here, which contains some english-specific translations, such as the names of maps and proxies:
+
+https://github.com/w3champions/website/tree/master/src/locales
+
+If you'd like to add new strings to the website, you can request access to edit the localization document above to add them, and then refer to them in the html by calling the V18n library.
+Contact @CepheidUK for access to the sheet.
