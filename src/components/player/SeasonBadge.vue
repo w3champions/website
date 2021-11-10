@@ -4,7 +4,7 @@
       <div
         @click="() => onClick(season)"
         v-on="on"
-        class="season-badge pointer"
+        :class="[ 'season-badge', 'pointer' ]"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
       />
     </template>
@@ -38,9 +38,11 @@ export default class SeasonBadge extends Vue {
 
 <style lang="scss" scoped>
 .season-badge {
-  margin-right: 10px;
   width: 24px;
   height: 24px;
   background-size: cover;
+  display: inline-block;
+  vertical-align: middle;
 }
+
 </style>
