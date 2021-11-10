@@ -1,4 +1,4 @@
-## Project setup
+## Development setup
 
 ```
 npm install
@@ -24,26 +24,61 @@ npm run lint
 
 ### Customize configuration
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
+
+## Optional: Setup website backend server (and authenticate as admin)
+By default the website you started using `yarn run serve` will connect to the productive
+backend of [www.w3champions.com](https://www.w3champions.com/). The API serving the dynamic content
+is available at [website-backend.w3champions.com/api/](https://website-backend.w3champions.com/api/). 
+
+If you're not interested in manipulating the API responses you can skip the following setup, but for some
+actions you might require a local instance of the website backend:
+
+1) Clone (and fork) the [w3champions/website-backend](https://github.com/w3champions/website-backend)
+2) Follow the [setup instructions](https://github.com/w3champions/website-backend#readme) and spin up your local website backend api server
+3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (eg. https://localhost:44336/)
+4) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL
 
 ### Authenticating as Admin
-1) Clone the backend https://github.com/w3champions/w3champions-chat-service
-2) Open this file https://github.com/w3champions/w3champions-chat-service/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs and just return an Object that Contains your battletag and IsAdmin = true like
-```
+
+Granting yourself admin permissions consists of two steps:
+
+#### Granting API admin scope (JWT manipulation)
+
+Permission is validated using a JWT, to intercept the process you can skip the 
+JWT validation and return a valid `W3CUserAuthenticationDto` object which grants you `IsAdmin` rights.
+
+Open the file [`W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs`](https://github.com/w3champions/website-backend/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs) and just return an object which contains your battletag and `IsAdmin = true` like
+
+```csharp
 public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
 {
     return new W3CUserAuthenticationDto
     {
         BattleTag = "modmoto#123",
         Name = "modmoto",
-        isAdmin = true
+        IsAdmin = true
     };
 }
 ```
 
-3) Run the project (F5) in visual studio. This usually opens a browser window with blank page. Copy the url of the page (eg. https://localhost:44336/).
-4) Change the `BASE_URL` of ui to the backend url you just copied: https://github.com/w3champions/w3champions-ui/blob/master/public/env.js#L3
-6) You should be able to login as admin.
+After restarting the backend server you're granted access to all routes protected
+by the `[CheckIfBattleTagIsAdmin]` attribute.
+
+#### Granting frontend admin permission
+
+In order to set the `isAdmin` state in the frontend you have several options. Since the original
+permission request is send to the [w3champions/identification-service](https://github.com/w3champions/identification-service) (see `IDENTIFICATION_URL`) you
+could spin up your own local identification server and grant yourself admin permission.
+
+A more convenient option is to overwrite the vue mutation which sets the
+`isAdmin` property in the [`oauth` store](src/store/oauth/index.ts):
+
+```javascript
+SET_IS_ADMIN(state: OauthState, isAdmin: boolean) {
+    state.isAdmin = true; // state.isAdmin = isAdmin;
+},
+```
 
 ### Deploying to a Pull Request Environment
 If you branch starts with "DEPLOY_" azure will create a automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://add-new-language.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
