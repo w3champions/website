@@ -14,7 +14,7 @@
           >
             <div
               style="margin-top: 0px;"
-              v-bind:style="`height: ${round.dimensions.headerHeight}px`"
+              v-bind:style="{ height: round.dimensions ? round.dimensions.headerHeight + 'px' : null }"
             >
               <div class="bracket-header">{{ round.name }}</div>
             </div>
@@ -26,7 +26,7 @@
               :date="match.date"
               :topPlayer="match.players[0]"
               :bottomPlayer="match.players[1]"
-              :cellHeight="round.dimensions.cellHeight"
+              :cellHeight="{ height: round.dimensions ? round.dimensions.cellHeight : null }"
             >
             </tournamentMatch>
           </div>
