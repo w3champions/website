@@ -17,7 +17,7 @@
       </v-list>
       <v-divider />
       <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.title" v-show="visible(item)" link :to="item.to">
+        <v-list-item v-for="item in items" :key="item.title" v-show="isNavItemVisible(item)" link :to="{ name: item.to }">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -42,11 +42,11 @@
       <span class="d-none d-lg-flex">
         <v-btn
           v-for="item in items"
-          v-show="visible(item)"
+          v-show="isNavItemVisible(item)"
           :key="item.title"
           text
           tile
-          :to="item.to"
+          :to="{ name: item.to }"
           :class="item.class">
           <span class="mr-2">
             {{ $t(`views_app.${item.title}`) }}
@@ -159,32 +159,32 @@ export default class App extends Vue {
     {
       title: "tournaments",
       icon: "mdi-trophy",
-      to: "/tournaments",
+      to: "Tournaments",
     },
     {
       title: "rankings",
       icon: "mdi-view-list",
-      to: `/Rankings`,
+      to: "Rankings",
     },
     {
       title: "matches",
       icon: "mdi-controller-classic",
-      to: "/Matches",
+      to: "Matches",
     },
     {
       title: "statistics",
       icon: "mdi-chart-areaspline",
-      to: "/OverallStatistics",
+      to: "OverallStatistics",
     },
     {
       title: "admin",
       icon: "mdi-account-tie",
-      to: "/AdminOnlyView",
+      to: "Admin",
     },
     {
       title: "faq",
       icon: "mdi-help-circle-outline",
-      to: "/Faq",
+      to: "FAQ",
       class: "d-none d-md-flex",
     },
   ];
@@ -206,7 +206,14 @@ export default class App extends Vue {
     this.$store.direct.dispatch.oauth.logout();
   }
 
-  public visible(item: any): boolean {
+  /**
+   * Check if given ItemType element is visible for
+   * the current user
+   *
+   * @return boolean
+   * @param item
+   */
+  public isNavItemVisible(item: any): boolean {
     if (item.title == "admin" && !this.isAdmin) {
       return false;
     }
