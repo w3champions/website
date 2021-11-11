@@ -8,7 +8,7 @@
       >
         <template v-for="(round, roundIndex) in bracketRounds">
           <div
-            :key="round.round"
+            :key="`round.${roundIndex}`"
             class="bracket-column bracket-column-matches"
             style="width: 150px;"
           >
@@ -22,7 +22,7 @@
               v-for="(match, matchIndex) in round.matches"
               style="cursor: pointer"
               v-on:click.native="matchSelected(match)"
-              :key="matchIndex"
+              :key="`match.${roundIndex}.${matchIndex}`"
               :date="match.date"
               :topPlayer="match.players[0]"
               :bottomPlayer="match.players[1]"
@@ -31,7 +31,7 @@
             </tournamentMatch>
           </div>
           <tournamentRoundConnector
-            :key="`conn${round.round}`"
+            :key="`connector.${roundIndex}`"
             :round="round"
             :prevRound="bracketRounds[roundIndex - 1]"
             :totalRounds="totalRounds"
