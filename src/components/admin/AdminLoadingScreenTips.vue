@@ -41,7 +41,7 @@
               <v-btn text @click="closeTips">Cancel</v-btn>
               <v-btn
                 color="primary"
-                class="w3-race-bg--text"
+                class="w3-race-bg--text primary"
                 text
                 @click="saveTips"
               >
