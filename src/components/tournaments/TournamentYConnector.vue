@@ -1,6 +1,6 @@
 <template>
   <div class="connector-y">
-    <div class="connector-y-top" v-bind:style="`height: ${round.dimensions.cellHeight * 2}px;`">
+    <div class="connector-y-top" v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
       <div class="connector-y-container">
         <div class="connector-y-top-left"></div>
         <div class="connector-y-offset"></div>
@@ -15,7 +15,7 @@
       </div>
       <div class="connector-y-between"></div>
     </div>
-    <div class="connector-y-bottom" v-bind:style="`height: ${round.dimensions.cellHeight * 2}px;`">
+    <div class="connector-y-bottom" v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
       <div class="connector-y-between"></div>
       <div class="connector-y-container">
         <div class="connector-y-offset"></div>
