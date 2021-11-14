@@ -5,7 +5,7 @@
     v-if="round && round.round < totalRounds"
   >
     <div class="connector-header"
-         v-bind:style="`height: ${round.dimensions.headerHeight}px;`"></div>
+         v-bind:style="{ height: round.dimensions ? round.dimensions.headerHeight + 'px' : null }"></div>
     <div class="connector-connection"
          v-for="connection in numberOfConnectors"
          :key="connection">

@@ -1,8 +1,8 @@
 <template>
   <div class="connector-straight-open"
-       v-bind:style="`height: ${round.dimensions.cellHeight * 2}px;`">
+       v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
     <div class="connector-straight-open-top"
-         v-bind:style="`height: ${round.dimensions.cellHeight - 1}px;`">
+         v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight - 1 + 'px': null }">
     </div>
   </div>
 </template>
