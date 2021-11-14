@@ -152,7 +152,7 @@ import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Season } from "@/store/ranking/types";
+import { Gateways, Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
@@ -332,6 +332,17 @@ export default class PlayerView extends Vue {
 
   public gatewayChanged() {
     this.$store.direct.dispatch.player.reloadPlayer();
+  }
+
+  public isGatewayNeeded() {
+    const seasonId = this.$store.direct.state.player.selectedSeason.id;
+    if (seasonId > 5) {
+      this.$store.direct.state.gateway = Gateways.Europe;
+      return false;
+    }
+    else {
+      return true;
+    }  
   }
 
   async mounted() {
