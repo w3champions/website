@@ -109,7 +109,6 @@ const routes = [
       {
         path: "",
         props: true,
-
         component: PlayerProfileTab,
       },
       {
@@ -145,23 +144,28 @@ const routes = [
   },
   {
     path: "/OverallStatistics",
-    name: "OverallStatistics",
     component: OverallStatistics,
+    name: "OverallStatistics",
+    redirect: {name: 'OverallStatisticsPlayerActivity' },
     children: [
       {
-        path: "/",
+        path: "",
         component: PlayerActivityTab,
+        name: "OverallStatisticsPlayerActivity"
       },
       {
         path: "mmr-distribution",
+        name: "OverallStatisticsDistribution",
         component: MmrDistributionTab,
       },
       {
         path: "winrates-per-race-and-map",
+        name: "OverallStatisticsWinrates",
         component: WinrateTab,
       },
       {
         path: "heroes-winrates",
+        name: "OverallStatisticsHeroesWinrates",
         component: HeroTab,
       },
     ],

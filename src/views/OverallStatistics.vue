@@ -7,32 +7,25 @@
             <span>{{ $t("views_statistics.w3cstats") }}</span>
           </v-card-title>
           <v-tabs>
-            <v-tabs-slider />
-            <v-tab class="profileTab" exact :to="`/OverallStatistics/`">
+            <v-tabs-slider/>
+            <v-tab class="profileTab" exact :to="{name: 'OverallStatisticsPlayerActivity'}">
               {{ $t("views_statistics.playeractivity") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/OverallStatistics/mmr-distribution`"
-            >
+            <v-tab class="profileTab" :to="{name: 'OverallStatisticsDistribution'}">
               {{ $t("views_statistics.mmr") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/OverallStatistics/winrates-per-race-and-map`"
-            >
+            <v-tab class="profileTab" :to="{name: 'OverallStatisticsWinrates'}">
               {{ $t("views_statistics.wrs") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/OverallStatistics/heroes-winrates`"
-            >
+            <v-tab class="profileTab" :to="{name: 'OverallStatisticsHeroesWinrates'}">
               {{ $t("views_statistics.heroes") }}
             </v-tab>
           </v-tabs>
-          <keep-alive>
-            <router-view></router-view>
-          </keep-alive>
+          <v-card-text>
+            <keep-alive>
+              <router-view></router-view>
+            </keep-alive>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -42,15 +35,15 @@
 <script lang="ts">
 import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import {Component} from "vue-property-decorator";
 import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
 import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
 import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
-import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
-import { Season } from "@/store/ranking/types.ts";
+import {SeasonGameModeGateWayForMMR} from "@/store/overallStats/types";
+import {Season} from "@/store/ranking/types.ts";
 
 @Component({
   components: {
@@ -95,7 +88,7 @@ export default class OverallStatisticsView extends Vue {
       gateWay: this.$store.direct.state.gateway,
     };
     await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
-      mMRDistributionPayload
+        mMRDistributionPayload
     );
   }
 }
