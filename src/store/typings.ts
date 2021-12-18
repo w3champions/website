@@ -120,6 +120,7 @@ export enum EGameMode {
   GM_2ON2 = 2,
   GM_2ON2_AT = 6,
   GM_4ON4 = 4,
+  GM_4ON4_AT = 8,
   GM_FFA = 5,
   GM_FOOTMEN_FRENZY = 101,
 
