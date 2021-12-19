@@ -25,7 +25,7 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
-import AdminPlayerManagement from "@/components/admin/PlayerManagement/AdminPlayerManagement.vue";
+import AdminPlayerManagement from "@/components/admin/AdminPlayerManagement.vue";
 
 @Component({
   components: {

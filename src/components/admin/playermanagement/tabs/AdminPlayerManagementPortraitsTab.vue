@@ -30,7 +30,7 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 
 
 @Component({ components: {} })
-export default class AdminPlayerManagementPortraits extends Vue {
+export default class AdminPlayerManagementPortraitsTab extends Vue {
   @Prop() tag!: string;
   public dialogOpened = false;
   public managedPlayerSettings = {} as PersonalSetting;

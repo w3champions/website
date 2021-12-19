@@ -15,10 +15,10 @@
         return-object
         @click:clear="revertToDefault">
       </v-autocomplete>
-      <admin-player-management-profile
+      <admin-player-management-panel
         v-if="showPlayer"
         :tag="getManagedPlayer()">
-      </admin-player-management-profile>
+      </admin-player-management-panel>
   </v-container>
 </template>
 
@@ -26,9 +26,9 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { SearchedPlayer } from "@/store/admin/types";
-import AdminPlayerManagementProfile from "./AdminPlayerManagementProfile.vue"
+import AdminPlayerManagementPanel from "./playermanagement/AdminPlayerManagementPanel.vue"
 
-@Component({ components: { AdminPlayerManagementProfile }})
+@Component({ components: { AdminPlayerManagementPanel }})
 export default class AdminPlayerManagement extends Vue {
 
   public searchPlayerMgmtModel = {} as SearchedPlayer;

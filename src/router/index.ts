@@ -18,10 +18,15 @@ import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue"
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
-import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivityTab.vue";
-import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
-import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
-import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
+import PlayerActivityTab from "@/components/overal-statistics/tabs/PlayerActivityTab.vue";
+import WinrateTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
+import MmrDistributionTab from "@/components/overal-statistics/tabs/MmrDistributionTab.vue";
+import HeroTab from "@/components/overal-statistics/tabs/HeroTab.vue";
+import AdminPlayerManagementProfileTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementProfileTab.vue";
+import AdminPlayerManagementPortraitsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementPortraitsTab.vue";
+import AdminPlayerManagementSanctionsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementSanctionsTab.vue";
+import AdminPlayerManagementFlosettingsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementFlosettingsTab.vue";
+import AdminPlayerManagementStatsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementStatsTab.vue";
 
 Vue.use(VueRouter);
 
@@ -174,6 +179,33 @@ const routes = [
     path: "/AdminOnlyView",
     name: "Admin",
     component: Admin,
+    children: [
+      {
+        path: "player-profile",
+        name: "AdminPlayerManagementProfileTab",
+        component: AdminPlayerManagementProfileTab
+      },
+      {
+        path: "portraits",
+        name: "AdminPlayerManagementPortraitsTab",
+        component: AdminPlayerManagementPortraitsTab
+      },
+      {
+        path: "sanctions",
+        name: "AdminPlayerManagementSanctionsTab",
+        component: AdminPlayerManagementSanctionsTab
+      },
+      {
+        path: "flo-settings",
+        name: "AdminPlayerManagementFlosettingsTab",
+        component: AdminPlayerManagementFlosettingsTab
+      },
+      {
+        path: "stats",
+        name: "AdminPlayerManagementStatsTab",
+        component: AdminPlayerManagementStatsTab
+      }
+    ]
   },
   {
     path: "/tournaments",
