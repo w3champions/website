@@ -14,12 +14,20 @@ const mod = {
   } as PersonalSettingsState,
   actions: {
     async loadPersonalSetting(
-      context: ActionContext<PersonalSettingsState, RootState>
+      context: ActionContext<PersonalSettingsState, RootState>, 
+      adminManagedPlayerTag?: string,
     ) {
       const { commit, rootGetters, rootState } = moduleActionContext(
         context,
         mod
       );
+
+      if (adminManagedPlayerTag) {
+        const response = await rootGetters.personalSettingsService.retrievePersonalSetting(adminManagedPlayerTag);
+        commit.SET_MANAGED_PLAYER_SETTINGS(response);
+        return;
+      }
+
       commit.SET_PERSONAL_SETTING({} as PersonalSetting);
 
       const battleTag = rootState.player.battleTag;
@@ -76,6 +84,12 @@ const mod = {
         ...state.personalSettings,
         profilePicture,
       };
+    },
+    SET_MANAGED_PLAYER_SETTINGS(
+      state: PersonalSettingsState,
+      setting: PersonalSetting
+    ) {
+      state.managedPlayerSettings = setting;
     },
   },
 } as const;

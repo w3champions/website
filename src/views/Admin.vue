@@ -25,7 +25,7 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
-import AdminPlayerSearch from "@/components/admin/AdminPlayerSearch.vue";
+import AdminPlayerManagement from "@/components/admin/PlayerManagement/AdminPlayerManagement.vue";
 
 @Component({
   components: {
@@ -37,16 +37,16 @@ import AdminPlayerSearch from "@/components/admin/AdminPlayerSearch.vue";
     AdminProxies,
     AdminAlts,
     AdminGlobalMute,
-    AdminPlayerSearch
+    AdminPlayerManagement
   }
 })
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
     {
-      title: "Search Player",
+      title: "Player Management",
       icon: "mdi-account-search",
       key: "search",
-      component: "admin-player-search",
+      component: "admin-player-management",
     },
     {
       title: "Ban List",

@@ -27,7 +27,6 @@ import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
-import en from "@/locales/en";
 import { OauthState } from "@/store/oauth/types";
 
 Vue.use(Vuex);

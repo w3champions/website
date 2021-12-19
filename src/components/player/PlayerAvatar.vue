@@ -412,7 +412,6 @@ export default class PlayerAvatar extends Vue {
     ) {
       return true; // player has an alias in W3info db, and has NOT opted out of at least one alias option
     }
-
     return false; // might be opted out - might not have an alias
   }
 
@@ -421,10 +420,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   get liquipediaString(): string {
-    return (
-      this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ??
-      ""
-    );
+    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? '';
   }
 
   get aliasOrW3infoId(): string {

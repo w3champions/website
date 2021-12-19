@@ -27,6 +27,11 @@ const data = {
       save: "Save",
       gameMode: "Game Mode",
       mutePlayer: "Mute Player",
+      profile: "Profile",
+      portraits: "Portraits",
+      sanctions: "Sanctions",
+      flosettings: "Flo Settings",
+      stats: "Stats"
     },
     views_gettingstarted: {
       manualwarning:

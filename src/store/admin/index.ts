@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
-import { Action, ActionContext } from "vuex";
+import { ActionContext } from "vuex";
 import {
   AdminState,
   BannedPlayer,
@@ -30,6 +30,7 @@ const mod = {
     modifiedProxies: {nodeOverrides: [], automaticNodeOverrides: []} as ProxySettings,
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
+    managedPlayer: "",
   } as AdminState,
   
   actions: {
@@ -349,6 +350,17 @@ const mod = {
           rootState.oauth.token,
           mute
         );
+      },
+
+      async setManagedPlayer(
+        context: ActionContext<AdminState, RootState>,
+        battleTag: string,
+      ) : Promise<void> {
+        const { commit } = moduleActionContext(
+          context,
+          mod
+        );
+        commit.SET_MANAGED_PLAYER(battleTag);
       }
 
   },
@@ -392,6 +404,9 @@ const mod = {
     },
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
+    },
+    SET_MANAGED_PLAYER(state: AdminState, battleTag: string) {
+      state.managedPlayer = battleTag;
     }
   },
 } as const;

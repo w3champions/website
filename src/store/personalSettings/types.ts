@@ -3,6 +3,7 @@ import { RaceStat } from "@/store/player/types";
 
 export type PersonalSettingsState = {
   personalSettings: PersonalSetting;
+  managedPlayerSettings: PersonalSetting;
 };
 
 export type ProfilePicture = {

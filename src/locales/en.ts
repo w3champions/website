@@ -365,29 +365,6 @@ const en = {
     onGoing: "Now Playing",
     past: "Finished",
   },
-
-  proxies: {
-    eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
-    asia_east_via_cn_east: "Asia East via CN East",
-    russia_central_via_cn_east: "Russia Central via CN East",
-    us_west5_via_oceania2: "US West 5 via Oceania 2",
-    asia_east2_via_oceania2: "Asia East 2 via Oceania 2",
-    us_east_via_us_central2: "US East via US Central 2",
-    us_east_via_eu_west: "US East via EU West",
-    russia_central_via_eu_west: "Russia Central via EU West",
-    us_east_via_south_america: "US East via South America",
-    us_central2_via_south_america: "US Central 2 via South America",
-    eu_east4_via_ucloud_pathx: "EU East 4 via ucloud pathx",
-    eu_east4_via_eu_central2: "EU East 4 via EU Central 2",
-    west_india_via_oceania2: "West India via Oceania 2",
-    us_west_7_via_ucloud_pathx: "US West 7 via ucloud pathx",
-    asia_east2_via_asia_east: "Asia East 2 via Asia East",
-    west_india_via_eu_central2: "West India via EU Central 2",
-    russia_east_via_asia_east2: "Russia East via Asia East 2",
-    russia_central_via_korea_central2: "Russia Central via Korea Central 2",
-    africa_east_via_sg: "Africa East via Singapore",  
-    africa_east_via_sg_azure_via_simple_cloud: "Africa East via Singapore via simplecloud"  
-  }
 };
 
 export default en;

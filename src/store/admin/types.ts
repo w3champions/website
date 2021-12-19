@@ -13,6 +13,7 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+  managedPlayer: string;
 };
 
 export interface NewsMessage {
@@ -84,12 +85,12 @@ export interface QueuedPlayer {
   serverOption: string,
 }
 
-export type SearchedPlayer = {
+export interface SearchedPlayer {
   gameMode: number,
   player: PlayerOverview,
 }
 
-export type OverridesList = {
+export interface OverridesList {
   overrides: string[],
   isAutomatic: boolean,
 }
