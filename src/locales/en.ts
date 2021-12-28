@@ -35,6 +35,7 @@ const en = {
     GM_LEGION_4v4_X3: 'Legion TD 4v4 x3',
     GM_LEGION_1v1_x20: 'Legion TD 1v1 x20',
     GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
+    GM_LEGION_4v4_x20_AT: 'Legion TD 4v4 x20 AT',
     GM_ROC_1ON1: 'RoC 1vs1',
     GM_LTW_1ON1: 'Line Tower Wars 1vs1',
     GM_FROSTCRAFT_4ON4: 'Frostcraft 4v4',
