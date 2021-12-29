@@ -31,7 +31,8 @@ const data = {
       portraits: "Portraits",
       sanctions: "Sanctions",
       flosettings: "Flo Settings",
-      stats: "Stats"
+      stats: "Stats",
+      smurfs: "Smurfs",
     },
     views_gettingstarted: {
       manualwarning:

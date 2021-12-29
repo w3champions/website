@@ -6,9 +6,9 @@
           <v-card-title>
             <v-row no-gutters>
               <v-col :align-self="'center'">
-                <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
+                <span>{{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
-                <span class="mr-2" /> <!-- add some space between name and season badges -->
+                <span class="mr-2" />
                 <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block" >
                   <SeasonBadge :season="season" :on-click="selectSeason" />
                 </div>
@@ -98,43 +98,46 @@
             </v-row>
           </v-container>
 
-          <v-tabs v-model="tabsModel">
-            <v-tabs-slider></v-tabs-slider>
-            <v-tab
-              exact
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}`"
-            >
-              {{ $t("views_player.profile") }}
-            </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
-            >
-              {{ $t("views_player.matchhistory") }}
-            </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
-            >
-              {{ $t("views_player.teams") }}
-            </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
-            >
-              {{ $t("views_player.statistics") }}
-            </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
-            >
-              {{ $t("views_player.clan") }}
-            </v-tab>
-          </v-tabs>
-          <keep-alive>
-            <router-view></router-view>
-          </keep-alive>
+          <div v-if="!adminView">
+            <v-tabs v-model="tabsModel">
+              <v-tabs-slider></v-tabs-slider>
+              <v-tab
+                exact
+                class="profileTab"
+                :to="`/player/${encodeURIComponent(this.battleTag)}`"
+              >
+                {{ $t("views_player.profile") }}
+              </v-tab>
+              <v-tab
+                class="profileTab"
+                :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
+              >
+                {{ $t("views_player.matchhistory") }}
+              </v-tab>
+              <v-tab
+                class="profileTab"
+                :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
+              >
+                {{ $t("views_player.teams") }}
+              </v-tab>
+              <v-tab
+                class="profileTab"
+                :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
+              >
+                {{ $t("views_player.statistics") }}
+              </v-tab>
+              <v-tab
+                class="profileTab"
+                :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
+              >
+                {{ $t("views_player.clan") }}
+              </v-tab>
+            </v-tabs>
+            <keep-alive>
+              <router-view></router-view>
+            </keep-alive>
+          </div>
+          
         </v-card>
       </v-col>
     </v-row>
@@ -188,6 +191,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
   @Prop() public freshLogin!: boolean;
+  @Prop() public adminView? = false;
 
   public tabsModel = {};
   private _intervalRefreshHandle?: number = undefined;
@@ -221,13 +225,7 @@ export default class PlayerView extends Vue {
   }
 
   get aliasName(): string | false {
-    if (this.$store.direct.state.player.playerProfile.playerAkaData != null) {
-      return (
-        this.$store.direct.state.player.playerProfile.playerAkaData.name ??
-        false
-      );
-    }
-    return false;
+    return this.$store.direct.state.player.playerProfile.playerAkaData.name ?? false;
   }
 
   get seasonsWithoutCurrentOne() {

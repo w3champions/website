@@ -54,6 +54,7 @@ export default class AdminPlayerManagement extends Vue {
       let bTag = searchedPlayer.player.playerIds[0].battleTag;
       this.showPlayer = true;
       this.$store.direct.dispatch.admin.setManagedPlayer(bTag);
+      this.$router.push('/AdminOnlyView/player-profile')
     }
   }
 

@@ -8,21 +8,25 @@
     </v-toolbar>
     <v-tabs>
       <v-tabs-slider/>
-      <v-tab class="profileTab" exact :to="{name: 'AdminPlayerManagementProfileTab'}">
+      <v-tab class="adminTab" exact :to="{name: 'AdminPlayerManagementProfileTab'}">
         {{ $t("views_admin.profile") }}
       </v-tab>
-      <v-tab class="profileTab" :to="{name: 'AdminPlayerManagementPortraitsTab'}">
+      <v-tab class="adminTab" :to="{name: 'AdminPlayerManagementPortraitsTab'}">
         {{ $t("views_admin.portraits") }}
       </v-tab>
-      <v-tab class="profileTab" :to="{name: 'AdminPlayerManagementSanctionsTab'}">
+      <v-tab class="adminTab" :to="{name: 'AdminPlayerManagementSanctionsTab'}">
         {{ $t("views_admin.sanctions") }}
       </v-tab>
-      <v-tab class="profileTab" :to="{name: 'AdminPlayerManagementFlosettingsTab'}">
+      <v-tab class="adminTab" :to="{name: 'AdminPlayerManagementFlosettingsTab'}">
         {{ $t("views_admin.flosettings") }}
       </v-tab>
-      <v-tab class="profileTab" :to="{name: 'AdminPlayerManagementStatsTab'}">
+      <v-tab class="adminTab" :to="{name: 'AdminPlayerManagementStatsTab'}">
         {{ $t("views_admin.stats") }}
       </v-tab>
+      <v-tab class="adminTab" :to="{ name: 'AdminPlayerManagementSmurfsTab' }">
+        {{ $t("views_admin.smurfs") }}
+      </v-tab>
+
     </v-tabs>
     <v-card-text>
       <keep-alive>
@@ -49,15 +53,6 @@ import AdminPlayerManagementStatsTab from "./tabs/AdminPlayerManagementStatsTab.
   AdminPlayerManagementStatsTab }})
 export default class AdminPlayerManagementPanel extends Vue {
   @Prop() tag!: string;
-
-  currentTab = 'Profile';
-  profileTabs = [
-    'Profile',
-    'Portrait',
-    'Sanctions',
-    'Flo Settings',
-    'Stats'
-  ]
 
   private async init() : Promise<void> {
     await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.tag);

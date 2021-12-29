@@ -27,6 +27,7 @@ import AdminPlayerManagementPortraitsTab from "@/components/admin/playermanageme
 import AdminPlayerManagementSanctionsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementSanctionsTab.vue";
 import AdminPlayerManagementFlosettingsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementFlosettingsTab.vue";
 import AdminPlayerManagementStatsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementStatsTab.vue";
+import AdminPlayerManagementSmurfsTab from "@/components/admin/playermanagement/tabs/AdminPlayerManagementSmurfsTab.vue"
 
 Vue.use(VueRouter);
 
@@ -204,6 +205,11 @@ const routes = [
         path: "stats",
         name: "AdminPlayerManagementStatsTab",
         component: AdminPlayerManagementStatsTab
+      },
+      {
+        path: "smurfs",
+        name: "AdminPlayerManagementSmurfsTab",
+        component: AdminPlayerManagementSmurfsTab
       }
     ]
   },
