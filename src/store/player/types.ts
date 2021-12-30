@@ -17,6 +17,7 @@ export type PlayerState = {
   selectedSeason: Season;
   gameMode: EGameMode;
   race: ERaceEnum;
+  opponentRace: ERaceEnum;
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];

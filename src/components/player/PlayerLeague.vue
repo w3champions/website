@@ -59,7 +59,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { EGameMode, Match } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
@@ -121,6 +121,7 @@ export default class PlayerLeague extends Vue {
       this.battleTag,
       "",
       this.gameMode,
+      ERaceEnum.TOTAL,
       this.gateWay,
       this.selectedSeason.id
     );

@@ -1,4 +1,4 @@
-import { EGameMode, Match, MatchDetail } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/typings";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 
@@ -76,6 +76,7 @@ export default class MatchService {
     battleTag: string,
     opponentTag: string,
     gameMode: EGameMode,
+    opponentRace: ERaceEnum,
     gateway: Gateways,
     season: number
   ): Promise<{ count: number; matches: Match[] }> {
@@ -97,6 +98,10 @@ export default class MatchService {
     }
 
     url += `&season=${season}`;
+
+    if (opponentRace !== ERaceEnum.TOTAL) {
+      url += `&opponentRace=${opponentRace}`;
+    }
 
     const response = await fetch(url, {
       headers: {

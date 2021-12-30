@@ -85,7 +85,16 @@
             </template>
           </v-autocomplete>
         </v-col>
-        <v-col cols="12" md="2" class="pb-0">
+        <v-col>
+          <v-btn 
+            outlined
+            @click="filtersVisible=!filtersVisible"
+          > {{filterButtonText}}
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row v-show="filtersVisible">
+        <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
             :items="gameModes"
@@ -93,6 +102,17 @@
             item-value="modeId"
             @change="setSelectedGameModeForSearch"
             label="Mode"
+            outlined
+          />
+        </v-col>
+        <v-col cols="12" md="2">
+         <v-select
+            class="race-select-box"
+            :items="races"
+            item-text="raceName"
+            item-value="raceId"
+            @change="setRaceForSearch"
+            label="Opponent Race"
             outlined
           />
         </v-col>
@@ -143,7 +163,7 @@ export default class PlayerMatchesTab extends Vue {
   public isLoadingMatches = false;
   public isLoading = false;
   public gameModeEnums = EGameMode;
-  public raceEnums = ERaceEnum;
+  public filtersVisible = false;
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal?: Ranking) {
@@ -232,6 +252,35 @@ export default class PlayerMatchesTab extends Vue {
     ];
   }
 
+  get races() {
+    return [
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
+      raceId: ERaceEnum.TOTAL,
+    },
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
+      raceId: ERaceEnum.HUMAN,
+    },
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
+      raceId: ERaceEnum.ORC,
+    },
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
+      raceId: ERaceEnum.NIGHT_ELF,
+    },
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
+      raceId: ERaceEnum.UNDEAD,
+    },
+    {
+      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
+      raceId: ERaceEnum.RANDOM,
+    }
+    ];
+  }
+
   get noDataText(): string {
     if (!this.search || this.search.length < 3) {
       return "Type at least 3 letters";
@@ -256,6 +305,15 @@ export default class PlayerMatchesTab extends Vue {
     return ((this.opponentWins / this.matches.length) * 100).toFixed(1);
   }
 
+  get filterButtonText() {
+    if (this.filtersVisible) {
+      return "Hide Additional Filters";
+    }
+    else {
+      return "Show Additional Filters";
+    }
+  }
+
   get searchRanks(): Ranking[] {
     return this.$store.direct.state.rankings.searchRanks;
   }
@@ -269,6 +327,11 @@ export default class PlayerMatchesTab extends Vue {
     this.getMatches();
   }
 
+  public setRaceForSearch(race: ERaceEnum) {
+    this.$store.direct.commit.player.SET_OPPONENT_RACE(race);
+    this.getMatches();
+  }
+  
   get totalMatchesAgainstOpponent() {
     const opponentTag = this.$store.direct.state.player.opponentTag;
     if (!opponentTag || !this.matches) {
