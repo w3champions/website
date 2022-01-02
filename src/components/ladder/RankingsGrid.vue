@@ -32,10 +32,10 @@
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
-          <td>
+          <td class="d-md-flex">
             <div
-              class="d-inline-block rank-icon-container"
-              v-bind:class="{ 'ml-3': index > 0 }"
+              class="rank-icon-container my-1"
+              v-bind:class="{ 'ml-md-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag + '_' + item.race"
             >
@@ -52,7 +52,7 @@
                 :player-race="item.race"
               />
               <div
-                class="country-flag__container"
+                class="country-flag__container ml-1"
                 v-if="
                   (item.playersInfo && item.playersInfo[index].countryCode) ||
                   item.playersInfo[index].location
@@ -148,7 +148,12 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import {
+  EAvatarCategory,
+  EGameMode,
+  ERaceEnum,
+  OngoingMatches,
+} from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -175,99 +180,100 @@ export default class RankingsGrid extends Vue {
 
   get headers() {
     return [
-    {
-      text: this.$t("components_ladder_rankingsgrid.rank"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.rankNumber - a.rankNumber;
+      {
+        text: this.$t("components_ladder_rankingsgrid.rank"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.rankNumber - a.rankNumber;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.player"),
-      align: "start",
-      sortable: false,
-      minWidth: "170px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return ("" + b.player.name).localeCompare(a.player.name);
+      {
+        text: this.$t("components_ladder_rankingsgrid.player"),
+        align: "start",
+        sortable: false,
+        minWidth: "170px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return ("" + b.player.name).localeCompare(a.player.name);
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.race"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.race - a.race;
+      {
+        text: this.$t("components_ladder_rankingsgrid.race"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.race - a.race;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.clan"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return ("" + b.playersInfo[0].clanId).localeCompare(
-          a.playersInfo[0].clanId
-        );
+      {
+        text: this.$t("components_ladder_rankingsgrid.clan"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return ("" + b.playersInfo[0].clanId).localeCompare(
+            a.playersInfo[0].clanId
+          );
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.wins"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.player.wins - a.player.wins;
+      {
+        text: this.$t("components_ladder_rankingsgrid.wins"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.player.wins - a.player.wins;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.losses"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.player.losses - a.player.losses;
+      {
+        text: this.$t("components_ladder_rankingsgrid.losses"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.player.losses - a.player.losses;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.total"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.player.games - a.player.games;
+      {
+        text: this.$t("components_ladder_rankingsgrid.total"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.player.games - a.player.games;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.winrate"),
-      align: "end",
-      sortable: false,
-      width: "50px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.player.winrate - a.player.winrate;
+      {
+        text: this.$t("components_ladder_rankingsgrid.winrate"),
+        align: "end",
+        sortable: false,
+        width: "50px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.player.winrate - a.player.winrate;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.mmr"),
-      align: "end",
-      sortable: false,
-      width: "25px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.player.mmr - a.player.mmr;
+      {
+        text: this.$t("components_ladder_rankingsgrid.mmr"),
+        align: "end",
+        sortable: false,
+        width: "25px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.player.mmr - a.player.mmr;
+        },
       },
-    },
-    {
-      text: this.$t("components_ladder_rankingsgrid.rp"),
-      align: "end",
-      sortable: false,
-      width: "25px",
-      sortFunction: (a: Ranking, b: Ranking): number => {
-        return b.rankingPoints - a.rankingPoints;
+      {
+        text: this.$t("components_ladder_rankingsgrid.rp"),
+        align: "end",
+        sortable: false,
+        width: "25px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.rankingPoints - a.rankingPoints;
+        },
       },
-    },
-  ];}
+    ];
+  }
 
   public sortedRankings: Ranking[] = this.rankings;
   public sortColumn = "Rank";
@@ -504,37 +510,19 @@ export default class RankingsGrid extends Vue {
     margin-left: 0 !important;
   }
 }
+.rank-icon-container {
+  display: flex;
+  align-items: center;
+}
 
 td.header {
   position: relative;
 
   .sort-icon {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     right: -7px;
   }
-}
-
-.country-flag__container {
-  position: relative;
-  display: inline-block;
-}
-
-.twitch__container {
-  position: relative;
-  display: inline-block;
-  left: 8px;
-}
-
-::v-deep .country-flag {
-  position: absolute;
-  top: -10px;
-}
-
-.twitch-icon {
-  position: absolute;
-  top: -5px;
-  left: 10px;
 }
 
 .swords {
