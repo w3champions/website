@@ -272,6 +272,10 @@ const en = {
     MurgulOasisLV: "Mur'gul Oasis LV",
     BanditsRetreatv1_1: "Bandits Retreat",
 
+    // S9
+
+    "AutumnLeavesv2-0": "Autumn Leaves",
+
     // tour
     ShallowGravetourney: "Shallow Grave",
     TwistedMeadowstourney: "Twisted Meadows",
