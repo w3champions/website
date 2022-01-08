@@ -513,6 +513,14 @@ export default class RankingsGrid extends Vue {
 .rank-icon-container {
   display: flex;
   align-items: center;
+  width: 10.75rem;
+  margin-left: 0!important;
+  min-height: 39px;
+}
+
+.d-md-flex {
+  height: auto;
+  flex-wrap: wrap
 }
 
 td.header {
