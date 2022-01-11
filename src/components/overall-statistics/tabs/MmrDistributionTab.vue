@@ -75,7 +75,7 @@ import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/typings";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
-import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
+import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import { Watch } from "vue-property-decorator";
 
 @Component({

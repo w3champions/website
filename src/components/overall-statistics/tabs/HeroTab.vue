@@ -41,11 +41,11 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
-import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
-import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
-import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
-import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
+import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
+import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
+import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
+import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
+import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import { EGameMode, EPick } from "@/store/typings";
 import { PlayedHero } from "@/store/overallStats/types";
 @Component({

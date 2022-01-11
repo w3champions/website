@@ -5,7 +5,7 @@
 import { Component, Prop } from "vue-property-decorator";
 
 import { ChartData } from "chart.js";
-import BarChart from "@/components/overal-statistics/BarChart.vue";
+import BarChart from "@/components/overall-statistics/BarChart.vue";
 import Vue from "vue";
 import { MapCount } from "@/store/overallStats/types";
 

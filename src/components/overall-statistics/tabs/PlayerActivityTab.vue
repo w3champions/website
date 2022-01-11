@@ -33,7 +33,7 @@
           </div>
         </v-col>
         <v-col cols="12" md="10">
-          <multiple-amount-per-day-chart
+          <activity-per-day-chart
             v-if="isAllMode"
             style="position: relative"
             :game-days="gameDays"
@@ -168,17 +168,17 @@ import {
   PopularGameHour,
 } from "@/store/overallStats/types";
 import Component from "vue-class-component";
-import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
-import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
-import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
+import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
+import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
+import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
 import { EGameMode } from "@/store/typings";
-import MultipleAmountPerDayChart from "@/components/overal-statistics/MultipleAmountPerDayChart.vue";
-import MapsPerSeasonChart from "@/components/overal-statistics/MapsPerSeasonChart.vue";
+import ActivityPerDayChart from "@/components/overall-statistics/ActivityPerDayChart.vue";
+import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonChart.vue";
 
 @Component({
   components: {
     MapsPerSeasonChart,
-    MultipleAmountPerDayChart,
+    ActivityPerDayChart,
     GameLengthChart,
     AmountPerDayChart,
     PopularGameTimeChart,
