@@ -33,15 +33,15 @@
 </template>
 
 <script lang="ts">
-import AmountPerDayChart from "@/components/overal-statistics/AmountPerDayChart.vue";
+import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import Vue from "vue";
 import {Component} from "vue-property-decorator";
-import GameLengthChart from "@/components/overal-statistics/GameLengthChart.vue";
-import PopularGameTimeChart from "@/components/overal-statistics/PopularGameTimeChart.vue";
-import PlayedHeroesChart from "@/components/overal-statistics/PlayedHeroesChart.vue";
-import HeroWinrate from "@/components/overal-statistics/HeroWinrate.vue";
+import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
+import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
+import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
+import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import MmrDistributionChart from "@/components/overal-statistics/MmrDistributionChart.vue";
+import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import {SeasonGameModeGateWayForMMR} from "@/store/overallStats/types";
 import {Season} from "@/store/ranking/types.ts";
 
