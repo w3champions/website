@@ -163,6 +163,7 @@ export default class PlayerMatchesTab extends Vue {
   public isLoadingMatches = false;
   public isLoading = false;
   public gameModeEnums = EGameMode;
+  public raceEnums = ERaceEnum;
   public filtersVisible = false;
 
   @Watch("searchModel")
