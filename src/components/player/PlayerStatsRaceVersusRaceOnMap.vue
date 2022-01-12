@@ -28,7 +28,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { RaceWinsOnMap } from "@/store/player/types";
-import RaceToMapStat from "@/components/overal-statistics/RaceToMapStat.vue";
+import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 

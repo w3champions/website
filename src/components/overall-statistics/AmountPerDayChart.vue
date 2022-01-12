@@ -5,7 +5,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import { GameDay } from "@/store/overallStats/types";
 import moment from "moment";
-import LineChart from "@/components/overal-statistics/LineChart.vue";
+import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
 

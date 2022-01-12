@@ -18,10 +18,10 @@ import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue"
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
-import PlayerActivityTab from "@/components/overal-statistics/tabs/PlayerActivityTab.vue";
-import WinrateTab from "@/components/overal-statistics/tabs/WinratesTab.vue";
-import MmrDistributionTab from "@/components/overal-statistics/tabs/MmrDistributionTab.vue";
-import HeroTab from "@/components/overal-statistics/tabs/HeroTab.vue";
+import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivityTab.vue";
+import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
+import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
+import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
 
 Vue.use(VueRouter);
 

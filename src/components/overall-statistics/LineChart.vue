@@ -55,6 +55,11 @@ export default class LineChart extends Mixins(Line) {
         },
       ],
     },
+    elements: {
+      point: {
+        radius: 1
+      }
+    },
   };
 
   mounted() {
@@ -71,9 +76,9 @@ export default class LineChart extends Mixins(Line) {
           // e.g. "rgb(23, 21, 42)" -> "(23, 21, 42"
           // this will be assembled to full string e.g. "rgba(23, 21, 42, 0.5)"
           const regex = /\((\d*,\s?){2}\d*/g;
-          gradient?.addColorStop(0.1, "rgba" + color.match(regex) + ", 0.5)");
-          gradient?.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.25)");
-          gradient?.addColorStop(0.6, "rgba" + color.match(regex) + ", 0.1)");
+          gradient?.addColorStop(0.1, "rgba" + color.match(regex) + ", 0.75)");
+          gradient?.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.50)");
+          gradient?.addColorStop(0.6, "rgba" + color.match(regex) + ", 0.25)");
           gradient?.addColorStop(0.85, "rgba" + color.match(regex) + ", 0.0)");
           this.chartData.datasets[_i].backgroundColor = gradient;
         }
