@@ -123,7 +123,7 @@ export default class ActivityPerDayChart extends Vue {
         return 4;
 
       case EGameMode.GM_FOOTMEN_FRENZY:
-        return 6;
+        return 4;
 
       case EGameMode.GM_LEGION_4v4_X3:
         return 4;
