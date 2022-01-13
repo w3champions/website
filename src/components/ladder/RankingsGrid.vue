@@ -508,12 +508,13 @@ export default class RankingsGrid extends Vue {
   .rank-icon-container {
     margin-top: 5px;
     margin-left: 0 !important;
+    min-width: 10rem;
   }
 }
 .rank-icon-container {
   display: flex;
   align-items: center;
-  width: 12rem;
+  width: 50%;
   margin-left: 0!important;
   min-height: 39px;
 }
