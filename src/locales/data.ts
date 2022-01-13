@@ -300,6 +300,7 @@ const data = {
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Select Mode",
+      selectseason: "Select Season",
       gamemodedesc1:
         "Game Modes are normalized to compare their popularity more easily:",
       gamemodedesc2:
