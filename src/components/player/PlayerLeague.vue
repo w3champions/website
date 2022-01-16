@@ -122,6 +122,7 @@ export default class PlayerLeague extends Vue {
       "",
       this.gameMode,
       ERaceEnum.TOTAL,
+      ERaceEnum.TOTAL,
       this.gateWay,
       this.selectedSeason.id
     );
