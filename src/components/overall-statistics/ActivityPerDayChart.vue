@@ -15,6 +15,7 @@ import { EGameMode } from "@/store/typings";
 })
 export default class ActivityPerDayChart extends Vue {
   @Prop() public gameDays!: GameDayPerMode[];
+  @Prop() public selectedGameMode!: EGameMode;
 
   get gameDayDates() {
     return this.allSet.gameDays.map((g) => moment(g.date).format("LL"));
@@ -32,6 +33,13 @@ export default class ActivityPerDayChart extends Vue {
           // Filter out gameMode 9 as it does not exist
           // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
           return c.gameMode !== 9 && c.gameMode !== 6;
+        })
+        // then only show the data that user selected
+        .filter((c) => {
+          return (
+            this.selectedGameMode === EGameMode.UNDEFINED ||
+            c.gameMode === this.selectedGameMode
+          );
         })
         .map((c) => {
           return {
@@ -66,7 +74,7 @@ export default class ActivityPerDayChart extends Vue {
 
       case EGameMode.GM_FFA:
         return "rgb(255,114,20)";
-      
+
       case EGameMode.GM_4ON4_AT:
         return "rgb(21, 189, 124)";
 
@@ -118,7 +126,7 @@ export default class ActivityPerDayChart extends Vue {
 
       case EGameMode.GM_FFA:
         return 2;
-      
+
       case EGameMode.GM_4ON4_AT:
         return 4;
 
