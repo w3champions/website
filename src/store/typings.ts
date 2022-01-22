@@ -122,9 +122,7 @@ export enum EGameMode {
   GM_4ON4 = 4,
   GM_4ON4_AT = 8,
   GM_FFA = 5,
-  GM_FOOTMEN_FRENZY = 101,
 
-  GM_LEGION_4v4_X3 = 201,
   GM_LEGION_4v4_X20 = 202,
   GM_LEGION_1v1_x20 = 203,
   GM_LEGION_4v4_x20_AT = 204,
