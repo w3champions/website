@@ -98,45 +98,43 @@
             </v-row>
           </v-container>
 
-          <div v-if="!adminView">
-            <v-tabs v-model="tabsModel">
-              <v-tabs-slider></v-tabs-slider>
-              <v-tab
-                exact
-                class="profileTab"
-                :to="`/player/${encodeURIComponent(this.battleTag)}`"
-              >
-                {{ $t("views_player.profile") }}
-              </v-tab>
-              <v-tab
-                class="profileTab"
-                :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
-              >
-                {{ $t("views_player.matchhistory") }}
-              </v-tab>
-              <v-tab
-                class="profileTab"
-                :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
-              >
-                {{ $t("views_player.teams") }}
-              </v-tab>
-              <v-tab
-                class="profileTab"
-                :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
-              >
-                {{ $t("views_player.statistics") }}
-              </v-tab>
-              <v-tab
-                class="profileTab"
-                :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
-              >
-                {{ $t("views_player.clan") }}
-              </v-tab>
-            </v-tabs>
-            <keep-alive>
-              <router-view></router-view>
-            </keep-alive>
-          </div>
+          <v-tabs v-model="tabsModel">
+            <v-tabs-slider></v-tabs-slider>
+            <v-tab
+              exact
+              class="profileTab"
+              :to="`/player/${encodeURIComponent(this.battleTag)}`"
+            >
+              {{ $t("views_player.profile") }}
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
+            >
+              {{ $t("views_player.matchhistory") }}
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
+            >
+              {{ $t("views_player.teams") }}
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
+            >
+              {{ $t("views_player.statistics") }}
+            </v-tab>
+            <v-tab
+              class="profileTab"
+              :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
+            >
+              {{ $t("views_player.clan") }}
+            </v-tab>
+          </v-tabs>
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
           
         </v-card>
       </v-col>
@@ -191,7 +189,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 export default class PlayerView extends Vue {
   @Prop() public id!: string;
   @Prop() public freshLogin!: boolean;
-  @Prop() public adminView? = false;
+  @Prop() public adminView?: boolean = false;
 
   public tabsModel = {};
   private _intervalRefreshHandle?: number = undefined;
