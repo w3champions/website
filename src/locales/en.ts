@@ -31,8 +31,6 @@ const en = {
     GM_4ON4: "4 vs 4",
     GM_4ON4_AT: "4 vs 4 AT",
     GM_FFA: "FFA",
-    GM_FOOTMEN_FRENZY: 'Footmen Frenzy',
-    GM_LEGION_4v4_X3: 'Legion TD 4v4 x3',
     GM_LEGION_1v1_x20: 'Legion TD 1v1 x20',
     GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
     GM_LEGION_4v4_x20_AT: 'Legion TD 4v4 x20 AT',
@@ -291,6 +289,7 @@ const en = {
     ionTD7_0c1TeamOZEW3C: "LegionTD x20 7.0c",
     ionTD7_0dTeamOZEW3C: "LegionTD x20 7.0d",
     ionTD70eTeamOZE: "LegionTD x20 7.0e",
+    ionTD9_0bTeamOZEW3C: "LegionTD x20 9.0b",
 
     // ROC
     FrostsabreROC: "Frostsabre (ROC)",
