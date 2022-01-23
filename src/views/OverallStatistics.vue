@@ -43,7 +43,7 @@ import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import {SeasonGameModeGateWayForMMR} from "@/store/overallStats/types";
-import {Season} from "@/store/ranking/types.ts";
+import {Season} from "@/store/ranking/types";
 
 @Component({
   components: {
