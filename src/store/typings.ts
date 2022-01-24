@@ -115,7 +115,7 @@ export type OngoingMatches=Record<string,{
 }>
 
 export enum EGameMode {
-  UNDEFINED,
+  UNDEFINED = 0,
   GM_1ON1 = 1,
   GM_2ON2 = 2,
   GM_2ON2_AT = 6,

@@ -271,8 +271,10 @@ const en = {
     BanditsRetreatv1_1: "Bandits Retreat",
 
     // S9
-
     "AutumnLeavesv2-0": "Autumn Leaves",
+
+    // S10
+    "ShatteredExilev2-07": "Shattered Exile",
 
     // tour
     ShallowGravetourney: "Shallow Grave",
