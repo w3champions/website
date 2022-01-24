@@ -15,6 +15,7 @@ import { EGameMode } from "@/store/typings";
 })
 export default class ActivityPerDayChart extends Vue {
   @Prop() public gameDays!: GameDayPerMode[];
+  @Prop() public selectedGameMode!: EGameMode;
 
   get gameDayDates() {
     return this.allSet.gameDays.map((g) => moment(g.date).format("LL"));
@@ -29,9 +30,16 @@ export default class ActivityPerDayChart extends Vue {
       labels: this.gameDayDates,
       datasets: this.gameDays
         .filter((c) => {
-          // Filter out gameMode 9 as it does not exist
+          // Filter out all game modes that are not present in enum "EGameMode"
           // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
-          return c.gameMode !== 9 && c.gameMode !== 6;
+          return Object.values( EGameMode ).includes( c.gameMode ) && c.gameMode !== 6;
+        })
+        // then only show the data that user selected
+        .filter((c) => {
+          return (
+            this.selectedGameMode === EGameMode.UNDEFINED ||
+            c.gameMode === this.selectedGameMode
+          );
         })
         .map((c) => {
           return {
@@ -66,15 +74,9 @@ export default class ActivityPerDayChart extends Vue {
 
       case EGameMode.GM_FFA:
         return "rgb(255,114,20)";
-      
+
       case EGameMode.GM_4ON4_AT:
         return "rgb(21, 189, 124)";
-
-      case EGameMode.GM_FOOTMEN_FRENZY:
-        return "rgb(230, 46, 92)";
-
-      case EGameMode.GM_LEGION_4v4_X3:
-        return "rgb(131, 51, 0)";
 
       case EGameMode.GM_LEGION_4v4_X20:
         return "rgb(191, 121, 0)";
@@ -118,14 +120,8 @@ export default class ActivityPerDayChart extends Vue {
 
       case EGameMode.GM_FFA:
         return 2;
-      
+
       case EGameMode.GM_4ON4_AT:
-        return 4;
-
-      case EGameMode.GM_FOOTMEN_FRENZY:
-        return 4;
-
-      case EGameMode.GM_LEGION_4v4_X3:
         return 4;
 
       case EGameMode.GM_LEGION_4v4_X20:
