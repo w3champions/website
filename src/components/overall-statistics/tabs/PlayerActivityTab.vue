@@ -34,8 +34,8 @@
         </v-col>
         <v-col cols="12" md="10">
           <activity-per-day-chart
-            v-if="isAllMode"
             style="position: relative"
+            :selectedGameMode="selectedGamesPerDayMode"
             :game-days="gameDays"
           />
         </v-col>
@@ -261,7 +261,7 @@ export default class PlayerActivityTab extends Vue {
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        gameMode: EGameMode.GM_FFA,
+        modeId: EGameMode.GM_FFA,
       },
     ];
   }
@@ -282,13 +282,14 @@ export default class PlayerActivityTab extends Vue {
       this.overWrittenOnce = true;
     }
 
-    const selectedSeasonMaps = this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
-      (m) =>
-        m.season ===
-        (this.selectedSeasonForMaps === "All"
-          ? -1
-          : parseInt(this.selectedSeasonForMaps))
-    )[0];
+    const selectedSeasonMaps =
+      this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
+        (m) =>
+          m.season ===
+          (this.selectedSeasonForMaps === "All"
+            ? -1
+            : parseInt(this.selectedSeasonForMaps))
+      )[0];
     if (!selectedSeasonMaps) return [];
     return (
       selectedSeasonMaps?.matchesOnMapPerModes?.filter(
@@ -309,7 +310,6 @@ export default class PlayerActivityTab extends Vue {
     let all = this.$store.direct.state.overallStatistics.gamesPerDay[0];
     let us = this.$store.direct.state.overallStatistics.gamesPerDay[1];
     let eu = this.$store.direct.state.overallStatistics.gamesPerDay[2];
-
     const filterForCurrentMode = (all: GameDayPerMode[]) => {
       return all.filter((g) => g.gameMode === this.selectedGamesPerDayMode);
     };
