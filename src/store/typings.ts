@@ -115,16 +115,14 @@ export type OngoingMatches=Record<string,{
 }>
 
 export enum EGameMode {
-  UNDEFINED,
+  UNDEFINED = 0,
   GM_1ON1 = 1,
   GM_2ON2 = 2,
   GM_2ON2_AT = 6,
   GM_4ON4 = 4,
   GM_4ON4_AT = 8,
   GM_FFA = 5,
-  GM_FOOTMEN_FRENZY = 101,
 
-  GM_LEGION_4v4_X3 = 201,
   GM_LEGION_4v4_X20 = 202,
   GM_LEGION_1v1_x20 = 203,
   GM_LEGION_4v4_x20_AT = 204,

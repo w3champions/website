@@ -114,14 +114,6 @@ export default class PlayerActivityTab extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FOOTMEN_FRENZY]}`),
-        modeId: EGameMode.GM_FOOTMEN_FRENZY,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X3]}`),
-        modeId: EGameMode.GM_LEGION_4v4_X3,
-      },
-      {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
         modeId: EGameMode.GM_LEGION_1v1_x20,
       },
