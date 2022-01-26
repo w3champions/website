@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <div
         style="display: inline;"
-        class="pointer"
+        class="pointer player-name"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openProfileInNewTab(playerId.battleTag)"
         v-on="on"
@@ -42,3 +42,14 @@ export default class PlayerRankInfo extends Vue {
   }
 }
 </script>
+
+<style scoped>
+
+.player-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 7rem;
+}
+
+</style>
