@@ -54,7 +54,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EGameMode, ERaceEnum } from "@/store/typings";
-import { Gateways } from '@/store/ranking/types';
+import { Gateways } from "@/store/ranking/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 
@@ -71,23 +71,22 @@ export default class ModeStatsGrid extends Vue {
   }
 
   get gameModeStatsCombined(): ModeStat[] {
-  
-    let gm2v2s = this.stats.filter( (g) => g.gameMode === EGameMode.GM_2ON2_AT );
+    let gm2v2s = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
 
-    if (gm2v2s.length === 0) 
-      return this.stats;
+    if (gm2v2s.length === 0) return this.stats;
 
     const combindes2v2 = this.combineStats(gm2v2s);
 
-    combindes2v2.winrate = combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
+    combindes2v2.winrate =
+      combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
     combindes2v2.mmr = Math.round(combindes2v2.mmr / gm2v2s.length);
     combindes2v2.rankingPoints = Math.round(
       combindes2v2.rankingPoints / gm2v2s.length
     );
     combindes2v2.quantile = combindes2v2.quantile / gm2v2s.length;
 
-    const combined = new Array<ModeStat>( 0 );
-    combined.push( combindes2v2 );
+    const combined = new Array<ModeStat>(0);
+    combined.push(combindes2v2);
 
     const gm1v1 = this.stats.filter((g) => g.gameMode === EGameMode.GM_1ON1);
 
@@ -97,11 +96,13 @@ export default class ModeStatsGrid extends Vue {
 
     const gm4v4 = this.stats.filter((g) => g.gameMode === EGameMode.GM_4ON4);
 
-    return [...gm1v1, ...gm2v2, combindes2v2, ...gm4v4, ...ffa].filter((i) => i); //filter out null & undefined
+    return [...gm1v1, ...gm2v2, combindes2v2, ...gm4v4, ...ffa].filter(
+      (i) => i
+    ); //filter out null & undefined
   }
 
   private combineStats(gm2v2s: ModeStat[]): ModeStat {
-    const empty = {
+    const empty: ModeStat = {
       id: "",
       gameMode: EGameMode.UNDEFINED,
       gateWay: Gateways.Europe,
@@ -118,7 +119,7 @@ export default class ModeStatsGrid extends Vue {
       season: 0,
       rankingPoints: 0,
       playerIds: [],
-      quantile: 0
+      quantile: 0,
     };
 
     return gm2v2s.reduce(
@@ -139,7 +140,7 @@ export default class ModeStatsGrid extends Vue {
         rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
         playerIds: [],
-        quantile: b.quantile + a.quantile
+        quantile: b.quantile + a.quantile,
       }),
       empty
     );

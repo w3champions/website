@@ -6,10 +6,12 @@
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "npm run build:prod && http-server ./dist",
     "build:prod": "npm run generate-locales && rimraf ./dist && vue-cli-service build",
-    "lint": "vue-cli-service lint --fix",
+    "lint": "vue-cli-service lint",
+    "lint:fix": "vue-cli-service lint --fix",
     "format": "node_modules/.bin/prettier --write .",
     "update": "npm install -g npm-check-updates && ncu --upgrade && npm install ",
-    "generate-locales": "npx ts-node scripts/generate-locales.ts"
+    "generate-locales": "npx ts-node scripts/generate-locales.ts",
+    "sass-migrate": "sass-migrator division **/*.scss"
   },
   "dependencies": {
     "@mdi/font": "^6.5.95",
@@ -72,6 +74,7 @@
     "rimraf": "^3.0.2",
     "sass": "^1.49.0",
     "sass-loader": "^8.0.2",
+    "sass-migrator": "^1.5.4",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5",
     "vue-cli-plugin-vuetify": "^2.4.5",
