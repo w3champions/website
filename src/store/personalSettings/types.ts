@@ -25,13 +25,13 @@ export type WinsToPictureId = {
 export type SpecialPicture = {
   pictureId: number;
   description: string;
-}
+};
 
 export type AkaSettings = {
   showAka: boolean;
   showW3info: boolean;
   showLiquipedia: boolean;
-}
+};
 
 export type PersonalSetting = {
   profileMessage: string;

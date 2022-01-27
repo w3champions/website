@@ -93,7 +93,6 @@
                         To ban from all game modes, leave this field blank
                       </span>
                     </v-tooltip>
-                    
                   </v-col>
 
                   <v-col cols="12" sm="6" md="12">
@@ -141,35 +140,45 @@ import { LocaleMessage } from "vue-i18n";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
-  
   public gameModesEnumValues = this.translateGametypes();
 
   public headers = [
-        { text: "BattleTag", align: "start", sortable: false, value: "battleTag",},
-        { text: "Ban End Date", value: "endDate" },
-        { text: "Is only banned from chat?", value: "isOnlyChatBan" },
-        { text: "Game modes", value: "gameModes" },
-        { text: "Is IP banned?", value: "isIpBan" },
-        { text: "Ban reason", value: "banReason" },
-        { text: "Actions", value: "actions", sortable: false }
-      ];
+    { text: "BattleTag", align: "start", sortable: false, value: "battleTag" },
+    { text: "Ban End Date", value: "endDate" },
+    { text: "Is only banned from chat?", value: "isOnlyChatBan" },
+    { text: "Game modes", value: "gameModes" },
+    { text: "Is IP banned?", value: "isIpBan" },
+    { text: "Ban reason", value: "banReason" },
+    { text: "Actions", value: "actions", sortable: false },
+  ];
 
-  public translateGametypes() : { text: LocaleMessage, value: string | EGameMode }[] {
-    let translatedEnums = [] as { text: LocaleMessage, value: string | EGameMode }[]
+  public translateGametypes(): {
+    text: LocaleMessage;
+    value: string | EGameMode;
+  }[] {
+    let translatedEnums = [] as {
+      text: LocaleMessage;
+      value: string | EGameMode;
+    }[];
 
-    const keys = Object.keys(EGameMode).filter(k => typeof EGameMode[k as any] === "number")
-    const values = keys.map(k => EGameMode[k as any])
+    const keys = Object.keys(EGameMode).filter(
+      (k) => typeof EGameMode[k as any] === "number"
+    );
+    const values = keys.map((k) => EGameMode[k as any]);
 
-    keys.shift()
-    values.shift()
+    keys.shift();
+    values.shift();
 
     for (let item in keys) {
-      translatedEnums.push({ text: this.$t(`gameModes.${keys[item]}`), value: values[item]})
+      translatedEnums.push({
+        text: this.$t(`gameModes.${keys[item]}`),
+        value: values[item],
+      });
     }
     return translatedEnums;
   }
 
-  get bannedPlayers() : BannedPlayer[] {
+  get bannedPlayers(): BannedPlayer[] {
     return this.$store.direct.state.admin.players;
   }
 
@@ -178,16 +187,16 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() : void {
+  onBattleTagChanged(): void {
     this.init();
   }
 
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
-    } 
+    }
   }
-  
+
   public dialog = false;
   public dialogNews = false;
   public dialogTips = false;
@@ -201,7 +210,7 @@ export default class AdminBannedPlayers extends Vue {
     isOnlyChatBan: false,
     gameModes: [] as number[],
     isIpBan: false,
-    banReason: ""
+    banReason: "",
   };
   public defaultItem = {
     battleTag: "",
@@ -209,10 +218,10 @@ export default class AdminBannedPlayers extends Vue {
     isOnlyChatBan: false,
     gameModes: [] as number[],
     isIpBan: false,
-    banReason: ""
+    banReason: "",
   };
 
-  editItem(item: BannedPlayer) : void {
+  editItem(item: BannedPlayer): void {
     this.editedIndex = this.bannedPlayers.indexOf(item);
 
     if (this.editedIndex === -1) {
@@ -223,7 +232,7 @@ export default class AdminBannedPlayers extends Vue {
     this.dialog = true;
   }
 
-  async deleteItem(item: BannedPlayer) : Promise<void> {
+  async deleteItem(item: BannedPlayer): Promise<void> {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);
@@ -231,11 +240,11 @@ export default class AdminBannedPlayers extends Vue {
     await this.$store.direct.dispatch.admin.loadBannedPlayers();
   }
 
-  formTitle() : unknown {
+  formTitle(): unknown {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
-  async save() : Promise<void> {
+  async save(): Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
     } else {
@@ -246,7 +255,7 @@ export default class AdminBannedPlayers extends Vue {
     this.close();
   }
 
-  close() : void {
+  close(): void {
     this.dialog = false;
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
@@ -254,7 +263,7 @@ export default class AdminBannedPlayers extends Vue {
     });
   }
 
-  async mounted() : Promise<void> {
+  async mounted(): Promise<void> {
     await this.init();
   }
 }

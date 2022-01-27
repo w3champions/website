@@ -1,6 +1,13 @@
 <template>
   <div class="connector-y">
-    <div class="connector-y-top" v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
+    <div
+      class="connector-y-top"
+      v-bind:style="{
+        height: round.dimensions
+          ? round.dimensions.cellHeight * 2 + 'px'
+          : null,
+      }"
+    >
       <div class="connector-y-container">
         <div class="connector-y-top-left"></div>
         <div class="connector-y-offset"></div>
@@ -15,7 +22,14 @@
       </div>
       <div class="connector-y-between"></div>
     </div>
-    <div class="connector-y-bottom" v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
+    <div
+      class="connector-y-bottom"
+      v-bind:style="{
+        height: round.dimensions
+          ? round.dimensions.cellHeight * 2 + 'px'
+          : null,
+      }"
+    >
       <div class="connector-y-between"></div>
       <div class="connector-y-container">
         <div class="connector-y-offset"></div>
@@ -36,11 +50,10 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {
-  ITournamentRound} from "@/store/tournaments/types";
+import { ITournamentRound } from "@/store/tournaments/types";
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class TournamentYConnector extends Vue {
   @Prop() round!: ITournamentRound;
@@ -49,10 +62,11 @@ export default class TournamentYConnector extends Vue {
     const middle_offset = 3;
     const arc_height = 6;
     const between_offset = 11;
-    const height = (this.round?.dimensions?.cellHeight ?? 20)
-      - 2 * arc_height
-      - between_offset
-      - middle_offset;
+    const height =
+      (this.round?.dimensions?.cellHeight ?? 20) -
+      2 * arc_height -
+      between_offset -
+      middle_offset;
     return { height: `${height}px`, width: "9px" };
   }
 }

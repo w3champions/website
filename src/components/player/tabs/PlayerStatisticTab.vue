@@ -3,20 +3,12 @@
     <div>
       <v-row v-if="selectedSeason.id === 0">
         <v-card-text class="text-center">
-          {{
-            $t(
-              "components_player_tabs_playerprofiletab.betaText"
-            )
-          }}
+          {{ $t("components_player_tabs_playerprofiletab.betaText") }}
         </v-card-text>
       </v-row>
     </div>
     <v-card-title>
-      {{
-        $t(
-          "components_player_tabs_playerstatistictab.title"
-        )
-      }}
+      {{ $t("components_player_tabs_playerstatistictab.title") }}
     </v-card-title>
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="md-3">
@@ -40,11 +32,7 @@
       </v-col>
     </v-row>
     <v-card-title>
-      {{
-        $t(
-          "components_player_tabs_playerstatistictab.playermmrtimeline"
-        )
-      }}
+      {{ $t("components_player_tabs_playerstatistictab.playermmrtimeline") }}
     </v-card-title>
     <v-row v-if="selectedSeason.id !== 0">
       <v-col cols="12" md="2">
@@ -77,9 +65,7 @@
           />
           <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
             {{
-              $t(
-                "components_player_tabs_playerstatistictab.playerhasnomatches"
-              )
+              $t("components_player_tabs_playerstatistictab.playerhasnomatches")
             }}
           </v-card-text>
         </v-card-text>
@@ -186,9 +172,9 @@ export default class PlayerStatisticTab extends Vue {
     }
     let patches = ["All"];
 
-    Object.keys(
-      this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
-    ).map((p) => patches.push(p));
+    Object.keys(this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch).map(
+      (p) => patches.push(p)
+    );
 
     return patches;
   }
@@ -210,7 +196,7 @@ export default class PlayerStatisticTab extends Vue {
 
     return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
       this.selectedPatch
-    ].filter((r: { race: ERaceEnum; }) => r.race !== ERaceEnum.RANDOM);
+    ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
   }
 
   get gameModes() {

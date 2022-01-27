@@ -31,7 +31,10 @@
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats">
-          <gateway-select @gatewayChanged="gatewayChanged" v-if="isGatewayNeeded()"/>
+          <gateway-select
+            @gatewayChanged="gatewayChanged"
+            v-if="isGatewayNeeded()"
+          />
         </v-card-text>
 
         <v-card-text>
@@ -114,11 +117,15 @@ export default class PlayerActivityTab extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
+        ),
         modeId: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
+        ),
         modeId: EGameMode.GM_LEGION_4v4_X20,
       },
       {
@@ -130,10 +137,12 @@ export default class PlayerActivityTab extends Vue {
         modeId: EGameMode.GM_LTW_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`
+        ),
         modeId: EGameMode.GM_FROSTCRAFT_4ON4,
-      }
-    ]
+      },
+    ];
   }
   get loadingMapAndRaceStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;

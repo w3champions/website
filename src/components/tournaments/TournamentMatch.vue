@@ -11,9 +11,11 @@
               size="small"
             />
           </div>
-          <span style="vertical-align: -1px; padding-left:6px">{{ topPlayer.name }}</span>
+          <span style="vertical-align: -1px; padding-left: 6px">
+            {{ topPlayer.name }}
+          </span>
         </div>
-        <div class="match-score" style="width: 21px;">{{ topPlayer.score }}</div>
+        <div class="match-score" style="width: 21px">{{ topPlayer.score }}</div>
       </div>
     </div>
     <div class="match-part match-bottom">
@@ -26,9 +28,13 @@
               size="small"
             />
           </div>
-          <span style="vertical-align: -1px; padding-left:6px">{{ bottomPlayer.name }}</span>
+          <span style="vertical-align: -1px; padding-left: 6px">
+            {{ bottomPlayer.name }}
+          </span>
         </div>
-        <div class="match-score" style="width: 21px;">{{ bottomPlayer.score }}</div>
+        <div class="match-score" style="width: 21px">
+          {{ bottomPlayer.score }}
+        </div>
       </div>
     </div>
   </div>
@@ -38,15 +44,14 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import moment from "moment";
-import {
-  ITournamentPlayer} from "@/store/tournaments/types";
+import { ITournamentPlayer } from "@/store/tournaments/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
   components: {
-    CountryFlagExtended
-  }
+    CountryFlagExtended,
+  },
 })
 export default class TournamentMatch extends Vue {
   @Prop() topPlayer!: ITournamentPlayer;
@@ -61,14 +66,12 @@ export default class TournamentMatch extends Vue {
       "match-human": player.race == ERaceEnum.HUMAN,
       "match-orc": player.race == ERaceEnum.ORC,
       "match-ud": player.race == ERaceEnum.UNDEAD,
-      "match-elf": player.race == ERaceEnum.NIGHT_ELF
+      "match-elf": player.race == ERaceEnum.NIGHT_ELF,
     };
   }
 
   formatDate() {
-    return moment(this.date).format(
-      this.$t("dateFormats.dateTime").toString()
-    )
+    return moment(this.date).format(this.$t("dateFormats.dateTime").toString());
   }
 }
 </script>
@@ -155,5 +158,4 @@ export default class TournamentMatch extends Vue {
   height: 10px;
   display: inline-block;
 }
-
 </style>

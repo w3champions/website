@@ -48,7 +48,12 @@ export default class PersonalSettingsService {
       battleTag
     )}/profile-picture?authorization=${authToken}`;
 
-    const post = { pictureId: value.pictureId, avatarCategory: value.race, description: value.description, isClassic: value.isClassic };
+    const post = {
+      pictureId: value.pictureId,
+      avatarCategory: value.race,
+      description: value.description,
+      isClassic: value.isClassic,
+    };
     const data = JSON.stringify(post);
     const response = await fetch(url, {
       method: "PUT",

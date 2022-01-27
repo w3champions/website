@@ -2,7 +2,7 @@
   <v-tooltip top>
     <template v-slot:activator="{ on }">
       <div
-        style="display: inline;"
+        style="display: inline"
         class="pointer player-name"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openProfileInNewTab(playerId.battleTag)"
@@ -23,7 +23,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerId } from "@/store/ranking/types";
-import { getProfileUrl } from '@/helpers/url-functions';
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({})
 export default class PlayerRankInfo extends Vue {
@@ -44,12 +44,10 @@ export default class PlayerRankInfo extends Vue {
 </script>
 
 <style scoped>
-
 .player-name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 7rem;
 }
-
 </style>

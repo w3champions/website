@@ -238,33 +238,33 @@ export default class MatchesGrid extends Vue {
 
   get headers() {
     return [
-    {
-      text: this.$t("components_matches_matchesgrid.players"),
-      align: "center",
-      sortable: false,
-      value: "players",
-      minWidth: "475px",
-    },
-    {
-      text: this.$t("components_matches_matchesgrid.map"),
-      align: "start",
-      sortable: false,
-      value: "map",
-    },
-    {
-      text: this.$t("components_matches_matchesgrid.starttime"),
-      align: "start",
-      sortable: false,
-      value: "startTime",
-      minWidth: "170px",
-    },
-    {
-      text: this.$t("components_matches_matchesgrid.duration"),
-      align: "start",
-      sortable: false,
-      value: "duration",
-    },
-  ];
+      {
+        text: this.$t("components_matches_matchesgrid.players"),
+        align: "center",
+        sortable: false,
+        value: "players",
+        minWidth: "475px",
+      },
+      {
+        text: this.$t("components_matches_matchesgrid.map"),
+        align: "start",
+        sortable: false,
+        value: "map",
+      },
+      {
+        text: this.$t("components_matches_matchesgrid.starttime"),
+        align: "start",
+        sortable: false,
+        value: "startTime",
+        minWidth: "170px",
+      },
+      {
+        text: this.$t("components_matches_matchesgrid.duration"),
+        align: "start",
+        sortable: false,
+        value: "duration",
+      },
+    ];
   }
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent;">
-        <v-icon style="margin-right: 5px;">mdi-map</v-icon>
+      <v-btn tile v-on="on" style="background-color: transparent">
+        <v-icon style="margin-right: 5px">mdi-map</v-icon>
         {{ selected }}
       </v-btn>
     </template>
@@ -10,16 +10,12 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>{{ $t("common.selectmap")}}</v-list-item-title>
+            <v-list-item-title>{{ $t("common.selectmap") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
-          <v-list-item
-            v-for="m in maps"
-            :key="m.key"
-            @click="selectMap(m.key)"
-          >
+          <v-list-item v-for="m in maps" :key="m.key" @click="selectMap(m.key)">
             <v-list-item-content>
               <v-list-item-title>{{ m.mapName }}</v-list-item-title>
             </v-list-item-content>
@@ -41,13 +37,13 @@ export default class MapSelect extends Vue {
   @Prop() mapKeys = [];
 
   get selected(): string | TranslateResult {
-      const match = this.maps.find(m => m.key === this.map);
-      return match ? match.mapName : "Overall";
+    const match = this.maps.find((m) => m.key === this.map);
+    return match ? match.mapName : "Overall";
   }
 
-  get maps(): { mapName: TranslateResult, key: string }[] {
+  get maps(): { mapName: TranslateResult; key: string }[] {
     const maps = this.mapKeys
-      .map(key => ({ mapName: this.$t(`mapNames.${key}`), key }))
+      .map((key) => ({ mapName: this.$t(`mapNames.${key}`), key }))
       .sort((mapA, mapB) => {
         const nameA = mapA.mapName.toString().toUpperCase();
         const nameB = mapB.mapName.toString().toUpperCase();
@@ -58,8 +54,8 @@ export default class MapSelect extends Vue {
           return 1;
         }
         return 0;
-      })
-    return [ { mapName: this.$t("mapNames.Overall"), key: "Overall" }, ...maps ];
+      });
+    return [{ mapName: this.$t("mapNames.Overall"), key: "Overall" }, ...maps];
   }
 
   public selectMap(map: string): void {

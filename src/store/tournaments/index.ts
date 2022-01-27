@@ -1,7 +1,7 @@
 import { moduleActionContext } from "..";
 import { ActionContext } from "vuex";
-import { TournamentsState, ITournament } from './types';
-import { RootState } from '../typings';
+import { TournamentsState, ITournament } from "./types";
+import { RootState } from "../typings";
 
 const mod = {
   namespaced: true,
@@ -10,24 +10,21 @@ const mod = {
   } as TournamentsState,
   actions: {
     async retrieveTournaments(
-      context: ActionContext<TournamentsState, RootState>,
+      context: ActionContext<TournamentsState, RootState>
     ) {
-      const { commit, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.tournamentsService.getTournaments();
 
       commit.SET_TOURNAMENTS(response.tournaments);
     },
-    
+
     async saveTournament(
       context: ActionContext<ITournament, RootState>,
       tournament?: ITournament
     ) {
       if (!tournament) return;
-      
+
       const { dispatch, rootGetters, rootState } = moduleActionContext(
         context,
         mod
@@ -39,7 +36,7 @@ const mod = {
       );
 
       await dispatch.retrieveTournaments();
-      
+
       return tournament;
     },
   },

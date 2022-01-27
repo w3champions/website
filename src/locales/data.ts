@@ -27,6 +27,12 @@ const data = {
       save: "Save",
       gameMode: "Game Mode",
       mutePlayer: "Mute Player",
+      profile: "Profile",
+      portraits: "Portraits",
+      sanctions: "Sanctions",
+      flosettings: "Flo Settings",
+      stats: "Stats",
+      smurfs: "Smurfs",
     },
     views_gettingstarted: {
       manualwarning:
@@ -300,7 +306,6 @@ const data = {
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Select Mode",
-      selectseason: "Select Season",
       gamemodedesc1:
         "Game Modes are normalized to compare their popularity more easily:",
       gamemodedesc2:
@@ -444,6 +449,8 @@ const data = {
       GM_2ON2_AT: "2 vs 2 AT",
       GM_4ON4: "4 vs 4",
       GM_FFA: "FFA",
+      GM_FOOTMEN_FRENZY: "Footmen Frenzy",
+      GM_LEGION_4v4_X3: "Legion TD 4v4 x3",
       GM_LEGION_1v1_x20: "Legion TD 1v1 x20",
       GM_LEGION_4v4_X20: "Legion TD 4v4 x20",
       GM_ROC_1ON1: "RoC 1vs1",

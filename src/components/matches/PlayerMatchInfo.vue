@@ -11,7 +11,6 @@
       <a
         class="name-link"
         :class="won"
-        
         @click="notClickable ? null : goToPlayer()"
         @click.middle="openProfileInNewTab()"
         @click.right="openProfileInNewTab()"
@@ -130,10 +129,11 @@ export default class PlayerMatchInfo extends Vue {
       return;
     }
 
-    this.winrate = await this.$store.direct.getters.profileService.retrieveWinRate(
-      this.player.battleTag,
-      this.$store.direct.state.rankings.selectedSeason.id
-    );
+    this.winrate =
+      await this.$store.direct.getters.profileService.retrieveWinRate(
+        this.player.battleTag,
+        this.$store.direct.state.rankings.selectedSeason.id
+      );
   }
 
   public goToPlayer() {

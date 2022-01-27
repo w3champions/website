@@ -1,13 +1,23 @@
 <template>
   <div class="streamed-match-player-info">
-    <div class="streamed-match-player-info__twitch" :style="{order: this.alignRight ? 3 : 1}">
+    <div
+      class="streamed-match-player-info__twitch"
+      :style="{ order: this.alignRight ? 3 : 1 }"
+    >
       <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank">
         <v-icon color="purple accent-4">mdi-twitch</v-icon>
       </v-btn>
     </div>
     <div class="streamed-match-player-info__player">
-      <player-icon class="streamed-match-player-info__race" :race="player.race" />
-      <router-link :to="playerProfilePage" class="streamed-match-player-info__name" :title="player.name">
+      <player-icon
+        class="streamed-match-player-info__race"
+        :race="player.race"
+      />
+      <router-link
+        :to="playerProfilePage"
+        class="streamed-match-player-info__name"
+        :title="player.name"
+      >
         {{ player.name }}
       </router-link>
       <span class="streamed-match-player-info__mmr">({{ player.oldMmr }})</span>
@@ -16,22 +26,22 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "../../store/typings";
 
 @Component({})
-export default class StreamedMatchPlayerInfo extends Vue{
+export default class StreamedMatchPlayerInfo extends Vue {
   @Prop() readonly player!: PlayerInTeam;
-  @Prop({default: false}) readonly alignRight!: boolean
+  @Prop({ default: false }) readonly alignRight!: boolean;
 
-  get twitchLink():string {
-    return `https://twitch.tv/${this.player.twitch}`
+  get twitchLink(): string {
+    return `https://twitch.tv/${this.player.twitch}`;
   }
 
-  get playerProfilePage(){
-    const playerId = encodeURIComponent(this.player.battleTag)
-    return `/player/${playerId}`
+  get playerProfilePage() {
+    const playerId = encodeURIComponent(this.player.battleTag);
+    return `/player/${playerId}`;
   }
 }
 </script>
@@ -47,7 +57,7 @@ export default class StreamedMatchPlayerInfo extends Vue{
   &__player {
     order: 2;
     display: grid;
-    grid-template-areas: 'race name' 'race mmr';
+    grid-template-areas: "race name" "race mmr";
     grid-column-gap: 5px;
     align-items: center;
   }

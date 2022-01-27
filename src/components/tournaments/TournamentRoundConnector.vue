@@ -1,14 +1,20 @@
 <template>
   <div
     class="bracket-column"
-    style="width: 20px;"
+    style="width: 20px"
     v-if="round && round.round < totalRounds"
   >
-    <div class="connector-header"
-         v-bind:style="{ height: round.dimensions ? round.dimensions.headerHeight + 'px' : null }"></div>
-    <div class="connector-connection"
-         v-for="connection in numberOfConnectors"
-         :key="connection">
+    <div
+      class="connector-header"
+      v-bind:style="{
+        height: round.dimensions ? round.dimensions.headerHeight + 'px' : null,
+      }"
+    ></div>
+    <div
+      class="connector-connection"
+      v-for="connection in numberOfConnectors"
+      :key="connection"
+    >
       <tournament-straight-open-connector
         :key="`conn${round.round}`"
         :round="round"
@@ -31,10 +37,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {
-   ITournamentRound,
-  ConnectionType
-} from "@/store/tournaments/types";
+import { ITournamentRound, ConnectionType } from "@/store/tournaments/types";
 import TournamentStraightConnector from "@/components/tournaments/TournamentStraightOpenConnector.vue";
 import TournamentStraightOpenDownConnector from "@/components/tournaments/TournamentStraightOpenDownConnector.vue";
 import TournamentYConnector from "@/components/tournaments/TournamentYConnector.vue";
@@ -46,7 +49,7 @@ import TournamentStraightOpenConnector from "@/components/tournaments/Tournament
     TournamentStraightConnector,
     TournamentStraightOpenDownConnector,
     TournamentYConnector,
-  }
+  },
 })
 export default class TournamentRoundConnector extends Vue {
   @Prop() round!: ITournamentRound;

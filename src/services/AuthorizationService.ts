@@ -6,7 +6,10 @@ const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
 
 export default class AuthorizationService {
-  public async authorize(code: string, region: BnetOAuthRegion = BnetOAuthRegion.eu): Promise<W3cToken> {
+  public async authorize(
+    code: string,
+    region: BnetOAuthRegion = BnetOAuthRegion.eu
+  ): Promise<W3cToken> {
     const url = `${IDENTIFICATION_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}&region=${region}`;
     const response = await fetch(url, {
       method: "GET",
@@ -58,7 +61,7 @@ export default class AuthorizationService {
   public async saveAuthRegion(region: BnetOAuthRegion) {
     Vue.cookies.set(w3CAuthRegion, region, {
       expires: Infinity,
-    })
+    });
   }
 
   public async saveAuthToken(token: W3cToken) {
@@ -83,6 +86,5 @@ export default class AuthorizationService {
     });
 
     return response.status === 200 ? await response.json() : null;
-
   }
 }

@@ -228,8 +228,10 @@ export default class PlayerAvatar extends Vue {
       if (this._player2Copy && this._player2Copy.score) {
         this._player2Copy.score = parseInt(this._player2Copy.score?.toString());
       }
-      this.tournamentMatch.players[0] = this._player1Copy || this.tournamentMatch.players[0];
-      this.tournamentMatch.players[1] = this._player2Copy || this.tournamentMatch.players[1];
+      this.tournamentMatch.players[0] =
+        this._player1Copy || this.tournamentMatch.players[0];
+      this.tournamentMatch.players[1] =
+        this._player2Copy || this.tournamentMatch.players[1];
     }
 
     this.$emit("saveChanges");

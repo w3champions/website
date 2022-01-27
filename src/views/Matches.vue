@@ -17,8 +17,7 @@
               @mapChanged="mapChanged"
               :mapKeys="maps"
               :map="map"
-            >
-            </map-select>
+            ></map-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -52,17 +51,21 @@ import AppConstants from "@/constants";
     MatchesGrid,
     MatchesStatusSelect,
     GameModeSelect,
-    MapSelect
+    MapSelect,
   },
 })
 export default class MatchesView extends Vue {
-  onPageChanged(page: number) : void {
+  onPageChanged(page: number): void {
     this.getMatches(page);
   }
 
-  get disabledGameModes() : Array<number> {
+  get disabledGameModes(): Array<number> {
     if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
-      return [EGameMode.GM_2ON2_AT, EGameMode.GM_4ON4_AT, EGameMode.GM_LEGION_4v4_x20_AT];
+      return [
+        EGameMode.GM_2ON2_AT,
+        EGameMode.GM_4ON4_AT,
+        EGameMode.GM_LEGION_4v4_x20_AT,
+      ];
     }
 
     return [];
@@ -76,7 +79,7 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.matches;
   }
 
-  get currentSeason() : number {
+  get currentSeason(): number {
     return this.$store.direct.state.rankings.seasons[0].id;
   }
 
@@ -86,26 +89,35 @@ export default class MatchesView extends Vue {
   }
 
   get mapsByGameMode() {
-    const filterSeasons = this.$store.direct.state.matches.status == MatchStatus.onGoing
-      ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === this.currentSeason
-      : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
+    const filterSeasons =
+      this.$store.direct.state.matches.status == MatchStatus.onGoing
+        ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
+            matchesOnMapPerSeason.season === this.currentSeason
+        : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
+            matchesOnMapPerSeason.season >= 0;
 
     return this.$store.direct.state.overallStatistics.matchesOnMapPerSeason
       .filter(filterSeasons)
-      .reduce<Record<EGameMode, Set<unknown>>>((mapsByMode, matchesOnMapPerSeason) => {
-        for (let modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-          // just get the map name and ignore the count
-          const mapNames = modes.maps.map(m => m.map);
+      .reduce<Record<EGameMode, Set<unknown>>>(
+        (mapsByMode, matchesOnMapPerSeason) => {
+          for (let modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+            // just get the map name and ignore the count
+            const mapNames = modes.maps.map((m) => m.map);
 
-          if (!mapsByMode[modes.gameMode]) {
-            mapsByMode[modes.gameMode] = new Set(mapNames)
-          } else {
-            // combine this seasons mode maps with other seasons modes maps without dupes
-            mapsByMode[modes.gameMode] = new Set([ ...mapsByMode[modes.gameMode], ...mapNames  ]);
+            if (!mapsByMode[modes.gameMode]) {
+              mapsByMode[modes.gameMode] = new Set(mapNames);
+            } else {
+              // combine this seasons mode maps with other seasons modes maps without dupes
+              mapsByMode[modes.gameMode] = new Set([
+                ...mapsByMode[modes.gameMode],
+                ...mapNames,
+              ]);
+            }
           }
-        }
-        return mapsByMode;
-      }, {} as Record<EGameMode, Set<unknown>>);
+          return mapsByMode;
+        },
+        {} as Record<EGameMode, Set<unknown>>
+      );
   }
 
   get unfinished(): boolean {
@@ -120,41 +132,41 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.map;
   }
 
-  public async getMatches(page?: number) : Promise<void> {
+  public async getMatches(page?: number): Promise<void> {
     await this.$store.direct.dispatch.matches.loadMatches(page);
   }
 
-  public getMaps() : void {
+  public getMaps(): void {
     this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
   }
 
   _intervalRefreshHandle?: number = undefined;
 
-  private refreshMatches() : void {
+  private refreshMatches(): void {
     this._intervalRefreshHandle = setInterval(async () => {
       await this.getMatches();
     }, AppConstants.ongoingMatchesRefreshInterval);
   }
 
-  mounted() : void {
+  mounted(): void {
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();
   }
 
-  destroyed() : void {
+  destroyed(): void {
     clearInterval(this._intervalRefreshHandle);
   }
 
-  gatewayChanged() : void {
+  gatewayChanged(): void {
     this.getMatches(1);
   }
 
-  gameModeChanged(gameMode: EGameMode) : void {
+  gameModeChanged(gameMode: EGameMode): void {
     this.$store.direct.dispatch.matches.setGameMode(gameMode);
   }
 
-  mapChanged(map: string) : void {
+  mapChanged(map: string): void {
     this.$store.direct.dispatch.matches.setMap(map);
   }
 }

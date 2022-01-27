@@ -1,9 +1,9 @@
 function getPublicPath() {
   if (process.env.NODE_ENV === "development") {
-    return '/';
+    return "/";
   }
 
-  return 'SITE_CDN_URL';
+  return "SITE_CDN_URL";
 }
 
 module.exports = {
@@ -18,8 +18,8 @@ module.exports = {
   css: {
     loaderOptions: {
       scss: {
-        prependData: `@import '@/scss/variables.scss';`
-      }
-    }
-  }
+        prependData: `@import '@/scss/variables.scss';`,
+      },
+    },
+  },
 };

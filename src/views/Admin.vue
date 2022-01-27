@@ -1,7 +1,10 @@
 <template>
   <v-container fluid v-show="isAdmin" style="height: 100%">
     <div class="admin-page-wrapper">
-      <admin-navigation :items="navItems" v-on:itemSelected="navItemSelected"></admin-navigation>
+      <admin-navigation
+        :items="navItems"
+        v-on:itemSelected="navItemSelected"
+      ></admin-navigation>
       <v-card tile>
         <v-card-title>
           {{ selectedNavItem.title }}
@@ -35,8 +38,8 @@ import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
     AdminQueueData,
     AdminProxies,
     AdminAlts,
-    AdminGlobalMute
-  }
+    AdminGlobalMute,
+  },
 })
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
@@ -48,21 +51,21 @@ export default class Admin extends Vue {
           key: "banned_players",
           title: "Banned Players",
           icon: "mdi-account-remove",
-          component: "admin-banned-players"
+          component: "admin-banned-players",
         },
         {
           key: "alts",
           title: "Smurf Checker",
           icon: "mdi-account-question",
-          component: "admin-alts"
+          component: "admin-alts",
         },
         {
           key: "mute",
           title: "Global Mute",
           icon: "mdi-chat-remove",
           component: "admin-global-mute",
-        }
-      ]
+        },
+      ],
     },
     {
       title: "Player Settings",
@@ -72,9 +75,9 @@ export default class Admin extends Vue {
           key: "proxy_settings",
           title: "Proxy Settings",
           icon: "mdi-account-network",
-          component: "admin-proxies"
-        }
-      ]
+          component: "admin-proxies",
+        },
+      ],
     },
     {
       title: "Launcher",
@@ -84,10 +87,11 @@ export default class Admin extends Vue {
           key: "news",
           title: "News for Launcher",
           icon: "mdi-rss",
-          component: "admin-news-for-launcher"
-        }
-      ]
-    },{
+          component: "admin-news-for-launcher",
+        },
+      ],
+    },
+    {
       title: "In-Game Settings",
       icon: "mdi-monitor-dashboard",
       items: [
@@ -95,23 +99,22 @@ export default class Admin extends Vue {
           key: "tips",
           icon: "mdi-tooltip-text-outline",
           title: "Loading screen tips",
-          component: "admin-loading-screen-tips"
-        }
-      ]
-    }
-    ,
+          component: "admin-loading-screen-tips",
+        },
+      ],
+    },
     {
       title: "Data Science",
       icon: "mdi-chart-line",
       items: [
-      {
-        key: "queue",
-        title: "Live Queue Data",
-        icon: "mdi-table",
-        component: "admin-queue-data",
-      }
-      ]
-    }
+        {
+          key: "queue",
+          title: "Live Queue Data",
+          icon: "mdi-table",
+          component: "admin-queue-data",
+        },
+      ],
+    },
   ];
   selectedNavItem = {};
 
@@ -119,7 +122,7 @@ export default class Admin extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  navItemSelected(item: NavigationItem) : void {
+  navItemSelected(item: NavigationItem): void {
     this.selectedNavItem = item;
   }
 
@@ -136,7 +139,7 @@ export default class Admin extends Vue {
     return this.navItems[0];
   }
 
-  mounted() : void {
+  mounted(): void {
     this.navItemSelected(this.getFirstItem(this.navItems));
   }
 }

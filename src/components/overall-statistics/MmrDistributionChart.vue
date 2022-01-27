@@ -63,8 +63,14 @@ export default class MmrDistributionChart extends Vue {
       return 0;
     }
 
-    const minMMR = minBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr) || { mmr: 0 ,count: 0};
-    const maxMMR = maxBy(this.mmrDistribution.distributedMmrs, (d) => d.mmr) || { mmr: 0 ,count: 0};
+    const minMMR = minBy(
+      this.mmrDistribution.distributedMmrs,
+      (d) => d.mmr
+    ) || { mmr: 0, count: 0 };
+    const maxMMR = maxBy(
+      this.mmrDistribution.distributedMmrs,
+      (d) => d.mmr
+    ) || { mmr: 0, count: 0 };
 
     const clampedPlayerMMR = clamp(
       this.mmrOfLoggedInPlayer,
@@ -85,9 +91,10 @@ export default class MmrDistributionChart extends Vue {
   }
 
   get isTop50percent(): boolean {
-    const top50mmr = this.mmrDistribution.distributedMmrs[
-      this.mmrDistribution.top50PercentIndex
-    ].mmr;
+    const top50mmr =
+      this.mmrDistribution.distributedMmrs[
+        this.mmrDistribution.top50PercentIndex
+      ].mmr;
     return this.mmrOfLoggedInPlayer > top50mmr;
   }
 

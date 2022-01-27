@@ -76,11 +76,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import {
-  ITournamentMatch,
-  ITournament,
-} from "@/store/tournaments/types";
-
+import { ITournamentMatch, ITournament } from "@/store/tournaments/types";
 
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
@@ -139,7 +135,9 @@ export default class TournamentsView extends Vue {
   }
 
   async updateTournament() {
-      await this.$store.direct.dispatch.tournaments.saveTournament(this.tournament);
+    await this.$store.direct.dispatch.tournaments.saveTournament(
+      this.tournament
+    );
   }
 
   async mounted() {

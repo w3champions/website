@@ -332,9 +332,9 @@ import {
 import CountryFlag from "vue-country-flag";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "../../helpers/url-functions";
-import { enumKeys } from "../../helpers/general"
+import { enumKeys } from "../../helpers/general";
 
-type CountryType = { country: string; countryCode: string }
+type CountryType = { country: string; countryCode: string };
 
 @Component({ components: { CountryFlag, PlayerSocials } })
 export default class PlayerAvatar extends Vue {
@@ -400,8 +400,8 @@ export default class PlayerAvatar extends Vue {
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    let playerAkaData = this.$store.direct.state.player.playerProfile
-      .playerAkaData;
+    let playerAkaData =
+      this.$store.direct.state.player.playerProfile.playerAkaData;
 
     if (playerAkaData == null) return false;
 
@@ -416,8 +416,8 @@ export default class PlayerAvatar extends Vue {
     return false; // might be opted out - might not have an alias
   }
 
-  get w3infoId(): string|number {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? '';
+  get w3infoId(): string | number {
+    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? "";
   }
 
   get liquipediaString(): string {
@@ -570,7 +570,7 @@ export default class PlayerAvatar extends Vue {
       return true;
     }
 
-    const raceCategory = (category) as unknown as ERaceEnum;
+    const raceCategory = category as unknown as ERaceEnum;
 
     return (
       this.personalSetting.pickablePictures?.filter(
@@ -662,13 +662,13 @@ export default class PlayerAvatar extends Vue {
 
     if (!this.selectedCountryCode && this.personalSetting?.location) {
       this.selectedCountryCode = this.personalSetting.location;
-      
+
       enumKeys(ECountries).map((key) => {
         const element = ECountries[key] as string;
         if (element == this.selectedCountryCode) {
           this.selectedCountry = key;
         }
-      })
+      });
     }
   }
 }

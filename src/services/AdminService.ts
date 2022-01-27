@@ -9,7 +9,7 @@ import {
   SearchedPlayer,
   ProxySettings,
   GloballyMutedPlayer,
-  GlobalMute
+  GlobalMute,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -161,23 +161,19 @@ export default class AdminService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async getQueueData(
-    token: string
-    ): Promise<QueueData[]> {
-      const url = `${API_URL}api/admin/queue-data/?authorization=${token}`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      return await response.json();
-    }
+  public async getQueueData(token: string): Promise<QueueData[]> {
+    const url = `${API_URL}api/admin/queue-data/?authorization=${token}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  }
 
-  public async getAvailableProxies(
-    token: string
-  ): Promise<Proxy[]> {
+  public async getAvailableProxies(token: string): Promise<Proxy[]> {
     const url = `${API_URL}api/admin/proxies/?authorization=${token}`;
     const response = await fetch(url, {
       method: "GET",
@@ -185,7 +181,7 @@ export default class AdminService {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-    })
+    });
     return await response.json();
   }
 
@@ -193,7 +189,9 @@ export default class AdminService {
     battleTagFragment: string,
     token: string
   ): Promise<SearchedPlayer[]> {
-    const url = `${API_URL}api/admin/search/${encodeURIComponent(battleTagFragment)}?authorization=${token}`;
+    const url = `${API_URL}api/admin/search/${encodeURIComponent(
+      battleTagFragment
+    )}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -207,9 +205,11 @@ export default class AdminService {
 
   public async getProxiesForBattletag(
     battleTag: string,
-    token: string,
+    token: string
   ): Promise<ProxySettings> {
-    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}?authorization=${token}`
+    const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(
+      battleTag
+    )}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -224,10 +224,12 @@ export default class AdminService {
   public async putProxies(
     proxies: ProxySettings,
     battleTag: string,
-    token: string,
+    token: string
   ): Promise<Response> {
-    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}`
-    
+    const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(
+      battleTag
+    )}?authorization=${token}`;
+
     const data = JSON.stringify(proxies);
     const response = await fetch(url, {
       method: "PUT",
@@ -243,9 +245,11 @@ export default class AdminService {
 
   public async getAltsForBattletag(
     btag: string,
-    token: string,
+    token: string
   ): Promise<string[]> {
-    const url = `${API_URL}api/admin/alts/${encodeURIComponent(btag)}?authorization=${token}`
+    const url = `${API_URL}api/admin/alts/${encodeURIComponent(
+      btag
+    )}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -254,14 +258,12 @@ export default class AdminService {
         "Content-Type": "application/json",
       },
     });
-    
+
     return await response.json();
   }
 
-  public async getGlobalMutes(
-    token: string,
-  ): Promise<GloballyMutedPlayer[]> {
-    const url = `${API_URL}api/admin/globalChatBans?authorization=${token}`
+  public async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
+    const url = `${API_URL}api/admin/globalChatBans?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -274,12 +276,9 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async deleteGlobalMute(
-    token: string,
-    id: string,
-  ): Promise<number> {
+  public async deleteGlobalMute(token: string, id: string): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/${id}?authorization=${token}`;
-    
+
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -293,19 +292,19 @@ export default class AdminService {
 
   public async PutGlobalMute(
     token: string,
-    globalMutedPlayer: GlobalMute,
+    globalMutedPlayer: GlobalMute
   ): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/?authorization=${token}`;
 
-    const data = JSON.stringify(globalMutedPlayer)
+    const data = JSON.stringify(globalMutedPlayer);
     const response = await fetch(url, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: data
-    })
+      body: data,
+    });
 
     return response.status;
   }

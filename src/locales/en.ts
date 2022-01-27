@@ -31,12 +31,12 @@ const en = {
     GM_4ON4: "4 vs 4",
     GM_4ON4_AT: "4 vs 4 AT",
     GM_FFA: "FFA",
-    GM_LEGION_1v1_x20: 'Legion TD 1v1 x20',
-    GM_LEGION_4v4_X20: 'Legion TD 4v4 x20',
-    GM_LEGION_4v4_x20_AT: 'Legion TD 4v4 x20 AT',
-    GM_ROC_1ON1: 'RoC 1vs1',
-    GM_LTW_1ON1: 'Line Tower Wars 1vs1',
-    GM_FROSTCRAFT_4ON4: 'Frostcraft 4v4',
+    GM_LEGION_1v1_x20: "Legion TD 1v1 x20",
+    GM_LEGION_4v4_X20: "Legion TD 4v4 x20",
+    GM_LEGION_4v4_x20_AT: "Legion TD 4v4 x20 AT",
+    GM_ROC_1ON1: "RoC 1vs1",
+    GM_LTW_1ON1: "Line Tower Wars 1vs1",
+    GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
   },
 
   gatewayNames: {
@@ -300,7 +300,7 @@ const en = {
     LostTempleROC: "Lost Temple (ROC)",
     MoongladeROC: "Moonglade (ROC)",
     OutskirtsROC: "Outskirts (ROC)",
-    PlunderIsleROC : "Plunder Isle (ROC)",
+    PlunderIsleROC: "Plunder Isle (ROC)",
     RiftValleyROC: "Rift Valley (ROC)",
     ScorchedBasinROC: "Scorched Basin (ROC)",
     SecretValleyROC: "Secret Valley (ROC)",
@@ -314,7 +314,7 @@ const en = {
     LostTempleroc: "Lost Temple (ROC)",
     Moongladeroc: "Moonglade (ROC)",
     Outskirtsroc: "Outskirts (ROC)",
-    PlunderIsleroc : "Plunder Isle (ROC)",
+    PlunderIsleroc: "Plunder Isle (ROC)",
     RiftValleyroc: "Rift Valley (ROC)",
     ScorchedBasinroc: "Scorched Basin (ROC)",
     SecretValleyroc: "Secret Valley (ROC)",
@@ -385,9 +385,10 @@ const en = {
     west_india_via_eu_central2: "West India via EU Central 2",
     russia_east_via_asia_east2: "Russia East via Asia East 2",
     russia_central_via_korea_central2: "Russia Central via Korea Central 2",
-    africa_east_via_sg: "Africa East via Singapore",  
-    africa_east_via_sg_azure_via_simple_cloud: "Africa East via Singapore via simplecloud"  
-  }
+    africa_east_via_sg: "Africa East via Singapore",
+    africa_east_via_sg_azure_via_simple_cloud:
+      "Africa East via Singapore via simplecloud",
+  },
 };
 
 export default en;

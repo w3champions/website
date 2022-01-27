@@ -2,7 +2,10 @@
   <v-container>
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
-        <gateway-select @gatewayChanged="onGatewayChanged" v-if="isGatewayNeeded()"/>
+        <gateway-select
+          @gatewayChanged="onGatewayChanged"
+          v-if="isGatewayNeeded()"
+        />
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
@@ -253,7 +256,6 @@ export default class RankingsView extends Vue {
   get selectedGameMode() {
     return this.$store.direct.state.rankings.gameMode;
   }
-
 
   get selectedLeague(): League {
     if (!this.ladders) return {} as League;

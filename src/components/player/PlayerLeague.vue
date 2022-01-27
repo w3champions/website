@@ -114,17 +114,16 @@ export default class PlayerLeague extends Vue {
   }
 
   public async init() {
-    const {
-      matches,
-    } = await this.$store.direct.getters.matchService.retrievePlayerMatches(
-      0,
-      this.battleTag,
-      "",
-      this.gameMode,
-      ERaceEnum.TOTAL,
-      this.gateWay,
-      this.selectedSeason.id
-    );
+    const { matches } =
+      await this.$store.direct.getters.matchService.retrievePlayerMatches(
+        0,
+        this.battleTag,
+        "",
+        this.gameMode,
+        ERaceEnum.TOTAL,
+        this.gateWay,
+        this.selectedSeason.id
+      );
 
     this.matches = matches;
   }
@@ -253,7 +252,7 @@ export default class PlayerLeague extends Vue {
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
-  }
+}
 
 .LadderSummaryShowcase-card.diamond:before {
   border-top: 2px solid #2c33ff !important;

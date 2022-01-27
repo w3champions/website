@@ -111,7 +111,8 @@ const mod = {
 
       commit.SET_LOADING_MAP_AND_RACE_STATS(true);
 
-      const stats = await rootGetters.statisticService.retrieveMapAndRaceStats();
+      const stats =
+        await rootGetters.statisticService.retrieveMapAndRaceStats();
 
       commit.SET_MAP_AND_RACE_STATS(stats);
       commit.SET_LOADING_MAP_AND_RACE_STATS(false);
@@ -139,7 +140,8 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrievePopularGameHours();
+      const stats =
+        await rootGetters.statisticService.retrievePopularGameHours();
 
       commit.SET_POPULAR_GAME_HOURS(stats);
     },

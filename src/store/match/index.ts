@@ -15,7 +15,7 @@ const mod = {
     matchDetail: {} as MatchDetail,
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
-    map: "Overall"
+    map: "Overall",
   } as MatchState,
   actions: {
     async loadMatches(
@@ -52,7 +52,11 @@ const mod = {
       commit.SET_TOTAL_MATCHES(response.count);
       commit.SET_MATCHES(response.matches);
     },
-    async loadAllOngoingMatches(context: ActionContext<MatchState, RootState>, gameMode?: EGameMode, map?: string) {
+    async loadAllOngoingMatches(
+      context: ActionContext<MatchState, RootState>,
+      gameMode?: EGameMode,
+      map?: string
+    ) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,
         mod
@@ -99,15 +103,12 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
-    async setMap(
-      context: ActionContext<MatchState, RootState>,
-      map: string
-    ) {
+    async setMap(context: ActionContext<MatchState, RootState>, map: string) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_MAP(map);
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
-    }
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -136,7 +137,7 @@ const mod = {
     },
     SET_MAP(state: MatchState, map: string) {
       state.map = map;
-    }
+    },
   },
 } as const;
 
