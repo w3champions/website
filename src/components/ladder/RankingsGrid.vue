@@ -104,25 +104,25 @@
                   </div>
                 </v-tooltip>
               </div>
+              <span
+                style="position: relative"
+                v-if="
+                  isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
+                "
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span style="display: inline" class="pointer" v-on="on">
+                      <sword-icon class="swords blinker" />
+                    </span>
+                  </template>
+                  <div>
+                    {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
+                    {{ getLiveOpponent(item.player.playerIds) }}
+                  </div>
+                </v-tooltip>
+              </span>
             </div>
-            <span
-              style="position: relative"
-              v-if="
-                isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
-              "
-            >
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <span style="display: inline" class="pointer" v-on="on">
-                    <sword-icon class="swords blinker" />
-                  </span>
-                </template>
-                <div>
-                  {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
-                  {{ getLiveOpponent(item.player.playerIds) }}
-                </div>
-              </v-tooltip>
-            </span>
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
@@ -508,11 +508,20 @@ export default class RankingsGrid extends Vue {
   .rank-icon-container {
     margin-top: 5px;
     margin-left: 0 !important;
+    min-width: 10rem;
   }
 }
 .rank-icon-container {
   display: flex;
   align-items: center;
+  width: 50%;
+  margin-left: 0!important;
+  min-height: 39px;
+}
+
+.d-md-flex {
+  height: auto;
+  flex-wrap: wrap;
 }
 
 td.header {
@@ -527,7 +536,7 @@ td.header {
 
 .swords {
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 18px;
   cursor: pointer;
 }
