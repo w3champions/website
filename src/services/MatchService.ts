@@ -76,6 +76,7 @@ export default class MatchService {
     battleTag: string,
     opponentTag: string,
     gameMode: EGameMode,
+    playerRace: ERaceEnum,
     opponentRace: ERaceEnum,
     gateway: Gateways,
     season: number
@@ -98,6 +99,10 @@ export default class MatchService {
     }
 
     url += `&season=${season}`;
+
+    if (playerRace !== ERaceEnum.TOTAL) {
+      url += `&playerRAce=${playerRace}`;
+    }
 
     if (opponentRace !== ERaceEnum.TOTAL) {
       url += `&opponentRace=${opponentRace}`;

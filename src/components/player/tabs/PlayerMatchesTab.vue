@@ -107,11 +107,22 @@
         </v-col>
         <v-col cols="12" md="2">
          <v-select
-            class="race-select-box"
+            class="player-race-select-box"
             :items="races"
             item-text="raceName"
             item-value="raceId"
-            @change="setRaceForSearch"
+            @change="setPlayerRaceForSearch"
+            label="Player Race"
+            outlined
+          />
+        </v-col>
+        <v-col cols="12" md="2">
+         <v-select
+            class="opponent-race-select-box"
+            :items="races"
+            item-text="raceName"
+            item-value="raceId"
+            @change="setOpponentRaceForSearch"
             label="Opponent Race"
             outlined
           />
@@ -320,7 +331,12 @@ export default class PlayerMatchesTab extends Vue {
     this.getMatches();
   }
 
-  public setRaceForSearch(race: ERaceEnum) {
+  public setPlayerRaceForSearch(race: ERaceEnum) {
+    this.$store.direct.commit.player.SET_PLAYER_RACE(race);
+    this.getMatches();
+  }
+
+  public setOpponentRaceForSearch(race: ERaceEnum) {
     this.$store.direct.commit.player.SET_OPPONENT_RACE(race);
     this.getMatches();
   }
