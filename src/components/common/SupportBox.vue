@@ -85,7 +85,7 @@ export default class SupportBox extends Vue {
     Vue.set(dialogTracker, index, true);
   }
 
-  button(button: string): NodeRequire {
+  button(button: string): string {
     return require(`@/assets/socials/${button}_button.png`);
   }
 
