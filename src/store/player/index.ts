@@ -28,6 +28,7 @@ const mod = {
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
     race: 0 as ERaceEnum,
+    playerRace: 16 as ERaceEnum,
     opponentRace: 16 as ERaceEnum,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
@@ -118,6 +119,7 @@ const mod = {
         state.battleTag,
         state.opponentTag,
         state.gameMode,
+        state.playerRace,
         state.opponentRace,
         rootState.gateway,
         state.selectedSeason?.id ?? -1
@@ -212,6 +214,9 @@ const mod = {
     },
     SET_RACE(state: PlayerState, race: ERaceEnum) {
       state.race = race;
+    },
+    SET_PLAYER_RACE(state: PlayerState, playerRace: ERaceEnum) {
+      state.playerRace = playerRace;
     },
     SET_OPPONENT_RACE(state: PlayerState, opponentRace: ERaceEnum) {
       state.opponentRace = opponentRace;
