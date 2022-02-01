@@ -88,7 +88,7 @@
           />
         </v-col>
         <v-col cols="12" md="2">
-         <v-select
+          <v-select
             class="player-race-select-box"
             :items="races"
             item-text="raceName"
@@ -99,7 +99,7 @@
           />
         </v-col>
         <v-col cols="12" md="2">
-         <v-select
+          <v-select
             class="opponent-race-select-box"
             :items="races"
             item-text="raceName"
