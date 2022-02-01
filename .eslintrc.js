@@ -22,7 +22,6 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
-    "global-require": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-loss-of-precision": "off",
     "@typescript-eslint/explicit-module-boundary-types":"off",
