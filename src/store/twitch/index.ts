@@ -23,7 +23,7 @@ const mod = {
       token = await rootGetters.oauthService.authorizeWithTwitch();
 
       const sanitizedTwitchNames = twitchNames
-        .map((name) => name ? name.replace("https://twitch.tv/", ""): '')
+        .map((name) => (name ? name.replace("https://twitch.tv/", "") : ""))
         .filter((name) => !!name && encodeURIComponent(name) === name);
       const response = await rootGetters.twitchService.getStreamStatus(
         token,

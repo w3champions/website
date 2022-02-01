@@ -1,5 +1,5 @@
 <template>
-  <v-card-text :class="{'pa-1': $vuetify.breakpoint.xsOnly}">
+  <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <div v-on="on">
@@ -24,26 +24,39 @@
     </div>
     <v-dialog v-model="dialogOpened" max-width="300px">
       <v-card class="pa-1">
-        <v-row no-gutters :justify="'space-between'"
+        <v-row
+          no-gutters
+          :justify="'space-between'"
           v-for="heroPickPerRace in possibleHeroPickRows"
           :key="heroPickPerRace.map((h) => h.heroId).join('_')"
         >
-          <v-col :cols="3"
+          <v-col
+            :cols="3"
             v-for="heroPickSelection in heroPickPerRace"
-            :key="heroPickSelection.heroId">
+            :key="heroPickSelection.heroId"
+          >
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div v-on="on" class="ma-1">
-                  <v-responsive :aspect-ratio="1/1">
-                    <div :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
-                         class="hero-icon-select"
-                         :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
-                         @click="
-                      () => {
-                        if (isEnabledForSelect(heroPickSelection))
-                          pickHero(heroPickSelection);
-                      }
-                    " />
+                  <v-responsive :aspect-ratio="1 / 1">
+                    <div
+                      :style="{
+                        backgroundImage:
+                          'url(' + parsePicture(heroPickSelection) + ')',
+                      }"
+                      class="hero-icon-select"
+                      :class="
+                        isEnabledForSelect(heroPickSelection)
+                          ? ''
+                          : 'hero-icon-disabled'
+                      "
+                      @click="
+                        () => {
+                          if (isEnabledForSelect(heroPickSelection))
+                            pickHero(heroPickSelection);
+                        }
+                      "
+                    />
                   </v-responsive>
                 </div>
               </template>

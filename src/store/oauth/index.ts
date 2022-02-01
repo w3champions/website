@@ -24,9 +24,7 @@ const mod = {
 
       commit.SET_BEARER(bearer.jwt);
 
-      const profile = await rootGetters.oauthService.getProfile(
-        bearer.jwt
-      );
+      const profile = await rootGetters.oauthService.getProfile(bearer.jwt);
 
       if (profile) {
         commit.SET_PROFILE_NAME(profile.battleTag);

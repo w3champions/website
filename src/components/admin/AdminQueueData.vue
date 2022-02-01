@@ -1,14 +1,13 @@
-<template >
+<template>
   <v-container>
     <v-card>
-      <v-expansion-panels 
-        tile
-        multiple>
+      <v-expansion-panels tile multiple>
         <template>
-          <v-expansion-panel 
-            tile 
-            v-for="(mode, index) in gameModes" 
-            :key="index">
+          <v-expansion-panel
+            tile
+            v-for="(mode, index) in gameModes"
+            :key="index"
+          >
             <v-expansion-panel-header>
               {{ mode.text }}
             </v-expansion-panel-header>
@@ -16,21 +15,19 @@
               <template>
                 <div v-if="getPlayerDataInGamemode(mode.modeId) != null">
                   <v-data-table
-                  :headers="headers"
-                  :items="getPlayerDataInGamemode(mode.modeId)"
-                  :items-per-page="-1"
-                  :disable-pagination="true"
-                  :hide-default-footer="true">
-                  </v-data-table>
+                    :headers="headers"
+                    :items="getPlayerDataInGamemode(mode.modeId)"
+                    :items-per-page="-1"
+                    :disable-pagination="true"
+                    :hide-default-footer="true"
+                  ></v-data-table>
                 </div>
-                <div v-else>
-                  No Data found.
-                </div>
+                <div v-else>No Data found.</div>
               </template>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </template>
-        </v-expansion-panels>
+      </v-expansion-panels>
     </v-card>
   </v-container>
 </template>
@@ -44,10 +41,9 @@ import AppConstants from "@/constants";
 
 @Component({ components: {} })
 export default class AdminQueueData extends Vue {
-
   _intervalRefreshHandle?: number = undefined;
 
-  get headers() : Array<unknown> {
+  get headers(): Array<unknown> {
     return [
       {
         text: "Battletag",
@@ -102,34 +98,38 @@ export default class AdminQueueData extends Vue {
         value: "serverOption",
         align: "start",
         sortable: true,
-      }
-    ]
+      },
+    ];
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() : void {
+  onBattleTagChanged(): void {
     this.init();
   }
 
-  private async init() : Promise<void> {
+  private async init(): Promise<void> {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadQueueData(this.$store.direct.state.oauth.token);
+      await this.$store.direct.dispatch.admin.loadQueueData(
+        this.$store.direct.state.oauth.token
+      );
     }
   }
 
-  private async refresh() : Promise<void> {
-    await this.$store.direct.dispatch.admin.loadQueueData(this.$store.direct.state.oauth.token);
+  private async refresh(): Promise<void> {
+    await this.$store.direct.dispatch.admin.loadQueueData(
+      this.$store.direct.state.oauth.token
+    );
   }
 
-  get queueData() : QueueData[] {
+  get queueData(): QueueData[] {
     return this.$store.direct.state.admin.queuedata;
   }
 
-  get isAdmin() : boolean {
-      return this.$store.direct.state.oauth.isAdmin;
+  get isAdmin(): boolean {
+    return this.$store.direct.state.oauth.isAdmin;
   }
 
-  get gameModes() : Array<unknown> {
+  get gameModes(): Array<unknown> {
     return [
       {
         text: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
@@ -166,38 +166,32 @@ export default class AdminQueueData extends Vue {
       {
         text: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
         modeId: EGameMode.GM_FROSTCRAFT_4ON4,
-      }
+      },
     ];
   }
 
-  getPlayerDataInGamemode(modeId : number) : unknown {
-
-    for (let i=0; i<this.queueData.length; i++) {
-      if (this.queueData[i].gameMode == modeId) { 
+  getPlayerDataInGamemode(modeId: number): unknown {
+    for (let i = 0; i < this.queueData.length; i++) {
+      if (this.queueData[i].gameMode == modeId) {
         return this.queueData[i].snapshot;
       }
-
     }
-    
+
     return null;
-    
   }
 
-  async mounted() : Promise<void> {
+  async mounted(): Promise<void> {
     await this.init();
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refresh();
-    }, AppConstants.queueDataRefreshInterval)
+    }, AppConstants.queueDataRefreshInterval);
   }
 
-  destroyed() : void {
+  destroyed(): void {
     clearInterval(this._intervalRefreshHandle);
   }
-
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

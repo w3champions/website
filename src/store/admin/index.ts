@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
-import { Action, ActionContext } from "vuex";
+import { ActionContext } from "vuex";
 import {
   AdminState,
   BannedPlayer,
@@ -12,7 +12,7 @@ import {
   ProxySettings,
   OverridesList,
   GloballyMutedPlayer,
-  GlobalMute
+  GlobalMute,
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -27,11 +27,14 @@ const mod = {
     searchedPlayers: [],
     proxiesSetForSearchedPlayer: {} as ProxySettings,
     searchedBattletag: "",
-    modifiedProxies: {nodeOverrides: [], automaticNodeOverrides: []} as ProxySettings,
+    modifiedProxies: {
+      nodeOverrides: [],
+      automaticNodeOverrides: [],
+    } as ProxySettings,
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
   } as AdminState,
-  
+
   actions: {
     async loadNews(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
@@ -179,7 +182,7 @@ const mod = {
 
     async loadQueueData(
       context: ActionContext<AdminState, RootState>,
-      token: string,
+      token: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const queuedata = await rootGetters.adminService.getQueueData(token);
@@ -188,10 +191,11 @@ const mod = {
 
     async loadAvailableProxies(
       context: ActionContext<AdminState, RootState>,
-      token: string,
+      token: string
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
-      const availableProxies = await rootGetters.adminService.getAvailableProxies(token);
+      const availableProxies =
+        await rootGetters.adminService.getAvailableProxies(token);
       commit.SET_AVAILABLEPROXIES(availableProxies);
     },
 
@@ -221,138 +225,120 @@ const mod = {
     async getProxiesForPlayer(
       context: ActionContext<AdminState, RootState>,
       battleTag: string
-      ) : Promise<ProxySettings> {
-        const { commit, rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-  
-        const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
-          battleTag,
-          rootState.oauth.token,
-        );
+    ): Promise<ProxySettings> {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
 
-        commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
-        commit.SET_SEARCHED_PLAYER_BTAG(battleTag);
+      const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
+        battleTag,
+        rootState.oauth.token
+      );
 
-        return proxiesSet;
-      },
+      commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
+      commit.SET_SEARCHED_PLAYER_BTAG(battleTag);
 
-      updateModifiedProxies(
-        context: ActionContext<AdminState, RootState>,
-        overrides: OverridesList
-      ) : void {
-        const { commit } = moduleActionContext(
-          context,
-          mod
-        );
-        
-        if (overrides.isAutomatic) {
-          commit.SET_MODIFIED_AUTO_PROXIES(overrides);
-          return
-        }
-        
-        commit.SET_MODIFIED_PROXIES(overrides);
-      },
+      return proxiesSet;
+    },
 
-      proxyModified(
-        context: ActionContext<AdminState, RootState>,
-        val: boolean,
-      ) : void {
-        const { commit } = moduleActionContext(
-          context,
-          mod
-        );
+    updateModifiedProxies(
+      context: ActionContext<AdminState, RootState>,
+      overrides: OverridesList
+    ): void {
+      const { commit } = moduleActionContext(context, mod);
 
-        commit.SET_PROXY_MODIFIED(val);
-      },
-
-      async putNewProxies(
-        context: ActionContext<AdminState, RootState>,
-        proxies: ProxySettings,
-      ) : Promise<void> {
-        const { commit, rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-
-        if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
-          return;
-        }
-        const response = await rootGetters.adminService.putProxies(
-          proxies, 
-          mod.state.proxiesSetForSearchedPlayer._id,
-          rootState.oauth.token);
-
-        if (response.status == 200){
-          commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies);
-        }
-      },
-
-      async getAltsForPlayer (
-        context: ActionContext<AdminState, RootState>,
-        btag: string,
-      ) : Promise<string[]> {
-        const { rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-
-        const getAlts = await rootGetters.adminService.getAltsForBattletag(
-          btag,
-          rootState.oauth.token,
-        );
-
-        return getAlts;
-      },
-
-      async loadGlobalMutes (
-        context: ActionContext<AdminState, RootState>,
-      ) : Promise<void> {
-        const { commit, rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-
-        const getGlobalMutes = await rootGetters.adminService.getGlobalMutes(
-          rootState.oauth.token,
-        );
-
-        commit.SET_MUTED_PLAYERS(getGlobalMutes);
-      },
-
-      async deleteGlobalMute(
-        context: ActionContext<AdminState, RootState>,
-        player: GloballyMutedPlayer,
-      ) : Promise<void> {
-        const { rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-
-        await rootGetters.adminService.deleteGlobalMute(
-          rootState.oauth.token,
-          player.id
-        );
-      },
-
-      async addGlobalMute(
-        context: ActionContext<AdminState, RootState>,
-        mute: GlobalMute,
-      ) : Promise<void> {
-        const { rootGetters, rootState } = moduleActionContext(
-          context,
-          mod
-        );
-
-        await rootGetters.adminService.PutGlobalMute(
-          rootState.oauth.token,
-          mute
-        );
+      if (overrides.isAutomatic) {
+        commit.SET_MODIFIED_AUTO_PROXIES(overrides);
+        return;
       }
 
+      commit.SET_MODIFIED_PROXIES(overrides);
+    },
+
+    proxyModified(
+      context: ActionContext<AdminState, RootState>,
+      val: boolean
+    ): void {
+      const { commit } = moduleActionContext(context, mod);
+
+      commit.SET_PROXY_MODIFIED(val);
+    },
+
+    async putNewProxies(
+      context: ActionContext<AdminState, RootState>,
+      proxies: ProxySettings
+    ): Promise<void> {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
+        return;
+      }
+      const response = await rootGetters.adminService.putProxies(
+        proxies,
+        mod.state.proxiesSetForSearchedPlayer._id,
+        rootState.oauth.token
+      );
+
+      if (response.status == 200) {
+        commit.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies);
+      }
+    },
+
+    async getAltsForPlayer(
+      context: ActionContext<AdminState, RootState>,
+      btag: string
+    ): Promise<string[]> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+
+      const getAlts = await rootGetters.adminService.getAltsForBattletag(
+        btag,
+        rootState.oauth.token
+      );
+
+      return getAlts;
+    },
+
+    async loadGlobalMutes(
+      context: ActionContext<AdminState, RootState>
+    ): Promise<void> {
+      const { commit, rootGetters, rootState } = moduleActionContext(
+        context,
+        mod
+      );
+
+      const getGlobalMutes = await rootGetters.adminService.getGlobalMutes(
+        rootState.oauth.token
+      );
+
+      commit.SET_MUTED_PLAYERS(getGlobalMutes);
+    },
+
+    async deleteGlobalMute(
+      context: ActionContext<AdminState, RootState>,
+      player: GloballyMutedPlayer
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.adminService.deleteGlobalMute(
+        rootState.oauth.token,
+        player.id
+      );
+    },
+
+    async addGlobalMute(
+      context: ActionContext<AdminState, RootState>,
+      mute: GlobalMute
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.adminService.PutGlobalMute(rootState.oauth.token, mute);
+    },
   },
-  
+
   mutations: {
     SET_NEWS(state: AdminState, news: NewsMessage[]) {
       state.news = news;
@@ -372,10 +358,16 @@ const mod = {
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
     },
-    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
+    SET_SEARCH_FOR_BNET_TAG(
+      state: AdminState,
+      searchedPlayers: SearchedPlayer[]
+    ) {
       state.searchedPlayers = searchedPlayers;
     },
-    SET_SEARCHED_PROXIES_FOR_BATTLETAG(state: AdminState, proxies: ProxySettings) {
+    SET_SEARCHED_PROXIES_FOR_BATTLETAG(
+      state: AdminState,
+      proxies: ProxySettings
+    ) {
       state.proxiesSetForSearchedPlayer = proxies;
     },
     SET_SEARCHED_PLAYER_BTAG(state: AdminState, battleTag: string) {
@@ -385,14 +377,14 @@ const mod = {
       state.modifiedProxies.nodeOverrides = overridesList.overrides;
     },
     SET_MODIFIED_AUTO_PROXIES(state: AdminState, overridesList: OverridesList) {
-      state.modifiedProxies.automaticNodeOverrides = overridesList.overrides
+      state.modifiedProxies.automaticNodeOverrides = overridesList.overrides;
     },
     SET_PROXY_MODIFIED(state: AdminState, val: boolean) {
       state.proxyModified = val;
     },
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
-    }
+    },
   },
 } as const;
 

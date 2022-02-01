@@ -67,7 +67,7 @@ import { LoadingScreenTip } from "@/store/admin/types";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
-  data() : unknown {
+  data(): unknown {
     return {
       headersTips: [
         {
@@ -82,7 +82,7 @@ export default class AdminLoadingScreenTips extends Vue {
     };
   }
 
-  get tips() : LoadingScreenTip[] {
+  get tips(): LoadingScreenTip[] {
     return this.$store.direct.state.admin.tips;
   }
 
@@ -91,11 +91,11 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   @Watch("isAdmin")
-  onBattleTagChanged() : void {
+  onBattleTagChanged(): void {
     this.init();
   }
 
-  private async init() : Promise<void> {
+  private async init(): Promise<void> {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadTips();
     }
@@ -132,23 +132,24 @@ export default class AdminLoadingScreenTips extends Vue {
     banReason: "",
   };
 
-  editTipItem(item: LoadingScreenTip) : void {
+  editTipItem(item: LoadingScreenTip): void {
     this.editedTipItem = item;
     this.dialogTips = true;
   }
 
-  async deleteTipItem(item: LoadingScreenTip) : Promise<void> {
+  async deleteTipItem(item: LoadingScreenTip): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
       (await this.$store.direct.dispatch.admin.deleteTip(item));
     this.dialogTips = false;
   }
 
-  formTitle() : unknown {
+  formTitle(): unknown {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
-  async saveTips() : Promise<void> {
-    this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
+  async saveTips(): Promise<void> {
+    this.editedTipItem.author =
+      this.$store.direct.state.oauth.blizzardVerifiedBtag;
     this.editedTipItem.creationDate = moment().format(
       "MMMM Do YYYY, h:mm:ss a"
     );
@@ -163,7 +164,7 @@ export default class AdminLoadingScreenTips extends Vue {
     }
   }
 
-  closeTips() : void {
+  closeTips(): void {
     this.dialogTips = false;
     this.editedTipItem = {
       message: "",
@@ -173,7 +174,7 @@ export default class AdminLoadingScreenTips extends Vue {
     };
   }
 
-  async mounted() : Promise<void> {
+  async mounted(): Promise<void> {
     await this.init();
   }
 }

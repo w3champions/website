@@ -60,43 +60,43 @@ export default class RaceToMapStat extends Vue {
 
   get headers() {
     return [
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.map"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.vshu"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.vsorc"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.vsne"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.vsud"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-    {
-      text: this.$t("components_overall-statistics_racetomapstat.total"),
-      align: "start",
-      sortable: false,
-      width: "25px",
-    },
-  ];
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.map"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.vshu"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.vsorc"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.vsne"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.vsud"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+      {
+        text: this.$t("components_overall-statistics_racetomapstat.total"),
+        align: "start",
+        sortable: false,
+        width: "25px",
+      },
+    ];
   }
 }
 </script>

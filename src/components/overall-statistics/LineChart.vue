@@ -8,11 +8,10 @@ import { ChartData, TimeUnit } from "chart.js";
 })
 export default class LineChart extends Mixins(Line) {
   @Prop() public chartData!: ChartData;
-  @Prop() public customYAxes?: 
-  {
+  @Prop() public customYAxes?: {
     ticks: {
-      beginAtZero: true,
-    },
+      beginAtZero: true;
+    };
   }[];
 
   private options = {
@@ -57,8 +56,8 @@ export default class LineChart extends Mixins(Line) {
     },
     elements: {
       point: {
-        radius: 1
-      }
+        radius: 1,
+      },
     },
   };
 

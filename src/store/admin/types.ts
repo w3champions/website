@@ -38,59 +38,58 @@ export interface BannedPlayer {
 }
 
 export interface NavigationItem {
-  key?: string,
-  title: string,
-  icon?: string,
-  component?: string,
-  items?: Array<NavigationItem>
+  key?: string;
+  title: string;
+  icon?: string;
+  component?: string;
+  items?: Array<NavigationItem>;
 }
 
 export interface QueueData {
-  gameMode: number,
-  snapshot: QueuedPlayer[]
+  gameMode: number;
+  snapshot: QueuedPlayer[];
 }
 
 export interface ProxySettings {
-  nodeOverrides: string[],
-  automaticNodeOverrides: string[],
-  _id?: string,
-  _created_at?: string,
-  _updated_at?: string,
+  nodeOverrides: string[];
+  automaticNodeOverrides: string[];
+  _id?: string;
+  _created_at?: string;
+  _updated_at?: string;
 }
 
 export interface GlobalMute {
-  battleTag: string,
-  expiresAt: string | null,
+  battleTag: string;
+  expiresAt: string | null;
 }
 
 export interface GloballyMutedPlayer extends GlobalMute {
-  id: string,
+  id: string;
 }
 
 export interface Proxy {
-  id: string,
-  nodeId: number,
+  id: string;
+  nodeId: number;
 }
 
 export interface QueuedPlayer {
-  battleTag : string,
-  mmr: number,
-  rd: number,
-  quantile: number,
-  activityQuantile: number,
-  queueTime: number,
-  isFloConnected: boolean,
-  location: string,
-  serverOption: string,
+  battleTag: string;
+  mmr: number;
+  rd: number;
+  quantile: number;
+  activityQuantile: number;
+  queueTime: number;
+  isFloConnected: boolean;
+  location: string;
+  serverOption: string;
 }
 
 export type SearchedPlayer = {
-  gameMode: number,
-  player: PlayerOverview,
-}
+  gameMode: number;
+  player: PlayerOverview;
+};
 
 export type OverridesList = {
-  overrides: string[],
-  isAutomatic: boolean,
-}
-;
+  overrides: string[];
+  isAutomatic: boolean;
+};

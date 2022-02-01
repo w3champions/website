@@ -25,9 +25,10 @@ const mod = {
       const battleTag = rootState.player.battleTag;
       if (!battleTag) return;
 
-      const response = await rootGetters.personalSettingsService.retrievePersonalSetting(
-        battleTag
-      );
+      const response =
+        await rootGetters.personalSettingsService.retrievePersonalSetting(
+          battleTag
+        );
 
       commit.SET_PERSONAL_SETTING(response);
     },
@@ -40,11 +41,12 @@ const mod = {
         mod
       );
 
-      const success = await rootGetters.personalSettingsService.savePersonalSettings(
-        rootState.player.battleTag,
-        setting,
-        rootState.oauth.token
-      );
+      const success =
+        await rootGetters.personalSettingsService.savePersonalSettings(
+          rootState.player.battleTag,
+          setting,
+          rootState.oauth.token
+        );
       if (success) commit.SET_PERSONAL_SETTING(setting);
     },
     async saveAvatar(

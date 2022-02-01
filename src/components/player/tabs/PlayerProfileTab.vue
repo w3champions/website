@@ -3,7 +3,7 @@
     <v-card-text v-if="!loadingProfile">
       <v-row class="mt-4 filter-none">
         <v-col cols="12" md="4" lg="3">
-          <v-card-text style="padding-top: 0 !important;">
+          <v-card-text style="padding-top: 0 !important">
             <player-avatar :is-logged-in-player="isLoggedInPlayer" />
           </v-card-text>
         </v-col>
@@ -21,21 +21,15 @@
           <v-row v-if="isBetaSeason">
             <v-col>
               <v-card-text>
-                {{
-                  $t(
-                    "components_player_tabs_playerprofiletab.betaText"
-                  )
-                }}
+                {{ $t("components_player_tabs_playerprofiletab.betaText") }}
               </v-card-text>
             </v-col>
           </v-row>
           <v-row class="filter-none" v-if="!isBetaSeason">
             <v-col cols="12" md="4">
-              <h4 style="position: relative;">{{
-                  $t(
-                    "components_player_tabs_playerprofiletab.statsByRace"
-                  )
-                }}</h4>
+              <h4 style="position: relative">
+                {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
+              </h4>
               <v-data-table
                 hide-default-footer
                 :headers="raceHeaders"
@@ -49,7 +43,7 @@
                     <span class="won">{{ item.wins }}</span>
                     -
                     <span class="lost">{{ item.losses }}</span>
-                    <span style="float: right;">
+                    <span style="float: right">
                       ({{ (item.winrate * 100).toFixed(1) }}%)
                     </span>
                   </span>
@@ -57,12 +51,9 @@
               </v-data-table>
             </v-col>
             <v-col cols="12" md="6">
-              <h4 style="position: relative;">
-                {{ 
-                  $t(
-                    "components_player_tabs_playerprofiletab.statsByMode"
-                  ) 
-                }}</h4>
+              <h4 style="position: relative">
+                {{ $t("components_player_tabs_playerprofiletab.statsByMode") }}
+              </h4>
               <mode-stats-grid :stats="gameModeStats" />
             </v-col>
           </v-row>
@@ -71,11 +62,11 @@
     </v-card-text>
     <v-card-text
       v-if="loadingProfile"
-      style="min-height: 500px;"
+      style="min-height: 500px"
       class="text-center"
     >
       <v-progress-circular
-        style="margin-top: 180px;"
+        style="margin-top: 180px"
         :size="50"
         color="primary"
         indeterminate
@@ -100,21 +91,21 @@ import { EGameMode } from "@/store/typings";
 export default class PlayerProfileTab extends Vue {
   @Prop() public id!: string;
 
-  get raceHeaders () {
+  get raceHeaders() {
     return [
-    {
-      text: this.$t("components_player_tabs_playerprofiletab.race"),
-      align: "start",
-      sortable: false,
-      value: "race",
-    },
-    {
-      text: this.$t("components_player_tabs_playerprofiletab.winloss"),
-      align: "start",
-      sortable: false,
-      value: "wins",
-    },
-  ];
+      {
+        text: this.$t("components_player_tabs_playerprofiletab.race"),
+        align: "start",
+        sortable: false,
+        value: "race",
+      },
+      {
+        text: this.$t("components_player_tabs_playerprofiletab.winloss"),
+        align: "start",
+        sortable: false,
+        value: "wins",
+      },
+    ];
   }
 
   get isBetaSeason() {

@@ -254,7 +254,7 @@ export default class PlayerLeague extends Vue {
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
-  }
+}
 
 .LadderSummaryShowcase-card.diamond:before {
   border-top: 2px solid #2c33ff !important;

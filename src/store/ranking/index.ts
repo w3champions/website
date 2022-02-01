@@ -1,6 +1,6 @@
 import { moduleActionContext } from "..";
 import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { DataTableOptions, EGameMode, ERaceEnum, RootState } from "../typings";
+import { DataTableOptions, EGameMode, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
 const mod = {
@@ -77,7 +77,7 @@ const mod = {
     },
     async search(
       context: ActionContext<RankingState, RootState>,
-      search: { searchText: string; gameMode: EGameMode; }
+      search: { searchText: string; gameMode: EGameMode }
     ) {
       const { commit, rootGetters, state, rootState } = moduleActionContext(
         context,

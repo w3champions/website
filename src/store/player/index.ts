@@ -92,10 +92,11 @@ const mod = {
       battleTag: string
     ) {
       const { commit, state, rootGetters } = moduleActionContext(context, mod);
-      const profile = await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
-        battleTag,
-        state.selectedSeason?.id ?? -1
-      );
+      const profile =
+        await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
+          battleTag,
+          state.selectedSeason?.id ?? -1
+        );
 
       commit.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
     },
@@ -133,9 +134,8 @@ const mod = {
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.matchService.retrieveOnGoingPlayerMatch(
-        playerId
-      );
+      const response =
+        await rootGetters.matchService.retrieveOnGoingPlayerMatch(playerId);
       commit.SET_ONGOING_MATCH(response || {});
     },
     async reloadPlayer(context: ActionContext<PlayerState, RootState>) {
@@ -157,13 +157,14 @@ const mod = {
         mod
       );
       commit.SET_LOADING_MMR_TIMELINE(true);
-      const mmrRpTimeline = await rootGetters.profileService.retrievePlayerMmrRpTimeline(
-        state.battleTag,
-        state.race,
-        rootState.gateway,
-        state.selectedSeason?.id ?? -1,
-        state.gameMode
-      );
+      const mmrRpTimeline =
+        await rootGetters.profileService.retrievePlayerMmrRpTimeline(
+          state.battleTag,
+          state.race,
+          rootState.gateway,
+          state.selectedSeason?.id ?? -1,
+          state.gameMode
+        );
       commit.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       commit.SET_LOADING_MMR_TIMELINE(false);
     },

@@ -104,33 +104,33 @@ export default class WinratesTab extends Vue {
 
   get headers() {
     return [
-    {
-      text: "",
-      align: "start",
-      sortable: false,
-      value: "race",
-    },
-    {
-      text: this.$t("components_overall-statistics_tabs_winratestab.vshu"),
-      align: "start",
-      sortable: false,
-    },
-    {
-      text: this.$t("components_overall-statistics_tabs_winratestab.vsorc"),
-      align: "start",
-      sortable: false,
-    },
-    {
-      text: this.$t("components_overall-statistics_tabs_winratestab.vsud"),
-      align: "start",
-      sortable: false,
-    },
-    {
-      text: this.$t("components_overall-statistics_tabs_winratestab.vsne"),
-      align: "start",
-      sortable: false,
-    },
-  ];
+      {
+        text: "",
+        align: "start",
+        sortable: false,
+        value: "race",
+      },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vshu"),
+        align: "start",
+        sortable: false,
+      },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsorc"),
+        align: "start",
+        sortable: false,
+      },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsud"),
+        align: "start",
+        sortable: false,
+      },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsne"),
+        align: "start",
+        sortable: false,
+      },
+    ];
   }
 
   get mmrs() {

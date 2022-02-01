@@ -1,6 +1,9 @@
 <template>
   <v-row justify="center">
-    <v-col v-if="heroesOfWinner.length !== 3" :cols="heroesOfWinner.length === 1 ? 2 : 1" />
+    <v-col
+      v-if="heroesOfWinner.length !== 3"
+      :cols="heroesOfWinner.length === 1 ? 2 : 1"
+    />
     <v-col cols="1" v-if="heroesOfWinner.length === 3">
       <hero-icon :hero="this.heroesOfWinner[2]" />
     </v-col>
@@ -46,7 +49,10 @@
     <v-col cols="1" v-if="heroesOfLooser.length === 3">
       <hero-icon :hero="heroesOfLooser[2]" />
     </v-col>
-    <v-col v-if="heroesOfLooser.length !== 3" :cols="heroesOfLooser.length <= 1 ? 2 : 1" />
+    <v-col
+      v-if="heroesOfLooser.length !== 3"
+      :cols="heroesOfLooser.length <= 1 ? 2 : 1"
+    />
   </v-row>
 </template>
 
@@ -67,6 +73,7 @@ export default class MatchDetailHeroRow extends Vue {
   @Prop() public scoresOfWinner!: HeroScore;
   @Prop() public scoresOfLooser!: HeroScore;
 
-  public getDescription = (value?:number) => !!value || value === 0 ? value : "N/A"
+  public getDescription = (value?: number) =>
+    !!value || value === 0 ? value : "N/A";
 }
 </script>

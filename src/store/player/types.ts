@@ -50,7 +50,7 @@ export type AliasData = {
   main_race: string;
   country: string;
   liquipedia: string;
-}
+};
 
 export type ModeStat = {
   id: string;

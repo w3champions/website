@@ -3,11 +3,7 @@
     <v-card-title>
       <v-row align="center">
         <v-col cols="12" md="5">
-          {{
-            $t(
-              "components_player_tabs_matchhistorytab.title"
-            )
-          }}
+          {{ $t("components_player_tabs_matchhistorytab.title") }}
         </v-col>
         <v-col cols="12" md="5">
           <v-autocomplete
@@ -62,22 +58,10 @@
                     </span>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{
-                      $t(
-                        "common.wins"
-                      )
-                    }} {{ data.item.player.wins }} |
-                    {{
-                      $t(
-                        "common.losses"
-                      )
-                    }}
+                    {{ $t("common.wins") }} {{ data.item.player.wins }} |
+                    {{ $t("common.losses") }}
                     {{ data.item.player.losses }} |
-                    {{
-                      $t(
-                        "common.total"
-                      )
-                    }}
+                    {{ $t("common.total") }}
                     {{ data.item.player.games }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -86,10 +70,8 @@
           </v-autocomplete>
         </v-col>
         <v-col>
-          <v-btn 
-            outlined
-            @click="filtersVisible=!filtersVisible"
-          > {{filterButtonText}}
+          <v-btn outlined @click="filtersVisible = !filtersVisible">
+            {{ filterButtonText }}
           </v-btn>
         </v-col>
       </v-row>
@@ -106,7 +88,7 @@
           />
         </v-col>
         <v-col cols="12" md="2">
-         <v-select
+          <v-select
             class="player-race-select-box"
             :items="races"
             item-text="raceName"
@@ -117,7 +99,7 @@
           />
         </v-col>
         <v-col cols="12" md="2">
-         <v-select
+          <v-select
             class="opponent-race-select-box"
             :items="races"
             item-text="raceName"
@@ -234,11 +216,15 @@ export default class PlayerMatchesTab extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
+        ),
         modeId: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
+        ),
         modeId: EGameMode.GM_LEGION_4v4_X20,
       },
       {
@@ -250,38 +236,40 @@ export default class PlayerMatchesTab extends Vue {
         modeId: EGameMode.GM_LTW_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`
+        ),
         modeId: EGameMode.GM_FROSTCRAFT_4ON4,
-      }
+      },
     ];
   }
 
   get races() {
     return [
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
-      raceId: ERaceEnum.TOTAL,
-    },
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
-      raceId: ERaceEnum.HUMAN,
-    },
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
-      raceId: ERaceEnum.ORC,
-    },
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
-      raceId: ERaceEnum.NIGHT_ELF,
-    },
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
-      raceId: ERaceEnum.UNDEAD,
-    },
-    {
-      raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
-      raceId: ERaceEnum.RANDOM,
-    }
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
+        raceId: ERaceEnum.TOTAL,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
+        raceId: ERaceEnum.HUMAN,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
+        raceId: ERaceEnum.ORC,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
+        raceId: ERaceEnum.NIGHT_ELF,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
+        raceId: ERaceEnum.UNDEAD,
+      },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
+        raceId: ERaceEnum.RANDOM,
+      },
     ];
   }
 
@@ -312,8 +300,7 @@ export default class PlayerMatchesTab extends Vue {
   get filterButtonText() {
     if (this.filtersVisible) {
       return "Hide Additional Filters";
-    }
-    else {
+    } else {
       return "Show Additional Filters";
     }
   }
@@ -340,7 +327,7 @@ export default class PlayerMatchesTab extends Vue {
     this.$store.direct.commit.player.SET_OPPONENT_RACE(race);
     this.getMatches();
   }
-  
+
   get totalMatchesAgainstOpponent() {
     const opponentTag = this.$store.direct.state.player.opponentTag;
     if (!opponentTag || !this.matches) {

@@ -5,42 +5,41 @@
     </v-card-text>
     <v-card
       v-for="(partner, index) in partners"
-      v-bind:key="'partner_card_'+index"
+      v-bind:key="'partner_card_' + index"
       class="socials-subcard"
       tile
       :href="partner.link"
       target="_blank"
-      outlined>
-      <v-img 
-        :src="imgSource(partner.img)"></v-img>
+      outlined
+    >
+      <v-img :src="imgSource(partner.img)"></v-img>
     </v-card>
-    
   </v-card>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class PartnerBox extends Vue {
   get partners() {
-      return [
-          { 
-            img:"back2warcraft",
-            link:"https://www.back2warcraft.com/"
-          },
-          { 
-            img:"hive",
-            link:"https://www.hiveworkshop.com/"
-          },
-          {
-            img:"gym",
-            link:"https://warcraft-gym.com"
-          }
-      ]
+    return [
+      {
+        img: "back2warcraft",
+        link: "https://www.back2warcraft.com/",
+      },
+      {
+        img: "hive",
+        link: "https://www.hiveworkshop.com/",
+      },
+      {
+        img: "gym",
+        link: "https://warcraft-gym.com",
+      },
+    ];
   }
-  imgSource(name: string) : NodeRequire {
+  imgSource(name: string): string {
     return require(`@/assets/partners/${name}.jpg`);
   }
 }

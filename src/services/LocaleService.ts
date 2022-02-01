@@ -7,6 +7,6 @@ export default class LocaleService {
 
   public getLocale(): string {
     const locale = localStorage.getItem(localeLocalStorageKey);
-    return locale?.toString() ?? 'en';
+    return locale?.toString() ?? "en";
   }
 }

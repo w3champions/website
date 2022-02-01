@@ -32,7 +32,9 @@ export default class ActivityPerDayChart extends Vue {
         .filter((c) => {
           // Filter out all game modes that are not present in enum "EGameMode"
           // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
-          return Object.values( EGameMode ).includes( c.gameMode ) && c.gameMode !== 6;
+          return (
+            Object.values(EGameMode).includes(c.gameMode) && c.gameMode !== 6
+          );
         })
         // then only show the data that user selected
         .filter((c) => {

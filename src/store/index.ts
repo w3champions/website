@@ -27,7 +27,6 @@ import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
-import en from "@/locales/en";
 import { OauthState } from "@/store/oauth/types";
 
 Vue.use(Vuex);
@@ -65,23 +64,18 @@ const mod = {
     locale: "en",
   } as RootState,
   actions: {
-    loadLocale(
-      context: ActionContext<OauthState, RootState>
-    ) {
+    loadLocale(context: ActionContext<OauthState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const locale = rootGetters.localeService.getLocale();
       commit.SET_LOCALE(locale);
     },
-    saveLocale(
-      context: ActionContext<OauthState, RootState>,
-      locale: string
-    ) {
+    saveLocale(context: ActionContext<OauthState, RootState>, locale: string) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       rootGetters.localeService.setLocale(locale);
       commit.SET_LOCALE(locale);
-    }
+    },
   },
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
@@ -132,9 +126,8 @@ const mod = {
   },
 } as const;
 
-const { store, rootActionContext, moduleActionContext } = createDirectStore(
-  mod
-);
+const { store, rootActionContext, moduleActionContext } =
+  createDirectStore(mod);
 
 export default store;
 

@@ -25,7 +25,7 @@
       <tbody>
         <tr
           :id="`listitem_${item.rankNumber}`"
-          v-for="item in sortedRankings"
+          v-for="item in rankings"
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag,
@@ -275,7 +275,6 @@ export default class RankingsGrid extends Vue {
     ];
   }
 
-  public sortedRankings: Ranking[] = this.rankings;
   public sortColumn = "Rank";
   public isSortedAsc = true;
   private _lastSortFunction: (() => void) | null = null;
@@ -295,7 +294,7 @@ export default class RankingsGrid extends Vue {
       return;
     }
 
-    if (newVal == this.sortedRankings) {
+    if (newVal == this.rankings) {
       return;
     }
 
@@ -314,7 +313,7 @@ export default class RankingsGrid extends Vue {
       this.getStreamStatus();
     }
 
-    this.sortedRankings = newVal;
+    this.rankings = newVal;
 
     if (this._lastSortFunction) {
       this._lastSortFunction();
@@ -405,8 +404,8 @@ export default class RankingsGrid extends Vue {
 
   public isTwitchLive(ranking: Ranking): boolean {
     const twitchName = ranking.playersInfo[0].twitchName;
-    const streamData = this.$store.direct.state.twitch.twitchStreamResponse
-      .data;
+    const streamData =
+      this.$store.direct.state.twitch.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
         let stream = streamData[i];
@@ -474,9 +473,9 @@ export default class RankingsGrid extends Vue {
 
       const sortFn = () => {
         this.sortColumn = columnName;
-        this.sortedRankings.sort(sortFunction);
+        this.rankings.sort(sortFunction);
         if (this.isSortedAsc) {
-          this.sortedRankings = this.sortedRankings.reverse();
+          this.rankings = this.rankings.reverse();
         }
       };
       this._lastSortFunction = sortFn;
@@ -515,7 +514,7 @@ export default class RankingsGrid extends Vue {
   display: flex;
   align-items: center;
   width: 50%;
-  margin-left: 0!important;
+  margin-left: 0 !important;
   min-height: 39px;
 }
 

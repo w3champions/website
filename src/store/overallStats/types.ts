@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
-import { Gateways } from '@/store/ranking/types';
+import { Gateways } from "@/store/ranking/types";
 
 export type OveralStatisticState = {
   gamesPerDay: GameDayPerMode[][];
@@ -133,8 +133,8 @@ export interface MatchesOnMapPerSeason {
   season: number;
 }
 
-export interface SeasonGameModeGateWayForMMR{
-  season: number,
-  gameMode: EGameMode,
-  gateWay: Gateways
+export interface SeasonGameModeGateWayForMMR {
+  season: number;
+  gameMode: EGameMode;
+  gateWay: Gateways;
 }

@@ -17,13 +17,13 @@ Vue.config.productionTip = false;
 declare global {
   interface Window {
     _env_: {
-      BASE_URL: string,
-      IDENTIFICATION_URL: string,
-      REDIRECT_URL: string
-      LAUNCHER_UPDATE_URL: string,
-      INGAME_STATIC_RESOURCES_URL: string,
-      BNET_API_CLIENT_ID: string
-    }
+      BASE_URL: string;
+      IDENTIFICATION_URL: string;
+      REDIRECT_URL: string;
+      LAUNCHER_UPDATE_URL: string;
+      INGAME_STATIC_RESOURCES_URL: string;
+      BNET_API_CLIENT_ID: string;
+    };
   }
 }
 

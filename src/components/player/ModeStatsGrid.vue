@@ -53,7 +53,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { EGameMode } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/typings";
+import { Gateways } from "@/store/ranking/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 
@@ -70,13 +71,7 @@ export default class ModeStatsGrid extends Vue {
   }
 
   get gameModeStatsCombined(): ModeStat[] {
-    let gm2v2s = [];
-
-    for (var i = 0; i < this.stats.length; i++) {
-      if (this.stats[i].gameMode === EGameMode.GM_2ON2_AT) {
-        gm2v2s.push(this.stats[i]);
-      }
-    }
+    let gm2v2s = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
 
     if (gm2v2s.length === 0) return this.stats;
 
@@ -90,22 +85,49 @@ export default class ModeStatsGrid extends Vue {
     );
     combindes2v2.quantile = combindes2v2.quantile / gm2v2s.length;
 
+    const combined = new Array<ModeStat>(0);
+    combined.push(combindes2v2);
+
     const gm1v1 = this.stats.filter((g) => g.gameMode === EGameMode.GM_1ON1);
 
-    const ffa = this.stats.find((g) => g.gameMode === EGameMode.GM_FFA);
+    const ffa = this.stats.filter((g) => g.gameMode === EGameMode.GM_FFA);
 
-    const gm2v2 = this.stats.find((g) => g.gameMode === EGameMode.GM_2ON2);
+    const gm2v2 = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2);
 
-    const gm4v4 = this.stats.find((g) => g.gameMode === EGameMode.GM_4ON4);
+    const gm4v4 = this.stats.filter((g) => g.gameMode === EGameMode.GM_4ON4);
 
-    return [...gm1v1, gm2v2, combindes2v2, gm4v4, ffa].filter((i) => i); //filter out nulls
+    return [...gm1v1, ...gm2v2, combindes2v2, ...gm4v4, ...ffa].filter(
+      (i) => i
+    ); //filter out null & undefined
   }
 
-  private combineStats(gm2v2s: any[]) {
+  private combineStats(gm2v2s: ModeStat[]): ModeStat {
+    const empty: ModeStat = {
+      id: "",
+      gameMode: EGameMode.UNDEFINED,
+      gateWay: Gateways.Europe,
+      race: ERaceEnum.RANDOM,
+      wins: 0,
+      losses: 0,
+      games: 0,
+      winrate: 0,
+      mmr: 0,
+      leagueId: 0,
+      leagueOrder: 0,
+      division: 0,
+      rank: 0,
+      season: 0,
+      rankingPoints: 0,
+      playerIds: [],
+      quantile: 0,
+    };
+
     return gm2v2s.reduce(
       (a, b) => ({
+        id: "",
         gameMode: EGameMode.GM_2ON2_AT,
         gateWay: b.gateWay,
+        race: b.race,
         wins: b.wins + a.wins,
         losses: b.losses + a.losses,
         games: b.games + a.games,
@@ -117,18 +139,10 @@ export default class ModeStatsGrid extends Vue {
         division: 0,
         rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
         season: b.season,
+        playerIds: [],
         quantile: b.quantile + a.quantile,
       }),
-      {
-        wins: 0,
-        losses: 0,
-        games: 0,
-        winrate: 0,
-        mmr: 0,
-        rank: 0,
-        rankingPoints: 0,
-        quantile: 0,
-      }
+      empty
     );
   }
 
@@ -148,31 +162,31 @@ export default class ModeStatsGrid extends Vue {
 
   get headers() {
     return [
-    {
-      text: this.$t("components_player_modestatsgrid.mode"),
-      align: "center",
-      sortable: false,
-      tooltip: this.$t("components_player_modestatsgrid.mode"),
-    },
-    {
-      text: this.$t("components_player_modestatsgrid.winloss"),
-      align: "center",
-      sortable: false,
-      tooltip: this.$t("components_player_modestatsgrid.winloss"),
-    },
-    {
-      text: this.$t("components_player_modestatsgrid.mmr"),
-      align: "center",
-      sortable: false,
-      tooltip: this.$t("components_player_modestatsgrid.mmr"),
-    },
-    {
-      text: this.$t("components_player_modestatsgrid.rp"),
-      align: "center",
-      sortable: false,
-      tooltip: this.$t("components_player_modestatsgrid.rpdesc"),
-    },
-  ];
+      {
+        text: this.$t("components_player_modestatsgrid.mode"),
+        align: "center",
+        sortable: false,
+        tooltip: this.$t("components_player_modestatsgrid.mode"),
+      },
+      {
+        text: this.$t("components_player_modestatsgrid.winloss"),
+        align: "center",
+        sortable: false,
+        tooltip: this.$t("components_player_modestatsgrid.winloss"),
+      },
+      {
+        text: this.$t("components_player_modestatsgrid.mmr"),
+        align: "center",
+        sortable: false,
+        tooltip: this.$t("components_player_modestatsgrid.mmr"),
+      },
+      {
+        text: this.$t("components_player_modestatsgrid.rp"),
+        align: "center",
+        sortable: false,
+        tooltip: this.$t("components_player_modestatsgrid.rpdesc"),
+      },
+    ];
   }
 }
 </script>

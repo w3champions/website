@@ -39,10 +39,10 @@ export default class TopOngoingMatchesWithStreams extends Vue {
       EGameMode.GM_1ON1
     );
 
-    const matchesWithStreamers = this.$store.direct.state.matches.allOngoingMatches.filter(
-      (match) =>
+    const matchesWithStreamers =
+      this.$store.direct.state.matches.allOngoingMatches.filter((match) =>
         match.teams.some((team) => team.players.some((player) => player.twitch))
-    );
+      );
     const streamerNames = matchesWithStreamers.flatMap((match) =>
       match.teams.flatMap((team) => team.players.map((player) => player.twitch))
     );
@@ -50,9 +50,10 @@ export default class TopOngoingMatchesWithStreams extends Vue {
     if (streamerNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames);
 
-      const activeStreamers = this.$store.direct.state.twitch.twitchStreamResponse.data.map(
-        (stream) => stream.user_name.toLowerCase()
-      );
+      const activeStreamers =
+        this.$store.direct.state.twitch.twitchStreamResponse.data.map(
+          (stream) => stream.user_name.toLowerCase()
+        );
 
       this.matches = matchesWithStreamers
         .filter((match) =>

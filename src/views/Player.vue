@@ -6,10 +6,17 @@
           <v-card-title>
             <v-row no-gutters>
               <v-col :align-self="'center'">
-                <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
+                <span>
+                  {{ $t("views_player.profile") }} {{ profile.battleTag }}
+                </span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
-                <span class="mr-2" /> <!-- add some space between name and season badges -->
-                <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block" >
+                <span class="mr-2" />
+                <!-- add some space between name and season badges -->
+                <div
+                  v-for="season in seasonsWithoutCurrentOne"
+                  :key="season.id"
+                  class="ml-1 d-inline-block"
+                >
                   <SeasonBadge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
@@ -17,33 +24,34 @@
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
                   <v-menu offset-x v-if="!!seasons && seasons.length > 0">
-                  <template v-slot:activator="{ on }">
-                    <v-btn tile v-on="on" class="ma-2 transparent">
-                    <span class="pa-0" v-if="selectedSeason">
-                      {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
-                    </span>
-                    </v-btn>
-                  </template>
+                    <template v-slot:activator="{ on }">
+                      <v-btn tile v-on="on" class="ma-2 transparent">
+                        <span class="pa-0" v-if="selectedSeason">
+                          {{ $t("views_rankings.season") }}
+                          {{ selectedSeason.id }}
+                        </span>
+                      </v-btn>
+                    </template>
 
-                  <v-card>
-                    <v-list>
-                      <v-subheader>
-                        {{ $t("views_player.prevseasons") }}
-                      </v-subheader>
-                      <v-list-item
+                    <v-card>
+                      <v-list>
+                        <v-subheader>
+                          {{ $t("views_player.prevseasons") }}
+                        </v-subheader>
+                        <v-list-item
                           v-for="item in seasons"
                           :key="item.id"
                           @click="selectSeason(item)"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            {{ $t("views_rankings.season") }} {{ item.id }}
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                  </v-card>
-                </v-menu>
+                        >
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ $t("views_rankings.season") }} {{ item.id }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-list>
+                    </v-card>
+                  </v-menu>
                 </div>
               </v-col>
             </v-row>
@@ -152,7 +160,7 @@ import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { Gateways, Season } from "@/store/ranking/types";
+import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
@@ -337,12 +345,11 @@ export default class PlayerView extends Vue {
   public isGatewayNeeded() {
     const seasonId = this.$store.direct.state.player.selectedSeason.id;
     if (seasonId > 5) {
-      this.$store.direct.state.gateway = Gateways.Europe;
+      //this.$store.direct.state.gateway = Gateways.Europe;
       return false;
-    }
-    else {
+    } else {
       return true;
-    }  
+    }
   }
 
   async mounted() {

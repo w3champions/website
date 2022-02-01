@@ -8,7 +8,7 @@ import chartjsPluginAnnotation from "chartjs-plugin-annotation";
   mixins: [mixins.reactiveProp],
 })
 export default class BarChart extends Mixins(Bar) {
-  @Prop() public chartOptions: ChartOptions|undefined;
+  @Prop() public chartOptions: ChartOptions | undefined;
   @Prop() public chartData!: ChartData;
 
   get options() {
@@ -16,7 +16,7 @@ export default class BarChart extends Mixins(Bar) {
   }
 
   //default options
-  private defaultOptions:ChartOptions = {
+  private defaultOptions: ChartOptions = {
     legend: {
       display: true,
     },

@@ -1,8 +1,8 @@
-import { ITournament } from './../store/tournaments/types';
+import { ITournament } from "./../store/tournaments/types";
 import { API_URL } from "@/main";
 
-export interface ITournamentsResponse{
-  tournaments: ITournament[]
+export interface ITournamentsResponse {
+  tournaments: ITournament[];
 }
 
 export default class AdminService {
@@ -17,7 +17,7 @@ export default class AdminService {
     });
 
     if (response.status == 404) {
-        return {tournaments: []};
+      return { tournaments: [] };
     }
 
     return await response?.json();

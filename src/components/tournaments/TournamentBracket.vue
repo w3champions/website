@@ -2,7 +2,7 @@
   <div class="bracket-wrapper bracket-player">
     <div class="bracket-scroller">
       <div
-        style="width: 100%;"
+        style="width: 100%"
         class="bracket bracket-width-2col-20"
         v-if="bracketRoundsWithDimensions"
       >
@@ -10,11 +10,15 @@
           <div
             :key="`round.${roundIndex}`"
             class="bracket-column bracket-column-matches"
-            style="width: 150px;"
+            style="width: 150px"
           >
             <div
-              style="margin-top: 0px;"
-              v-bind:style="{ height: round.dimensions ? round.dimensions.headerHeight + 'px' : null }"
+              style="margin-top: 0px"
+              v-bind:style="{
+                height: round.dimensions
+                  ? round.dimensions.headerHeight + 'px'
+                  : null,
+              }"
             >
               <div class="bracket-header">{{ round.name }}</div>
             </div>
@@ -26,9 +30,10 @@
               :date="match.date"
               :topPlayer="match.players[0]"
               :bottomPlayer="match.players[1]"
-              :cellHeight="{ height: round.dimensions ? round.dimensions.cellHeight : null }"
-            >
-            </tournamentMatch>
+              :cellHeight="{
+                height: round.dimensions ? round.dimensions.cellHeight : null,
+              }"
+            ></tournamentMatch>
           </div>
           <tournamentRoundConnector
             :key="`connector.${roundIndex}`"
@@ -38,7 +43,7 @@
             :matchesInRound="round.matches.length"
           ></tournamentRoundConnector>
         </template>
-        <div style="clear: left;"></div>
+        <div style="clear: left"></div>
       </div>
     </div>
   </div>

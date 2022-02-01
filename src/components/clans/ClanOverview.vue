@@ -237,9 +237,7 @@ export default class ClanOverview extends Vue {
       .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
   }
 
-  public getStats(
-    mode: EGameMode
-  ): {
+  public getStats(mode: EGameMode): {
     wins: number;
     losses: number;
     gameMode: EGameMode;

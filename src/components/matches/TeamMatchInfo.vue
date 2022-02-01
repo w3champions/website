@@ -1,17 +1,17 @@
 <template>
   <div v-if="team">
     <div
-        v-for="(player, index) in team.players"
-        v-bind:key="index"
-        v-bind:class="{ mt2: index > 0 }"
+      v-for="(player, index) in team.players"
+      v-bind:key="index"
+      v-bind:class="{ mt2: index > 0 }"
     >
       <player-match-info
-          :unfinishedMatch="unfinishedMatch"
-          :player="team.players[index]"
-          :left="left"
-          :big-race-icon="bigRaceIcon"
-          :not-clickable="notClickable"
-          :is-anonymous="isAnonymous"
+        :unfinishedMatch="unfinishedMatch"
+        :player="team.players[index]"
+        :left="left"
+        :big-race-icon="bigRaceIcon"
+        :not-clickable="notClickable"
+        :is-anonymous="isAnonymous"
       />
     </div>
   </div>
@@ -24,7 +24,7 @@ import { Team } from "@/store/typings";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 
 @Component({
-  components: { PlayerMatchInfo }
+  components: { PlayerMatchInfo },
 })
 export default class TeamMatchInfo extends Vue {
   @Prop() public team!: Team;

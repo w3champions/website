@@ -1,24 +1,31 @@
 <template>
-  <div class="connector-straight-open"
-       v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px': null }">
-    <div class="connector-straight-open-top"
-         v-bind:style="{ height: round.dimensions ? round.dimensions.cellHeight - 1 + 'px': null }">
-    </div>
+  <div
+    class="connector-straight-open"
+    v-bind:style="{
+      height: round.dimensions ? round.dimensions.cellHeight * 2 + 'px' : null,
+    }"
+  >
+    <div
+      class="connector-straight-open-top"
+      v-bind:style="{
+        height: round.dimensions
+          ? round.dimensions.cellHeight - 1 + 'px'
+          : null,
+      }"
+    ></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {
-  ITournamentRound} from "@/store/tournaments/types";
+import { ITournamentRound } from "@/store/tournaments/types";
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class TournamentStraightConnector extends Vue {
   @Prop() round!: ITournamentRound;
-
 }
 </script>
 

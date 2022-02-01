@@ -146,12 +146,12 @@ const routes = [
     path: "/OverallStatistics",
     component: OverallStatistics,
     name: "OverallStatistics",
-    redirect: {name: 'OverallStatisticsPlayerActivity' },
+    redirect: { name: "OverallStatisticsPlayerActivity" },
     children: [
       {
         path: "",
         component: PlayerActivityTab,
-        name: "OverallStatisticsPlayerActivity"
+        name: "OverallStatisticsPlayerActivity",
       },
       {
         path: "mmr-distribution",

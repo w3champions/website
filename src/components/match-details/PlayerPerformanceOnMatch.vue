@@ -87,7 +87,12 @@
         </v-row>
         <v-row dense>
           <v-col :class="armyComparison" :align="align">
-            <number-display :object="unitScore" value="largestArmy" :delimiter="AddValuesDelimiter.SLASH" :align="align" />
+            <number-display
+              :object="unitScore"
+              value="largestArmy"
+              :delimiter="AddValuesDelimiter.SLASH"
+              :align="align"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -103,20 +108,20 @@ import NumberDisplay from "./NumberDisplay.vue";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",
-  SLASH = " / "
+  SLASH = " / ",
 }
 
-@Component({components: {NumberDisplay}})
+@Component({ components: { NumberDisplay } })
 export default class PlayerPerformanceOnMatch extends Vue {
   @Prop() left!: boolean;
   @Prop() unitScore!: UnitScore[];
   @Prop() unitScoreOpponent!: UnitScore[];
   @Prop() resourceScoure!: ResourceScore[];
   @Prop() resourceScoureOpponent!: ResourceScore[];
-  
-  public AddValuesDelimiter = AddValuesDelimiter
 
-  public align = this.left ? 'right':'left'
+  public AddValuesDelimiter = AddValuesDelimiter;
+
+  public align = this.left ? "right" : "left";
 
   get goldComparison() {
     return this.comparison(

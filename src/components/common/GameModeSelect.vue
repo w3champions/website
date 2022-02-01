@@ -71,15 +71,21 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
+        ),
         gameMode: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
+        ),
         gameMode: EGameMode.GM_LEGION_4v4_X20,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_x20_AT]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_x20_AT]}`
+        ),
         gameMode: EGameMode.GM_LEGION_4v4_x20_AT,
       },
       {
@@ -91,9 +97,11 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_LTW_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`),
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`
+        ),
         gameMode: EGameMode.GM_FROSTCRAFT_4ON4,
-      }
+      },
     ];
 
     if (this.disabledModes) {
