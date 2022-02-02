@@ -407,7 +407,7 @@ export default class PlayerView extends Vue {
 .live-match__container {
   position: relative;
   max-width: 500px;
-  margin: 0 auto;
+  margin: 20px auto;
   height: 44px;
 
   .live-match__indicator {
