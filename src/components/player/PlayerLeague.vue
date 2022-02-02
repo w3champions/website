@@ -114,18 +114,17 @@ export default class PlayerLeague extends Vue {
   }
 
   public async init() {
-    const {
-      matches,
-    } = await this.$store.direct.getters.matchService.retrievePlayerMatches(
-      0,
-      this.battleTag,
-      "",
-      this.gameMode,
-      ERaceEnum.TOTAL,
-      ERaceEnum.TOTAL,
-      this.gateWay,
-      this.selectedSeason.id
-    );
+    const { matches } =
+      await this.$store.direct.getters.matchService.retrievePlayerMatches(
+        0,
+        this.battleTag,
+        "",
+        this.gameMode,
+        ERaceEnum.TOTAL,
+        ERaceEnum.TOTAL,
+        this.gateWay,
+        this.selectedSeason.id
+      );
 
     this.matches = matches;
   }
