@@ -65,7 +65,7 @@
                   size="small"
                 />
               </div>
-              <div class="twitch__container" v-if="isTwitchLive(item)">
+              <div class="twitch__container" v-if="isTwitchLive(item, index)">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
@@ -107,7 +107,7 @@
               <span
                 style="position: relative"
                 v-if="
-                  isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
+                  isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)
                 "
               >
                 <v-tooltip bottom>
@@ -294,14 +294,8 @@ export default class RankingsGrid extends Vue {
       return;
     }
 
-    if (newVal == this.rankings) {
-      return;
-    }
-
-    let triggerTwitchLookup = false;
-    if (newVal.length != oldVal.length) {
-      triggerTwitchLookup = true;
-    } else {
+    let triggerTwitchLookup = Boolean(newVal.length != oldVal.length);
+    if (!triggerTwitchLookup) {
       for (let i = 0; i < newVal.length; i++) {
         if (newVal[i].player.name != oldVal[i].player.name) {
           triggerTwitchLookup = true;
@@ -313,6 +307,10 @@ export default class RankingsGrid extends Vue {
       this.getStreamStatus();
     }
 
+    if (newVal == this.rankings) {
+      return;
+    }
+
     this.rankings = newVal;
 
     if (this._lastSortFunction) {
@@ -321,7 +319,11 @@ export default class RankingsGrid extends Vue {
   }
 
   public async getStreamStatus(): Promise<void> {
-    let twitchNames = this.rankings.map((r) => r.playersInfo[0].twitchName);
+    // filter nulls and empty strings
+    const twitchNames = [...new Set(this.rankings
+      .map(r => r.playersInfo)
+      .map(r => r.map(i => i.twitchName))
+      .flat())].filter(r => (r && r.length > 0));
 
     if (twitchNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
@@ -402,8 +404,8 @@ export default class RankingsGrid extends Vue {
     return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
-  public isTwitchLive(ranking: Ranking): boolean {
-    const twitchName = ranking.playersInfo[0].twitchName;
+  public isTwitchLive(ranking: Ranking, index: number): boolean {
+    const twitchName = ranking.playersInfo[index].twitchName;
     const streamData =
       this.$store.direct.state.twitch.twitchStreamResponse.data;
     if (twitchName && streamData) {
