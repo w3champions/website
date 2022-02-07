@@ -1,7 +1,8 @@
 name: $(Build.BuildID)
 
 pool:
-  vmImage: "ubuntu-18.04"
+  #vmImage: "ubuntu-18.04"
+  Cepheid-Cloud
 
 variables:
   - group: Secrets
