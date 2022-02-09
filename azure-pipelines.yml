@@ -1,7 +1,7 @@
 name: $(Build.BuildID)
 
 pool:
-  name: 'Azure Pipelines'
+  name: 'Cepheid-Cloud'
   demands:
   - agent.os -equals Linux
 
