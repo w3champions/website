@@ -1,0 +1,59 @@
+# This is a basic workflow to help you get started with Actions
+
+name: ${{ github.run_id }}
+
+on: # triggers
+  push:
+    branches: [ master ] # master branch updated
+  #pull_request:
+  #  branches: [ master ] # PR branch updated
+  
+  workflow_dispatch: # manual run
+
+jobs:
+  build-master:
+    runs-on: ubuntu-18.04 
+
+    steps:
+    
+    - name: Set Docker & Action tag
+      run: | # this script is useless for github, there's probably a much more succinct way to handle tagging in github actions
+        if(!("${{ env.Build.Reason }}".Equals("PullRequest"))){
+          Write-Host "##vso[task.setvariable variable=TAG]${{ github.run_id }}"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]latest"
+          Write-Host "Masterversion: ${{ github.run_id }}"
+        } else {
+          Write-Host "##vso[task.setvariable variable=TAG]dev-${{ env.System.PullRequest.PullRequestNumber }}"
+          Write-Host "##vso[task.setvariable variable=IS_LATEST]"
+          Write-Host "PR-Version: dev-${{ env.System.PullRequest.PullRequestNumber }}"
+          if("${{ env.System.PullRequest.SourceBranch }}".StartsWith("DEPLOY_")) {
+            $pr_name = "${{ env.System.PullRequest.SourceBranch }}".Split("_")[1]
+            Write-Host "##vso[task.setvariable variable=PR_NAME]$pr_name"
+            az pipelines build tag add --build-id ${{ github.run_id }} --tags pr-deployment --organization https://dev.azure.com/w3champions/ --project w3champions
+          }
+        }
+      shell: pwsh # docs say 'powershell' but editor corrects to 'pwsh'
+      env:
+        AZURE_DEVOPS_EXT_PAT: ${{ env.AZURE_CLI }} # probably we dont need this with migration?
+        GOOGLE_API_KEY: ${{ env.GOOGLE_API_KEY }} # need to add to org/repo secrets
+        
+    - name: Replace tokens # this feels like it's probably wrong but I dont understand this action format
+      uses: cschleiden/replace-tokens@v1
+      with:
+        files: '["**/*.token.yml", "**/*.ts.token"]'
+      env:
+        YML: "*.yml"
+        TS: "*.ts"
+    
+    - name: Docker build # probably a good idea to do the build
+      run: |
+        docker build --file **/Dockerfile official-docker-modmoto modmoto/w3champions-ui --tags ${{ env.TAG }} .
+        docker push --file **/Dockerfile official-docker-modmoto modmoto/w3champions-ui --tags ${{ env.TAG }} .
+    
+    - name: Publish docker-compose files # this seems ok?
+      run: Copy '/**/*docker-compose.yml' '${{ github.workspace }}'
+      
+    - name: Publish Build Artifacts # do we need to do this?
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.workspace }}
