@@ -10,6 +10,8 @@ const data = {
       statistics: "Statistics",
       admin: "Admin",
       faq: "FAQ",
+      viewprofile: "View Profile",
+      logout: "Logout",
     },
     views_admin: {
       adminpage: "Administration Page",
@@ -529,6 +531,8 @@ const data = {
       statistics: "Статистика",
       admin: "Админ",
       faq: "FAQ",
+      viewprofile: "Просмотреть профиль",
+      logout: "Выйти",
     },
     views_admin: {
       adminpage: "Страница администратора",
@@ -1035,6 +1039,8 @@ const data = {
       statistics: "통계",
       admin: "관리",
       faq: "문의사항",
+      viewprofile: "프로필보기",
+      logout: "로그 아웃",
     },
     views_admin: {
       adminpage: "관리 페이지",
@@ -1470,6 +1476,8 @@ const data = {
       statistics: "数据统计",
       admin: "管理员",
       faq: "常见问题",
+      viewprofile: "查看资料",
+      logout: "登出",
     },
     views_admin: {
       adminpage: "管理员页面",
@@ -2330,6 +2338,8 @@ const data = {
       statistics: "Statystyki",
       admin: "Administracja",
       faq: "FAQ",
+      viewprofile: "Zobacz profil",
+      logout: "Wyloguj",
     },
     views_admin: {
       adminpage: "Strona administacji",
@@ -2842,6 +2852,8 @@ const data = {
       statistics: "Статистика",
       admin: "Адмін",
       faq: "FAQ",
+      viewprofile: "Перегляд профілю",
+      logout: "Вийти",
     },
     views_admin: {
       adminpage: "Сторінка адміністратора",
@@ -3350,6 +3362,8 @@ const data = {
       statistics: "Estatísticas",
       admin: "Admin",
       faq: "Perguntas frequentes\n",
+      viewprofile: "Ver Perfil",
+      logout: "Sair",
     },
     views_admin: {
       adminpage: "Página de Administração",
@@ -3858,6 +3872,8 @@ const data = {
       statistics: "Statistiques",
       admin: "Administration",
       faq: "FAQ",
+      viewprofile: "Voir Profil",
+      logout: "Se déconnecter",
     },
     views_admin: {
       adminpage: "Page d'Administration",
