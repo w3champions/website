@@ -1,7 +1,6 @@
 name: $(Build.BuildID)
 
 pool:
-  name: 'Cepheid-Cloud'
   demands:
   - agent.os -equals Linux
 
