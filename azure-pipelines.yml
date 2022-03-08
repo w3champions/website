@@ -1,9 +1,7 @@
 name: $(Build.BuildID)
 
 pool:
-  name: 'Cepheid-Cloud'
-  demands:
-  - agent.os -equals Linux
+  vmImage: "ubuntu-20.04"
 
 variables:
   - group: Secrets
