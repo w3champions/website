@@ -102,6 +102,12 @@ export default class GameModeSelect extends Vue {
         ),
         gameMode: EGameMode.GM_FROSTCRAFT_4ON4,
       },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`
+        ),
+        gameMode: EGameMode.GM_RH_1ON1,
+      },
     ];
 
     if (this.disabledModes) {

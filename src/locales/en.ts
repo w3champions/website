@@ -37,6 +37,7 @@ const en = {
     GM_ROC_1ON1: "RoC 1vs1",
     GM_LTW_1ON1: "Line Tower Wars 1vs1",
     GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
+    GM_RH_1ON1: 'Random Hero 1vs1'
   },
 
   gatewayNames: {

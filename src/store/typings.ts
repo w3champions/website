@@ -135,6 +135,8 @@ export enum EGameMode {
   GM_LTW_1ON1 = 401,
 
   GM_FROSTCRAFT_4ON4 = 501,
+
+  GM_RH_1ON1 = 601,
 }
 
 export enum EPick {
