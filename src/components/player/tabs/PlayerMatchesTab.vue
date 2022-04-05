@@ -232,14 +232,10 @@ export default class PlayerMatchesTab extends Vue {
         modeId: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LTW_1ON1]}`),
-        modeId: EGameMode.GM_LTW_1ON1,
-      },
-      {
         modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`
+          `gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`
         ),
-        modeId: EGameMode.GM_FROSTCRAFT_4ON4,
+        modeId: EGameMode.GM_BANJOBALL_4ON4,
       },
     ];
   }

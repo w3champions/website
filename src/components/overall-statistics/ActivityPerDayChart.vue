@@ -92,12 +92,6 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_ROC_1ON1:
         return "rgb(120, 0, 4)";
 
-      case EGameMode.GM_LTW_1ON1:
-        return "rgb(89, 76, 76)";
-
-      case EGameMode.GM_FROSTCRAFT_4ON4:
-        return "rgb(33, 33, 117)";
-
       default:
         return "rgba(54, 162, 235, 1)";
     }
@@ -141,7 +135,7 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_LTW_1ON1:
         return 1;
 
-      case EGameMode.GM_FROSTCRAFT_4ON4:
+      case EGameMode.GM_BANJOBALL_4ON4:
         return 4;
 
       default:

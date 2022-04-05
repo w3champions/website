@@ -93,20 +93,14 @@ export default class GameModeSelect extends Vue {
         gameMode: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LTW_1ON1]}`),
-        gameMode: EGameMode.GM_LTW_1ON1,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_FROSTCRAFT_4ON4]}`
-        ),
-        gameMode: EGameMode.GM_FROSTCRAFT_4ON4,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
         gameMode: EGameMode.GM_RH_1ON1,
+      },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`
+        ),
+        gameMode: EGameMode.GM_BANJOBALL_4ON4,
       },
     ];
 
