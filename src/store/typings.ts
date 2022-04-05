@@ -34,6 +34,8 @@ export type Team = {
 
 export type Match = {
   map: string;
+  mapId?: number;
+  mapName: string;
   id: number;
   durationInSeconds: number;
   number: number;

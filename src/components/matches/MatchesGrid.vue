@@ -80,7 +80,7 @@
               </v-row>
             </td>
             <td>
-              <span>{{ $t("mapNames." + item.map.replace("'", "")) }}</span>
+              <span>{{ getMapName(item) }}</span>
             </td>
             <td>
               {{
@@ -234,6 +234,14 @@ export default class MatchesGrid extends Vue {
       .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
       .format(format.toString())
       .toString();
+  }
+
+  public getMapName(match: Match) {
+    if (match.mapName) {
+      return match.mapName;
+    }
+
+    return this.$t("mapNames." + match.map.replace("'", ""));
   }
 
   get headers() {
