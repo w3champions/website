@@ -20,7 +20,7 @@
     "core-js": "^3.20.3",
     "direct-vuex": "^0.12.1",
     "lodash": "^4.17.21",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "register-service-worker": "^1.7.2",
     "tiptap": "^1.30.2",
     "tiptap-extensions": "^1.35.2",
