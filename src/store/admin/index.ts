@@ -13,6 +13,7 @@ import {
   OverridesList,
   GloballyMutedPlayer,
   GlobalMute,
+  PortraitDefinition,
 } from "./types";
 import moment from "moment";
 const mod = {
@@ -33,6 +34,8 @@ const mod = {
     } as ProxySettings,
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
+    allSpecialPortraits: [] as PortraitDefinition[],
+    searchedPlayerSpecialPortraits: [],
   } as AdminState,
 
   actions: {
@@ -335,7 +338,29 @@ const mod = {
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.PutGlobalMute(rootState.oauth.token, mute);
+      await rootGetters.adminService.putGlobalMute(rootState.oauth.token, mute);
+    },
+
+    async loadAllSpecialPortraits(
+      context: ActionContext<AdminState, RootState>,
+      token: string
+    ) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const availablePortraits =
+        await rootGetters.adminService.getAllSpecialPortraits(token);
+      commit.SET_SPECIAL_PORTRAITS(availablePortraits);
+    },
+
+    async loadSpecialPortraitsForPlayer(
+      context: ActionContext<AdminState, RootState>,
+      btag: string
+    ): Promise<number[]> {
+      const { rootGetters } = moduleActionContext(context, mod);
+      const playerSettings =
+        await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
+
+      const portraits = playerSettings.specialPictures.map(x => x.pictureId);
+      return portraits;
     },
   },
 
@@ -384,6 +409,9 @@ const mod = {
     },
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
+    },
+    SET_SPECIAL_PORTRAITS(state: AdminState, specialPortraits: PortraitDefinition[]) {
+      state.allSpecialPortraits = specialPortraits;
     },
   },
 } as const;

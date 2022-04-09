@@ -10,6 +10,7 @@ import {
   ProxySettings,
   GloballyMutedPlayer,
   GlobalMute,
+  PortraitDefinition,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -290,7 +291,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async PutGlobalMute(
+  public async putGlobalMute(
     token: string,
     globalMutedPlayer: GlobalMute
   ): Promise<number> {
@@ -307,5 +308,19 @@ export default class AdminService {
     });
 
     return response.status;
+  }
+
+  public async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {
+    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.json();
   }
 }

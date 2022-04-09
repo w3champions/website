@@ -13,6 +13,8 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+  allSpecialPortraits: PortraitDefinition[];
+  searchedPlayerSpecialPortraits: number[];
 };
 
 export interface NewsMessage {
@@ -82,6 +84,11 @@ export interface QueuedPlayer {
   isFloConnected: boolean;
   location: string;
   serverOption: string;
+}
+
+export interface PortraitDefinition {
+  id: number;
+  groups: string[];
 }
 
 export type SearchedPlayer = {
