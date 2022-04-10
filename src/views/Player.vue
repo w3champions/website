@@ -91,7 +91,7 @@
               {{ $t("views_player.playingFFA") }}
             </div>
             <span class="live-match__map">
-              {{ $t("mapNames." + ongoingMatch.map) }}
+              {{ $_mapNameFromMatch(ongoingMatch) }}
             </span>
           </div>
 
@@ -150,8 +150,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
 
@@ -173,6 +172,7 @@ import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
+import MatchMixin from "@/mixins/MatchMixin";
 
 @Component({
   components: {
@@ -193,7 +193,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
     HostIcon,
   },
 })
-export default class PlayerView extends Vue {
+export default class PlayerView extends Mixins(MatchMixin) {
   @Prop() public id!: string;
   @Prop() public freshLogin!: boolean;
 

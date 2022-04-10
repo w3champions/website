@@ -59,7 +59,7 @@
           </v-card-title>
           <v-card-title class="justify-center small-title">
             <v-card-subtitle>
-              {{ $t(`mapNames.${match.map}`) }} ({{ matchDuration }})
+              {{ $_mapNameFromMatch(match) }} ({{ matchDuration }})
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
@@ -174,8 +174,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import moment from "moment";
@@ -186,6 +185,7 @@ import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vu
 import { EGameMode, PlayerScore, Team } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
+import MatchMixin from "@/mixins/MatchMixin";
 
 @Component({
   components: {
@@ -197,7 +197,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
     HostIcon,
   },
 })
-export default class MatchDetailView extends Vue {
+export default class MatchDetailView extends Mixins(MatchMixin) {
   @Prop() public matchId!: string;
 
   @Watch("matchId")
