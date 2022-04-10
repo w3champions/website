@@ -80,7 +80,7 @@
               </v-row>
             </td>
             <td>
-              <span>{{ getMapName(item) }}</span>
+              <span>{{ $_mapNameFromMatch(item) }}</span>
             </td>
             <td>
               {{
@@ -115,12 +115,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Mixins, Prop } from "vue-property-decorator";
 import { Match, Team, PlayerInTeam } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
+import MatchMixin from "@/mixins/MatchMixin";
 
 @Component({
   components: {
@@ -128,7 +128,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
     HostIcon,
   },
 })
-export default class MatchesGrid extends Vue {
+export default class MatchesGrid extends Mixins(MatchMixin) {
   @Prop() public value!: Match[];
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
@@ -234,14 +234,6 @@ export default class MatchesGrid extends Vue {
       .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
       .format(format.toString())
       .toString();
-  }
-
-  public getMapName(match: Match) {
-    if (match.mapName) {
-      return match.mapName;
-    }
-
-    return this.$t("mapNames." + match.map.replace("'", ""));
   }
 
   get headers() {
