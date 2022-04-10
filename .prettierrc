@@ -1,4 +1,5 @@
 {
   "htmlWhitespaceSensitivity": "ignore",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "printWidth": 120
 }

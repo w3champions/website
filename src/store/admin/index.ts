@@ -342,12 +342,11 @@ const mod = {
     },
 
     async loadAllSpecialPortraits(
-      context: ActionContext<AdminState, RootState>,
-      token: string
+      context: ActionContext<AdminState, RootState>
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
       const availablePortraits =
-        await rootGetters.adminService.getAllSpecialPortraits(token);
+        await rootGetters.adminService.getAllSpecialPortraits(rootState.oauth.token);
       commit.SET_SPECIAL_PORTRAITS(availablePortraits);
     },
 

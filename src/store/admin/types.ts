@@ -87,7 +87,7 @@ export interface QueuedPlayer {
 }
 
 export interface PortraitDefinition {
-  id: number;
+  id: string;
   groups: string[];
 }
 
