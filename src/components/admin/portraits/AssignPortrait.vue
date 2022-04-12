@@ -1,8 +1,8 @@
 <template>
   <v-container class="ma-0 pa-0" @click="assignPortrait">
     <v-img :src="urlById"></v-img>
-    <v-btn class="d-flex justify-center ma-1 pa-1" v-if="isAssigned" icon @click="removeAssignedPortrait">
-      <v-icon dark large>mdi-close-circle-outline</v-icon>
+    <v-btn class="cancel-button" right v-if="isAssigned" icon @click="removeAssignedPortrait">
+      <v-icon large>mdi-close-circle-outline</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -12,7 +12,6 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { EAvatarCategory } from "@/store/typings";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-//
 
 @Component({ components: {} })
 export default class AssignPortrait extends Vue {
@@ -35,4 +34,8 @@ export default class AssignPortrait extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.cancel-button {
+  left: 27%;
+}
+</style>

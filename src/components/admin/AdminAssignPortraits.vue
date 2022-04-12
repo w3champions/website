@@ -19,36 +19,45 @@
     <v-card v-if="true">
       <!-- showPlayersPortraits -->
       <v-container>
-        <v-row class="justify-center align-center mb-1">
-          <v-card-title>Portraits for {{ bnetTag }}:</v-card-title>
+        <v-row class="justify-center align-center ma-1 mt-0">
+          <v-col>
+            <v-card-title class="justify-left">Portraits for {{ bnetTag }}</v-card-title>
+          </v-col>
+          <v-col>
+            <v-row v-if="assignmentsChanged" class="justify-end">
+              <v-dialog v-model="assignDialog" transition="dialog-bottom-transition">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn x-large v-bind="attrs" v-on="on" class="primary">Assign</v-btn>
+                </template>
+
+                <!-- Confirmation dialog -->
+                <template v-slot:default="assignDialog">
+                  <v-card>
+                    <v-card-title>Confirm Portrait Assignments</v-card-title>
+                    <v-card-actions class="justify-center">
+                      <v-btn text @click="assignDialog.value = false">Close</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
+            </v-row>
+          </v-col>
         </v-row>
         <v-divider />
 
         <!-- Currently Assigned -->
         <v-col class="mt-2 mb-2">
           <v-row>
-            <v-card-title class="justify-center">
-              Currently Assigned
-            </v-card-title>
+            <v-card-title class="justify-center">Currently Assigned</v-card-title>
           </v-row>
 
           <v-row v-if="hasSpecialPortraits" no-gutters :justify="'start'">
-            <v-col
-              v-for="portraitId in searchedPlayerPortraits"
-              :key="portraitId"
-              cols="2"
-              md="1"
-            >
-              <assign-portrait
-                :portraitId="portraitId"
-                class="pa-1"
-              ></assign-portrait>
+            <v-col v-for="portraitId in searchedPlayerPortraits" :key="portraitId" cols="2" md="1">
+              <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
             </v-col>
           </v-row>
           <v-row v-else class="ma-2 pa-2">
-            <v-card-subtitle class="justify-center">
-              No special portraits found for this player.
-            </v-card-subtitle>
+            <v-card-subtitle class="justify-center">No special portraits found for this player.</v-card-subtitle>
           </v-row>
         </v-col>
         <v-divider />
@@ -58,14 +67,8 @@
           <v-row>
             <v-card-title class="justify-center">To Be Assigned</v-card-title>
           </v-row>
-          <v-row no-gutters :justify="'start'">
-            <v-col
-              align-self="stretch"
-              v-for="portraitId in assignedPortraitsModel"
-              :key="portraitId"
-              cols="2"
-              md="1"
-            >
+          <v-row v-if="hasSpecialPortraitsAssigned" no-gutters :justify="'start'">
+            <v-col align-self="stretch" v-for="portraitId in assignedPortraitsModel" :key="portraitId" cols="2" md="1">
               <assign-portrait
                 :portraitId="portraitId"
                 :isAssigned="true"
@@ -74,33 +77,8 @@
               ></assign-portrait>
             </v-col>
           </v-row>
-
-          <v-row v-if="assignmentsChanged" class="justify-center">
-            <v-dialog
-              v-model="assignDialog"
-              transition="dialog-bottom-transition"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  x-large
-                  v-bind="attrs"
-                  v-on="on"
-                  class="primary ma-3 pa-3"
-                >
-                  Assign
-                </v-btn>
-              </template>
-
-              <!-- Confirmation dialog -->
-              <template v-slot:default="assignDialog">
-                <v-card>
-                  <v-card-title>Confirm Portrait Assignments</v-card-title>
-                  <v-card-actions class="justify-center">
-                    <v-btn text @click="assignDialog.value = false">Close</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </template>
-            </v-dialog>
+          <v-row v-else class="ma-2 pa-2">
+            <v-card-subtitle class="justify-center">No special portraits assigned for this player.</v-card-subtitle>
           </v-row>
         </v-col>
         <v-divider />
@@ -109,11 +87,7 @@
         <v-col>
           <v-card-title class="justify-center">Available</v-card-title>
           <v-row no-gutters :justify="'start'">
-            <v-col
-              v-for="portraitId in allSpecialPortraits"
-              :key="portraitId"
-              cols="1"
-            >
+            <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
               <assign-portrait
                 :portraitId="portraitId"
                 @add-available-portrait="assignPortrait"
@@ -149,7 +123,6 @@ export default class AdminAssignPortraits extends Vue {
   // TODO - ARE YOU SURE? dialog
   // TODO - service method to send to backend
 
-
   get bnetTag() {
     return "Cepheid#1467";
     //return this.searchPlayerPortraitsModel.player.playerIds[0].battleTag;
@@ -157,13 +130,15 @@ export default class AdminAssignPortraits extends Vue {
 
   get searchedPlayerPortraits(): number[] {
     //return this.$store.direct.state.admin.searchedPlayerSpecialPortraits;
-    return [
-      10004, 10005,
-    ];
+    return [10004, 10005];
   }
 
   get hasSpecialPortraits(): boolean {
     return this.searchedPlayerPortraits.length > 0;
+  }
+
+  get hasSpecialPortraitsAssigned(): boolean {
+    return this.assignedPortraitsModel.length > 0;
   }
 
   get assignmentsChanged(): boolean {
@@ -181,7 +156,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   removeAssignedPortrait(portraitId: number): void {
-    this.assignedPortraitsModel = this.assignedPortraitsModel.filter(x => x != portraitId);
+    this.assignedPortraitsModel = this.assignedPortraitsModel.filter((x) => x != portraitId);
     this.assignedPortraitsModel.sort((a, b) => a - b);
   }
 
@@ -194,23 +169,15 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   @Watch("searchPlayerPortraitsModel")
-  public async onSearchStringChanged(
-    searchedPlayer: SearchedPlayer
-  ): Promise<void> {
+  public async onSearchStringChanged(searchedPlayer: SearchedPlayer): Promise<void> {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
       let btag = searchedPlayer.player.playerIds[0].battleTag;
 
-      this.playerPortraits =
-        await this.$store.direct.dispatch.admin.loadSpecialPortraitsForPlayer(
-          btag
-        );
+      this.playerPortraits = await this.$store.direct.dispatch.admin.loadSpecialPortraitsForPlayer(btag);
 
-      if (
-        (this.playerPortraits != null || undefined) &&
-        this.playerPortraits.length > 0
-      ) {
+      if ((this.playerPortraits != null || undefined) && this.playerPortraits.length > 0) {
         this.showPlayersPortraits = true;
       } else {
         this.revertToDefault();
@@ -249,9 +216,7 @@ export default class AdminAssignPortraits extends Vue {
     await this.$store.direct.dispatch.admin.loadAllSpecialPortraits();
     this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);
     this.allSpecialPortraits = Object.create(
-      this.$store.direct.state.admin.allSpecialPortraits
-        .map((x) => parseInt(x.id))
-        .sort((a, b) => b - a)
+      this.$store.direct.state.admin.allSpecialPortraits.map((x) => parseInt(x.id)).sort((a, b) => b - a)
     );
   }
 
@@ -265,4 +230,9 @@ export default class AdminAssignPortraits extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.pm0 {
+  padding: 0px;
+  margin: 0px;
+}
+</style>
