@@ -16,27 +16,95 @@
       @click:clear="revertToDefault"
     ></v-autocomplete>
 
-    <v-card v-if="true">
-      <!-- showPlayersPortraits -->
+    <v-card v-if="showPlayersPortraits">
       <v-container>
         <v-row class="justify-center align-center ma-1 mt-0">
-          <v-col>
-            <v-card-title class="justify-left">Portraits for {{ bnetTag }}</v-card-title>
+          <v-col class="ml-0 pl-0">
+            <v-card-title class="justify-left pl=0 ml-0">Portraits for {{ bnetTag }}</v-card-title>
           </v-col>
           <v-col>
             <v-row v-if="assignmentsChanged" class="justify-end">
-              <v-dialog v-model="assignDialog" transition="dialog-bottom-transition">
+              <v-dialog v-model="assignDialogOpen" transition="fade-transition" max-width="1000">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn x-large v-bind="attrs" v-on="on" class="primary">Assign</v-btn>
                 </template>
 
                 <!-- Confirmation dialog -->
-                <template v-slot:default="assignDialog">
+                <template>
                   <v-card>
-                    <v-card-title>Confirm Portrait Assignments</v-card-title>
-                    <v-card-actions class="justify-center">
-                      <v-btn text @click="assignDialog.value = false">Close</v-btn>
-                    </v-card-actions>
+                    <v-container>
+                      <v-row>
+                        <v-col>
+                          <v-card-title class="justify-center">Confirm Portrait Assignments</v-card-title>
+                        </v-col>
+
+                        <v-btn icon @click="assignDialogOpen = false">
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-row>
+
+                      <!-- The following portraits will be ADDED: -->
+                      <v-row v-if="confirmAddedPortraits.length > 0">
+                        <v-container>
+                          <v-card-subtitle class="text-h6">
+                            The following portraits will be
+                            <strong>ADDED:</strong>
+                          </v-card-subtitle>
+                          <v-card-actions>
+                            <v-row no-gutters>
+                              <v-col v-for="portraitId in confirmAddedPortraits" :key="portraitId" cols="1">
+                                <assign-portrait
+                                  :portraitId="portraitId"
+                                  :isAssigned="false"
+                                  :isInert="true"
+                                  class="pa-1"
+                                ></assign-portrait>
+                              </v-col>
+                            </v-row>
+                          </v-card-actions>
+                          <v-card-actions>
+                            <v-row class="ma-1 pa-1">
+                              <v-text-field
+                                v-model="mouseoverText"
+                                :rules="[rules.required, rules.min]"
+                                label="Mouseover tooltip"
+                              ></v-text-field>
+                              <v-spacer />
+                            </v-row>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
+
+                      <!-- The following portraits will be REMOVED: -->
+                      <v-row v-if="confirmRemovedPortraits.length > 0">
+                        <v-container>
+                          <v-card-subtitle class="text-h6">
+                            The following portraits will be
+                            <strong>REMOVED:</strong>
+                          </v-card-subtitle>
+                          <v-card-actions>
+                            <v-row no-gutters>
+                              <v-col v-for="portraitId in confirmRemovedPortraits" :key="portraitId" cols="1">
+                                <assign-portrait
+                                  :portraitId="portraitId"
+                                  :isAssigned="false"
+                                  :isInert="true"
+                                  class="pa-1"
+                                ></assign-portrait>
+                              </v-col>
+                            </v-row>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
+                      <v-row>
+                        <v-spacer />
+                        <v-container>
+                          <v-card-actions class="justify-end">
+                            <v-btn class="primary" xlarge @click="confirmDialog">Confirm</v-btn>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
+                    </v-container>
                   </v-card>
                 </template>
               </v-dialog>
@@ -47,9 +115,7 @@
 
         <!-- Currently Assigned -->
         <v-col class="mt-2 mb-2">
-          <v-row>
-            <v-card-title class="justify-center">Currently Assigned</v-card-title>
-          </v-row>
+          <v-card-title class="justify-center">Currently Assigned</v-card-title>
 
           <v-row v-if="hasSpecialPortraits" no-gutters :justify="'start'">
             <v-col v-for="portraitId in searchedPlayerPortraits" :key="portraitId" cols="2" md="1">
@@ -64,9 +130,8 @@
 
         <!-- To Be Assigned -->
         <v-col class="mt-2 mb-2">
-          <v-row>
-            <v-card-title class="justify-center">To Be Assigned</v-card-title>
-          </v-row>
+          <v-card-title class="justify-center">To Be Assigned</v-card-title>
+
           <v-row v-if="hasSpecialPortraitsAssigned" no-gutters :justify="'start'">
             <v-col align-self="stretch" v-for="portraitId in assignedPortraitsModel" :key="portraitId" cols="2" md="1">
               <assign-portrait
@@ -103,7 +168,6 @@
 
 <script lang="ts">
 import { SearchedPlayer } from "@/store/admin/types";
-import _ from "lodash";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
@@ -117,20 +181,24 @@ export default class AdminAssignPortraits extends Vue {
   showPlayersPortraits = false;
   assignedPortraitsModel = [] as number[];
   allSpecialPortraits = [] as number[];
-  assignDialog = false;
+  assignDialogOpen = false;
+  confirmAddedPortraits = [] as number[];
+  confirmRemovedPortraits = [] as number[];
+  mouseoverText = "";
 
-  // TODO - on dialog activate -> figure out the diff between current + to-be assigned lists
-  // TODO - ARE YOU SURE? dialog
-  // TODO - service method to send to backend
+  get rules(): unknown {
+    return {
+      required: (value: string | unknown[]) => !!value || "Required",
+      min: (text: string | unknown[]) => text.length >= 3 || "Min 3 characters",
+    };
+  }
 
   get bnetTag() {
-    return "Cepheid#1467";
-    //return this.searchPlayerPortraitsModel.player.playerIds[0].battleTag;
+    return this.searchPlayerPortraitsModel.player.playerIds[0].battleTag;
   }
 
   get searchedPlayerPortraits(): number[] {
-    //return this.$store.direct.state.admin.searchedPlayerSpecialPortraits;
-    return [10004, 10005];
+    return this.$store.direct.state.admin.searchedPlayerSpecialPortraits;
   }
 
   get hasSpecialPortraits(): boolean {
@@ -155,6 +223,28 @@ export default class AdminAssignPortraits extends Vue {
     return true;
   }
 
+  async confirmDialog(): Promise<void> {
+    if (this.confirmAddedPortraits.length > 0) {
+      await this.$store.direct.dispatch.admin.addPortraits(
+        this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
+        this.confirmAddedPortraits,
+        this.mouseoverText
+      );
+    }
+    if (this.confirmRemovedPortraits.length > 0) {
+      await this.$store.direct.dispatch.admin.removePortraits(
+        this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
+        this.confirmAddedPortraits
+      );
+    }
+    await this.init();
+    this.assignDialogOpen = false;
+  }
+
+  updateAddAndRemoved(): void {
+    console.log("Worked!");
+  }
+
   removeAssignedPortrait(portraitId: number): void {
     this.assignedPortraitsModel = this.assignedPortraitsModel.filter((x) => x != portraitId);
     this.assignedPortraitsModel.sort((a, b) => a - b);
@@ -166,6 +256,12 @@ export default class AdminAssignPortraits extends Vue {
     }
     this.assignedPortraitsModel.sort((a, b) => a - b);
     this.assignedPortraitsModel = Object.create(this.assignedPortraitsModel); // force change detection
+  }
+
+  @Watch("assignDialogOpen")
+  public async updateConfirmedAssignments(): Promise<void> {
+    this.confirmAddedPortraits = this.assignedPortraitsModel.filter((x) => !this.searchedPlayerPortraits.includes(x));
+    this.confirmRemovedPortraits = this.searchedPlayerPortraits.filter((x) => !this.assignedPortraitsModel.includes(x));
   }
 
   @Watch("searchPlayerPortraitsModel")
@@ -230,9 +326,4 @@ export default class AdminAssignPortraits extends Vue {
 }
 </script>
 
-<style lang="scss">
-.pm0 {
-  padding: 0px;
-  margin: 0px;
-}
-</style>
+<style lang="scss"></style>

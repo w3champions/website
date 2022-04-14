@@ -323,4 +323,41 @@ export default class AdminService {
 
     return response.json();
   }
+
+  public async putPortraits(
+    token: string,
+    btag: string,
+    portraitIds: number[],
+    tooltip: string
+    ): Promise<void> {
+    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.json();
+  }
+
+  public async deletePortraits(
+    token: string,
+    btag: string,
+    portraitIds: number[]
+    ): Promise<void> {
+    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.json();
+  }
 }

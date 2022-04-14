@@ -49,10 +49,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       newsMessage: NewsMessage
     ) {
-      const { rootGetters, rootState, dispatch } = moduleActionContext(
-        context,
-        mod
-      );
+      const { rootGetters, rootState, dispatch } = moduleActionContext(context, mod);
       const success = await rootGetters.adminService.editNews(
         newsMessage,
         rootState.oauth.token
@@ -66,10 +63,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       newsMessage: NewsMessage
     ) {
-      const { rootGetters, dispatch, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { rootGetters, dispatch, rootState } = moduleActionContext(context, mod);
       const success = await rootGetters.adminService.deleteNews(
         newsMessage,
         rootState.oauth.token
@@ -89,10 +83,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       loadingScreenTip: LoadingScreenTip
     ) {
-      const { rootGetters, rootState, dispatch } = moduleActionContext(
-        context,
-        mod
-      );
+      const { rootGetters, rootState, dispatch } = moduleActionContext(context, mod);
       const success = await rootGetters.adminService.editTip(
         loadingScreenTip,
         rootState.oauth.token
@@ -108,10 +99,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       loadingScreenTip: LoadingScreenTip
     ) {
-      const { rootGetters, dispatch, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { rootGetters, dispatch, rootState } = moduleActionContext(context, mod);
       const success = await rootGetters.adminService.deleteTip(
         loadingScreenTip,
         rootState.oauth.token
@@ -141,10 +129,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.postBan(
         bannedPlayer,
@@ -166,10 +151,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.deleteBan(
         bannedPlayer,
@@ -206,10 +188,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const searchedPlayers = await rootGetters.adminService.searchByTag(
         search.searchText,
@@ -229,10 +208,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       battleTag: string
     ): Promise<ProxySettings> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
         battleTag,
@@ -272,10 +248,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       proxies: ProxySettings
     ): Promise<void> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
         return;
@@ -297,10 +270,7 @@ const mod = {
     ): Promise<string[]> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      const getAlts = await rootGetters.adminService.getAltsForBattletag(
-        btag,
-        rootState.oauth.token
-      );
+      const getAlts = await rootGetters.adminService.getAltsForBattletag(btag, rootState.oauth.token);
 
       return getAlts;
     },
@@ -308,10 +278,7 @@ const mod = {
     async loadGlobalMutes(
       context: ActionContext<AdminState, RootState>
     ): Promise<void> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const getGlobalMutes = await rootGetters.adminService.getGlobalMutes(
         rootState.oauth.token
@@ -341,12 +308,10 @@ const mod = {
       await rootGetters.adminService.putGlobalMute(rootState.oauth.token, mute);
     },
 
-    async loadAllSpecialPortraits(
-      context: ActionContext<AdminState, RootState>
-    ) {
+    async loadAllSpecialPortraits(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-      const availablePortraits =
-        await rootGetters.adminService.getAllSpecialPortraits(rootState.oauth.token);
+
+      const availablePortraits = await rootGetters.adminService.getAllSpecialPortraits(rootState.oauth.token);
       commit.SET_SPECIAL_PORTRAITS(availablePortraits);
     },
 
@@ -355,11 +320,40 @@ const mod = {
       btag: string
     ): Promise<number[]> {
       const { rootGetters } = moduleActionContext(context, mod);
-      const playerSettings =
-        await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
+      const playerSettings = await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
 
       const portraits = playerSettings.specialPictures.map(x => x.pictureId);
       return portraits;
+    },
+
+    async addPortraits(
+      context: ActionContext<AdminState, RootState>,
+      btag: string,
+      portraitIds: number[],
+      tooltip: string
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+
+      await rootGetters.adminService.putPortraits(
+        rootState.oauth.token, 
+        btag, 
+        portraitIds, 
+        tooltip
+      );
+    },
+
+    async removePortraits(
+      context: ActionContext<AdminState, RootState>,
+      btag: string,
+      portraitIds: number[]
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      
+      await rootGetters.adminService.deletePortraits(
+        rootState.oauth.token, 
+        btag, 
+        portraitIds,
+      );
     },
   },
 
@@ -382,16 +376,10 @@ const mod = {
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
     },
-    SET_SEARCH_FOR_BNET_TAG(
-      state: AdminState,
-      searchedPlayers: SearchedPlayer[]
-    ) {
+    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
       state.searchedPlayers = searchedPlayers;
     },
-    SET_SEARCHED_PROXIES_FOR_BATTLETAG(
-      state: AdminState,
-      proxies: ProxySettings
-    ) {
+    SET_SEARCHED_PROXIES_FOR_BATTLETAG(state: AdminState, proxies: ProxySettings) {
       state.proxiesSetForSearchedPlayer = proxies;
     },
     SET_SEARCHED_PLAYER_BTAG(state: AdminState, battleTag: string) {
