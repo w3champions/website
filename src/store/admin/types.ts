@@ -13,6 +13,9 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+};
+
+export type AdminPlayerManagementState = {
   allSpecialPortraits: PortraitDefinition[];
   searchedPlayerSpecialPortraits: number[];
 };

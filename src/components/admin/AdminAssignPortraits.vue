@@ -155,7 +155,7 @@
             <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
               <assign-portrait
                 :portraitId="portraitId"
-                @add-available-portrait="assignPortrait"
+                @add-available-portrait="assignThisPortrait"
                 class="pa-1"
               ></assign-portrait>
             </v-col>
@@ -225,14 +225,14 @@ export default class AdminAssignPortraits extends Vue {
 
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
-      await this.$store.direct.dispatch.admin.addPortraits(
+      await this.$store.direct.dispatch.adminPlayerManagement.addPortraits(
         this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
         this.confirmAddedPortraits,
         this.mouseoverText
       );
     }
     if (this.confirmRemovedPortraits.length > 0) {
-      await this.$store.direct.dispatch.admin.removePortraits(
+      await this.$store.direct.dispatch.adminPlayerManagement.removePortraits(
         this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
         this.confirmAddedPortraits
       );
@@ -271,7 +271,7 @@ export default class AdminAssignPortraits extends Vue {
     if (searchedPlayer) {
       let btag = searchedPlayer.player.playerIds[0].battleTag;
 
-      this.playerPortraits = await this.$store.direct.dispatch.admin.loadSpecialPortraitsForPlayer(btag);
+      this.playerPortraits = await this.$store.direct.dispatch.adminPlayerManagement.loadSpecialPortraitsForPlayer(btag);
 
       if ((this.playerPortraits != null || undefined) && this.playerPortraits.length > 0) {
         this.showPlayersPortraits = true;
