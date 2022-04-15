@@ -20,6 +20,12 @@ export type AdminPlayerManagementState = {
   searchedPlayerSpecialPortraits: number[];
 };
 
+export interface ChangePortraitsCommand {
+  battleTag: string;
+  portraitIds: number[];
+  mouseover?: string;
+}
+
 export interface NewsMessage {
   message: string;
   date: string;

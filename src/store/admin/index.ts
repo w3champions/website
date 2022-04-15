@@ -330,54 +330,6 @@ const mod = {
 
       await rootGetters.adminService.putGlobalMute(rootState.oauth.token, mute);
     },
-
-    async loadAllSpecialPortraits(context: ActionContext<AdminState, RootState>) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-
-      const availablePortraits = await rootGetters.adminService.getAllSpecialPortraits(rootState.oauth.token);
-      commit.SET_SPECIAL_PORTRAITS(availablePortraits);
-    },
-
-    async loadSpecialPortraitsForPlayer(
-      context: ActionContext<AdminState, RootState>,
-      btag: string
-    ): Promise<number[]> {
-      const { rootGetters } = moduleActionContext(context, mod);
-      const playerSettings = await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
-
-      const portraits = playerSettings.specialPictures.map(x => x.pictureId);
-      return portraits;
-    },
-
-    async addPortraits(
-      context: ActionContext<AdminState, RootState>,
-      btag: string,
-      portraitIds: number[],
-      tooltip: string
-    ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-
-      await rootGetters.adminService.putPortraits(
-        rootState.oauth.token, 
-        btag, 
-        portraitIds, 
-        tooltip
-      );
-    },
-
-    async removePortraits(
-      context: ActionContext<AdminState, RootState>,
-      btag: string,
-      portraitIds: number[]
-    ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-      
-      await rootGetters.adminService.deletePortraits(
-        rootState.oauth.token, 
-        btag, 
-        portraitIds,
-      );
-    },
   },
 
   mutations: {

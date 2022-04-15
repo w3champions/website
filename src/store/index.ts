@@ -11,7 +11,6 @@ import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
 import twitch from "./twitch/index";
 import admin from "./admin/index";
-import adminPlayerManagement from "./admin/playerManagement/index";
 import rankings from "./ranking/index";
 
 import RankingService from "@/services/RankingService";
@@ -57,7 +56,6 @@ const mod = {
     clan,
     twitch,
     admin,
-    adminPlayerManagement,
     tournaments,
   },
   state: {

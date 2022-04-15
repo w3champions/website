@@ -100,7 +100,7 @@
                         <v-spacer />
                         <v-container>
                           <v-card-actions class="justify-end">
-                            <v-btn class="primary" xlarge @click="confirmDialog">Confirm</v-btn>
+                            <v-btn class="primary" x-large @click="confirmDialog">Confirm</v-btn>
                           </v-card-actions>
                         </v-container>
                       </v-row>
@@ -167,7 +167,7 @@
 </template>
 
 <script lang="ts">
-import { SearchedPlayer } from "@/store/admin/types";
+import { SearchedPlayer, ChangePortraitsCommand  } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
@@ -198,11 +198,11 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   get searchedPlayerPortraits(): number[] {
-    return this.$store.direct.state.admin.searchedPlayerSpecialPortraits;
+    return this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
   }
 
   get hasSpecialPortraits(): boolean {
-    return this.searchedPlayerPortraits.length > 0;
+    return this.searchedPlayerPortraits != null && this.searchedPlayerPortraits.length > 0;
   }
 
   get hasSpecialPortraitsAssigned(): boolean {
@@ -225,17 +225,17 @@ export default class AdminAssignPortraits extends Vue {
 
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
-      await this.$store.direct.dispatch.adminPlayerManagement.addPortraits(
-        this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
-        this.confirmAddedPortraits,
-        this.mouseoverText
-      );
+      await this.$store.direct.dispatch.admin.playerManagement.addPortraits({
+        battleTag: this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
+        portraitIds: this.confirmAddedPortraits,
+        mouseover: this.mouseoverText,
+      } as ChangePortraitsCommand);
     }
     if (this.confirmRemovedPortraits.length > 0) {
-      await this.$store.direct.dispatch.adminPlayerManagement.removePortraits(
-        this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
-        this.confirmAddedPortraits
-      );
+      await this.$store.direct.dispatch.admin.playerManagement.removePortraits({
+        battleTag: this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
+        portraitIds: this.confirmAddedPortraits,
+      } as ChangePortraitsCommand);
     }
     await this.init();
     this.assignDialogOpen = false;
@@ -250,7 +250,7 @@ export default class AdminAssignPortraits extends Vue {
     this.assignedPortraitsModel.sort((a, b) => a - b);
   }
 
-  assignPortrait(portraitId: number): void {
+  assignThisPortrait(portraitId: number): void {
     if (!this.assignedPortraitsModel.includes(portraitId)) {
       this.assignedPortraitsModel.push(portraitId);
     }
@@ -271,9 +271,11 @@ export default class AdminAssignPortraits extends Vue {
     if (searchedPlayer) {
       let btag = searchedPlayer.player.playerIds[0].battleTag;
 
-      this.playerPortraits = await this.$store.direct.dispatch.adminPlayerManagement.loadSpecialPortraitsForPlayer(btag);
+      await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(btag);
+      const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
+      this.assignedPortraitsModel = Object.create(playerPortraits);
 
-      if ((this.playerPortraits != null || undefined) && this.playerPortraits.length > 0) {
+      if ((playerPortraits != null || undefined) && playerPortraits.length > 0) {
         this.showPlayersPortraits = true;
       } else {
         this.revertToDefault();
@@ -300,7 +302,6 @@ export default class AdminAssignPortraits extends Vue {
     this.showPlayersPortraits = false;
     this.oldSearchTerm = "";
     this.$store.direct.dispatch.admin.clearSearch();
-    this.playerPortraits = [];
   }
 
   @Watch("isAdmin")
@@ -309,10 +310,12 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   private async init(): Promise<void> {
-    await this.$store.direct.dispatch.admin.loadAllSpecialPortraits();
+    await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
     this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);
     this.allSpecialPortraits = Object.create(
-      this.$store.direct.state.admin.allSpecialPortraits.map((x) => parseInt(x.id)).sort((a, b) => b - a)
+      this.$store.direct.state.admin.playerManagement.allSpecialPortraits
+        .map((x) => parseInt(x.id))
+        .sort((a, b) => b - a)
     );
   }
 
