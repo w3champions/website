@@ -85,35 +85,35 @@ const data = {
       manualwinbody23: "decimal value: 1",
       manualmactitle: "Manual Mac OS",
       manualmacbody1:
-        "1. Download the zip file and unpack it in your Warcraft Installation folder",
+        "1. Download the zip file and unpack it in your Warcraft installation directory",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Make sure to have a directory structure like:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "/Applications/Warcraft III/webui/index.html",
       manualmacbody5:
-        "If you have a folder called _retail_ in your Warcraft III folder, make sure to have the following structure:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+        "If you have a directory called _retail_ in your Warcraft III directory, make sure to have the following structure:",
+      manualmacbody6: "/Applications/Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
-        "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
+        "3. Download the Maps and unpack it to your Warcraft III Maps directory",
       manualmacbody8: "Download MAPS",
-      manualmacbody9: "4. The folder structure after unpacking should be",
+      manualmacbody9: "4. The directory structure after unpacking should be:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Important",
       manualmacbody12:
         "If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it.",
       manualmacbody13: "DELETE Path-to-game/Maps",
-      manualmacbody14: "DELETE Path-to-game/retail/maps",
+      manualmacbody14: "DELETE Path-to-game/_retail_/maps",
       manualmacbody15: "Example:",
-      manualmacbody16: "DELETE Warcraft III\\Maps",
-      manualmacbody17: "DELETE Warcraft III_retail_\\Maps",
+      manualmacbody16: "DELETE /Applications/Warcraft III/Maps",
+      manualmacbody17: "DELETE /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
-        "5. You need to set a registry (Installer is doing this automatically)",
-      manualmacbody19: "Copy command",
+        "5. You will also need to update the Warcraft III preferences to allow for local file use (installer does this automatically)",
+      manualmacbody19: "Copy command:",
       manualmacbody19_1:
         'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Open terminal",
       manualmacbody21: "Paste command and execute by pressing Enter key.",
-      manualmacbody22: "Run Warcraft 3. You should see W3Champions.",
+      manualmacbody22: "Run Warcraft 3. You should see the W3Champions button in the main menu.",
     },
     views_home: {
       w3c_motto: "The ladder you have been waiting for!",
