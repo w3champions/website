@@ -28,6 +28,7 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
+import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 
 @Component({
   components: {
@@ -39,6 +40,7 @@ import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
     AdminProxies,
     AdminAlts,
     AdminGlobalMute,
+    AdminAssignPortraits,
   },
 })
 export default class Admin extends Vue {
@@ -112,6 +114,18 @@ export default class Admin extends Vue {
           title: "Live Queue Data",
           icon: "mdi-table",
           component: "admin-queue-data",
+        },
+      ],
+    },
+    {
+      title: "Rewards",
+      icon: "mdi-gift",
+      items: [
+        {
+          key: "portraits",
+          title: "Assign Portraits",
+          icon: "mdi-account-box-outline",
+          component: "admin-assign-portraits",
         },
       ],
     },

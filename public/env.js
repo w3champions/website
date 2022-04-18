@@ -8,6 +8,6 @@ window._env_ = {
   // REDIRECT_URL: "http://localhost:8080/login",
   REDIRECT_URL: "https://w3champions.com/login",
   LAUNCHER_UPDATE_URL: "https://update-service.test.w3champions.com/api/",
-  INGAME_STATIC_RESOURCES_URL: "https://storage.googleapis.com/w3champions-prod/integration/",
+  INGAME_STATIC_RESOURCES_URL: "https://w3champions.wc3.tools/prod/integration/",
   BNET_API_CLIENT_ID: "d7bd6dd46e2842c8a680866759ad34c2",
 };

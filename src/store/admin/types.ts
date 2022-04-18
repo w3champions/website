@@ -15,6 +15,23 @@ export type AdminState = {
   globallyMutedPlayers: GloballyMutedPlayer[];
 };
 
+export type AdminPlayerManagementState = {
+  allSpecialPortraits: PortraitDefinition[];
+  searchedPlayerSpecialPortraits: number[];
+};
+
+export interface ChangePortraitsCommand {
+  battleTags: string[];
+  portraitIds: number[];
+  mouseover?: string;
+}
+
+export type ChangePortraitsDto = {
+  BnetTags: string[];
+  Portraits: number[];
+  Tooltip?: string;
+};
+
 export interface NewsMessage {
   message: string;
   date: string;
@@ -82,6 +99,11 @@ export interface QueuedPlayer {
   isFloConnected: boolean;
   location: string;
   serverOption: string;
+}
+
+export interface PortraitDefinition {
+  id: string;
+  groups: string[];
 }
 
 export type SearchedPlayer = {

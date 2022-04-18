@@ -1,6 +1,7 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
+import playerManagementModule from "./playerManagement/index";
 import {
   AdminState,
   BannedPlayer,
@@ -15,6 +16,7 @@ import {
   GlobalMute,
 } from "./types";
 import moment from "moment";
+
 const mod = {
   namespaced: true,
   state: {
@@ -79,7 +81,7 @@ const mod = {
     async loadTips(context: ActionContext<AdminState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const tips = await rootGetters.adminService.getTips();
-      commit.SET_Tips(tips);
+      commit.SET_TIPS(tips);
     },
 
     async editTip(
@@ -269,10 +271,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       proxies: ProxySettings
     ): Promise<void> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
         return;
@@ -294,10 +293,7 @@ const mod = {
     ): Promise<string[]> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      const getAlts = await rootGetters.adminService.getAltsForBattletag(
-        btag,
-        rootState.oauth.token
-      );
+      const getAlts = await rootGetters.adminService.getAltsForBattletag(btag, rootState.oauth.token);
 
       return getAlts;
     },
@@ -305,10 +301,7 @@ const mod = {
     async loadGlobalMutes(
       context: ActionContext<AdminState, RootState>
     ): Promise<void> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const getGlobalMutes = await rootGetters.adminService.getGlobalMutes(
         rootState.oauth.token
@@ -335,7 +328,7 @@ const mod = {
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.PutGlobalMute(rootState.oauth.token, mute);
+      await rootGetters.adminService.putGlobalMute(rootState.oauth.token, mute);
     },
   },
 
@@ -343,7 +336,7 @@ const mod = {
     SET_NEWS(state: AdminState, news: NewsMessage[]) {
       state.news = news;
     },
-    SET_Tips(state: AdminState, tips: LoadingScreenTip[]) {
+    SET_TIPS(state: AdminState, tips: LoadingScreenTip[]) {
       state.tips = tips;
     },
     SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: BannedPlayer[]) {
@@ -358,16 +351,10 @@ const mod = {
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
     },
-    SET_SEARCH_FOR_BNET_TAG(
-      state: AdminState,
-      searchedPlayers: SearchedPlayer[]
-    ) {
+    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
       state.searchedPlayers = searchedPlayers;
     },
-    SET_SEARCHED_PROXIES_FOR_BATTLETAG(
-      state: AdminState,
-      proxies: ProxySettings
-    ) {
+    SET_SEARCHED_PROXIES_FOR_BATTLETAG(state: AdminState, proxies: ProxySettings) {
       state.proxiesSetForSearchedPlayer = proxies;
     },
     SET_SEARCHED_PLAYER_BTAG(state: AdminState, battleTag: string) {
@@ -385,6 +372,10 @@ const mod = {
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
     },
+  },
+
+  modules: {
+    playerManagement: playerManagementModule,
   },
 } as const;
 

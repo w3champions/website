@@ -10,6 +10,9 @@ import {
   ProxySettings,
   GloballyMutedPlayer,
   GlobalMute,
+  PortraitDefinition,
+  ChangePortraitsCommand,
+  ChangePortraitsDto,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -290,7 +293,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async PutGlobalMute(
+  public async putGlobalMute(
     token: string,
     globalMutedPlayer: GlobalMute
   ): Promise<number> {
@@ -304,6 +307,66 @@ export default class AdminService {
         "Content-Type": "application/json",
       },
       body: data,
+    });
+
+    return response.status;
+  }
+
+  public async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {
+    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.json();
+  }
+
+  public async putPortraits(
+    token: string,
+    command: ChangePortraitsCommand
+    ): Promise<number> {
+    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
+
+    const data = {
+      BnetTags: command.battleTags,
+      Portraits: command.portraitIds,
+      Tooltip: command.mouseover,
+    } as ChangePortraitsDto;
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.status;
+  }
+
+  public async deletePortraits(
+    token: string,
+    command: ChangePortraitsCommand
+    ): Promise<number> {
+    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
+
+    const data = {
+      BnetTags: command.battleTags,
+      Portraits: command.portraitIds,
+    } as ChangePortraitsDto;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     });
 
     return response.status;
