@@ -21,10 +21,16 @@ export type AdminPlayerManagementState = {
 };
 
 export interface ChangePortraitsCommand {
-  battleTag: string;
+  battleTags: string[];
   portraitIds: number[];
   mouseover?: string;
 }
+
+export type ChangePortraitsDto = {
+  BnetTags: string[];
+  Portraits: number[];
+  Tooltip?: string;
+};
 
 export interface NewsMessage {
   message: string;

@@ -29,7 +29,6 @@ const mod = {
       } else {
         commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS([] as number[]);
       }
-      
     },
 
     async addPortraits(
@@ -38,12 +37,7 @@ const mod = {
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.putPortraits(
-        rootState.oauth.token,
-        portraitCommand.battleTag,
-        portraitCommand.portraitIds,
-        portraitCommand.mouseover || ""
-      );
+      await rootGetters.adminService.putPortraits(rootState.oauth.token, portraitCommand);
     },
 
     async removePortraits(
@@ -52,11 +46,7 @@ const mod = {
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.deletePortraits(
-        rootState.oauth.token,
-        portraitCommand.battleTag,
-        portraitCommand.portraitIds
-      );
+      await rootGetters.adminService.deletePortraits(rootState.oauth.token, portraitCommand);
     },
   },
 

@@ -11,6 +11,8 @@ import {
   GloballyMutedPlayer,
   GlobalMute,
   PortraitDefinition,
+  ChangePortraitsCommand,
+  ChangePortraitsDto,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -326,38 +328,47 @@ export default class AdminService {
 
   public async putPortraits(
     token: string,
-    btag: string,
-    portraitIds: number[],
-    tooltip: string
-    ): Promise<void> {
-    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+    command: ChangePortraitsCommand
+    ): Promise<number> {
+    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
 
+    const data = {
+      BnetTags: command.battleTags,
+      Portraits: command.portraitIds,
+      Tooltip: command.mouseover,
+    } as ChangePortraitsDto;
     const response = await fetch(url, {
-      method: "GET",
+      method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     });
 
-    return response.json();
+    return response.status;
   }
 
   public async deletePortraits(
     token: string,
-    btag: string,
-    portraitIds: number[]
-    ): Promise<void> {
-    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+    command: ChangePortraitsCommand
+    ): Promise<number> {
+    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
+
+    const data = {
+      BnetTags: command.battleTags,
+      Portraits: command.portraitIds,
+    } as ChangePortraitsDto;
 
     const response = await fetch(url, {
-      method: "GET",
+      method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     });
 
-    return response.json();
+    return response.status;
   }
 }

@@ -96,6 +96,7 @@
                           </v-card-actions>
                         </v-container>
                       </v-row>
+
                       <v-row>
                         <v-spacer />
                         <v-container>
@@ -225,24 +226,30 @@ export default class AdminAssignPortraits extends Vue {
 
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
-      await this.$store.direct.dispatch.admin.playerManagement.addPortraits({
-        battleTag: this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
+      let battleTags = [] as string[];
+      battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
+
+      const command = {
+        battleTags: battleTags,
         portraitIds: this.confirmAddedPortraits,
-        mouseover: this.mouseoverText,
-      } as ChangePortraitsCommand);
+        mouseover: this.mouseoverText || "",
+      } as ChangePortraitsCommand;
+
+      await this.$store.direct.dispatch.admin.playerManagement.addPortraits(command);
     }
     if (this.confirmRemovedPortraits.length > 0) {
-      await this.$store.direct.dispatch.admin.playerManagement.removePortraits({
-        battleTag: this.searchPlayerPortraitsModel.player.playerIds[0].battleTag,
-        portraitIds: this.confirmAddedPortraits,
-      } as ChangePortraitsCommand);
+      let battleTags = [] as string[];
+      battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
+
+      const command = {
+        battleTags: battleTags,
+        portraitIds: this.confirmRemovedPortraits,
+      } as ChangePortraitsCommand;
+
+      await this.$store.direct.dispatch.admin.playerManagement.removePortraits(command);
     }
     await this.init();
     this.assignDialogOpen = false;
-  }
-
-  updateAddAndRemoved(): void {
-    console.log("Worked!");
   }
 
   removeAssignedPortrait(portraitId: number): void {
@@ -275,7 +282,7 @@ export default class AdminAssignPortraits extends Vue {
       const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
       this.assignedPortraitsModel = Object.create(playerPortraits);
 
-      if ((playerPortraits != null || undefined) && playerPortraits.length > 0) {
+      if (playerPortraits) {
         this.showPlayersPortraits = true;
       } else {
         this.revertToDefault();
