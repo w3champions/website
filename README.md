@@ -10,6 +10,9 @@ npm install
 npm run serve
 ```
 
+#### .env
+When running locally, environmental variables will be taken from [this](https://github.com/w3champions/website/blob/master/public/env.js) file.
+
 ### Compiles and minifies for production
 
 ```
@@ -90,15 +93,18 @@ When you are done, please contact one of the older devs, because they can delete
 ### Working with Localization
 The website rebuilds localizations on each new deployment, running this script:
 
-https://github.com/w3champions/website/blob/master/scripts/generate-locales.ts
+[generate-locales.ts](https://github.com/w3champions/website/blob/master/scripts/generate-locales.ts)
 
 this works by gathering all the localization strings from this google drive document:
 
-https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc
+[Localization Tables](https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc)
 
 It then merges with the existing localizations here, which contains some english-specific translations, such as the names of maps and proxies:
 
-https://github.com/w3champions/website/tree/master/src/locales
+[locales](https://github.com/w3champions/website/tree/master/src/locales)
 
-If you'd like to add new strings to the website, you can request access to edit the localization document above to add them, and then refer to them in the html by calling the V18n library.
+If you'd like to add new strings to the website, you can request access to edit the localization document above to add them, and then refer to them in the html by calling the v18n library in that component.
+
+[example](https://github.com/w3champions/website/blob/10eb639aad5175481a6230d3ff55a18f11f831f5/src/views/Home.vue#L8)
+
 Contact @CepheidUK for access to the sheet.

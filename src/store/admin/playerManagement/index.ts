@@ -2,7 +2,6 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { AdminPlayerManagementState, ChangePortraitsCommand, PortraitDefinition } from "../types";
-import { SpecialPicture } from "@/store/personalSettings/types";
 const mod = {
   namespaced: true,
   state: {
@@ -29,6 +28,7 @@ const mod = {
       } else {
         commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS([] as number[]);
       }
+      commit.SET_MANAGED_PLAYER_BATTLETAG(btag);
     },
 
     async addPortraits(
@@ -48,9 +48,19 @@ const mod = {
 
       await rootGetters.adminService.deletePortraits(rootState.oauth.token, portraitCommand);
     },
+
+    clearManagedPlayer(
+      context: ActionContext<AdminPlayerManagementState, RootState>
+    ): void {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_MANAGED_PLAYER_BATTLETAG("");
+    },
   },
 
   mutations: {
+    SET_MANAGED_PLAYER_BATTLETAG(state: AdminPlayerManagementState, battleTag: string) {
+      state.managedBattleTag = battleTag;
+    },
     SET_SPECIAL_PORTRAITS(state: AdminPlayerManagementState, specialPortraits: PortraitDefinition[]) {
       state.allSpecialPortraits = specialPortraits;
     },

@@ -26,7 +26,7 @@
             <v-row v-if="assignmentsChanged" class="justify-end">
               <v-dialog v-model="assignDialogOpen" transition="fade-transition" max-width="1000">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn x-large v-bind="attrs" v-on="on" class="primary">Assign</v-btn>
+                  <v-btn x-large v-bind="attrs" v-on="on" class="primary w3-race-bg--text">Assign</v-btn>
                 </template>
 
                 <!-- Confirmation dialog -->
@@ -101,7 +101,7 @@
                         <v-spacer />
                         <v-container>
                           <v-card-actions class="justify-end">
-                            <v-btn class="primary" x-large @click="confirmDialog">Confirm</v-btn>
+                            <v-btn class="primary w3-race-bg--text" x-large @click="confirmDialog">Confirm</v-btn>
                           </v-card-actions>
                         </v-container>
                       </v-row>
@@ -318,6 +318,10 @@ export default class AdminAssignPortraits extends Vue {
 
   private async init(): Promise<void> {
     await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
+    const managedPlayer = this.$store.direct.state.admin.playerManagement.managedBattleTag;
+    if (managedPlayer != "") {
+      await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
+    }
     this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);
     this.allSpecialPortraits = Object.create(
       this.$store.direct.state.admin.playerManagement.allSpecialPortraits
