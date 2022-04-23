@@ -19,6 +19,7 @@ export type AdminPlayerManagementState = {
   managedBattleTag: string;
   allSpecialPortraits: PortraitDefinition[];
   searchedPlayerSpecialPortraits: number[];
+  portraitDefinitionGroups: PortraitDefinitionGroup[];
 };
 
 export interface ChangePortraitsCommand {
@@ -105,6 +106,11 @@ export interface QueuedPlayer {
 export interface PortraitDefinition {
   id: string;
   groups: string[];
+}
+
+export interface PortraitDefinitionGroup {
+  group: string;
+  portraitIds: number[];
 }
 
 export type SearchedPlayer = {
