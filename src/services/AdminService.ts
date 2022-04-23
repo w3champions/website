@@ -314,7 +314,7 @@ export default class AdminService {
   }
 
   public async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {
-    const url = `${API_URL}api/admin/portraitDefinitions?authorization=${token}`;
+    const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
