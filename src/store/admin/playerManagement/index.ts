@@ -1,7 +1,7 @@
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
-import { AdminPlayerManagementState, ChangePortraitsCommand, PortraitDefinition } from "../types";
+import { AdminPlayerManagementState, ChangePortraitsCommand, PortraitDefinition, PortraitDefinitionGroup } from "../types";
 const mod = {
   namespaced: true,
   state: {
@@ -55,6 +55,15 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_MANAGED_PLAYER_BATTLETAG("");
     },
+
+    async loadPortraitDefinitionGroups(
+      context: ActionContext<AdminPlayerManagementState, RootState>,
+    ): Promise<void> {
+      const { rootGetters, commit } = moduleActionContext(context, mod);
+
+      const portDefGroups = await rootGetters.adminService.getAllPortraitDefinitionGroups();
+      commit.SET_PORTRAIT_DEFINITION_GROUPS(portDefGroups);
+    },
   },
 
   mutations: {
@@ -66,6 +75,9 @@ const mod = {
     },
     SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS(state: AdminPlayerManagementState, specialPortraits: number[]) {
       state.searchedPlayerSpecialPortraits = specialPortraits;
+    },
+    SET_PORTRAIT_DEFINITION_GROUPS(state: AdminPlayerManagementState, portDefGroups: PortraitDefinitionGroup[]) {
+      state.portraitDefinitionGroups = portDefGroups;
     },
   },
 } as const;

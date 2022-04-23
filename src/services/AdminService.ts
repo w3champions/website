@@ -13,6 +13,7 @@ import {
   PortraitDefinition,
   ChangePortraitsCommand,
   ChangePortraitsDto,
+  PortraitDefinitionGroup,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -330,7 +331,7 @@ export default class AdminService {
     token: string,
     command: ChangePortraitsCommand
     ): Promise<number> {
-    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
+    const url = `${API_URL}api/rewards/portraits?authorization=${token}`;
 
     const data = {
       BnetTags: command.battleTags,
@@ -353,7 +354,7 @@ export default class AdminService {
     token: string,
     command: ChangePortraitsCommand
     ): Promise<number> {
-    const url = `${API_URL}api/admin/portraits?authorization=${token}`;
+    const url = `${API_URL}api/rewards/portraits?authorization=${token}`;
 
     const data = {
       BnetTags: command.battleTags,
@@ -370,5 +371,19 @@ export default class AdminService {
     });
 
     return response.status;
+  }
+
+  public async getAllPortraitDefinitionGroups(): Promise<PortraitDefinitionGroup[]> {
+    const url = `${API_URL}api/rewards/portrait-groups`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.json();
   }
 }
