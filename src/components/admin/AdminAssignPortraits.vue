@@ -131,7 +131,20 @@
 
         <!-- To Be Assigned -->
         <v-col class="mt-2 mb-2">
-          <v-card-title class="justify-center">To Be Assigned</v-card-title>
+          <v-row>
+            <v-col></v-col>
+            <v-col>
+              <v-card-title class="justify-center">To Be Assigned</v-card-title>
+
+            </v-col>
+            <v-col>
+              <v-spacer />
+              <portrait-group-dropdown
+                class="d-flex justify-end"
+                @add-group-of-portraits="assignGroupPortraits"
+              ></portrait-group-dropdown>
+            </v-col>
+          </v-row>
 
           <v-row v-if="hasSpecialPortraitsAssigned" no-gutters :justify="'start'">
             <v-col align-self="stretch" v-for="portraitId in assignedPortraitsModel" :key="portraitId" cols="2" md="1">
@@ -168,12 +181,13 @@
 </template>
 
 <script lang="ts">
-import { SearchedPlayer, ChangePortraitsCommand  } from "@/store/admin/types";
+import { SearchedPlayer, ChangePortraitsCommand } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
+import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 
-@Component({ components: { AssignPortrait } })
+@Component({ components: { AssignPortrait, PortraitGroupDropdown } })
 export default class AdminAssignPortraits extends Vue {
   searchPlayerPortraitsModel = {} as SearchedPlayer;
   playerPortraits = [] as number[];
@@ -261,6 +275,16 @@ export default class AdminAssignPortraits extends Vue {
     if (!this.assignedPortraitsModel.includes(portraitId)) {
       this.assignedPortraitsModel.push(portraitId);
     }
+    this.assignedPortraitsModel.sort((a, b) => a - b);
+    this.assignedPortraitsModel = Object.create(this.assignedPortraitsModel); // force change detection
+  }
+
+  assignGroupPortraits(portraits: number[]): void {
+    portraits.forEach(x => {
+      if (this.allSpecialPortraits.includes(x) && !this.assignedPortraitsModel.includes(x)) {
+        this.assignedPortraitsModel.push(x);
+      }
+    });
     this.assignedPortraitsModel.sort((a, b) => a - b);
     this.assignedPortraitsModel = Object.create(this.assignedPortraitsModel); // force change detection
   }
