@@ -8,15 +8,24 @@
         </v-btn>
       </template>
 
-      <v-list>
+      <v-list max-height="400" class="overflow-y-auto">
         <v-list-item v-for="group in groupNames" :key="group">
-          <v-tooltip left>
+          <v-tooltip left max-width="500" min-width="500">
             <template v-slot:activator="{ on: onTooltip }">
               <v-list-item v-on="{ ...onTooltip }" @click="addPortraitGroup(group)">
                 {{ group }}
               </v-list-item>
             </template>
-            <span>{{ group }}</span>
+            <v-row no-gutters justify="start">
+              <v-col v-for="portraitId in hoveredGroupPortraits(group)" :key="portraitId" cols="1" md="1">
+                <assign-portrait
+                  :portraitId="portraitId"
+                  :isAssigned="false"
+                  :isInert="true"
+                  class="pa-1"
+                ></assign-portrait>
+              </v-col>
+            </v-row>
           </v-tooltip>
         </v-list-item>
       </v-list>
@@ -26,10 +35,11 @@
 
 <script lang="ts">
 import { PortraitDefinitionGroup } from "@/store/admin/types";
+import AssignPortrait from "./AssignPortrait.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-@Component({ components: {} })
+@Component({ components: { AssignPortrait } })
 export default class PortraitGroupDropdown extends Vue {
   selectedGroups = [] as string[];
   portraitDefGroups = [] as PortraitDefinitionGroup[];
@@ -40,6 +50,10 @@ export default class PortraitGroupDropdown extends Vue {
     if (portraitsToAdd) {
       this.$emit("add-group-of-portraits", portraitsToAdd);
     }
+  }
+
+  hoveredGroupPortraits(defGroup: string): number[] {
+    return this.portraitDefGroups.find((x) => x.group == defGroup)?.portraitIds || [];
   }
 
   async init(): Promise<void> {
@@ -56,4 +70,6 @@ export default class PortraitGroupDropdown extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+$tooltip-opacity: 1;
+</style>
