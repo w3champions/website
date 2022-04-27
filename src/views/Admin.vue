@@ -29,6 +29,7 @@ import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
+import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 
 @Component({
   components: {
@@ -41,6 +42,7 @@ import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
     AdminAlts,
     AdminGlobalMute,
     AdminAssignPortraits,
+    AdminManagePortraits,
   },
 })
 export default class Admin extends Vue {
@@ -127,6 +129,12 @@ export default class Admin extends Vue {
           icon: "mdi-account-box-outline",
           component: "admin-assign-portraits",
         },
+        {
+          key: "manage-portraits",
+          title: "Manage Portraits",
+          icon: "mdi-briefcase",
+          component: "admin-manage-portraits",
+        }
       ],
     },
   ];

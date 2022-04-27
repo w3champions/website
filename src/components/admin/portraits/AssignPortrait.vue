@@ -17,21 +17,19 @@ import { Component, Prop } from "vue-property-decorator";
 export default class AssignPortrait extends Vue {
   @Prop({}) public portraitId!: number;
   @Prop({ default: false }) public isAssigned!: boolean;
-  @Prop({ default: false }) public isInert!: boolean;
+  @Prop({ default: false }) public selectable!: boolean;
 
   get urlById() {
     return getAvatarUrl(EAvatarCategory.SPECIAL, this.portraitId, false);
   }
 
   removeAssignedPortrait(): void {
-    if (!this.isInert) {
-      this.$emit("remove-assigned-portrait", this.portraitId);
-    }
+    this.$emit("portrait-deselected", this.portraitId);
   }
 
   assignPortrait(): void {
-    if (!this.isAssigned && !this.isInert) {
-      this.$emit("add-available-portrait", this.portraitId);
+    if (!this.isAssigned && this.selectable) {
+      this.$parent.$emit("portrait-selected", this.portraitId);
     }
   }
 }

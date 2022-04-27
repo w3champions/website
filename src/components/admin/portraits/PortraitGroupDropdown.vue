@@ -2,7 +2,7 @@
   <v-container>
     <v-menu bottom>
       <template v-slot:activator="{ on: onMenu }">
-        <v-btn color="primary" dark v-on="{ ...onMenu }">
+        <v-btn color="primary w3-race-bg--text" dark v-on="{ ...onMenu }">
           Select Portrait Groups
           <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
