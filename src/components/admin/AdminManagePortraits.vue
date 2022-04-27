@@ -18,13 +18,36 @@
         <br />
         Example groups: "s10", "bronze-patreon" etc.
       </v-card-text>
-    <new-portrait-definition-dialog></new-portrait-definition-dialog>
+      <new-portrait-definition-dialog></new-portrait-definition-dialog>
     </v-row>
 
-    <edit-portrait-definition-dialog></edit-portrait-definition-dialog>
+    <v-dialog v-model="editDialogOpen" max-width="500">
+      <v-card>
+        <v-container>
+          <v-row class="justify-center">
+            <v-card-title>Edit PortraitDefinition</v-card-title>
+          </v-row>
+          <v-row class="justify-center pt-0 mt-0">
+            <v-card-title>Portrait Id: {{ editPortraitId }}</v-card-title>
+          </v-row>
+          <v-row>
+            <v-col />
+            <v-col>
+              <assign-portrait :portraitId="editPortraitId" :selectable="false"/>
+            </v-col>
+            <v-col />
+          </v-row>
+          <v-row class="justify-center">
+            <v-col>
+              Change groups here
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-dialog>
 
     <v-row>
-      <available-portraits-gallery @portrait-selected="selectPortrait" :selectable="true"></available-portraits-gallery>
+      <available-portraits-gallery @portrait-selected="selectPortrait" />
     </v-row>
 
     <!-- add a new portrait definition ID interface -->
@@ -38,20 +61,25 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
-import EditPortraitDefinitionDialog from "./portraits/EditPortraitDefinitionDialog.vue";
+import AssignPortrait from "./portraits/AssignPortrait.vue";
 
-@Component({ components: { AvailablePortraitsGallery, NewPortraitDefinitionDialog, EditPortraitDefinitionDialog } })
+@Component({ components: { AvailablePortraitsGallery, NewPortraitDefinitionDialog, AssignPortrait } })
 export default class AdminManagePortraits extends Vue {
   editPortraitId = 0;
-  editPortraitDialog = false;
+  editDialogOpen = false;
 
   get isAdmin(): boolean {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  selectPortrait(id: number): void {
-    this.editPortraitId = id;
-    this.editPortraitDialog = true;
+  selectPortrait(portraitId: number): void {
+    this.editPortraitId = portraitId;
+    this.editDialogOpen = true;
+  }
+
+  exitDialog(): void {
+    this.editPortraitId = 0;
+    this.editDialogOpen = false;
   }
 
   async init(): Promise<void> {

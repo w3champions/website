@@ -3,7 +3,7 @@
     <v-card-title class="justify-center">Special Portraits</v-card-title>
     <v-row no-gutters :justify="'start'">
       <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-        <assign-portrait :portraitId="portraitId" :selectable="selectable" class="pa-1"></assign-portrait>
+        <assign-portrait :portraitId="portraitId" class="pa-1" :selectable="selectable" />
       </v-col>
     </v-row>
   </v-col>
@@ -17,8 +17,7 @@ import AssignPortrait from "./AssignPortrait.vue";
 
 @Component({ components: { AssignPortrait } })
 export default class AvailablePortraitsGallery extends Vue {
-  @Prop() selectable!: boolean;
-
+  @Prop({ default: true }) public selectable?: boolean;
   allSpecialPortraits = [] as PortraitDefinition[];
 
   async init(): Promise<void> {
