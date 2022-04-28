@@ -1,29 +1,21 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row class="mb-1 pb-1">
       <v-card-text>
-        Special portrait filenames are of the format:
-        <b>SPECIAL_XXXX.jpg</b>
-        where XXXX is the portrait's id number.
-        <br />
-        We store this as a
-        <i>PortraitDefinition.</i>
-        <br />
-        You can see a gallery of all the portrait definitions at the bottom of this page.
-        <br />
-        a
-        <i>PortraitDefinition</i>
-        also stores a list of groups that the portrait belongs to, this allows easy mass-assignment of portraits by
-        their group tag.
-        <br />
-        Example groups: "s10", "bronze-patreon" etc.
+        This page is for adding new portraits and adding/editing what groups they are a part of, e.g.
+        <strong>Bronze Patreon Tier</strong>
       </v-card-text>
+    </v-row>
+    <v-row class="justify-center ma-1 pa-1">
+      <v-btn class="secondary w3-race-bg--text">Add New Portrait (Coming Soon!)</v-btn>
+    </v-row>
+    <v-row class="ma-1 pa-1">
       <new-portrait-definition-dialog></new-portrait-definition-dialog>
     </v-row>
 
-    <v-dialog v-model="editDialogOpen" max-width="500">
+    <v-dialog v-model="editDialogOpen" max-width="650">
       <v-card>
-        <v-container>
+        <v-container class="pa-6">
           <v-row class="justify-center">
             <v-card-title>Edit PortraitDefinition</v-card-title>
           </v-row>
@@ -39,12 +31,19 @@
           </v-row>
           <v-row class="justify-center">
             <v-col>
-              Change groups here
+              <portrait-group-combobox :portraitId="editPortraitId" />
             </v-col>
+          </v-row>
+          <v-row class="justify-center pb-5">
+            <v-btn x-large class="primary w3-race-bg--text">Change groups</v-btn>
           </v-row>
         </v-container>
       </v-card>
     </v-dialog>
+
+    <v-row class="mt-1 pt-1">
+      <v-card-text>Click on a portrait in the grid below to edit it's groups.</v-card-text>
+    </v-row>
 
     <v-row>
       <available-portraits-gallery @portrait-selected="selectPortrait" />
@@ -62,8 +61,16 @@ import { Component } from "vue-property-decorator";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
+import PortraitGroupCombobox from "./portraits/PortraitGroupCombobox.vue";
 
-@Component({ components: { AvailablePortraitsGallery, NewPortraitDefinitionDialog, AssignPortrait } })
+@Component({
+  components: {
+    AvailablePortraitsGallery,
+    NewPortraitDefinitionDialog,
+    AssignPortrait,
+    PortraitGroupCombobox,
+  },
+})
 export default class AdminManagePortraits extends Vue {
   editPortraitId = 0;
   editDialogOpen = false;

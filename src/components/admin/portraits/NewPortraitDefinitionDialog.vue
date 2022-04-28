@@ -4,7 +4,7 @@
       <v-dialog max-width="1000">
         <template v-slot:activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
-            <v-btn class="primary w3-race-bg--text" v-on="on">Add New PortraitDefinition</v-btn>
+            <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now!)</v-btn>
           </v-row>
         </template>
         <template>

@@ -38,6 +38,7 @@
           </template>
 
           <v-list-item
+            class="ml-0 pl-6"
             v-for="(subItem, i) in item.items"
             :key="i"
             @click="itemSelected(subItem, index)"
