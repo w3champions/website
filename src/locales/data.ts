@@ -371,6 +371,7 @@ const data = {
       playerhasnomatches:
         "This player hasn't played any matches fitting to the current settings.",
       title: "Matchup Statistics",
+      playerheroesstatisticstitle: "Hero Usage Statistics",
     },
     components_player_modestatsgrid: {
       mode: "Mode",
