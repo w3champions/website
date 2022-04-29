@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/w3champions/w3champions/_apis/build/status/website?branchName=master)](https://dev.azure.com/w3champions/w3champions/_build/latest?definitionId=1&branchName=master)
+
 ## Development setup
 
 ```
