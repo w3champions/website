@@ -110,12 +110,10 @@ export default class AdminManagePortraits extends Vue {
   }
 
   updateGroupModel(groups: string[]): void {
-    console.log(`updating group model of ${this.editPortraitId} to ${this.groupsModel}`);
     this.groupsModel = groups;
   }
 
   async changeGroups(): Promise<void> {
-    console.log(`changing groups of ${this.editPortraitId} to ${this.groupsModel}`);
     await this.$store.direct.dispatch.admin.playerManagement.updatePortraitDefinition({
       ids: [this.editPortraitId],
       groups: this.groupsModel,
