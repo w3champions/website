@@ -48,10 +48,6 @@
     <v-row>
       <available-portraits-gallery @portrait-selected="selectPortrait" />
     </v-row>
-
-    <!-- add a new portrait definition ID interface -->
-    <!-- on clicking the portraits gallery, open a modal to edit that portrait's groups -->
-    <!-- maybe add tooltips that show what group the portrait in the gallery is part of? -->
   </v-container>
 </template>
 

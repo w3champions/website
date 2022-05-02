@@ -1,5 +1,12 @@
 <template>
-  <v-combobox v-model="chips" :items="items" chips clearable label="Change Groups" multiple solo>
+  <v-combobox
+    v-model="chips"
+    :items="items"
+    chips
+    clearable
+    label="Assign Groups - Select existing or enter a new group"
+    multiple
+  >
     <template v-slot:selection="{ attrs, item, select, selected }">
       <v-chip v-bind="attrs" :input-value="selected" close @click="select" @click:close="remove(item)">
         {{ item }}

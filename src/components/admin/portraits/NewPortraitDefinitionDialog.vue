@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <v-dialog max-width="1000">
+      <v-dialog max-width="700">
         <template v-slot:activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
             <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now!)</v-btn>
@@ -10,9 +10,16 @@
         <template>
           <v-card>
             <v-container>
-              <v-row class="justify-center">
-                <v-card-title>Add New PortraitDefinition</v-card-title>
+              <v-row>
+                <v-col>
+                  <v-card-title class="justify-center">Add New PortraitDefinition</v-card-title>
+                </v-col>
+
+                <v-btn icon @click="vacant = false">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
               </v-row>
+
               <v-row>
                 <v-container class="ml-3 mr-3">
                   <v-text-field
@@ -22,8 +29,20 @@
                   ></v-text-field>
                 </v-container>
               </v-row>
-              <v-row></v-row>
+
+              <v-row>
+                <v-container class="ml-3 mr-3">
+                  <portrait-group-combobox :portraitId="portraitId" />
+                </v-container>
+              </v-row>
             </v-container>
+            <v-row>
+              <v-container>
+                <v-row class="justify-end">
+                  <v-btn class="primary w3-race-bg--text">Confirm</v-btn>
+                </v-row>
+              </v-container>
+            </v-row>
           </v-card>
         </template>
       </v-dialog>
@@ -35,10 +54,10 @@
 import { PortraitDefinition } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 
-@Component({ components: {} })
+@Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
-  @Prop({ default: false }) edit!: boolean;
   portraitId = 0;
 
   get allSpecialPortraits(): PortraitDefinition[] {
