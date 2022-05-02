@@ -103,15 +103,20 @@ export interface QueuedPlayer {
   serverOption: string;
 }
 
-export interface PortraitDefinition {
+export type PortraitDefinition = {
   id: string;
   groups: string[];
-}
+};
 
-export interface PortraitDefinitionGroup {
+export type PortraitDefinitionGroup = {
   group: string;
   portraitIds: number[];
-}
+};
+
+export type PortraitDefinitionDTO = {
+  ids: number[];
+  groups?: string[];
+};
 
 export type SearchedPlayer = {
   gameMode: number;

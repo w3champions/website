@@ -1,7 +1,13 @@
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
-import { AdminPlayerManagementState, ChangePortraitsCommand, PortraitDefinition, PortraitDefinitionGroup } from "../types";
+import {
+  AdminPlayerManagementState,
+  ChangePortraitsCommand,
+  PortraitDefinition,
+  PortraitDefinitionDTO,
+  PortraitDefinitionGroup,
+} from "../types";
 const mod = {
   namespaced: true,
   state: {
@@ -49,21 +55,41 @@ const mod = {
       await rootGetters.adminService.deletePortraits(rootState.oauth.token, portraitCommand);
     },
 
-    clearManagedPlayer(
-      context: ActionContext<AdminPlayerManagementState, RootState>
-    ): void {
+    clearManagedPlayer(context: ActionContext<AdminPlayerManagementState, RootState>): void {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_MANAGED_PLAYER_BATTLETAG("");
     },
 
-    async loadPortraitDefinitionGroups(
-      context: ActionContext<AdminPlayerManagementState, RootState>,
-    ): Promise<void> {
+    async loadPortraitDefinitionGroups(context: ActionContext<AdminPlayerManagementState, RootState>): Promise<void> {
       const { rootGetters, commit } = moduleActionContext(context, mod);
 
       const portDefGroups = await rootGetters.adminService.getAllPortraitDefinitionGroups();
       commit.SET_PORTRAIT_DEFINITION_GROUPS(portDefGroups);
     },
+
+    async addNewPortraitDefinition(
+      context: ActionContext<AdminPlayerManagementState, RootState>,
+      definition: PortraitDefinitionDTO
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      await rootGetters.adminService.postPortraitDefinitions(rootState.oauth.token, definition);
+    },
+
+    async removePortraitDefinition(
+      context: ActionContext<AdminPlayerManagementState, RootState>,
+      definition: PortraitDefinitionDTO
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      await rootGetters.adminService.deletePortraitDefinitions(rootState.oauth.token, definition);
+    },
+
+    async updatePortraitDefinition(
+      context: ActionContext<AdminPlayerManagementState, RootState>,
+      definition: PortraitDefinitionDTO
+    ): Promise<void> {
+      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      await rootGetters.adminService.putPortraitDefinitions(rootState.oauth.token, definition);
+    }
   },
 
   mutations: {

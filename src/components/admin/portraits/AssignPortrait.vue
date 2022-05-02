@@ -1,6 +1,6 @@
 <template>
   <v-container class="ma-0 pa-0" @click="assignPortrait">
-    <v-img :src="urlById"></v-img>
+    <v-img max-width="250" max-height="250" :src="urlById" />
     <v-btn class="cancel-button" right v-if="isAssigned" icon @click="removeAssignedPortrait">
       <v-icon large>mdi-close-circle-outline</v-icon>
     </v-btn>
@@ -17,21 +17,21 @@ import { Component, Prop } from "vue-property-decorator";
 export default class AssignPortrait extends Vue {
   @Prop({}) public portraitId!: number;
   @Prop({ default: false }) public isAssigned!: boolean;
-  @Prop({ default: false }) public isInert!: boolean;
+  @Prop({ default: true }) public selectable!: boolean;
 
   get urlById() {
     return getAvatarUrl(EAvatarCategory.SPECIAL, this.portraitId, false);
   }
 
   removeAssignedPortrait(): void {
-    if (!this.isInert) {
-      this.$emit("remove-assigned-portrait", this.portraitId);
+    if (this.selectable) {
+      this.$emit("portrait-deselected", this.portraitId);
     }
   }
 
   assignPortrait(): void {
-    if (!this.isAssigned && !this.isInert) {
-      this.$emit("add-available-portrait", this.portraitId);
+    if (!this.isAssigned && this.selectable) {
+      this.$parent.$emit("portrait-selected", this.portraitId);
     }
   }
 }

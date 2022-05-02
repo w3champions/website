@@ -48,17 +48,14 @@
                         <v-container>
                           <v-card-subtitle class="text-h6">
                             The following portraits will be
-                            <strong>ADDED:</strong>
+                            <strong>ADDED</strong>
+                            for 
+                            <strong>{{ bnetTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
                             <v-row no-gutters>
                               <v-col v-for="portraitId in confirmAddedPortraits" :key="portraitId" cols="1">
-                                <assign-portrait
-                                  :portraitId="portraitId"
-                                  :isAssigned="false"
-                                  :isInert="true"
-                                  class="pa-1"
-                                ></assign-portrait>
+                                <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
                               </v-col>
                             </v-row>
                           </v-card-actions>
@@ -80,17 +77,14 @@
                         <v-container>
                           <v-card-subtitle class="text-h6">
                             The following portraits will be
-                            <strong>REMOVED:</strong>
+                            <strong>REMOVED</strong>
+                            for 
+                            <strong>{{ bnetTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
                             <v-row no-gutters>
                               <v-col v-for="portraitId in confirmRemovedPortraits" :key="portraitId" cols="1">
-                                <assign-portrait
-                                  :portraitId="portraitId"
-                                  :isAssigned="false"
-                                  :isInert="true"
-                                  class="pa-1"
-                                ></assign-portrait>
+                                <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
                               </v-col>
                             </v-row>
                           </v-card-actions>
@@ -112,21 +106,6 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-divider />
-
-        <!-- Currently Assigned -->
-        <v-col class="mt-2 mb-2">
-          <v-card-title class="justify-center">Currently Assigned</v-card-title>
-
-          <v-row v-if="hasSpecialPortraits" no-gutters :justify="'start'">
-            <v-col v-for="portraitId in searchedPlayerPortraits" :key="portraitId" cols="2" md="1">
-              <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
-            </v-col>
-          </v-row>
-          <v-row v-else class="ma-2 pa-2">
-            <v-card-subtitle class="justify-center">No special portraits found for this player.</v-card-subtitle>
-          </v-row>
-        </v-col>
         <v-divider />
 
         <!-- To Be Assigned -->
@@ -151,7 +130,7 @@
               <assign-portrait
                 :portraitId="portraitId"
                 :isAssigned="true"
-                @remove-assigned-portrait="removeAssignedPortrait"
+                @portrait-deselected="removeAssignedPortrait"
                 class="pa-1"
               ></assign-portrait>
             </v-col>
@@ -162,19 +141,26 @@
         </v-col>
         <v-divider />
 
-        <!-- Available -->
-        <v-col>
-          <v-card-title class="justify-center">Available</v-card-title>
-          <v-row no-gutters :justify="'start'">
-            <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-              <assign-portrait
-                :portraitId="portraitId"
-                @add-available-portrait="assignThisPortrait"
-                class="pa-1"
-              ></assign-portrait>
+        <!-- Currently Assigned -->
+        <v-col class="mt-2 mb-2">
+          <v-card-title class="justify-center">Currently Assigned</v-card-title>
+
+          <v-row v-if="hasSpecialPortraits" no-gutters :justify="'start'">
+            <v-col v-for="portraitId in searchedPlayerPortraits" :key="portraitId" cols="2" md="1">
+              <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
             </v-col>
           </v-row>
+          <v-row v-else class="ma-2 pa-2">
+            <v-card-subtitle class="justify-center">No special portraits found for this player.</v-card-subtitle>
+          </v-row>
         </v-col>
+        <v-divider />
+
+        <!-- Available -->
+        <available-portraits-gallery
+          :selectable="true"
+          @portrait-selected="assignThisPortrait"
+        ></available-portraits-gallery>
       </v-container>
     </v-card>
   </v-container>
@@ -186,8 +172,9 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
+import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 
-@Component({ components: { AssignPortrait, PortraitGroupDropdown } })
+@Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery } })
 export default class AdminAssignPortraits extends Vue {
   searchPlayerPortraitsModel = {} as SearchedPlayer;
   playerPortraits = [] as number[];

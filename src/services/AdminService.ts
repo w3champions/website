@@ -14,6 +14,7 @@ import {
   ChangePortraitsCommand,
   ChangePortraitsDto,
   PortraitDefinitionGroup,
+  PortraitDefinitionDTO,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -385,5 +386,47 @@ export default class AdminService {
     });
 
     return response.json();
+  }
+
+  public async postPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+    const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(definitions),
+    });
+    return response.status;
+  }
+
+  public async putPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+    const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(definitions),
+    });
+    return response.status;
+  }
+
+  public async deletePortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+    const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(definitions),
+    });
+    return response.status;
   }
 }
