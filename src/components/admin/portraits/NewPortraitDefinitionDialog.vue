@@ -1,49 +1,52 @@
 <template>
   <v-row>
     <v-col>
-      <v-dialog max-width="700">
+      <v-dialog v-model="dialogOpen" max-width="700">
         <template v-slot:activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
-            <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now!)</v-btn>
+            <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now)</v-btn>
           </v-row>
         </template>
+
         <template>
-          <v-card>
-            <v-container>
-              <v-row>
-                <v-col>
-                  <v-card-title class="justify-center">Add New PortraitDefinition</v-card-title>
-                </v-col>
-
-                <v-btn icon @click="vacant = false">
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-row>
-
-              <v-row>
-                <v-container class="ml-3 mr-3">
-                  <v-text-field
-                    v-model="portraitId"
-                    :rules="[rules.required, rules.min, rules.taken, rules.number, rules.notZero]"
-                    label="Portrait Id"
-                  ></v-text-field>
-                </v-container>
-              </v-row>
-
-              <v-row>
-                <v-container class="ml-3 mr-3">
-                  <portrait-group-combobox :portraitId="portraitId" />
-                </v-container>
-              </v-row>
-            </v-container>
-            <v-row>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-card>
               <v-container>
-                <v-row class="justify-end">
-                  <v-btn class="primary w3-race-bg--text">Confirm</v-btn>
+                <v-row>
+                  <v-col>
+                    <v-card-title class="justify-center">Add New PortraitDefinition</v-card-title>
+                  </v-col>
+
+                  <v-btn icon @click="dialogOpen = false">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-row>
+
+                <v-row>
+                  <v-container class="ml-3 mr-3">
+                    <v-text-field
+                      v-model="portraitId"
+                      :rules="[rules.required, rules.min, rules.taken, rules.number, rules.notZero]"
+                      label="Portrait Id"
+                    ></v-text-field>
+                  </v-container>
+                </v-row>
+
+                <v-row>
+                  <v-container class="ml-3 mr-3">
+                    <portrait-group-combobox :portraitId="portraitId" />
+                  </v-container>
                 </v-row>
               </v-container>
-            </v-row>
-          </v-card>
+              <v-row class="mb-5">
+                <v-container>
+                  <v-row class="justify-center">
+                    <v-btn class="primary w3-race-bg--text" @click="confirmDialog" :disabled="!valid">Confirm</v-btn>
+                  </v-row>
+                </v-container>
+              </v-row>
+            </v-card>
+          </v-form>
         </template>
       </v-dialog>
     </v-col>
@@ -51,14 +54,17 @@
 </template>
 
 <script lang="ts">
-import { PortraitDefinition } from "@/store/admin/types";
+import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 
 @Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
   portraitId = 0;
+  dialogOpen = false;
+  valid = false;
+  groups = [] as string[];
 
   get allSpecialPortraits(): PortraitDefinition[] {
     return this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
@@ -77,11 +83,26 @@ export default class NewPortraitDefinitionDialog extends Vue {
     };
   }
 
+  newPortraitDefinition(): PortraitDefinitionDTO {
+    return {
+      ids: [this.portraitId],
+      groups: this.groups,
+    } as PortraitDefinitionDTO;
+  }
+
+  confirmDialog(): void {
+    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
+      this.dialogOpen = false;
+      this.$store.direct.dispatch.admin.playerManagement.addNewPortraitDefinition(this.newPortraitDefinition());
+    }
+  }
+
   async init(): Promise<void> {
     const allSpecialPortraits = this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
     if (!(allSpecialPortraits.length > 0)) {
       await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
     }
+    this.dialogOpen = false;
   }
 
   async mounted(): Promise<void> {
