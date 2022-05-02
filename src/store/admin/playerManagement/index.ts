@@ -72,7 +72,7 @@ const mod = {
       definition: PortraitDefinitionDTO
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
-      await rootGetters.adminService.putPortraitDefinitions(rootState.oauth.token, definition);
+      await rootGetters.adminService.postPortraitDefinitions(rootState.oauth.token, definition);
     },
 
     async removePortraitDefinition(
