@@ -160,7 +160,7 @@ export default class AdminQueueData extends Vue {
         modeId: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
+        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
         gameMode: EGameMode.GM_RH_1ON1,
       },
       {
