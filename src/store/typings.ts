@@ -168,8 +168,3 @@ export enum EAvatarCategory {
   TOTAL = 16,
   SPECIAL = 32,
 }
-
-export enum ELocaleFlags {
-  EN = "src/assets/localeFlags/en.svg",
-  DE = "src/assets/localeFlags/de.svg",
-}
