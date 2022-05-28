@@ -1,10 +1,10 @@
 # build stage
 FROM node:lts-alpine as build-stage
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 COPY . .
-RUN npm run build:prod
+RUN yarn run build:prod
 
 # production stage
 FROM nginx:stable-alpine as production-stage

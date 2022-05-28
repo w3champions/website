@@ -14,7 +14,7 @@ const mod = {
     async loadAllMaps(context: ActionContext<AdminMapsState, RootState>) {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.getAllMaps(rootState.oauth.token);
+      // await rootGetters.adminService.getAllMaps(rootState.oauth.token);
     },
     // some actions
   },
