@@ -2,28 +2,28 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import {
-  AdminMapsState
+  AdminMapsState, GetMapsResponse, Map
 } from "./types";
 const mod = {
   namespaced: true,
   state: {
-    // state variables
+    totalMaps: 0 as number,
+    maps: [] as Map[],
   } as AdminMapsState,
 
   actions: {
-    async loadAllMaps(context: ActionContext<AdminMapsState, RootState>) {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-
-      // await rootGetters.adminService.getAllMaps(rootState.oauth.token);
+    async loadMaps(context: ActionContext<AdminMapsState, RootState>, filter?: string) {
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const searchMapsResponse = await rootGetters.mapService.getAllMaps(rootState.oauth.token, filter);
+      commit.SET_MAPS(searchMapsResponse);
     },
-    // some actions
   },
 
   mutations: {
-    // mutations
-    // SET_SOME_STATE(state: AdminMapsState, placeholder: string) {
-    //   state.placeholder = placeholder;
-    // },
+    SET_MAPS(state: AdminMapsState, getMapsResponse: GetMapsResponse) {
+      state.maps = getMapsResponse?.items ?? [];
+      state.totalMaps = getMapsResponse?.total ?? 0;
+    },
   },
 } as const;
 
