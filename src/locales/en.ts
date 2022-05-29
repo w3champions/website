@@ -278,6 +278,12 @@ const en = {
     // S10
     "ShatteredExilev2-07": "Shattered Exile",
 
+    // S11
+    LastRefugev1_4: "Last Refuge",
+    Springtimev1_1: "Springtime",
+    Tidehuntersv1_2: "Tidehunters",
+    RustyCreekv1_1: "Rusty Creek",
+
     // tour
     ShallowGravetourney: "Shallow Grave",
     TwistedMeadowstourney: "Twisted Meadows",
