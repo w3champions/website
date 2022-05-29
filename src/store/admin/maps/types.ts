@@ -3,6 +3,8 @@ import { EColors, EComputer, ERaceEnum } from "@/store/typings";
 export type AdminMapsState = {
   totalMaps: number;
   maps: Map[];
+  mapsFilter?: string;
+  mapFiles: MapFileData[];
 };
 
 export interface GetMapsResponse {
@@ -13,10 +15,10 @@ export interface GetMapsResponse {
 export interface Map {
   id: number;
   name: string;
-  category: string;
+  category?: string;
   maxTeams: number;
   mappedForces?: MapForce[];
-  gameMap: GameMapExtended;
+  gameMap?: GameMapExtended;
 }
 
 export interface MapForce {
