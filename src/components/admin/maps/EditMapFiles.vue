@@ -51,6 +51,7 @@ export default class EditMapFiles extends Vue {
   @Prop() public map!: Map;
 
   public fileName = "";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public file: File = {} as any;
 
   public get headers() {
@@ -88,9 +89,10 @@ export default class EditMapFiles extends Vue {
       await this.$store.direct.dispatch.admin.mapsManagement.loadMapFiles(this.map.id);
 
       this.fileName = "";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.file = {} as any;
     } catch {
-      console.log("error upload file");
+      alert("Error trying to create map file");
     }
   }
 
