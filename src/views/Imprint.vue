@@ -21,7 +21,7 @@
               Telephone: 404 857 4571
               <br />
               E-Mail:
-              <a href="mailto:info@matchbox.gg">info@matchbox.gg</a>
+              <a href="mailto:w3champions.team@gmail.com">w3champions.team@gmail.com</a>
               <br />
               Internet address:
               <a href="http://w3champions.com" target="_blank">http://w3champions.com</a>
