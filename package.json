@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
-    "serve:prod": "npm run build:prod && http-server ./dist",
-    "build:prod": "npm run generate-locales && rimraf ./dist && vue-cli-service build",
+    "serve:prod": "yarn run build:prod && http-server ./dist",
+    "build:prod": "yarn run generate-locales && rimraf ./dist && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "lint:fix": "vue-cli-service lint --fix",
     "format": "node_modules/.bin/prettier --write .",
-    "update": "npm install -g npm-check-updates && ncu --upgrade && npm install ",
     "generate-locales": "npx ts-node scripts/generate-locales.ts",
     "sass-migrate": "sass-migrator division **/*.scss"
   },
