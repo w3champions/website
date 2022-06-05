@@ -2,6 +2,8 @@ import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 import playerManagementModule from "./playerManagement/index";
+import mapsManagementModule from "./maps/index";
+
 import {
   AdminState,
   BannedPlayer,
@@ -376,6 +378,7 @@ const mod = {
 
   modules: {
     playerManagement: playerManagementModule,
+    mapsManagement: mapsManagementModule
   },
 } as const;
 

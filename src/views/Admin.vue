@@ -30,6 +30,7 @@ import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
+import AdminMaps from "@/components/admin/AdminMaps.vue";
 
 @Component({
   components: {
@@ -43,6 +44,7 @@ import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
     AdminGlobalMute,
     AdminAssignPortraits,
     AdminManagePortraits,
+    AdminMaps,
   },
 })
 export default class Admin extends Vue {
@@ -135,6 +137,18 @@ export default class Admin extends Vue {
           icon: "mdi-briefcase",
           component: "admin-manage-portraits",
         }
+      ],
+    },
+    {
+      title: "Maps",
+      icon: "mdi-map-search",
+      items: [
+        {
+          key: "maps",
+          title: "Manage Maps",
+          icon: "mdi-map-plus",
+          component: "admin-maps",
+        },
       ],
     },
   ];
