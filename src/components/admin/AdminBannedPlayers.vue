@@ -124,6 +124,9 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template #[`item.gameModesText`]="{ item }">
+      <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
+    </template>
     <template #[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
@@ -144,9 +147,9 @@ export default class AdminBannedPlayers extends Vue {
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: false, value: "battleTag" },
-    { text: "Ban End Date", value: "endDate" },
+    { text: "Ban End Date", value: "endDate", width: "8vw" },
     { text: "Is only banned from chat?", value: "isOnlyChatBan" },
-    { text: "Game modes", value: "gameModes" },
+    { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw" },
     { text: "Is IP banned?", value: "isIpBan" },
     { text: "Ban reason", value: "banReason" },
     { text: "Actions", value: "actions", sortable: false },
@@ -176,6 +179,22 @@ export default class AdminBannedPlayers extends Vue {
       });
     }
     return translatedEnums;
+  }
+
+  getGametypeText(gameModes: number[]): string {
+    if (!gameModes || gameModes.length === 0) {
+      return this.$t(`gameModes.UNDEFINED`).toString();
+    }
+
+    let stringBuilder = "";
+    gameModes.forEach((element) => {
+      const gameMode = this.gameModesEnumValues.find((o) => o.value === element) || undefined;
+      if (gameMode) {
+        stringBuilder = stringBuilder + this.$t(`gameModes.${EGameMode[element]}`) + "\n";
+      }
+    });
+
+    return stringBuilder;
   }
 
   get bannedPlayers(): BannedPlayer[] {
