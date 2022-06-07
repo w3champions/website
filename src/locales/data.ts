@@ -38,7 +38,7 @@ const data = {
     },
     views_gettingstarted: {
       manualwarning:
-        "Those steps are only needed, if you have problems with the normal W3Champions App. In that case, please reach out on discord!",
+        "These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!",
       howtoinstall: "How to Install W3Champions",
       launcher: "Launcher",
       manualwin: "Manual Windows",
@@ -60,7 +60,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "If you have a folder called _retail_ in your Warcraft III folder, make sure to have the following structure: ",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
       manualwinbody8: "Download MAPS",
@@ -69,12 +69,12 @@ const data = {
       manualwinbody11: "Important",
       manualwinbody12:
         "If you have a Maps folder inside your Warcraft III directory go ahead and delete it.",
-      manualwinbody13: "DELETE Path-to-game/Maps",
-      manualwinbody14: "DELETE Path-to-game/_retail_/Maps",
+      manualwinbody13: "DELETE Path-to-game\\Maps",
+      manualwinbody14: "DELETE Path-to-game\\_retail_\\Maps",
       manualwinbody15: "Example:",
       manualwinbody16: "DELETE C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "DELETE C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "DELETE C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18:
         "5. You need to set a registry (Installer is doing this automatically)",
       manualwinbody19: "open regedit.exe",
@@ -572,7 +572,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Если в папке с Warcraft III у вас есть папка с названием _retail_, то у вас должна быть следующая структура папок:",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
       manualwinbody8: "Скачать КАРТЫ",
@@ -581,12 +581,12 @@ const data = {
       manualwinbody11: "Важно",
       manualwinbody12:
         "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
-      manualwinbody13: "Удалите <Путь-к-игре>/Maps",
-      manualwinbody14: "Удалите <Путь-к-игре>/_retail_/Maps",
+      manualwinbody13: "Удалите <Путь-к-игре>\\Maps",
+      manualwinbody14: "Удалите <Путь-к-игре>\\_retail_\\Maps",
       manualwinbody15: "Например:",
       manualwinbody16: "Удалите C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "Удалите C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "Удалите C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18:
         "5. Вам нужно обновить реестр (установщик делает это автоматически)",
       manualwinbody19: "откройте regedit.exe",
@@ -600,24 +600,24 @@ const data = {
         "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. У вас должна быть следующая структура папок:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Если в папке с Warcraft III у вас есть папка с названием _retail_, то у вас должна быть следующая структура папок:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
       manualmacbody8: "Скачать КАРТЫ",
       manualmacbody9: "4. После распаковки должна быть следующая структура:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Важно",
       manualmacbody12:
         "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
       manualmacbody13: "Удалите <ПУть-к-игре>/Maps",
       manualmacbody14: "Удалите <ПУть-к-игре>/_retail_/Maps",
       manualmacbody15: "Например:",
-      manualmacbody16: "Удалите Warcraft III\\Maps",
-      manualmacbody17: "Удалите Warcraft III_retail_\\Maps",
+      manualmacbody16: "Удалите /Applications/Warcraft III/Maps",
+      manualmacbody17: "Удалите /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "5. Вам нужно обновить реестр (установщик делает это автоматически)",
       manualmacbody19: "Скопируйте команду",
@@ -1079,7 +1079,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
       manualwinbody8: "맵 다운로드",
@@ -1088,12 +1088,12 @@ const data = {
       manualwinbody11: "중요",
       manualwinbody12:
         "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
-      manualwinbody13: "삭제 워크래프트 설치 폴더/Maps",
-      manualwinbody14: "삭제 워크래프트 설치 폴더/_retail_/Maps",
+      manualwinbody13: "삭제 워크래프트 설치 폴더\\Maps",
+      manualwinbody14: "삭제 워크래프트 설치 폴더\\_retail_\\Maps",
       manualwinbody15: "예:",
       manualwinbody16: "삭제 C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "삭제 C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18:
         "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
       manualwinbody19: "열기 regedit.exe(레지스트리 편집기)",
@@ -1107,25 +1107,25 @@ const data = {
         "압축 파일을 받아 워크래프트3가 설치된 폴더에 설치합니다.",
       manualmacbody2: "워3 챔피언스",
       manualmacbody3: "다음의 경로가 생성되었는지 확인하세요",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
       manualmacbody8: "맵 다운로드",
       manualmacbody9: "다운로드 받은 맵은 다음의 폴더에 들어가야 합니다.",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "중요",
       manualmacbody12:
         "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
       manualmacbody13: "삭제 워크래프트 설치 폴더/Maps",
       manualmacbody14: "삭제 워크래프트 설치 폴더/_retail_/Maps",
       manualmacbody15: "예:",
-      manualmacbody16: "삭제 C:\\Program Files (x86)\\Warcraft III\\Maps",
+      manualmacbody16: "삭제 /Applications/Warcraft III/Maps",
       manualmacbody17:
-        "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "삭제 /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
       manualmacbody19: "다음의 커맨드를 복사",
@@ -1522,12 +1522,12 @@ const data = {
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "重要信息",
       manualwinbody12: "如果你的魔兽争霸目录下有一个Maps文件夹，请删除它",
-      manualwinbody13: "删除 魔兽争霸路径/Maps",
-      manualwinbody14: "删除 魔兽争霸路径/_retail_/Maps",
+      manualwinbody13: "删除 魔兽争霸路径\\Maps",
+      manualwinbody14: "删除 魔兽争霸路径\\_retail_\\Maps",
       manualwinbody15: "比如:",
       manualwinbody16: "删除 C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "删除 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "删除 C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18: "5. 你需要修改注册表 (如用启动客户端，它会自动帮您修改)",
       manualwinbody19: "打开regedit.exe",
       manualwinbody20:
@@ -1539,21 +1539,21 @@ const data = {
       manualmacbody1: "1.下载压缩包并在魔兽争霸安装目录下解压缩",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2.安装目录类似于:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5: "如果在魔兽争霸目录下有_retail_文件夹，请安装在:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7: "3.下载地图并解压缩在魔兽争霸地图文件夹下",
       manualmacbody8: "下载地图",
       manualmacbody9: "4.解压后的目录应类似于:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "重要信息",
       manualmacbody12: "如果你的魔兽争霸目录下有一个Maps文件夹，请删除它",
       manualmacbody13: "删除 魔兽争霸路径/Maps",
       manualmacbody14: "删除 魔兽争霸路径/_retail_/Maps",
       manualmacbody15: "比如:",
-      manualmacbody16: "删除 Warcraft III\\Maps",
-      manualmacbody17: "删除 Warcraft III_retail_\\Maps",
+      manualmacbody16: "删除 /Applications/Warcraft III/Maps",
+      manualmacbody17: "删除 /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18: "5. 你需要修改注册表 (如用启动客户端，它会自动帮您修改)",
       manualmacbody19:
         '复制以下命令defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
@@ -1933,7 +1933,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
       manualwinbody8: "Maps Runterladen",
@@ -1942,8 +1942,8 @@ const data = {
       manualwinbody11: "Wichtig",
       manualwinbody12:
         "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
-      manualwinbody13: "LÖSCHEN: Pfad-zum-Spiel/Maps",
-      manualwinbody14: "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
+      manualwinbody13: "LÖSCHEN: Pfad-zum-Spiel\\Maps",
+      manualwinbody14: "LÖSCHEN: Pfad-zum-Spiel\\_retail_\\Maps",
       manualwinbody15: "Beispiel:",
       manualwinbody16: "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\Maps",
       manualwinbody17:
@@ -1961,24 +1961,24 @@ const data = {
         "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Überprüfe, dass deine Ordnerstruktur so aussieht:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
       manualmacbody8: "Maps Runterladen",
       manualmacbody9: "4. Die Ordnerstruktur sollte danach so aussehen:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Wichtig",
       manualmacbody12:
         "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
       manualmacbody13: "LÖSCHEN: Pfad-zum-Spiel/Maps",
       manualmacbody14: "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
       manualmacbody15: "Beispiel:",
-      manualmacbody16: "LÖSCHEN: Warcraft III\\Maps",
-      manualmacbody17: "LÖSCHEN: Warcraft III\\_retail_\\Maps",
+      manualmacbody16: "LÖSCHEN: /Applications/Warcraft III/Maps",
+      manualmacbody17: "LÖSCHEN: /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
       manualmacbody19:
@@ -2382,7 +2382,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Jeżeli masz folder nazwany _retail_ w folderze z Warcraftem III, twoja struktura katalogów powinna wyglądać tak:",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
       manualwinbody8: "Pobierz MAPY",
@@ -2392,12 +2392,12 @@ const data = {
       manualwinbody11: "Ważne",
       manualwinbody12:
         "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
-      manualwinbody13: "USUŃ Ścieżka-gry/Maps",
-      manualwinbody14: "USUŃ Ścieżka-gry/_retail_/Maps",
+      manualwinbody13: "USUŃ Ścieżka-gry\\Maps",
+      manualwinbody14: "USUŃ Ścieżka-gry\\_retail_\\Maps",
       manualwinbody15: "Przykład:",
       manualwinbody16: "USUŃ C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "USUŃ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "USUŃ C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18:
         "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
       manualwinbody19: "Otwórz regedit.exe",
@@ -2412,25 +2412,25 @@ const data = {
       manualmacbody2: "W3Champions",
       manualmacbody3:
         "2. Upewnij się, że twoja struktura katalogów wygląda tak:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Jeżeli masz folder nazwany _retail_ w folderze z Warcraftem III, twoja struktura katalogów powinna wyglądać tak:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
       manualmacbody8: "Pobierz mapy",
       manualmacbody9:
         "4. Struktura folderów po rozpakowaniu powinna wyglądać tak:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Ważne",
       manualmacbody12:
         "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
       manualmacbody13: "USUŃ Ścieżka-gry/Maps",
       manualmacbody14: "USUŃ Ścieżka-gry/retail/Maps",
       manualmacbody15: "Przykład:",
-      manualmacbody16: "USUŃ Warcraft III\\Maps",
-      manualmacbody17: "USUŃ Warcraft III_retail_\\Maps",
+      manualmacbody16: "USUŃ /Applications/Warcraft III/Maps",
+      manualmacbody17: "USUŃ /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
       manualmacbody19: "Skopiuj polecenie",
@@ -2896,7 +2896,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Якщо в директорії з Warcraft III у вас є директорія з назвою _retail_, то у вас повинна бути наступна структура директорій:",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Завантажте мапи та розпакуйте їх у вашу директорію з мапами Warcraft III",
       manualwinbody8: "Завантажити МАПИ",
@@ -2905,12 +2905,12 @@ const data = {
       manualwinbody11: "Важливо",
       manualwinbody12:
         "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
-      manualwinbody13: "Видаліть <Шлях-до-гри>/Maps",
-      manualwinbody14: "Видаліть <Шлях-до-гри>/_retail_/Maps",
+      manualwinbody13: "Видаліть <Шлях-до-гри>\\Maps",
+      manualwinbody14: "Видаліть <Шлях-до-гри>\\_retail_\\Maps",
       manualwinbody15: "Наприклад:",
       manualwinbody16: "Видаліть C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
-        "Видаліть C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "Видаліть C:\\Program Files (x86)\\Warcraft III\\_retail_\\Maps",
       manualwinbody18:
         "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
       manualwinbody19: "запустіть regedit.exe",
@@ -2924,24 +2924,24 @@ const data = {
         "1. Завантажте файл zip та розпакуйте його в директорію з встановленим Warcraft III",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. У вас повинна бути наступна структура директорій:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Якщо в директорії з Warcraft III у вас є директорія з назвою _retail_, то у вас повинна бути наступна структура директорій:",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "3. Завантажте мапи та розпакуйте їх в вашу директорію з мапами Warcraft III",
       manualmacbody8: "Завантажити МАПИ",
       manualmacbody9: "4. Після розпакування повинна бути наступна структура:",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Важливо",
       manualmacbody12:
         "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
       manualmacbody13: "Видальте <Шлях-до-гри>/Maps",
       manualmacbody14: "Видальте <Шлях-до-гри>/_retail_/Maps",
       manualmacbody15: "Наприклад:",
-      manualmacbody16: "Видальте Warcraft III\\Maps",
-      manualmacbody17: "Видальте Warcraft III_retail_\\Maps",
+      manualmacbody16: "Видальте /Applications/Warcraft III/Maps",
+      manualmacbody17: "Видальте /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
       manualmacbody19: "Зкопіюйте команду",
@@ -3406,7 +3406,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Se tiveres uma pasta chamada _retail_ na tua pasta do Warcraft III, garante que tens a seguinte estrutura de pastas:",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Baixa os Mapas e extrai-os para a pasta Maps do Warcraft III",
       manualwinbody8: "Baixar MAPAS",
@@ -3416,8 +3416,8 @@ const data = {
       manualwinbody11: "Importante",
       manualwinbody12:
         "Se tiveres uma pasta Maps na tua instalação de Warcraft III, por favor apaga-a",
-      manualwinbody13: "APAGAR: Directoria-do-jogo/Maps",
-      manualwinbody14: "APAGAR: Directoria-do-jogo/_retail_/Maps",
+      manualwinbody13: "APAGAR: Directoria-do-jogo\\Maps",
+      manualwinbody14: "APAGAR: Directoria-do-jogo\\_retail_\\Maps",
       manualwinbody15: "Exemplo:",
       manualwinbody16: "APAGAR: C:\\Programas (x86)\\Warcraft III\\Maps",
       manualwinbody17:
@@ -3435,24 +3435,24 @@ const data = {
         "Baixe o arquivo zip e extrai-o na pasta de instalação do Warcraft",
       manualmacbody2: "W3Champions",
       manualmacbody3: "Certifique-se de ter uma estrutura de diretório como:",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Se você tiver uma pasta chamada _retail_ na sua pasta de Warcraft III, certifique-se de que tenha a seguinte estrutura de diretório",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "Baixa os Mapas e extrai-os na sua pasta de Mapas do Warcraft III",
       manualmacbody8: "Baixar MAPAS",
       manualmacbody9: "A estrutura da pasta após a extração deverá ser\r\n",
       manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Importante",
       manualmacbody12:
         "Se você tiver uma pasta de Mapas dentro do seu diretório do Warcraft 3 exclua-o",
       manualmacbody13: "EXCLUIR Caminho-para-jogo/Mapas",
       manualmacbody14: "EXCLUIR Caminho-para-jogo/retail/Mapas",
       manualmacbody15: "Exemplo:",
-      manualmacbody16: "EXCLUIR Warcraft III/Mapas",
-      manualmacbody17: "EXCLUIR Warcraft III_retail_\\Mapas",
+      manualmacbody16: "EXCLUIR /Applications/Warcraft III/Mapas",
+      manualmacbody17: "EXCLUIR /Applications/Warcraft III/_retail_/Mapas",
       manualmacbody18:
         "Você precisa definir um registro (O instalador esta fazendo isso automaticamente)",
       manualmacbody19:
@@ -3916,7 +3916,7 @@ const data = {
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Si vous avez un dossier nommé _retail_ dans votre dossier Warcraft III, assurez-vous d'avoir la structure suivante :",
-      manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7:
         "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps",
       manualwinbody8: "Téléchargez CARTES (MAPS)",
@@ -3926,8 +3926,8 @@ const data = {
       manualwinbody11: "Important",
       manualwinbody12:
         "Si vous avez un dossier Maps dans votre dossier Warcraft III, sélectionnez-le et supprimez-le.",
-      manualwinbody13: "SUPPRIMEZ Chemin-du-jeu/Maps",
-      manualwinbody14: "SUPPRIMEZ Chemin-du-jeu/_retail_/Maps",
+      manualwinbody13: "SUPPRIMEZ Chemin-du-jeu\\Maps",
+      manualwinbody14: "SUPPRIMEZ Chemin-du-jeu\\_retail_\\Maps",
       manualwinbody15: "Exemple :",
       manualwinbody16: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III\\Maps",
       manualwinbody17:
@@ -3945,10 +3945,10 @@ const data = {
         "1. Téléchargez le fichier zip et décompressez-le dans le dossier d'installation de Warcraft 3.",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Assurez-vous que vous ayez une structure du type :",
-      manualmacbody4: "Warcraft III\\webui\\index.html",
+      manualmacbody4: "Warcraft III/webui/index.html",
       manualmacbody5:
         "Si vous avez un dossier nommé _retail_ dans votre dossier Warcraft III, assurez-vous d'avoir la structure suivante :",
-      manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
+      manualmacbody6: "Warcraft III/_retail_/webui/index.html",
       manualmacbody7:
         "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps.",
       manualmacbody8: "Téléchargez CARTES (MAPS)",
@@ -3962,9 +3962,9 @@ const data = {
       manualmacbody13: "SUPPRIMEZ Chemin-du-jeu/Maps",
       manualmacbody14: "SUPPRIMEZ Chemin-du-jeu/_retail_/Maps",
       manualmacbody15: "Exemple :",
-      manualmacbody16: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III\\Maps",
+      manualmacbody16: "SUPPRIMEZ /Applications/Warcraft III/Maps",
       manualmacbody17:
-        "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+        "SUPPRIMEZ /Applications/Warcraft III/_retail_/Maps",
       manualmacbody18:
         "5. Vous devez créer une clé de registre (l'installateur fait ça automatiquement)",
       manualmacbody19: "Copiez la commande",
