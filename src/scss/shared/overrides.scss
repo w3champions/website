@@ -197,3 +197,9 @@ header.v-app-bar--is-scrolled + main {
     background-color: var(--w3-bg-glass);
   }
 }
+
+.v-carousel {
+  .v-window-item {
+    margin-bottom: 50px;
+  }
+}
