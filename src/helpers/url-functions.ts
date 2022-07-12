@@ -7,7 +7,7 @@ export function getAvatarUrl(
   isClassic: boolean
 ) {
   if (picId == undefined || picId == null) {
-    return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/RANDOM_0.jpg`;
+    return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/STARTER_${Math.floor(Math.random() * 5) + 1}.jpg`;
   }
   if (category == EAvatarCategory.SPECIAL) {
     return `${INGAME_STATIC_RESOURCES_URL}icons/specialAvatars/SPECIAL_${picId}.jpg`;
