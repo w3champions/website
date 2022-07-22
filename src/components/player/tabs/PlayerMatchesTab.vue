@@ -238,9 +238,15 @@ export default class PlayerMatchesTab extends Vue {
       },
       {
         modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`
         ),
-        modeId: EGameMode.GM_LEGION_4v4_X20,
+        modeId: EGameMode.GM_LEGION_2v2_X20,
+      },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X4]}`
+        ),
+        modeId: EGameMode.GM_LEGION_4v4_X4,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
