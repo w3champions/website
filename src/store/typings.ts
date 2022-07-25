@@ -158,13 +158,14 @@ export enum ERaceEnum {
   NIGHT_ELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
+  STARTER = 32,
 }
 
 export enum EAvatarCategory {
   RANDOM = 0,
   HUMAN = 1,
   ORC = 2,
-  NIGHT_ELF = 4,
+  NIGHTELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
   SPECIAL = 32,

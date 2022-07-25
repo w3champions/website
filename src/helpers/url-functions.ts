@@ -9,13 +9,19 @@ export function getAvatarUrl(
   if (picId == undefined || picId == null) {
     return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/STARTER_${Math.floor(Math.random() * 5) + 1}.jpg`;
   }
+
+  if (category == EAvatarCategory.STARTER) {
+    return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/STARTER_${picId}.jpg`;
+  }
+
   if (category == EAvatarCategory.SPECIAL) {
     return `${INGAME_STATIC_RESOURCES_URL}icons/specialAvatars/SPECIAL_${picId}.jpg`;
-  } else {
-    const raceIconPrefix = isClassic ? "classic/" : "";
-    const categoryString = EAvatarCategory[category].toString();
-    return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/${raceIconPrefix}${categoryString}_${picId}.jpg`;
   }
+
+  const raceIconPrefix = isClassic ? "classic/" : "";
+  const categoryString = EAvatarCategory[category].toString();
+
+  return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/${raceIconPrefix}${categoryString}_${picId}.jpg`;
 }
 
 export function getProfileUrl(playerId: string) {
