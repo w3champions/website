@@ -13,7 +13,7 @@ export type ProfilePicture = {
 };
 
 export type RaceToMaxPicture = {
-  race: ERaceEnum;
+  avatarType: ERaceEnum;
   max: number;
 };
 
@@ -46,7 +46,9 @@ export type PersonalSetting = {
   location?: string;
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
-  pictureRange: WinsToPictureId[];
+  racePictureRange: WinsToPictureId[];
+  totalPicturerange: WinsToPictureId[];
+  tournamentPictureRange: WinsToPictureId[];
   winLosses: RaceStat[];
   specialPictures: SpecialPicture[];
   id: string;

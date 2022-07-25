@@ -10,8 +10,7 @@
               @click.stop="openDialog"
               class="player-avatar text-center"
               :style="{
-                'background-image':
-                  'url(' + picture(avatarCategory, avatarIcon) + ')',
+                'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')',
               }"
             />
           </template>
@@ -39,21 +38,55 @@
     </v-row>
     <player-socials :userProfile="userProfile" />
 
-    <v-dialog v-model="dialogOpened" max-width="1400px" class="scroll-v-dialog">
+    <v-dialog v-model="dialogOpened" max-width="1150px" class="scroll-v-dialog">
       <v-card>
         <v-checkbox
           style="margin-left: 25px"
           v-model="useClassicIcons"
           :label="$t('components_player_playeravatar.useClassicIcons')"
         ></v-checkbox>
+
+        <!-- Starter Icons -->
         <v-row
+          class="pb-3"
+          align="center"
+          justify="center">
+          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
+          <v-col
+            cols="auto"
+            v-for="number in starterPicNumbers"
+            :key="number"
+          >
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-card-text
+                  v-on="on"
+                  class="player-avatar-choosing"
+                  @click="isLoggedInPlayer ? savePicture(starterAvatarCategory, number) : null"
+                  :style="{
+                    'background-image': 'url(' + picture(starterAvatarCategory, number) + ')',
+                  }"
+                />
+              </template>
+              <span>Starter</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+
+        <!-- Race Icons Grid -->
+        <v-row
+          class="mt-0 mb-2"
           style="padding-left: 25px; padding-right: 25px"
           v-for="race in races"
           :key="race"
           align="center"
-          justify="space-between"
+          justify="center"
         >
-          <v-col cols="1" v-for="number in picNumbers" :key="number">
+          <v-card-text 
+            class="avatar-choose-headers pa-0 ma-0" align="center">
+            {{ enumToString(race) }}
+          </v-card-text>
+          <v-col cols="auto" v-for="number in racePicNumbers" :key="number">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
@@ -65,17 +98,20 @@
                   }"
                 />
               </template>
-              <span>{{ winsOf(winsOfRace(race), number) }}</span>
+              <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
             </v-tooltip>
           </v-col>
         </v-row>
+
+        <!-- Special Icons -->
         <v-row
-          class="special-icons"
-          style="padding-left: 25px; padding-right: 25px"
+          v-if="specialPictures.length > 0"
+          class="pb-3"
           align="center"
-        >
+          justify="center">
+          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
           <v-col
-            cols="1"
+            cols="auto"
             v-for="specialPicture in specialPictures"
             :key="specialPicture.pictureId"
           >
@@ -87,18 +123,11 @@
                   v-bind:class="{ pointer: isLoggedInPlayer }"
                   @click="
                     isLoggedInPlayer
-                      ? savePicture(
-                          specialAvatarCategory,
-                          specialPicture.pictureId,
-                          specialPicture.description
-                        )
+                      ? savePicture(specialAvatarCategory, specialPicture.pictureId, specialPicture.description)
                       : null
                   "
                   :style="{
-                    'background-image':
-                      'url(' +
-                      picture(specialAvatarCategory, specialPicture.pictureId) +
-                      ')',
+                    'background-image': 'url(' + picture(specialAvatarCategory, specialPicture.pictureId) + ')',
                   }"
                 />
               </template>
@@ -110,13 +139,23 @@
     </v-dialog>
 
     <v-row>
-      <v-col style="margin-top: -15px">
+      <v-col style="margin-top: -5px">
         <h3>
           {{ $t("components_player_playeravatar.games") }}
           {{ playerGames }}
         </h3>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col style="margin-top: -15px">
+        <h3>
+          {{ $t("components_player_playeravatar.wins") }}
+          {{ totalWins() }}
+        </h3>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col>
         <h3>{{ $t("components_player_playeravatar.homepage") }}</h3>
@@ -179,9 +218,7 @@
                       single-line
                       shaped
                       prefix="https://twitch.tv/"
-                      :hint="
-                        $t('components_player_playeravatar.entertwitchname')
-                      "
+                      :hint="$t('components_player_playeravatar.entertwitchname')"
                       v-model="userProfile.twitch"
                     ></v-text-field>
                     <v-text-field
@@ -202,9 +239,7 @@
                       clearable
                       single-line
                       shaped
-                      :hint="
-                        $t('components_player_playeravatar.entertwittername')
-                      "
+                      :hint="$t('components_player_playeravatar.entertwittername')"
                       prefix="https://www.twitter.com/"
                       v-model="userProfile.twitter"
                     ></v-text-field>
@@ -215,9 +250,7 @@
                       clearable
                       single-line
                       shaped
-                      :hint="
-                        $t('components_player_playeravatar.entertrovoname')
-                      "
+                      :hint="$t('components_player_playeravatar.entertrovoname')"
                       prefix="https://trovo.live/"
                       v-model="userProfile.trovo"
                     ></v-text-field>
@@ -262,26 +295,18 @@
                         :item-value="countryCode"
                         :items="countries"
                         :filter="countryFilter"
-                        :label="
-                          $t('components_player_playeravatar.selectcountry')
-                        "
+                        :label="$t('components_player_playeravatar.selectcountry')"
                         item-text="country"
                         v-model="selectedCountry"
                         :return-object="false"
                       >
                         <template v-slot:item="{ item }">
-                          <country-flag
-                            :country="item.countryCode"
-                            size="normal"
-                          />
+                          <country-flag :country="item.countryCode" size="normal" />
                           {{ item.country }}
                           <v-spacer></v-spacer>
                         </template>
                         <template v-slot:selection="{ item }">
-                          <country-flag
-                            :country="item.countryCode"
-                            size="normal"
-                          />
+                          <country-flag :country="item.countryCode" size="normal" />
                           <span class="pr-2">{{ item.country }}</span>
                         </template>
                       </v-autocomplete>
@@ -325,10 +350,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import {
-  AkaSettings,
-  SpecialPicture,
-} from "../../store/personalSettings/types";
+import { AkaSettings, SpecialPicture } from "../../store/personalSettings/types";
 import CountryFlag from "vue-country-flag";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "../../helpers/url-functions";
@@ -349,10 +371,21 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.NIGHT_ELF,
     ERaceEnum.UNDEAD,
     ERaceEnum.RANDOM,
+    ERaceEnum.TOTAL,
   ];
 
+  enumToString(race: ERaceEnum) {
+    return this.$t(`races.${ERaceEnum[race]}`);
+  }
+
+  get totalRace(): ERaceEnum.TOTAL {
+    return ERaceEnum.TOTAL;
+  }
+
   public countries: CountryType[] = [];
-  public picNumbers = Array.from(Array(11).keys());
+
+  public starterPicNumbers = Array.from({ length: 5 }, (_, i) => i + 1);
+  public racePicNumbers = Array.from({ length: 18 }, (_, i) => i + 1);
 
   get playerGames() {
     return this.personalSetting.winLosses?.reduce((sum, stat) => {
@@ -400,8 +433,7 @@ export default class PlayerAvatar extends Vue {
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    let playerAkaData =
-      this.$store.direct.state.player.playerProfile.playerAkaData;
+    let playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
 
     if (playerAkaData == null) return false;
 
@@ -421,10 +453,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   get liquipediaString(): string {
-    return (
-      this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ??
-      ""
-    );
+    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? "";
   }
 
   get aliasOrW3infoId(): string {
@@ -460,13 +489,20 @@ export default class PlayerAvatar extends Vue {
     return this.$store.direct.state.personalSettings.personalSettings;
   }
 
+  get starterAvatarCategory() {
+    return EAvatarCategory.STARTER;
+  }
+
   get specialAvatarCategory() {
     return EAvatarCategory.SPECIAL;
   }
 
+  get totalAvatarCategory() {
+    return EAvatarCategory.TOTAL;
+  }
+
   public rules = {
-    maxLength: (len: number) => (v: string) =>
-      (v || "").length < len || `Can not exceed ${len} characters`,
+    maxLength: (len: number) => (v: string) => (v || "").length < len || `Can not exceed ${len} characters`,
   };
 
   public selectedCountry = "";
@@ -529,19 +565,15 @@ export default class PlayerAvatar extends Vue {
     personalSetting.country = this.selectedCountry || "";
     personalSetting.countryCode = this.selectedCountryCode || "";
 
-    await this.$store.direct.dispatch.personalSettings.saveUserProfile(
-      personalSetting
-    );
+    await this.$store.direct.dispatch.personalSettings.saveUserProfile(personalSetting);
     this.userProfile.editDialogOpened = false;
   }
 
   getCorrectClasses(category: EAvatarCategory, iconId: number) {
     const classes = ["player-avatar-choosing"];
-    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(category, iconId))
-      classes.push("pointer");
+    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(category, iconId)) classes.push("pointer");
 
-    if (!this.enabledIfEnoughWins(category, iconId))
-      classes.push("player-avatar-choosing-disabled");
+    if (!this.enabledIfEnoughWins(category, iconId)) classes.push("player-avatar-choosing-disabled");
 
     return classes;
   }
@@ -559,41 +591,45 @@ export default class PlayerAvatar extends Vue {
       return "";
     }
 
-    const specialPicture = this.specialPictures.find(
-      (x) => x.pictureId == this.avatarIcon
-    );
+    const specialPicture = this.specialPictures.find((x) => x.pictureId == this.avatarIcon);
+
     return specialPicture?.description ?? "";
   }
 
   enabledIfEnoughWins(category: EAvatarCategory, iconId: number) {
-    if (category == EAvatarCategory.SPECIAL) {
+    if (category == EAvatarCategory.SPECIAL || category == EAvatarCategory.STARTER) {
       return true;
+    }
+
+    if (category == EAvatarCategory.TOTAL) {
+      return this.personalSetting.pickablePictures?.filter((r) => r.avatarType == ERaceEnum.TOTAL)[0].max >= iconId;
     }
 
     const raceCategory = category as unknown as ERaceEnum;
 
-    return (
-      this.personalSetting.pickablePictures?.filter(
-        (r) => r.race == raceCategory
-      )[0].max >= iconId
-    );
+    return this.personalSetting.pickablePictures?.filter((r) => r.avatarType == raceCategory)[0].max >= iconId;
   }
 
-  winsOfRace(race: ERaceEnum) {
-    return (
-      this.personalSetting.winLosses?.filter((w) => w.race == race)[0]?.wins ??
-      0
-    );
+  winsOfRace(race: ERaceEnum): number {
+    if (race == ERaceEnum.TOTAL) {
+      return this.totalWins();
+    }
+    return this.personalSetting.winLosses?.filter((w) => w.race == race)[0]?.wins ?? 0;
   }
 
-  winsOf(wins: number, iconId: number) {
-    return `${wins}/${this.winsTransformed(iconId)}`;
+  winsOf(wins: number, iconId: number, race: ERaceEnum): string {
+    return `${wins}/${this.winsTransformed(iconId, race)}`;
   }
 
-  winsTransformed(iconId: number) {
-    return this.personalSetting.pictureRange?.filter(
-      (p) => p.pictureId == iconId
-    )[0]?.neededWins;
+  totalWins() {
+    return this.personalSetting.winLosses?.map((x) => x.wins).reduce((partial, y) => partial + y, 0) ?? 0;
+  }
+
+  winsTransformed(iconId: number, race: ERaceEnum): number {
+    if (race == ERaceEnum.TOTAL) {
+      return this.personalSetting.totalPicturerange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
+    }
+    return this.personalSetting.racePictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
   }
 
   picture(category: EAvatarCategory, picId: number) {
@@ -721,7 +757,7 @@ export default class PlayerAvatar extends Vue {
 
 .player-avatar-choosing {
   padding-top: 100%;
-  width: 100%;
+  width: 150%;
   background-repeat: no-repeat;
   background-size: contain;
 }
@@ -756,5 +792,10 @@ export default class PlayerAvatar extends Vue {
 .alias-checkbox {
   margin-top: 0px;
   padding-top: 0px;
+}
+
+.avatar-choose-headers {
+  padding-left: 25px;
+  padding-right: 25px;
 }
 </style>

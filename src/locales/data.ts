@@ -386,6 +386,7 @@ const data = {
     components_player_playeravatar: {
       useClassicIcons: "Use classic icons",
       games: "Games:",
+      wins: "Wins",
       homepage: "Homepage:",
       about: "About:",
       edit: "Edit Profile",
