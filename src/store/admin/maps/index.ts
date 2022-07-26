@@ -2,7 +2,7 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import {
-  AdminMapsState, GetMapsResponse, Map, MapFileData
+  AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse
 } from "./types";
 const mod = {
   namespaced: true,
@@ -44,6 +44,12 @@ const mod = {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
       await rootGetters.mapService.createMapFile(rootState.oauth.token, formData);
     },
+
+    async loadMapsForCurrentSeason(context: ActionContext<AdminMapsState, RootState>) {
+      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const searchMapsResponse = await rootGetters.mapService.getMapsForCurrentSeason();
+      commit.SET_SEASON_MAPS(searchMapsResponse);
+    },
   },
 
   mutations: {
@@ -58,6 +64,10 @@ const mod = {
 
     SET_MAP_FILES(state: AdminMapsState, mapFiles: MapFileData[]) {
       state.mapFiles = mapFiles || [];
+    },
+
+    SET_SEASON_MAPS(state: AdminMapsState, getSeasonMapsResponse: GetSeasonMapsResponse) {
+      state.seasonMaps = getSeasonMapsResponse?.items ?? [];
     },
   },
 } as const;

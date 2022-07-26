@@ -5,11 +5,21 @@ export type AdminMapsState = {
   maps: Map[];
   mapsFilter?: string;
   mapFiles: MapFileData[];
+  seasonMaps: SeasonMap[];
 };
 
 export interface GetMapsResponse {
   total: number;
   items: Map[];
+}
+
+export interface GetSeasonMapsResponse {
+  items: SeasonMap[]
+}
+
+export interface SeasonMap {
+  gameMode: string;
+  maps: Map[];
 }
 
 export interface Map {
