@@ -627,7 +627,7 @@ export default class PlayerAvatar extends Vue {
 
   winsTransformed(iconId: number, race: ERaceEnum): number {
     if (race == ERaceEnum.TOTAL) {
-      return this.personalSetting.totalPicturerange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
+      return this.personalSetting.totalPictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
     }
     return this.personalSetting.racePictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
   }
