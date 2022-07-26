@@ -47,7 +47,7 @@ export type PersonalSetting = {
   profilePicture: ProfilePicture;
   pickablePictures: RaceToMaxPicture[];
   racePictureRange: WinsToPictureId[];
-  totalPicturerange: WinsToPictureId[];
+  totalPictureRange: WinsToPictureId[];
   tournamentPictureRange: WinsToPictureId[];
   winLosses: RaceStat[];
   specialPictures: SpecialPicture[];
