@@ -204,6 +204,7 @@ export default class RankingsView extends Vue {
   public ongoingMatchesMap: OngoingMatches = {};
   public gameModes = EGameMode;
   public races = ERaceEnum;
+  private searchTimer: ReturnType<typeof setTimeout> = 0;
 
   @Prop() public season!: number;
   @Prop() public league!: number;
@@ -225,15 +226,29 @@ export default class RankingsView extends Vue {
     this.setLeague(rank.league);
   }
 
+  @Watch("searchRanks")
+  public onSearchRanksChanged() {
+    this.isLoading = false;
+  }
+
   @Watch("search")
   public onSearchChanged(newValue: string) {
+    const searchDebounced = (timeout=500) => {
+      clearTimeout(this.searchTimer);
+      this.isLoading = true;
+      this.searchTimer = setTimeout(() => { 
+        this.$store.direct.dispatch.rankings.search({
+          searchText: newValue.toLowerCase(),
+          gameMode: this.selectedGameMode,
+        });
+      }, timeout);
+    }
+
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search({
-        searchText: newValue.toLowerCase(),
-        gameMode: this.selectedGameMode,
-      });
+      searchDebounced();
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
+      this.isLoading = false;
     }
   }
 

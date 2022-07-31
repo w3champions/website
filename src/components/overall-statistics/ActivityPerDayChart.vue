@@ -80,13 +80,13 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_4ON4_AT:
         return "rgb(21, 189, 124)";
 
-      case EGameMode.GM_LEGION_4v4_X20:
+      case EGameMode.GM_LEGION_4v4_X4:
         return "rgb(191, 121, 0)";
 
       case EGameMode.GM_LEGION_1v1_x20:
         return "rgb(13, 13, 189)";
 
-      case EGameMode.GM_LEGION_4v4_x20_AT:
+      case EGameMode.GM_LEGION_4v4_x4_AT:
         return "rgb(58, 58, 186)";
 
       case EGameMode.GM_ROC_1ON1:
@@ -120,13 +120,16 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_4ON4_AT:
         return 4;
 
-      case EGameMode.GM_LEGION_4v4_X20:
+      case EGameMode.GM_LEGION_4v4_X4:
         return 4;
 
       case EGameMode.GM_LEGION_1v1_x20:
         return 1;
 
-      case EGameMode.GM_LEGION_4v4_x20_AT:
+      case EGameMode.GM_LEGION_2v2_X20:
+        return 2;
+
+      case EGameMode.GM_LEGION_4v4_x4_AT:
         return 4;
 
       case EGameMode.GM_ROC_1ON1:
