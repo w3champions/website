@@ -128,9 +128,10 @@ export enum EGameMode {
   GM_4ON4_AT = 8,
   GM_FFA = 5,
 
-  GM_LEGION_4v4_X20 = 202,
+  GM_LEGION_4v4_X4 = 202,
   GM_LEGION_1v1_x20 = 203,
-  GM_LEGION_4v4_x20_AT = 204,
+  GM_LEGION_4v4_x4_AT = 204,
+  GM_LEGION_2v2_X20 = 205,
 
   GM_ROC_1ON1 = 301,
 
@@ -157,19 +158,49 @@ export enum ERaceEnum {
   NIGHT_ELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
+  STARTER = 32,
 }
 
 export enum EAvatarCategory {
   RANDOM = 0,
   HUMAN = 1,
   ORC = 2,
-  NIGHT_ELF = 4,
+  NIGHTELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
   SPECIAL = 32,
+  STARTER = 64,
 }
 
-export enum ELocaleFlags {
-  EN = "src/assets/localeFlags/en.svg",
-  DE = "src/assets/localeFlags/de.svg",
+export enum EColors {
+  RED = 0,
+  BLUE = 1,
+  TEAL = 2,
+  PURPLE = 3,
+  YELLOW = 4,
+  ORANGE = 5,
+  GREEN = 6,
+  PINK = 7,
+  GRAY = 8,
+  LIGHT_BLUE = 9,
+  DARK_GREEN = 10,
+  BROWN = 11,
+  MAROON = 12,
+  NAVY = 13,
+  TURQUOISE = 14,
+  VIOLET = 15,
+  WHEAT = 16,
+  PEATCH = 17,
+  MINT = 18,
+  LAVENDER = 19,
+  COAL = 20,
+  SNOW = 21,
+  EMERALD = 22,
+  PEANUT = 23
+}
+
+export enum EComputer {
+  EASY = 0,
+  NORMAL = 1,
+  INSANE = 2,
 }

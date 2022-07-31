@@ -152,15 +152,19 @@ export default class AdminQueueData extends Vue {
         modeId: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
-        modeId: EGameMode.GM_LEGION_4v4_X20,
+        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`),
+        modeId: EGameMode.GM_LEGION_2v2_X20,
+      },
+      {
+        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X4]}`),
+        modeId: EGameMode.GM_LEGION_4v4_X4,
       },
       {
         text: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
         modeId: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
+        text: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
         gameMode: EGameMode.GM_RH_1ON1,
       },
       {
