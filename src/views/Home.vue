@@ -76,16 +76,19 @@
           <v-card-title>{{ $t("views_home.mappooltitle") }}</v-card-title>
           <div class="seasonMaps">
             <div>
-              <b>{{ $t("gameModes.GM_1ON1") }}</b>
-              <div v-for="map in maps1v1" :key="map.id"> {{ map.name }}</div>
+              <b class="mode">{{ $t("gameModes.GM_1ON1") }}</b>
+              <copy-button :copyText="mapNamesAsString('1vs1')" tooltipText="maptooltip"></copy-button>
+              <ul><li v-for="map in maps1v1" :key="map.id">{{ map.name }}</li></ul>
             </div>
             <div>
-              <b>{{ $t("gameModes.GM_2ON2") }}</b>
-              <div v-for="map in maps2v2" :key="map.id"> {{ map.name }}</div>
+              <b class="mode">{{ $t("gameModes.GM_2ON2") }}</b>
+              <copy-button :copyText="mapNamesAsString('2vs2')" tooltipText="maptooltip"></copy-button>
+              <ul><li v-for="map in maps2v2" :key="map.id">{{ map.name }}</li></ul>
             </div>
             <div>
-              <b>{{ $t("gameModes.GM_4ON4") }}</b>
-              <div v-for="map in maps4v4" :key="map.id"> {{ map.name }}</div>
+              <b class="mode">{{ $t("gameModes.GM_4ON4") }}</b>
+              <copy-button :copyText="mapNamesAsString('4vs4')" tooltipText="maptooltip"></copy-button>
+              <ul><li v-for="map in maps4v4" :key="map.id">{{ map.name }}</li></ul>
             </div>
           </div>
           <br />
@@ -153,7 +156,8 @@ import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 import { NewsMessage } from "@/store/admin/messages/types";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/maps/types"
+import CopyButton from "@/components/common/CopyButton.vue";
 
 @Component({
   components: {
@@ -162,13 +166,14 @@ import { Map } from "@/store/admin/maps/types";
     SocialBox,
     SupportBox,
     PartnerBox,
+    CopyButton,
   },
 })
 export default class HomeView extends Vue {
   public model = 0;
-  maps1v1: Map[] = []
-  maps2v2: Map[] = []
-  maps4v4: Map[] = []
+  maps1v1: Map[] = [];
+  maps2v2: Map[] = [];
+  maps4v4: Map[] = [];
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
@@ -198,6 +203,17 @@ export default class HomeView extends Vue {
     this.$router.push({
       path: getProfileUrl(rank.player.playerIds[0].battleTag),
     });
+  }
+
+  public mapNamesAsString(mode: string) {
+    switch (mode) {
+      case "1vs1":
+        return this.maps1v1.map((m) => m.name).join("\n");
+      case "2vs2":
+        return this.maps2v2.map((m) => m.name).join("\n");
+      case "4vs4":
+        return this.maps4v4.map((m) => m.name).join("\n");
+    }
   }
 }
 </script>
@@ -240,5 +256,18 @@ export default class HomeView extends Vue {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+
+  ul {
+    margin-top: 10px;
+    padding-left: 0;
+  }
+
+  li {
+    list-style: none;
+  }
+
+  .mode {
+    margin-right: 15px;
+  }
 }
 </style>
