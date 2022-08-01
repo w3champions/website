@@ -80,6 +80,9 @@
               </v-row>
             </td>
             <td>
+              {{ gameModeTranslation(item.gameMode) }}
+            </td>
+            <td>
               <span>{{ $_mapNameFromMatch(item) }}</span>
             </td>
             <td>
@@ -116,7 +119,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from "vue-property-decorator";
-import { Match, Team, PlayerInTeam } from "@/store/typings";
+import { Match, Team, PlayerInTeam, EGameMode } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
@@ -143,6 +146,10 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   destroyed() {
     this.$emit("pageChanged", 1);
+  }
+
+  gameModeTranslation(gameMode: EGameMode) {
+    return this.$t(`gameModes.${EGameMode[gameMode]}`);
   }
 
   get matches(): Match[] {
@@ -197,9 +204,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   public getPlayerTeam(match: Match) {
     const playerTeam = match.teams.find((team: Team) =>
-      team.players.some(
-        (player: PlayerInTeam) => player.battleTag === this.alwaysLeftName
-      )
+      team.players.some((player: PlayerInTeam) => player.battleTag === this.alwaysLeftName)
     );
 
     return playerTeam;
@@ -207,10 +212,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   public getOpponentTeam(match: Match) {
     return match.teams.find(
-      (team: Team) =>
-        !team.players.some(
-          (player: PlayerInTeam) => player.battleTag === this.alwaysLeftName
-        )
+      (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === this.alwaysLeftName)
     );
   }
 
@@ -244,6 +246,13 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
         sortable: false,
         value: "players",
         minWidth: "475px",
+      },
+      {
+        text: this.$t("components_matches_matchesgrid.gamemode"),
+        align: "start",
+        sortable: false,
+        value: "gameMode",
+        maxWidth: "100px",
       },
       {
         text: this.$t("components_matches_matchesgrid.map"),
