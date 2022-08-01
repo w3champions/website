@@ -66,7 +66,6 @@ export default class PlayerHeroStatisticsTable extends Vue {
 
   @Watch("this.heroStatistics")
   heroStatsChange(): void {
-    console.log("this.heroStatisticsChange", this.heroStatistics);
     this.heroStatistics = this.heroStatistics.sort((a: PlayerHeroStatistic, b: PlayerHeroStatistic): number => {
       if (Number(a.total) > Number(b.total)){
         return 1;
