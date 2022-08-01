@@ -18,6 +18,10 @@
               :mapKeys="maps"
               :map="map"
             ></map-select>
+            <mmr-select
+              @mmrChanged="mmrChanged"
+              :mmr="mmr"
+            ></mmr-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -43,6 +47,7 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
+import MmrSelect from "@/components/common/MmrSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
 
@@ -52,6 +57,7 @@ import AppConstants from "@/constants";
     MatchesStatusSelect,
     GameModeSelect,
     MapSelect,
+    MmrSelect,
   },
 })
 export default class MatchesView extends Vue {
@@ -132,6 +138,10 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.map;
   }
 
+  get mmr(): number[] {
+    return this.$store.direct.state.matches.mmr;
+  }
+
   public async getMatches(page?: number): Promise<void> {
     await this.$store.direct.dispatch.matches.loadMatches(page);
   }
@@ -168,6 +178,10 @@ export default class MatchesView extends Vue {
 
   mapChanged(map: string): void {
     this.$store.direct.dispatch.matches.setMap(map);
+  }
+
+  mmrChanged(mmr: number[]): void {
+    this.$store.direct.dispatch.matches.setMmr(mmr);
   }
 }
 </script>
