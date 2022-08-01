@@ -284,6 +284,7 @@ const data = {
     components_matches_matchesgrid: {
       nomatchesfound: "no matches found",
       players: "Players",
+      gamemode: "Game Mode",
       map: "Map",
       starttime: "Start time",
       duration: "Duration",
