@@ -221,6 +221,9 @@ export default class PlayerView extends Mixins(MatchMixin) {
     this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
       this.battleTag
     );
+    this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(
+      this.battleTag
+    );
     this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
@@ -366,6 +369,9 @@ export default class PlayerView extends Mixins(MatchMixin) {
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
     await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
+      this.battleTag
+    );
+    await this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(
       this.battleTag
     );
     await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(

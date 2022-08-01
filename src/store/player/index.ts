@@ -6,6 +6,7 @@ import {
   ModeStat,
   RaceStat,
   PlayerMmrRpTimeline,
+  PlayerStatsHeroOnMapVersusRace,
 } from "./types";
 import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
@@ -16,6 +17,7 @@ const mod = {
   state: {
     isInitialized: false,
     playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
+    playerStatsHeroVersusRaceOnMap: {} as PlayerStatsHeroOnMapVersusRace,
     battleTag: "",
     page: 0,
     totalMatches: 0,
@@ -100,6 +102,19 @@ const mod = {
 
       commit.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
     },
+    async loadPlayerStatsHeroVersusRaceOnMap(
+      context: ActionContext<PlayerState, RootState>,
+      battleTag: string
+    ) {
+      const { commit, state, rootGetters } = moduleActionContext(context, mod);
+      const profile =
+        await rootGetters.profileService.retrievePlayerStatsHeroVersusRaceOnMap(
+          battleTag,
+          state.selectedSeason?.id ?? -1
+        );
+
+      commit.SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(profile);
+    },
     async loadMatches(
       context: ActionContext<PlayerState, RootState>,
       page?: number
@@ -147,6 +162,7 @@ const mod = {
         await dispatch.loadRaceStats();
         await dispatch.loadGameModeStats({});
         await dispatch.loadPlayerMmrRpTimeline();
+        await dispatch.loadPlayerStatsHeroVersusRaceOnMap;
       }
     },
     async loadPlayerMmrRpTimeline(
@@ -205,6 +221,12 @@ const mod = {
       stats: PlayerStatsRaceOnMapVersusRace
     ) {
       state.playerStatsRaceVersusRaceOnMap = stats;
+    },
+    SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(
+      state: PlayerState,
+      stats: PlayerStatsHeroOnMapVersusRace
+    ) {
+      state.playerStatsHeroVersusRaceOnMap = stats;
     },
     SET_SELECTED_SEASON(state: PlayerState, season: Season) {
       state.selectedSeason = season;
