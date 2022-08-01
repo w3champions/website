@@ -152,8 +152,8 @@ import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
-import { NewsMessage} from "@/store/admin/types";
-import { Map } from "@/store/admin/maps/types"
+import { NewsMessage } from "@/store/admin/messages/types";
+import { Map } from "@/store/admin/maps/types";
 
 @Component({
   components: {
@@ -175,17 +175,17 @@ export default class HomeView extends Vue {
   }
 
   get news(): NewsMessage[] {
-    return this.$store.direct.state.admin.news;
+    return this.$store.direct.state.infoMessages.news;
   }
 
   async mounted(): Promise<void> {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.$store.direct.dispatch.rankings.getTopFive();
-    await this.$store.direct.dispatch.admin.loadNews();
+    await this.$store.direct.dispatch.infoMessages.loadNews();
     await this.$store.direct.dispatch.admin.mapsManagement.loadMapsForCurrentSeason();
-    this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter(m => m.gameMode == '1vs1')[0].maps;
-    this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter(m => m.gameMode == '2vs2')[0].maps;
-    this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter(m => m.gameMode == '4vs4')[0].maps;
+    this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "1vs1")[0].maps;
+    this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "2vs2")[0].maps;
+    this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "4vs4")[0].maps;
   }
 
   public goToSetupPage(): void {

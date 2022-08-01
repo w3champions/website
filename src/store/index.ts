@@ -12,6 +12,7 @@ import clan from "./clan/index";
 import twitch from "./twitch/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
+import infoMessages from "./admin/messages/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -29,6 +30,7 @@ import MapService from "@/services/MapsService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
+import InfoMessageService from "@/services/InfoMessageService";
 
 Vue.use(Vuex);
 
@@ -45,6 +47,7 @@ const services = {
   mapsService: new MapService(),
   tournamentsService: new TournamentsService(),
   localeService: new LocaleService(),
+  infoMessageService: new InfoMessageService(),
 };
 
 const mod = {
@@ -59,6 +62,7 @@ const mod = {
     twitch,
     admin,
     tournaments,
+    infoMessages,
   },
   state: {
     darkMode: false,
@@ -127,6 +131,9 @@ const mod = {
     },
     localeService() {
       return services.localeService;
+    },
+    infoMessageService() {
+      return services.infoMessageService;
     },
   },
 } as const;
