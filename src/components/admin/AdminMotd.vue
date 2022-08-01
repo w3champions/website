@@ -42,7 +42,6 @@ export default class AdminMotd extends Vue {
   }
 
   async confirmNewMotd(): Promise<void> {
-    console.log(this.newMotd);
     await this.setMotd(this.newMotd);
     await this.$store.direct.dispatch.infoMessages.loadMotd();
   }
