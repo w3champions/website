@@ -1,0 +1,21 @@
+/* inter-regular - latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('assets/fonts/inter-v3-latin-regular.woff2') format('woff2'), /* Modern Browsers. */
+  url('assets/fonts/inter-v3-latin-regular.woff') format('woff'), /* Old Browsers. */
+  url('assets/fonts/inter-v3-latin-regular.ttf') format('truetype'); /* Legacy. */
+}
+
+/* inter-900 - latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 900;
+  src: url('assets/fonts/inter-v3-latin-900.woff2') format('woff2'), /* Modern Browsers. */
+  url('assets/fonts/inter-v3-latin-900.woff') format('woff'), /* Old Browsers. */
+  url('assets/fonts/inter-v3-latin-900.ttf') format('truetype'); /* Legacy. */
+}

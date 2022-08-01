@@ -1,10 +1,7 @@
 <template>
   <v-container fluid v-show="isAdmin" style="height: 100%">
     <div class="admin-page-wrapper">
-      <admin-navigation
-        :items="navItems"
-        v-on:itemSelected="navItemSelected"
-      ></admin-navigation>
+      <admin-navigation :items="navItems" v-on:itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
         <v-card-title>
           {{ selectedNavItem.title }}
@@ -30,6 +27,8 @@ import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
+import AdminMaps from "@/components/admin/AdminMaps.vue";
+import AdminMotd from "@/components/admin/AdminMotd.vue";
 
 @Component({
   components: {
@@ -43,6 +42,8 @@ import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
     AdminGlobalMute,
     AdminAssignPortraits,
     AdminManagePortraits,
+    AdminMaps,
+    AdminMotd,
   },
 })
 export default class Admin extends Vue {
@@ -89,7 +90,7 @@ export default class Admin extends Vue {
       items: [
         {
           key: "news",
-          title: "News for Launcher",
+          title: "News",
           icon: "mdi-rss",
           component: "admin-news-for-launcher",
         },
@@ -105,6 +106,12 @@ export default class Admin extends Vue {
           title: "Loading screen tips",
           component: "admin-loading-screen-tips",
         },
+        {
+          key: "motd",
+          icon: "mdi-message-alert",
+          title: "Message of the Day",
+          component: "admin-motd",
+        }
       ],
     },
     {
@@ -135,6 +142,18 @@ export default class Admin extends Vue {
           icon: "mdi-briefcase",
           component: "admin-manage-portraits",
         }
+      ],
+    },
+    {
+      title: "Maps",
+      icon: "mdi-map-search",
+      items: [
+        {
+          key: "maps",
+          title: "Manage Maps",
+          icon: "mdi-map-plus",
+          component: "admin-maps",
+        },
       ],
     },
   ];

@@ -383,58 +383,6 @@ export default class App extends Vue {
   top: 9px;
 }
 
-@font-face {
-  font-family: "Friz Quadrata Std Bold";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Friz Quadrata Std Bold"),
-    url("./assets/fonts/friz-quadrata-std-bold-587034a220f9f.woff")
-      format("woff");
-
-  * {
-    font-family: "Friz Quadrata Std Bold" !important;
-  }
-}
-
-@font-face {
-  font-family: "Friz Quadrata Std Italic";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Friz Quadrata Std Italic"),
-    url("./assets/fonts/friz-quadrata-std-italic-587033b2c95df.woff")
-      format("woff");
-
-  * {
-    font-family: "Friz Quadrata Std Italic" !important;
-  }
-}
-
-@font-face {
-  font-family: "Friz Quadrata Std Medium";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Friz Quadrata Std Medium"),
-    url("./assets/fonts/friz-quadrata-std-medium-5870338ec7ef8.woff")
-      format("woff");
-
-  * {
-    font-family: "Friz Quadrata Std Medium" !important;
-  }
-}
-
-@font-face {
-  font-family: "Friz Quadrata Std Bold Italic";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Friz Quadrata Std Bold Italic"),
-    url("./assets/fonts/friz-quadrata-std-bold-italic-587033d6d4298.woff")
-      format("woff");
-
-  * {
-    font-family: "Friz Quadrata Std Bold Italic" !important;
-  }
-}
-
 .theme--dark.v-badge .v-badge__badge::after {
   border-color: #ffffff !important;
 }

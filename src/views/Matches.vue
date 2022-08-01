@@ -64,7 +64,7 @@ export default class MatchesView extends Vue {
       return [
         EGameMode.GM_2ON2_AT,
         EGameMode.GM_4ON4_AT,
-        EGameMode.GM_LEGION_4v4_x20_AT,
+        EGameMode.GM_LEGION_4v4_x4_AT,
       ];
     }
 

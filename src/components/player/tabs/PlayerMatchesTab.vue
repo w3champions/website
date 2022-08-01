@@ -158,6 +158,7 @@ export default class PlayerMatchesTab extends Vue {
   public gameModeEnums = EGameMode;
   public raceEnums = ERaceEnum;
   public filtersVisible = false;
+  private searchTimer: ReturnType<typeof setTimeout> = 0;
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal?: Ranking) {
@@ -171,6 +172,11 @@ export default class PlayerMatchesTab extends Vue {
     this.getMatches();
   }
 
+  @Watch("searchRanks")
+  public onSearchRanksChanged() {
+    this.isLoading = false;
+  }
+
   get battleTag() {
     return decodeURIComponent(this.id);
   }
@@ -182,14 +188,23 @@ export default class PlayerMatchesTab extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
+    const searchDebounced = (timeout=500) => {
+      clearTimeout(this.searchTimer);
+      this.isLoading = true;
+      this.searchTimer = setTimeout(() => { 
+        this.$store.direct.dispatch.rankings.search({
+          searchText: newValue.toLowerCase(),
+          gameMode: this.selectedGameModeForSearch,
+        });
+      }, timeout);
+    }
+
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.rankings.search({
-        searchText: newValue.toLowerCase(),
-        gameMode: this.selectedGameModeForSearch,
-      });
+      searchDebounced();
     } else {
       this.$store.direct.dispatch.rankings.clearSearch();
       this.onSearchModelChanged(undefined);
+      this.isLoading = false;
     }
   }
 
@@ -223,13 +238,23 @@ export default class PlayerMatchesTab extends Vue {
       },
       {
         modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`
         ),
-        modeId: EGameMode.GM_LEGION_4v4_X20,
+        modeId: EGameMode.GM_LEGION_2v2_X20,
+      },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X4]}`
+        ),
+        modeId: EGameMode.GM_LEGION_4v4_X4,
       },
       {
         modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
         modeId: EGameMode.GM_ROC_1ON1,
+      },
+      {
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_RH_1ON1]}`),
+        modeId: EGameMode.GM_RH_1ON1,
       },
       {
         modeName: this.$t(
