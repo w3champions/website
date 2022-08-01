@@ -11,6 +11,7 @@ export type MatchState = {
   status: MatchStatus;
   gameMode: EGameMode;
   map: string;
+  mmr: number[];
 };
 
 export enum MatchStatus {
