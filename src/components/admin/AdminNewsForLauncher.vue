@@ -206,7 +206,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { NewsMessage } from "@/store/admin/types";
+import { NewsMessage } from "@/store/admin/messages/types";
 import { Editor, EditorContent, EditorMenuBar } from "tiptap";
 import {
   Blockquote,
@@ -243,7 +243,7 @@ export default class AdminNewsForLauncher extends Vue {
   }
 
   get news(): NewsMessage[] {
-    return this.$store.direct.state.admin.news;
+    return this.$store.direct.state.infoMessages.news;
   }
 
   get isAdmin(): boolean {
@@ -257,7 +257,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   private async init() {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadNews();
+      await this.$store.direct.dispatch.infoMessages.loadNews();
     }
   }
 
@@ -304,7 +304,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   async deleteNewsItem(item: NewsMessage): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-      (await this.$store.direct.dispatch.admin.deleteNews(item));
+      (await this.$store.direct.dispatch.infoMessages.deleteNews(item));
     this.dialogNews = false;
   }
 
@@ -314,7 +314,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   async saveNews() {
     this.editedNewsItem.message = this.editor.getHTML();
-    await this.$store.direct.dispatch.admin.editNews(this.editedNewsItem);
+    await this.$store.direct.dispatch.infoMessages.editNews(this.editedNewsItem);
     this.dialogNews = false;
     this.editor.clearContent();
     this.editedNewsItem = { bsonId: "", date: "", message: "" };
