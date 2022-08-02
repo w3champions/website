@@ -113,7 +113,7 @@ import {
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
-import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
+import { MatchesOnMapPerMode, MatchesOnMapPerSeason } from "@/store/overallStats/types";
 
 @Component({
   components: {
@@ -291,11 +291,23 @@ export default class PlayerStatisticTab extends Vue {
   }
 
   get maps() {
-    const maps = this.$store.direct.state.overallStatistics
-      .matchesOnMapPerSeason?.filter((matchesOnMapPerSeason: MatchesOnMapPerSeason)=>this.selectedSeason.id === matchesOnMapPerSeason.season)
-      [0].matchesOnMapPerModes[EGameMode.GM_1ON1].maps.map((e: any) =>{
-        return {mapName: e.map, mapId: e.map}
-        }) || [];
+    const gameModes = [
+      EGameMode.GM_1ON1,
+      EGameMode.GM_2ON2,
+      EGameMode.GM_4ON4,
+      EGameMode.GM_FFA,
+      EGameMode.GM_RH_1ON1,
+      EGameMode.GM_ROC_1ON1,
+    ];
+    const maps = [];
+    this.$store.direct.state.overallStatistics
+      .matchesOnMapPerSeason?.filter((matchesOnMapPerSeason: MatchesOnMapPerSeason) => this.selectedSeason.id === matchesOnMapPerSeason.season)
+      [0].matchesOnMapPerModes.filter((matchesOnMapPerMode: MatchesOnMapPerMode) => 
+        gameModes.includes(matchesOnMapPerMode.gameMode)).map((matchesOnMapPerMode: MatchesOnMapPerMode) => {
+          matchesOnMapPerMode.maps.map((e: any) =>{
+            maps.push({mapName: e.map, mapId: e.map});
+          });
+        });
     maps.push({
       mapName: 'Overall',
       mapId: 'Overall',
