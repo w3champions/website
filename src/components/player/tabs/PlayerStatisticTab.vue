@@ -71,6 +71,31 @@
         </v-card-text>
       </v-col>
     </v-row>
+    <v-card-title>
+      {{ $t("components_player_tabs_playerstatistictab.playerheroesstatisticstitle") }}
+    </v-card-title>
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="md-2">
+        <v-card-text class="player-hero-usage-statistics__selects">
+          <v-select
+            v-model="selectedMap"
+            :items="maps"
+            item-text="mapName"
+            item-value="mapId"
+            label="Map"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="md-10">
+        <player-hero-statistics
+          v-if="selectedSeason.id !== 0"
+          :key="updatePlayerHeroStatsKey"
+          :selectedMap="selectedMap"
+          :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -81,16 +106,20 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
   PlayerMmrRpTimeline,
+  PlayerStatsHeroOnMapVersusRace,
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
 } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
+import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
+import { MatchesOnMapPerMode, MatchesOnMapPerSeason } from "@/store/overallStats/types";
 
 @Component({
   components: {
     PlayerStatsRaceVersusRaceOnMap,
     PlayerMmrRpTimelineChart,
+    PlayerHeroStatistics,
     MatchesGrid,
   },
 })
@@ -98,6 +127,8 @@ export default class PlayerStatisticTab extends Vue {
   public selectedPatch = "All";
   public selectedGameMode = this.$store.direct.state.player.gameMode;
   public selectedRace = this.$store.direct.state.player.race;
+  public updatePlayerHeroStatsKey = 0;
+  public selectedMap = "Overall";
 
   get selectedSeason() {
     return this.$store.direct.state.player.selectedSeason;
@@ -105,6 +136,10 @@ export default class PlayerStatisticTab extends Vue {
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+  }
+
+  get playerStatsHeroVersusRaceOnMap(): PlayerStatsHeroOnMapVersusRace {
+    return this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap ?? [];
   }
 
   get loadingMmrRpTimeline(): boolean {
@@ -124,10 +159,12 @@ export default class PlayerStatisticTab extends Vue {
   }
 
   mounted(): void {
+    this.getMaps();
     if (this.isPlayerInitialized) {
       this.initMmrRpTimeline();
     }
   }
+
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
   // is called before mounted of player, which this depends on. For this case isPlayerInitialized
   // is being watched to init the mmrRpTimeline once player.vue init() has finished.
@@ -219,6 +256,7 @@ export default class PlayerStatisticTab extends Vue {
       },
     ];
   }
+
   get races() {
     return [
       {
@@ -241,7 +279,46 @@ export default class PlayerStatisticTab extends Vue {
         raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
         raceId: ERaceEnum.RANDOM,
       },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
+        raceId: ERaceEnum.TOTAL,
+      },
     ];
+  }
+
+  public getMaps(): void {
+    this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
+  }
+
+  get maps() {
+    const gameModes = [
+      EGameMode.GM_1ON1,
+      EGameMode.GM_2ON2,
+      EGameMode.GM_4ON4,
+      EGameMode.GM_FFA,
+      EGameMode.GM_RH_1ON1,
+      EGameMode.GM_ROC_1ON1,
+    ];
+    const maps = [];
+    this.$store.direct.state.overallStatistics
+      .matchesOnMapPerSeason?.filter((matchesOnMapPerSeason: MatchesOnMapPerSeason) => this.selectedSeason.id === matchesOnMapPerSeason.season)
+      [0].matchesOnMapPerModes.filter((matchesOnMapPerMode: MatchesOnMapPerMode) => 
+        gameModes.includes(matchesOnMapPerMode.gameMode)).map((matchesOnMapPerMode: MatchesOnMapPerMode) => {
+          matchesOnMapPerMode.maps.map((e: any) =>{
+            maps.push({mapName: e.map, mapId: e.map});
+          });
+        });
+    maps.push({
+      mapName: 'Overall',
+      mapId: 'Overall',
+    })
+    return maps;
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .player-hero-usage-statistics__selects {
+    margin-top: 48px;
+  }
+</style>

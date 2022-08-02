@@ -3,8 +3,6 @@ import { PlayerOverview } from "@/store/ranking/types";
 export type AdminState = {
   total: number;
   players: BannedPlayer[];
-  news: NewsMessage[];
-  tips: LoadingScreenTip[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
   searchedPlayers: SearchedPlayer[];
@@ -28,23 +26,10 @@ export interface ChangePortraitsCommand {
   mouseover?: string;
 }
 
-export type ChangePortraitsDto = {
+export interface ChangePortraitsDto {
   BnetTags: string[];
   Portraits: number[];
   Tooltip?: string;
-};
-
-export interface NewsMessage {
-  message: string;
-  date: string;
-  bsonId: string;
-}
-
-export interface LoadingScreenTip {
-  message: string;
-  author: string;
-  creationDate: string;
-  bsonId: string;
 }
 
 export interface BannedPlayer {

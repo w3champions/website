@@ -53,10 +53,7 @@
               />
               <div
                 class="country-flag__container ml-1"
-                v-if="
-                  (item.playersInfo && item.playersInfo[index].countryCode) ||
-                  item.playersInfo[index].location
-                "
+                v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
               >
                 <country-flag-extended
                   class="country-flag"
@@ -72,10 +69,7 @@
                       <v-btn
                         icon
                         v-on="on"
-                        :href="
-                          'http://twitch.tv/' +
-                          item.playersInfo[index].twitchName
-                        "
+                        :href="'http://twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
                       >
                         <v-icon
@@ -106,9 +100,7 @@
               </div>
               <span
                 style="position: relative"
-                v-if="
-                  isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)
-                "
+                v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
               >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
@@ -126,16 +118,12 @@
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
-            {{
-              item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/")
-            }}
+            {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
           </td>
           <td class="number-text text-end won">{{ item.player.wins }}</td>
           <td class="number-text text-end lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
-          <td class="number-text text-end">
-            {{ (item.player.winrate * 100).toFixed(1) }}%
-          </td>
+          <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
           <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
@@ -342,9 +330,7 @@ export default class RankingsGrid extends Vue {
   // methods
   public goToRank(rank: Ranking): void {
     setTimeout(() => {
-      const listItemOfPlayer = document.getElementById(
-        `listitem_${rank.rankNumber}`
-      );
+      const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
 
       if (!listItemOfPlayer) return;
 

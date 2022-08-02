@@ -63,7 +63,7 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import moment from "moment";
-import { LoadingScreenTip } from "@/store/admin/types";
+import { LoadingScreenTip } from "@/store/admin/messages/types";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
@@ -83,7 +83,7 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   get tips(): LoadingScreenTip[] {
-    return this.$store.direct.state.admin.tips;
+    return this.$store.direct.state.infoMessages.tips;
   }
 
   get isAdmin(): boolean {
@@ -97,7 +97,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   private async init(): Promise<void> {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadTips();
+      await this.$store.direct.dispatch.infoMessages.loadTips();
     }
   }
 
@@ -139,7 +139,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   async deleteTipItem(item: LoadingScreenTip): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-      (await this.$store.direct.dispatch.admin.deleteTip(item));
+      (await this.$store.direct.dispatch.infoMessages.deleteTip(item));
     this.dialogTips = false;
   }
 
@@ -148,12 +148,10 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   async saveTips(): Promise<void> {
-    this.editedTipItem.author =
-      this.$store.direct.state.oauth.blizzardVerifiedBtag;
-    this.editedTipItem.creationDate = moment().format(
-      "MMMM Do YYYY, h:mm:ss a"
-    );
-    if (await this.$store.direct.dispatch.admin.editTip(this.editedTipItem)) {
+    this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    this.editedTipItem.creationDate = moment().format("MMMM Do YYYY, h:mm:ss a");
+
+    if (await this.$store.direct.dispatch.infoMessages.editTip(this.editedTipItem)) {
       this.dialogTips = false;
       this.editedTipItem = {
         message: "",

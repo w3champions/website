@@ -284,6 +284,7 @@ const data = {
     components_matches_matchesgrid: {
       nomatchesfound: "no matches found",
       players: "Players",
+      gamemode: "Game Mode",
       map: "Map",
       starttime: "Start time",
       duration: "Duration",
@@ -371,6 +372,7 @@ const data = {
       playerhasnomatches:
         "This player hasn't played any matches fitting to the current settings.",
       title: "Matchup Statistics",
+      playerheroesstatisticstitle: "Hero Usage Statistics",
     },
     components_player_modestatsgrid: {
       mode: "Mode",
@@ -386,6 +388,7 @@ const data = {
     components_player_playeravatar: {
       useClassicIcons: "Use classic icons",
       games: "Games:",
+      wins: "Wins:",
       homepage: "Homepage:",
       about: "About:",
       edit: "Edit Profile",
@@ -453,8 +456,9 @@ const data = {
       GM_FFA: "FFA",
       GM_FOOTMEN_FRENZY: "Footmen Frenzy",
       GM_LEGION_4v4_X3: "Legion TD 4v4 x3",
-      GM_LEGION_1v1_x20: "Legion TD 1v1 x20",
-      GM_LEGION_4v4_X20: "Legion TD 4v4 x20",
+      GM_LEGION_1v1_x20: "Legion TD 1v1",
+      GM_LEGION_2v2_X20: "Legion TD 2v2",
+      GM_LEGION_4v4_X4: "Legion TD 4v4 x4",
       GM_ROC_1ON1: "RoC 1vs1",
       GM_LTW_1ON1: "Line Tower Wars 1vs1",
       GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",

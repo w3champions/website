@@ -2,7 +2,7 @@
   <v-dialog v-model="show" max-width="500">
     <v-card>
       <v-card-title class="justify-center">
-        {{ this.cryptoName }}
+        {{ cryptoName }}
       </v-card-title>
       <v-container>
         <v-row>
@@ -11,9 +11,7 @@
 
         <v-row class="mt-2">
           <v-spacer></v-spacer>
-          <v-btn small @click="copyAddress">
-            <v-icon>mdi-content-copy</v-icon>
-          </v-btn>
+          <copy-button :copyText="cryptoAddress"></copy-button>
           <v-spacer></v-spacer>
         </v-row>
 
@@ -42,17 +40,18 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import CopyButton from "@/components/common/CopyButton.vue";
 
-@Component({})
+@Component({
+  components: {
+    CopyButton,
+  },
+})
 export default class CryptoDialog extends Vue {
   @Prop() crypto!: string;
   @Prop() cryptoName!: string;
   @Prop() cryptoAddress!: string;
   @Prop() value!: boolean;
-
-  private copyAddress() {
-    navigator.clipboard.writeText(this.cryptoAddress);
-  }
 
   get show(): boolean {
     return this.value;

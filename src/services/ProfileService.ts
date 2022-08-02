@@ -2,6 +2,7 @@ import {
   ModeStat,
   PlayerMmrRpTimeline,
   PlayerProfile,
+  PlayerStatsHeroOnMapVersusRace,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
 } from "@/store/player/types";
@@ -105,6 +106,19 @@ export default class ProfileService {
     const response = await fetch(url);
     return await response.json();
   }
+
+  public async retrievePlayerStatsHeroVersusRaceOnMap(
+    battleTag: string,
+    season: number
+  ): Promise<PlayerStatsHeroOnMapVersusRace> {
+    const url = `${API_URL}api/player-stats/${encodeURIComponent(
+      battleTag
+    )}/hero-on-map-versus-race?season=${season}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+  
 
   public async retrievePlayerMmrRpTimeline(
     battleTag: string,
