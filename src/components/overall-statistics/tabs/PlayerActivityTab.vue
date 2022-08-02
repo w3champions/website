@@ -119,6 +119,9 @@
             outlined
           />
         </v-card-text>
+        <div style="padding: 15px; font-size: 14px">
+          Graph adjusted to your timezone
+        </div>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
