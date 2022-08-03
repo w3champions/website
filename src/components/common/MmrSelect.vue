@@ -2,27 +2,22 @@
   <v-menu offset-x :close-on-content-click=false @input="onMenuToggled">
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">mdi-chevron-triple-up</v-icon>
+        <v-icon class="mr-1">mdi-chevron-triple-up</v-icon>
         {{selected}}
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="px-2 pt-2">
       <v-card-text>
-        <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{$t("components_common_mmrselect.selectmmr")}}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list>
-        <v-divider></v-divider>
         <v-range-slider
           v-model="range"
-          style="margin-top: 50px"
           max=3000
           min=0
           step="100"
           thumb-label="always"
+          :hint="$t('components_common_mmrselect.selectmmr')"
+          persistent-hint
+          class="pt-7"
+          style="min-width: 300px"
           @change="selectMmr"
         ></v-range-slider>
       </v-card-text>
@@ -68,4 +63,8 @@ export default class MmrSelect extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+::v-deep .v-messages {
+  font-size: 15px;
+}
+</style>
