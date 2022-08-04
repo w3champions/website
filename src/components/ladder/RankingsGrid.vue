@@ -363,10 +363,7 @@ export default class RankingsGrid extends Vue {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return "Random";
     const playerInfo = playersInfo[playerIndex];
-    if (
-      RankingsGrid.hasSelectedIcon(playerInfo) &&
-      playerInfo.selectedRace <= ERaceEnum.UNDEAD
-    ) {
+    if (RankingsGrid.hasSelectedIcon(playerInfo)) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
@@ -374,15 +371,12 @@ export default class RankingsGrid extends Vue {
   }
 
   private static hasSelectedIcon(playerInfo: PlayerInfo) {
-    if (
+    return (
       playerInfo.selectedRace !== undefined &&
       playerInfo.selectedRace != null &&
       playerInfo.pictureId !== undefined &&
       playerInfo.pictureId != null
-    ) {
-      return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
-    }
-    return false;
+    );
   }
 
   raceIcon(race: ERaceEnum) {

@@ -396,10 +396,7 @@ export default class CountryRankingsGrid extends Vue {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.$t("races.RANDOM");
     const playerInfo = playersInfo[playerIndex];
-    if (
-      CountryRankingsGrid.hasSelectedIcon(playerInfo) &&
-      playerInfo.selectedRace <= ERaceEnum.UNDEAD
-    ) {
+    if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
@@ -407,15 +404,12 @@ export default class CountryRankingsGrid extends Vue {
   }
 
   private static hasSelectedIcon(playerInfo: PlayerInfo) {
-    if (
+    return (
       playerInfo.selectedRace !== undefined &&
       playerInfo.selectedRace != null &&
       playerInfo.pictureId !== undefined &&
       playerInfo.pictureId != null
-    ) {
-      return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
-    }
-    return false;
+    );
   }
 
   raceIcon(race: ERaceEnum) {
