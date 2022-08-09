@@ -30,7 +30,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue"
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { getAsset } from "@/helpers/url-functions"
-import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
@@ -48,10 +48,6 @@ export default class PlayerHeroStatistics extends Vue {
 
   get isPlayerInitialized(): boolean {
     return this.$store.direct.state.player.isInitialized;
-  }
-
-  setSelectedTab(): void {
-    this.selectedTab = `tab-1`;
   }
 
   get heroUsages() {
@@ -111,6 +107,40 @@ export default class PlayerHeroStatistics extends Vue {
   }
 
   populateDataForTable(tableData: any[], heroStatsData: any[], gamesSum: number) {
+    const totals: { [key: number]: number; } = {
+      [ERaceEnum.HUMAN]: 0,
+      [ERaceEnum.ORC]: 0,
+      [ERaceEnum.NIGHT_ELF]: 0,
+      [ERaceEnum.UNDEAD]: 0,
+      [ERaceEnum.RANDOM]: 0,
+      [ERaceEnum.TOTAL]: 0,
+    };
+    if (this.selectedRace != ERaceEnum.TOTAL) {
+      const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+        .filter((obj: any) => obj.race == this.selectedRace)[0]
+        .winLossesOnMap
+        .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0];
+      if (winLossesOnMap) {
+        winLossesOnMap.winLosses
+          .map((raceStat: RaceStat) => {
+            totals[raceStat.race] += raceStat.games;
+            totals[ERaceEnum.TOTAL] += raceStat.games;
+          });
+      }
+    } else {
+      this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+        .map((obj: any) => {
+          const selectedMapData = obj.winLossesOnMap
+            .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0]
+            if (selectedMapData) {
+              selectedMapData.winLosses
+                .map((raceStat: RaceStat) => {
+                  totals[raceStat.race] += raceStat.games;
+                  totals[ERaceEnum.TOTAL] += raceStat.games;
+              });
+            }
+        });        
+    }
     heroStatsData.map((heroStat) => {
       if (heroStat.total === 0) {
         return;
@@ -119,12 +149,12 @@ export default class PlayerHeroStatistics extends Vue {
         id: heroStat.id, 
         name: heroStat.name,
         image: heroStat.image,
-        hu: gamesSum > 0 ? String((heroStat.hu*100/gamesSum).toFixed(2)) + '%' : 'N/A',
-        orc: gamesSum > 0 ? String((heroStat.orc*100/gamesSum).toFixed(2)) + '%' : 'N/A',
-        ne: gamesSum > 0 ? String((heroStat.ne*100/gamesSum).toFixed(2)) + '%' : 'N/A',
-        ud: gamesSum > 0 ? String((heroStat.ud*100/gamesSum).toFixed(2)) + '%' : 'N/A',
-        rand: gamesSum > 0 ? String((heroStat.rand*100/gamesSum).toFixed(2)) + '%' : 'N/A',
-        total: gamesSum > 0 ? String((heroStat.total*100/gamesSum).toFixed(2)) + '%' : 'N/A',
+        hu: totals[ERaceEnum.HUMAN] > 0 ? String((heroStat.hu*100/totals[ERaceEnum.HUMAN]).toFixed(2)) + '%' : 'N/A',
+        orc: totals[ERaceEnum.ORC] > 0 ? String((heroStat.orc*100/totals[ERaceEnum.ORC]).toFixed(2)) + '%' : 'N/A',
+        ne: totals[ERaceEnum.NIGHT_ELF] > 0 ? String((heroStat.ne*100/totals[ERaceEnum.NIGHT_ELF]).toFixed(2)) + '%' : 'N/A',
+        ud: totals[ERaceEnum.UNDEAD] > 0 ? String((heroStat.ud*100/totals[ERaceEnum.UNDEAD]).toFixed(2)) + '%' : 'N/A',
+        rand: totals[ERaceEnum.RANDOM] > 0 ? String((heroStat.rand*100/totals[ERaceEnum.RANDOM]).toFixed(2)) + '%' : 'N/A',
+        total: totals[ERaceEnum.TOTAL] > 0 ? String((heroStat.total*100/totals[ERaceEnum.TOTAL]).toFixed(2)) + '%' : 'N/A',
       })
     });
   }
