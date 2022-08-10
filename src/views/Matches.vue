@@ -22,6 +22,7 @@
               @mmrChanged="mmrChanged"
               :mmr="mmr"
             ></mmr-select>
+            <sort-select v-if="unfinished"></sort-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -48,6 +49,7 @@ import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
 import MmrSelect from "@/components/common/MmrSelect.vue";
+import SortSelect from "@/components/matches/SortSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
 
@@ -58,6 +60,7 @@ import AppConstants from "@/constants";
     GameModeSelect,
     MapSelect,
     MmrSelect,
+    SortSelect,
   },
 })
 export default class MatchesView extends Vue {
