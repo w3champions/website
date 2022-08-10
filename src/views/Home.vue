@@ -9,9 +9,13 @@
           </v-card-title>
           <v-row class="justify-center">
             <v-col class="text-center">
-              <button @click="goToSetupPage" class="join-button">
+              <v-btn
+                height="76px"
+                @click="goToSetupPage"
+                class="join-button my-7 px-11"
+              >
                 {{ $t("views_home.join_button") }}
-              </button>
+              </v-btn>
             </v-col>
           </v-row>
           <v-card-text>
@@ -223,33 +227,10 @@ export default class HomeView extends Vue {
   padding-top: 0;
 }
 
-.join-button {
-  cursor: pointer;
-  line-height: 1;
-  background-color: transparent;
-  text-transform: uppercase;
-  color: rgb(51, 38, 28);
-  background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%),
-    linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));
-  box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 0px 2px,
-    rgba(236, 174, 6, 0.3) 0px 0px 40px 15px,
-    rgba(255, 255, 255, 0.4) 0px 0px 0px 2px inset,
-    rgba(255, 125, 19, 0.3) 0px 0px 20px 10px inset;
-  text-shadow: rgb(51, 38, 28) 0px 0px;
-  height: 76px;
-  margin-top: 26px;
-  margin-bottom: 26px;
+.v-btn.join-button {
+  letter-spacing: 0 !important;
+  font-family: inherit !important;
   font-size: 20px;
-  border-width: 0px;
-  border-style: initial;
-  border-color: initial;
-  border-image: initial;
-  border-radius: 2px;
-  background-repeat: no-repeat;
-  outline: 0px;
-  text-decoration: none;
-  transition: filter 200ms ease 0s;
-  padding: 0px 45px;
 }
 
 .seasonMaps {
