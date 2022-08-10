@@ -5,7 +5,7 @@
       <span v-if="stat.race === raceEnums.TOTAL">
         {{ $t("common.allraces") }}
       </span>
-      <race-icon :race="stat.race" />
+      <race-icon v-else :race="stat.race" />
     </v-tab>
 
     <v-tab-item

@@ -136,3 +136,16 @@ export type PlayerHeroStatistic = {
   hu: string;
   ne: string;
 }
+
+export type PlayerHeroWinRateForStatisticsTab = {
+  hero: string;
+  name: string;
+  image: string;
+  [ERaceEnum.TOTAL]: string;
+  [ERaceEnum.UNDEAD]: string;
+  [ERaceEnum.ORC]: string;
+  [ERaceEnum.HUMAN]: string;
+  [ERaceEnum.NIGHT_ELF]: string;
+  [ERaceEnum.RANDOM]: string;
+  [ERaceEnum.STARTER]: string;
+}
