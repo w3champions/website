@@ -115,31 +115,16 @@ export default class PlayerHeroStatistics extends Vue {
       [ERaceEnum.RANDOM]: 0,
       [ERaceEnum.TOTAL]: 0,
     };
-    if (this.selectedRace != ERaceEnum.TOTAL) {
-      const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-        .filter((obj: any) => obj.race == this.selectedRace)[0]
-        .winLossesOnMap
-        .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0];
-      if (winLossesOnMap) {
-        winLossesOnMap.winLosses
-          .map((raceStat: RaceStat) => {
-            totals[raceStat.race] += raceStat.games;
-            totals[ERaceEnum.TOTAL] += raceStat.games;
-          });
-      }
-    } else {
-      this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-        .map((obj: any) => {
-          const selectedMapData = obj.winLossesOnMap
-            .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0]
-            if (selectedMapData) {
-              selectedMapData.winLosses
-                .map((raceStat: RaceStat) => {
-                  totals[raceStat.race] += raceStat.games;
-                  totals[ERaceEnum.TOTAL] += raceStat.games;
-              });
-            }
-        });        
+    const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+      .filter((obj: any) => obj.race == this.selectedRace)[0]
+      .winLossesOnMap
+      .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0];
+    if (winLossesOnMap) {
+      winLossesOnMap.winLosses
+        .map((raceStat: RaceStat) => {
+          totals[raceStat.race] += raceStat.games;
+          totals[ERaceEnum.TOTAL] += raceStat.games;
+        });
     }
     heroStatsData.map((heroStat) => {
       if (heroStat.total === 0) {
