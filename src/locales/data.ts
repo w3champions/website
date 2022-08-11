@@ -373,6 +373,7 @@ const data = {
         "This player hasn't played any matches fitting to the current settings.",
       title: "Matchup Statistics",
       playerheroesstatisticstitle: "Hero Usage Statistics",
+      playerherowinratetitle: "Hero Winrate"
     },
     components_player_modestatsgrid: {
       mode: "Mode",

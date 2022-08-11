@@ -5,7 +5,7 @@
       <span v-if="race.raceId === raceEnums.TOTAL">
         {{ $t("common.allraces") }}
       </span>
-      <race-icon :race="race.raceId" />
+      <race-icon v-else :race="race.raceId" />
     </v-tab>
 
     <v-tab-item
@@ -41,6 +41,31 @@ export default class PlayerHeroStatistics extends Vue {
   public raceEnums = ERaceEnum;
   @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
   @Prop() selectedMap!: string;
+
+  @Watch("isPlayerInitialized")
+  onPlayerInitialized(): void {
+    this.setSelectedTab();
+  }
+
+  setSelectedTab(): void {
+    let maxRace = ERaceEnum.RANDOM;
+    let maxGames = 0;
+    this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+      .filter((s: any) => s.race !== ERaceEnum.TOTAL)
+      .forEach((s: any) =>
+        s.winLossesOnMap.forEach((w: any) => {
+          const gamesOfRace = w.winLosses
+            .map((wl: any) => wl.games)
+            .reduce((a: any, b:any) => a + b, 0);
+
+          if (maxGames < gamesOfRace) {
+            maxRace = s.race;
+            maxGames = gamesOfRace;
+          }
+        })
+      );
+    this.selectedTab = `tab-${maxRace}`;
+  }
 
   get selectedRace() {
     return Number(this.selectedTab.split('-')[1]);
