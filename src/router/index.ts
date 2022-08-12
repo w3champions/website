@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue, { Data } from "vue";
 import VueRouter from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
@@ -22,6 +22,8 @@ import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivi
 import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
 import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
 import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
+import data from "@/locales/data";
+import store from "@/store/index";
 
 Vue.use(VueRouter);
 
@@ -185,6 +187,24 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   routes,
+});
+
+router.afterEach((to) => {
+
+  setTimeout(() => {
+
+    const locale = store.state.locale as keyof typeof data;
+
+    const routeName = to?.name?.replaceAll(' ', '') as keyof typeof data[typeof locale]['titles'];
+
+    const title = data[locale]['titles'][routeName] ?? '';
+
+    document.title = title.length > 0 ? title + ' - W3Champions' : 'W3Champions';
+  
+    window.scrollTo({top: 0, behavior: 'smooth'});
+
+  });
+
 });
 
 export default router;

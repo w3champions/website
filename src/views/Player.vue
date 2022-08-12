@@ -357,6 +357,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
 
   async mounted() {
     await this.init();
+    document.title = this.profile.battleTag + " - W3Champions";
   }
 
   private async init() {
