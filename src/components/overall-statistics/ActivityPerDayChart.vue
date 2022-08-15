@@ -9,7 +9,6 @@ import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
 import { EGameMode } from "@/store/typings";
-import AppConstants from "@/constants";
 
 @Component({
   components: { LineChart },
@@ -29,7 +28,7 @@ export default class ActivityPerDayChart extends Vue {
   get gameHourChartData(): ChartData {
     return {
       labels: this.gameDayDates,
-      datasets: this.fillDays(this.gameDays)
+      datasets: this.gameDays
         .filter((c) => {
           // Filter out all game modes that are not present in enum "EGameMode"
           // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
@@ -48,7 +47,12 @@ export default class ActivityPerDayChart extends Vue {
           return {
             label: this.$t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
             data: c.gameDays
-              .map((g) => g.gamesPlayed * this.multiplier(c.gameMode))
+              .map((g) => {
+                return {
+                  x: moment(g.date).format("LL"),
+                  y: g.gamesPlayed * this.multiplier(c.gameMode)
+                }
+              })
               .splice(0, c.gameDays.length - 1),
             backgroundColor: "rgba(126,126,126,0.08)",
             borderColor: this.mapColor(c.gameMode),
@@ -56,38 +60,6 @@ export default class ActivityPerDayChart extends Vue {
           };
         }),
     };
-  }
-
-  // Fix for chart.js displaying the graph for new modes to the left of the chart instead of to the right.
-  private fillDays(gameDaysObjects: GameDayPerMode[]): GameDayPerMode[] {
-    const expectedGameDays = AppConstants.daysOfStatistics;
-
-    // Make a deep copy of the array
-    let copy = JSON.parse(JSON.stringify(gameDaysObjects));
-
-    // Make sure the amount of gamedays from backend correspond to what's expected 
-    const limitGameDays = (obj: GameDayPerMode) => {
-      return {
-        gameMode: obj.gameMode,
-        gameDays: obj.gameDays.slice(0, expectedGameDays)
-      }
-    }
-
-    // Fill the gameDays array with dummy data if the gamemode hasn't existed long enough to fill up the chart. 
-    const pushDummyData = (gameDaysObject: GameDayPerMode) => {
-      for (let i = gameDaysObject.gameDays.length; i < expectedGameDays; i++) {
-        gameDaysObject.gameDays.unshift({
-          date: moment("01-01-2022", "MM-DD-YYYY"),
-          id: "0",
-          gamesPlayed: 0
-        })
-      }
-      return gameDaysObject;
-    }
-
-    return copy
-      .map(limitGameDays)
-      .map((obj: GameDayPerMode) => obj.gameDays.length == expectedGameDays ? obj : pushDummyData(obj))
   }
 
   private mapColor(gameMode: EGameMode) {
