@@ -128,9 +128,9 @@ export enum EGameMode {
   GM_4ON4_AT = 8,
   GM_FFA = 5,
 
-  GM_LEGION_4v4_X4 = 202,
+  GM_LEGION_4v4_X20 = 202,
   GM_LEGION_1v1_x20 = 203,
-  GM_LEGION_4v4_x4_AT = 204,
+  GM_LEGION_4v4_X20_AT = 204,
   GM_LEGION_2v2_X20 = 205,
 
   GM_ROC_1ON1 = 301,
