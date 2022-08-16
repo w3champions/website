@@ -199,3 +199,12 @@ h3 {
 .w3app {
   overflow-y: hidden;
 }
+
+// Set cursor to 'pointer' instead of 'text' in dropdown menus.
+.v-select {
+  .v-select__selections {
+    input {
+      cursor: pointer;
+    }
+  }
+}

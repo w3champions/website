@@ -4,6 +4,7 @@
       <v-col cols="md-4">
         <v-card-text>
           <v-select
+            v-model="selectedMap"
             :items="maps"
             item-text="mapName"
             item-value="mapId"
@@ -14,6 +15,7 @@
             outlined
           />
           <v-select
+            v-model="selectedMmr"
             :items="mmrs"
             item-text="league"
             item-value="mmr"
