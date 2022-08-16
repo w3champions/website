@@ -31,9 +31,9 @@ export default class ActivityPerDayChart extends Vue {
       datasets: this.gameDays
         .filter((c) => {
           // Filter out all game modes that are not present in enum "EGameMode"
-          // and gameMode 6 as it is 2v2 AT which has been merged with 2v2 RT
+          // and other old game modes.
           return (
-            Object.values(EGameMode).includes(c.gameMode) && c.gameMode !== 6
+            Object.values(EGameMode).includes(c.gameMode) && !this.disabledGameModes.includes(c.gameMode)
           );
         })
         // then only show the data that user selected
@@ -60,6 +60,16 @@ export default class ActivityPerDayChart extends Vue {
           };
         }),
     };
+  }
+
+  get disabledGameModes(): Array<number> {
+    return [
+      EGameMode.GM_2ON2_AT,
+      EGameMode.GM_4ON4_AT,
+      EGameMode.GM_LEGION_4v4_X20_AT,
+      EGameMode.GM_LTW_1ON1,
+      EGameMode.GM_FROSTCRAFT_4ON4
+    ];
   }
 
   private mapColor(gameMode: EGameMode) {
