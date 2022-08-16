@@ -12,6 +12,7 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
+            v-model="selectedHeroesPlayedMode"
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"
@@ -20,6 +21,7 @@
             outlined
           />
           <v-select
+            v-model="selectedHeroesPlayedPick"
             :items="picks"
             item-text="pickName"
             item-value="pickId"
