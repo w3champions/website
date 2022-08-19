@@ -11,7 +11,7 @@
       <template v-slot:body="{ items }">
         <tbody>
           <tr v-for="item in items" :key="item.map">
-            <td>{{ $t("mapNames." + item.map) }}</td>
+            <td>{{ displayMapName(item.map) }}</td>
             <player-stats-race-versus-race-on-map-table-cell
               :stats="item.winLosses[1]"
             />
@@ -42,6 +42,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import parseMapName from "@/locales/map-key-parser";
 
 @Component({
   components: { PlayerStatsRaceVersusRaceOnMapTableCell },
@@ -56,6 +57,11 @@ export default class RaceToMapStat extends Vue {
       totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
     return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
+  }
+
+  public displayMapName(name: string) {
+    const parsedKey = parseMapName(name).mapKey
+    return this.$t("mapNames." + parsedKey)
   }
 
   get headers() {
