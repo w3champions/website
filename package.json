@@ -41,6 +41,7 @@
     "@types/chart.js": "^2.9.35",
     "@types/chartjs-plugin-annotation": "^0.5.2",
     "@types/google-spreadsheet": "^3.1.5",
+    "@types/jest": "^28.1.7",
     "@types/lodash": "^4.14.178",
     "@types/prosemirror-inputrules": "^1.0.4",
     "@types/prosemirror-model": "^1.16.0",
