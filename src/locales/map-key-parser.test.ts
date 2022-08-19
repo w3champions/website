@@ -6,3 +6,9 @@ test("can parse mApNaMesv2_0", () => {
     version: "v2_0",
   });
 });
+
+test("won't parse mApNaMes", () => {
+  expect(parseMapName("mApNaMes")).toEqual({
+    mapKey: "mApNaMes",
+  });
+});
