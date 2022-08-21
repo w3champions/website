@@ -182,6 +182,8 @@ const en = {
     synergy: "Synergy",
     dragonisland: "Dragon Island",
     phantomgrove: "Phantom Grove",
+    shallowgrave: "Shallow Grave",
+    shatteredexile: "Shattered Exile",
 
     // S6
     Amazonia: "Amazonia",
