@@ -1,6 +1,6 @@
 const versionRegExp = new RegExp(/v\d.*/);
 
-const parseMapName = (key: string) => {
+const parseVersionedMapName = (key: string) => {
   const version = versionRegExp.exec(key);
   if (version) {
     const mapKey = key.slice(0, version.index).toLowerCase();
@@ -15,4 +15,4 @@ const parseMapName = (key: string) => {
   };
 };
 
-export default parseMapName;
+export default parseVersionedMapName;
