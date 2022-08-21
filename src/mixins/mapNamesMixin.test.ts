@@ -1,4 +1,4 @@
-import parseVersionedMapName from "./map-key-parser";
+import { parseVersionedMapName } from "./mapNamesMixin";
 
 test("can parse mApNaMesv2_0", () => {
   expect(parseVersionedMapName("mApNaMesv2_0")).toEqual({
