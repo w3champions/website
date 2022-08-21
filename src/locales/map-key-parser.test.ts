@@ -12,3 +12,10 @@ test("won't parse mApNaMes", () => {
     mapKey: "mApNaMes",
   });
 });
+
+test("only splits the last v off of a map name", () => {
+  expect(parseMapName("Evolvev7_9")).toEqual({
+    mapKey: "evolve",
+    version: "v7_9",
+  });
+});
