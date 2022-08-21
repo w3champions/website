@@ -95,6 +95,8 @@ import {
 } from "@/store/overallStats/types";
 import { Watch } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import { parseVersionedMapName } from "@/mixins/mapNamesMixin";
+
 @Component({
   components: { PlayerStatsRaceVersusRaceOnMapTableCell },
 })
@@ -151,7 +153,12 @@ export default class WinratesTab extends Vue {
     const stats = this.statsPerRaceAndMap[0];
     if (!stats) return [];
     return stats.patchToStatsPerModes[this.selectedPatch].map((r) => {
-      return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
+      const { mapKeyPrefixed, versionTag } = parseVersionedMapName(r.mapName);
+      const mapName = this.$t(mapKeyPrefixed) + " " + versionTag;
+      return {
+        mapId: r.mapName,
+        mapName,
+      };
     });
   }
 
