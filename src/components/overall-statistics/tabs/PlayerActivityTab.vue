@@ -6,6 +6,7 @@
         <v-col cols="12" md="2">
           <v-card-text>
             <v-select
+              v-model="selectedGamesPerDayMode"
               :items="gameModesWithAll"
               item-text="modeName"
               item-value="modeId"
@@ -63,6 +64,7 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
+            v-model="selectedModeForMaps"
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"
@@ -75,6 +77,7 @@
             outlined
           />
           <v-select
+            v-model="selectedSeasonForMaps"
             :items="seasons"
             item-text="id"
             item-value="id"
@@ -107,6 +110,7 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
+          v-model="selectedPopularHourMode"
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"
@@ -119,6 +123,9 @@
             outlined
           />
         </v-card-text>
+        <div style="padding: 15px; font-size: 14px">
+          Graph adjusted to your timezone
+        </div>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
@@ -136,6 +143,7 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
+            v-model="selectedLengthMode"
             :items="gameModes"
             item-text="modeName"
             item-value="modeId"

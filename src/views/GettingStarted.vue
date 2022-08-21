@@ -353,11 +353,6 @@ export default class GettingStartedView extends Vue {
   opacity: 0.12 !important;
 }
 
-.theme--dark.v-application .v-btn.join-button {
-  text-shadow: none !important;
-  color: black !important;
-}
-
 .video-container {
   position: relative;
   padding-bottom: 62.25%;

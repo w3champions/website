@@ -11,9 +11,16 @@ export type MatchState = {
   status: MatchStatus;
   gameMode: EGameMode;
   map: string;
+  mmr: number[];
+  sort: string;
 };
 
 export enum MatchStatus {
   onGoing = "onGoing",
   past = "past",
+}
+
+export enum SortMode {
+  startTimeDescending = "startTimeDescending",
+  mmrDescending = "mmrDescending",
 }

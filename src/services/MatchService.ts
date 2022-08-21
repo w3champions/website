@@ -13,10 +13,11 @@ export default class MatchService {
     page: number,
     gateway: number,
     gameMode: EGameMode,
-    map: string
+    map: string,
+    mmr: number[]
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}&minMmr=${mmr[0]}&maxMmr=${mmr[1]}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -26,7 +27,9 @@ export default class MatchService {
     page: number,
     gateway: number,
     gameMode: EGameMode,
-    map: string
+    map: string,
+    mmr: number[],
+    sort: string
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
 
@@ -35,7 +38,9 @@ export default class MatchService {
       this.pageSize,
       gateway,
       gameMode,
-      map
+      map,
+      mmr,
+      sort
     );
   }
 
@@ -44,9 +49,11 @@ export default class MatchService {
     pageSize: number,
     gateway: number,
     gameMode: EGameMode,
-    map: string
+    map: string,
+    mmr: number[],
+    sort: string
   ): Promise<{ count: number; matches: Match[] }> {
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}`;
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}&minMmr=${mmr[0]}&maxMmr=${mmr[1]}&sort=${sort}`;
 
     const response = await fetch(url);
     return await response.json();

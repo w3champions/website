@@ -108,6 +108,10 @@ h3 {
     z-index: 1;
   }
 }
+.custom-table-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
 
 .v-text-field__prefix {
   padding-right: 0px !important;
@@ -192,9 +196,16 @@ h3 {
   }
 }
 
-header.v-app-bar--is-scrolled + main {
-  .search-bar {
-    background-color: var(--w3-bg-glass);
+.w3app {
+  overflow-y: hidden;
+}
+
+// Set cursor to 'pointer' instead of 'text' in dropdown menus.
+.v-select {
+  .v-select__selections {
+    input {
+      cursor: pointer;
+    }
   }
 }
 

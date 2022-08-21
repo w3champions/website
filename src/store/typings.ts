@@ -130,7 +130,8 @@ export enum EGameMode {
 
   GM_LEGION_4v4_X20 = 202,
   GM_LEGION_1v1_x20 = 203,
-  GM_LEGION_4v4_x20_AT = 204,
+  GM_LEGION_4v4_X20_AT = 204,
+  GM_LEGION_2v2_X20 = 205,
 
   GM_ROC_1ON1 = 301,
 
@@ -157,16 +158,18 @@ export enum ERaceEnum {
   NIGHT_ELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
+  STARTER = 32,
 }
 
 export enum EAvatarCategory {
   RANDOM = 0,
   HUMAN = 1,
   ORC = 2,
-  NIGHT_ELF = 4,
+  NIGHTELF = 4,
   UNDEAD = 8,
   TOTAL = 16,
   SPECIAL = 32,
+  STARTER = 64,
 }
 
 export enum EColors {

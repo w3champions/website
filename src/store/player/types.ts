@@ -5,6 +5,7 @@ import { Moment } from "moment";
 export type PlayerState = {
   isInitialized: boolean;
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
+  playerStatsHeroVersusRaceOnMap: PlayerStatsHeroOnMapVersusRace;
   page: number;
   battleTag: string;
   totalMatches: number;
@@ -13,6 +14,7 @@ export type PlayerState = {
   loadingRecentMatches: boolean;
   loadingProfile: boolean;
   loadingMmrRpTimeline: boolean;
+  loadingPlayerStatsHeroVersusRaceOnMap: boolean;
   opponentTag: string;
   selectedSeason: Season;
   gameMode: EGameMode;
@@ -89,10 +91,31 @@ export interface PlayerStatsRaceOnMapVersusRaceByPatch {
   raceWinsOnMap: RaceWinsOnMap[];
 }
 
+export interface PlayerStatsHeroOnMapVersusRaceByPatch {
+  [key: string]: any;
+
+  patch: string;
+  raceWinsOnMap: RaceWinsOnMap[];
+}
+
 export interface PlayerStatsRaceOnMapVersusRace {
   raceWinsOnMapByPatch: PlayerStatsRaceOnMapVersusRaceByPatch;
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
+}
+
+export interface PlayerHeroStats {
+  heroId: string,
+  stats: RaceWinsOnMap[];
+}
+
+export interface PlayerStatsHeroOnMapVersusRace {
+  heroStatsItemList: PlayerHeroStats[],
+  raceWinsOnMapByPatch: PlayerStatsHeroOnMapVersusRaceByPatch;
+  raceWinsOnMap: RaceWinsOnMap[];
+  id: string;
+  season: string;
+  battleTag: string;
 }
 
 export type MmrRpAtDate = {
@@ -104,3 +127,25 @@ export type MmrRpAtDate = {
 export type PlayerMmrRpTimeline = {
   mmrRpAtDates: MmrRpAtDate[];
 };
+
+export type PlayerHeroStatistic = {
+  hero: string;
+  total: string;
+  ud: string;
+  orc: string;
+  hu: string;
+  ne: string;
+}
+
+export type PlayerHeroWinRateForStatisticsTab = {
+  hero: string;
+  name: string;
+  image: string;
+  [ERaceEnum.TOTAL]: string;
+  [ERaceEnum.UNDEAD]: string;
+  [ERaceEnum.ORC]: string;
+  [ERaceEnum.HUMAN]: string;
+  [ERaceEnum.NIGHT_ELF]: string;
+  [ERaceEnum.RANDOM]: string;
+  [ERaceEnum.STARTER]: string;
+}

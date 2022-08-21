@@ -71,6 +71,55 @@
         </v-card-text>
       </v-col>
     </v-row>
+    <v-card-title>
+      {{ $t("components_player_tabs_playerstatistictab.playerheroesstatisticstitle") }}
+    </v-card-title>
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="md-2">
+        <v-card-text class="player-hero-usage-statistics__selects">
+          <v-select
+            v-model="selectedMap"
+            :items="maps"
+            item-text="mapName"
+            item-value="mapId"
+            label="Map"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="md-10">
+        <player-hero-statistics
+          v-if="selectedSeason.id !== 0"
+          :selectedMap="selectedMap"
+          :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
+        />
+      </v-col>
+    </v-row>
+    <v-card-title>
+      {{ $t("components_player_tabs_playerstatistictab.playerherowinratetitle") }}
+    </v-card-title>
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="md-2">
+        <v-card-text class="player-hero-usage-statistics__selects">
+          <v-select
+            v-model="selectedMapHeroWinRate"
+            :items="maps"
+            item-text="mapName"
+            item-value="mapId"
+            label="Map"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="md-10">
+        <player-hero-win-rate
+          v-if="selectedSeason.id !== 0"
+          :key="updatePlayerHeroStatsKey"
+          :selectedMap="selectedMapHeroWinRate"
+          :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -81,16 +130,22 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
   PlayerMmrRpTimeline,
+  PlayerStatsHeroOnMapVersusRace,
   PlayerStatsRaceOnMapVersusRace,
   RaceWinsOnMap,
 } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
+import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
+import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
+import { MatchesOnMapPerMode, MatchesOnMapPerSeason } from "@/store/overallStats/types";
 
 @Component({
   components: {
     PlayerStatsRaceVersusRaceOnMap,
     PlayerMmrRpTimelineChart,
+    PlayerHeroStatistics,
+    PlayerHeroWinRate,
     MatchesGrid,
   },
 })
@@ -98,6 +153,9 @@ export default class PlayerStatisticTab extends Vue {
   public selectedPatch = "All";
   public selectedGameMode = this.$store.direct.state.player.gameMode;
   public selectedRace = this.$store.direct.state.player.race;
+  public updatePlayerHeroStatsKey = 0;
+  public selectedMap = "Overall";
+  public selectedMapHeroWinRate = "Overall";
 
   get selectedSeason() {
     return this.$store.direct.state.player.selectedSeason;
@@ -105,6 +163,10 @@ export default class PlayerStatisticTab extends Vue {
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
     return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+  }
+
+  get playerStatsHeroVersusRaceOnMap(): PlayerStatsHeroOnMapVersusRace {
+    return this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap ?? [];
   }
 
   get loadingMmrRpTimeline(): boolean {
@@ -124,10 +186,12 @@ export default class PlayerStatisticTab extends Vue {
   }
 
   mounted(): void {
+    this.getMaps();
     if (this.isPlayerInitialized) {
       this.initMmrRpTimeline();
     }
   }
+
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
   // is called before mounted of player, which this depends on. For this case isPlayerInitialized
   // is being watched to init the mmrRpTimeline once player.vue init() has finished.
@@ -219,6 +283,7 @@ export default class PlayerStatisticTab extends Vue {
       },
     ];
   }
+
   get races() {
     return [
       {
@@ -241,7 +306,41 @@ export default class PlayerStatisticTab extends Vue {
         raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
         raceId: ERaceEnum.RANDOM,
       },
+      {
+        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
+        raceId: ERaceEnum.TOTAL,
+      },
     ];
+  }
+
+  public getMaps(): void {
+    this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
+  }
+
+  get maps() {
+    const maps = [{
+      mapName: 'Overall',
+      mapId: 'Overall',
+    }];
+    const mapsList: string[] = [];
+    this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
+      heroItemList.stats.map((stats)=> {
+        stats.winLossesOnMap.map((winLossOnMap) => {
+          const map = winLossOnMap.map;
+          if (!mapsList.includes(map)) {
+            mapsList.push(map);
+          }
+        });
+      })
+    });
+    mapsList.forEach(map => maps.push({mapName: map, mapId: map}));
+    return maps;
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .player-hero-usage-statistics__selects {
+    margin-top: 48px;
+  }
+</style>

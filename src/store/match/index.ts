@@ -16,6 +16,8 @@ const mod = {
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
+    mmr: [0, 3000],
+    sort: "startTimeDescending",
   } as MatchState,
   actions: {
     async loadMatches(
@@ -38,14 +40,17 @@ const mod = {
           state.page,
           rootState.gateway,
           state.gameMode,
-          state.map
+          state.map,
+          state.mmr,
+          state.sort
         );
       } else {
         response = await rootGetters.matchService.retrieveMatches(
           state.page,
           rootState.gateway,
           state.gameMode,
-          state.map
+          state.map,
+          state.mmr
         );
       }
 
@@ -67,7 +72,9 @@ const mod = {
         200,
         rootState.gateway,
         gameMode || state.gameMode,
-        map || state.map
+        map || state.map,
+        state.mmr,
+        state.sort
       );
 
       commit.SET_ALL_ONGOING_MATCHES(response.matches);
@@ -109,6 +116,24 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+    async setMmr(
+      context: ActionContext<MatchState, RootState>, 
+      mmr: number[]
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_MMR(mmr);
+      commit.SET_PAGE(0);
+      await dispatch.loadMatches(undefined);
+    },
+    async setSort(
+      context: ActionContext<MatchState, RootState>,
+      sort: string
+    ) {
+      const { commit, dispatch } = moduleActionContext(context, mod);
+      commit.SET_SORT(sort);
+      commit.SET_PAGE(0);
+      await dispatch.loadMatches(undefined);
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -137,6 +162,12 @@ const mod = {
     },
     SET_MAP(state: MatchState, map: string) {
       state.map = map;
+    },
+    SET_MMR(state: MatchState, mmr: number[]) {
+      state.mmr = mmr;
+    },
+    SET_SORT(state: MatchState, sort: string) {
+      state.sort = sort;
     },
   },
 } as const;
