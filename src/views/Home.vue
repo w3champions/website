@@ -24,7 +24,7 @@
               :show-arrows="false"
               :dark="$vuetify.theme.dark"
               :light="!$vuetify.theme.dark"
-              height="auto"
+              height="350px"
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
                 <v-card-title>
