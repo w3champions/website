@@ -208,3 +208,13 @@ h3 {
     }
   }
 }
+
+.v-carousel {
+  height: 400px !important;
+  .v-window__container {
+    margin-bottom: 50px;
+  }
+  .v-window-item .v-responsive__content {
+    overflow-y: auto;
+  }
+}
