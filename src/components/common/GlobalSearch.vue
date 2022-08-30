@@ -5,7 +5,7 @@
     offset-y
     transition="slide-y-transition"
     v-model="menuOpened"
-    :nudge-bottom="10"
+    :nudge-bottom="18"
     :nudge-width="300"
     :close-on-content-click="false"
   >
