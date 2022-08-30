@@ -66,7 +66,6 @@ import { debounce } from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
-import { EAvatarCategory } from "@/store/typings";
 
 @Component({
   components: {
