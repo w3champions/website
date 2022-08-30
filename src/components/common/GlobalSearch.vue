@@ -79,12 +79,6 @@ export default class GlobalSearch extends Vue {
   public isLoading = false;
   public menuOpened = false;
 
-  private static DEFAULT_AVATAR = {
-    race: EAvatarCategory.TOTAL,
-    pictureId: 0,
-    isClassic: false,
-  };
-
   private static SEARCH_DELAY = 500;
 
   private debouncedSearch = debounce((searchValue: string) => {
@@ -135,7 +129,7 @@ export default class GlobalSearch extends Vue {
   }
 
   getPlayerAvatarUrl(player: PlayerSearchData) {
-    const pfp = player.personalSetting?.profilePicture ?? GlobalSearch.DEFAULT_AVATAR;
+    const pfp = player.profilePicture;
     
     return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
   }
