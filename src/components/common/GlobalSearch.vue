@@ -31,8 +31,8 @@
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
-          item-text="id"
-          item-value="id"
+          item-text="battleTag"
+          item-value="battleTag"
         >
           <template v-slot:item="data">
             <v-list-item-avatar>
@@ -40,7 +40,7 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ data.item.id }}
+                {{ data.item.battleTag }}
               </v-list-item-title>
               <v-list-item-subtitle>
                 <div
@@ -95,11 +95,11 @@ export default class GlobalSearch extends Vue {
   @Watch("searchModel")
   public onSearchModelChanged(player: PlayerSearchData) {
     // We cleared the input, ignore
-    if (!player?.id) return;
+    if (!player?.battleTag) return;
 
     // Nativate to the selected player's profile
     this.$router.push({
-      path: getProfileUrl(player.id),
+      path: getProfileUrl(player.battleTag),
     });
 
     // Since the global search is present on all pages, we need to manually close it

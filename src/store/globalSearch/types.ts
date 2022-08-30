@@ -5,7 +5,7 @@ export type GlobalSearchState = {
 };
 
 export type PlayerSearchData = {
-  id: string;
+  battleTag: string;
   name: string;
   seasons: Season[];
   personalSetting: PersonalSetting;
