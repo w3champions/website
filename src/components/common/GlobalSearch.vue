@@ -167,6 +167,7 @@ export default class GlobalSearch extends Vue {
 
 <style lang="scss">
 .global-search {
+  z-index: 1000 !important;
   .autocomplete-wrapper {
     .v-text-field__details {
       display: none;
