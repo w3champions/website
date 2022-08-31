@@ -2,6 +2,8 @@ import { ProfilePicture } from "@/store/personalSettings/types";
 
 export type GlobalSearchState = {
   players: PlayerSearchData[];
+  // False if we fetched all pages of the search
+  hasMore: boolean;
 };
 
 export type PlayerSearchData = {

@@ -53,6 +53,9 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </template>
+          <template v-slot:append-item>
+            <div v-intersect="endIntersect" />
+          </template>
         </v-autocomplete>
       </v-card-title>
     </v-card>
@@ -80,9 +83,7 @@ export default class GlobalSearch extends Vue {
 
   private static SEARCH_DELAY = 500;
 
-  private debouncedSearch = debounce((searchValue: string) => {
-    this.$store.direct.dispatch.globalSearch.search(searchValue);
-  }, GlobalSearch.SEARCH_DELAY);
+  private debouncedSearch = debounce(this.dispatchSearch, GlobalSearch.SEARCH_DELAY);
 
   // Handler when selecting a player from the list
   @Watch("searchModel")
@@ -104,15 +105,30 @@ export default class GlobalSearch extends Vue {
   }
 
   @Watch("search")
-  public onSearchChanged(searchValue: string) {
-    if (searchValue && searchValue.length >= 3) {
+  public onSearchChanged() {
+    this.searchChangeHandler();
+  }
+
+  private dispatchSearch(append = false) {
+    this.$store.direct.dispatch.globalSearch.search({ searchText: this.search, append });
+  }
+
+  private searchChangeHandler(append = false) {
+    if (this.search && this.search.length >= 3) {
       this.isLoading = true;
-      this.debouncedSearch(searchValue);
+      this.debouncedSearch(append);
     } else {
       this.$store.direct.dispatch.globalSearch.clearSearch();
       this.isLoading = false;
       // Prevent previous calls from executing
       this.debouncedSearch.clear();
+    }
+  }
+
+  // Reached the end of the list, try to load more players
+  public endIntersect(_entries: unknown, _observer: unknown, isIntersecting: boolean) {
+    if (isIntersecting && !this.isLoading && this.allowAppend) {
+      this.searchChangeHandler(true);
     }
   }
 
@@ -135,6 +151,10 @@ export default class GlobalSearch extends Vue {
 
   get players(): PlayerSearchData[] {
     return this.$store.direct.state.globalSearch.players;
+  }
+
+  get allowAppend(): boolean {
+    return this.$store.direct.state.globalSearch.hasMore;
   }
 
   @Watch("players")
