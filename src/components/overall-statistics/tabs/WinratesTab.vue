@@ -74,6 +74,12 @@
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
                   />
+                  <player-stats-race-versus-race-on-map-table-cell
+                    :stats="item.winLosses[0]"
+                    :compareRace="item.race"
+                    :winThreshold="0.51"
+                    :lossThreshold="0.49"
+                  />
                 </tr>
               </tbody>
             </template>
@@ -132,6 +138,11 @@ export default class WinratesTab extends Vue {
         align: "start",
         sortable: false,
       },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        align: "start",
+        sortable: false,
+      },
     ];
   }
 
@@ -172,7 +183,7 @@ export default class WinratesTab extends Vue {
     if (!statsPerMapAndRace) {
       return [];
     }
-    return statsPerMapAndRace.ratio.slice(1, 5);
+    return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
   }
 
   public setSelectedMap(map: string) {
