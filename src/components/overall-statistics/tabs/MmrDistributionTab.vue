@@ -30,10 +30,9 @@
             outlined
           />
         </v-card-text>
-        <v-card-text v-if="!loadingMapAndRaceStats">
+        <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded()">
           <gateway-select
             @gatewayChanged="gatewayChanged"
-            v-if="isGatewayNeeded()"
           />
         </v-card-text>
 
