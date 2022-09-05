@@ -57,6 +57,7 @@ export type MmrDistribution = {
   top25ercentIndex: number;
   top50PercentIndex: number;
   distributedMmrs: MmrCount[];
+  standardDeviation: number;
 };
 
 export type PlayersPerDay = {

@@ -39,6 +39,15 @@
         <v-card-text>
           {{
             $t(
+              "components_overall-statistics_tabs_mmrdistributiontab.stddev"
+            )
+          }}
+          <div>{{standardDeviation}}</div>
+        </v-card-text>
+
+        <v-card-text>
+          {{
+            $t(
               "components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc"
             )
           }}
@@ -206,6 +215,10 @@ export default class PlayerActivityTab extends Vue {
 
   get mmrDistribution() {
     return this.$store.direct.state.overallStatistics.mmrDistribution;
+  }
+
+  get standardDeviation(): string {
+    return this.mmrDistribution?.standardDeviation?.toString() ?? "-";
   }
 
   get authCode(): string {
