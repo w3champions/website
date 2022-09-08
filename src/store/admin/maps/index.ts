@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
@@ -46,7 +47,13 @@ const mod = {
     },
 
     async loadMapsForCurrentSeason(context: ActionContext<AdminMapsState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      // Season maps already fetched, skip
+      if (!_.isEmpty(state.seasonMaps)) {
+        return
+      }
+
       const searchMapsResponse = await rootGetters.mapService.getMapsForCurrentSeason();
       commit.SET_SEASON_MAPS(searchMapsResponse);
     },
