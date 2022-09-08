@@ -20,9 +20,9 @@
           <v-select
             v-model="selectedGameMode"
             class="over-chart-select-box"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModes"
+            item-text="name"
+            item-value="id"
             @change="gameModeChanged"
             :label="
               $t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)
@@ -71,8 +71,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
+import { Component, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/typings";
@@ -84,68 +84,16 @@ import { Watch } from "vue-property-decorator";
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
 })
-export default class PlayerActivityTab extends Vue {
+export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public selectedSeason: Season = { id: 1 };
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
-  private loadingData = true;
+  public loadingData = true;
 
   get seasons() {
     return this.$store.direct.state.rankings.seasons;
   }
 
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        modeId: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        modeId: EGameMode.GM_2ON2_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        modeId: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        gameMode: EGameMode.GM_FFA,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_1v1_x20,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_2v2_X20,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_4v4_X20,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
-        modeId: EGameMode.GM_ROC_1ON1,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`
-        ),
-        modeId: EGameMode.GM_BANJOBALL_4ON4,
-      },
-    ];
-  }
   get loadingMapAndRaceStats(): boolean {
     return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
   }
@@ -196,6 +144,7 @@ export default class PlayerActivityTab extends Vue {
   }
 
   private async init() {
+    await this.loadActiveGameModes();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
     this.updateMMRDistribution();
