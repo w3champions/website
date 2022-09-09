@@ -144,6 +144,11 @@ export enum EGameMode {
   GM_BANJOBALL_4ON4 = 701,
 }
 
+export enum EGameModeType {
+  MELEE = "MELEE",
+  NON_MELEE = "NON_MELEE",
+}
+
 export enum EPick {
   OVERALL,
   FIRST = 1,

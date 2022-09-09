@@ -38,9 +38,9 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModes"
+            item-text="name"
+            item-value="id"
             v-model="selectedGameMode"
             @change="setTimelineMode"
             label="Select Mode"
@@ -125,7 +125,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
+
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
@@ -149,7 +151,7 @@ import { MatchesOnMapPerMode, MatchesOnMapPerSeason } from "@/store/overallStats
     MatchesGrid,
   },
 })
-export default class PlayerStatisticTab extends Vue {
+export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   public selectedPatch = "All";
   public selectedGameMode = this.$store.direct.state.player.gameMode;
   public selectedRace = this.$store.direct.state.player.race;
@@ -185,11 +187,12 @@ export default class PlayerStatisticTab extends Vue {
     return this.$store.direct.state.player.isInitialized;
   }
 
-  mounted(): void {
+  async mounted(): Promise<void> {
     this.getMaps();
     if (this.isPlayerInitialized) {
       this.initMmrRpTimeline();
     }
+    await this.loadActiveGameModes();
   }
 
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here

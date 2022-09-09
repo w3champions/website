@@ -1,4 +1,6 @@
-import { EColors, EComputer, ERaceEnum, EGameMode } from "@/store/typings";
+import {
+  EColors, EComputer, ERaceEnum, EGameMode, EGameModeType,
+} from "@/store/typings";
 
 export type AdminMapsState = {
   totalMaps: number;
@@ -19,6 +21,7 @@ export interface GetSeasonMapsResponse {
 
 export interface SeasonMap {
   id: EGameMode;
+  type: EGameModeType;
   gameMode: string;
   maps: Map[];
 }

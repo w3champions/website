@@ -13,9 +13,9 @@
         <v-card-text>
           <v-select
             v-model="selectedHeroesPlayedMode"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeMeleeGameModes"
+            item-text="name"
+            item-value="id"
             @change="setSelectedHeroesPlayedMode"
             :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
             outlined
@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
+import { Component, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
@@ -59,11 +59,12 @@ import { PlayedHero } from "@/store/overallStats/types";
     PopularGameTimeChart,
   },
 })
-export default class HeroTab extends Vue {
+export default class HeroTab extends Mixins(GameModesMixin) {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
 
   async mounted() {
+    await this.loadActiveGameModes();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
   }
 
@@ -103,31 +104,6 @@ export default class HeroTab extends Vue {
 
   public setSelectedHeroesPlayedMode(mode: EGameMode) {
     this.selectedHeroesPlayedMode = mode;
-  }
-
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        modeId: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        modeId: EGameMode.GM_2ON2_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        modeId: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA,
-      },
-    ];
   }
 }
 </script>
