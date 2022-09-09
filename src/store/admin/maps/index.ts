@@ -3,7 +3,7 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import {
-  AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse
+  AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse, SeasonMap,
 } from "./types";
 const mod = {
   namespaced: true,
@@ -12,6 +12,7 @@ const mod = {
     maps: [] as Map[],
     mapsFilter: undefined,
     mapFiles: [] as  MapFileData[],
+    seasonMaps: [] as SeasonMap[],
   } as AdminMapsState,
 
   actions: {
