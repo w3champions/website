@@ -13,7 +13,7 @@
         <v-card-text>
           <v-select
             v-model="selectedHeroesPlayedMode"
-            :items="activeMeleeGameModes"
+            :items="gameModes"
             item-text="name"
             item-value="id"
             @change="setSelectedHeroesPlayedMode"
@@ -66,6 +66,10 @@ export default class HeroTab extends Mixins(GameModesMixin) {
   async mounted() {
     await this.loadActiveGameModes();
     await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+  }
+
+  get gameModes() {
+    return this.activeMeleeGameModesWithAT.filter(x => x.id !== EGameMode.GM_4ON4_AT);
   }
 
   get picks() {
