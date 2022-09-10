@@ -266,27 +266,6 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
   }
 
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        modeId: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        modeId: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA,
-      },
-    ];
-  }
-
   get races() {
     return [
       {
