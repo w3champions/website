@@ -48,7 +48,7 @@ export default class GameModeSelect extends Mixins(GameModesMixin) {
   }
 
   get gameModes(): Array<{ name: LocaleMessage; id: number }> {
-    let modes = this.activeGameModes;
+    let modes = this.activeGameModesWithAT;
 
     if (this.disabledModes) {
       modes = modes?.filter((x) => !this.disabledModes?.includes(x.id));

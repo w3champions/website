@@ -79,7 +79,7 @@
         <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
-            :items="activeGameModes"
+            :items="activeGameModesWithAT"
             item-text="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
