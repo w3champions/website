@@ -326,6 +326,7 @@ const data = {
       vsorc: "vs Orc",
       vsud: "vs Undead",
       vsne: "vs Night Elf",
+      vsrdm: "vs Random",
     },
     "components_overall-statistics_gamelengthchart": {
       amountofgames: "amount of games",
