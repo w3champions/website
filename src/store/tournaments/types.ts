@@ -60,32 +60,23 @@ export interface ITournamentPlayer {
   score?: number;
 }
 
-// export enum ConnectionType {
-//   Default = 1,
-//   StraightOpen = 2,
-//   StraightOpenDown = 3,
-// }
-// export interface ITournamentRound {
-//   name: string;
-//   round: number;
-//   matches: ITournamentMatch[];
-//   // connectionType?: ConnectionType;
-// }
 export interface ITournamentRound {
   name: string;
-  round: number;
-  series: Array<ITournamentSeries>;
+  number: number;
+  series: ITournamentSeries[];
 }
 
 export interface ITournamentSeries {
-  id?: string;
-  players?: ITournamentPlayer[];
+  id: string;
+  players?: ISeriesPlayer[];
   matches?: ITournamentMatch[];
 }
 
 export interface ISeriesPlayer {
   battleTag: string;
+  team: number;
   score?: number;
+  won?: boolean;
 }
 
 export interface ITournamentMatch {
@@ -96,5 +87,6 @@ export interface ITournamentMatch {
 
 export interface IMatchPlayer {
   battleTag: string;
+  team: number,
   won?: boolean;
 }

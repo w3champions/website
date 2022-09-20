@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom>
     <template v-slot:activator="{ on }">
-      <span v-on="on" @click="goToCountryRankings()" class="clickable">
+      <span v-on="on" @click="clickable && goToCountryRankings()" class="clickable">
         <country-flag
           v-if="selectedCountryCode"
           class="country-flag"
@@ -24,6 +24,7 @@ import CountryFlag from "vue-country-flag";
 export default class CountryFlagExtended extends Vue {
   @Prop() countryCode?: string;
   @Prop() location?: string;
+  @Prop({ default: true }) clickable!: string;
 
   get selectedCountryCode(): string {
     if (this.countryCode) {

@@ -24,34 +24,227 @@ const mod = {
         winner: {
           battleTag: 'Happy#1233',
           race: ERaceEnum.UNDEAD,
-          countryCode: '123',
+          countryCode: 'RU',
         } as ITournamentPlayer,
         players: [
           {
             battleTag: 'Happy#1233',
             race: ERaceEnum.UNDEAD,
-            countryCode: '123',
+            countryCode: 'RU',
           } as ITournamentPlayer,
           {
             battleTag: 'Grubby#1728',
             race: ERaceEnum.ORC,
-            countryCode: '321',
+            countryCode: 'NED',
           } as ITournamentPlayer,
         ],
         rounds: [
           {
             name: 'Round 1',
-            round: 1,
+            number: 1,
             series: [
               {
+                id: '1',
                 players: [
                   {
                     battleTag: 'Happy#1233',
                     score: 1,
+                    team: 0,
+                    won: false,
                   } as ISeriesPlayer,
                   {
                     battleTag: 'Grubby#1728',
                     score: 0,
+                    team: 1,
+                    won: true,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+              {
+                id: '2',
+                players: [
+                  {
+                    battleTag: 'Happy2#1233',
+                    score: 1,
+                    team: 0,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby2#1728',
+                    score: 0,
+                    team: 1,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy2#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby2#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+              {
+                id: '3',
+                players: [
+                  {
+                    battleTag: 'Happy3#1233',
+                    score: 1,
+                    team: 0,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby3#1728',
+                    score: 0,
+                    team: 1,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy3#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby3#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+              {
+                id: '4',
+                players: [
+                  {
+                    battleTag: 'Happy4#1233',
+                    score: 1,
+                    team: 0,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby4#1728',
+                    score: 0,
+                    team: 1,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy4#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby4#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+            ],
+          } as ITournamentRound,
+          {
+            name: 'Round 2',
+            number: 1,
+            series: [
+              {
+                id: '1',
+                players: [
+                  {
+                    battleTag: 'Happy#1233',
+                    team: 0,
+                    score: 1,
+                    won: true,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby#1728',
+                    score: 0,
+                    team: 1,
+                    won: false,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+              {
+                id: '2',
+                players: [
+                  {
+                    battleTag: 'Happy#1233',
+                    score: 1,
+                    team: 0,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby#1728',
+                    score: 0,
+                    team: 1,
+                  } as ISeriesPlayer,
+                ],
+                matches: [
+                  {
+                    players: [
+                      {
+                        battleTag: 'Happy#1233',
+                        won: true,
+                      } as IMatchPlayer,
+                      {
+                        battleTag: 'Grubby#1728',
+                        won: false,
+                      } as IMatchPlayer,
+                    ],
+                  } as ITournamentMatch,
+                ],
+              } as ITournamentSeries,
+            ],
+          } as ITournamentRound,
+          {
+            name: 'Round 3',
+            number: 2,
+            series: [
+              {
+                id: '3',
+                players: [
+                  {
+                    battleTag: 'Happy#1233',
+                    score: 1,
+                    team: 0,
+                  } as ISeriesPlayer,
+                  {
+                    battleTag: 'Grubby#1728',
+                    score: 0,
+                    team: 1,
                   } as ISeriesPlayer,
                 ],
                 matches: [
@@ -75,7 +268,7 @@ const mod = {
         admins: [
           {
             battleTag: 'admin#1234',
-            countryCode: '321',
+            countryCode: 'RO',
           } as ITournamentAdmin,
         ],
       }

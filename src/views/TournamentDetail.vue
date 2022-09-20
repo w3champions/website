@@ -4,9 +4,9 @@
       <v-card-title>
         {{tournament.name}}
       </v-card-title>
-      <div class="pl-4">
-        <tournament-description tournament="tournament" />
-        <tournament-bracket tournament="tournament" />
+      <div class="pl-4 pb-4">
+        <tournament-description :tournament="tournament" />
+        <tournament-bracket :tournament="tournament" />
       </div>
     </v-card>
   </v-container>
@@ -25,7 +25,6 @@ import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
     TournamentBracket,
   },
 })
-
 export default class TournamentDetail extends Vue {
   @Prop() public tournamentId!: string;
 
