@@ -14,17 +14,17 @@
         class="elevation-1"
         @click:row="onRowClick"
       >
-        <template #[`item.startDateTime`]>
-          Date
+        <template #[`item.startDateTime`]="{ item }">
+          {{formatDate(item)}}
         </template>
-        <template #[`item.state`]>
-          Name
+        <template #[`item.state`]="{ item }">
+          {{getStateDescription(item)}}
         </template>
         <template #[`item.playerCount`]="{ item }">
           {{item.players.length}}
         </template>
         <template #[`item.winner`]="{ item }">
-          {{item.winner.battleTag}}
+          {{item.winner ? item.winner.battleTag : "-"}}
         </template>
       </v-data-table>
       </div>
@@ -37,9 +37,19 @@ import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { getTournamentUrl } from "@/helpers/url-functions";
+import { format } from "date-fns";
+import { TournamentStateLabel } from "@/helpers/tournaments"
 
 @Component
 export default class TournamentsView extends Vue {
+  async mounted() {
+    await this.$store.direct.dispatch.tournaments.retrieveTournaments();
+  }
+
+  get tournaments() {
+    return this.$store.direct.state.tournaments.tournaments;
+  }
+
   get headers() {
     return [
       {
@@ -68,15 +78,18 @@ export default class TournamentsView extends Vue {
     ];
   }
 
-  get tournaments() {
-    console.log(this.$store.direct.state.tournaments.tournaments);
-    return this.$store.direct.state.tournaments.tournaments;
-  }
-
   public onRowClick(item: ITournament) {
     this.$router.push({
       path: getTournamentUrl(item.id),
     });
+  }
+
+  public formatDate(tournament: ITournament) {
+    return format(tournament.startDateTime, 'yyyy-MM-dd p');
+  }
+
+  public getStateDescription(tournament: ITournament) {
+    return TournamentStateLabel[tournament.state];
   }
 
   public itemClass(item: ITournament) {

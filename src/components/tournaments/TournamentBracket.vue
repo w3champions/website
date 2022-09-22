@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="showBracket">
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" v-bind:style="style">
       <template v-for="(round, roundIndex) in rounds">
@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import _ from "lodash";
-import { ITournament, ITournamentRound } from "@/store/tournaments/types";
+import { ETournamentState, ITournament, ITournamentRound } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import TournamentRoundMatches from "./TournamentRoundMatches.vue";
@@ -49,6 +49,12 @@ export default class TournamentBracket extends Vue {
   @Prop({ default: 28 }) public playerHeight!: number;
   @Prop({ default: 32 }) public roundNameHeight!: number;
   @Prop({ default: 14 }) public fontSize!: number;
+
+  get showBracket() {
+    return [
+      ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
+    ].includes(this.tournament.state);
+  }
 
   get rounds(): ITournamentRound[] {
     return this.tournament.rounds;

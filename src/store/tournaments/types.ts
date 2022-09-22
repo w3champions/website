@@ -24,6 +24,7 @@ export enum ETournamentType {
 
 export type TournamentsState = {
   tournaments: ITournament[];
+  loaded: boolean;
 };
 
 export interface ITournamentSeed {

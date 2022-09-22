@@ -1,32 +1,97 @@
 <template>
   <div>
     <div>
-      <b>Start Time:</b>
-      {{ 123 }}
+      <b>Gateway:</b>
+      {{gateway}}
     </div>
     <div>
-      <b>Game Type:</b>
-      {{ "1vs1" }}
+      <b>Start Time:</b>
+      {{formattedDate}}
+    </div>
+    <div>
+      <b>Game Mode:</b>
+      {{gameMode}}
     </div>
     <div>
       <b>Format:</b>
-      {{ "Single Elimination" }}
+      {{format}}
+    </div>
+    <div>
+      <b>Player Count:</b>
+      {{playerCount}}
     </div>
     <div>
       <b>Map Pool:</b>
-      {{ "EI, TM, CH, AZ" }}
+      {{mapPool}}
+    </div>
+    <div class="mt-2" v-if="statusInit || statusRegistration || statusCanceled">
+      <div v-if="statusInit">
+        Registration didn't start yet.
+      </div>
+      <div v-else-if="statusRegistration">
+        Registration is open.
+      </div>
+      <div v-else-if="statusCanceled">
+        The tournament was canceled.
+      </div>
+      <div class="mt-2" v-if="tournament.players.length > 0">
+        Registered players list: {{tournament.players.map(p => p.battleTag).join(', ')}}
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { ITournament } from "@/store/tournaments/types";
+import { ETournamentState, ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { format } from "date-fns";
+import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
 
 @Component
-export default class TournamentDetail extends Vue {
+export default class TournamentDescription extends Vue {
   @Prop() public tournament!: ITournament;
+
+  get gateway() {
+    return EGatewayLabel[this.tournament.gateway];
+  }
+
+  get formattedDate() {
+    return format(this.tournament.startDateTime, 'yyyy-MM-dd p');
+  }
+
+  get gameMode() {
+    return EGameModeLabel[this.tournament.mode];
+  }
+
+  get format() {
+    return ETournamentFormatLabel[this.tournament.format];
+  }
+
+  get playerCount() {
+    return this.tournament.players.length;
+  }
+
+  get mapPool() {
+    // TODO: get map names
+    return this.tournament.mapPool;
+  }
+
+  get statusInit() {
+    return this.tournament.state === ETournamentState.INIT;
+  }
+
+  get statusRegistration() {
+    return this.tournament.state === ETournamentState.REGISTRATION;
+  }
+
+  get statusMatchGeneration() {
+    return this.tournament.state === ETournamentState.MATCH_GENERATION;
+  }
+
+  get statusCanceled() {
+    return this.tournament.state === ETournamentState.CANCELED;
+  }
 }
 </script>
 
