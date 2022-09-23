@@ -1,32 +1,33 @@
 <template>
   <v-container>
-    <v-card class="mt-2">
+    <v-card class="mt-2 pb-2 pr-4">
       <v-card-title>
         Tournaments
       </v-card-title>
       <div class="pl-4">
         <v-data-table
-        :headers="headers"
-        :items="tournaments"
-        :items-per-page="10"
-        :item-class="itemClass"
-        :server-items-length="3"
-        class="elevation-1"
-        @click:row="onRowClick"
-      >
-        <template #[`item.startDateTime`]="{ item }">
-          {{formatDate(item)}}
-        </template>
-        <template #[`item.state`]="{ item }">
-          {{getStateDescription(item)}}
-        </template>
-        <template #[`item.playerCount`]="{ item }">
-          {{item.players.length}}
-        </template>
-        <template #[`item.winner`]="{ item }">
-          {{item.winner ? item.winner.battleTag : "-"}}
-        </template>
-      </v-data-table>
+          :headers="headers"
+          :items="tournaments"
+          :disable-pagination="true"
+          :items-per-page="-1"
+          :item-class="itemClass"
+          class="elevation-1"
+          @click:row="onRowClick"
+          :hide-default-footer="true"
+        >
+          <template #[`item.startDateTime`]="{ item }">
+            {{formatDate(item)}}
+          </template>
+          <template #[`item.state`]="{ item }">
+            {{getStateDescription(item)}}
+          </template>
+          <template #[`item.playerCount`]="{ item }">
+            {{item.players.length}}
+          </template>
+          <template #[`item.winner`]="{ item }">
+            {{item.winner ? item.winner.battleTag : "-"}}
+          </template>
+        </v-data-table>
       </div>
     </v-card>
   </v-container>
