@@ -57,6 +57,22 @@ export default class TournamentBracket extends Vue {
   }
 
   get rounds(): ITournamentRound[] {
+    const playerExtraData = _.fromPairs(
+      this.tournament.players.map(p => [
+        p.battleTag,
+        _.pick(p, [ 'countryCode', 'race' ]),
+      ])
+    );
+    for (const round of this.tournament.rounds) {
+      for (const series of round.series) {
+        if (!series.players) {
+          continue;
+        }
+        for (const player of series.players) {
+          _.assign(player, playerExtraData[player.battleTag]);
+        }
+      }
+    }
     return this.tournament.rounds;
   }
 

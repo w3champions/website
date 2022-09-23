@@ -1,18 +1,18 @@
 <template>
-  <div v-bind:class="`player ${side} ${playerWon ? 'winner' : 'loser'}`" v-bind:style="style">
-    <span class="player-name d-flex align-center">
-      <span style="padding: 5px; height: 100%;">
+  <div v-bind:class="`player ${side} ${won ? 'winner' : 'loser'}`" v-bind:style="style">
+    <span class="player-name d-flex align-center" v-bind:class="raceClass">
+      <span class="player-country">
         <country-flag-extended
           class="country-flag"
-          :location="'RO'"
+          :location="countryCode"
           :clickable="false"
         />
       </span>
-      {{playerName}}
+      {{name}}
     </span>
     <span class="player-score-box d-flex justify-center align-center">
       <span class="player-score">
-        {{playerScore}}
+        {{score}}
       </span>
     </span>
   </div>
@@ -23,6 +23,7 @@ import { ISeriesPlayer } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
+import { ERaceEnum } from "@/store/typings";
 
 @Component({
   components: {
@@ -34,16 +35,25 @@ export default class TournamentSeriesPlayer extends Vue {
   @Prop() public player!: ISeriesPlayer;
   @Prop() public playerHeight!: number;
 
-  get playerWon() {
+  get won() {
     return this.player?.won ?? false;
   }
 
-  get playerName() {
+  get name() {
     return this.getName(this.player?.battleTag ?? '');
   }
 
-  get playerScore() {
+  get countryCode() {
+    return this.player?.countryCode;
+  }
+
+  get score() {
     return this.player?.score ?? '';
+  }
+
+  get raceClass() {
+    const race = this.player?.race;
+    return ERaceEnum[race].toLowerCase();
   }
 
   private getName(battleTag: string) {
@@ -82,6 +92,23 @@ export default class TournamentSeriesPlayer extends Vue {
 .player-name {
   width: -webkit-fill-available;
   height: 100%;
+}
+.player-name.human {
+  background-color: #b8b8f2;
+}
+.player-name.orc {
+  background-color: #f2b8b8;
+}
+.player-name.night_elf {
+  background-color: #b8f2b8;
+}
+.player-name.undead {
+  background-color: #f2b8f2;
+}
+.player-country {
+  padding: 5px;
+  height: 100%;
+  width: 28px;
 }
 .player-score-box {
   height: 100%;

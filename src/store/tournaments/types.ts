@@ -58,7 +58,6 @@ export interface ITournamentPlayer {
   battleTag: string;
   race: ERaceEnum;
   countryCode?: string;
-  score?: number;
 }
 
 export interface ITournamentRound {
@@ -78,6 +77,8 @@ export interface ISeriesPlayer {
   team: number;
   score?: number;
   won?: boolean;
+  race: ERaceEnum; // copied from ITournamentPlayer
+  countryCode?: string; // copied from ITournamentPlayer
 }
 
 export interface ITournamentMatch {
