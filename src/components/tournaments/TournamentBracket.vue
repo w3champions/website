@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showBracket">
+  <div v-if="showBracket" class="black--text">
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" v-bind:style="style">
       <template v-for="(round, roundIndex) in rounds">
@@ -45,8 +45,8 @@ export default class TournamentBracket extends Vue {
   @Prop() public tournament!: ITournament;
   @Prop({ default: 156 }) public roundWidth!: number;
   @Prop({ default: 36 }) public connectorWidth!: number;
-  @Prop({ default: 32 }) public verticalSpace!: number;
-  @Prop({ default: 28 }) public playerHeight!: number;
+  @Prop({ default: 26 }) public verticalSpace!: number;
+  @Prop({ default: 25 }) public playerHeight!: number;
   @Prop({ default: 32 }) public roundNameHeight!: number;
   @Prop({ default: 14 }) public fontSize!: number;
 

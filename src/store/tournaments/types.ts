@@ -22,6 +22,15 @@ export enum ETournamentType {
   CUSTOM,
 }
 
+export enum ESeriesState {
+  INIT,
+  VETO,
+  IN_PROGRESS,
+  FINISHED,
+  BYE,
+  CANCELED,
+}
+
 export type TournamentsState = {
   tournaments: ITournament[];
   loaded: boolean;
@@ -68,6 +77,7 @@ export interface ITournamentRound {
 
 export interface ITournamentSeries {
   id: string;
+  state: ESeriesState;
   players?: ISeriesPlayer[];
   matches?: ITournamentMatch[];
 }

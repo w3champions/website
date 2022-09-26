@@ -10,6 +10,7 @@
           :seriesIndex="index"
           :playerHeight="playerHeight"
           :verticalSpace="verticalSpace"
+          :roundWidth="roundWidth"
           v-bind:key="s.id"
         />
       </template>

@@ -1,14 +1,16 @@
 <template>
   <div v-bind:class="`player ${side} ${won ? 'winner' : 'loser'}`" v-bind:style="style">
-    <span class="player-name d-flex align-center" v-bind:class="raceClass">
-      <span class="player-country">
+    <span class="player-slot d-flex align-center" v-bind:class="raceClass" v-bind:style="slotStyle">
+      <span class="player-country d-flex justify-center align-center">
         <country-flag-extended
           class="country-flag"
           :location="countryCode"
           :clickable="false"
         />
       </span>
-      {{name}}
+      <span class="player-name">
+        {{name}}
+      </span>
     </span>
     <span class="player-score-box d-flex justify-center align-center">
       <span class="player-score">
@@ -19,8 +21,9 @@
 </template>
 
 <script lang="ts">
-import { ISeriesPlayer } from "@/store/tournaments/types";
 import Vue from "vue";
+import _ from "lodash";
+import { ISeriesPlayer } from "@/store/tournaments/types";
 import { Component, Prop } from "vue-property-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/typings";
@@ -34,6 +37,8 @@ export default class TournamentSeriesPlayer extends Vue {
   @Prop() public side!: 'top' | 'bottom';
   @Prop() public player!: ISeriesPlayer;
   @Prop() public playerHeight!: number;
+  @Prop() public roundWidth!: number;
+  @Prop() public seriesFinished!: boolean;
 
   get won() {
     return this.player?.won ?? false;
@@ -48,11 +53,23 @@ export default class TournamentSeriesPlayer extends Vue {
   }
 
   get score() {
-    return this.player?.score ?? '';
+    if (this.player?.score) {
+      return this.player?.score;
+    }
+    if (!this.seriesFinished) {
+      return '';
+    }
+    if (this.player?.won) {
+      return '1';
+    }
+    return '-';
   }
 
   get raceClass() {
-    const race = this.player?.race;
+    if (_.isNil(this.player)) {
+      return '';
+    }
+    const race = this.player.race;
     return ERaceEnum[race].toLowerCase();
   }
 
@@ -68,6 +85,13 @@ export default class TournamentSeriesPlayer extends Vue {
     }
     return {
       height: `${height}px`,
+    }
+  }
+
+  get slotStyle() {
+    return {
+      // subtract box and border width
+      'max-width': `${this.roundWidth - 27 - 2}px`,
     }
   }
 }
@@ -89,35 +113,44 @@ export default class TournamentSeriesPlayer extends Vue {
 .player.winner {
   font-weight: bold;
 }
-.player-name {
+.player-slot {
   width: -webkit-fill-available;
   height: 100%;
 }
-.player-name.human {
+.player-slot.human {
   background-color: #b8b8f2;
 }
-.player-name.orc {
+.player-slot.orc {
   background-color: #f2b8b8;
 }
-.player-name.night_elf {
+.player-slot.night_elf {
   background-color: #b8f2b8;
 }
-.player-name.undead {
+.player-slot.undead {
   background-color: #f2b8f2;
+}
+.player-slot.random {
+  background-color: #f2f2b8;
 }
 .player-country {
   padding: 5px;
+  padding-bottom: 1px;
   height: 100%;
   width: 28px;
 }
 .player-score-box {
   height: 100%;
-  width: 32px;
+  min-width: 27px;
   background: lightgrey;
   border-left: 1px solid darkgrey;
 }
 .player-score {
   position: relative;
   left: -1px;
+}
+.player-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

@@ -4,17 +4,21 @@
       :side="'top'"
       :player="topPlayer"
       :playerHeight="playerHeight"
+      :seriesFinished="seriesFinished"
+      :roundWidth="roundWidth"
     />
     <tournament-series-player
       :side="'bottom'"
       :player="bottomPlayer"
       :playerHeight="playerHeight"
+      :seriesFinished="seriesFinished"
+      :roundWidth="roundWidth"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { ITournamentSeries } from "@/store/tournaments/types";
+import { ITournamentSeries, ESeriesState } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
@@ -29,6 +33,7 @@ export default class TournamentSeries extends Vue {
   @Prop() public series!: ITournamentSeries;
   @Prop() public playerHeight!: number;
   @Prop() public verticalSpace!: number;
+  @Prop() public roundWidth!: number;
 
   get topPlayer() {
     return this.series.players?.find(p => p.team === 0);
@@ -36,6 +41,10 @@ export default class TournamentSeries extends Vue {
 
   get bottomPlayer() {
     return this.series.players?.find(p => p.team === 1);
+  }
+
+  get seriesFinished() {
+    return [ ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED ].includes(this.series.state);
   }
 
   get style() {

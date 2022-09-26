@@ -24,12 +24,15 @@
       <b>Map Pool:</b>
       {{mapPool}}
     </div>
-    <div class="mt-2" v-if="statusInit || statusRegistration || statusCanceled">
+    <div class="mt-2" v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled">
       <div v-if="statusInit">
         Registration didn't start yet.
       </div>
       <div v-else-if="statusRegistration">
         Registration is open.
+      </div>
+      <div v-else-if="statusMatchGeneration">
+        Generating bracket.
       </div>
       <div v-else-if="statusCanceled">
         The tournament was canceled.
