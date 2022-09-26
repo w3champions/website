@@ -24,6 +24,9 @@
       <b>Map Pool:</b>
       {{mapPool}}
     </div>
+    <div v-if="matcherinoUrl">
+      <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
+    </div>
     <div class="mt-2" v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled">
       <div v-if="statusInit">
         Registration didn't start yet.
@@ -94,6 +97,10 @@ export default class TournamentDescription extends Vue {
 
   get statusCanceled() {
     return this.tournament.state === ETournamentState.CANCELED;
+  }
+
+  get matcherinoUrl() {
+    return this.tournament.matcherinoUrl;
   }
 }
 </script>

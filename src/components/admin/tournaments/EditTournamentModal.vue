@@ -10,11 +10,19 @@
         item-text="name"
         item-value="id"
         label="Gateway"
+        hide-details
+        single-line
       />
-      <v-text-field v-model="name" label="Name"></v-text-field>
+      <v-text-field
+        v-model="name"
+        label="Name"
+        hide-details
+        single-line
+      />
       <v-datetime-picker
         label="Date / Time (UTC)"
         v-model="startDateTime"
+        :textFieldProps="{ 'single-line': true, 'hide-details': true }"
       />
       <v-select
         v-if="isEdit"
@@ -23,11 +31,13 @@
         item-text="name"
         item-value="id"
         label="State"
+        hide-details
+        single-line
       />
-      <div>
+      <div class="mt-4">
         Map Pool
       </div>
-      <v-row class="mt-0 mb-3">
+      <v-row class="mt-0 mb-0">
         <v-col cols="4" class="py-0" v-for="map in maps" v-bind:key="map.id">
           <v-checkbox
             :multiple="true"
@@ -35,6 +45,7 @@
             :label="map.name"
             :value="map.id"
             :dense="true"
+            hide-details
           />
         </v-col>
       </v-row>
@@ -44,6 +55,8 @@
         item-text="name"
         item-value="id"
         label="Game Mode"
+        hide-details
+        single-line
       />
       <v-select
         :items="formats"
@@ -51,9 +64,53 @@
         item-text="name"
         item-value="id"
         label="Format"
+        hide-details
+        single-line
       />
+      <v-row>
+        <v-col cols="4">
+          <v-text-field
+            v-model="registrationTimeMinutes"
+            label="Registration Time (mins)"
+            hide-details
+            type="number"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            v-model="readyTimeSeconds"
+            label="Ready Time (s)"
+            hide-details
+            type="number"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            v-model="vetoTimeSeconds"
+            label="Veto Time (s)"
+            hide-details
+            type="number"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
+          <v-text-field
+            v-model="showWinnerTimeHours"
+            label="Show Winner Time (hrs)"
+            hide-details
+            type="number"
+          />
+        </v-col>
+        <v-col cols="8">
+          <v-text-field
+            v-model="matcherinoUrl"
+            label="Matcherino URL"
+            hide-details
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
-
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
       <v-btn text @click="cancel">
@@ -88,6 +145,11 @@ export default class AddPlayerModal extends Vue {
   public format = ETournamentFormat.SINGLE_ELIM;
   public mapPool = this.maps.slice(0, 5).map(m => m.id);
   public state = ETournamentState.INIT;
+  public registrationTimeMinutes = 5;
+  public readyTimeSeconds = 180;
+  public vetoTimeSeconds = 45;
+  public showWinnerTimeHours = 24;
+  public matcherinoUrl = "";
 
   mounted() {
     this.init();
@@ -104,6 +166,11 @@ export default class AddPlayerModal extends Vue {
     this.format = this.tournament.format;
     this.mapPool = this.tournament.mapPool;
     this.state = this.tournament.state;
+    this.registrationTimeMinutes = this.tournament.registrationTimeMinutes;
+    this.readyTimeSeconds = this.tournament.readyTimeSeconds;
+    this.vetoTimeSeconds = this.tournament.vetoTimeSeconds;
+    this.showWinnerTimeHours = this.tournament.showWinnerTimeHours;
+    this.matcherinoUrl = this.tournament.matcherinoUrl ?? '';
   }
 
   get isEdit() {
@@ -122,7 +189,11 @@ export default class AddPlayerModal extends Vue {
   }
 
   public save() {
-    const fieldNames = [ 'name', 'gateway', 'startDateTime', 'mode', 'format', 'mapPool', 'state' ];
+    const fieldNames = [
+      'name', 'gateway', 'startDateTime', 'mode', 'format', 'mapPool', 'state',
+      'registrationTimeMinutes', 'readyTimeSeconds', 'vetoTimeSeconds',
+      'showWinnerTimeHours', 'matcherinoUrl',
+    ];
     const tournamentData = _.pick(this, fieldNames);
     this.$emit("save", tournamentData);
   }
@@ -200,9 +271,3 @@ export default class AddPlayerModal extends Vue {
   }
 }
 </script>
-
-<style>
-.edit-tournament-modal .v-messages {
-  display: none;
-}
-</style>

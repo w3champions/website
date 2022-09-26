@@ -56,6 +56,11 @@ export interface ITournament {
   winner: ITournamentPlayer;
   rounds: ITournamentRound[];
   admins: ITournamentAdmin[];
+  registrationTimeMinutes: number;
+  readyTimeSeconds: number;
+  vetoTimeSeconds: number;
+  showWinnerTimeHours: number;
+  matcherinoUrl?: string;
 }
 
 export interface ITournamentAdmin {

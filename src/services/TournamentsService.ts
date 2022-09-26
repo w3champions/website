@@ -105,11 +105,19 @@ export default class TournamentsService {
     const id = tournament.id;
     const url = `${API_URL}api/tournaments/${id}?authorization=${token}`;
 
-    const fieldNames = [ 'name', 'startDateTime', 'gateway', 'mode', 'format', 'mapPool', 'state' ];
+    const fieldNames = [
+      'name', 'startDateTime', 'gateway', 'mode', 'format', 'mapPool', 'state',
+      'registrationTimeMinutes', 'readyTimeSeconds', 'vetoTimeSeconds',
+      'showWinnerTimeHours', 'matcherinoUrl',
+    ];
     const body = _.pickBy(
       tournament,
       (value, key) => fieldNames.includes(key) && !_.isUndefined(value)
     );
+    body.registrationTimeMinutes = +body.registrationTimeMinutes!;
+    body.readyTimeSeconds = +body.readyTimeSeconds!;
+    body.vetoTimeSeconds = +body.vetoTimeSeconds!;
+    body.showWinnerTimeHours = +body.showWinnerTimeHours!;
 
     const response = await fetch(url, {
       method: "PATCH",
