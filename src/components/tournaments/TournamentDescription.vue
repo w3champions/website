@@ -41,7 +41,7 @@
         The tournament was canceled.
       </div>
       <div class="mt-2" v-if="tournament.players.length > 0">
-        Registered players list: {{tournament.players.map(p => p.battleTag).join(', ')}}
+        Registered players list: {{registeredPlayers}}
       </div>
     </div>
   </div>
@@ -54,6 +54,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { format } from "date-fns";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/maps/types";
+import { ERaceEnum } from "@/store/typings";
 
 @Component
 export default class TournamentDescription extends Vue {
@@ -102,6 +103,12 @@ export default class TournamentDescription extends Vue {
 
   get matcherinoUrl() {
     return this.tournament.matcherinoUrl;
+  }
+
+  get registeredPlayers(): string {
+    return this.tournament.players.map(player => (
+      `${player.battleTag}(${this.$t(`racesShort.${ERaceEnum[player.race]}`)})`
+    )).join(', ');
   }
 }
 </script>
