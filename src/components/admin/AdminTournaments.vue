@@ -2,13 +2,29 @@
   <v-container>
     <v-card class="pa-md-4">
       <v-dialog v-if="isAddPlayerOpen" v-model="isAddPlayerOpen" max-width="800px">
-        <add-player-modal :tournament="tournament" :saving="isLoading" @cancel="closeAddPlayer" @save="addPlayer" />
+        <add-player-modal
+          :tournament="tournament"
+          :saving="isLoading"
+          @cancel="closeAddPlayer"
+          @save="addPlayer"
+        />
       </v-dialog>
       <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="800px">
-        <edit-tournament-modal :saving="isLoading" @cancel="closeCreateTournament" @save="createTournament" />
+        <edit-tournament-modal
+          :saving="isLoading"
+          :maps="maps"
+          @cancel="closeCreateTournament"
+          @save="createTournament"
+        />
       </v-dialog>
       <v-dialog v-if="isEditTournamentOpen" v-model="isEditTournamentOpen" max-width="800px">
-        <edit-tournament-modal :tournament="tournament" :saving="isLoading" @cancel="closeEditTournament" @save="updateTournament" />
+        <edit-tournament-modal
+          :tournament="tournament"
+          :saving="isLoading"
+          :maps="maps"
+          @cancel="closeEditTournament"
+          @save="updateTournament"
+        />
       </v-dialog>
 
       <v-row>
@@ -44,6 +60,7 @@ import Tournament from "../tournaments/Tournament.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
 import { ERaceEnum } from "@/store/typings";
+import { Map } from "@/store/admin/maps/types";
 
 @Component({
   components: {
@@ -61,6 +78,7 @@ export default class AdminTournaments extends Vue {
 
   async mounted(): Promise<void> {
     this.throttledInit();
+    await this.$store.direct.dispatch.tournaments.loadTournamentMaps();
     setInterval(() => {
       this.throttledInit();
     }, 15000);
@@ -68,6 +86,10 @@ export default class AdminTournaments extends Vue {
 
   private async init(): Promise<void> {
     await this.$store.direct.dispatch.admin.tournamentsManagement.loadUpcomingTournament();
+  }
+
+  get maps(): Map[] {
+    return this.$store.direct.state.tournaments.maps;
   }
 
   get isLoading() {

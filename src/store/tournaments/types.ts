@@ -1,5 +1,6 @@
 import { ERaceEnum, EGameMode } from "../typings";
 import { Gateways } from "../ranking/types";
+import { Map } from "../admin/maps/types";
 
 export enum ETournamentFormat {
   SINGLE_ELIM,
@@ -33,7 +34,7 @@ export enum ESeriesState {
 
 export type TournamentsState = {
   tournaments: ITournament[];
-  loaded: boolean;
+  maps: Map[];
 };
 
 export interface ITournamentSeed {

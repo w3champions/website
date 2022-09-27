@@ -38,7 +38,7 @@
         Map Pool
       </div>
       <v-row class="mt-0 mb-0">
-        <v-col cols="4" class="py-0" v-for="map in maps" v-bind:key="map.id">
+        <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
           <v-checkbox
             :multiple="true"
             v-model="mapPool"
@@ -132,18 +132,20 @@ import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
 import { Gateways } from "@/store/ranking/types";
+import { Map } from "@/store/admin/maps/types";
 
 @Component({})
 export default class AddPlayerModal extends Vue {
   @Prop() public tournament!: ITournament;
   @Prop() public saving!: boolean;
+  @Prop() public maps!: Map[];
 
   public name = "Standard One vs One Tournament";
   public gateway = Gateways.Europe;
   public startDateTime = startOfHour(setHours(addDays(new Date(), 1), 20));
   public mode = EGameMode.GM_1ON1;
   public format = ETournamentFormat.SINGLE_ELIM;
-  public mapPool = this.maps.slice(0, 5).map(m => m.id);
+  public mapPool: number[] = [];
   public state = ETournamentState.INIT;
   public registrationTimeMinutes = 5;
   public readyTimeSeconds = 180;
@@ -157,6 +159,7 @@ export default class AddPlayerModal extends Vue {
 
   private init() {
     if (!this.tournament) {
+      this.mapPool = this.maps.slice(0, 5).map(m => m.id);
       return
     }
     this.name = this.tournament.name;
@@ -217,50 +220,8 @@ export default class AddPlayerModal extends Vue {
     return this.getSelectOptions(ETournamentFormatLabel).slice(0, 1);
   }
 
-  get maps() {
-    // TODO: use server maps after merging https://github.com/w3champions/website/pull/540
-    return [
-      {
-        id: 2000,
-        name: 'Amazonia',
-      },
-      {
-        id: 2001,
-        name: 'Concealed Hill',
-      },
-      {
-        id: 2002,
-        name: 'Echo Isles',
-      },
-      {
-        id: 2003,
-        name: 'Last Refuge',
-      },
-      {
-        id: 2004,
-        name: 'Northern Isles',
-      },
-      {
-        id: 2005,
-        name: 'Terenas Stand LV',
-      },
-      {
-        id: 2006,
-        name: 'Twisted Meadows',
-      },
-      {
-        id: 2044,
-        name: 'Autumn Leaves',
-      },
-      {
-        id: 2054,
-        name: 'Tidehunters',
-      },
-      {
-        id: 2061,
-        name: 'Shallow Grave',
-      },
-    ];
+  get mapOptions() {
+    return this.maps;
   }
 
   private getSelectOptions(labelMap: { [key: number]: string }) {

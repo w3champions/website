@@ -53,10 +53,12 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { format } from "date-fns";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
+import { Map } from "@/store/admin/maps/types";
 
 @Component
 export default class TournamentDescription extends Vue {
   @Prop() public tournament!: ITournament;
+  @Prop() public maps!: Map[];
 
   get gateway() {
     return EGatewayLabel[this.tournament.gateway];
@@ -79,8 +81,7 @@ export default class TournamentDescription extends Vue {
   }
 
   get mapPool() {
-    // TODO: get map names
-    return this.tournament.mapPool;
+    return this.tournament.mapPool.map(mapId => this.maps.find(map => map.id === mapId)?.name).sort().join(', ');
   }
 
   get statusInit() {
