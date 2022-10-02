@@ -10,6 +10,7 @@ const mod = {
     loaded: false,
     tournaments: [],
     maps: [],
+    activeMaps: [],
   } as TournamentsState,
   actions: {
     async retrieveTournaments(
@@ -31,8 +32,18 @@ const mod = {
         return
       }
 
-      const response = await rootGetters.mapService.getTournamentMaps();
+      const response = await rootGetters.mapService.getTournamentMaps(false);
       commit.SET_MAPS(response.items);
+    },
+    async loadActiveTournamentMaps(context: ActionContext<TournamentsState, RootState>) {
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      if (state.activeMaps.length > 0) {
+        return
+      }
+
+      const response = await rootGetters.mapService.getTournamentMaps(true);
+      commit.SET_ACTIVE_MAPS(response.items);
     },
   },
   mutations: {
@@ -41,6 +52,9 @@ const mod = {
     },
     SET_MAPS(state: TournamentsState, maps: Map[]) {
       state.maps = maps;
+    },
+    SET_ACTIVE_MAPS(state: TournamentsState, activeMaps: Map[]) {
+      state.activeMaps = activeMaps;
     },
   },
 } as const;
