@@ -28,14 +28,6 @@ const mod = {
       commit.SET_IS_LOADING(false);
       return registered;
     },
-    async cancelTournament(context: ActionContext<AdminTournamentsState, RootState>) {
-      const { rootGetters, commit, state, rootState } = moduleActionContext(context, mod);
-      const token = rootState.oauth.token;
-      commit.SET_IS_LOADING(true);
-      const registered = await rootGetters.tournamentsService.cancelTournament(state.upcomingTournament.id, token);
-      commit.SET_IS_LOADING(false);
-      return registered;
-    },
     async createTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament) {
       const { rootGetters, commit, rootState } = moduleActionContext(context, mod);
       const token = rootState.oauth.token;

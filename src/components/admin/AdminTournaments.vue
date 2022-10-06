@@ -35,7 +35,6 @@
           <div v-if="tournament.id">
             <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openAddPlayer">Add Player</v-btn>
             <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openEditTournament">Edit</v-btn>
-            <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="cancelTournament">Cancel</v-btn>
           </div>
           <v-btn v-else color="primary" class="mb-2 w3-race-bg--text" @click="openCreateTournament">Create Tournament</v-btn>
         </v-col>
@@ -128,13 +127,6 @@ export default class AdminTournaments extends Vue {
   get registrationOpen() {
     return this.tournament.state === ETournamentState.INIT ||
            this.tournament.state === ETournamentState.REGISTRATION;
-  }
-
-  public async cancelTournament() {
-    if (confirm('Are you sure you want to cancel the tournament?')) {
-      await this.$store.direct.dispatch.admin.tournamentsManagement.cancelTournament();
-      this.throttledInit();
-    }
   }
 
   public openCreateTournament() {

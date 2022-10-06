@@ -92,15 +92,6 @@ export default class TournamentsService {
     return !!responseBody.tournament;
   }
 
-  public async cancelTournament(tournamentId: string, token: string): Promise<boolean> {
-    const updateData = {
-      id: tournamentId,
-      state: ETournamentState.CANCELED,
-    } as ITournament;
-    const updated = await this.updateTournament(updateData, token);
-    return updated;
-  }
-
   public async updateTournament(tournament: ITournament, token: string): Promise<boolean> {
     const id = tournament.id;
     const url = `${API_URL}api/tournaments/${id}?authorization=${token}`;
