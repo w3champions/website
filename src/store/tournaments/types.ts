@@ -98,8 +98,16 @@ export interface ISeriesPlayer {
   countryCode?: string; // copied from ITournamentPlayer
 }
 
+export enum EMatchState {
+  INIT,
+  STARTED,
+  FINISHED,
+  CANCELED
+}
+
 export interface ITournamentMatch {
   id?: string;
+  state: EMatchState;
   mapId: number;
   players: IMatchPlayer[];
 }

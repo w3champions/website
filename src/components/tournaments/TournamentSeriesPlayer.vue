@@ -39,6 +39,8 @@ export default class TournamentSeriesPlayer extends Vue {
   @Prop() public playerHeight!: number;
   @Prop() public roundWidth!: number;
   @Prop() public seriesFinished!: boolean;
+  @Prop() public seriesSpecial!: boolean;
+  @Prop() public seriesCanceled!: boolean;
 
   get won() {
     return this.player?.won ?? false;
@@ -53,16 +55,25 @@ export default class TournamentSeriesPlayer extends Vue {
   }
 
   get score() {
-    if (this.player?.score) {
-      return this.player?.score;
-    }
     if (!this.seriesFinished) {
       return '';
     }
-    if (this.player?.won) {
-      return '1';
+    if (_.isNil(this.player)) {
+        return '';
     }
-    return '-';
+
+    let score = '';
+    if (!_.isNil(this.player.score)) {
+      score = this.player.score.toString();
+    }
+    if (!_.isNil(this.player) && !this.seriesCanceled) {
+      score = this.player.won ? '1' : '0';
+    }
+    if (this.seriesSpecial) {
+      score += '*';
+    }
+
+    return score;
   }
 
   get raceClass() {

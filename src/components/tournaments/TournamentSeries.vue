@@ -4,21 +4,25 @@
       :side="'top'"
       :player="topPlayer"
       :playerHeight="playerHeight"
+      :seriesCanceled="seriesCanceled"
       :seriesFinished="seriesFinished"
+      :seriesSpecial="seriesSpecial"
       :roundWidth="roundWidth"
     />
     <tournament-series-player
       :side="'bottom'"
       :player="bottomPlayer"
       :playerHeight="playerHeight"
+      :seriesCanceled="seriesCanceled"
       :seriesFinished="seriesFinished"
+      :seriesSpecial="seriesSpecial"
       :roundWidth="roundWidth"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { ITournamentSeries, ESeriesState } from "@/store/tournaments/types";
+import { ITournamentSeries, ESeriesState, EMatchState } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
@@ -45,6 +49,15 @@ export default class TournamentSeries extends Vue {
 
   get seriesFinished() {
     return [ ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED ].includes(this.series.state);
+  }
+
+  get seriesCanceled() {
+    return this.series.state === ESeriesState.CANCELED;
+  }
+
+  get seriesSpecial() {
+    return [ ESeriesState.BYE, ESeriesState.CANCELED ].includes(this.series.state) ||
+      this.series.matches?.some(match => match.state === EMatchState.CANCELED);
   }
 
   get style() {
