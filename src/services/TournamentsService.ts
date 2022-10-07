@@ -75,6 +75,22 @@ export default class TournamentsService {
     return !!responseBody.tournament;
   }
 
+  public async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ battleTag }),
+    });
+
+    const responseBody: ITournamentResponse = await response?.json();
+
+    return !!responseBody.tournament;
+  }
+
   public async createTournament(tournament: ITournament, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments?authorization=${token}`;
     const { id, ...data } = tournament;

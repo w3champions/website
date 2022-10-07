@@ -9,6 +9,14 @@
           @save="addPlayer"
         />
       </v-dialog>
+      <v-dialog v-if="isRemovePlayerOpen" v-model="isRemovePlayerOpen" max-width="800px">
+        <remove-player-modal
+          :tournament="tournament"
+          :saving="isLoading"
+          @cancel="closeRemovePlayer"
+          @save="removePlayer"
+        />
+      </v-dialog>
       <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="800px">
         <edit-tournament-modal
           :saving="isLoading"
@@ -34,6 +42,7 @@
         <v-col class="d-flex justify-end">
           <div v-if="tournament.id">
             <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openAddPlayer">Add Player</v-btn>
+            <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openRemovePlayer">Remove Player</v-btn>
             <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openEditTournament">Edit</v-btn>
           </div>
           <v-btn v-else color="primary" class="mb-2 w3-race-bg--text" @click="openCreateTournament">Create Tournament</v-btn>
@@ -57,6 +66,7 @@ import { Component } from "vue-property-decorator";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
 import Tournament from "../tournaments/Tournament.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
+import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
 import { ERaceEnum } from "@/store/typings";
 import { Map } from "@/store/admin/maps/types";
@@ -65,11 +75,13 @@ import { Map } from "@/store/admin/maps/types";
   components: {
     Tournament,
     AddPlayerModal,
+    RemovePlayerModal,
     EditTournamentModal,
   },
 })
 export default class AdminTournaments extends Vue {
   public isAddPlayerOpen = false;
+  public isRemovePlayerOpen = false;
   public isCreateTournamentOpen = false;
   public isEditTournamentOpen = false;
 
@@ -120,6 +132,27 @@ export default class AdminTournaments extends Vue {
       }
     } catch {
       alert("Error while adding player");
+    }
+    this.throttledInit();
+  }
+
+  public openRemovePlayer() {
+    this.isRemovePlayerOpen = true;
+  }
+
+  public closeRemovePlayer() {
+    this.isRemovePlayerOpen = false;
+  }
+
+  public async removePlayer(battleTag: string) {
+    try {
+      const removed = await this.$store.direct.dispatch.admin.tournamentsManagement.unregisterPlayer(battleTag);
+
+      if (removed) {
+        this.isRemovePlayerOpen = false;
+      }
+    } catch {
+      alert('Error while removing player');
     }
     this.throttledInit();
   }
