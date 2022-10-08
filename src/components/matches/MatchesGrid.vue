@@ -224,7 +224,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   showReplayDownload(item: Match): boolean {
     // Timestamp is - 8th October 2022 - 15:28 UTC - anything older requires database migration
-    return !this.unfinished && moment(item.endTime).unix() > 1665239280 ? true : false;
+    return !this.unfinished && moment(item.endTime).unix() > 1665242880 ? true : false;
   }
 
   get headers() {
