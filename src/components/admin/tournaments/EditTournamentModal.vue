@@ -4,112 +4,125 @@
       <span class="headline">{{isEdit ? 'Edit' : 'Create'}} Tournament</span>
     </v-card-title>
     <v-card-text>
-      <v-select
-        :items="gateways"
-        v-model="gateway"
-        item-text="name"
-        item-value="id"
-        label="Gateway"
-        hide-details
-        single-line
-      />
-      <v-text-field
-        v-model="name"
-        label="Name"
-        hide-details
-        single-line
-      />
-      <v-datetime-picker
-        label="Date / Time (UTC)"
-        v-model="startDateTime"
-        :textFieldProps="{ 'single-line': true, 'hide-details': true }"
-      />
-      <v-select
-        v-if="isEdit"
-        :items="states"
-        v-model="state"
-        item-text="name"
-        item-value="id"
-        label="State"
-        hide-details
-        single-line
-      />
-      <div class="mt-4">
-        Map Pool
-      </div>
-      <v-row class="mt-0 mb-0">
-        <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
-          <v-checkbox
-            :multiple="true"
-            v-model="mapPool"
-            :label="map.name"
-            :value="map.id"
-            :dense="true"
+      <v-tabs v-model="tabsModel">
+        <v-tabs-slider></v-tabs-slider>
+        <v-tab>General</v-tab>
+        <v-tab>Advanced</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tabsModel">
+        <v-tab-item :transition="false">
+          <v-select
+            :items="gateways"
+            v-model="gateway"
+            item-text="name"
+            item-value="id"
+            label="Gateway"
             hide-details
+            single-line
           />
-        </v-col>
-      </v-row>
-      <v-select
-        :items="gameModes"
-        v-model="mode"
-        item-text="name"
-        item-value="id"
-        label="Game Mode"
-        hide-details
-        single-line
-      />
-      <v-select
-        :items="formats"
-        v-model="format"
-        item-text="name"
-        item-value="id"
-        label="Format"
-        hide-details
-        single-line
-      />
-      <v-row>
-        <v-col cols="4">
           <v-text-field
-            v-model="registrationTimeMinutes"
-            label="Registration Time (mins)"
+            v-model="name"
+            label="Name"
             hide-details
-            type="number"
+            single-line
           />
-        </v-col>
-        <v-col cols="4">
-          <v-text-field
-            v-model="readyTimeSeconds"
-            label="Ready Time (s)"
+          <v-datetime-picker
+            label="Date / Time (UTC)"
+            v-model="startDateTime"
+            :textFieldProps="{ 'single-line': true, 'hide-details': true }"
+          />
+          <v-select
+            v-if="isEdit"
+            :items="states"
+            v-model="state"
+            item-text="name"
+            item-value="id"
+            label="State"
             hide-details
-            type="number"
+            single-line
           />
-        </v-col>
-        <v-col cols="4">
-          <v-text-field
-            v-model="vetoTimeSeconds"
-            label="Veto Time (s)"
+          <div class="mt-4">
+            Map Pool
+          </div>
+          <v-row class="mt-0 mb-0">
+            <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
+              <v-checkbox
+                :multiple="true"
+                v-model="mapPool"
+                :label="map.name"
+                :value="map.id"
+                :dense="true"
+                hide-details
+              />
+            </v-col>
+          </v-row>
+        </v-tab-item>
+        <v-tab-item :transition="false">
+          <v-row class="mt-0">
+            <v-col cols="4">
+              <v-text-field
+                v-model="registrationTimeMinutes"
+                label="Registration Time (mins)"
+                hide-details
+                type="number"
+              />
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="readyTimeSeconds"
+                label="Ready Time (s)"
+                hide-details
+                type="number"
+              />
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="vetoTimeSeconds"
+                label="Veto Time (s)"
+                hide-details
+                type="number"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="4">
+              <v-text-field
+                v-model="showWinnerTimeHours"
+                label="Show Winner Time (hrs)"
+                hide-details
+                type="number"
+              />
+            </v-col>
+            <v-col cols="8">
+              <v-text-field
+                v-model="matcherinoUrl"
+                label="Matcherino URL"
+                hide-details
+              />
+            </v-col>
+          </v-row>
+          <v-select
+            :items="gameModes"
+            :disabled="true"
+            v-model="mode"
+            item-text="name"
+            item-value="id"
+            label="Game Mode"
             hide-details
-            type="number"
+            single-line
           />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="4">
-          <v-text-field
-            v-model="showWinnerTimeHours"
-            label="Show Winner Time (hrs)"
+          <v-select
+            :items="formats"
+            :disabled="true"
+            v-model="format"
+            item-text="name"
+            item-value="id"
+            label="Format"
             hide-details
-            type="number"
+            single-line
           />
-        </v-col>
-        <v-col cols="8">
-          <v-text-field
-            v-model="matcherinoUrl"
-            label="Matcherino URL"
-            hide-details
-          />
-        </v-col>
-      </v-row>
+        </v-tab-item>
+      </v-tabs-items>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
@@ -152,6 +165,8 @@ export default class AddPlayerModal extends Vue {
   public vetoTimeSeconds = 45;
   public showWinnerTimeHours = 24;
   public matcherinoUrl = "";
+
+  public tabsModel = {};
 
   mounted() {
     this.init();
