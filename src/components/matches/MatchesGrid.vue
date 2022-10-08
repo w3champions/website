@@ -15,14 +15,13 @@
             >
               {{ header.text }}
             </td>
+            <td v-if="!unfinished">
+              {{ $t("components_matches_matchesgrid.replay") }}
+            </td>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="item in matches"
-            :key="item.id"
-            @click="goToMatchDetailPage(item)"
-          >
+          <tr v-for="item in matches" :key="item.id">
             <td>
               <div v-if="item.gameMode === 5" class="my-3">
                 <v-row justify="center" v-if="alwaysLeftName">
@@ -35,11 +34,7 @@
                     ></team-match-info>
                   </v-col>
                 </v-row>
-                <v-row
-                  justify="center"
-                  v-for="(team, index) in getOpponentTeams(item)"
-                  :key="index"
-                >
+                <v-row justify="center" v-for="(team, index) in getOpponentTeams(item)" :key="index">
                   <v-col offset="4" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
@@ -50,30 +45,23 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row v-if="item.gameMode !== 5">
+              <v-row @click="goToMatchDetailPage(item)" v-if="item.gameMode !== 5">
                 <v-col cols="5.5">
                   <team-match-info
                     :not-clickable="!unfinished"
-                    :team="
-                      alwaysLeftName ? getPlayerTeam(item) : getWinner(item)
-                    "
+                    :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
                     left="true"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1">
                   VS
-                  <host-icon
-                    v-if="item.serverInfo && item.serverInfo.provider"
-                    :host="item.serverInfo"
-                  ></host-icon>
+                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
                 <v-col cols="5.5">
                   <team-match-info
                     :not-clickable="!unfinished"
-                    :team="
-                      alwaysLeftName ? getOpponentTeam(item) : getLoser(item)
-                    "
+                    :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
                   ></team-match-info>
                 </v-col>
@@ -86,12 +74,13 @@
               <span>{{ $_mapNameFromMatch(item) }}</span>
             </td>
             <td>
-              {{
-                item.startTime | moment($t("dateFormats.dateTime").toString())
-              }}
+              {{ item.startTime | moment($t("dateFormats.dateTime").toString()) }}
             </td>
             <td>
               <span class="number-text">{{ getDuration(item) }}</span>
+            </td>
+            <td v-if="showReplayDownload(item)">
+              <download-replay-icon :gameId="item.id"></download-replay-icon>
             </td>
           </tr>
           <tr v-if="!matches || matches.length == 0">
@@ -107,12 +96,7 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination
-        v-model="page"
-        :length="getTotalPages()"
-        :total-visible="5"
-        @input="onPageChanged"
-      ></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages()" :total-visible="5" @input="onPageChanged"></v-pagination>
     </div>
   </div>
 </template>
@@ -123,12 +107,14 @@ import { Match, Team, PlayerInTeam, EGameMode } from "@/store/typings";
 import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
+import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
 
 @Component({
   components: {
     TeamMatchInfo,
     HostIcon,
+    DownloadReplayIcon,
   },
 })
 export default class MatchesGrid extends Mixins(MatchMixin) {
@@ -228,14 +214,17 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
       return this.$t("matchStatuses.onGoing");
     }
 
-    const format =
-      match.durationInSeconds <= 3600
-        ? this.$t("dateFormats.timeShort")
-        : this.$t("dateFormats.timeLong");
+    const format = match.durationInSeconds <= 3600 ? this.$t("dateFormats.timeShort") : this.$t("dateFormats.timeLong");
+
     return moment
       .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
       .format(format.toString())
       .toString();
+  }
+
+  showReplayDownload(item: Match): boolean {
+    // Timestamp is - 8th October 2022 - 15:28 UTC - anything older requires database migration
+    return !this.unfinished && moment(item.endTime).unix() > 1665239280 ? true : false;
   }
 
   get headers() {
