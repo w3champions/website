@@ -223,8 +223,8 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   }
 
   showReplayDownload(item: Match): boolean {
-    // Timestamp is - 8th October 2022 - 15:28 UTC - anything older requires database migration
-    return !this.unfinished && moment(item.endTime).unix() > 1665242880 ? true : false;
+    // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
+    return !this.unfinished && moment(item.endTime).unix() > 1664471820 ? true : false;
   }
 
   get headers() {
