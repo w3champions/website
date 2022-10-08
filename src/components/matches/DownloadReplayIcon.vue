@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <span v-on="on">
         <v-btn class="ma-2" icon @click="downloadReplay" outlined>
-          <v-icon :src="icon" :max-height="18" :max-width="18">mdi-download</v-icon>
+          <v-icon :max-height="18" :max-width="18">mdi-download</v-icon>
         </v-btn>
       </span>
     </template>
@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts">
-import { getAsset } from "@/helpers/url-functions";
 import { API_URL } from "@/main";
 import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
@@ -21,10 +20,6 @@ import { Component, Prop } from "vue-property-decorator";
 @Component({})
 export default class DownloadReplayIcon extends Vue {
   @Prop({}) gameId!: string;
-
-  get icon(): unknown {
-    return getAsset(`icons/replay.png`);
-  }
 
   get tooltip(): LocaleMessage {
     return `${this.$t("components_matches_replayicon.download")}`;
