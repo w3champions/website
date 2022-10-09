@@ -7,7 +7,13 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="battleTag" label="Battletag" autofocus></v-text-field>
+            <v-select
+              :items="players"
+              v-model="battleTag"
+              item-text="battleTag"
+              item-value="battleTag"
+              label="Player"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -36,6 +42,10 @@ export default class RemovePlayerModal extends Vue {
   @Prop() public saving!: boolean;
 
   public battleTag = "";
+
+  get players() {
+    return this.tournament.players;
+  }
 
   public cancel() {
     this.$emit("cancel");
