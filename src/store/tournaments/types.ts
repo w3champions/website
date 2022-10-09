@@ -53,7 +53,7 @@ export interface ITournament {
   type: ETournamentType;
   gateway: Gateways;
   matcherinoLink: string;
-  mapPool: number[]; // TODO: return map names
+  mapPool: number[];
   players: ITournamentPlayer[];
   winner: ITournamentPlayer;
   rounds: ITournamentRound[];
