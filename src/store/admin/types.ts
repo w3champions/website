@@ -1,4 +1,6 @@
 import { PlayerOverview } from "@/store/ranking/types";
+import { EChatScope } from "../common/typings";
+import { EColors } from "../typings";
 
 export type AdminState = {
   total: number;
@@ -18,6 +20,10 @@ export type AdminPlayerManagementState = {
   allSpecialPortraits: PortraitDefinition[];
   searchedPlayerSpecialPortraits: number[];
   portraitDefinitionGroups: PortraitDefinitionGroup[];
+};
+
+export type AdminReplayManagementState = {
+  chatLog: ReplayChatLog;
 };
 
 export interface ChangePortraitsCommand {
@@ -111,4 +117,27 @@ export type SearchedPlayer = {
 export type OverridesList = {
   overrides: string[];
   isAutomatic: boolean;
+};
+
+export type ReplayChatLog = {
+  players: ReplayPlayer[];
+  messages: ReplayMessage[];
+};
+
+export type ReplayPlayer = {
+  id: number;
+  name: string;
+  team: number;
+  color: EColors;
+};
+
+export type ReplayMessage = {
+  fromPlayer: number;
+  scope: ReplayMessageScope;
+  content: string;
+};
+
+export type ReplayMessageScope = {
+  type: EChatScope;
+  id: number | null;
 };

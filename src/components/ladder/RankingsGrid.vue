@@ -136,12 +136,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import {
-  EAvatarCategory,
-  EGameMode,
-  ERaceEnum,
-  OngoingMatches,
-} from "@/store/typings";
+import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";

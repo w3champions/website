@@ -13,6 +13,7 @@ import {
   ChangePortraitsDto,
   PortraitDefinitionGroup,
   PortraitDefinitionDTO,
+  ReplayChatLog,
 } from "@/store/admin/types";
 
 export default class AdminService {
@@ -291,5 +292,18 @@ export default class AdminService {
       body: JSON.stringify(definitions),
     });
     return response.status;
+  }
+
+  public async getChatLog(token: string, matchId: string): Promise<ReplayChatLog> {
+    const url = `${API_URL}api/replays/${matchId}/chats?authorization=${token}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
   }
 }
