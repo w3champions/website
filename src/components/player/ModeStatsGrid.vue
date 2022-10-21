@@ -42,7 +42,7 @@
           </td>
           <td class="number-text text-center">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
-            {{ item.rank !== 0 ? item.rankingPoints : "-" }}
+            {{ item.rank !== 0 ? Math.round(item.rankingPoints * 1000) / 1000 : "-" }}
           </td>
         </tr>
       </tbody>
