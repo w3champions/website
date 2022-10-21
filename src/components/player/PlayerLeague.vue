@@ -42,7 +42,7 @@
         </span>
         <span class="ml-2" style="font-size: 13px">
           RP:
-          <span class="number-text">{{ modeStat.rankingPoints }}</span>
+          <span class="number-text">{{ Math.round(modeStat.rankingPoints * 1000) / 1000 }}</span>
         </span>
       </div>
       <div class="text-center" v-if="!isRanked && !smallMode">
