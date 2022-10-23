@@ -169,7 +169,7 @@
             {{ (item.player.winrate * 100).toFixed(1) }}%
           </td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
-          <td class="number-text text-end">{{ item.rankingPoints }}</td>
+          <td class="number-text text-end">{{ Math.round(item.rankingPoints * 1000) / 1000 }}</td>
         </tr>
       </tbody>
     </table>
