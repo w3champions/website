@@ -41,8 +41,9 @@
           <span class="number-text">{{ modeStat.mmr }}</span>
         </span>
         <span class="ml-2" style="font-size: 13px">
-          RP:
-          <span class="number-text">{{ Math.round(modeStat.rankingPoints * 1000) / 1000 }}</span>
+          <v-col>
+            <level-progress :rp="modeStat.rankingPoints"></level-progress>
+          </v-col>
         </span>
       </div>
       <div class="text-center" v-if="!isRanked && !smallMode">
@@ -63,9 +64,10 @@ import { EGameMode, ERaceEnum, Match } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import LevelProgress from "@/components/ladder/LevelProgress.vue";
 
 @Component({
-  components: { RecentPerformance },
+  components: { RecentPerformance, LevelProgress },
 })
 export default class PlayerLeague extends Vue {
   @Prop() modeStat!: ModeStat;

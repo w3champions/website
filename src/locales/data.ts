@@ -384,8 +384,11 @@ const data = {
       mmr: "MMR",
       mmrdesc: "MMR",
       rp: "RP",
+      level: "Level",
       rpdesc:
-        "RP stands for Ranking Points and \\ndetermines your rank in the ladder. \\nRP is calculated from your MMR and activity level.",
+        "RP stans for Ranking Points and \\ndetermines your rank in the ladder. \\nRP is calculated from your MMR and activity level.",
+      leveldesc:
+        "Level is similar to the old Bnet Level system, and is calculated based on the highest MMR achieved this season and activity, however it cannot decay",
     },
     components_player_playeravatar: {
       useClassicIcons: "Use classic icons",

@@ -189,7 +189,7 @@ export default class RankingsGrid extends Vue {
         text: this.$t("components_ladder_rankingsgrid.level"),
         align: "center",
         sortable: false,
-        width: "25px",
+        width: "100px",
         sortFunction: (a: Ranking, b: Ranking): number => {
           return b.rankingPoints - a.rankingPoints;
         },
