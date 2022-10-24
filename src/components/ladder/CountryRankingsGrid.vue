@@ -157,7 +157,7 @@
             </span>
           </td>
           <td class="number-text text-end">
-            <level-progress class="level-progress" :rp="item.rankingPoints"></level-progress>
+            <level-progress :rp="item.rankingPoints"></level-progress>
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
