@@ -1,10 +1,10 @@
 <template>
   <v-progress-linear
-    :value="getProgessToNextLevel(rp)"
+    :value="getProgessToNextLevel()"
     height="25"
     style="min-width: 100px"
   >
-    <strong>{{ Math.round(rp) }}</strong>
+    <strong>{{ getLevelNumber() }}</strong>
   </v-progress-linear>
 </template>
 
@@ -16,8 +16,12 @@ import { Component, Prop } from "vue-property-decorator";
 export default class LevelProgress extends Vue {
   @Prop() rp!: number;
 
-  public getProgessToNextLevel(rp: number) {
-    return Math.round((rp % 1) * 100)
+  public getProgessToNextLevel() {
+    return Math.round((this.rp % 1) * 100);
+  }
+
+  public getLevelNumber() {
+    return Math.floor(this.rp);
   }
 }
 </script>
@@ -35,7 +39,7 @@ export default class LevelProgress extends Vue {
   ::v-deep(.v-progress-linear__determinate) {
     background-image: linear-gradient(white, var(--v-primary-lighten1), white);
   }
-  
+
   &.theme--dark {
     background-color: black !important;
     color: white;

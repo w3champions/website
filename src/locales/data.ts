@@ -255,6 +255,7 @@ const data = {
       winrate: "Winrate",
       mmr: "MMR",
       rp: "RP",
+      level: "Level",
     },
     components_ladder_rankingsracedistribution: {
       race: "Race",
