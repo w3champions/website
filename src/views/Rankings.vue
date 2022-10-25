@@ -352,23 +352,11 @@ export default class RankingsView extends Vue {
 
   async mounted() {
     this.search = "";
-    if (this.league) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.league);
-    }
-    if (this.season) {
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
-        id: this.season,
-      });
-    }
-    if (this.gamemode) {
-      this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
-    }
-    if (this.gateway) {
-      this.$store.direct.commit.SET_GATEWAY(this.gateway);
-    }
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    await this.refreshRankings();
+    await this.getLadders();
+    await this.setLeague(this.ladders[0].id);
+    await this.loadOngoingMatches();
 
     if (this.ladders && !this.selectedLeague?.id) {
       await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
@@ -433,11 +421,13 @@ export default class RankingsView extends Vue {
 
   public async selectSeason(season: Season) {
     await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    await this.getLadders();
+    await this.setLeague(this.ladders[0].id)
   }
 
   public async setLeague(league: number) {
     await this.$store.direct.dispatch.rankings.setLeague(league);
+    await this.getRankings();
   }
 
   public playerIsRanked(rank: Ranking): boolean {
