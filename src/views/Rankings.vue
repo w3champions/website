@@ -433,7 +433,7 @@ export default class RankingsView extends Vue {
 
   public async selectSeason(season: Season) {
     await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
   }
 
   public async setLeague(league: number) {
