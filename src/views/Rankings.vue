@@ -206,13 +206,6 @@ export default class RankingsView extends Vue {
   public races = ERaceEnum;
   private searchTimer: ReturnType<typeof setTimeout> = 0;
 
-  @Prop() public season!: number;
-  @Prop() public league!: number;
-  @Prop() public gateway!: Gateways;
-  @Prop() public gamemode!: EGameMode;
-  @Prop({ default: "" })
-  public playerId!: string;
-
   private _intervalRefreshHandle?: number = undefined;
 
   @Watch("searchModel")
@@ -351,23 +344,8 @@ export default class RankingsView extends Vue {
   }
 
   async mounted() {
-    this.search = "";
-
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    await this.getLadders();
-    await this.setLeague(this.ladders[0].id);
-    await this.loadOngoingMatches();
-
-    if (this.ladders && !this.selectedLeague?.id) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
-    }
-
-    if (this.playerId) {
-      const selectedPlayer = this.rankings.find(
-        (r) => r.player.id === this.playerId
-      );
-      this.searchModel = selectedPlayer ?? ({} as Ranking);
-    }
+    await this.refreshRankings();
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.refreshRankings();
