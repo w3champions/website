@@ -352,13 +352,16 @@ export default class RankingsView extends Vue {
 
   async mounted() {
     this.search = "";
-    if (this.league) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.league);
-    }
+
     if (this.season) {
       this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
         id: this.season,
       });
+    } else {
+      await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    }
+    if (this.league) {
+      await this.$store.direct.dispatch.rankings.setLeague(this.league);
     }
     if (this.gamemode) {
       this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
@@ -367,7 +370,6 @@ export default class RankingsView extends Vue {
       this.$store.direct.commit.SET_GATEWAY(this.gateway);
     }
 
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.refreshRankings();
 
     if (this.ladders && !this.selectedLeague?.id) {
