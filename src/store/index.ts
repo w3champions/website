@@ -82,6 +82,10 @@ const mod = {
       rootGetters.localeService.setLocale(locale);
       commit.SET_LOCALE(locale);
     },
+    setGateway(context: ActionContext<OauthState, RootState>, gateway: Gateways) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_GATEWAY(gateway);
+    }
   },
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
