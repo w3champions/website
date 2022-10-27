@@ -353,28 +353,29 @@ export default class RankingsView extends Vue {
   async mounted() {
     this.search = "";
 
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+
     if (this.season) {
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
-        id: this.season,
-      });
-    } else {
-      await this.$store.direct.dispatch.rankings.retrieveSeasons();
+      this.$store.direct.dispatch.rankings.setSeason({id: this.season} as Season);
     }
     if (this.league) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.league);
+      this.$store.direct.dispatch.rankings.setLeague(this.league);
     }
     if (this.gamemode) {
-      this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
+      this.$store.direct.dispatch.rankings.setGameMode(this.gamemode);
     }
     if (this.gateway) {
-      this.$store.direct.commit.SET_GATEWAY(this.gateway);
+      this.$store.direct.dispatch.setGateway(this.gateway);
     }
 
-    await this.refreshRankings();
+    await this.loadOngoingMatches();
+    await this.getLadders();
 
     if (this.ladders && !this.selectedLeague?.id) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
+      this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
     }
+
+    await this.getRankings();
 
     if (this.playerId) {
       const selectedPlayer = this.rankings.find(
@@ -434,12 +435,14 @@ export default class RankingsView extends Vue {
   }
 
   public async selectSeason(season: Season) {
-    await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.getLadders();
+    await this.setLeague(0);
   }
 
   public async setLeague(league: number) {
-    await this.$store.direct.dispatch.rankings.setLeague(league);
+    this.$store.direct.dispatch.rankings.setLeague(league);
+    await this.getRankings();
   }
 
   public playerIsRanked(rank: Ranking): boolean {
