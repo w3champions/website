@@ -94,7 +94,7 @@ export default class GlobalSearch extends Vue {
     // Nativate to the selected player's profile
     this.$router.push({
       path: getProfileUrl(player.battleTag),
-    });
+    }).catch(() => null);
 
     // Since the global search is present on all pages, we need to manually close it
     this.menuOpened = false;
