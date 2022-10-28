@@ -34,7 +34,7 @@
     "vue-moment": "^4.1.0",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.3",
-    "vuetify": "^2.6.3",
+    "vuetify": "^2.6.10",
     "vuetify-datetime-picker": "^2.1.1",
     "vuex": "^3.6.2"
   },
