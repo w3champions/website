@@ -4,6 +4,7 @@ import { ActionContext } from "vuex";
 import playerManagementModule from "./playerManagement/index";
 import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
+import replayManagementModule from "./replays/index";
 
 import {
   AdminState,
@@ -291,6 +292,7 @@ const mod = {
     playerManagement: playerManagementModule,
     mapsManagement: mapsManagementModule,
     infoMessageManagement: infoMessageManagementModule,
+    replayManagement: replayManagementModule,
   },
 } as const;
 

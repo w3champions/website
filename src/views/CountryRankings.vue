@@ -301,8 +301,7 @@ export default class CountryRankingsView extends Vue {
   }
 
   async selectSeason(season: Season) {
-    await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    this.$store.direct.dispatch.rankings.setSeason(season);
     this.refreshRankings();
   }
 

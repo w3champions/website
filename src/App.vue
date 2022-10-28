@@ -337,7 +337,6 @@ export default class App extends Vue {
     this.$store.direct.dispatch.loadLocale();
     this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
     }
