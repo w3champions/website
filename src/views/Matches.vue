@@ -161,7 +161,8 @@ export default class MatchesView extends Vue {
     }, AppConstants.ongoingMatchesRefreshInterval);
   }
 
-  mounted(): void {
+  async mounted() {
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();
