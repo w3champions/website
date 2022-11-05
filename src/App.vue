@@ -239,6 +239,7 @@ export default class App extends Vue {
 
   logout() {
     this.$store.direct.dispatch.oauth.logout();
+    this.$store.direct.dispatch.personalSettings.resetLoggedInPersonalSetting();
   }
 
   /**
@@ -342,8 +343,10 @@ export default class App extends Vue {
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
     if (this.authCode) {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
+      await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(this.battleTag);
     }
   }
+
   private setThemeColors() {
     this.$vuetify.theme.themes[this.isDarkTheme ? "dark" : "light"] =
       Object.assign(

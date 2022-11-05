@@ -3,6 +3,7 @@ import { RaceStat } from "@/store/player/types";
 
 export type PersonalSettingsState = {
   personalSettings: PersonalSetting;
+  loggedInPersonalSettings: PersonalSetting;
 };
 
 export type ProfilePicture = {
@@ -53,4 +54,5 @@ export type PersonalSetting = {
   specialPictures: SpecialPicture[];
   id: string;
   aliasSettings: AkaSettings;
+  hideMatchResult?: boolean;
 };

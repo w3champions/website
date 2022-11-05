@@ -31,6 +31,7 @@
                       :team="getPlayerTeam(item)"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :hide-match-result="hideMatchResult"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -41,28 +42,31 @@
                       :team="team"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :hide-match-result="hideMatchResult"
                     ></team-match-info>
                   </v-col>
                 </v-row>
               </div>
               <v-row @click="goToMatchDetailPage(item)" v-if="item.gameMode !== 5">
-                <v-col cols="5.5">
+                <v-col>
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
                     left="true"
+                    :hide-match-result="hideMatchResult"
                   ></team-match-info>
                 </v-col>
-                <v-col cols="1">
+                <v-col class="vsText">
                   VS
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
-                <v-col cols="5.5">
+                <v-col>
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
+                    :hide-match-result="hideMatchResult"
                   ></team-match-info>
                 </v-col>
               </v-row>
@@ -224,7 +228,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   showReplayDownload(item: Match): boolean {
     // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
-    return !this.unfinished && moment(item.endTime).unix() > 1664471820 ? true : false;
+    return !this.unfinished && moment(item.endTime).unix() > 1664471820;
   }
 
   get headers() {
@@ -264,6 +268,10 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
       },
     ];
   }
+
+  get hideMatchResult() {
+    return this.$store.direct.state.personalSettings.loggedInPersonalSettings.hideMatchResult;
+  }
 }
 </script>
 
@@ -274,5 +282,9 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
 .pager__current-matches {
   text-align: center;
+}
+
+.vsText {
+  max-width: 10%;
 }
 </style>

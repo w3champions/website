@@ -12,6 +12,7 @@
         :big-race-icon="bigRaceIcon"
         :not-clickable="notClickable"
         :is-anonymous="isAnonymous"
+        :hide-match-result="hideMatchResult"
       />
     </div>
   </div>
@@ -33,5 +34,6 @@ export default class TeamMatchInfo extends Vue {
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
   @Prop() public isAnonymous!: boolean;
+  @Prop() public hideMatchResult?: boolean;
 }
 </script>

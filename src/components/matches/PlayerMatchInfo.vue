@@ -17,7 +17,7 @@
       >
         {{ nameWithoutBtag }}
         <span class="number-text">({{ currentRating }})</span>
-        <span class="number-text" v-if="mmrChange !== 0" :class="won">
+        <span class="number-text" v-if="mmrChange !== 0 && !hideMatchResult" :class="won">
           <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
           <span v-else>{{ mmrChange }}</span>
         </span>
@@ -60,6 +60,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public notClickable!: boolean;
   @Prop() public unfinishedMatch!: boolean;
   @Prop() public isAnonymous!: boolean;
+  @Prop() public hideMatchResult?: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
 
@@ -68,7 +69,7 @@ export default class PlayerMatchInfo extends Vue {
       return "";
     }
 
-    if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
+    if (Object.prototype.hasOwnProperty.call(this.player, "won") && !this.hideMatchResult) {
       return this.player.won ? "won" : "lost";
     }
 

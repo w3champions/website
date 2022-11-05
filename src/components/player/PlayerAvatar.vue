@@ -274,6 +274,13 @@
                         v-model="userProfile.aliasSettings.showAka"
                         :label="$t('components_player_playeravatar.showalias')"
                       ></v-checkbox>
+                      <v-checkbox
+                        dense
+                        class="alias-checkbox"
+                        prepend-icon="mdi-eye-off"
+                        v-model="userProfile.hideMatchResult"
+                        :label="$t('components_player_playeravatar.hidematchresult')"
+                      ></v-checkbox>
                       <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
                       <!-- <v-checkbox dense class="alias-checkbox"
                         prepend-icon="$w3info"
@@ -431,6 +438,10 @@ export default class PlayerAvatar extends Vue {
     );
   }
 
+  get hideMatchResult(): boolean {
+    return this.personalSetting.hideMatchResult || false;
+  }
+
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
     let playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
@@ -518,6 +529,7 @@ export default class PlayerAvatar extends Vue {
     about: this.savedMessageValue,
     homePage: this.homePage,
     editDialogOpened: false,
+    hideMatchResult: this.hideMatchResult,
   };
 
   countryFilter(item: CountryType, queryText: string) {
@@ -537,6 +549,7 @@ export default class PlayerAvatar extends Vue {
       trovo: this.trovo,
       douyu: this.douyu,
       aliasSettings: this.aliasSettings,
+      hideMatchResult: this.hideMatchResult,
     };
   }
 
@@ -550,6 +563,7 @@ export default class PlayerAvatar extends Vue {
     personalSetting.trovo = this.userProfile.trovo;
     personalSetting.douyu = this.userProfile.douyu;
     personalSetting.aliasSettings = this.userProfile.aliasSettings;
+    personalSetting.hideMatchResult = this.userProfile.hideMatchResult;
 
     this.countries.map((c) => {
       if (c.country == this.selectedCountry) {
@@ -567,6 +581,9 @@ export default class PlayerAvatar extends Vue {
 
     await this.$store.direct.dispatch.personalSettings.saveUserProfile(personalSetting);
     this.userProfile.editDialogOpened = false;
+
+    const battleTag = this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting(battleTag);
   }
 
   getCorrectClasses(category: EAvatarCategory, iconId: number) {
@@ -676,6 +693,7 @@ export default class PlayerAvatar extends Vue {
       douyu: this.douyu,
       aliasSettings: this.aliasSettings,
       editDialogOpened: false,
+      hideMatchResult: this.hideMatchResult,
     };
 
     this.useClassicIcons =
