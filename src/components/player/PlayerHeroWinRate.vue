@@ -157,7 +157,6 @@ export default class PlayerHeroWinRate extends Vue {
         [ERaceEnum.HUMAN]: '',
         [ERaceEnum.NIGHT_ELF]: '',
         [ERaceEnum.RANDOM]: '',
-        [ERaceEnum.STARTER]: '',
       };
       const filtered = item.stats
         .filter((byRace) => byRace.race == this.selectedRace)[0]

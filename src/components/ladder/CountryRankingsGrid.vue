@@ -197,20 +197,19 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import {
   Ranking,
   PlayerId,
-  PlayerInfo,
   CountryRanking,
   League,
 } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { ERaceEnum, OngoingMatches } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
-import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue"
+import { getRaceIcon, hasSelectedIcon } from "@/helpers/ranking-icons";
 
 @Component({
   components: {
@@ -377,43 +376,19 @@ export default class CountryRankingsGrid extends Vue {
     this.leagueMap = new Map(league?.leagues.map((l) => [l.id, l]));
   }
 
-  public getRaceIcon(ranking: Ranking, playerIndex: number): string {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
-    const playerInfo = playersInfo[playerIndex];
-    if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
-      return getAvatarUrl(
-        playerInfo.selectedRace,
-        playerInfo.pictureId,
-        playerInfo.isClassicPicture
-      );
-    } else {
-      return this.raceIcon(playerInfo.calculatedRace);
-    }
+  getRaceIcon(ranking: Ranking, playerIndex: number): string {
+    return getRaceIcon(ranking, playerIndex);
   }
 
-  public getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+  getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.$t("races.RANDOM");
     const playerInfo = playersInfo[playerIndex];
-    if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
+    if (hasSelectedIcon(playerInfo)) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
     }
-  }
-
-  private static hasSelectedIcon(playerInfo: PlayerInfo) {
-    return (
-      playerInfo.selectedRace !== undefined &&
-      playerInfo.selectedRace != null &&
-      playerInfo.pictureId !== undefined &&
-      playerInfo.pictureId != null
-    );
-  }
-
-  raceIcon(race: ERaceEnum) {
-    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
   isTwitchLive(ranking: Ranking): boolean {

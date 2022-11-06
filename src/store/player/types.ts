@@ -147,5 +147,4 @@ export type PlayerHeroWinRateForStatisticsTab = {
   [ERaceEnum.HUMAN]: string;
   [ERaceEnum.NIGHT_ELF]: string;
   [ERaceEnum.RANDOM]: string;
-  [ERaceEnum.STARTER]: string;
 }
