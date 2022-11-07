@@ -58,6 +58,7 @@ export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
   }
 
   get isComparingSameRace() {
+    // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
     if (_.isNil(this.compareRace) || !this.stats) {
       return false;
     }
