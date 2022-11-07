@@ -97,23 +97,19 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
     },
-    async setLeague(
+    setLeague(
       context: ActionContext<RankingState, RootState>,
       league: number
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_LEAGUE(league);
-      await dispatch.retrieveRankings(undefined);
     },
-    async setSeason(
+    setSeason(
       context: ActionContext<RankingState, RootState>,
       season: Season
     ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       commit.SET_SELECTED_SEASON(season);
-
-      await dispatch.retrieveLeagueConstellation();
-      await dispatch.retrieveRankings(undefined);
     },
     async setCountry(
       context: ActionContext<RankingState, RootState>,

@@ -14,7 +14,7 @@ export interface GetMapsResponse {
 }
 
 export interface GetSeasonMapsResponse {
-  items: SeasonMap[]
+  items: SeasonMap[];
 }
 
 export interface SeasonMap {

@@ -29,6 +29,7 @@ import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
+import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 
 @Component({
   components: {
@@ -44,6 +45,7 @@ import AdminMotd from "@/components/admin/AdminMotd.vue";
     AdminManagePortraits,
     AdminMaps,
     AdminMotd,
+    AdminViewGameChat,
   },
 })
 export default class Admin extends Vue {
@@ -70,6 +72,12 @@ export default class Admin extends Vue {
           icon: "mdi-chat-remove",
           component: "admin-global-mute",
         },
+        {
+          key: "view_game_chat",
+          title: "View Game Chat",
+          icon: "mdi-format-align-left",
+          component: "admin-view-game-chat",
+        }
       ],
     },
     {

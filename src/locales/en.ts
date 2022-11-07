@@ -369,6 +369,14 @@ const en = {
     past: "Finished",
   },
 
+  components_matches_replayicon: {
+    download: "Download Replay",
+  },
+
+  components_matches_matchesgrid: {
+    replay: "Replay",
+  },
+
   proxies: {
     eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
     asia_east_via_cn_east: "Asia East via CN East",
