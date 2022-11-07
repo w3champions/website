@@ -43,7 +43,7 @@
           <v-data-table
             hide-default-footer
             :headers="headers"
-            :items="raceWinrateWithoutRandom"
+            :items="raceWinrate"
             :mobile-breakpoint="400"
           >
             <template v-slot:body="{ items }">
@@ -166,7 +166,7 @@ export default class WinratesTab extends Vue {
     });
   }
 
-  get raceWinrateWithoutRandom(): Ratio[] {
+  get raceWinrate(): Ratio[] {
     if (
       !this.statsPerRaceAndMap ||
       !this.statsPerRaceAndMap[0] ||
