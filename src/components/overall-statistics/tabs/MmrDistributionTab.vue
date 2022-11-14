@@ -206,7 +206,6 @@ export default class PlayerActivityTab extends Vue {
   private async init() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
-    this.updateMMRDistribution();
   }
 
   get verifiedBtag() {
