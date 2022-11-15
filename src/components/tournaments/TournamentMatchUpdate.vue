@@ -171,7 +171,7 @@ interface DateTimePickerProps extends Element {
 
 @Component({ components: { CountryFlag } })
 export default class PlayerAvatar extends Vue {
-  @Prop() isModalOpened = false;
+  @Prop({default: false}) isModalOpened?: boolean;
   @Prop() tournamentMatch?: ITournamentMatch;
 
   public countries: { country: string; countryCode: string }[] = [];

@@ -60,10 +60,11 @@
       <v-col cols="12" md="10">
         <v-card-text v-if="!loadingMmrRpTimeline">
           <player-mmr-rp-timeline-chart
+            v-if="!isPlayerMmrRpTimelineEmpty"
             style="position: relative"
             :mmrRpTimeline="playerMmrRpTimeline"
           />
-          <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
+          <v-card-text v-else>
             {{
               $t("components_player_tabs_playerstatistictab.playerhasnomatches")
             }}
