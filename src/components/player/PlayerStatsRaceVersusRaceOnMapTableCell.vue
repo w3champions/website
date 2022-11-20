@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import _ from "lodash";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceWinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
@@ -57,7 +58,8 @@ export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
   }
 
   get isComparingSameRace() {
-    if (!this.compareRace || !this.stats) {
+    // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
+    if (_.isNil(this.compareRace) || !this.stats) {
       return false;
     }
 

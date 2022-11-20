@@ -77,6 +77,8 @@
         <v-divider vertical />
       </span>
 
+      <global-search />
+
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
         <v-icon v-if="!authCode" class="mr-2">
           mdi-account-circle-outline
@@ -166,6 +168,7 @@ import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
+import GlobalSearch from "@/components/common/GlobalSearch.vue";
 
 export type ItemType = {
   title: string;
@@ -174,7 +177,7 @@ export type ItemType = {
   class?: string;
 };
 
-@Component({ components: { BrandLogo, SignInDialog, localeIcon } })
+@Component({ components: { BrandLogo, SignInDialog, localeIcon, GlobalSearch } })
 export default class App extends Vue {
   private _savedLocale = "en";
   private selectedTheme = "human";
@@ -337,7 +340,6 @@ export default class App extends Vue {
     this.$store.direct.dispatch.loadLocale();
     this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
     }

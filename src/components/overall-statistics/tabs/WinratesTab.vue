@@ -43,7 +43,7 @@
           <v-data-table
             hide-default-footer
             :headers="headers"
-            :items="raceWinrateWithoutRandom"
+            :items="raceWinrate"
             :mobile-breakpoint="400"
           >
             <template v-slot:body="{ items }">
@@ -70,6 +70,12 @@
                   />
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[4]"
+                    :compareRace="item.race"
+                    :winThreshold="0.51"
+                    :lossThreshold="0.49"
+                  />
+                  <player-stats-race-versus-race-on-map-table-cell
+                    :stats="item.winLosses[0]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
@@ -132,6 +138,11 @@ export default class WinratesTab extends Vue {
         align: "start",
         sortable: false,
       },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        align: "start",
+        sortable: false,
+      },
     ];
   }
 
@@ -155,7 +166,7 @@ export default class WinratesTab extends Vue {
     });
   }
 
-  get raceWinrateWithoutRandom(): Ratio[] {
+  get raceWinrate(): Ratio[] {
     if (
       !this.statsPerRaceAndMap ||
       !this.statsPerRaceAndMap[0] ||
@@ -172,7 +183,7 @@ export default class WinratesTab extends Vue {
     if (!statsPerMapAndRace) {
       return [];
     }
-    return statsPerMapAndRace.ratio.slice(1, 5);
+    return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
   }
 
   public setSelectedMap(map: string) {

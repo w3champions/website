@@ -5,6 +5,7 @@ import playerManagementModule from "./playerManagement/index";
 import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
 import tournamentsManagementModule from "./tournaments"
+import replayManagementModule from "./replays/index";
 
 import {
   AdminState,
@@ -293,6 +294,7 @@ const mod = {
     mapsManagement: mapsManagementModule,
     infoMessageManagement: infoMessageManagementModule,
     tournamentsManagement: tournamentsManagementModule,
+    replayManagement: replayManagementModule,
   },
 } as const;
 
