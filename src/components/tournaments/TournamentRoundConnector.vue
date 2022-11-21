@@ -1,35 +1,12 @@
 <template>
-  <div
-    class="bracket-column"
-    style="width: 20px"
-    v-if="round && round.round < totalRounds"
-  >
-    <div
-      class="connector-header"
-      v-bind:style="{
-        height: round.dimensions ? round.dimensions.headerHeight + 'px' : null,
-      }"
-    ></div>
-    <div
-      class="connector-connection"
-      v-for="connection in numberOfConnectors"
-      :key="connection"
-    >
-      <tournament-straight-open-connector
-        :key="`conn${round.round}`"
-        :round="round"
-        v-if="isStraight"
-      ></tournament-straight-open-connector>
-      <tournament-straight-open-down-connector
-        :key="`conn${round.round}`"
-        :round="round"
-        v-if="isStraightDown"
-      ></tournament-straight-open-down-connector>
-      <tournament-y-connector
-        :key="`conn${round.round}`"
-        :round="round"
-        v-else-if="!isStraight && !isStraightDown"
-      ></tournament-y-connector>
+  <div v-bind:style="containerStyle" v-bind:class="`connector ${side}-connector`">
+    <div class="connector-row top">
+      <div class="cell top-left"></div>
+      <div class="cell top-right"></div>
+    </div>
+    <div class="connector-row bottom">
+      <div class="cell bottom-left"></div>
+      <div class="cell bottom-right"></div>
     </div>
   </div>
 </template>
@@ -37,58 +14,77 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ITournamentRound, ConnectionType } from "@/store/tournaments/types";
-import TournamentStraightConnector from "@/components/tournaments/TournamentStraightOpenConnector.vue";
-import TournamentStraightOpenDownConnector from "@/components/tournaments/TournamentStraightOpenDownConnector.vue";
-import TournamentYConnector from "@/components/tournaments/TournamentYConnector.vue";
-import TournamentStraightOpenConnector from "@/components/tournaments/TournamentStraightOpenConnector.vue";
 
-@Component({
-  components: {
-    TournamentStraightOpenConnector,
-    TournamentStraightConnector,
-    TournamentStraightOpenDownConnector,
-    TournamentYConnector,
-  },
-})
-export default class TournamentRoundConnector extends Vue {
-  @Prop() round!: ITournamentRound;
-  @Prop() matchesInRound!: number;
-  @Prop() totalRounds!: number;
+@Component
+export default class TournamentRoundConnectors extends Vue {
+  @Prop() public index!: number;
+  @Prop() public side!: 'top' | 'bottom';
+  @Prop() public playerHeight!: number;
+  @Prop() public verticalSpace!: number;
+  @Prop() public marginTop!: number;
 
-  get numberOfConnectors() {
-    let connections = this.matchesInRound;
-
-    if (!this.isStraight) {
-      connections = this.matchesInRound / 2;
+  get containerStyle() {
+    let marginTop = this.playerHeight;
+    if (this.index > 0 && this.side !== 'bottom') {
+      marginTop += this.playerHeight + this.verticalSpace;
     }
-
-    const result = [];
-    for (let index = 0; index < connections; index++) {
-      result.push(index + 1);
+    return {
+      'margin-top': `${marginTop}px`,
+      height: `${this.playerHeight / 2 + this.verticalSpace / 2}px`,
     }
-
-    return result;
-  }
-
-  get isStraight() {
-    return (
-      this.round.connectionType &&
-      this.round.connectionType == ConnectionType.StraightOpen
-    );
-  }
-
-  get isStraightDown() {
-    return (
-      this.round.connectionType &&
-      this.round.connectionType == ConnectionType.StraightOpenDown
-    );
   }
 }
 </script>
 
 <style lang="scss">
-.connector-connection {
-  display: grid;
+.connector {
+  box-sizing: content-box;
+}
+.connector-row {
+  width: 100%;
+  display: flex;
+}
+.connector-row.top {
+  height: 50%;
+}
+.connector-row.bottom {
+  height: calc(50% + 2px);
+}
+.connector .cell {
+  width: 50%;
+  border-color: grey;
+  border-style: solid;
+}
+.top-connector {
+  .top-left {
+    border-width: 2px 2px 0px 0px;
+    border-top-right-radius: 3px;
+  }
+  .top-right {
+    border-width: 0px;
+  }
+  .bottom-left {
+    border-width: 0px;
+  }
+  .bottom-right {
+    border-width: 0px 0px 2px 2px;
+    border-bottom-left-radius: 3px;
+  }
+}
+.bottom-connector {
+  .top-left {
+    border-width: 0px;
+  }
+  .top-right {
+    border-width: 2px 0px 0px 2px;
+    border-top-left-radius: 3px;
+  }
+  .bottom-left {
+    border-width: 0px 2px 2px 0px;
+    border-bottom-right-radius: 3px;
+  }
+  .bottom-right {
+    border-width: 0px;
+  }
 }
 </style>

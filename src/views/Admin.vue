@@ -29,6 +29,7 @@ import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
+import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 
 @Component({
@@ -45,6 +46,7 @@ import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
     AdminManagePortraits,
     AdminMaps,
     AdminMotd,
+    AdminTournaments,
     AdminViewGameChat,
   },
 })
@@ -161,6 +163,18 @@ export default class Admin extends Vue {
           title: "Manage Maps",
           icon: "mdi-map-plus",
           component: "admin-maps",
+        },
+      ],
+    },
+    {
+      title: "Tournaments",
+      icon: "mdi-sword-cross",
+      items: [
+        {
+          key: "tournaments",
+          title: "Manage Tournaments",
+          icon: "mdi-sword-cross",
+          component: "admin-tournaments",
         },
       ],
     },

@@ -1,307 +1,101 @@
 <template>
-  <div class="bracket-wrapper bracket-player">
-    <div class="bracket-scroller">
-      <div
-        style="width: 100%"
-        class="bracket bracket-width-2col-20"
-        v-if="bracketRoundsWithDimensions"
-      >
-        <template v-for="(round, roundIndex) in bracketRounds">
-          <div
-            :key="`round.${roundIndex}`"
-            class="bracket-column bracket-column-matches"
-            style="width: 150px"
-          >
-            <div
-              style="margin-top: 0px"
-              v-bind:style="{
-                height: round.dimensions
-                  ? round.dimensions.headerHeight + 'px'
-                  : null,
-              }"
-            >
-              <div class="bracket-header">{{ round.name }}</div>
-            </div>
-            <tournamentMatch
-              v-for="(match, matchIndex) in round.matches"
-              style="cursor: pointer"
-              v-on:click.native="matchSelected(match)"
-              :key="`match.${roundIndex}.${matchIndex}`"
-              :date="match.date"
-              :topPlayer="match.players[0]"
-              :bottomPlayer="match.players[1]"
-              :cellHeight="{
-                height: round.dimensions ? round.dimensions.cellHeight : null,
-              }"
-            ></tournamentMatch>
-          </div>
-          <tournamentRoundConnector
-            :key="`connector.${roundIndex}`"
-            :round="round"
-            :prevRound="bracketRounds[roundIndex - 1]"
-            :totalRounds="totalRounds"
-            :matchesInRound="round.matches.length"
-          ></tournamentRoundConnector>
-        </template>
-        <div style="clear: left"></div>
-      </div>
+  <div v-if="showBracket" class="black--text">
+    <h3 class="mt-3">Bracket</h3>
+    <div class="d-flex pa-2" v-bind:style="style">
+      <template v-for="(round, roundIndex) in rounds">
+        <tournament-round-matches
+          :key="`matches-${roundIndex}`"
+          :round="round"
+          :roundWidth="roundWidth"
+          :playerHeight="playerHeight"
+          :roundNameHeight="roundNameHeight"
+          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+          :marginTop="roundDimensions[roundIndex].marginTop"
+        />
+        <tournament-round-connectors
+          v-if="roundIndex + 1 < rounds.length"
+          :key="`connectors-${roundIndex}`"
+          :seriesCount="round.series.length"
+          :connectorWidth="connectorWidth"
+          :playerHeight="playerHeight"
+          :roundNameHeight="roundNameHeight"
+          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+          :marginTop="roundDimensions[roundIndex].marginTop"
+        />
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import _ from "lodash";
+import { ETournamentState, ITournament, ITournamentRound } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {
-  ITournamentPlayer,
-  ITournamentMatch,
-  ITournamentRound,
-  ConnectionType,
-} from "@/store/tournaments/types";
-import { ERaceEnum } from "@/store/typings";
-import TournamentMatch from "@/components/tournaments/TournamentMatch.vue";
-import TournamentRoundConnector from "@/components/tournaments/TournamentRoundConnector.vue";
+import TournamentRoundMatches from "./TournamentRoundMatches.vue";
+import TournamentRoundConnectors from "./TournamentRoundConnectors.vue";
 
 @Component({
   components: {
-    TournamentMatch,
-    TournamentRoundConnector,
+    TournamentRoundMatches,
+    TournamentRoundConnectors,
   },
 })
 export default class TournamentBracket extends Vue {
-  @Prop() bracketRounds!: ITournamentRound[];
+  @Prop() public tournament!: ITournament;
+  @Prop({ default: 156 }) public roundWidth!: number;
+  @Prop({ default: 36 }) public connectorWidth!: number;
+  @Prop({ default: 26 }) public verticalSpace!: number;
+  @Prop({ default: 25 }) public playerHeight!: number;
+  @Prop({ default: 32 }) public roundNameHeight!: number;
+  @Prop({ default: 14 }) public fontSize!: number;
 
-  get totalRounds() {
-    if (!this.bracketRounds) {
-      return 0;
-    }
-
-    return this.bracketRounds.length;
+  get showBracket() {
+    return [
+      ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
+    ].includes(this.tournament.state);
   }
 
-  get bracketRoundsWithDimensions() {
-    for (let index = 0; index < this.totalRounds; index++) {
-      const round = this.bracketRounds[index];
-      const prevRound = this.bracketRounds[index - 1];
-
-      round.dimensions = round.dimensions || undefined;
-
-      if (round.dimensions) {
-        round.dimensions.headerHeight = this.calculateHeaderHeight(
-          round,
-          prevRound
-        );
-        round.dimensions.cellHeight = this.calculateCellHeight(
-          round,
-          prevRound
-        );
+  get rounds(): ITournamentRound[] {
+    const playerExtraData = _.fromPairs(
+      this.tournament.players.map(p => [
+        p.battleTag,
+        _.pick(p, [ 'countryCode', 'race' ]),
+      ])
+    );
+    for (const round of this.tournament.rounds) {
+      for (const series of round.series) {
+        if (!series.players) {
+          continue;
+        }
+        for (const player of series.players) {
+          _.assign(player, playerExtraData[player.battleTag]);
+        }
       }
     }
-
-    return this.bracketRounds;
+    return this.tournament.rounds;
   }
 
-  getClass(player: ITournamentPlayer, index: number) {
+  get roundDimensions() {
+    let playerHeight = this.playerHeight;
+    let verticalSpace = this.verticalSpace;
+    let marginTop = 0;
+    const dimensions: any[] = [];
+    _.times(this.rounds.length, () => {
+      dimensions.push({
+        verticalSpace,
+        marginTop,
+      });
+      marginTop += verticalSpace / 2 + playerHeight;
+      verticalSpace = 2 * (verticalSpace + playerHeight);
+    });
+    return dimensions;
+  }
+
+  get style() {
     return {
-      "bracket-player-top": index == 0,
-      "bracket-player-bottom": index == 1,
-      "bracket-human": player.race == ERaceEnum.HUMAN,
-      "bracket-orc": player.race == ERaceEnum.ORC,
-      "bracket-ud": player.race == ERaceEnum.UNDEAD,
-      "bracket-elf": player.race == ERaceEnum.NIGHT_ELF,
-    };
-  }
-
-  private matchSelected(match: ITournamentMatch) {
-    this.$emit("matchSelected", match);
-  }
-
-  private calculateCellHeight(
-    round: ITournamentRound,
-    prevRound: ITournamentRound
-  ) {
-    let previousHeight = 20;
-    let multiplier = 2;
-
-    if (prevRound) {
-      previousHeight = prevRound?.dimensions?.cellHeight || 20;
-
-      if (
-        prevRound.connectionType == ConnectionType.StraightOpen ||
-        prevRound.connectionType == ConnectionType.StraightOpenDown
-      ) {
-        multiplier = 1;
-      }
+      'font-size': `${this.fontSize}px`,
     }
-
-    return previousHeight * multiplier;
-  }
-
-  private calculateHeaderHeight(
-    round: ITournamentRound,
-    prevRound: ITournamentRound
-  ) {
-    let height = 40;
-    if ((prevRound || round).connectionType === ConnectionType.StraightOpen) {
-      height = 64 - (round.round - 1) * 12;
-    }
-
-    if (
-      prevRound &&
-      prevRound.connectionType === ConnectionType.StraightOpenDown
-    ) {
-      height = (prevRound.dimensions?.headerHeight || 0) + 12;
-    }
-
-    return height;
   }
 }
 </script>
-
-<style lang="scss">
-.bracket-wrapper {
-  min-height: 0.01%;
-  pointer-events: auto;
-  padding-bottom: 15px;
-  box-sizing: content-box;
-}
-
-.bracket {
-  font-size: 11px;
-  color: #000000;
-  background: transparent;
-  display: table;
-  -webkit-transform-origin: left top 0;
-  transform-origin: left top 0;
-}
-
-.bracket-column {
-  float: left;
-  position: relative;
-}
-
-.bracket-header {
-  border-radius: 2px;
-  border: 1px solid #aaaaaa;
-  padding: 2px 0 2px 0;
-  position: relative;
-  left: 0;
-  right: 0;
-  line-height: 18px;
-  margin-bottom: 20px;
-  text-align: center;
-  background: #ebebeb;
-}
-
-.bracket-game {
-  position: relative;
-}
-
-.bracket-game .icon,
-.table-battleroyale-results .icon,
-.match-row-icon {
-  cursor: pointer;
-  height: 12px;
-  width: 12px;
-  background-image: url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cdefs%3E%3Cstyle%3E.c%7Bfill%3A%23616161%7D.i%7Bfill%3A%23fff%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ccircle%20class%3D%22c%22%20cx%3D%226%22%20cy%3D%226%22%20r%3D%226%22%2F%3E%3Cpolygon%20class%3D%22i%22%20points%3D%224%205%204%206%205%206%205%209%204%209%204%2010%208%2010%208%209%207%209%207%202%205%202%205%204%207%204%207%205%204%205%22%2F%3E%3C%2Fsvg%3E);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: transparent;
-  z-index: 500;
-  position: absolute;
-  image-rendering: -webkit-optimize-contrast;
-}
-
-.bracket-cell,
-.bracket-cell-r1,
-.bracket-cell-r2,
-.bracket-cell-r3,
-.bracket-cell-r4,
-.bracket-cell-r5,
-.bracket-cell-r6,
-.bracket-cell-r7 {
-  position: relative;
-}
-
-.bracket-team-top,
-.bracket-team-bottom,
-.bracket-player-top,
-.bracket-player-bottom,
-.bracket-team-middle,
-.bracket-player-middle,
-.bracket-team-inner,
-.bracket-player-inner {
-  border-radius: 0 0 2px 2px;
-  border: solid #aaaaaa 1px;
-  position: absolute;
-  padding: 1px;
-  min-height: 20px;
-  line-height: 18px;
-  background: #f2f2f2;
-  left: 0;
-  right: 0;
-}
-
-.match-row,
-.bracket-hover,
-.grouptableslot,
-.matchlistslot,
-.bracket-team-top,
-.bracket-team-bottom,
-.bracket-team-middle,
-.bracket-team-inner,
-.bracket-player-top,
-.bracket-player-bottom,
-.bracket-player-middle,
-.bracket-player-inner {
-  transition: 0.5s;
-}
-
-.bracket-team-top,
-.bracket-player-top {
-  bottom: 0;
-  border-radius: 2px 2px 0 0;
-}
-
-.bracket-score {
-  text-align: center;
-  background: #ebebeb;
-  border-left: 1px solid #aaaaaa;
-  position: absolute;
-  line-height: 22px;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
-
-.wiki-warcraft .bracket-popup-wrapper.bracket-popup-player {
-  width: 320px;
-}
-
-.bracket-popup-wrapper {
-  box-sizing: border-box;
-  display: none;
-  position: fixed;
-  transform: translateZ(0);
-  z-index: 1000;
-  font-weight: normal;
-  white-space: normal;
-  font-size: 12px;
-}
-
-.bracket-elf {
-  background: rgb(184, 242, 184);
-}
-
-.bracket-human {
-  background: rgb(184, 184, 242);
-}
-
-.bracket-orc {
-  background: rgb(242, 184, 184);
-}
-
-.bracket-ud {
-  background: rgb(242, 184, 242);
-}
-</style>

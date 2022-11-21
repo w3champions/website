@@ -32,3 +32,7 @@ export function getProfileUrl(playerId: string) {
 export function getAsset(path: string) {
   return require(`../assets/${path}`);
 }
+
+export function getTournamentUrl(tournamentId: string) {
+  return "/tournaments/" + encodeURIComponent(`${tournamentId}`);
+}

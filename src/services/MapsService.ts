@@ -86,4 +86,17 @@ export default class MapsService {
 
     return await response.json();
   }
+
+  public async getTournamentMaps(active: boolean): Promise<GetMapsResponse> {
+    const url = `${API_URL}api/maps/tournaments?active=${active}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }
+    });
+
+    return await response.json();
+  }
 }

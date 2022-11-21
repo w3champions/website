@@ -22,6 +22,7 @@ import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivi
 import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
 import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
 import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
+import TournamentDetail from "@/views/TournamentDetail.vue";
 
 Vue.use(VueRouter);
 
@@ -179,6 +180,12 @@ const routes = [
     path: "/tournaments",
     name: "Tournaments",
     component: Tournaments,
+  },
+  {
+    path: "/tournaments/:tournamentId",
+    name: "Tournament",
+    props: true,
+    component: TournamentDetail,
   },
 ];
 

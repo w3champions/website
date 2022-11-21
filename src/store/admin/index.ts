@@ -4,6 +4,7 @@ import { ActionContext } from "vuex";
 import playerManagementModule from "./playerManagement/index";
 import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
+import tournamentsManagementModule from "./tournaments"
 import replayManagementModule from "./replays/index";
 
 import {
@@ -71,7 +72,7 @@ const mod = {
       );
 
       let filterPlayer = state.players.find(
-        (p) => p.battleTag === bannedPlayer.battleTag
+        (p: BannedPlayer) => p.battleTag === bannedPlayer.battleTag
       );
 
       if (filterPlayer) {
@@ -292,6 +293,7 @@ const mod = {
     playerManagement: playerManagementModule,
     mapsManagement: mapsManagementModule,
     infoMessageManagement: infoMessageManagementModule,
+    tournamentsManagement: tournamentsManagementModule,
     replayManagement: replayManagementModule,
   },
 } as const;
