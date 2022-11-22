@@ -97,7 +97,7 @@ const mod = {
       );
 
       const bannedPlayers = state.players.filter(
-        (p) => p.battleTag != bannedPlayer.battleTag
+        (p: BannedPlayer) => p.battleTag != bannedPlayer.battleTag
       );
 
       commit.SET_BANNED_PLAYERS(bannedPlayers);

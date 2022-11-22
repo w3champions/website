@@ -27,5 +27,8 @@ module.exports = {
     "@typescript-eslint/no-loss-of-precision": "off",
     "@typescript-eslint/explicit-module-boundary-types":"off",
     camelcase: "off",
+    "vue/valid-v-slot": ["error", {
+      allowModifiers: true,
+    }],
   },
 };

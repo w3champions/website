@@ -31,7 +31,7 @@ export default class AssignPortrait extends Vue {
 
   assignPortrait(): void {
     if (!this.isAssigned && this.selectable) {
-      this.$parent.$emit("portrait-selected", this.portraitId);
+      this.$parent?.$emit("portrait-selected", this.portraitId);
     }
   }
 }
