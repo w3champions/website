@@ -64,13 +64,11 @@ export default class MmrSelect extends Vue {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .v-messages {
-    font-size: 15px;
-  }
+::v-deep(.v-messages) {
+  font-size: 15px;
+}
 
-  .theme--dark .v-slider__thumb-label {
-    color: black;
-  }
+::v-deep(.theme--dark .v-slider__thumb-label) {
+  color: black;
 }
 </style>

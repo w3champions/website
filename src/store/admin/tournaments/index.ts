@@ -20,7 +20,7 @@ const mod = {
       const data = await rootGetters.tournamentsService.getUpcomingTournament();
       commit.SET_UPCOMING_TOURNAMENT(data.tournament);
     },
-    async registerPlayer(context: ActionContext<AdminTournamentsState, RootState>, player: ITournamentPlayer) {
+    async registerPlayer(context: ActionContext<AdminTournamentsState, RootState>, player: ITournamentPlayer): Promise<boolean> {
       const { rootGetters, commit, state, rootState } = moduleActionContext(context, mod);
       const token = rootState.oauth.token;
       commit.SET_IS_LOADING(true);
@@ -28,7 +28,7 @@ const mod = {
       commit.SET_IS_LOADING(false);
       return registered;
     },
-    async unregisterPlayer(context: ActionContext<AdminTournamentsState, RootState>, battleTag: string) {
+    async unregisterPlayer(context: ActionContext<AdminTournamentsState, RootState>, battleTag: string): Promise<boolean> {
       const { rootGetters, commit, state, rootState } = moduleActionContext(context, mod);
       const token = rootState.oauth.token;
       commit.SET_IS_LOADING(true);
@@ -36,7 +36,7 @@ const mod = {
       commit.SET_IS_LOADING(false);
       return registered;
     },
-    async createTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament) {
+    async createTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament): Promise<boolean> {
       const { rootGetters, commit, rootState } = moduleActionContext(context, mod);
       const token = rootState.oauth.token;
       commit.SET_IS_LOADING(true);
@@ -44,7 +44,7 @@ const mod = {
       commit.SET_IS_LOADING(false);
       return created;
     },
-    async updateTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament) {
+    async updateTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament): Promise<boolean> {
       const { rootGetters, commit, rootState } = moduleActionContext(context, mod);
       const token = rootState.oauth.token;
       commit.SET_IS_LOADING(true);
