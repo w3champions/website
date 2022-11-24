@@ -163,6 +163,7 @@ export default class MatchesView extends Vue {
 
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();

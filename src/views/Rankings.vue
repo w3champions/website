@@ -355,9 +355,10 @@ export default class RankingsView extends Vue {
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
 
-    if (this.season) {
-      this.$store.direct.dispatch.rankings.setSeason({id: this.season} as Season);
-    }
+    this.season
+      ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
+      : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+
     if (this.league) {
       this.$store.direct.dispatch.rankings.setLeague(this.league);
     }

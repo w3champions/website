@@ -54,7 +54,6 @@ import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTim
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
-import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { Season } from "@/store/ranking/types";
 
 @Component({
@@ -93,14 +92,6 @@ export default class OverallStatisticsView extends Vue {
         freshLogin: false,
       });
     }
-    const mMRDistributionPayload: SeasonGameModeGateWayForMMR = {
-      season: this.$store.direct.state.rankings.selectedSeason.id,
-      gameMode: this.$store.direct.state.matches.gameMode,
-      gateWay: this.$store.direct.state.gateway,
-    };
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
-      mMRDistributionPayload
-    );
   }
 }
 </script>
