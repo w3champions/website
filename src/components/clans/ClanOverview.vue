@@ -363,7 +363,7 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted(): Promise<void> {
-    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
 
     await this.$store.direct.dispatch.player.loadProfile({
       battleTag: this.battleTag,
@@ -374,6 +374,7 @@ export default class ClanOverview extends Vue {
   // Load clans on activate instead of mount,
   // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
   async activated(): Promise<void> {
+    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }
