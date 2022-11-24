@@ -43,6 +43,7 @@ import { Component } from "vue-property-decorator";
 
 import { Match, EGameMode } from "@/store/typings";
 import { MatchStatus } from "@/store/match/types";
+import { Season } from "@/store/ranking/types";
 
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
@@ -88,11 +89,15 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.matches;
   }
 
-  get currentSeason(): number {
-    return this.$store.direct.state.rankings.seasons[0].id;
+  get currentSeason(): Season {
+    return this.$store.direct.state.rankings.seasons[0];
   }
 
   get maps() {
+    if (!this.currentSeason) {
+      return [];
+    }
+
     const maps = this.mapsByGameMode[this.gameMode] || [];
     return Array.from(maps);
   }
@@ -101,7 +106,7 @@ export default class MatchesView extends Vue {
     const filterSeasons =
       this.$store.direct.state.matches.status == MatchStatus.onGoing
         ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-            matchesOnMapPerSeason.season === this.currentSeason
+            matchesOnMapPerSeason.season === this.currentSeason.id
         : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
             matchesOnMapPerSeason.season >= 0;
 
