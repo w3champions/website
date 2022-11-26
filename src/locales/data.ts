@@ -117,7 +117,7 @@ const data = {
     },
     views_home: {
       w3c_motto: "The ladder you have been waiting for!",
-      join_button: "Join the Battlefield now!",
+      join_button: "Download now!",
       hometitle: "Come and join us!",
       homebody1: "W3Champions is the ladder made by and for the community.",
       homebody2: "It adds many new and old features to the game, such as:",
@@ -232,6 +232,10 @@ const data = {
       invitespending: "Invites Pending:",
       nonepending: "None pending",
     },
+    components_common_copybutton: {
+      tooltip: "Copy to clipboard",
+      maptooltip: "Copy maps to clipboard",
+    },
     components_common_gamemodeselect: {
       selectgamemode: "Select a gamemode:",
     },
@@ -293,6 +297,11 @@ const data = {
     components_matches_matchesstatusselect: {
       selectstatus: "Select a status:",
     },
+    components_matches_sortselect: {
+      sortmatchesby: "Sort matches by:",
+      mmrdescending: "MMR",
+      starttimedescending: "Start time",
+    },
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Top live 1v1 matches",
     },
@@ -319,6 +328,7 @@ const data = {
       playedmaps: "Played Maps",
       popularhours: "Popular Hours",
       gamelengths: "Game Lengths",
+      selectseason: "Select Season"
     },
     "components_overall-statistics_tabs_winratestab": {
       selectmap: "Select Map",

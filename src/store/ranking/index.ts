@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { moduleActionContext } from "..";
 import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
@@ -101,7 +102,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       league: number
     ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       commit.SET_LEAGUE(league);
     },
     setSeason(
@@ -139,12 +140,15 @@ const mod = {
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },
     async retrieveSeasons(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      // Seasons already fetched, skip
+      if (!_.isEmpty(state.seasons)) {
+        return;
+      }
 
       const seasons = await rootGetters.rankingService.retrieveSeasons();
-
       commit.SET_SEASONS(seasons);
-      commit.SET_SELECTED_SEASON(seasons[0]);
     },
   },
   mutations: {

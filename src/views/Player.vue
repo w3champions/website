@@ -360,6 +360,12 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   private async init() {
+
+    // This is needed because the view is not destroyed when going from a profile directly to another profile, leading to multiple interval timers.
+    if (this._intervalRefreshHandle) {
+      this.stopLoadingMatches();
+    }
+
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
     await this.$store.direct.dispatch.player.loadProfile({
@@ -388,6 +394,10 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   destroyed() {
+    this.stopLoadingMatches();
+  }
+
+  stopLoadingMatches() {
     this.$store.direct.commit.player.SET_ONGOING_MATCH({} as Match);
     clearInterval(this._intervalRefreshHandle);
   }

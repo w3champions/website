@@ -25,7 +25,7 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
-    loadingMmrRpTimeline: false,
+    loadingMmrRpTimeline: true,
     opponentTag: "",
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
