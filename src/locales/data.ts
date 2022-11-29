@@ -242,6 +242,9 @@ const data = {
     components_common_gatewayselect: {
       selectgateway: "Select a gateway:",
     },
+    components_common_mmrselect: {
+      selectmmr: "Select MMR range"
+    },
     components_ladder_countryrankingsgrid: {
       noplayerfound: "No players found for this country",
     },
