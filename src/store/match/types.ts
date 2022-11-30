@@ -11,7 +11,7 @@ export type MatchState = {
   status: MatchStatus;
   gameMode: EGameMode;
   map: string;
-  mmr: number[];
+  mmr: Mmr;
   sort: string;
 };
 
@@ -24,3 +24,8 @@ export enum SortMode {
   startTimeDescending = "startTimeDescending",
   mmrDescending = "mmrDescending",
 }
+
+export type Mmr = {
+    min: number;
+    max: number;
+};
