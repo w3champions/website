@@ -6,8 +6,8 @@
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "yarn run build:prod && http-server ./dist",
     "build:prod": "yarn run generate-locales && rimraf ./dist && vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "lint:fix": "vue-cli-service lint --fix",
+    "lint": "vue-cli-service lint --no-fix",
+    "lint:fix": "vue-cli-service lint",
     "format": "node_modules/.bin/prettier --write .",
     "generate-locales": "npx ts-node scripts/generate-locales.ts",
     "sass-migrate": "sass-migrator division **/*.scss"

@@ -9,7 +9,7 @@
     <v-card class="px-2 pt-2">
       <v-card-text>
         <v-range-slider
-          v-model="range"
+          v-model="currentMinMax"
           max=3000
           min=0
           step="100"
@@ -28,37 +28,36 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { Mmr } from "@/store/match/types";
 
 @Component({})
 export default class MmrSelect extends Vue {
-  @Prop() mmr!: number[];
+  @Prop() mmr!: Mmr;
 
-  range: number[] = []
-  previousMmr: number[] = [];
-  currentMmr: number[] = [];
+  previousMmr = {} as Mmr;
+  currentMmr = {min: 0, max: 3000} as Mmr;
+  currentMinMax: number[] = [this.currentMmr.min, this.currentMmr.max];
 
-  mounted() {
-    this.range = [this.mmr[0], this.mmr[1]];
-  }
-
-  public selectMmr(mmr: number[]): void {
-    this.currentMmr = mmr;
+  public selectMmr(selectedMmr: number[]): void {
+    this.currentMmr.min = selectedMmr[0];
+    this.currentMmr.max = selectedMmr[1];
   }
 
   get selected(): string {
-    return (this.mmr[0] == 0 && this.mmr[1] == 3000) ? "MMR" : `${this.mmr[0]} - ${this.mmr[1]}`;
+    return (this.mmr.min == 0 && this.mmr.max == 3000) ? "MMR" : `${this.mmr.min} - ${this.mmr.max}`;
   }
 
   public onMenuToggled(opened: boolean): void {
     // Only send a request to backend when closing menu and selecting a different mmr.
     if (!opened && this.hasSelectedDifferentMmr()) {
-      this.previousMmr = this.currentMmr;
+      this.previousMmr.min = this.currentMmr.min;
+      this.previousMmr.max = this.currentMmr.max;
       this.$emit("mmrChanged", this.currentMmr);
     }
   }
 
   public hasSelectedDifferentMmr() {
-    return this.currentMmr.some((val: number, index: number) => val != this.previousMmr[index]);
+    return this.currentMmr.min != this.previousMmr.min || this.currentMmr.max != this.previousMmr.max;
   }
 }
 </script>

@@ -42,7 +42,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { Match, EGameMode } from "@/store/typings";
-import { MatchStatus } from "@/store/match/types";
+import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
 
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -146,7 +146,7 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.map;
   }
 
-  get mmr(): number[] {
+  get mmr(): Mmr {
     return this.$store.direct.state.matches.mmr;
   }
 
@@ -190,7 +190,7 @@ export default class MatchesView extends Vue {
     this.$store.direct.dispatch.matches.setMap(map);
   }
 
-  mmrChanged(mmr: number[]): void {
+  mmrChanged(mmr: Mmr): void {
     this.$store.direct.dispatch.matches.setMmr(mmr);
   }
 }

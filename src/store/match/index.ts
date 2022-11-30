@@ -1,6 +1,6 @@
 import { EGameMode } from "@/store/typings";
 import { moduleActionContext } from "..";
-import { MatchState, MatchStatus } from "./types";
+import { MatchState, MatchStatus, Mmr } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -16,7 +16,7 @@ const mod = {
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
-    mmr: [0, 3000],
+    mmr: {min: 0, max: 3000} as Mmr,
     sort: "startTimeDescending",
   } as MatchState,
   actions: {
@@ -118,7 +118,7 @@ const mod = {
     },
     async setMmr(
       context: ActionContext<MatchState, RootState>, 
-      mmr: number[]
+      mmr: Mmr
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);
       commit.SET_MMR(mmr);
@@ -163,7 +163,7 @@ const mod = {
     SET_MAP(state: MatchState, map: string) {
       state.map = map;
     },
-    SET_MMR(state: MatchState, mmr: number[]) {
+    SET_MMR(state: MatchState, mmr: Mmr) {
       state.mmr = mmr;
     },
     SET_SORT(state: MatchState, sort: string) {
