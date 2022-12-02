@@ -7,6 +7,7 @@
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
+
                 <v-card-subtitle class="pa-0">
                   {{ $t(`gatewayNames.${gateWay}`) }}
                   <br />
@@ -49,6 +50,11 @@
                 />
               </v-col>
               <v-col cols="1" />
+            <v-row>
+              <v-col>
+                <download-replay-icon class="subicon" :gameId="matchId"></download-replay-icon>
+              </v-col>
+            </v-row>
             </v-row>
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
@@ -186,6 +192,7 @@ import { EGameMode, PlayerScore, Team } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
+import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 
 @Component({
   components: {
@@ -195,6 +202,7 @@ import MatchMixin from "@/mixins/MatchMixin";
     MatchHiglights,
     TeamMatchInfo,
     HostIcon,
+    DownloadReplayIcon
   },
 })
 export default class MatchDetailView extends Mixins(MatchMixin) {
@@ -404,4 +412,5 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   background-image: url("../assets/giphy.gif") !important;
   background-size: cover !important;
 }
+
 </style>
