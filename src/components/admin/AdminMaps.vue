@@ -10,12 +10,12 @@
         <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected"></edit-map-files>
       </v-dialog>
 
-      <v-text-field label="Search" v-model="search" @input="onSearchChange"></v-text-field>
+      <v-text-field label="Search" v-model="search"></v-text-field>
       <v-data-table
         :headers="headers"
         :items="maps"
         :items-per-page="10"
-        :server-items-length="totalMaps"
+        :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
         class="elevation-1"
       >
         <template #[`item.path`]="{ item }">
@@ -36,6 +36,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
+import _ from "lodash";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
@@ -62,15 +63,16 @@ export default class AdminMaps extends Vue {
   }
 
   public get maps() {
-    return this.$store.direct.state.admin.mapsManagement.maps;
+    return _.isUndefined(this.search) ?
+      this.$store.direct.state.admin.mapsManagement.maps :
+      this.$store.direct.state.admin.mapsManagement.maps.filter(m => {
+        return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||
+               m.name.toLowerCase().includes(this.search!.toLowerCase());
+      })
   }
 
   public get totalMaps() {
     return this.$store.direct.state.admin.mapsManagement.totalMaps;
-  }
-
-  public onSearchChange() {
-    this.$store.direct.dispatch.admin.mapsManagement.loadMaps(this.search);
   }
 
   public getMapPath(map: Map) {
