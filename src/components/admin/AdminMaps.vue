@@ -15,7 +15,7 @@
         :headers="headers"
         :items="maps"
         :items-per-page="10"
-        :server-items-length="totalMaps"
+        :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
         class="elevation-1"
       >
         <template #[`item.path`]="{ item }">
