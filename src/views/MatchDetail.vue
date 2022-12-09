@@ -7,7 +7,6 @@
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
-
                 <v-card-subtitle class="pa-0">
                   {{ $t(`gatewayNames.${gateWay}`) }}
                   <br />
@@ -50,11 +49,9 @@
                 />
               </v-col>
               <v-col cols="1" />
-            <v-row>
-              <v-col>
-                <download-replay-icon class="subicon" :gameId="matchId"></download-replay-icon>
-              </v-col>
-            </v-row>
+              <div class="subicon">
+                <download-replay-icon :gameId="matchId"/>
+              </div>
             </v-row>
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
@@ -413,4 +410,9 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   background-size: cover !important;
 }
 
+.subicon {
+  display: block;
+  position: absolute;
+  right:1%;
+}
 </style>
