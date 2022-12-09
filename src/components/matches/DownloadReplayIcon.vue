@@ -26,7 +26,7 @@ export default class DownloadReplayIcon extends Vue {
   }
 
   downloadReplay(): void {
-    window.open(`${API_URL}api/replays/${this.gameId}`);
+    window.open(`${API_URL}api/replays/${this.gameId}`, "_self");
   }
 }
 </script>
