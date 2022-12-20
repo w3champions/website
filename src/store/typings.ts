@@ -139,7 +139,7 @@ export enum EGameMode {
 
   GM_FROSTCRAFT_4ON4 = 501,
 
-  GM_RH_1ON1 = 601,
+  GM_ATR_1ON1 = 601,
 
   GM_BANJOBALL_4ON4 = 701,
 
