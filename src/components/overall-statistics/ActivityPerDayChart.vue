@@ -101,7 +101,7 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_ROC_1ON1:
         return "rgb(120, 0, 4)";
 
-      case EGameMode.GM_RH_1ON1:
+      case EGameMode.GM_ATR_1ON1:
         return "rgb(21, 189, 124)";
 
       case EGameMode.GM_BANJOBALL_4ON4:
@@ -141,7 +141,7 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_ROC_1ON1:
         return 1;
 
-      case EGameMode.GM_RH_1ON1:
+      case EGameMode.GM_ATR_1ON1:
         return 1;
 
       case EGameMode.GM_BANJOBALL_4ON4:
