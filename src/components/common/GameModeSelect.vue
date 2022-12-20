@@ -108,6 +108,12 @@ export default class GameModeSelect extends Vue {
         ),
         gameMode: EGameMode.GM_BANJOBALL_4ON4,
       },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`
+        ),
+        gameMode: EGameMode.GM_PTR_1ON1,
+      },
     ];
 
     if (this.disabledModes) {

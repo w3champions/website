@@ -41,6 +41,7 @@ const en = {
     GM_RH_1ON1: "Random Hero 1vs1",
     GM_ATR_1ON1: "All The Randoms 1vs1",
     GM_BANJOBALL_4ON4: "Banjoball 4v4",
+    GM_PTR_1ON1: "PTR Balance 1v1",
   },
 
   gatewayNames: {

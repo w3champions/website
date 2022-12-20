@@ -263,6 +263,12 @@ export default class PlayerMatchesTab extends Vue {
         ),
         modeId: EGameMode.GM_BANJOBALL_4ON4,
       },
+      {
+        modeName: this.$t(
+          `gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`
+        ),
+        modeId: EGameMode.GM_PTR_1ON1,
+      },
     ];
   }
 
