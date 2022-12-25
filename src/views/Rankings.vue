@@ -105,40 +105,7 @@
           </template>
         </v-autocomplete>
       </v-card-title>
-      <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-          <v-btn tile v-on="on" class="ma-4 transparent">
-            <h2 class="pa-0">
-              {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
-            </h2>
-            <v-icon class="ml-4">mdi-chevron-right</v-icon>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-text>
-            <v-list>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t("views_rankings.prevseasons") }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list>
-            <v-list dense>
-              <v-list-item
-                v-for="item in seasons"
-                :key="item.id"
-                @click="selectSeason(item)"
-              >
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.season") }} {{ item.id }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-menu>
+      <season-select @seasonSelected="seasonSelected"></season-select>
       <v-card-text>
         <rankings-grid
           :rankings="rankings"
@@ -187,6 +154,7 @@ import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+import SeasonSelect from "@/components/common/SeasonSelect.vue";
 
 @Component({
   components: {
@@ -195,6 +163,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
     GameModeSelect,
     RankingsGrid,
     RankingsRaceDistribution,
+    SeasonSelect,
   },
 })
 export default class RankingsView extends Vue {
@@ -262,10 +231,6 @@ export default class RankingsView extends Vue {
 
   get selectedSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
-  }
-
-  get seasons() {
-    return this.$store.direct.state.rankings.seasons;
   }
 
   get selectedGameMode() {
@@ -354,7 +319,6 @@ export default class RankingsView extends Vue {
     this.search = "";
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
-
     this.season
       ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
       : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
@@ -435,12 +399,6 @@ export default class RankingsView extends Vue {
     });
   }
 
-  public async selectSeason(season: Season) {
-    this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.getLadders();
-    await this.setLeague(0);
-  }
-
   public async setLeague(league: number) {
     this.$store.direct.dispatch.rankings.setLeague(league);
     await this.getRankings();
@@ -454,6 +412,11 @@ export default class RankingsView extends Vue {
     this.$router.push({
       path: getProfileUrl(playerId),
     });
+  }
+
+  async seasonSelected(): Promise<void> {
+    await this.getLadders();
+    await this.setLeague(0);
   }
 }
 </script>

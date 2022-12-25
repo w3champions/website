@@ -58,39 +58,7 @@
           </v-card>
         </v-menu>
         <v-spacer></v-spacer>
-        <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              tile
-              v-on="on"
-              class="ma-4"
-              style="background-color: transparent"
-            >
-              <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
-              <v-icon class="ml-4">mdi-chevron-right</v-icon>
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Previous seasons:</v-list-item-title>
-                </v-list-item-content>
-              </v-list>
-              <v-list dense>
-                <v-list-item
-                  v-for="item in seasons"
-                  :key="item.id"
-                  @click="selectSeason(item)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>Season {{ item.id }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
+        <season-select @seasonSelected="seasonSelected"></season-select>
       </v-card-title>
       <v-card-text>
         <country-rankings-grid
@@ -130,6 +98,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+import SeasonSelect from "@/components/common/SeasonSelect.vue";
 
 @Component({
   components: {
@@ -138,6 +107,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
     GameModeSelect,
     CountryRankingsGrid,
     CountryFlag,
+    SeasonSelect,
   },
 })
 export default class CountryRankingsView extends Vue {
@@ -190,10 +160,6 @@ export default class CountryRankingsView extends Vue {
 
   get selectedSeason() {
     return this.$store.direct.state.rankings.selectedSeason;
-  }
-
-  get seasons() {
-    return this.$store.direct.state.rankings.seasons;
   }
 
   get rankings(): CountryRanking[] {
@@ -299,11 +265,6 @@ export default class CountryRankingsView extends Vue {
     });
   }
 
-  async selectSeason(season: Season) {
-    this.$store.direct.dispatch.rankings.setSeason(season);
-    this.refreshRankings();
-  }
-
   async setCountry(countryCode: string) {
     await this.$store.direct.dispatch.rankings.setCountry(countryCode);
   }
@@ -316,6 +277,10 @@ export default class CountryRankingsView extends Vue {
     this.$router.push({
       path: getProfileUrl(playerId),
     });
+  }
+
+  seasonSelected(season: Season): void {
+    this.refreshRankings();
   }
 }
 </script>
