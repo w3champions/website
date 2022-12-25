@@ -7,7 +7,7 @@
         class="ma-4"
         style="background-color: transparent"
       >
-        <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
+        <h2 class="pa-0">{{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }}</h2>
         <v-icon class="ml-4">mdi-chevron-right</v-icon>
       </v-btn>
     </template>
@@ -15,7 +15,7 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>Previous seasons:</v-list-item-title>
+            <v-list-item-title>{{ $t("components_common_seasonselect.prevseasons") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-list dense>
@@ -25,7 +25,7 @@
             @click="selectSeason(season)"
           >
             <v-list-item-content>
-              <v-list-item-title>Season {{ season.id }}</v-list-item-title>
+              <v-list-item-title>{{ $t("components_common_seasonselect.season") }} {{ season.id }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
