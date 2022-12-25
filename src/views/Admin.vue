@@ -53,6 +53,18 @@ import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
     {
+      title: "Data Science",
+      icon: "mdi-chart-line",
+      items: [
+        {
+          key: "queue",
+          title: "Live Queue Data",
+          icon: "mdi-table",
+          component: "admin-queue-data",
+        },
+      ],
+    },
+    {
       title: "Moderation",
       icon: "mdi-account-group",
       items: [
@@ -122,18 +134,6 @@ export default class Admin extends Vue {
           title: "Message of the Day",
           component: "admin-motd",
         }
-      ],
-    },
-    {
-      title: "Data Science",
-      icon: "mdi-chart-line",
-      items: [
-        {
-          key: "queue",
-          title: "Live Queue Data",
-          icon: "mdi-table",
-          component: "admin-queue-data",
-        },
       ],
     },
     {
