@@ -7,7 +7,7 @@
             {{ $t("views_app.matches") }}
           </v-card-title>
           <v-card-text>
-            <matches-status-select />
+            <matches-status-select @statusChanged="statusChanged"/>
             <game-mode-select
               :disabledModes="disabledGameModes"
               :gameMode="gameMode"
@@ -161,9 +161,11 @@ export default class MatchesView extends Vue {
   _intervalRefreshHandle?: number = undefined;
 
   private refreshMatches(): void {
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.getMatches();
-    }, AppConstants.ongoingMatchesRefreshInterval);
+    if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
+      this._intervalRefreshHandle = setInterval(async () => {
+        await this.getMatches();
+      }, AppConstants.ongoingMatchesRefreshInterval);
+    }
   }
 
   async mounted() {
@@ -201,6 +203,16 @@ export default class MatchesView extends Vue {
 
   seasonSelected(season: Season): void {
     this.getMatches(1);
+  }
+
+  statusChanged(status: MatchStatus) {
+    if (status == MatchStatus.onGoing) {
+      this._intervalRefreshHandle = setInterval(async () => {
+        await this.getMatches();
+      }, AppConstants.ongoingMatchesRefreshInterval);
+    } else {
+      clearInterval(this._intervalRefreshHandle);
+    }
   }
 }
 </script>
