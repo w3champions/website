@@ -18,10 +18,6 @@
               :mapKeys="maps"
               :map="map"
             ></map-select>
-            <mmr-select
-              @mmrChanged="mmrChanged"
-              :mmr="mmr"
-            ></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" matchesPage="true" @seasonSelected="seasonSelected"></season-select>
           </v-card-text>
