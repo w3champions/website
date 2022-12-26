@@ -15,12 +15,13 @@ export default class MatchService {
     gateway: number,
     gameMode: EGameMode,
     map: string,
-    mmr: Mmr
+    mmr: Mmr,
+    season: number
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&season=${season}`;
 
     const response = await fetch(url);
     return await response.json();

@@ -23,6 +23,7 @@
               :mmr="mmr"
             ></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
+            <season-select v-if="!unfinished" matchesPage="true" @seasonSelected="seasonSelected"></season-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -53,6 +54,8 @@ import MmrSelect from "@/components/common/MmrSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
+import SeasonSelect from '@/components/common/SeasonSelect.vue'
+import _ from "lodash";
 
 @Component({
   components: {
@@ -62,6 +65,7 @@ import AppConstants from "@/constants";
     MapSelect,
     MmrSelect,
     SortSelect,
+    SeasonSelect,
   },
 })
 export default class MatchesView extends Vue {
@@ -169,6 +173,11 @@ export default class MatchesView extends Vue {
   async mounted() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+
+    if (_.isEmpty(this.$store.direct.state.matches.selectedSeason)) {
+      this.$store.direct.dispatch.matches.setSeason(this.$store.direct.state.rankings.seasons[0]);
+    }
+
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();
@@ -192,6 +201,10 @@ export default class MatchesView extends Vue {
 
   mmrChanged(mmr: Mmr): void {
     this.$store.direct.dispatch.matches.setMmr(mmr);
+  }
+
+  seasonSelected(season: Season): void {
+    this.getMatches(1);
   }
 }
 </script>

@@ -1,6 +1,6 @@
 import { EGameMode } from "@/store/typings";
 import { moduleActionContext } from "..";
-import { MatchState, MatchStatus, Mmr } from "./types";
+import { MatchState, MatchStatus, Mmr, Season } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
 
@@ -18,6 +18,7 @@ const mod = {
     map: "Overall",
     mmr: {min: 0, max: 3000} as Mmr,
     sort: "startTimeDescending",
+    selectedSeason: {} as Season,
   } as MatchState,
   actions: {
     async loadMatches(
@@ -50,7 +51,8 @@ const mod = {
           rootState.gateway,
           state.gameMode,
           state.map,
-          state.mmr
+          state.mmr,
+          state.selectedSeason.id
         );
       }
 
@@ -134,6 +136,13 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+    setSeason(
+      context: ActionContext<MatchState, RootState>,
+      season: Season
+    ) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_SELECTED_SEASON(season);
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -168,6 +177,9 @@ const mod = {
     },
     SET_SORT(state: MatchState, sort: string) {
       state.sort = sort;
+    },
+    SET_SELECTED_SEASON(state: MatchState, season: Season) {
+      state.selectedSeason = season;
     },
   },
 } as const;
