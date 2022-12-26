@@ -60,6 +60,7 @@ export default class MatchesStatusSelect extends Vue {
 
   public setStatus(status: MatchStatus) {
     this.$store.direct.dispatch.matches.setStatus(status);
+    this.$emit("statusChanged", status);
   }
 }
 </script>

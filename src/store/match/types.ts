@@ -13,6 +13,7 @@ export type MatchState = {
   map: string;
   mmr: Mmr;
   sort: string;
+  selectedSeason: Season;
 };
 
 export enum MatchStatus {
@@ -28,4 +29,8 @@ export enum SortMode {
 export type Mmr = {
     min: number;
     max: number;
+};
+
+export type Season = {
+  id: number;
 };
