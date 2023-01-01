@@ -459,6 +459,8 @@ const data = {
       NIGHT_ELF: "Night Elf",
       RANDOM: "Random",
       TOTAL: "Total",
+      SPECIAL: "Special",
+      STARTER: "Starter",
     },
     racesShort: {
       ORC: "OC",
