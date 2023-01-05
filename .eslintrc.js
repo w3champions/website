@@ -23,10 +23,12 @@ module.exports = {
     "prettier/prettier": "warn",
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "prefer-const": "warn",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-loss-of-precision": "off",
     "@typescript-eslint/explicit-module-boundary-types":"off",
     camelcase: "off",
+    "vue/no-v-text-v-html-on-component": "warn",
     "vue/valid-v-slot": ["error", {
       allowModifiers: true,
     }],
