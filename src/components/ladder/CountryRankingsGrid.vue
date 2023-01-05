@@ -357,7 +357,7 @@ export default class CountryRankingsGrid extends Vue {
   }
 
   async getStreamStatus(): Promise<void> {
-    let twitchNames = _.flatMap(this.rankings, (cr) => cr.ranks).map(
+    const twitchNames = _.flatMap(this.rankings, (cr) => cr.ranks).map(
       (r) => r.playersInfo[0].twitchName
     );
 
@@ -428,7 +428,7 @@ export default class CountryRankingsGrid extends Vue {
       this.$store.direct.state.twitch.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
-        let stream = streamData[i];
+        const stream = streamData[i];
         if (
           stream &&
           stream.user_name.toLowerCase() == twitchName.toLowerCase()

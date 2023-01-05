@@ -264,7 +264,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get gameNumber() {
-    let number = this.match.number / 1000000;
+    const number = this.match.number / 1000000;
     switch (number) {
       case 1:
         return "one";
@@ -361,7 +361,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   private getPlayerScores(team: Team): PlayerScore[] {
-    let scores: PlayerScore[] = this.playerScores
+    const scores: PlayerScore[] = this.playerScores
       .filter((s) =>
         team.players.some(
           (player) =>

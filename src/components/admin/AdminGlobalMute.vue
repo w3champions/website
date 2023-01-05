@@ -240,7 +240,7 @@ export default class AdminGlobalMute extends Vue {
   public async save(): Promise<void> {
     this.close();
 
-    let mute = {
+    const mute = {
       battleTag: this.player,
       expiresAt: this.banExpiry,
     } as GlobalMute;

@@ -202,7 +202,7 @@ export default class PlayerStatisticTab extends Vue {
   }
 
   private async initMmrRpTimeline() {
-    let raceStats = this.$store.direct.state.player.raceStats;
+    const raceStats = this.$store.direct.state.player.raceStats;
     let maxRace = ERaceEnum.HUMAN;
     let maxWins = 0;
     raceStats.forEach((r) => {
@@ -235,7 +235,7 @@ export default class PlayerStatisticTab extends Vue {
     ) {
       return [];
     }
-    let patches = ["All"];
+    const patches = ["All"];
 
     Object.keys(this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch).map(
       (p) => patches.push(p)
