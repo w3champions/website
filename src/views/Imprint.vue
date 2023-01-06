@@ -24,7 +24,7 @@
               <a href="mailto:w3champions.team@gmail.com">w3champions.team@gmail.com</a>
               <br />
               Internet address:
-              <a href="http://w3champions.com" target="_blank">http://w3champions.com</a>
+              <a href="https://w3champions.com" target="_blank">https://w3champions.com</a>
             </p>
           </v-card-text>
           <v-card-text>

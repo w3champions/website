@@ -69,7 +69,7 @@
                       <v-btn
                         icon
                         v-on="on"
-                        :href="'http://twitch.tv/' + item.playersInfo[index].twitchName"
+                        :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
                       >
                         <v-icon
