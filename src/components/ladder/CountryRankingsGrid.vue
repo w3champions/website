@@ -81,7 +81,7 @@
                           icon
                           v-on="on"
                           :href="
-                            'http://twitch.tv/' +
+                            'https:///twitch.tv/' +
                             item.playersInfo[index].twitchName
                           "
                           target="_blank"
