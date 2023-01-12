@@ -114,7 +114,7 @@ export default class MatchesView extends Vue {
       .filter(filterSeasons)
       .reduce<Record<EGameMode, Set<unknown>>>(
         (mapsByMode, matchesOnMapPerSeason) => {
-          for (let modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
             // just get the map name and ignore the count
             const mapNames = modes.maps.map((m) => m.map);
 

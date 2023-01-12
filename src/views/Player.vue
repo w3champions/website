@@ -308,10 +308,10 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   public getDuration(match: Match) {
-    var today = new Date();
-    var diffMs =
+    const today = new Date();
+    const diffMs =
       today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
-    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
 
     return diffMins;
   }

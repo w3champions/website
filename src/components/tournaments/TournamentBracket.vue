@@ -77,7 +77,7 @@ export default class TournamentBracket extends Vue {
   }
 
   get roundDimensions() {
-    let playerHeight = this.playerHeight;
+    const playerHeight = this.playerHeight;
     let verticalSpace = this.verticalSpace;
     let marginTop = 0;
     const dimensions: any[] = [];

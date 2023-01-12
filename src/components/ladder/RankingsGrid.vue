@@ -395,7 +395,7 @@ export default class RankingsGrid extends Vue {
       this.$store.direct.state.twitch.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
-        let stream = streamData[i];
+        const stream = streamData[i];
         if (
           stream &&
           stream.user_name.toLowerCase() == twitchName.toLowerCase()

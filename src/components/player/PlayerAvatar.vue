@@ -82,7 +82,7 @@
           align="center"
           justify="center"
         >
-          <v-card-text 
+          <v-card-text
             class="avatar-choose-headers pa-0 ma-0" align="center">
             {{ enumToString(race) }}
           </v-card-text>
@@ -433,7 +433,7 @@ export default class PlayerAvatar extends Vue {
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    let playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
+    const playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
 
     if (playerAkaData == null) return false;
 
@@ -457,7 +457,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   get aliasOrW3infoId(): string {
-    let name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
+    const name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
 
     if (name != null) {
       return name;
@@ -541,7 +541,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   async saveUserProfile() {
-    let personalSetting = this.personalSetting;
+    const personalSetting = this.personalSetting;
     personalSetting.profileMessage = this.userProfile.about;
     personalSetting.homePage = this.userProfile.homePage;
     personalSetting.twitch = this.userProfile.twitch;
@@ -683,7 +683,7 @@ export default class PlayerAvatar extends Vue {
 
     // populate countries dropdown for combobox
     enumKeys(ECountries).map((key) => {
-      let country = {
+      const country = {
         country: key,
         countryCode: ECountries[key],
       };

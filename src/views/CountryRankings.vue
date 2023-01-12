@@ -240,7 +240,7 @@ export default class CountryRankingsView extends Vue {
       this.$store.direct.commit.SET_GATEWAY(this.gateway);
     }
 
-    let country =
+    const country =
       this.country || this.selectedCountryCode || this.countries[0].countryCode;
 
     await this.getLadders();

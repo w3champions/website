@@ -56,7 +56,7 @@ export default class RankingsRaceDistribution extends Vue {
 
     const result: { race: number; total: number; percent: number }[] = [];
 
-    var groupedByRace = _.groupBy(this.rankings, (x) => {
+    const groupedByRace = _.groupBy(this.rankings, (x) => {
       return x.race;
     });
 

@@ -190,7 +190,7 @@ export default class Admin extends Vue {
   }
 
   getFirstItem(items: Array<NavigationItem>): NavigationItem {
-    for (let item of items) {
+    for (const item of items) {
       if (!item.items) {
         return item;
       }

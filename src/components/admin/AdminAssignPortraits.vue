@@ -227,7 +227,7 @@ export default class AdminAssignPortraits extends Vue {
 
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
-      let battleTags = [] as string[];
+      const battleTags = [] as string[];
       battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
 
       const command = {
@@ -239,7 +239,7 @@ export default class AdminAssignPortraits extends Vue {
       await this.$store.direct.dispatch.admin.playerManagement.addPortraits(command);
     }
     if (this.confirmRemovedPortraits.length > 0) {
-      let battleTags = [] as string[];
+      const battleTags = [] as string[];
       battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
 
       const command = {
@@ -267,7 +267,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   assignGroupPortraits(portraits: number[]): void {
-    portraits.forEach(x => {
+    portraits.forEach((x) => {
       if (this.allSpecialPortraits.includes(x) && !this.assignedPortraitsModel.includes(x)) {
         this.assignedPortraitsModel.push(x);
       }
@@ -287,7 +287,7 @@ export default class AdminAssignPortraits extends Vue {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      let btag = searchedPlayer.player.playerIds[0].battleTag;
+      const btag = searchedPlayer.player.playerIds[0].battleTag;
 
       await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(btag);
       const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;

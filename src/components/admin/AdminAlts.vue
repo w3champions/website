@@ -58,7 +58,7 @@ export default class AdminAlts extends Vue {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      let btag = searchedPlayer.player.playerIds[0].battleTag;
+      const btag = searchedPlayer.player.playerIds[0].battleTag;
 
       this.alts = await this.$store.direct.dispatch.admin.getAltsForPlayer(
         btag
