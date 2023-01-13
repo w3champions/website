@@ -60,7 +60,7 @@ export default class TournamentBracket extends Vue {
     const playerExtraData = _.fromPairs(
       this.tournament.players.map(p => [
         p.battleTag,
-        _.pick(p, [ 'countryCode', 'race' ]),
+        _.pick(p, [ "countryCode", "race" ]),
       ])
     );
     for (const round of this.tournament.rounds) {
@@ -94,8 +94,8 @@ export default class TournamentBracket extends Vue {
 
   get style() {
     return {
-      'font-size': `${this.fontSize}px`,
-    }
+      "font-size": `${this.fontSize}px`,
+    };
   }
 }
 </script>

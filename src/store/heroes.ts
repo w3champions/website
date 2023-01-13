@@ -1,4 +1,4 @@
-import { ERaceEnum } from "./typings"
+import { ERaceEnum } from "./typings";
 
 export enum EHeroes {
   ARCHMAGE = "archmage",

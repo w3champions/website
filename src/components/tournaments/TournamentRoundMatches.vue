@@ -1,7 +1,7 @@
 <template>
   <div class="bracket-rounds-column" v-bind:style="style">
     <div class="round-name" v-bind:style="roundNameStyle">
-      {{round.name}}
+      {{ round.name }}
     </div>
     <div v-bind:style="matchesStyle">
       <template v-for="(s, index) in series">
@@ -44,19 +44,19 @@ export default class TournamentRoundMatches extends Vue {
   get style() {
     return {
       width: `${this.roundWidth}px`,
-    }
+    };
   }
 
   get matchesStyle() {
     return {
-      'margin-top': `${this.marginTop + this.playerHeight}px`,
-    }
+      "margin-top": `${this.marginTop + this.playerHeight}px`,
+    };
   }
 
   get roundNameStyle() {
     return {
       height: `${this.roundNameHeight}px`,
-    }
+    };
   }
 }
 </script>

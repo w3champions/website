@@ -18,20 +18,20 @@ import { Component, Prop } from "vue-property-decorator";
 @Component
 export default class TournamentRoundConnectors extends Vue {
   @Prop() public index!: number;
-  @Prop() public side!: 'top' | 'bottom';
+  @Prop() public side!: "top" | "bottom";
   @Prop() public playerHeight!: number;
   @Prop() public verticalSpace!: number;
   @Prop() public marginTop!: number;
 
   get containerStyle() {
     let marginTop = this.playerHeight;
-    if (this.index > 0 && this.side !== 'bottom') {
+    if (this.index > 0 && this.side !== "bottom") {
       marginTop += this.playerHeight + this.verticalSpace;
     }
     return {
-      'margin-top': `${marginTop}px`,
+      "margin-top": `${marginTop}px`,
       height: `${this.playerHeight / 2 + this.verticalSpace / 2}px`,
-    }
+    };
   }
 }
 </script>

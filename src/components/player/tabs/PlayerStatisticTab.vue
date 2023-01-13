@@ -320,28 +320,28 @@ export default class PlayerStatisticTab extends Vue {
 
   get maps() {
     const maps = [{
-      mapName: 'Overall',
-      mapId: 'Overall',
+      mapName: "Overall",
+      mapId: "Overall",
     }];
     const mapsList: string[] = [];
     this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
-      heroItemList.stats.map((stats)=> {
+      heroItemList.stats.map((stats) => {
         stats.winLossesOnMap.map((winLossOnMap) => {
           const map = winLossOnMap.map;
           if (!mapsList.includes(map)) {
             mapsList.push(map);
           }
         });
-      })
+      });
     });
-    mapsList.forEach(map => maps.push({mapName: map, mapId: map}));
+    mapsList.forEach(map => maps.push({ mapName: map, mapId: map }));
     return maps;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .player-hero-usage-statistics__selects {
-    margin-top: 48px;
-  }
+.player-hero-usage-statistics__selects {
+  margin-top: 48px;
+}
 </style>

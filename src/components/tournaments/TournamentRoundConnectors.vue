@@ -15,7 +15,7 @@
         :playerHeight="playerHeight"
         :verticalSpace="verticalSpace"
       />
-  </template>
+    </template>
   </div>
 </template>
 
@@ -40,8 +40,8 @@ export default class TournamentRoundConnectors extends Vue {
   get containerStyle() {
     return {
       width: `${this.connectorWidth}px`,
-      'margin-top': `${this.playerHeight + this.roundNameHeight + this.marginTop}px`,
-    }
+      "margin-top": `${this.playerHeight + this.roundNameHeight + this.marginTop}px`,
+    };
   }
 }
 </script>

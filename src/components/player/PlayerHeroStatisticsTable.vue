@@ -1,25 +1,22 @@
 <template>
   <div class="player-hero-statistics-table">
     <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th v-for="header in headers" :key="header.value" class="text-left">
-                {{ header.text }}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="player-hero-statistics-table__body">
-            <tr
-              v-for="item in heroStatsCurrentPage"
-              :key="item.id"
-            >
-              <td v-for="header in headers" :key="header.value" v-html="item[header.value]"></td>
-            </tr>
-          </tbody>
-        </template>
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th v-for="header in headers" :key="header.value" class="text-left">
+              {{ header.text }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="player-hero-statistics-table__body">
+          <tr v-for="item in heroStatsCurrentPage" :key="item.id">
+            <td v-for="header in headers" :key="header.value" v-html="item[header.value]"></td>
+          </tr>
+        </tbody>
+      </template>
     </v-simple-table>
-    
+
     <v-pagination
       v-model="page"
       :length="pageLength"
@@ -51,26 +48,26 @@ export default class PlayerHeroStatisticsTable extends Vue {
     return this.heroStatistics.slice((this.pageOffset - this.paginationSize), this.pageOffset);
   }
 
-  get headers() { 
+  get headers() {
     return [
-      { text: "", value: "image"},
-      { text: "Hero", value: "name"},
-      { text: "Total", value: "total"},
-      { text: "vs. Human", value: "hu"},
-      { text: "vs. Orc", value: "orc"},
-      { text: "vs. Undead", value: "ud"},
-      { text: "vs. Night Elf", value: "ne"},
-      { text: "vs. Random", value: "rand"},
-    ]
+      { text: "", value: "image" },
+      { text: "Hero", value: "name" },
+      { text: "Total", value: "total" },
+      { text: "vs. Human", value: "hu" },
+      { text: "vs. Orc", value: "orc" },
+      { text: "vs. Undead", value: "ud" },
+      { text: "vs. Night Elf", value: "ne" },
+      { text: "vs. Random", value: "rand" },
+    ];
   }
 
   @Watch("this.heroStatistics")
   heroStatsChange(): void {
     this.heroStatistics = this.heroStatistics.sort((a: PlayerHeroStatistic, b: PlayerHeroStatistic): number => {
-      if (Number(a.total) > Number(b.total)){
+      if (Number(a.total) > Number(b.total)) {
         return 1;
       }
-      if (Number(b.total) > Number(a.total)){
+      if (Number(b.total) > Number(a.total)) {
         return -1;
       }
       return 0;
@@ -80,7 +77,7 @@ export default class PlayerHeroStatisticsTable extends Vue {
 </script>
 
 <style>
-  .player-hero-statistics-table__hero-image {
-    margin-top: 5px;
-  }
+.player-hero-statistics-table__hero-image {
+  margin-top: 5px;
+}
 </style>

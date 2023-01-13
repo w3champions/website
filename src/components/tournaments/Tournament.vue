@@ -1,7 +1,7 @@
 <template>
   <div v-if="tournament">
     <v-card-title>
-      {{tournament.name}}
+      {{ tournament.name }}
     </v-card-title>
     <div class="pl-4 pb-4">
       <tournament-description :tournament="tournament" :maps="maps" />

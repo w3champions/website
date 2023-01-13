@@ -30,7 +30,7 @@ import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
 @Component({
   components: {
     TournamentSeriesPlayer,
-  }
+  },
 })
 export default class TournamentSeries extends Vue {
   @Prop() public seriesIndex!: number;
@@ -63,15 +63,15 @@ export default class TournamentSeries extends Vue {
   get style() {
     const marginTop = this.seriesIndex === 0 ? 0 : this.verticalSpace;
     return {
-      'margin-top': `${marginTop}px`,
+      "margin-top": `${marginTop}px`,
       height: `${2 * this.playerHeight}px`,
-    }
+    };
   }
 
   get playerStyle() {
     return {
       height: `${this.playerHeight}px`,
-    }
+    };
   }
 }
 </script>

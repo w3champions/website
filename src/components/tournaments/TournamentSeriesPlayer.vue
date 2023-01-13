@@ -9,12 +9,12 @@
         />
       </span>
       <span class="player-name">
-        {{name}}
+        {{ name }}
       </span>
     </span>
     <span class="player-score-box d-flex justify-center align-center">
       <span class="player-score">
-        {{score}}
+        {{ score }}
       </span>
     </span>
   </div>
@@ -31,10 +31,10 @@ import { ERaceEnum } from "@/store/typings";
 @Component({
   components: {
     CountryFlagExtended,
-  }
+  },
 })
 export default class TournamentSeriesPlayer extends Vue {
-  @Prop() public side!: 'top' | 'bottom';
+  @Prop() public side!: "top" | "bottom";
   @Prop() public player!: ISeriesPlayer;
   @Prop() public playerHeight!: number;
   @Prop() public roundWidth!: number;
@@ -47,7 +47,7 @@ export default class TournamentSeriesPlayer extends Vue {
   }
 
   get name() {
-    return this.getName(this.player?.battleTag ?? '');
+    return this.getName(this.player?.battleTag ?? "");
   }
 
   get countryCode() {
@@ -56,21 +56,21 @@ export default class TournamentSeriesPlayer extends Vue {
 
   get score() {
     if (!this.seriesFinished) {
-      return '';
+      return "";
     }
     if (_.isNil(this.player)) {
-        return '';
+      return "";
     }
 
-    let score = '';
+    let score = "";
     if (!_.isNil(this.player.score)) {
       score = this.player.score.toString();
     }
     if (!_.isNil(this.player) && !this.seriesCanceled) {
-      score = this.player.won ? '1' : '0';
+      score = this.player.won ? "1" : "0";
     }
     if (this.seriesSpecial) {
-      score += '*';
+      score += "*";
     }
 
     return score;
@@ -78,32 +78,32 @@ export default class TournamentSeriesPlayer extends Vue {
 
   get raceClass() {
     if (_.isNil(this.player)) {
-      return '';
+      return "";
     }
     const race = this.player.race;
     return ERaceEnum[race].toLowerCase();
   }
 
   private getName(battleTag: string) {
-    return battleTag.split('#')[0];
+    return battleTag.split("#")[0];
   }
 
   get style() {
     let height = this.playerHeight;
-    if (this.side === 'bottom') {
+    if (this.side === "bottom") {
       // Subtract 2px to account for the 1px outer border and 1px divider border
       height -= 2;
     }
     return {
       height: `${height}px`,
-    }
+    };
   }
 
   get slotStyle() {
     return {
       // subtract box and border width
-      'max-width': `${this.roundWidth - 27 - 2}px`,
-    }
+      "max-width": `${this.roundWidth - 27 - 2}px`,
+    };
   }
 }
 </script>
