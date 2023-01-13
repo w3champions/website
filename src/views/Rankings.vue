@@ -233,16 +233,16 @@ export default class RankingsView extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    const searchDebounced = (timeout=500) => {
+    const searchDebounced = (timeout = 500) => {
       clearTimeout(this.searchTimer);
       this.isLoading = true;
-      this.searchTimer = setTimeout(() => { 
+      this.searchTimer = setTimeout(() => {
         this.$store.direct.dispatch.rankings.search({
           searchText: newValue.toLowerCase(),
           gameMode: this.selectedGameMode,
         });
       }, timeout);
-    }
+    };
 
     if (newValue && newValue.length > 2) {
       searchDebounced();

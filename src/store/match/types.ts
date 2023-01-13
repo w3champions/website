@@ -26,6 +26,6 @@ export enum SortMode {
 }
 
 export type Mmr = {
-    min: number;
-    max: number;
+  min: number;
+  max: number;
 };

@@ -5,7 +5,7 @@ import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 
 interface AdminTournamentsState {
   upcomingTournament: ITournament;
-  isLoading: boolean,
+  isLoading: boolean;
 }
 
 const mod = {

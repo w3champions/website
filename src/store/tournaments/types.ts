@@ -102,7 +102,7 @@ export enum EMatchState {
   INIT,
   STARTED,
   FINISHED,
-  CANCELED
+  CANCELED,
 }
 
 export interface ITournamentMatch {
@@ -114,6 +114,6 @@ export interface ITournamentMatch {
 
 export interface IMatchPlayer {
   battleTag: string;
-  team: number,
+  team: number;
   won?: boolean;
 }

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { ETournamentState, ITournament, ITournamentPlayer } from "./../store/tournaments/types";
+import { ITournament, ITournamentPlayer } from "./../store/tournaments/types";
 import { API_URL } from "@/main";
 
 export interface ITournamentsResponse {
@@ -78,10 +78,10 @@ export default class TournamentsService {
   public async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
     const response = await fetch(url, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ battleTag }),
     });

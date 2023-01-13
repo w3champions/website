@@ -11,7 +11,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-      }
+      },
     });
 
     return await response.json();
@@ -81,7 +81,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-      }
+      },
     });
 
     return await response.json();
@@ -94,7 +94,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-      }
+      },
     });
 
     return await response.json();

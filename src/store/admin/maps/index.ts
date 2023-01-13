@@ -1,16 +1,15 @@
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
-import {
-  AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse
-} from "./types";
+import { AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "./types";
+
 const mod = {
   namespaced: true,
   state: {
     totalMaps: 0 as number,
     maps: [] as Map[],
     mapsFilter: undefined,
-    mapFiles: [] as  MapFileData[],
+    mapFiles: [] as MapFileData[],
   } as AdminMapsState,
 
   actions: {
@@ -21,7 +20,7 @@ const mod = {
       commit.SET_MAPS(searchMapsResponse);
       commit.SET_FILTER(filter);
     },
-    
+
     async createMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
       const { dispatch, rootGetters, state, rootState } = moduleActionContext(context, mod);
       await rootGetters.mapService.createMap(rootState.oauth.token, map);
@@ -58,7 +57,7 @@ const mod = {
       state.totalMaps = getMapsResponse?.total ?? 0;
     },
 
-    SET_FILTER(state: AdminMapsState, filter?: string){
+    SET_FILTER(state: AdminMapsState, filter?: string) {
       state.mapsFilter = filter;
     },
 

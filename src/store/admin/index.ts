@@ -4,7 +4,7 @@ import { ActionContext } from "vuex";
 import playerManagementModule from "./playerManagement/index";
 import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
-import tournamentsManagementModule from "./tournaments"
+import tournamentsManagementModule from "./tournaments";
 import replayManagementModule from "./replays/index";
 
 import {
