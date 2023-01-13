@@ -19,7 +19,7 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       if (state.tournaments.length > 0) {
-        return
+        return;
       }
 
       const response = await rootGetters.tournamentsService.getTournaments();
@@ -29,7 +29,7 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       if (state.maps.length > 0) {
-        return
+        return;
       }
 
       const response = await rootGetters.mapService.getTournamentMaps(false);
@@ -39,7 +39,7 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       if (state.activeMaps.length > 0) {
-        return
+        return;
       }
 
       const response = await rootGetters.mapService.getTournamentMaps(true);

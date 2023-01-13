@@ -198,7 +198,7 @@ export enum EColors {
   COAL = 20,
   SNOW = 21,
   EMERALD = 22,
-  PEANUT = 23
+  PEANUT = 23,
 }
 
 export enum EComputer {

@@ -8,6 +8,7 @@ import {
   PortraitDefinitionDTO,
   PortraitDefinitionGroup,
 } from "../types";
+
 const mod = {
   namespaced: true,
   state: {
@@ -89,7 +90,7 @@ const mod = {
     ): Promise<void> {
       const { rootGetters, rootState } = moduleActionContext(context, mod);
       await rootGetters.adminService.putPortraitDefinitions(rootState.oauth.token, definition);
-    }
+    },
   },
 
   mutations: {

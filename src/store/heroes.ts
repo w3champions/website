@@ -1,37 +1,37 @@
-import { ERaceEnum } from './typings'
+import { ERaceEnum } from "./typings"
 
 export enum EHeroes {
-  ARCHMAGE = 'archmage',
-  ALCHEMIST = 'alchemist',
-  FIRELORD = 'avatarofflame',
-  DARK_RANGER = 'bansheeranger',
-  BEASTMASTER = 'beastmaster',
-  BLADEMASTER = 'blademaster',
-  CRYPT_LORD = 'cryptlord',
-  DEATH_KNIGHT = 'deathknight',
-  DEMON_HUNTER = 'demonhunter',
-  DREAD_LORD = 'dreadlord',
-  FARSEER = 'farseer',
-  KEEPER_OF_THE_GROVE = 'keeperofthegrove',
-  LICH = 'lich',
-  MOUNTAIN_KING = 'mountainking',
-  PALADIN = 'paladin',
-  PANDAREN_BREWMASTER = 'pandarenbrewmaster',
-  PIT_LORD = 'pitlord',
-  PRIESTESS_OF_THE_MOON = 'priestessofthemoon',
-  NAGA_SEA_WITCH = 'seawitch',
-  SHADOW_HUNTER = 'shadowhunter',
-  BLOODMAGE = 'sorceror',
-  TAUREN_CHEFTAIN = 'taurenchieftain',
-  TINKER = 'tinker',
-  WARDEN = 'warden',
+  ARCHMAGE = "archmage",
+  ALCHEMIST = "alchemist",
+  FIRELORD = "avatarofflame",
+  DARK_RANGER = "bansheeranger",
+  BEASTMASTER = "beastmaster",
+  BLADEMASTER = "blademaster",
+  CRYPT_LORD = "cryptlord",
+  DEATH_KNIGHT = "deathknight",
+  DEMON_HUNTER = "demonhunter",
+  DREAD_LORD = "dreadlord",
+  FARSEER = "farseer",
+  KEEPER_OF_THE_GROVE = "keeperofthegrove",
+  LICH = "lich",
+  MOUNTAIN_KING = "mountainking",
+  PALADIN = "paladin",
+  PANDAREN_BREWMASTER = "pandarenbrewmaster",
+  PIT_LORD = "pitlord",
+  PRIESTESS_OF_THE_MOON = "priestessofthemoon",
+  NAGA_SEA_WITCH = "seawitch",
+  SHADOW_HUNTER = "shadowhunter",
+  BLOODMAGE = "sorceror",
+  TAUREN_CHEFTAIN = "taurenchieftain",
+  TINKER = "tinker",
+  WARDEN = "warden",
 }
 
 export type HeroData = {
   [key: string]: {
-    race: ERaceEnum
+    race: ERaceEnum;
   };
-}
+};
 
 export const HERO_DATA: HeroData = {
   [EHeroes.ARCHMAGE]: {
@@ -110,4 +110,4 @@ export const HERO_DATA: HeroData = {
   [EHeroes.TINKER]: {
     race: ERaceEnum.RANDOM,
   },
-}
+};

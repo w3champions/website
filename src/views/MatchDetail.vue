@@ -199,7 +199,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
     MatchHiglights,
     TeamMatchInfo,
     HostIcon,
-    DownloadReplayIcon
+    DownloadReplayIcon,
   },
 })
 export default class MatchDetailView extends Mixins(MatchMixin) {
@@ -413,6 +413,6 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
 .subicon {
   display: block;
   position: absolute;
-  right:1%;
+  right: 1%;
 }
 </style>

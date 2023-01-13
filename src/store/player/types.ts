@@ -105,12 +105,12 @@ export interface PlayerStatsRaceOnMapVersusRace {
 }
 
 export interface PlayerHeroStats {
-  heroId: string,
+  heroId: string;
   stats: RaceWinsOnMap[];
 }
 
 export interface PlayerStatsHeroOnMapVersusRace {
-  heroStatsItemList: PlayerHeroStats[],
+  heroStatsItemList: PlayerHeroStats[];
   raceWinsOnMapByPatch: PlayerStatsHeroOnMapVersusRaceByPatch;
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
@@ -135,7 +135,7 @@ export type PlayerHeroStatistic = {
   orc: string;
   hu: string;
   ne: string;
-}
+};
 
 export type PlayerHeroWinRateForStatisticsTab = {
   hero: string;
@@ -148,4 +148,4 @@ export type PlayerHeroWinRateForStatisticsTab = {
   [ERaceEnum.NIGHT_ELF]: string;
   [ERaceEnum.RANDOM]: string;
   [ERaceEnum.STARTER]: string;
-}
+};

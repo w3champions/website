@@ -18,8 +18,8 @@ export default class MatchService {
     mmr: Mmr
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`
-    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`
+    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
+    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}`;
 
     const response = await fetch(url);
@@ -56,8 +56,8 @@ export default class MatchService {
     mmr: Mmr,
     sort: string
   ): Promise<{ count: number; matches: Match[] }> {
-    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`
-    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`
+    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
+    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
     const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&sort=${sort}`;
 
     const response = await fetch(url);

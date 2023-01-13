@@ -13,7 +13,7 @@ import twitch from "./twitch/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
 import infoMessages from "./admin/messages/index";
-import globalSearch from "./globalSearch"
+import globalSearch from "./globalSearch";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -32,7 +32,7 @@ import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
 import InfoMessageService from "@/services/InfoMessageService";
-import GlobalSearchService from '@/services/GlobalSearchService';
+import GlobalSearchService from "@/services/GlobalSearchService";
 
 Vue.use(Vuex);
 
@@ -89,7 +89,7 @@ const mod = {
     setGateway(context: ActionContext<OauthState, RootState>, gateway: Gateways) {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_GATEWAY(gateway);
-    }
+    },
   },
   mutations: {
     SET_DARK_MODE(state: RootState, darkMode: boolean) {
@@ -149,8 +149,7 @@ const mod = {
   },
 } as const;
 
-const { store, rootActionContext, moduleActionContext } =
-  createDirectStore(mod);
+const { store, rootActionContext, moduleActionContext } = createDirectStore(mod);
 
 export default store;
 

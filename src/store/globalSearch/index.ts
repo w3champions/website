@@ -14,7 +14,7 @@ const mod = {
   actions: {
     async search(
       context: ActionContext<GlobalSearchState, RootState>,
-      search: { searchText: string; append: boolean },
+      search: { searchText: string; append: boolean }
     ) {
       const { state, commit, rootGetters } = moduleActionContext(
         context,
@@ -32,7 +32,7 @@ const mod = {
     },
   },
   mutations: {
-    SET_PLAYERS(state: GlobalSearchState, payload: { players: PlayerSearchData[], append: boolean }) {
+    SET_PLAYERS(state: GlobalSearchState, payload: { players: PlayerSearchData[]; append: boolean }) {
       if (payload.append) {
         state.players = [ ...state.players, ...payload.players ];
       } else {

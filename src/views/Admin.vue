@@ -91,7 +91,7 @@ export default class Admin extends Vue {
           title: "View Game Chat",
           icon: "mdi-format-align-left",
           component: "admin-view-game-chat",
-        }
+        },
       ],
     },
     {
@@ -133,7 +133,7 @@ export default class Admin extends Vue {
           icon: "mdi-message-alert",
           title: "Message of the Day",
           component: "admin-motd",
-        }
+        },
       ],
     },
     {
@@ -151,7 +151,7 @@ export default class Admin extends Vue {
           title: "Manage Portraits",
           icon: "mdi-briefcase",
           component: "admin-manage-portraits",
-        }
+        },
       ],
     },
     {
