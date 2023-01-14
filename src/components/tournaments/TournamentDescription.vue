@@ -2,27 +2,27 @@
   <div>
     <div>
       <b>Gateway:</b>
-      {{gateway}}
+      {{ gateway }}
     </div>
     <div>
       <b>Start Time:</b>
-      {{formattedDate}}
+      {{ formattedDate }}
     </div>
     <div>
       <b>Game Mode:</b>
-      {{gameMode}}
+      {{ gameMode }}
     </div>
     <div>
       <b>Format:</b>
-      {{format}}
+      {{ format }}
     </div>
     <div>
       <b>Player Count:</b>
-      {{playerCount}}
+      {{ playerCount }}
     </div>
     <div>
       <b>Map Pool:</b>
-      {{mapPool}}
+      {{ mapPool }}
     </div>
     <div v-if="matcherinoUrl">
       <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
@@ -66,7 +66,7 @@ export default class TournamentDescription extends Vue {
   }
 
   get formattedDate() {
-    return format(this.tournament.startDateTime, 'yyyy-MM-dd p');
+    return format(this.tournament.startDateTime, "yyyy-MM-dd p");
   }
 
   get gameMode() {
@@ -82,7 +82,7 @@ export default class TournamentDescription extends Vue {
   }
 
   get mapPool() {
-    return this.tournament.mapPool.map(mapId => this.maps.find(map => map.id === mapId)?.name).sort().join(', ');
+    return this.tournament.mapPool.map(mapId => this.maps.find(map => map.id === mapId)?.name).sort().join(", ");
   }
 
   get statusInit() {
@@ -108,10 +108,9 @@ export default class TournamentDescription extends Vue {
   get registeredPlayers(): string {
     return this.tournament.players.map(player => (
       `${player.battleTag}(${this.$t(`racesShort.${ERaceEnum[player.race]}`)})`
-    )).join(', ');
+    )).join(", ");
   }
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

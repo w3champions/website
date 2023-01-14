@@ -16,7 +16,7 @@ const mod = {
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
-    mmr: {min: 0, max: 3000} as Mmr,
+    mmr: { min: 0, max: 3000 } as Mmr,
     sort: "startTimeDescending",
   } as MatchState,
   actions: {

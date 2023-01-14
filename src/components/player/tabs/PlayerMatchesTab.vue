@@ -189,16 +189,16 @@ export default class PlayerMatchesTab extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    const searchDebounced = (timeout=500) => {
+    const searchDebounced = (timeout = 500) => {
       clearTimeout(this.searchTimer);
       this.isLoading = true;
-      this.searchTimer = setTimeout(() => { 
+      this.searchTimer = setTimeout(() => {
         this.$store.direct.dispatch.rankings.search({
           searchText: newValue.toLowerCase(),
           gameMode: this.selectedGameModeForSearch,
         });
       }, timeout);
-    }
+    };
 
     if (newValue && newValue.length > 2) {
       searchDebounced();

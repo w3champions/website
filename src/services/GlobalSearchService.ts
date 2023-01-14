@@ -11,7 +11,7 @@ export default class GlobalSearchService {
       url += `&lastObjectId=${encodeURIComponent(lastPlayerId)}`;
     }
 
-    const players = await fetch(url).then(response => response.json())
+    const players = await fetch(url).then(response => response.json());
 
     return await players;
   }

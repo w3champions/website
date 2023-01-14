@@ -10,16 +10,16 @@
     :hide-default-footer="true"
   >
     <template #[`item.startDateTime`]="{ item }">
-      {{formatDate(item)}}
+      {{ formatDate(item) }}
     </template>
     <template #[`item.state`]="{ item }">
-      {{getStateDescription(item)}}
+      {{ getStateDescription(item) }}
     </template>
     <template #[`item.playerCount`]="{ item }">
-      {{item.players.length}}
+      {{ item.players.length }}
     </template>
     <template #[`item.winner`]="{ item }">
-      {{item.winner ? item.winner.battleTag : "-"}}
+      {{ item.winner ? item.winner.battleTag : "-" }}
     </template>
   </v-data-table>
 </template>
@@ -29,7 +29,7 @@ import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { format } from "date-fns";
-import { TournamentStateLabel } from "@/helpers/tournaments"
+import { TournamentStateLabel } from "@/helpers/tournaments";
 
 @Component
 export default class TournamentsTable extends Vue {
@@ -64,11 +64,11 @@ export default class TournamentsTable extends Vue {
   }
 
   public onRowClick(item: ITournament) {
-    this.$emit('click:row', item);
+    this.$emit("click:row", item);
   }
 
   public formatDate(tournament: ITournament) {
-    return format(tournament.startDateTime, 'yyyy-MM-dd p');
+    return format(tournament.startDateTime, "yyyy-MM-dd p");
   }
 
   public getStateDescription(tournament: ITournament) {
@@ -76,13 +76,13 @@ export default class TournamentsTable extends Vue {
   }
 
   public itemClass(item: ITournament) {
-    return 'tournament-row';
+    return "tournament-row";
   }
 }
 </script>
 
 <style lang="scss">
-  .tournament-row {
-    cursor: pointer;
-  }
+.tournament-row {
+  cursor: pointer;
+}
 </style>
