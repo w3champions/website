@@ -34,21 +34,21 @@ export default class PlayedHeroesChart extends Vue {
   get orderedHeroes(): PlayedHeroExtra[] {
     return _
       .chain(this.playedHeroes)
-      .map(hero => {
+      .map((hero) => {
         const race = HERO_DATA[hero.icon].race;
         const color = RACE_COLORS[race];
         return {
           ...hero,
           race,
           color,
-        }
+        };
       })
       .orderBy(["race", "count", "icon"], ["asc", "desc", "asc"])
       .groupBy("race")
       .mapValues((heroes, race) => {
         // Compute percentages within the race
         const groupTotalCount = _.sumBy(heroes, "count");
-        const newHeroesData: PlayedHeroExtra[] = _.map(heroes, hero => ({
+        const newHeroesData: PlayedHeroExtra[] = _.map(heroes, (hero) => ({
           ...hero,
           icon: this.$t("heroNames." + hero.icon).toString(),
           count: _.round((hero.count / groupTotalCount) * 100, 1),
@@ -72,7 +72,7 @@ export default class PlayedHeroesChart extends Vue {
       datasets: [
         {
           data: this.orderedHeroes.map((p: PlayedHero) => p.count),
-          backgroundColor: this.orderedHeroes.map(p => p.color),
+          backgroundColor: this.orderedHeroes.map((p) => p.color),
           borderWidth: 1,
         },
       ],

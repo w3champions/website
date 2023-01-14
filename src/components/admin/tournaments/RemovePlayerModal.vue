@@ -21,17 +21,16 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn text @click="cancel">
-        {{ $t('views_admin.cancel') }}
+        {{ $t("views_admin.cancel") }}
       </v-btn>
       <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || battleTag.length === 0">
-        {{ $t('views_admin.save') }}
+        {{ $t("views_admin.save") }}
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-import _ from "lodash";
 import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";

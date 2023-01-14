@@ -31,7 +31,7 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const playerSettings = await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
       if (playerSettings.specialPictures != null) {
-        commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS(playerSettings.specialPictures.map(x => x.pictureId));
+        commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS(playerSettings.specialPictures.map((x) => x.pictureId));
       } else {
         commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS([] as number[]);
       }

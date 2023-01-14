@@ -11,9 +11,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn text tile v-on="on">
-        <v-icon class="mr-2">
-          mdi-magnify
-        </v-icon>
+        <v-icon class="mr-2">mdi-magnify</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -73,7 +71,7 @@ import { PlayerSearchData } from "@/store/globalSearch/types";
 @Component({
   components: {
     SeasonBadge,
-  }
+  },
 })
 export default class GlobalSearch extends Vue {
   public searchModel: PlayerSearchData = {} as PlayerSearchData;
@@ -137,7 +135,7 @@ export default class GlobalSearch extends Vue {
       return "Type at least 3 letters";
     }
     if (this.isLoading) {
-      return "Loading..."
+      return "Loading...";
     }
 
     return "No player found";
@@ -145,7 +143,7 @@ export default class GlobalSearch extends Vue {
 
   getPlayerAvatarUrl(player: PlayerSearchData) {
     const pfp = player.profilePicture;
-    
+
     return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
   }
 

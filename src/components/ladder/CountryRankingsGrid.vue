@@ -168,9 +168,7 @@
           <td class="number-text text-end won">{{ item.player.wins }}</td>
           <td class="number-text text-end lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
-          <td class="number-text text-end">
-            {{ (item.player.winrate * 100).toFixed(1) }}%
-          </td>
+          <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
         </tr>
       </tbody>
@@ -194,13 +192,7 @@
 import Vue from "vue";
 import * as _ from "lodash";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  Ranking,
-  PlayerId,
-  PlayerInfo,
-  CountryRanking,
-  League,
-} from "@/store/ranking/types";
+import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
@@ -210,7 +202,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import LevelProgress from "@/components/ladder/LevelProgress.vue"
+import LevelProgress from "@/components/ladder/LevelProgress.vue";
 
 @Component({
   components: {

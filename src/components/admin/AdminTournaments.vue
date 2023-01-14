@@ -85,7 +85,7 @@ export default class AdminTournaments extends Vue {
   public isCreateTournamentOpen = false;
   public isEditTournamentOpen = false;
 
-  private throttledInit = _.throttle(this.init, 2000, { 'leading': true });
+  private throttledInit = _.throttle(this.init, 2000, { leading: true });
 
   async mounted(): Promise<void> {
     this.throttledInit();

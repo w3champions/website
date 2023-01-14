@@ -14,9 +14,7 @@
             </router-link>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">
-              mdi-close
-            </v-icon>
+            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">mdi-close</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list>
@@ -80,9 +78,7 @@
       <global-search />
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">
-          mdi-account-circle-outline
-        </v-icon>
+        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
           v-on:region-change="saveLoginRegion"

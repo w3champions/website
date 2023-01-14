@@ -24,10 +24,7 @@ const mod = {
       context: ActionContext<MatchState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
@@ -62,10 +59,7 @@ const mod = {
       gameMode?: EGameMode,
       map?: string
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const response = await rootGetters.matchService.retrieveOnGoingMatches(
         0,
@@ -117,7 +111,7 @@ const mod = {
       await dispatch.loadMatches(undefined);
     },
     async setMmr(
-      context: ActionContext<MatchState, RootState>, 
+      context: ActionContext<MatchState, RootState>,
       mmr: Mmr
     ) {
       const { commit, dispatch } = moduleActionContext(context, mod);

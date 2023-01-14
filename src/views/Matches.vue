@@ -106,32 +106,31 @@ export default class MatchesView extends Vue {
     const filterSeasons =
       this.$store.direct.state.matches.status == MatchStatus.onGoing
         ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-            matchesOnMapPerSeason.season === this.currentSeason.id
+          matchesOnMapPerSeason.season === this.currentSeason.id
         : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-            matchesOnMapPerSeason.season >= 0;
+          matchesOnMapPerSeason.season >= 0;
 
     return this.$store.direct.state.overallStatistics.matchesOnMapPerSeason
       .filter(filterSeasons)
       .reduce<Record<EGameMode, Set<unknown>>>(
-        (mapsByMode, matchesOnMapPerSeason) => {
-          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-            // just get the map name and ignore the count
-            const mapNames = modes.maps.map((m) => m.map);
+      (mapsByMode, matchesOnMapPerSeason) => {
+        for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+          // just get the map name and ignore the count
+          const mapNames = modes.maps.map((m) => m.map);
 
-            if (!mapsByMode[modes.gameMode]) {
-              mapsByMode[modes.gameMode] = new Set(mapNames);
-            } else {
-              // combine this seasons mode maps with other seasons modes maps without dupes
-              mapsByMode[modes.gameMode] = new Set([
-                ...mapsByMode[modes.gameMode],
-                ...mapNames,
-              ]);
-            }
+          if (!mapsByMode[modes.gameMode]) {
+            mapsByMode[modes.gameMode] = new Set(mapNames);
+          } else {
+            // combine this seasons mode maps with other seasons modes maps without dupes
+            mapsByMode[modes.gameMode] = new Set([
+              ...mapsByMode[modes.gameMode],
+              ...mapNames,
+            ]);
           }
-          return mapsByMode;
-        },
-        {} as Record<EGameMode, Set<unknown>>
-      );
+        }
+        return mapsByMode;
+      }, {} as Record<EGameMode, Set<unknown>>
+    );
   }
 
   get unfinished(): boolean {

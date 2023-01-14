@@ -233,7 +233,7 @@ export default class CountryRankingsView extends Vue {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
 
     this.season
-      ? this.$store.direct.dispatch.rankings.setSeason({id: this.season})
+      ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
       : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
 
     if (this.gateway) {

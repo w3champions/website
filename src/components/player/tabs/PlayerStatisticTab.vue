@@ -334,7 +334,7 @@ export default class PlayerStatisticTab extends Vue {
         });
       });
     });
-    mapsList.forEach(map => maps.push({ mapName: map, mapId: map }));
+    mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
     return maps;
   }
 }

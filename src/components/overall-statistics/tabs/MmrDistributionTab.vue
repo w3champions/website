@@ -8,11 +8,7 @@
             :items="seasons"
             item-text="id"
             @change="setSelectedSeason"
-            :label="
-              $t(
-                `components_overall-statistics_tabs_mmrdistributiontab.selectseason`
-              )
-            "
+            :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
             outlined
           />
@@ -24,48 +20,28 @@
             item-text="modeName"
             item-value="modeId"
             @change="gameModeChanged"
-            :label="
-              $t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)
-            "
+            :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
             outlined
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded()">
-          <gateway-select
-            @gatewayChanged="gatewayChanged"
-          />
+          <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
 
         <v-card-text>
-          {{
-            $t(
-              "components_overall-statistics_tabs_mmrdistributiontab.stddev"
-            )
-          }}
-          <div>{{standardDeviation}}</div>
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
+          <div>{{ standardDeviation }}</div>
         </v-card-text>
-
         <v-card-text>
-          {{
-            $t(
-              "components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc"
-            )
-          }}
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
         </v-card-text>
         <v-card-text v-if="authCode">
-          {{
-            $t(
-              "components_overall-statistics_tabs_mmrdistributiontab.greenbardesc"
-            )
-          }}
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.greenbardesc") }}
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
         <div class="text-center my-auto">
-          <v-progress-circular
-            indeterminate
-            v-if="loadingData"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate v-if="loadingData"></v-progress-circular>
         </div>
         <mmr-distribution-chart
           v-if="!loadingData"
@@ -125,21 +101,15 @@ export default class PlayerActivityTab extends Vue {
         gameMode: EGameMode.GM_FFA,
       },
       {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
         modeId: EGameMode.GM_LEGION_1v1_x20,
       },
       {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`),
         modeId: EGameMode.GM_LEGION_2v2_X20,
       },
       {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
         modeId: EGameMode.GM_LEGION_4v4_X20,
       },
       {
@@ -147,15 +117,11 @@ export default class PlayerActivityTab extends Vue {
         modeId: EGameMode.GM_ROC_1ON1,
       },
       {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`),
         modeId: EGameMode.GM_BANJOBALL_4ON4,
       },
       {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`
-        ),
+        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`),
         modeId: EGameMode.GM_PTR_1ON1,
       },
     ];
@@ -185,9 +151,7 @@ export default class PlayerActivityTab extends Vue {
       gameMode: this.selectedGameMode,
       gateWay: this.selectedGateWay,
     };
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
-      payload
-    );
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(payload);
     this.loadingData = false;
   }
 

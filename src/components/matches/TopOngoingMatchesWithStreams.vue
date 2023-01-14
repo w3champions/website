@@ -1,9 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      {{
-        $t("components_matches_topongoingmatcheswithstreams.toplive1v1matches")
-      }}
+      {{ $t("components_matches_topongoingmatcheswithstreams.toplive1v1matches") }}
     </v-card-title>
     <v-container>
       <v-row
@@ -35,9 +33,7 @@ export default class TopOngoingMatchesWithStreams extends Vue {
   private matches: Match[] = [];
 
   async mounted() {
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches(
-      EGameMode.GM_1ON1
-    );
+    await this.$store.direct.dispatch.matches.loadAllOngoingMatches(EGameMode.GM_1ON1);
 
     const matchesWithStreamers =
       this.$store.direct.state.matches.allOngoingMatches.filter((match) =>
