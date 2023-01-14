@@ -152,7 +152,7 @@ export default class AdminTournaments extends Vue {
         this.isRemovePlayerOpen = false;
       }
     } catch {
-      alert('Error while removing player');
+      alert("Error while removing player");
     }
     this.throttledInit();
   }

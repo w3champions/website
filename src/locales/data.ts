@@ -50,33 +50,27 @@ const data = {
       launcherfeaturesbody2: "Custom inventory and hero hotkeys",
       launcherfeaturesbody3: "Graphical user interface for custom hotkeys",
       launcherfeaturesbody4: "Custom team coloring",
-      launcherfeaturesbody5:
-        "Keep up with the scene by getting the latest news",
+      launcherfeaturesbody5: "Keep up with the scene by getting the latest news",
       manualwintitle: "Manual Windows",
-      manualwinbody1:
-        "1. Download the zip file and unpack it in your Warcraft Installation folder",
+      manualwinbody1: "1. Download the zip file and unpack it in your Warcraft Installation folder",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2. Make sure to have a directory structure like:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "If you have a folder called _retail_ in your Warcraft III folder, make sure to have the following structure: ",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
+      manualwinbody7: "3. Download the Maps and unpack it to your Warcraft III Maps Folder",
       manualwinbody8: "Download MAPS",
       manualwinbody9: "4. The folder structure after unpacking should be",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Important",
-      manualwinbody12:
-        "If you have a Maps folder inside your Warcraft III directory go ahead and delete it.",
+      manualwinbody12: "If you have a Maps folder inside your Warcraft III directory go ahead and delete it.",
       manualwinbody13: "DELETE Path-to-game/Maps",
       manualwinbody14: "DELETE Path-to-game/_retail_/Maps",
       manualwinbody15: "Example:",
       manualwinbody16: "DELETE C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "DELETE C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "5. You need to set a registry (Installer is doing this automatically)",
+      manualwinbody17: "DELETE C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "5. You need to set a registry (Installer is doing this automatically)",
       manualwinbody19: "open regedit.exe",
       manualwinbody20:
         "Find the registry Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
@@ -84,23 +78,19 @@ const data = {
       manualwinbody22: "name: Allow Local Files",
       manualwinbody23: "decimal value: 1",
       manualmactitle: "Manual Mac OS",
-      manualmacbody1:
-        "1. Download the zip file and unpack it in your Warcraft installation directory",
+      manualmacbody1: "1. Download the zip file and unpack it in your Warcraft installation directory",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Make sure to have a directory structure like:",
       manualmacbody4: "/Applications/Warcraft III/webui/index.html",
       manualmacbody5:
         "If you have a directory called _retail_ in your Warcraft III directory, make sure to have the following structure:",
       manualmacbody6: "/Applications/Warcraft III/_retail_/webui/index.html",
-      manualmacbody7:
-        "3. Download the Maps and unpack it to your Warcraft III Maps directory",
+      manualmacbody7: "3. Download the Maps and unpack it to your Warcraft III Maps directory",
       manualmacbody8: "Download MAPS",
       manualmacbody9: "4. The directory structure after unpacking should be:",
-      manualmacbody10:
-        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Important",
-      manualmacbody12:
-        "If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it.",
+      manualmacbody12: "If you have a Maps folder inside your Warcraft 3 directory go ahead and delete it.",
       manualmacbody13: "DELETE Path-to-game/Maps",
       manualmacbody14: "DELETE Path-to-game/_retail_/maps",
       manualmacbody15: "Example:",
@@ -109,8 +99,7 @@ const data = {
       manualmacbody18:
         "5. You will also need to update the Warcraft III preferences to allow for local file use (installer does this automatically)",
       manualmacbody19: "Copy command:",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Open terminal",
       manualmacbody21: "Paste command and execute by pressing Enter key.",
       manualmacbody22: "Run Warcraft 3. You should see the W3Champions button in the main menu.",
@@ -243,7 +232,7 @@ const data = {
       selectgateway: "Select a gateway:",
     },
     components_common_mmrselect: {
-      selectmmr: "Select MMR range"
+      selectmmr: "Select MMR range",
     },
     components_ladder_countryrankingsgrid: {
       noplayerfound: "No players found for this country",
@@ -316,22 +305,19 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Select Season",
       mode: "Mode",
-      purplebarsdesc:
-        "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
+      purplebarsdesc: "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
       greenbardesc: "The green line shows where you are in the distribution.",
       stddev: "Standard Deviation",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Select Mode",
-      gamemodedesc1:
-        "Game Modes are normalized to compare their popularity more easily:",
-      gamemodedesc2:
-        "2v2 and FFA games are counted twice, 4v4 games are counted four times",
+      gamemodedesc1: "Game Modes are normalized to compare their popularity more easily:",
+      gamemodedesc2: "2v2 and FFA games are counted twice, 4v4 games are counted four times",
       playersperday: "Players per Day",
       playedmaps: "Played Maps",
       popularhours: "Popular Hours",
       gamelengths: "Game Lengths",
-      selectseason: "Select Season"
+      selectseason: "Select Season",
     },
     "components_overall-statistics_tabs_winratestab": {
       selectmap: "Select Map",
@@ -385,11 +371,10 @@ const data = {
       betastats:
         "This noble person was part of our beta, therefore we hide their buggy stats and thank them for all eternity ;)",
       playermmrtimeline: "Player MMR Timeline",
-      playerhasnomatches:
-        "This player hasn't played any matches fitting to the current settings.",
+      playerhasnomatches: "This player hasn't played any matches fitting to the current settings.",
       title: "Matchup Statistics",
       playerheroesstatisticstitle: "Hero Usage Statistics",
-      playerherowinratetitle: "Hero Winrate"
+      playerherowinratetitle: "Hero Winrate",
     },
     components_player_modestatsgrid: {
       mode: "Mode",
@@ -589,64 +574,52 @@ const data = {
       launcherfeaturesbody4: "Настройки цветов команд",
       launcherfeaturesbody5: "Последние новости W3C",
       manualwintitle: "Руководство для Windows",
-      manualwinbody1:
-        "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
+      manualwinbody1: "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2. У вас должна быть следующая структура папок:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Если в папке с Warcraft III у вас есть папка с названием _retail_, то у вас должна быть следующая структура папок:",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
+      manualwinbody7: "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
       manualwinbody8: "Скачать КАРТЫ",
       manualwinbody9: "4. После распаковки должна быть следующая структура:",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Важно",
-      manualwinbody12:
-        "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
+      manualwinbody12: "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
       manualwinbody13: "Удалите <Путь-к-игре>/Maps",
       manualwinbody14: "Удалите <Путь-к-игре>/_retail_/Maps",
       manualwinbody15: "Например:",
       manualwinbody16: "Удалите C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "Удалите C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "5. Вам нужно обновить реестр (установщик делает это автоматически)",
+      manualwinbody17: "Удалите C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "5. Вам нужно обновить реестр (установщик делает это автоматически)",
       manualwinbody19: "откройте regedit.exe",
-      manualwinbody20:
-        "Найдите запись Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      manualwinbody20: "Найдите запись Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
       manualwinbody21: "Добавьте ключ DWORD к этой записи",
       manualwinbody22: "name: Allow Local Files",
       manualwinbody23: "decimal value: 1",
       manualmactitle: "Руководство Mac OS",
-      manualmacbody1:
-        "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
+      manualmacbody1: "1. Скачайте файл zip и распакуйте его в папку с установленным Warcraft III",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. У вас должна быть следующая структура папок:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Если в папке с Warcraft III у вас есть папка с названием _retail_, то у вас должна быть следующая структура папок:",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
+      manualmacbody7: "3. Скачайте карты и распакуйте их в вашу папку с картами Warcraft III",
       manualmacbody8: "Скачать КАРТЫ",
       manualmacbody9: "4. После распаковки должна быть следующая структура:",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Важно",
-      manualmacbody12:
-        "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
+      manualmacbody12: "Если внутри папки с Warcraft III у вас есть папка с картами, то удалите ее",
       manualmacbody13: "Удалите <ПУть-к-игре>/Maps",
       manualmacbody14: "Удалите <ПУть-к-игре>/_retail_/Maps",
       manualmacbody15: "Например:",
       manualmacbody16: "Удалите Warcraft III\\Maps",
       manualmacbody17: "Удалите Warcraft III_retail_\\Maps",
-      manualmacbody18:
-        "5. Вам нужно обновить реестр (установщик делает это автоматически)",
+      manualmacbody18: "5. Вам нужно обновить реестр (установщик делает это автоматически)",
       manualmacbody19: "Скопируйте команду",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Откройте командную строку",
       manualmacbody21: "Вставьте скопированную команду и нажмите Enter",
       manualmacbody22: "Запустите Warcraft III. Вы должны увидеть W3Champions",
@@ -655,10 +628,8 @@ const data = {
       w3c_motto: "Ладдер, которого вы ждали!",
       join_button: "Присоединяйтесь к битве!",
       hometitle: "Присоединяйтесь!",
-      homebody1:
-        "W3Champions - это ладдер созданный коммьюнити и для коммьюнити",
-      homebody2:
-        "Он добавляет в игру много старого и нового функционала, например:",
+      homebody1: "W3Champions - это ладдер созданный коммьюнити и для коммьюнити",
+      homebody2: "Он добавляет в игру много старого и нового функционала, например:",
       homebody3: "- Продуманную систему матчмейкинга",
       homebody4: "- Честный подбор противника после 5 подготовительных матчей",
       homebody5: "- Улучшенный пинг",
@@ -671,8 +642,7 @@ const data = {
       homebody12: "Команда W3C также работает над следующим функционалом:",
       homebody13: "- Хостботы для кроссрегиональной игры",
       homebody14: "- Автоматические турниры",
-      homebody15:
-        "Присоединяйтесь к W3Champions и насладитесь Warcraft III во всем его величии.",
+      homebody15: "Присоединяйтесь к W3Champions и насладитесь Warcraft III во всем его величии.",
       homebody16: "Поддержите нас ради еще больших возможностей!",
       mappooltitle: "Текущий набор карт",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ и LR",
@@ -841,16 +811,13 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Выберите сезон",
       mode: "Режим",
-      purplebarsdesc:
-        "Фиолетовая полоса отмечает топ 2%, 5%, 10%, 25% и 50% игроков.",
+      purplebarsdesc: "Фиолетовая полоса отмечает топ 2%, 5%, 10%, 25% и 50% игроков.",
       greenbardesc: "Зеленая полоса отмечает вашу позицию на графике",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Выберите режим",
-      gamemodedesc1:
-        "Игровые режимы нормализованы, чтобы легче сравнивать их популярность:",
-      gamemodedesc2:
-        "Игры 2 на 2 и FFA засчитываются 2 раза, игры 4 на 4 засчитываются 4 раза",
+      gamemodedesc1: "Игровые режимы нормализованы, чтобы легче сравнивать их популярность:",
+      gamemodedesc2: "Игры 2 на 2 и FFA засчитываются 2 раза, игры 4 на 4 засчитываются 4 раза",
       playersperday: "Игроков в день",
       playedmaps: "Сыгранные карты",
       popularhours: "Популярное время",
@@ -907,8 +874,7 @@ const data = {
       betastats:
         "Этот благородный человек участвовал в нашей бете, поэтому мы скрываем их забагованные статы и благодарим их до сончания времен ;)",
       playermmrtimeline: "График MMR игрока",
-      playerhasnomatches:
-        "Этот игрок не провел ни одного матча согласно выбранным настройкам.",
+      playerhasnomatches: "Этот игрок не провел ни одного матча согласно выбранным настройкам.",
       title: "Статистика матчапа",
     },
     components_player_modestatsgrid: {
@@ -1096,62 +1062,48 @@ const data = {
       launcherfeaturesbody4: "커스텀 팀 색상",
       launcherfeaturesbody5: "최신 뉴스를 주목하세요",
       manualwintitle: "윈도우 사용자 설명서",
-      manualwinbody1:
-        "압축 파일을 받아 워크래프트3가 설치된 폴더에 설치합니다.",
+      manualwinbody1: "압축 파일을 받아 워크래프트3가 설치된 폴더에 설치합니다.",
       manualwinbody2: "워3 챔피언스",
       manualwinbody3: "다음의 경로가 생성되었는지 확인하세요",
       manualwinbody4: "Warcraft III\\webui\\index.html",
-      manualwinbody5:
-        "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
+      manualwinbody5: "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
+      manualwinbody7: "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
       manualwinbody8: "맵 다운로드",
       manualwinbody9: "다운로드 받은 맵은 다음의 폴더에 들어가야 합니다.",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "중요",
-      manualwinbody12:
-        "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
+      manualwinbody12: "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
       manualwinbody13: "삭제 워크래프트 설치 폴더/Maps",
       manualwinbody14: "삭제 워크래프트 설치 폴더/_retail_/Maps",
       manualwinbody15: "예:",
       manualwinbody16: "삭제 C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
+      manualwinbody17: "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
       manualwinbody19: "열기 regedit.exe(레지스트리 편집기)",
-      manualwinbody20:
-        "다음 경로를 확인 Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      manualwinbody20: "다음 경로를 확인 Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
       manualwinbody21: '이 경로에 "DWORD 값" 추가',
       manualwinbody22: "이름 : Allow Local Files",
       manualwinbody23: "값 데이터 :1",
       manualmactitle: "MAC(맥) 사용자 설명서",
-      manualmacbody1:
-        "압축 파일을 받아 워크래프트3가 설치된 폴더에 설치합니다.",
+      manualmacbody1: "압축 파일을 받아 워크래프트3가 설치된 폴더에 설치합니다.",
       manualmacbody2: "워3 챔피언스",
       manualmacbody3: "다음의 경로가 생성되었는지 확인하세요",
       manualmacbody4: "Warcraft III\\webui\\index.html",
-      manualmacbody5:
-        "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
+      manualmacbody5: "만약 '_retail_' 이라는 폴더가 있으면 다음의 경로가 생성됩니다.",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
+      manualmacbody7: "맵을 다운로드 받아 워크래프트3 맵 폴더에 압축 해제합니다.",
       manualmacbody8: "맵 다운로드",
       manualmacbody9: "다운로드 받은 맵은 다음의 폴더에 들어가야 합니다.",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "중요",
-      manualmacbody12:
-        "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
+      manualmacbody12: "만약 맵 폴더가 워크래프트3가 설치된 폴더에 있다면 즉시 삭제 하세요",
       manualmacbody13: "삭제 워크래프트 설치 폴더/Maps",
       manualmacbody14: "삭제 워크래프트 설치 폴더/_retail_/Maps",
       manualmacbody15: "예:",
       manualmacbody16: "삭제 C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualmacbody17:
-        "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualmacbody18:
-        "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
+      manualmacbody17: "삭제 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualmacbody18: "레지스트리를 설정해야합니다.(워3 챔피언스 설치 시 자동으로 진행됨)",
       manualmacbody19: "다음의 커맨드를 복사",
       manualmacbody20: "터미널 열기",
       manualmacbody21: "복사한 명령어를 적고 엔터키를 눌러 실행",
@@ -1161,8 +1113,7 @@ const data = {
       w3c_motto: "당신이 기다리던 래더!",
       join_button: "전장에 참여하세요!",
       hometitle: "이리와서 같이 즐겨요!",
-      homebody1:
-        "워3 챔피언스는 커뮤니티에 의해, 커뮤니티를 위해 만든 래더입니다",
+      homebody1: "워3 챔피언스는 커뮤니티에 의해, 커뮤니티를 위해 만든 래더입니다",
       homebody2: "다음과 같은 많은 새로운 기능과 과거의 게임 기능이 있습니다.",
       homebody3: "정교한 매치메이킹 시스템",
       homebody4: "5회의 배치 경기 종료 후 실력이 비슷한 유저와의 매칭",
@@ -1323,8 +1274,7 @@ const data = {
       pickedheroes: "영웅 선택",
     },
     "components_overall-statistics_tabs_mmrdistributiontab": {
-      purplebarsdesc:
-        "보라색 바는 상위 2%, 5%, 10%, 25% and 50% 를 표시 합니다",
+      purplebarsdesc: "보라색 바는 상위 2%, 5%, 10%, 25% and 50% 를 표시 합니다",
       greenbardesc: "녹색 선은 당신의 위치를 나타냅니다",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -1376,8 +1326,7 @@ const data = {
       mmr: "MMR 변화",
       mmrdesc: "MMR 변화",
       rp: "랭킹 포인트",
-      rpdesc:
-        "RP는 랭킹포인트의 약자로 당신의 래더 순위를 결정합니다. 이는 당신의 MMR과 활동레벨로 계산됩니다.",
+      rpdesc: "RP는 랭킹포인트의 약자로 당신의 래더 순위를 결정합니다. 이는 당신의 MMR과 활동레벨로 계산됩니다.",
     },
     components_player_playeravatar: {
       games: "게임",
@@ -1519,8 +1468,7 @@ const data = {
       save: "保存",
     },
     views_gettingstarted: {
-      manualwarning:
-        "如果启动客户端无法启动游戏，可按以下步骤手动安装。如需帮助，欢迎来我们的discord小组。",
+      manualwarning: "如果启动客户端无法启动游戏，可按以下步骤手动安装。如需帮助，欢迎来我们的discord小组。",
       howtoinstall: "安装W3Champions的步骤",
       launcher: "启动客户端",
       manualwin: "Windows系统手动安装",
@@ -1550,12 +1498,10 @@ const data = {
       manualwinbody14: "删除 魔兽争霸路径/_retail_/Maps",
       manualwinbody15: "比如:",
       manualwinbody16: "删除 C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "删除 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody17: "删除 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
       manualwinbody18: "5. 你需要修改注册表 (如用启动客户端，它会自动帮您修改)",
       manualwinbody19: "打开regedit.exe",
-      manualwinbody20:
-        "注册表里寻找Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      manualwinbody20: "注册表里寻找Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
       manualwinbody21: "增加DWORD关键词",
       manualwinbody22: "允许本地文件",
       manualwinbody23: "十进制值:1",
@@ -1569,8 +1515,7 @@ const data = {
       manualmacbody7: "3.下载地图并解压缩在魔兽争霸地图文件夹下",
       manualmacbody8: "下载地图",
       manualmacbody9: "4.解压后的目录应类似于:",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "重要信息",
       manualmacbody12: "如果你的魔兽争霸目录下有一个Maps文件夹，请删除它",
       manualmacbody13: "删除 魔兽争霸路径/Maps",
@@ -1579,8 +1524,7 @@ const data = {
       manualmacbody16: "删除 Warcraft III\\Maps",
       manualmacbody17: "删除 Warcraft III_retail_\\Maps",
       manualmacbody18: "5. 你需要修改注册表 (如用启动客户端，它会自动帮您修改)",
-      manualmacbody19:
-        '复制以下命令defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19: '复制以下命令defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "打开终端",
       manualmacbody21: "粘帖以上命令，回车",
       manualmacbody22: "打开魔兽争霸，你会看到W3Champions",
@@ -1935,8 +1879,7 @@ const data = {
       save: "Speichern",
     },
     views_gettingstarted: {
-      manualwarning:
-        "Nur benötigt, wenn Du Probleme mit dem Launcher hast. In dem Fall, bitte auf discord melden!",
+      manualwarning: "Nur benötigt, wenn Du Probleme mit dem Launcher hast. In dem Fall, bitte auf discord melden!",
       howtoinstall: "Wie man W3Champions installiert",
       launcher: "Launcher",
       manualwin: "Windows manuell",
@@ -1950,30 +1893,25 @@ const data = {
       launcherfeaturesbody4: "Spielfarben selbst auswählen",
       launcherfeaturesbody5: "Bleib' mit Nachrichten über die Szene informiert",
       manualwintitle: "Windows manuell",
-      manualwinbody1:
-        "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
+      manualwinbody1: "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2. Überprüfe, dass deine Ordnerstruktur so aussieht:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
+      manualwinbody7: "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
       manualwinbody8: "Maps Runterladen",
       manualwinbody9: "4. Die Ordnerstruktur sollte danach so aussehen:",
       manualwinbody10: "Dokumente\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Wichtig",
-      manualwinbody12:
-        "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
+      manualwinbody12: "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
       manualwinbody13: "LÖSCHEN: Pfad-zum-Spiel/Maps",
       manualwinbody14: "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
       manualwinbody15: "Beispiel:",
       manualwinbody16: "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\_retail_\\Maps",
-      manualwinbody18:
-        "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
+      manualwinbody17: "LÖSCHEN: C:\\Programme (x86)\\Warcraft III\\_retail_\\Maps",
+      manualwinbody18: "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
       manualwinbody19: "öffne regedit.exe",
       manualwinbody20:
         "Finde den Eintrag Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
@@ -1981,32 +1919,26 @@ const data = {
       manualwinbody22: "Name: Allow Local Files",
       manualwinbody23: "Dezimalwert: 1",
       manualmactitle: "Mac manuell",
-      manualmacbody1:
-        "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
+      manualmacbody1: "1. Lade die Zip-Datei runter und entpacke sie in Deinem Warcraft-Ordner",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Überprüfe, dass deine Ordnerstruktur so aussieht:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Falls du einen _retail_ Ordner in deinem Warcraft-Ordner hast, muss die Ordnerstruktur so aussehen:",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
+      manualmacbody7: "3. Lade die Maps runter und entpacke sie in deinem Warcraft-Maps-Ordner",
       manualmacbody8: "Maps Runterladen",
       manualmacbody9: "4. Die Ordnerstruktur sollte danach so aussehen:",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Wichtig",
-      manualmacbody12:
-        "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
+      manualmacbody12: "Falls du einen Maps-Ordner in deinem Warcraft-Ordner hast, dann lösche ihn.",
       manualmacbody13: "LÖSCHEN: Pfad-zum-Spiel/Maps",
       manualmacbody14: "LÖSCHEN: Pfad-zum-Spiel/_retail_/Maps",
       manualmacbody15: "Beispiel:",
       manualmacbody16: "LÖSCHEN: Warcraft III\\Maps",
       manualmacbody17: "LÖSCHEN: Warcraft III\\_retail_\\Maps",
-      manualmacbody18:
-        "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
-      manualmacbody19:
-        'Kopiere den Befehl: defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody18: "5. Du musst einen Registry-Schlüssel setzen (Launcher macht es automatisch)",
+      manualmacbody19: 'Kopiere den Befehl: defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Öffne ein Terminal",
       manualmacbody21: "Füge den Befehl ein und drück' Enter",
       manualmacbody22: "Starte Warcraft, Du solltest nun W3Champions sehen",
@@ -2029,8 +1961,7 @@ const data = {
       homebody12: "Das W3C-Team arbeitet zur Zeit zusätzlich an:",
       homebody13: "Hostbots für guten Ping nach Asien und Amerika",
       homebody14: "Automatische Turniere",
-      homebody15:
-        "Tritt W3Champions bei und erlebe Warcraft III im vollen Glanz.",
+      homebody15: "Tritt W3Champions bei und erlebe Warcraft III im vollen Glanz.",
       homebody16: "Unterstütze uns für noch mehr Features!",
       mappooltitle: "Aktueller Mappool",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ und LR",
@@ -2177,8 +2108,7 @@ const data = {
       pickedheroes: "Ausgewählte Helden",
     },
     "components_overall-statistics_tabs_mmrdistributiontab": {
-      purplebarsdesc:
-        "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
+      purplebarsdesc: "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
       greenbardesc: "Die grüne Linie zeigt deinen Platz in der Verteilung.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -2211,8 +2141,7 @@ const data = {
       total: "Gesamt",
     },
     components_player_tabs_playerprofiletab: {
-      betastats:
-        "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
+      betastats: "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
       statsbygamemode: "Stats gemäß Spielmodus",
       winloss: "Sieg/Niederlage",
       race: "Rasse",
@@ -2222,11 +2151,9 @@ const data = {
       statsByMode: "Statistiken nach Modus",
     },
     components_player_tabs_playerstatistictab: {
-      betastats:
-        "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
+      betastats: "Diese noble Person war Teil unserer Beta, deswegen verbergen wir ihre verbuggten Stats auf ewig. ;)",
       playermmrtimeline: "MMR-Zeitstrahl des Spielers",
-      playerhasnomatches:
-        "Dieser Spieler hat keine Spiele mit den angegeben Einstellungen.",
+      playerhasnomatches: "Dieser Spieler hat keine Spiele mit den angegeben Einstellungen.",
       title: "Matchup Statistiken",
     },
     components_player_modestatsgrid: {
@@ -2391,90 +2318,69 @@ const data = {
       launchertitle: "Po instalacji otwórz W3Champions i dołącz do nas!",
       launcherfeaturestitle: "Funkcje launchera:",
       launcherfeaturesbody1: "Zawsze miej W3C zainstalowane i zaktualizowane",
-      launcherfeaturesbody2:
-        "Własne skróty klawiszowe dla ekwipunku i bohaterów",
-      launcherfeaturesbody3:
-        "Interfejs graficzny dla własnych skrótów klawiszowych",
+      launcherfeaturesbody2: "Własne skróty klawiszowe dla ekwipunku i bohaterów",
+      launcherfeaturesbody3: "Interfejs graficzny dla własnych skrótów klawiszowych",
       launcherfeaturesbody4: "Własne kolory drużyn",
       launcherfeaturesbody5: "Śledź scenę otrzymując najnowsze informacje",
       manualwintitle: "Instrukcja dla Windowsa",
-      manualwinbody1:
-        "1. Pobierz plik zip i rozpakuj go w folderze, gdzie zainstalowany jest Warcraft",
+      manualwinbody1: "1. Pobierz plik zip i rozpakuj go w folderze, gdzie zainstalowany jest Warcraft",
       manualwinbody2: "W3Champions",
-      manualwinbody3:
-        "2. Upewnij się, że twoja struktura katalogów wygląda tak:",
+      manualwinbody3: "2. Upewnij się, że twoja struktura katalogów wygląda tak:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Jeżeli masz folder nazwany _retail_ w folderze z Warcraftem III, twoja struktura katalogów powinna wyglądać tak:",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
+      manualwinbody7: "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
       manualwinbody8: "Pobierz MAPY",
-      manualwinbody9:
-        "4. Struktura folderów po rozpakowaniu powinna wyglądać tak:",
+      manualwinbody9: "4. Struktura folderów po rozpakowaniu powinna wyglądać tak:",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Ważne",
-      manualwinbody12:
-        "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
+      manualwinbody12: "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
       manualwinbody13: "USUŃ Ścieżka-gry/Maps",
       manualwinbody14: "USUŃ Ścieżka-gry/_retail_/Maps",
       manualwinbody15: "Przykład:",
       manualwinbody16: "USUŃ C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "USUŃ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
+      manualwinbody17: "USUŃ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
       manualwinbody19: "Otwórz regedit.exe",
-      manualwinbody20:
-        "Znajdź rejestr Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      manualwinbody20: "Znajdź rejestr Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
       manualwinbody21: "Dodaj wartość DWORD do tej ścieżki w rejestrze",
       manualwinbody22: "Nazwa: Allow Local Files",
       manualwinbody23: "Wartość dziesiętna:1",
       manualmactitle: "Instrukacja dla Mac OS",
-      manualmacbody1:
-        "1. Pobierz plik zip i rozpakuj go w folderze, gdzie zainstalowany jest Warcraft",
+      manualmacbody1: "1. Pobierz plik zip i rozpakuj go w folderze, gdzie zainstalowany jest Warcraft",
       manualmacbody2: "W3Champions",
-      manualmacbody3:
-        "2. Upewnij się, że twoja struktura katalogów wygląda tak:",
+      manualmacbody3: "2. Upewnij się, że twoja struktura katalogów wygląda tak:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Jeżeli masz folder nazwany _retail_ w folderze z Warcraftem III, twoja struktura katalogów powinna wyglądać tak:",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
+      manualmacbody7: "3. Pobierz mapy i rozpakuj je w folderze z mapami Warcrafta III",
       manualmacbody8: "Pobierz mapy",
-      manualmacbody9:
-        "4. Struktura folderów po rozpakowaniu powinna wyglądać tak:",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody9: "4. Struktura folderów po rozpakowaniu powinna wyglądać tak:",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Ważne",
-      manualmacbody12:
-        "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
+      manualmacbody12: "Jeżeli masz folder Maps w folderze Warcrafta III, usuń go.",
       manualmacbody13: "USUŃ Ścieżka-gry/Maps",
       manualmacbody14: "USUŃ Ścieżka-gry/retail/Maps",
       manualmacbody15: "Przykład:",
       manualmacbody16: "USUŃ Warcraft III\\Maps",
       manualmacbody17: "USUŃ Warcraft III_retail_\\Maps",
-      manualmacbody18:
-        "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
+      manualmacbody18: "5. Musisz ustawić rejestr (Instalator robi to automatycznie)",
       manualmacbody19: "Skopiuj polecenie",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Otwórz terminal",
       manualmacbody21: "Wklej polecenie i je wykonaj klawiszem Enter",
-      manualmacbody22:
-        "Uruchom Warcrafta III. Powinienieś zobaczyć W3Champions",
+      manualmacbody22: "Uruchom Warcrafta III. Powinienieś zobaczyć W3Champions",
     },
     views_home: {
       w3c_motto: "Ladder, na który czekałeś!",
       join_button: "Wkrocz na pole bitwy!",
       hometitle: "Dołącz do nas!",
       homebody1: "W3Champions to ladder zrobiony przez i dla społeczności",
-      homebody2:
-        "Dodaje on wiele nowych i starych funkcjonalności do gry, takich jak:",
+      homebody2: "Dodaje on wiele nowych i starych funkcjonalności do gry, takich jak:",
       homebody3: "Złożony system dobierania graczy",
-      homebody4:
-        "Mecze na równym poziomie umiejętności po pięciu meczach wstępnych",
+      homebody4: "Mecze na równym poziomie umiejętności po pięciu meczach wstępnych",
       homebody5: "Lepszy ping",
       homebody6: "Własne skróty klawiszowe dla ekwipunku",
       homebody7: "Nowy interfejs w starym stylu",
@@ -2485,8 +2391,7 @@ const data = {
       homebody12: "Drużyna W3C pracuje także nad funkcjami takimi jak:",
       homebody13: "Hostboty dla gry międzyregionalnej",
       homebody14: "Automatyczne turnieje",
-      homebody15:
-        "Dołącz do W3Champions i ciesz się Warcraftem III w całej okazałości",
+      homebody15: "Dołącz do W3Champions i ciesz się Warcraftem III w całej okazałości",
       homebody16: "Wesprzyj nas dla większej ilości funkcji!",
       mappooltitle: "Aktualna pula map",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ,LR",
@@ -2655,14 +2560,12 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Wybierz sezon",
       mode: "Tryb",
-      purplebarsdesc:
-        "Fioletowe paski zaznaczają czołowe: 2%, 5%, 10%, 25% i 50% graczy",
+      purplebarsdesc: "Fioletowe paski zaznaczają czołowe: 2%, 5%, 10%, 25% i 50% graczy",
       greenbardesc: "Zielonia linia pokazuje twoją pozycję",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Wybierz tryb",
-      gamemodedesc1:
-        "Tryby gry są znormalizowane, aby łatwiej porównać ich popularność.",
+      gamemodedesc1: "Tryby gry są znormalizowane, aby łatwiej porównać ich popularność.",
       gamemodedesc2: "Mecze 2v2 i FFA są liczone podwójne, a 4v4 poczwórnie.",
       playersperday: "Dzienna liczba graczy",
       playedmaps: "Rozegrane mapy",
@@ -2720,8 +2623,7 @@ const data = {
       betastats:
         "Ta szlachetna osoba uczestniczyła w naszych beta testach, więc chowamy jej zabugowane statystyki i jesteśmy jej dozgonnie wdzięczni ;)",
       playermmrtimeline: "Oś czasu MMR gracza",
-      playerhasnomatches:
-        "Ten gracz nie rozegrał żadnego meczu przy obecnej konfiguracji",
+      playerhasnomatches: "Ten gracz nie rozegrał żadnego meczu przy obecnej konfiguracji",
       title: "Statystyki wg ras",
     },
     components_player_modestatsgrid: {
@@ -2906,71 +2808,57 @@ const data = {
       launchertitle: "Після встановлення запустіть W3Champions і приєднуйтесь!",
       launcherfeaturestitle: "Переваги лаунчера:",
       launcherfeaturesbody1: "Остання версія W3C завжди встановлена",
-      launcherfeaturesbody2:
-        "Власні налаштування гарячих клавіш героїв та інвентарю",
-      launcherfeaturesbody3:
-        "Графічний інтерфейс для налаштування гарячих клавіш",
+      launcherfeaturesbody2: "Власні налаштування гарячих клавіш героїв та інвентарю",
+      launcherfeaturesbody3: "Графічний інтерфейс для налаштування гарячих клавіш",
       launcherfeaturesbody4: "Власні налаштування кольорів команд",
       launcherfeaturesbody5: "Завжди видно актуальні новини W3C",
       manualwintitle: "Посібник для Windows",
-      manualwinbody1:
-        "1. Завантажте файл zip і розпакуйте його в папку з встановленим Warcraft III",
+      manualwinbody1: "1. Завантажте файл zip і розпакуйте його в папку з встановленим Warcraft III",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2. У вас повинна бути наступна структура директорій:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Якщо в директорії з Warcraft III у вас є директорія з назвою _retail_, то у вас повинна бути наступна структура директорій:",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Завантажте мапи та розпакуйте їх у вашу директорію з мапами Warcraft III",
+      manualwinbody7: "3. Завантажте мапи та розпакуйте їх у вашу директорію з мапами Warcraft III",
       manualwinbody8: "Завантажити МАПИ",
       manualwinbody9: "4. Після встановлення повинна бути наступна структура:",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Важливо",
-      manualwinbody12:
-        "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
+      manualwinbody12: "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
       manualwinbody13: "Видаліть <Шлях-до-гри>/Maps",
       manualwinbody14: "Видаліть <Шлях-до-гри>/_retail_/Maps",
       manualwinbody15: "Наприклад:",
       manualwinbody16: "Видаліть C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "Видаліть C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
+      manualwinbody17: "Видаліть C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
       manualwinbody19: "запустіть regedit.exe",
-      manualwinbody20:
-        "Знайдіть запис Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
+      manualwinbody20: "Знайдіть запис Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
       manualwinbody21: "Додайте ключ DWORD до цього запису",
       manualwinbody22: "name: Allow Local Files",
       manualwinbody23: "decimal value: 1",
       manualmactitle: "Посібник Mac OS",
-      manualmacbody1:
-        "1. Завантажте файл zip та розпакуйте його в директорію з встановленим Warcraft III",
+      manualmacbody1: "1. Завантажте файл zip та розпакуйте його в директорію з встановленим Warcraft III",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. У вас повинна бути наступна структура директорій:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Якщо в директорії з Warcraft III у вас є директорія з назвою _retail_, то у вас повинна бути наступна структура директорій:",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "3. Завантажте мапи та розпакуйте їх в вашу директорію з мапами Warcraft III",
+      manualmacbody7: "3. Завантажте мапи та розпакуйте їх в вашу директорію з мапами Warcraft III",
       manualmacbody8: "Завантажити МАПИ",
       manualmacbody9: "4. Після розпакування повинна бути наступна структура:",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Важливо",
-      manualmacbody12:
-        "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
+      manualmacbody12: "Якщо всередині директорії з Warcraft III у вас є директорія з мапами, то видальте її",
       manualmacbody13: "Видальте <Шлях-до-гри>/Maps",
       manualmacbody14: "Видальте <Шлях-до-гри>/_retail_/Maps",
       manualmacbody15: "Наприклад:",
       manualmacbody16: "Видальте Warcraft III\\Maps",
       manualmacbody17: "Видальте Warcraft III_retail_\\Maps",
-      manualmacbody18:
-        "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
+      manualmacbody18: "5. Вам необхідно оновити реєстр (встановлювач робить це автоматично)",
       manualmacbody19: "Зкопіюйте команду",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Відкрийте термінал",
       manualmacbody21: "Вставте зкопійовану команду та натисніть Enter",
       manualmacbody22: "Запустіть Warcraft III. Ви маєте побачити W3Champions",
@@ -2980,8 +2868,7 @@ const data = {
       join_button: "Приєднуйтесь до битви!",
       hometitle: "Приєднуйтесь!",
       homebody1: "W3Champions - це ладдер створений спільнотою і для спільноти",
-      homebody2:
-        "Він додає в гру багато старого та нового функціоналу, наприклад:",
+      homebody2: "Він додає в гру багато старого та нового функціоналу, наприклад:",
       homebody3: "- Продуману систему створення матчів",
       homebody4: "- Чесний підбір противника після 5 підготовчих матчів",
       homebody5: "- Покращений ping",
@@ -2994,8 +2881,7 @@ const data = {
       homebody12: "Команда W3C також працює над наступним функціоналом:",
       homebody13: "- Хостботи для кроссрегіональной гри",
       homebody14: "- Автоматичні турніри",
-      homebody15:
-        "Приєднуйтесь до W3Champions та насолоджуйтесь Warcraft III в усій його величі.",
+      homebody15: "Приєднуйтесь до W3Champions та насолоджуйтесь Warcraft III в усій його величі.",
       homebody16: "Підтримайте нас заради ще більших можливостей!",
       mappooltitle: "Поточний набір мап",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ and LR",
@@ -3164,16 +3050,13 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Оберіть сезон",
       mode: "Режим",
-      purplebarsdesc:
-        "Фіолетова смуга відзначає топ 2%, 5%, 10%, 25% та 50% гравців.",
+      purplebarsdesc: "Фіолетова смуга відзначає топ 2%, 5%, 10%, 25% та 50% гравців.",
       greenbardesc: "Зелена смуга відзначає вашу позицію на графіку",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Оберіть режим",
-      gamemodedesc1:
-        "Ігрові режими нормалізовані, щоб легше порівнювати їх популярність:",
-      gamemodedesc2:
-        "Ігри 2 на 2 та FFA зараховуються 2 рази, ігри 4 на 4 зараховуються 4 рази",
+      gamemodedesc1: "Ігрові режими нормалізовані, щоб легше порівнювати їх популярність:",
+      gamemodedesc2: "Ігри 2 на 2 та FFA зараховуються 2 рази, ігри 4 на 4 зараховуються 4 рази",
       playersperday: "Гравців в день",
       playedmaps: "Зіграні мапи",
       popularhours: "Попурялний час",
@@ -3230,8 +3113,7 @@ const data = {
       betastats:
         "Ця благородна людина брала участь в нашому бета тесті, тому ми приховуємо її забаговану статистику та вічно їм вдячні ;)",
       playermmrtimeline: "Графік MMR гравця",
-      playerhasnomatches:
-        "Цей гравець не провів жодного матчу згідно з обраними налаштуваннями.",
+      playerhasnomatches: "Цей гравець не провів жодного матчу згідно з обраними налаштуваннями.",
       title: "Статистика матчапу",
     },
     components_player_modestatsgrid: {
@@ -3412,42 +3294,33 @@ const data = {
       manualwin: "Windows Manual",
       manualmac: "Mac Manual",
       downloadw3ctitle: "Baixar W3Champions",
-      launchertitle:
-        "Depois da instalação, abre o W3Champions e junta-te a nós!",
+      launchertitle: "Depois da instalação, abre o W3Champions e junta-te a nós!",
       launcherfeaturestitle: "Funcionalidades do Launcher:",
       launcherfeaturesbody1: "Manter sempre o W3C instalado e atualizado",
-      launcherfeaturesbody2:
-        "Teclas de atalho de heróis e inventário customizadas",
-      launcherfeaturesbody3:
-        "Interface gráfico para teclas de atalho customizadas",
+      launcherfeaturesbody2: "Teclas de atalho de heróis e inventário customizadas",
+      launcherfeaturesbody3: "Interface gráfico para teclas de atalho customizadas",
       launcherfeaturesbody4: "Cores de equipas customizadas",
       launcherfeaturesbody5: "Mantém-te atualizado com as últimas notícias",
       manualwintitle: "Windows Manual",
-      manualwinbody1:
-        "1. Baixa o ficheiro zip e extrai-o na pasta de instalação do Warcraft",
+      manualwinbody1: "1. Baixa o ficheiro zip e extrai-o na pasta de instalação do Warcraft",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2. Garante que tens a seguinte estrutura de pastas:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Se tiveres uma pasta chamada _retail_ na tua pasta do Warcraft III, garante que tens a seguinte estrutura de pastas:",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Baixa os Mapas e extrai-os para a pasta Maps do Warcraft III",
+      manualwinbody7: "3. Baixa os Mapas e extrai-os para a pasta Maps do Warcraft III",
       manualwinbody8: "Baixar MAPAS",
-      manualwinbody9:
-        "4. A estrutura de pastas depois de descompactado deverá ser",
+      manualwinbody9: "4. A estrutura de pastas depois de descompactado deverá ser",
       manualwinbody10: "Documentos\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Importante",
-      manualwinbody12:
-        "Se tiveres uma pasta Maps na tua instalação de Warcraft III, por favor apaga-a",
+      manualwinbody12: "Se tiveres uma pasta Maps na tua instalação de Warcraft III, por favor apaga-a",
       manualwinbody13: "APAGAR: Directoria-do-jogo/Maps",
       manualwinbody14: "APAGAR: Directoria-do-jogo/_retail_/Maps",
       manualwinbody15: "Exemplo:",
       manualwinbody16: "APAGAR: C:\\Programas (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "APAGAR: C:\\Programas (x86)\\Warcraft III\\_retail_\\Maps",
-      manualwinbody18:
-        "5. Precisas de definir um register (O instalador está a fazer isto automaticamente)",
+      manualwinbody17: "APAGAR: C:\\Programas (x86)\\Warcraft III\\_retail_\\Maps",
+      manualwinbody18: "5. Precisas de definir um register (O instalador está a fazer isto automaticamente)",
       manualwinbody19: "abre o regedit.exe",
       manualwinbody20:
         "Encontra o registo Computer\\HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
@@ -3455,32 +3328,26 @@ const data = {
       manualwinbody22: "Nome: Allow Local Files",
       manualwinbody23: "Valor decimal: 1",
       manualmactitle: "Mac OS Manual",
-      manualmacbody1:
-        "Baixe o arquivo zip e extrai-o na pasta de instalação do Warcraft",
+      manualmacbody1: "Baixe o arquivo zip e extrai-o na pasta de instalação do Warcraft",
       manualmacbody2: "W3Champions",
       manualmacbody3: "Certifique-se de ter uma estrutura de diretório como:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Se você tiver uma pasta chamada _retail_ na sua pasta de Warcraft III, certifique-se de que tenha a seguinte estrutura de diretório",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "Baixa os Mapas e extrai-os na sua pasta de Mapas do Warcraft III",
+      manualmacbody7: "Baixa os Mapas e extrai-os na sua pasta de Mapas do Warcraft III",
       manualmacbody8: "Baixar MAPAS",
       manualmacbody9: "A estrutura da pasta após a extração deverá ser\r\n",
-      manualmacbody10:
-        "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Importante",
-      manualmacbody12:
-        "Se você tiver uma pasta de Mapas dentro do seu diretório do Warcraft 3 exclua-o",
+      manualmacbody12: "Se você tiver uma pasta de Mapas dentro do seu diretório do Warcraft 3 exclua-o",
       manualmacbody13: "EXCLUIR Caminho-para-jogo/Mapas",
       manualmacbody14: "EXCLUIR Caminho-para-jogo/retail/Mapas",
       manualmacbody15: "Exemplo:",
       manualmacbody16: "EXCLUIR Warcraft III/Mapas",
       manualmacbody17: "EXCLUIR Warcraft III_retail_\\Mapas",
-      manualmacbody18:
-        "Você precisa definir um registro (O instalador esta fazendo isso automaticamente)",
-      manualmacbody19:
-        'Copie o comando: defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody18: "Você precisa definir um registro (O instalador esta fazendo isso automaticamente)",
+      manualmacbody19: 'Copie o comando: defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Abra um terminal",
       manualmacbody21: "Cole o comando e execute pressionando a tecla Enter.",
       manualmacbody22: "Execute Warcraft 3. Você deve ver W3Champions.",
@@ -3500,12 +3367,10 @@ const data = {
       homebody9: "- Estatísticas detalhadas",
       homebody10: "- Mapas novos e atualizados",
       homebody11: "- Interface gráfica para teclas de atalho customizados",
-      homebody12:
-        "O time do W3C também está a trabalhar nas seguintes funcionalidades:",
+      homebody12: "O time do W3C também está a trabalhar nas seguintes funcionalidades:",
       homebody13: "- Hostbots para jogos inter-regionais",
       homebody14: "- Torneios automatizados",
-      homebody15:
-        "- Junte-se ao W3champions e curta Warcraft III em toda a sua glória",
+      homebody15: "- Junte-se ao W3champions e curta Warcraft III em toda a sua glória",
       homebody16: "Nos apoie para ter ainda mais funcionalidades",
       mappooltitle: "Mapas Atuais",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ and LR",
@@ -3674,16 +3539,13 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Selecione Temporada",
       mode: "Modo",
-      purplebarsdesc:
-        "As barras roxas marcam o top: 2%, 5%, 10%, 25% e 50% dos jogadores.",
+      purplebarsdesc: "As barras roxas marcam o top: 2%, 5%, 10%, 25% e 50% dos jogadores.",
       greenbardesc: "A linha verde mostra onde você está na distribuição.\r\n",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Selecione modo",
-      gamemodedesc1:
-        "Os modos de jogos são normalizados para poder comparar mais facilmente a popularidade:",
-      gamemodedesc2:
-        "Jogos de 2v2 e FFA são contadas duas vezes, jogos de 4v4 são  contadas quatro vezes",
+      gamemodedesc1: "Os modos de jogos são normalizados para poder comparar mais facilmente a popularidade:",
+      gamemodedesc2: "Jogos de 2v2 e FFA são contadas duas vezes, jogos de 4v4 são  contadas quatro vezes",
       playersperday: "Jogadores por dia",
       playedmaps: "Mapas jogados",
       popularhours: "Horários populares",
@@ -3740,8 +3602,7 @@ const data = {
       betastats:
         "Esta nobre pessoa fez parte do nosso beta, portanto, escondemos suas estatísticas bugadas e a agradecemos por toda a eternidade ;)\r\n",
       playermmrtimeline: "Linha do tempo do MMR do Jogador\r\n",
-      playerhasnomatches:
-        "Este jogador não jogou nenhuma partida que se adeque às configurações atuais.\n",
+      playerhasnomatches: "Este jogador não jogou nenhuma partida que se adeque às configurações atuais.\n",
       title: "\r\nEstatísticas de confronto",
     },
     components_player_modestatsgrid: {
@@ -3922,42 +3783,33 @@ const data = {
       manualwin: "Manuel Windows",
       manualmac: "Manuel Mac",
       downloadw3ctitle: "Télécharger W3Champions",
-      launchertitle:
-        "Après l'Installation, ouvrez W3Champions et rejoignez-nous !",
+      launchertitle: "Après l'Installation, ouvrez W3Champions et rejoignez-nous !",
       launcherfeaturestitle: "Fonctionnalités du Lanceur :",
       launcherfeaturesbody1: "Ayez toujours W3C installé et mis à jour.",
       launcherfeaturesbody2: "Raccourcis personnalisés d'inventaire et d'héros",
-      launcherfeaturesbody3:
-        "Interface graphique pour raccourcis personnalisés",
+      launcherfeaturesbody3: "Interface graphique pour raccourcis personnalisés",
       launcherfeaturesbody4: "Couleurs d'équipes personnalisées",
       launcherfeaturesbody5: "Restez au courant des dernières nouvelles",
       manualwintitle: "Manuel Windows",
-      manualwinbody1:
-        "1. Téléchargez le fichier zip et décompressez-le dans le dossier d'installation de Warcraft 3",
+      manualwinbody1: "1. Téléchargez le fichier zip et décompressez-le dans le dossier d'installation de Warcraft 3",
       manualwinbody2: "W3Champions",
-      manualwinbody3:
-        "2. Assurez-vous que vous ayez une structure de répertoire du type :",
+      manualwinbody3: "2. Assurez-vous que vous ayez une structure de répertoire du type :",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5:
         "Si vous avez un dossier nommé _retail_ dans votre dossier Warcraft III, assurez-vous d'avoir la structure suivante :",
       manualwinbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualwinbody7:
-        "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps",
+      manualwinbody7: "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps",
       manualwinbody8: "Téléchargez CARTES (MAPS)",
-      manualwinbody9:
-        "4. La structure de dossier après décompression devrait être",
+      manualwinbody9: "4. La structure de dossier après décompression devrait être",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "Important",
-      manualwinbody12:
-        "Si vous avez un dossier Maps dans votre dossier Warcraft III, sélectionnez-le et supprimez-le.",
+      manualwinbody12: "Si vous avez un dossier Maps dans votre dossier Warcraft III, sélectionnez-le et supprimez-le.",
       manualwinbody13: "SUPPRIMEZ Chemin-du-jeu/Maps",
       manualwinbody14: "SUPPRIMEZ Chemin-du-jeu/_retail_/Maps",
       manualwinbody15: "Exemple :",
       manualwinbody16: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualwinbody18:
-        "5. Vous devez créer une clé de registre (l'installateur fait ça automatiquement)",
+      manualwinbody17: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualwinbody18: "5. Vous devez créer une clé de registre (l'installateur fait ça automatiquement)",
       manualwinbody19: "Ouvrez regedit.exe",
       manualwinbody20:
         "Trouvez le registre Ordinateur/HKEY_CURRENT_USER\\Software\\Blizzard Entertainment\\Warcraft III\\",
@@ -3965,38 +3817,29 @@ const data = {
       manualwinbody22: "Nom : Allow Local Files",
       manualwinbody23: "valeur décimale : 1",
       manualmactitle: "Manuel Mac OS",
-      manualmacbody1:
-        "1. Téléchargez le fichier zip et décompressez-le dans le dossier d'installation de Warcraft 3.",
+      manualmacbody1: "1. Téléchargez le fichier zip et décompressez-le dans le dossier d'installation de Warcraft 3.",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2. Assurez-vous que vous ayez une structure du type :",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5:
         "Si vous avez un dossier nommé _retail_ dans votre dossier Warcraft III, assurez-vous d'avoir la structure suivante :",
       manualmacbody6: "Warcraft III\\ _retail_ \\webui\\index.html",
-      manualmacbody7:
-        "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps.",
+      manualmacbody7: "3. Téléchargez les Cartes et décompressez-les dans votre dossier Warcraft III Maps.",
       manualmacbody8: "Téléchargez CARTES (MAPS)",
-      manualmacbody9:
-        "4. La structure de dossier après décompression devrait être",
-      manualmacbody10:
-        "Bibliothèque(Library)/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody9: "4. La structure de dossier après décompression devrait être",
+      manualmacbody10: "Bibliothèque(Library)/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "Important",
-      manualmacbody12:
-        "Si vous avez un dossier Maps dans votre dossier Warcraft III, sélectionnez-le et supprimez-le.",
+      manualmacbody12: "Si vous avez un dossier Maps dans votre dossier Warcraft III, sélectionnez-le et supprimez-le.",
       manualmacbody13: "SUPPRIMEZ Chemin-du-jeu/Maps",
       manualmacbody14: "SUPPRIMEZ Chemin-du-jeu/_retail_/Maps",
       manualmacbody15: "Exemple :",
       manualmacbody16: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualmacbody17:
-        "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
-      manualmacbody18:
-        "5. Vous devez créer une clé de registre (l'installateur fait ça automatiquement)",
+      manualmacbody17: "SUPPRIMEZ C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
+      manualmacbody18: "5. Vous devez créer une clé de registre (l'installateur fait ça automatiquement)",
       manualmacbody19: "Copiez la commande",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "Ouvrez le terminal",
-      manualmacbody21:
-        "Collez la commande et exécutez-la en appuyant sur Entrée",
+      manualmacbody21: "Collez la commande et exécutez-la en appuyant sur Entrée",
       manualmacbody22: "Ouvrez Warcraft 3. Vous devriez voir W3Champions.",
     },
     views_home: {
@@ -4004,8 +3847,7 @@ const data = {
       join_button: "Rejoignez le Champ de Bataille maintenant !",
       hometitle: "Rejoignez-nous !",
       homebody1: "W3Champions est un ladder crée par et pour la communauté",
-      homebody2:
-        "Il ajoute de nombreuses fonctionnalités nouvelles et anciennes au jeu, telles que :",
+      homebody2: "Il ajoute de nombreuses fonctionnalités nouvelles et anciennes au jeu, telles que :",
       homebody3: "Système de matchmaking sophistiqué",
       homebody4: "Niveau des rencontres ajusté après cinq matchs de placement",
       homebody5: "Latence améliorée",
@@ -4015,12 +3857,10 @@ const data = {
       homebody9: "Statistiques détaillées",
       homebody10: "Sets de cartes mis à jours",
       homebody11: "Interface graphique pour raccourcis personnalisés",
-      homebody12:
-        "L'équipe W3C travaille aussi sur les fonctionnalités suivantes :",
+      homebody12: "L'équipe W3C travaille aussi sur les fonctionnalités suivantes :",
       homebody13: "Système de Hostbots pour jeu inter-continents",
       homebody14: "Tournois automatisés",
-      homebody15:
-        "Rejoignez W3Champions et appréciez Warcraft III dans toute sa splendeur.",
+      homebody15: "Rejoignez W3Champions et appréciez Warcraft III dans toute sa splendeur.",
       homebody16: "Supportez-nous pour encore plus de fonctionnalités !",
       mappooltitle: "Cartes jouées actuellement",
       mappoolbody: "TM,EI,TSLV,CH,NIS,AZ et LR",
@@ -4038,8 +3878,7 @@ const data = {
     views_matchdetail: {
       season: "Saison:",
       vs: "VS",
-      incompletedata:
-        "Désolé, les données de ces parties semblent incomplètes.",
+      incompletedata: "Désolé, les données de ces parties semblent incomplètes.",
       jubileeGameNumber: "C'est notre {gameNumber} millionnième partie !",
       jubileeGameMessage: "Bravo à W3C et à la communauté !",
     },
@@ -4095,8 +3934,7 @@ const data = {
       enterclanabbrev: "entrez le tag du clan",
       createclan: "Créer un clan !",
       fieldismandatory: "Champ obligatoire",
-      minmaxchars:
-        "Doit être compris entre ${min} et ${max} caractères numériques",
+      minmaxchars: "Doit être compris entre ${min} et ${max} caractères numériques",
     },
     components_clans_clanoverview: {
       playerhasnoclan: "Ce joueur ne fait pas partie d'un clan.",
@@ -4113,8 +3951,7 @@ const data = {
     },
     components_clans_leaveclanmodal: {
       leaveclan: "Quitter",
-      promotefirst:
-        "Veuillez promouvoir quelqu'un Chaman avant de quitter le clan.",
+      promotefirst: "Veuillez promouvoir quelqu'un Chaman avant de quitter le clan.",
       areyousureleave: "Êtes-vous certain de vouloir quitter",
       close: "Fermer",
     },
@@ -4192,17 +4029,13 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Sélectionnez une Saison",
       mode: "Mode",
-      purplebarsdesc:
-        "Les barres violettes marquent les : 2%, 5%, 10%, 25%, 50% des meilleurs joueurs.",
-      greenbardesc:
-        "La ligne verte montre où vous êtes dans la répartition des joueurs.",
+      purplebarsdesc: "Les barres violettes marquent les : 2%, 5%, 10%, 25%, 50% des meilleurs joueurs.",
+      greenbardesc: "La ligne verte montre où vous êtes dans la répartition des joueurs.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
       selectmode: "Sélectionnez un Mode",
-      gamemodedesc1:
-        "Les modes de jeu sont normalisés afin de comparer plus facilement leur popularité :",
-      gamemodedesc2:
-        "Les parties de 2v2 et FFA sont comptabilisées deux fois, et les parties de 4v4 quatre fois.",
+      gamemodedesc1: "Les modes de jeu sont normalisés afin de comparer plus facilement leur popularité :",
+      gamemodedesc2: "Les parties de 2v2 et FFA sont comptabilisées deux fois, et les parties de 4v4 quatre fois.",
       playersperday: "Joueurs par Jour",
       playedmaps: "Cartes jouées",
       popularhours: "Heures Populaires",
@@ -4259,8 +4092,7 @@ const data = {
       betastats:
         "Cette noble personne a participé à notre beta, donc nous avons caché leurs statistiques boguées et les remercions pour l'éternité ;)",
       playermmrtimeline: "Chronologie MMR du joueur",
-      playerhasnomatches:
-        "Ce joueur n'a joué aucun match correspondant aux paramètres sélectionnés.",
+      playerhasnomatches: "Ce joueur n'a joué aucun match correspondant aux paramètres sélectionnés.",
       title: "Statistiques selon les races et cartes",
     },
     components_player_modestatsgrid: {

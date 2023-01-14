@@ -50,8 +50,8 @@ export default class ActivityPerDayChart extends Vue {
               .map((g) => {
                 return {
                   x: moment(g.date).format("LL"),
-                  y: g.gamesPlayed * this.multiplier(c.gameMode)
-                }
+                  y: g.gamesPlayed * this.multiplier(c.gameMode),
+                };
               })
               .splice(0, c.gameDays.length - 1),
             backgroundColor: "rgba(126,126,126,0.08)",
@@ -68,7 +68,7 @@ export default class ActivityPerDayChart extends Vue {
       EGameMode.GM_4ON4_AT,
       EGameMode.GM_LEGION_4v4_X20_AT,
       EGameMode.GM_LTW_1ON1,
-      EGameMode.GM_FROSTCRAFT_4ON4
+      EGameMode.GM_FROSTCRAFT_4ON4,
     ];
   }
 

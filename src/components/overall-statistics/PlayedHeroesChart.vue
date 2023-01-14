@@ -12,9 +12,9 @@ import { HERO_DATA } from "@/store/heroes";
 import { ERaceEnum } from "@/store/typings";
 
 type PlayedHeroExtra = PlayedHero & {
-  race: ERaceEnum,
-  color: string,
-}
+  race: ERaceEnum;
+  color: string;
+};
 
 const FILL_OPACITY = "0.5";
 const RACE_COLORS: { [key: string]: string } = {
@@ -23,7 +23,7 @@ const RACE_COLORS: { [key: string]: string } = {
   [ERaceEnum.ORC]: `rgba(255, 0, 0, ${FILL_OPACITY})`,
   [ERaceEnum.UNDEAD]: `rgba(151, 0, 165, ${FILL_OPACITY})`,
   [ERaceEnum.NIGHT_ELF]: `rgba(0, 161, 3, ${FILL_OPACITY})`,
-}
+};
 
 @Component({
   components: { BarChart },
@@ -43,20 +43,20 @@ export default class PlayedHeroesChart extends Vue {
           color,
         }
       })
-      .orderBy([ "race", "count", "icon" ], [ "asc", "desc", "asc" ])
-      .groupBy('race')
+      .orderBy(["race", "count", "icon"], ["asc", "desc", "asc"])
+      .groupBy("race")
       .mapValues((heroes, race) => {
         // Compute percentages within the race
-        const groupTotalCount = _.sumBy(heroes, 'count');
+        const groupTotalCount = _.sumBy(heroes, "count");
         const newHeroesData: PlayedHeroExtra[] = _.map(heroes, hero => ({
           ...hero,
           icon: this.$t("heroNames." + hero.icon).toString(),
-          count: _.round(hero.count / groupTotalCount * 100, 1),
+          count: _.round((hero.count / groupTotalCount) * 100, 1),
         }));
 
         // Add empty data point between races
         if (+race !== ERaceEnum.RANDOM) {
-          newHeroesData.unshift({ icon: '', count: 0, race: ERaceEnum.RANDOM, color: "" });
+          newHeroesData.unshift({ icon: "", count: 0, race: ERaceEnum.RANDOM, color: "" });
         }
 
         return newHeroesData;
@@ -100,13 +100,13 @@ export default class PlayedHeroesChart extends Vue {
             ticks: {
               beginAtZero: true,
               callback: function (value: number) {
-                return value + '%';
+                return value + "%";
               },
             },
           },
         ],
       },
-    }
+    };
   }
 }
 </script>

@@ -33,8 +33,8 @@ import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
 export default class MapSelect extends Vue {
-  @Prop({default: "Overall"}) map?: string;
-  @Prop({default: []}) mapKeys!: Array<string>;
+  @Prop({ default: "Overall" }) map?: string;
+  @Prop({ default: [] }) mapKeys!: Array<string>;
 
   get selected(): string | TranslateResult {
     const match = this.maps.find((m) => m.key === this.map);

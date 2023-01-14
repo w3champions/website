@@ -1,7 +1,7 @@
 <template>
   <v-container class="ma-0 pa-0">
     <div v-if="isPrivate()">
-      <span class="font-weight-bold" :class="getTeamColor(this.team)">{{ sentBy }} (to {{ sentTo }}): </span>
+      <span class="font-weight-bold" :class="getTeamColor(this.team)">{{ sentBy }} (to {{ sentTo }}):</span>
       <span class="black--text">{{ content }}</span>
     </div>
     <div v-else>
