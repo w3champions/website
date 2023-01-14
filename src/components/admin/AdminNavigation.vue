@@ -45,10 +45,10 @@
             link
           >
             <v-list-item-icon>
-              <v-icon v-text="subItem.icon || 'mdi-account-tie'"></v-icon>
+              <v-icon>{{ subItem.icon || "mdi-account-tie" }}</v-icon>
             </v-list-item-icon>
 
-            <v-list-item-title v-text="subItem.title"></v-list-item-title>
+            <v-list-item-title>{{ subItem.title }}</v-list-item-title>
           </v-list-item>
         </v-list-group>
       </template>
