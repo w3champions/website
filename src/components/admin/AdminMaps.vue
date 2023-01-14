@@ -63,12 +63,12 @@ export default class AdminMaps extends Vue {
   }
 
   public get maps() {
-    return _.isUndefined(this.search) ?
-      this.$store.direct.state.admin.mapsManagement.maps :
-      this.$store.direct.state.admin.mapsManagement.maps.filter(m => {
+    return _.isUndefined(this.search)
+      ? this.$store.direct.state.admin.mapsManagement.maps
+      : this.$store.direct.state.admin.mapsManagement.maps.filter((m) => {
         return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||
                m.name.toLowerCase().includes(this.search!.toLowerCase());
-      })
+      });
   }
 
   public get totalMaps() {

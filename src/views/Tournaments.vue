@@ -37,7 +37,7 @@ export default class TournamentsView extends Vue {
   }
 
   get upcomingTournaments() {
-    return this.tournaments.filter(tournament => (
+    return this.tournaments.filter((tournament) => (
       [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state) &&
       isFuture(tournament.startDateTime)
     ));

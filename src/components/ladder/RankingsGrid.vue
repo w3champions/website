@@ -146,7 +146,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import LevelProgress from "@/components/ladder/LevelProgress.vue"
+import LevelProgress from "@/components/ladder/LevelProgress.vue";
 
 @Component({
   components: {
@@ -308,9 +308,9 @@ export default class RankingsGrid extends Vue {
   public async getStreamStatus(): Promise<void> {
     // filter nulls and empty strings
     const twitchNames = [...new Set(this.rankings
-      .map(r => r.playersInfo)
-      .map(r => r.map(i => i.twitchName))
-      .flat())].filter(r => (r && r.length > 0));
+      .map((r) => r.playersInfo)
+      .map((r) => r.map((i) => i.twitchName))
+      .flat())].filter((r) => (r && r.length > 0));
 
     if (twitchNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);

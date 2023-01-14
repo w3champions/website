@@ -40,15 +40,15 @@ export default class TournamentSeries extends Vue {
   @Prop() public roundWidth!: number;
 
   get topPlayer() {
-    return this.series.players?.find(p => p.team === 0);
+    return this.series.players?.find((p) => p.team === 0);
   }
 
   get bottomPlayer() {
-    return this.series.players?.find(p => p.team === 1);
+    return this.series.players?.find((p) => p.team === 1);
   }
 
   get seriesFinished() {
-    return [ ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED ].includes(this.series.state);
+    return [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(this.series.state);
   }
 
   get seriesCanceled() {
@@ -56,8 +56,8 @@ export default class TournamentSeries extends Vue {
   }
 
   get seriesSpecial() {
-    return [ ESeriesState.BYE, ESeriesState.CANCELED ].includes(this.series.state) ||
-      this.series.matches?.some(match => match.state === EMatchState.CANCELED);
+    return [ESeriesState.BYE, ESeriesState.CANCELED].includes(this.series.state) ||
+      this.series.matches?.some((match) => match.state === EMatchState.CANCELED);
   }
 
   get style() {

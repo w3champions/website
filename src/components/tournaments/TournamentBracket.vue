@@ -58,7 +58,7 @@ export default class TournamentBracket extends Vue {
 
   get rounds(): ITournamentRound[] {
     const playerExtraData = _.fromPairs(
-      this.tournament.players.map(p => [
+      this.tournament.players.map((p) => [
         p.battleTag,
         _.pick(p, [ "countryCode", "race" ]),
       ])

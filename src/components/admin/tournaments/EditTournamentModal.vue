@@ -174,7 +174,7 @@ export default class AddPlayerModal extends Vue {
 
   private init() {
     if (!this.tournament) {
-      this.mapPool = this.maps.slice(0, 5).map(m => m.id);
+      this.mapPool = this.maps.slice(0, 5).map((m) => m.id);
       return;
     }
     this.name = this.tournament.name;

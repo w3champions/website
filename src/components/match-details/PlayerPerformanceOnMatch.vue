@@ -5,52 +5,32 @@
       <v-col :order="left ? 1 : 3" class="col-md-auto">
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t(
-                "components_match-details_playerperformanceonmatch.unitskilled"
-              )
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.unitskilled") }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t(
-                "components_match-details_playerperformanceonmatch.unitsproduced"
-              )
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.unitsproduced") }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t("components_match-details_playerperformanceonmatch.goldmined")
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.goldmined") }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t(
-                "components_match-details_playerperformanceonmatch.lumbermined"
-              )
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.lumbermined") }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t("components_match-details_playerperformanceonmatch.upkeeplost")
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.upkeeplost") }}
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :align="align">
-            {{
-              $t(
-                "components_match-details_playerperformanceonmatch.largestarmy"
-              )
-            }}
+            {{ $t("components_match-details_playerperformanceonmatch.largestarmy") }}
           </v-col>
         </v-row>
       </v-col>

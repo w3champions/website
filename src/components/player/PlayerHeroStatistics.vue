@@ -87,20 +87,25 @@ export default class PlayerHeroStatistics extends Vue {
         rand: 0,
         total: 0,
       };
-      playerHeroStats.stats.filter((raceWinOnMap: RaceWinsOnMap) => raceWinOnMap.race === this.selectedRace).map((raceWinOnMap: RaceWinsOnMap) => {
-        const raceWinOnMapOverallFiltered = raceWinOnMap.winLossesOnMap.filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map === this.selectedMap);
-        if (raceWinOnMapOverallFiltered.length === 0) return raceWinOnMap;
-        raceWinOnMapOverallFiltered[0].winLosses.map((currentValue) => gamesSum += currentValue.games)
-        raceWinOnMapOverallFiltered[0].winLosses.map(raceStat => {
-          if(raceStat.race===ERaceEnum.HUMAN) rowObject.hu += raceStat.games
-          else if(raceStat.race===ERaceEnum.ORC) rowObject.orc += raceStat.games
-          else if(raceStat.race===ERaceEnum.NIGHT_ELF) rowObject.ne += raceStat.games
-          else if(raceStat.race===ERaceEnum.UNDEAD) rowObject.ud += raceStat.games
-          else if(raceStat.race===ERaceEnum.RANDOM) rowObject.rand += raceStat.games
-          rowObject.total += raceStat.games
+      playerHeroStats.stats
+        .filter((raceWinOnMap: RaceWinsOnMap) => raceWinOnMap.race === this.selectedRace)
+        .map((raceWinOnMap: RaceWinsOnMap) => {
+          const raceWinOnMapOverallFiltered = raceWinOnMap.winLossesOnMap.filter(
+            (winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map === this.selectedMap
+          );
+
+          if (raceWinOnMapOverallFiltered.length === 0) return raceWinOnMap;
+          raceWinOnMapOverallFiltered[0].winLosses.map((currentValue) => gamesSum += currentValue.games);
+          raceWinOnMapOverallFiltered[0].winLosses.map((raceStat) => {
+            if (raceStat.race === ERaceEnum.HUMAN) rowObject.hu += raceStat.games;
+            else if (raceStat.race === ERaceEnum.ORC) rowObject.orc += raceStat.games;
+            else if (raceStat.race === ERaceEnum.NIGHT_ELF) rowObject.ne += raceStat.games;
+            else if (raceStat.race === ERaceEnum.UNDEAD) rowObject.ud += raceStat.games;
+            else if (raceStat.race === ERaceEnum.RANDOM) rowObject.rand += raceStat.games;
+            rowObject.total += raceStat.games;
+          });
+          return raceWinOnMap;
         });
-        return raceWinOnMap;
-      });
       heroStatsData.push(rowObject);
     }
 
@@ -112,7 +117,7 @@ export default class PlayerHeroStatistics extends Vue {
 
     return tableData;
   }
-  
+
   sortHeroStatsTableData(tableData: any[]) {
     return tableData.sort((a: any, b: any): number => {
       const aTotal = Number(a.total.replace("%", ""));
@@ -152,15 +157,15 @@ export default class PlayerHeroStatistics extends Vue {
         return;
       }
       tableData.push({
-        id: heroStat.id, 
+        id: heroStat.id,
         name: heroStat.name,
         image: heroStat.image,
-        hu: totals[ERaceEnum.HUMAN] > 0 ? String((heroStat.hu*100/totals[ERaceEnum.HUMAN]).toFixed(2)) + '%' : 'N/A',
-        orc: totals[ERaceEnum.ORC] > 0 ? String((heroStat.orc*100/totals[ERaceEnum.ORC]).toFixed(2)) + '%' : 'N/A',
-        ne: totals[ERaceEnum.NIGHT_ELF] > 0 ? String((heroStat.ne*100/totals[ERaceEnum.NIGHT_ELF]).toFixed(2)) + '%' : 'N/A',
-        ud: totals[ERaceEnum.UNDEAD] > 0 ? String((heroStat.ud*100/totals[ERaceEnum.UNDEAD]).toFixed(2)) + '%' : 'N/A',
-        rand: totals[ERaceEnum.RANDOM] > 0 ? String((heroStat.rand*100/totals[ERaceEnum.RANDOM]).toFixed(2)) + '%' : 'N/A',
-        total: totals[ERaceEnum.TOTAL] > 0 ? String((heroStat.total*100/totals[ERaceEnum.TOTAL]).toFixed(2)) + '%' : 'N/A',
+        hu: totals[ERaceEnum.HUMAN] > 0 ? String((heroStat.hu * 100 / totals[ERaceEnum.HUMAN]).toFixed(2)) + "%" : "N/A",
+        orc: totals[ERaceEnum.ORC] > 0 ? String((heroStat.orc * 100 / totals[ERaceEnum.ORC]).toFixed(2)) + "%" : "N/A",
+        ne: totals[ERaceEnum.NIGHT_ELF] > 0 ? String((heroStat.ne * 100 / totals[ERaceEnum.NIGHT_ELF]).toFixed(2)) + "%" : "N/A",
+        ud: totals[ERaceEnum.UNDEAD] > 0 ? String((heroStat.ud * 100 / totals[ERaceEnum.UNDEAD]).toFixed(2)) + "%" : "N/A",
+        rand: totals[ERaceEnum.RANDOM] > 0 ? String((heroStat.rand * 100 / totals[ERaceEnum.RANDOM]).toFixed(2)) + "%" : "N/A",
+        total: totals[ERaceEnum.TOTAL] > 0 ? String((heroStat.total * 100 / totals[ERaceEnum.TOTAL]).toFixed(2)) + "%" : "N/A",
       });
     });
   }

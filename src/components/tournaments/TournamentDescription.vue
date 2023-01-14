@@ -28,21 +28,11 @@
       <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
     </div>
     <div class="mt-2" v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled">
-      <div v-if="statusInit">
-        Registration didn't start yet.
-      </div>
-      <div v-else-if="statusRegistration">
-        Registration is open.
-      </div>
-      <div v-else-if="statusMatchGeneration">
-        Generating bracket.
-      </div>
-      <div v-else-if="statusCanceled">
-        The tournament was canceled.
-      </div>
-      <div class="mt-2" v-if="tournament.players.length > 0">
-        Registered players list: {{registeredPlayers}}
-      </div>
+      <div v-if="statusInit">Registration didn't start yet.</div>
+      <div v-else-if="statusRegistration">Registration is open.</div>
+      <div v-else-if="statusMatchGeneration">Generating bracket.</div>
+      <div v-else-if="statusCanceled">The tournament was canceled.</div>
+      <div class="mt-2" v-if="tournament.players.length > 0">Registered players list: {{ registeredPlayers }}</div>
     </div>
   </div>
 </template>
@@ -82,7 +72,7 @@ export default class TournamentDescription extends Vue {
   }
 
   get mapPool() {
-    return this.tournament.mapPool.map(mapId => this.maps.find(map => map.id === mapId)?.name).sort().join(", ");
+    return this.tournament.mapPool.map((mapId) => this.maps.find((map) => map.id === mapId)?.name).sort().join(", ");
   }
 
   get statusInit() {
@@ -106,7 +96,7 @@ export default class TournamentDescription extends Vue {
   }
 
   get registeredPlayers(): string {
-    return this.tournament.players.map(player => (
+    return this.tournament.players.map((player) => (
       `${player.battleTag}(${this.$t(`racesShort.${ERaceEnum[player.race]}`)})`
     )).join(", ");
   }

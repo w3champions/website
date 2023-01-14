@@ -27,7 +27,7 @@ export default class TournamentDetail extends Vue {
   }
 
   get tournament(): ITournament | undefined {
-    return this.$store.direct.state.tournaments.tournaments.find(t => t.id === this.tournamentId);
+    return this.$store.direct.state.tournaments.tournaments.find((t) => t.id === this.tournamentId);
   }
 }
 </script>

@@ -12,21 +12,11 @@
         <tbody>
           <tr v-for="item in items" :key="item.map">
             <td>{{ $t("mapNames." + item.map) }}</td>
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="item.winLosses[1]"
-            />
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="item.winLosses[2]"
-            />
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="item.winLosses[4]"
-            />
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="item.winLosses[3]"
-            />
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="totalWins(item.winLosses)"
-            />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
+            <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
           </tr>
         </tbody>
       </template>
@@ -52,8 +42,7 @@ export default class RaceToMapStat extends Vue {
   public totalWins(stat: RaceStat[]) {
     const totalWins = stat.map((s) => s.wins).reduce((a, b) => a + b, 0);
     const totalLosses = stat.map((s) => s.losses).reduce((a, b) => a + b, 0);
-    const totalWinrate =
-      totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
+    const totalWinrate = totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
     return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
   }
