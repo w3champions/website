@@ -1,7 +1,7 @@
 <template>
   <v-card class="edit-tournament-modal">
     <v-card-title>
-      <span class="headline">{{isEdit ? 'Edit' : 'Create'}} Tournament</span>
+      <span class="headline">{{ isEdit ? "Edit" : "Create" }} Tournament</span>
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
@@ -175,7 +175,7 @@ export default class AddPlayerModal extends Vue {
   private init() {
     if (!this.tournament) {
       this.mapPool = this.maps.slice(0, 5).map(m => m.id);
-      return
+      return;
     }
     this.name = this.tournament.name;
     this.gateway = this.tournament.gateway;
@@ -188,7 +188,7 @@ export default class AddPlayerModal extends Vue {
     this.readyTimeSeconds = this.tournament.readyTimeSeconds;
     this.vetoTimeSeconds = this.tournament.vetoTimeSeconds;
     this.showWinnerTimeHours = this.tournament.showWinnerTimeHours;
-    this.matcherinoUrl = this.tournament.matcherinoUrl ?? '';
+    this.matcherinoUrl = this.tournament.matcherinoUrl ?? "";
   }
 
   get isEdit() {
@@ -208,9 +208,9 @@ export default class AddPlayerModal extends Vue {
 
   public save() {
     const fieldNames = [
-      'name', 'gateway', 'startDateTime', 'mode', 'format', 'mapPool', 'state',
-      'registrationTimeMinutes', 'readyTimeSeconds', 'vetoTimeSeconds',
-      'showWinnerTimeHours', 'matcherinoUrl',
+      "name", "gateway", "startDateTime", "mode", "format", "mapPool", "state",
+      "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
+      "showWinnerTimeHours", "matcherinoUrl",
     ];
     const tournamentData = _.pick(this, fieldNames);
     this.$emit("save", tournamentData);

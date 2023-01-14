@@ -19,7 +19,7 @@
         class="elevation-1"
       >
         <template #[`item.path`]="{ item }">
-          {{getMapPath(item)}}
+          {{ getMapPath(item) }}
         </template>
         <template #[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="editMap(item)">mdi-pencil</v-icon>

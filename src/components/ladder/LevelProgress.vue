@@ -1,9 +1,5 @@
 <template>
-  <v-progress-linear
-    class="level-progress"
-    :value="getProgessToNextLevel()"
-    height="25"
-  >
+  <v-progress-linear class="level-progress" :value="getProgessToNextLevel()" height="25">
     <strong>{{ getLevelNumber() }}</strong>
   </v-progress-linear>
 </template>
@@ -27,7 +23,6 @@ export default class LevelProgress extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
 .level-progress {
   background-color: white !important;
   border: 1px solid rgba(0, 0, 0, 0.75);

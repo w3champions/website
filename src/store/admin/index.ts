@@ -61,10 +61,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.postBan(
         bannedPlayer,
@@ -86,10 +83,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.deleteBan(
         bannedPlayer,
@@ -126,10 +120,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const searchedPlayers = await rootGetters.adminService.searchByTag(
         search.searchText,
@@ -149,10 +140,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       battleTag: string
     ): Promise<ProxySettings> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
         battleTag,

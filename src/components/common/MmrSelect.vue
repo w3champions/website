@@ -1,17 +1,17 @@
 <template>
-  <v-menu offset-x :close-on-content-click=false @input="onMenuToggled">
+  <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
         <v-icon class="mr-1">mdi-chevron-triple-up</v-icon>
-        {{selected}}
+        {{ selected }}
       </v-btn>
     </template>
     <v-card class="px-2 pt-2">
       <v-card-text>
         <v-range-slider
           v-model="currentMinMax"
-          max=3000
-          min=0
+          max="3000"
+          min="0"
           step="100"
           thumb-label="always"
           :hint="$t('components_common_mmrselect.selectmmr')"
@@ -35,7 +35,7 @@ export default class MmrSelect extends Vue {
   @Prop() mmr!: Mmr;
 
   previousMmr = {} as Mmr;
-  currentMmr = {min: 0, max: 3000} as Mmr;
+  currentMmr = { min: 0, max: 3000 } as Mmr;
   currentMinMax: number[] = [this.currentMmr.min, this.currentMmr.max];
 
   public selectMmr(selectedMmr: number[]): void {

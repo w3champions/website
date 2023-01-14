@@ -27,10 +27,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       options?: DataTableOptions
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (options && options.page != null) {
         commit.SET_PAGE(options.page - 1);
@@ -47,10 +44,7 @@ const mod = {
       commit.SET_RANKINGS(response);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
@@ -61,10 +55,7 @@ const mod = {
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
     async getCountryRankings(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       commit.SET_COUNTRY_RANKINGS_LOADING(true);
       const rankings = await rootGetters.rankingService.retrieveCountryRankings(
@@ -80,10 +71,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       search: { searchText: string; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,

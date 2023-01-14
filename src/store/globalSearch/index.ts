@@ -16,12 +16,9 @@ const mod = {
       context: ActionContext<GlobalSearchState, RootState>,
       search: { searchText: string; append: boolean }
     ) {
-      const { state, commit, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootGetters } = moduleActionContext(context, mod);
 
-      const lastPlayerId = search.append && state.players.length > 0 ? state.players[state.players.length - 1].battleTag : '';
+      const lastPlayerId = search.append && state.players.length > 0 ? state.players[state.players.length - 1].battleTag : "";
       const players = await rootGetters.globalSearchService.search(search.searchText, lastPlayerId, PAGE_SIZE);
 
       commit.SET_PLAYERS({ players, append: search.append });
@@ -34,7 +31,7 @@ const mod = {
   mutations: {
     SET_PLAYERS(state: GlobalSearchState, payload: { players: PlayerSearchData[]; append: boolean }) {
       if (payload.append) {
-        state.players = [ ...state.players, ...payload.players ];
+        state.players = [...state.players, ...payload.players];
       } else {
         state.players = payload.players;
       }

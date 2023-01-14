@@ -8,11 +8,7 @@
       <race-icon v-else :race="race.raceId" />
     </v-tab>
 
-    <v-tab-item
-      v-for="race of races"
-      :key="race.raceId"
-      :value="'tab-' + race.raceId"
-    >
+    <v-tab-item v-for="race of races" :key="race.raceId" :value="'tab-' + race.raceId">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
@@ -27,9 +23,9 @@
 <script lang="ts">
 import Vue from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue"
+import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { getAsset } from "@/helpers/url-functions"
+import { getAsset } from "@/helpers/url-functions";
 import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 
@@ -68,7 +64,7 @@ export default class PlayerHeroStatistics extends Vue {
   }
 
   get selectedRace() {
-    return Number(this.selectedTab.split('-')[1]);
+    return Number(this.selectedTab.split("-")[1]);
   }
 
   get isPlayerInitialized(): boolean {
@@ -81,7 +77,7 @@ export default class PlayerHeroStatistics extends Vue {
     let gamesSum = 0;
     for (const playerHeroStats of heroStatsItemList) {
       const rowObject = {
-        id: playerHeroStats.heroId, 
+        id: playerHeroStats.heroId,
         name: this.$t(`heroNames.${playerHeroStats.heroId}`).toString(),
         image: this.getImageForTable(playerHeroStats.heroId),
         hu: 0,
@@ -102,9 +98,9 @@ export default class PlayerHeroStatistics extends Vue {
           else if(raceStat.race===ERaceEnum.UNDEAD) rowObject.ud += raceStat.games
           else if(raceStat.race===ERaceEnum.RANDOM) rowObject.rand += raceStat.games
           rowObject.total += raceStat.games
-        })
+        });
         return raceWinOnMap;
-      })
+      });
       heroStatsData.push(rowObject);
     }
 
@@ -119,8 +115,8 @@ export default class PlayerHeroStatistics extends Vue {
   
   sortHeroStatsTableData(tableData: any[]) {
     return tableData.sort((a: any, b: any): number => {
-      const aTotal = Number(a.total.replace('%', ''));
-      const bTotal = Number(b.total.replace('%', ''));
+      const aTotal = Number(a.total.replace("%", ""));
+      const bTotal = Number(b.total.replace("%", ""));
       if (aTotal > bTotal) {
         return -1;
       }
@@ -132,7 +128,7 @@ export default class PlayerHeroStatistics extends Vue {
   }
 
   populateDataForTable(tableData: any[], heroStatsData: any[], gamesSum: number) {
-    const totals: { [key: number]: number; } = {
+    const totals: { [key: number]: number } = {
       [ERaceEnum.HUMAN]: 0,
       [ERaceEnum.ORC]: 0,
       [ERaceEnum.NIGHT_ELF]: 0,
@@ -165,17 +161,17 @@ export default class PlayerHeroStatistics extends Vue {
         ud: totals[ERaceEnum.UNDEAD] > 0 ? String((heroStat.ud*100/totals[ERaceEnum.UNDEAD]).toFixed(2)) + '%' : 'N/A',
         rand: totals[ERaceEnum.RANDOM] > 0 ? String((heroStat.rand*100/totals[ERaceEnum.RANDOM]).toFixed(2)) + '%' : 'N/A',
         total: totals[ERaceEnum.TOTAL] > 0 ? String((heroStat.total*100/totals[ERaceEnum.TOTAL]).toFixed(2)) + '%' : 'N/A',
-      })
+      });
     });
   }
 
   getImageForTable(heroId: string) {
-    const src: string = getAsset(`heroes/${heroId}.png`)
-    return `<img class="player-hero-statistics-table__hero-image" src="${src}" height="40" width="40" />`
+    const src: string = getAsset(`heroes/${heroId}.png`);
+    return `<img class="player-hero-statistics-table__hero-image" src="${src}" height="40" width="40" />`;
   }
 
   getHeroCell(name: string, heroId: string) {
-    return `<span>${this.getImageForTable(heroId)}${name}</span>`
+    return `<span>${this.getImageForTable(heroId)}${name}</span>`;
   }
 
   get races() {

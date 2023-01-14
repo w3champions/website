@@ -49,7 +49,7 @@
                           <v-card-subtitle class="text-h6">
                             The following portraits will be
                             <strong>ADDED</strong>
-                            for 
+                            for
                             <strong>{{ bnetTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
@@ -78,7 +78,7 @@
                           <v-card-subtitle class="text-h6">
                             The following portraits will be
                             <strong>REMOVED</strong>
-                            for 
+                            for
                             <strong>{{ bnetTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
@@ -114,7 +114,6 @@
             <v-col></v-col>
             <v-col>
               <v-card-title class="justify-center">To Be Assigned</v-card-title>
-
             </v-col>
             <v-col>
               <v-spacer />
