@@ -6,7 +6,7 @@ import { Component, Prop } from "vue-property-decorator";
 
 import { PopularGameHour } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
-import moment, { utc } from "moment";
+import moment from "moment";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import Vue from "vue";
 

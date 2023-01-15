@@ -75,7 +75,7 @@ export default class TournamentsTable extends Vue {
     return TournamentStateLabel[tournament.state];
   }
 
-  public itemClass(item: ITournament) {
+  public itemClass() {
     return "tournament-row";
   }
 }
