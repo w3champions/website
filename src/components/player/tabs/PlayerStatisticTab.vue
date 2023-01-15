@@ -139,7 +139,6 @@ import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceV
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
-import { MatchesOnMapPerMode, MatchesOnMapPerSeason } from "@/store/overallStats/types";
 
 @Component({
   components: {

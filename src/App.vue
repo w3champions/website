@@ -244,7 +244,7 @@ export default class App extends Vue {
    * @return boolean
    * @param item
    */
-  public isNavItemVisible(item: any): boolean {
+  public isNavItemVisible(item: ItemType): boolean {
     if (item.title == "admin" && !this.isAdmin) {
       return false;
     }

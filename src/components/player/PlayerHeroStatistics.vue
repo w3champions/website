@@ -46,13 +46,14 @@ export default class PlayerHeroStatistics extends Vue {
   setSelectedTab(): void {
     let maxRace = ERaceEnum.RANDOM;
     let maxGames = 0;
+
     this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-      .filter((s: any) => s.race !== ERaceEnum.TOTAL)
-      .forEach((s: any) =>
-        s.winLossesOnMap.forEach((w: any) => {
+      .filter((s: RaceWinsOnMap) => s.race !== ERaceEnum.TOTAL)
+      .forEach((s: RaceWinsOnMap) =>
+        s.winLossesOnMap.forEach((w: WinLossesOnMap) => {
           const gamesOfRace = w.winLosses
-            .map((wl: any) => wl.games)
-            .reduce((a: any, b:any) => a + b, 0);
+            .map((wl: RaceStat) => wl.games)
+            .reduce((a: number, b: number) => a + b, 0);
 
           if (maxGames < gamesOfRace) {
             maxRace = s.race;
@@ -111,7 +112,7 @@ export default class PlayerHeroStatistics extends Vue {
 
     let tableData: any[] = [];
 
-    this.populateDataForTable(tableData, heroStatsData, gamesSum);
+    this.populateDataForTable(tableData, heroStatsData);
 
     tableData = this.sortHeroStatsTableData(tableData);
 
@@ -132,7 +133,7 @@ export default class PlayerHeroStatistics extends Vue {
     });
   }
 
-  populateDataForTable(tableData: any[], heroStatsData: any[], gamesSum: number) {
+  populateDataForTable(tableData: any[], heroStatsData: any[]) {
     const totals: { [key: number]: number } = {
       [ERaceEnum.HUMAN]: 0,
       [ERaceEnum.ORC]: 0,
@@ -142,7 +143,7 @@ export default class PlayerHeroStatistics extends Vue {
       [ERaceEnum.TOTAL]: 0,
     };
     const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-      .filter((obj: any) => obj.race == this.selectedRace)[0]
+      .filter((obj: RaceWinsOnMap) => obj.race == this.selectedRace)[0]
       .winLossesOnMap
       .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0];
     if (winLossesOnMap) {

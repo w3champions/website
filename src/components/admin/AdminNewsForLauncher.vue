@@ -208,6 +208,7 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { NewsMessage } from "@/store/admin/messages/types";
 import { Editor, EditorContent, EditorMenuBar } from "tiptap";
+import { Command } from "tiptap-commands";
 import {
   Blockquote,
   CodeBlock,
@@ -325,7 +326,7 @@ export default class AdminNewsForLauncher extends Vue {
     this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
 
-  showImagePrompt(command: any) {
+  showImagePrompt(command: Command) {
     // TODO Use a dialog instead of a browser prompt.
     const src = prompt("Enter the url of your image here");
     if (src !== null) {

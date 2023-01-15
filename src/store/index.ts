@@ -158,6 +158,7 @@ export { rootActionContext, moduleActionContext };
 export type AppStore = typeof store;
 
 declare module "vuex" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Store<S> {
     direct: AppStore;
   }
