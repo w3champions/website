@@ -117,3 +117,8 @@ export interface IMatchPlayer {
   team: number;
   won?: boolean;
 }
+
+export interface BracketDimensions {
+  verticalSpace: number;
+  marginTop: number;
+}

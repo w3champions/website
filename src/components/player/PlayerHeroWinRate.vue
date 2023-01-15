@@ -49,7 +49,7 @@ import Vue from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { getAsset } from "@/helpers/url-functions";
-import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
@@ -72,12 +72,12 @@ export default class PlayerHeroWinRate extends Vue {
     let maxRace = ERaceEnum.RANDOM;
     let maxGames = 0;
     this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-      .filter((s: any) => s.race !== ERaceEnum.TOTAL)
-      .forEach((s: any) =>
-        s.winLossesOnMap.forEach((w: any) => {
+      .filter((s: RaceWinsOnMap) => s.race !== ERaceEnum.TOTAL)
+      .forEach((s: RaceWinsOnMap) =>
+        s.winLossesOnMap.forEach((w: WinLossesOnMap) => {
           const gamesOfRace = w.winLosses
-            .map((wl: any) => wl.games)
-            .reduce((a: any, b:any) => a + b, 0);
+            .map((wl: RaceStat) => wl.games)
+            .reduce((a: number, b:number) => a + b, 0);
 
           if (maxGames < gamesOfRace) {
             maxRace = s.race;

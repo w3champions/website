@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import _ from "lodash";
-import { ETournamentState, ITournament, ITournamentRound } from "@/store/tournaments/types";
+import { ETournamentState, ITournament, ITournamentRound, BracketDimensions } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import TournamentRoundMatches from "./TournamentRoundMatches.vue";
@@ -80,7 +80,7 @@ export default class TournamentBracket extends Vue {
     const playerHeight = this.playerHeight;
     let verticalSpace = this.verticalSpace;
     let marginTop = 0;
-    const dimensions: any[] = [];
+    const dimensions: BracketDimensions[] = [];
     _.times(this.rounds.length, () => {
       dimensions.push({
         verticalSpace,

@@ -122,7 +122,7 @@ export default class AdminMaps extends Vue {
     }
   }
 
-  public async mapFileSelected(e: any) {
+  public async mapFileSelected(e: { map: Map; file: MapFileData }) {
     const map = e.map as Map;
     const file = e.file as MapFileData;
 
