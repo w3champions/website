@@ -52,9 +52,9 @@ export default class AdminProxies extends Vue {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      let bTag = searchedPlayer.player.playerIds[0].battleTag;
+      const bTag = searchedPlayer.player.playerIds[0].battleTag;
 
-      let proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(
+      const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(
         bTag
       );
       await this.setPlayerProxies(proxies);

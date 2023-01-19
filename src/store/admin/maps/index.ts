@@ -2,9 +2,8 @@ import _ from "lodash";
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
-import {
-  AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse, SeasonMap,
-} from "./types";
+import { AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse, SeasonMap } from "./types";
+
 const mod = {
   namespaced: true,
   state: {
@@ -23,7 +22,7 @@ const mod = {
       commit.SET_MAPS(searchMapsResponse);
       commit.SET_FILTER(filter);
     },
-    
+
     async createMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
       const { dispatch, rootGetters, state, rootState } = moduleActionContext(context, mod);
       await rootGetters.mapService.createMap(rootState.oauth.token, map);
@@ -66,7 +65,7 @@ const mod = {
       state.totalMaps = getMapsResponse?.total ?? 0;
     },
 
-    SET_FILTER(state: AdminMapsState, filter?: string){
+    SET_FILTER(state: AdminMapsState, filter?: string) {
       state.mapsFilter = filter;
     },
 

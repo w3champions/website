@@ -40,9 +40,10 @@
               {{ getTopPercent(item) }}
             </div>
           </td>
-          <td class="number-text text-center">
+          <td class="number-text text-center" style="min-width: 100px">
             <span v-if="is2v2(item) && item.rank !== 0"></span>
-            {{ item.rank !== 0 ? item.rankingPoints : "-" }}
+            <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints"></level-progress>
+            <div v-else>-</div>
           </td>
         </tr>
       </tbody>
@@ -57,9 +58,10 @@ import { EGameMode, ERaceEnum } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import LevelProgress from "@/components/ladder/LevelProgress.vue";
 
 @Component({
-  components: { RaceIcon },
+  components: { RaceIcon, LevelProgress },
 })
 export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
@@ -71,7 +73,7 @@ export default class ModeStatsGrid extends Vue {
   }
 
   get gameModeStatsCombined(): ModeStat[] {
-    let gm2v2s = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
+    const gm2v2s = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
 
     if (gm2v2s.length === 0) return this.stats;
 
@@ -181,10 +183,10 @@ export default class ModeStatsGrid extends Vue {
         tooltip: this.$t("components_player_modestatsgrid.mmr"),
       },
       {
-        text: this.$t("components_player_modestatsgrid.rp"),
+        text: this.$t("components_player_modestatsgrid.level"),
         align: "center",
         sortable: false,
-        tooltip: this.$t("components_player_modestatsgrid.rpdesc"),
+        tooltip: this.$t("components_player_modestatsgrid.leveldesc"),
       },
     ];
   }

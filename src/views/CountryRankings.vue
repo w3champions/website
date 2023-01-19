@@ -230,20 +230,19 @@ export default class CountryRankingsView extends Vue {
 
   async mounted() {
     window.scrollTo(0, 0);
+    await this.$store.direct.dispatch.rankings.retrieveSeasons();
 
-    if (this.season) {
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
-        id: this.season,
-      });
-    }
+    this.season
+      ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
+      : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+
     if (this.gateway) {
       this.$store.direct.commit.SET_GATEWAY(this.gateway);
     }
 
-    let country =
+    const country =
       this.country || this.selectedCountryCode || this.countries[0].countryCode;
 
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.getLadders();
     await this.$store.direct.dispatch.rankings.setCountry(country);
     this.initialized = true;
@@ -301,8 +300,7 @@ export default class CountryRankingsView extends Vue {
   }
 
   async selectSeason(season: Season) {
-    await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    this.$store.direct.dispatch.rankings.setSeason(season);
     this.refreshRankings();
   }
 

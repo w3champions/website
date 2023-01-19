@@ -39,7 +39,9 @@ const en = {
     GM_LTW_1ON1: "Line Tower Wars 1vs1",
     GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
     GM_RH_1ON1: "Random Hero 1vs1",
+    GM_ATR_1ON1: "All The Randoms 1vs1",
     GM_BANJOBALL_4ON4: "Banjoball 4v4",
+    GM_PTR_1ON1: "PTR Balance 1v1",
   },
 
   gatewayNames: {
@@ -369,6 +371,14 @@ const en = {
     past: "Finished",
   },
 
+  components_matches_replayicon: {
+    download: "Download Replay",
+  },
+
+  components_matches_matchesgrid: {
+    replay: "Replay",
+  },
+
   proxies: {
     eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
     asia_east_via_cn_east: "Asia East via CN East",
@@ -389,8 +399,7 @@ const en = {
     russia_east_via_asia_east2: "Russia East via Asia East 2",
     russia_central_via_korea_central2: "Russia Central via Korea Central 2",
     africa_east_via_sg: "Africa East via Singapore",
-    africa_east_via_sg_azure_via_simple_cloud:
-      "Africa East via Singapore via simplecloud",
+    africa_east_via_sg_azure_via_simple_cloud: "Africa East via Singapore via simplecloud",
   },
 };
 

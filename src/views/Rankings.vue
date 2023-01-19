@@ -66,7 +66,7 @@
         >
           <template v-slot:item="data">
             <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content v-text="data.item"></v-list-item-content>
+              <v-list-item-content>{{ data.item }}</v-list-item-content>
             </template>
             <template v-else>
               <v-list-item-content>
@@ -233,16 +233,16 @@ export default class RankingsView extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    const searchDebounced = (timeout=500) => {
+    const searchDebounced = (timeout = 500) => {
       clearTimeout(this.searchTimer);
       this.isLoading = true;
-      this.searchTimer = setTimeout(() => { 
+      this.searchTimer = setTimeout(() => {
         this.$store.direct.dispatch.rankings.search({
           searchText: newValue.toLowerCase(),
           gameMode: this.selectedGameMode,
         });
       }, timeout);
-    }
+    };
 
     if (newValue && newValue.length > 2) {
       searchDebounced();
@@ -352,27 +352,31 @@ export default class RankingsView extends Vue {
 
   async mounted() {
     this.search = "";
-    if (this.league) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.league);
-    }
-    if (this.season) {
-      this.$store.direct.commit.rankings.SET_SELECTED_SEASON({
-        id: this.season,
-      });
-    }
-    if (this.gamemode) {
-      this.$store.direct.commit.rankings.SET_GAME_MODE(this.gamemode);
-    }
-    if (this.gateway) {
-      this.$store.direct.commit.SET_GATEWAY(this.gateway);
-    }
 
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    await this.refreshRankings();
+
+    this.season
+      ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
+      : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+
+    if (this.league) {
+      this.$store.direct.dispatch.rankings.setLeague(this.league);
+    }
+    if (this.gamemode) {
+      this.$store.direct.dispatch.rankings.setGameMode(this.gamemode);
+    }
+    if (this.gateway) {
+      this.$store.direct.dispatch.setGateway(this.gateway);
+    }
+
+    await this.loadOngoingMatches();
+    await this.getLadders();
 
     if (this.ladders && !this.selectedLeague?.id) {
-      await this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
+      this.$store.direct.dispatch.rankings.setLeague(this.ladders[0].id);
     }
+
+    await this.getRankings();
 
     if (this.playerId) {
       const selectedPlayer = this.rankings.find(
@@ -432,12 +436,14 @@ export default class RankingsView extends Vue {
   }
 
   public async selectSeason(season: Season) {
-    await this.$store.direct.dispatch.rankings.setSeason(season);
-    await this.$store.direct.dispatch.rankings.setLeague(0);
+    this.$store.direct.dispatch.rankings.setSeason(season);
+    await this.getLadders();
+    await this.setLeague(0);
   }
 
   public async setLeague(league: number) {
-    await this.$store.direct.dispatch.rankings.setLeague(league);
+    this.$store.direct.dispatch.rankings.setLeague(league);
+    await this.getRankings();
   }
 
   public playerIsRanked(rank: Ranking): boolean {

@@ -50,8 +50,8 @@ export default class ActivityPerDayChart extends Vue {
               .map((g) => {
                 return {
                   x: moment(g.date).format("LL"),
-                  y: g.gamesPlayed * this.multiplier(c.gameMode)
-                }
+                  y: g.gamesPlayed * this.multiplier(c.gameMode),
+                };
               })
               .splice(0, c.gameDays.length - 1),
             backgroundColor: "rgba(126,126,126,0.08)",
@@ -68,7 +68,7 @@ export default class ActivityPerDayChart extends Vue {
       EGameMode.GM_4ON4_AT,
       EGameMode.GM_LEGION_4v4_X20_AT,
       EGameMode.GM_LTW_1ON1,
-      EGameMode.GM_FROSTCRAFT_4ON4
+      EGameMode.GM_FROSTCRAFT_4ON4,
     ];
   }
 
@@ -101,11 +101,14 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_ROC_1ON1:
         return "rgb(120, 0, 4)";
 
-      case EGameMode.GM_RH_1ON1:
+      case EGameMode.GM_ATR_1ON1:
         return "rgb(21, 189, 124)";
 
       case EGameMode.GM_BANJOBALL_4ON4:
         return "rgb(58, 58, 186)";
+
+      case EGameMode.GM_PTR_1ON1:
+        return "rgb(46, 230, 58)";
 
       default:
         return "rgb(54, 162, 235)";
@@ -141,11 +144,14 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_ROC_1ON1:
         return 1;
 
-      case EGameMode.GM_RH_1ON1:
+      case EGameMode.GM_ATR_1ON1:
         return 1;
 
       case EGameMode.GM_BANJOBALL_4ON4:
         return 4;
+
+      case EGameMode.GM_PTR_1ON1:
+        return 1;
 
       default:
         return 1;

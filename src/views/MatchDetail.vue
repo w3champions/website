@@ -49,6 +49,9 @@
                 />
               </v-col>
               <v-col cols="1" />
+              <div class="subicon">
+                <download-replay-icon :gameId="matchId"/>
+              </div>
             </v-row>
           </v-card-title>
           <v-card-title v-if="isJubileeGame" class="justify-center">
@@ -186,6 +189,7 @@ import { EGameMode, PlayerScore, Team } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
+import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 
 @Component({
   components: {
@@ -195,6 +199,7 @@ import MatchMixin from "@/mixins/MatchMixin";
     MatchHiglights,
     TeamMatchInfo,
     HostIcon,
+    DownloadReplayIcon,
   },
 })
 export default class MatchDetailView extends Mixins(MatchMixin) {
@@ -259,7 +264,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get gameNumber() {
-    let number = this.match.number / 1000000;
+    const number = this.match.number / 1000000;
     switch (number) {
       case 1:
         return "one";
@@ -356,7 +361,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   private getPlayerScores(team: Team): PlayerScore[] {
-    let scores: PlayerScore[] = this.playerScores
+    const scores: PlayerScore[] = this.playerScores
       .filter((s) =>
         team.players.some(
           (player) =>
@@ -403,5 +408,11 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   z-index: 100;
   background-image: url("../assets/giphy.gif") !important;
   background-size: cover !important;
+}
+
+.subicon {
+  display: block;
+  position: absolute;
+  right: 1%;
 }
 </style>

@@ -29,6 +29,8 @@ import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
+import AdminTournaments from "@/components/admin/AdminTournaments.vue";
+import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 
 @Component({
   components: {
@@ -44,10 +46,24 @@ import AdminMotd from "@/components/admin/AdminMotd.vue";
     AdminManagePortraits,
     AdminMaps,
     AdminMotd,
+    AdminTournaments,
+    AdminViewGameChat,
   },
 })
 export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
+    {
+      title: "Data Science",
+      icon: "mdi-chart-line",
+      items: [
+        {
+          key: "queue",
+          title: "Live Queue Data",
+          icon: "mdi-table",
+          component: "admin-queue-data",
+        },
+      ],
+    },
     {
       title: "Moderation",
       icon: "mdi-account-group",
@@ -69,6 +85,12 @@ export default class Admin extends Vue {
           title: "Global Mute",
           icon: "mdi-chat-remove",
           component: "admin-global-mute",
+        },
+        {
+          key: "view_game_chat",
+          title: "View Game Chat",
+          icon: "mdi-format-align-left",
+          component: "admin-view-game-chat",
         },
       ],
     },
@@ -111,18 +133,6 @@ export default class Admin extends Vue {
           icon: "mdi-message-alert",
           title: "Message of the Day",
           component: "admin-motd",
-        }
-      ],
-    },
-    {
-      title: "Data Science",
-      icon: "mdi-chart-line",
-      items: [
-        {
-          key: "queue",
-          title: "Live Queue Data",
-          icon: "mdi-table",
-          component: "admin-queue-data",
         },
       ],
     },
@@ -141,7 +151,7 @@ export default class Admin extends Vue {
           title: "Manage Portraits",
           icon: "mdi-briefcase",
           component: "admin-manage-portraits",
-        }
+        },
       ],
     },
     {
@@ -153,6 +163,18 @@ export default class Admin extends Vue {
           title: "Manage Maps",
           icon: "mdi-map-plus",
           component: "admin-maps",
+        },
+      ],
+    },
+    {
+      title: "Tournaments",
+      icon: "mdi-sword-cross",
+      items: [
+        {
+          key: "tournaments",
+          title: "Manage Tournaments",
+          icon: "mdi-sword-cross",
+          component: "admin-tournaments",
         },
       ],
     },
@@ -168,7 +190,7 @@ export default class Admin extends Vue {
   }
 
   getFirstItem(items: Array<NavigationItem>): NavigationItem {
-    for (let item of items) {
+    for (const item of items) {
       if (!item.items) {
         return item;
       }

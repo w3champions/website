@@ -1,6 +1,7 @@
 import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/typings";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
+import { Mmr } from "@/store/match/types";
 
 export default class MatchService {
   private pageSize: number;
@@ -14,10 +15,12 @@ export default class MatchService {
     gateway: number,
     gameMode: EGameMode,
     map: string,
-    mmr: number[]
+    mmr: Mmr
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}&minMmr=${mmr[0]}&maxMmr=${mmr[1]}`;
+    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
+    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -28,7 +31,7 @@ export default class MatchService {
     gateway: number,
     gameMode: EGameMode,
     map: string,
-    mmr: number[],
+    mmr: Mmr,
     sort: string
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
@@ -50,10 +53,12 @@ export default class MatchService {
     gateway: number,
     gameMode: EGameMode,
     map: string,
-    mmr: number[],
+    mmr: Mmr,
     sort: string
   ): Promise<{ count: number; matches: Match[] }> {
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}&minMmr=${mmr[0]}&maxMmr=${mmr[1]}&sort=${sort}`;
+    const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
+    const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&sort=${sort}`;
 
     const response = await fetch(url);
     return await response.json();

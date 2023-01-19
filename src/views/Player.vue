@@ -218,12 +218,8 @@ export default class PlayerView extends Mixins(MatchMixin) {
     this.$store.direct.dispatch.player.loadGameModeStats({});
     this.$store.direct.dispatch.player.loadRaceStats();
     this.$store.direct.dispatch.player.loadMatches(1);
-    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
-      this.battleTag
-    );
-    this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(
-      this.battleTag
-    );
+    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
     this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
   }
 
@@ -308,10 +304,10 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   public getDuration(match: Match) {
-    var today = new Date();
-    var diffMs =
+    const today = new Date();
+    const diffMs =
       today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
-    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
 
     return diffMins;
   }
@@ -360,6 +356,12 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   private async init() {
+
+    // This is needed because the view is not destroyed when going from a profile directly to another profile, leading to multiple interval timers.
+    if (this._intervalRefreshHandle) {
+      this.stopLoadingMatches();
+    }
+
     this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
 
     await this.$store.direct.dispatch.player.loadProfile({
@@ -368,26 +370,22 @@ export default class PlayerView extends Mixins(MatchMixin) {
     });
     await this.$store.direct.dispatch.player.loadGameModeStats({});
     await this.$store.direct.dispatch.player.loadRaceStats();
-    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(
-      this.battleTag
-    );
-    await this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(
-      this.battleTag
-    );
-    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
-      this.battleTag
-    );
+    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    await this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
+    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
 
     this._intervalRefreshHandle = setInterval(async () => {
-      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(
-        this.battleTag
-      );
+      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
     }, AppConstants.ongoingMatchesRefreshInterval);
     this.$store.direct.commit.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 
   destroyed() {
+    this.stopLoadingMatches();
+  }
+
+  stopLoadingMatches() {
     this.$store.direct.commit.player.SET_ONGOING_MATCH({} as Match);
     clearInterval(this._intervalRefreshHandle);
   }

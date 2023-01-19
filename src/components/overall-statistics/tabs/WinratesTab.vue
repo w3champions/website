@@ -43,7 +43,7 @@
           <v-data-table
             hide-default-footer
             :headers="headers"
-            :items="raceWinrateWithoutRandom"
+            :items="raceWinrate"
             :mobile-breakpoint="400"
           >
             <template v-slot:body="{ items }">
@@ -70,6 +70,12 @@
                   />
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[4]"
+                    :compareRace="item.race"
+                    :winThreshold="0.51"
+                    :lossThreshold="0.49"
+                  />
+                  <player-stats-race-versus-race-on-map-table-cell
+                    :stats="item.winLosses[0]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
@@ -132,6 +138,11 @@ export default class WinratesTab extends Vue {
         align: "start",
         sortable: false,
       },
+      {
+        text: this.$t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        align: "start",
+        sortable: false,
+      },
     ];
   }
 
@@ -155,7 +166,7 @@ export default class WinratesTab extends Vue {
     });
   }
 
-  get raceWinrateWithoutRandom(): Ratio[] {
+  get raceWinrate(): Ratio[] {
     if (
       !this.statsPerRaceAndMap ||
       !this.statsPerRaceAndMap[0] ||
@@ -172,7 +183,7 @@ export default class WinratesTab extends Vue {
     if (!statsPerMapAndRace) {
       return [];
     }
-    return statsPerMapAndRace.ratio.slice(1, 5);
+    return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
   }
 
   public setSelectedMap(map: string) {
@@ -197,13 +208,13 @@ export default class WinratesTab extends Vue {
 
   get patches() {
     if (this.statsPerRaceAndMap[0]) {
-      let allowedPatches = ["All"];
-      var patches = Object.keys(
+      const allowedPatches = ["All"];
+      const patches = Object.keys(
         this.statsPerRaceAndMap[0].patchToStatsPerModes
       );
-      for (let key in patches) {
-        var patch = patches[key];
-        let matches = this.getNumberOfMatches(
+      for (const key in patches) {
+        const patch = patches[key];
+        const matches = this.getNumberOfMatches(
           this.statsPerRaceAndMap[0].patchToStatsPerModes[patch]
         );
 
@@ -218,20 +229,20 @@ export default class WinratesTab extends Vue {
   }
 
   public getNumberOfMatches(patchStats: StatsPerMapAndRace[]) {
-    var dict: { [key: string]: number } = {};
-    var total = 0;
+    const dict: { [key: string]: number } = {};
+    let total = 0;
 
     patchStats[0].ratio.map((r: Ratio) => {
       r.winLosses.map((wL) => {
-        var keys = Object.keys(dict);
+        const keys = Object.keys(dict);
         if (keys.length == 0) {
           dict[r.race.toString() + wL.race.toString()] = wL.games;
         }
-        var found = false;
+        let found = false;
         for (const k in keys) {
-          var charArray = keys[k].split("");
-          var k0 = charArray[0] || "0";
-          var k1 = charArray[1] || "0";
+          const charArray = keys[k].split("");
+          const k0 = charArray[0] || "0";
+          const k1 = charArray[1] || "0";
 
           if (
             (k0 == r.race.toString() && k1 == wL.race.toString()) ||

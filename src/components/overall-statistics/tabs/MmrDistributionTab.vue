@@ -8,11 +8,7 @@
             :items="seasons"
             item-text="id"
             @change="setSelectedSeason"
-            :label="
-              $t(
-                `components_overall-statistics_tabs_mmrdistributiontab.selectseason`
-              )
-            "
+            :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
             outlined
           />
@@ -24,40 +20,28 @@
             item-text="name"
             item-value="id"
             @change="gameModeChanged"
-            :label="
-              $t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)
-            "
+            :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
             outlined
           />
         </v-card-text>
-        <v-card-text v-if="!loadingMapAndRaceStats">
-          <gateway-select
-            @gatewayChanged="gatewayChanged"
-            v-if="isGatewayNeeded()"
-          />
+        <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded()">
+          <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
 
         <v-card-text>
-          {{
-            $t(
-              "components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc"
-            )
-          }}
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
+          <div>{{ standardDeviation }}</div>
+        </v-card-text>
+        <v-card-text>
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
         </v-card-text>
         <v-card-text v-if="authCode">
-          {{
-            $t(
-              "components_overall-statistics_tabs_mmrdistributiontab.greenbardesc"
-            )
-          }}
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.greenbardesc") }}
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
         <div class="text-center my-auto">
-          <v-progress-circular
-            indeterminate
-            v-if="loadingData"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate v-if="loadingData"></v-progress-circular>
         </div>
         <mmr-distribution-chart
           v-if="!loadingData"
@@ -119,9 +103,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
       gameMode: this.selectedGameMode,
       gateWay: this.selectedGateWay,
     };
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(
-      payload
-    );
+    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(payload);
     this.loadingData = false;
   }
 
@@ -147,7 +129,6 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     await this.loadActiveGameModes();
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
-    this.updateMMRDistribution();
   }
 
   get verifiedBtag() {
@@ -156,6 +137,10 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
 
   get mmrDistribution() {
     return this.$store.direct.state.overallStatistics.mmrDistribution;
+  }
+
+  get standardDeviation(): string {
+    return this.mmrDistribution?.standardDeviation?.toString() ?? "-";
   }
 
   get authCode(): string {

@@ -288,16 +288,16 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get gameDaysForGateways(): GameDayPerMode[][] {
-    let all = this.$store.direct.state.overallStatistics.gamesPerDay[0];
-    let us = this.$store.direct.state.overallStatistics.gamesPerDay[1];
-    let eu = this.$store.direct.state.overallStatistics.gamesPerDay[2];
+    const all = this.$store.direct.state.overallStatistics.gamesPerDay[0];
+    const us = this.$store.direct.state.overallStatistics.gamesPerDay[1];
+    const eu = this.$store.direct.state.overallStatistics.gamesPerDay[2];
     const filterForCurrentMode = (all: GameDayPerMode[]) => {
       return all.filter((g) => g.gameMode === this.selectedGamesPerDayMode);
     };
 
-    let gameDayPerModes = filterForCurrentMode(all);
-    let gameDayPerModes1 = filterForCurrentMode(eu);
-    let gameDayPerModes2 = filterForCurrentMode(us);
+    const gameDayPerModes = filterForCurrentMode(all);
+    const gameDayPerModes1 = filterForCurrentMode(eu);
+    const gameDayPerModes2 = filterForCurrentMode(us);
     return [gameDayPerModes, gameDayPerModes1, gameDayPerModes2];
   }
 

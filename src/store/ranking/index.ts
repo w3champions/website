@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { moduleActionContext } from "..";
 import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
@@ -26,10 +27,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       options?: DataTableOptions
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (options && options.page != null) {
         commit.SET_PAGE(options.page - 1);
@@ -46,10 +44,7 @@ const mod = {
       commit.SET_RANKINGS(response);
     },
     async getTopFive(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.retrieveRankings(
         0,
@@ -60,10 +55,7 @@ const mod = {
       commit.SET_TOP_FIVE(rankings.slice(0, 5));
     },
     async getCountryRankings(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       commit.SET_COUNTRY_RANKINGS_LOADING(true);
       const rankings = await rootGetters.rankingService.retrieveCountryRankings(
@@ -79,10 +71,7 @@ const mod = {
       context: ActionContext<RankingState, RootState>,
       search: { searchText: string; gameMode: EGameMode }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const rankings = await rootGetters.rankingService.searchRankings(
         search.searchText,
@@ -97,23 +86,19 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
       commit.SET_SEARCH_RANKINGS([]);
     },
-    async setLeague(
+    setLeague(
       context: ActionContext<RankingState, RootState>,
       league: number
     ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       commit.SET_LEAGUE(league);
-      await dispatch.retrieveRankings(undefined);
     },
-    async setSeason(
+    setSeason(
       context: ActionContext<RankingState, RootState>,
       season: Season
     ) {
-      const { commit, dispatch } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       commit.SET_SELECTED_SEASON(season);
-
-      await dispatch.retrieveLeagueConstellation();
-      await dispatch.retrieveRankings(undefined);
     },
     async setCountry(
       context: ActionContext<RankingState, RootState>,
@@ -143,12 +128,15 @@ const mod = {
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },
     async retrieveSeasons(context: ActionContext<RankingState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      // Seasons already fetched, skip
+      if (!_.isEmpty(state.seasons)) {
+        return;
+      }
 
       const seasons = await rootGetters.rankingService.retrieveSeasons();
-
       commit.SET_SEASONS(seasons);
-      commit.SET_SELECTED_SEASON(seasons[0]);
     },
   },
   mutations: {

@@ -139,9 +139,11 @@ export enum EGameMode {
 
   GM_FROSTCRAFT_4ON4 = 501,
 
-  GM_RH_1ON1 = 601,
+  GM_ATR_1ON1 = 601,
 
   GM_BANJOBALL_4ON4 = 701,
+
+  GM_PTR_1ON1 = 801,
 }
 
 export enum EGameModeType {
@@ -201,7 +203,7 @@ export enum EColors {
   COAL = 20,
   SNOW = 21,
   EMERALD = 22,
-  PEANUT = 23
+  PEANUT = 23,
 }
 
 export enum EComputer {

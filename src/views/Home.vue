@@ -161,7 +161,7 @@ import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 import { NewsMessage } from "@/store/admin/messages/types";
-import { Map } from "@/store/admin/maps/types"
+import { Map } from "@/store/admin/maps/types";
 import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/typings";
 
@@ -191,6 +191,7 @@ export default class HomeView extends Vue {
 
   async mounted(): Promise<void> {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
     await this.$store.direct.dispatch.rankings.getTopFive();
     await this.$store.direct.dispatch.infoMessages.loadNews();
     await this.$store.direct.dispatch.admin.mapsManagement.loadMapsForCurrentSeason();

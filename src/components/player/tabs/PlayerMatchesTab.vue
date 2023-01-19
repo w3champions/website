@@ -23,7 +23,7 @@
           >
             <template v-slot:item="data">
               <template v-if="typeof data.item !== 'object'">
-                <v-list-item-content v-text="data.item"></v-list-item-content>
+                <v-list-item-content>{{ data.item }}</v-list-item-content>
               </template>
               <template v-else>
                 <v-list-item-content>
@@ -187,21 +187,22 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
 
   public async activated() {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
     setTimeout(async () => await this.getMatches(), 500);
   }
 
   @Watch("search")
   public onSearchChanged(newValue: string) {
-    const searchDebounced = (timeout=500) => {
+    const searchDebounced = (timeout = 500) => {
       clearTimeout(this.searchTimer);
       this.isLoading = true;
-      this.searchTimer = setTimeout(() => { 
+      this.searchTimer = setTimeout(() => {
         this.$store.direct.dispatch.rankings.search({
           searchText: newValue.toLowerCase(),
           gameMode: this.selectedGameModeForSearch,
         });
       }, timeout);
-    }
+    };
 
     if (newValue && newValue.length > 2) {
       searchDebounced();

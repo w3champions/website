@@ -60,10 +60,11 @@
       <v-col cols="12" md="10">
         <v-card-text v-if="!loadingMmrRpTimeline">
           <player-mmr-rp-timeline-chart
+            v-if="!isPlayerMmrRpTimelineEmpty"
             style="position: relative"
             :mmrRpTimeline="playerMmrRpTimeline"
           />
-          <v-card-text v-if="isPlayerMmrRpTimelineEmpty">
+          <v-card-text v-else>
             {{
               $t("components_player_tabs_playerstatistictab.playerhasnomatches")
             }}
@@ -202,7 +203,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   }
 
   private async initMmrRpTimeline() {
-    let raceStats = this.$store.direct.state.player.raceStats;
+    const raceStats = this.$store.direct.state.player.raceStats;
     let maxRace = ERaceEnum.HUMAN;
     let maxWins = 0;
     raceStats.forEach((r) => {
@@ -235,7 +236,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     ) {
       return [];
     }
-    let patches = ["All"];
+    const patches = ["All"];
 
     Object.keys(this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch).map(
       (p) => patches.push(p)
@@ -299,28 +300,28 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
 
   get maps() {
     const maps = [{
-      mapName: 'Overall',
-      mapId: 'Overall',
+      mapName: "Overall",
+      mapId: "Overall",
     }];
     const mapsList: string[] = [];
     this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
-      heroItemList.stats.map((stats)=> {
+      heroItemList.stats.map((stats) => {
         stats.winLossesOnMap.map((winLossOnMap) => {
           const map = winLossOnMap.map;
           if (!mapsList.includes(map)) {
             mapsList.push(map);
           }
         });
-      })
+      });
     });
-    mapsList.forEach(map => maps.push({mapName: map, mapId: map}));
+    mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
     return maps;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .player-hero-usage-statistics__selects {
-    margin-top: 48px;
-  }
+.player-hero-usage-statistics__selects {
+  margin-top: 48px;
+}
 </style>

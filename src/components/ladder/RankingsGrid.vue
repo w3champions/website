@@ -69,7 +69,7 @@
                       <v-btn
                         icon
                         v-on="on"
-                        :href="'http://twitch.tv/' + item.playersInfo[index].twitchName"
+                        :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
                       >
                         <v-icon
@@ -116,6 +116,9 @@
               </span>
             </div>
           </td>
+          <td class="number-text text-end">
+            <level-progress :rp="item.rankingPoints"></level-progress>
+          </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
             {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
@@ -125,7 +128,6 @@
           <td class="number-text text-end">{{ item.player.games }}</td>
           <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
-          <td class="number-text text-end">{{ item.rankingPoints }}</td>
         </tr>
       </tbody>
     </table>
@@ -136,12 +138,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import {
-  EAvatarCategory,
-  EGameMode,
-  ERaceEnum,
-  OngoingMatches,
-} from "@/store/typings";
+import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -149,6 +146,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
+import LevelProgress from "@/components/ladder/LevelProgress.vue";
 
 @Component({
   components: {
@@ -157,6 +155,7 @@ import { TranslateResult } from "vue-i18n";
     SwordIcon,
     PlayerRankInfo,
     CountryFlagExtended,
+    LevelProgress,
   },
 })
 export default class RankingsGrid extends Vue {
@@ -184,6 +183,15 @@ export default class RankingsGrid extends Vue {
         minWidth: "170px",
         sortFunction: (a: Ranking, b: Ranking): number => {
           return ("" + b.player.name).localeCompare(a.player.name);
+        },
+      },
+      {
+        text: this.$t("components_ladder_rankingsgrid.level"),
+        align: "center",
+        sortable: false,
+        width: "100px",
+        sortFunction: (a: Ranking, b: Ranking): number => {
+          return b.rankingPoints - a.rankingPoints;
         },
       },
       {
@@ -251,15 +259,6 @@ export default class RankingsGrid extends Vue {
           return b.player.mmr - a.player.mmr;
         },
       },
-      {
-        text: this.$t("components_ladder_rankingsgrid.rp"),
-        align: "end",
-        sortable: false,
-        width: "25px",
-        sortFunction: (a: Ranking, b: Ranking): number => {
-          return b.rankingPoints - a.rankingPoints;
-        },
-      },
     ];
   }
 
@@ -309,9 +308,9 @@ export default class RankingsGrid extends Vue {
   public async getStreamStatus(): Promise<void> {
     // filter nulls and empty strings
     const twitchNames = [...new Set(this.rankings
-      .map(r => r.playersInfo)
-      .map(r => r.map(i => i.twitchName))
-      .flat())].filter(r => (r && r.length > 0));
+      .map((r) => r.playersInfo)
+      .map((r) => r.map((i) => i.twitchName))
+      .flat())].filter((r) => (r && r.length > 0));
 
     if (twitchNames.length > 0) {
       await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
@@ -396,7 +395,7 @@ export default class RankingsGrid extends Vue {
       this.$store.direct.state.twitch.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
-        let stream = streamData[i];
+        const stream = streamData[i];
         if (
           stream &&
           stream.user_name.toLowerCase() == twitchName.toLowerCase()

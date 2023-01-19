@@ -25,7 +25,7 @@ const mod = {
     matches: [] as Match[],
     loadingProfile: false,
     loadingRecentMatches: false,
-    loadingMmrRpTimeline: false,
+    loadingMmrRpTimeline: true,
     opponentTag: "",
     selectedSeason: {} as Season,
     gameMode: 0 as EGameMode,
@@ -42,10 +42,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       params: { battleTag: string; freshLogin: boolean }
     ) {
-      const { commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 
@@ -62,10 +59,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       params: { battleTag?: string; season?: number }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const modeStats = await rootGetters.profileService.retrieveGameModeStats(
         params.battleTag ?? state.battleTag,
@@ -76,10 +70,7 @@ const mod = {
       commit.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       const raceStats = await rootGetters.profileService.retrieveRaceStats(
         state.battleTag,
@@ -94,6 +85,7 @@ const mod = {
       battleTag: string
     ) {
       const { commit, state, rootGetters } = moduleActionContext(context, mod);
+
       const profile =
         await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
           battleTag,
@@ -107,6 +99,7 @@ const mod = {
       battleTag: string
     ) {
       const { commit, state, rootGetters } = moduleActionContext(context, mod);
+
       const profile =
         await rootGetters.profileService.retrievePlayerStatsHeroVersusRaceOnMap(
           battleTag,
@@ -119,10 +112,7 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
@@ -155,6 +145,7 @@ const mod = {
     },
     async reloadPlayer(context: ActionContext<PlayerState, RootState>) {
       const { commit, dispatch, state } = moduleActionContext(context, mod);
+
       commit.SET_PAGE(0);
 
       if (state.battleTag) {
@@ -165,13 +156,9 @@ const mod = {
         await dispatch.loadPlayerStatsHeroVersusRaceOnMap;
       }
     },
-    async loadPlayerMmrRpTimeline(
-      context: ActionContext<PlayerState, RootState>
-    ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+    async loadPlayerMmrRpTimeline(context: ActionContext<PlayerState, RootState>) {
+      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+
       commit.SET_LOADING_MMR_TIMELINE(true);
       const mmrRpTimeline =
         await rootGetters.profileService.retrievePlayerMmrRpTimeline(

@@ -14,9 +14,7 @@
             </router-link>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">
-              mdi-close
-            </v-icon>
+            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">mdi-close</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list>
@@ -77,10 +75,10 @@
         <v-divider vertical />
       </span>
 
+      <global-search />
+
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">
-          mdi-account-circle-outline
-        </v-icon>
+        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
           v-on:region-change="saveLoginRegion"
@@ -166,6 +164,7 @@ import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
+import GlobalSearch from "@/components/common/GlobalSearch.vue";
 
 export type ItemType = {
   title: string;
@@ -174,7 +173,7 @@ export type ItemType = {
   class?: string;
 };
 
-@Component({ components: { BrandLogo, SignInDialog, localeIcon } })
+@Component({ components: { BrandLogo, SignInDialog, localeIcon, GlobalSearch } })
 export default class App extends Vue {
   private _savedLocale = "en";
   private selectedTheme = "human";
@@ -245,7 +244,7 @@ export default class App extends Vue {
    * @return boolean
    * @param item
    */
-  public isNavItemVisible(item: any): boolean {
+  public isNavItemVisible(item: ItemType): boolean {
     if (item.title == "admin" && !this.isAdmin) {
       return false;
     }
@@ -337,7 +336,6 @@ export default class App extends Vue {
     this.$store.direct.dispatch.loadLocale();
     this.$i18n.locale = this.savedLocale;
     await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
     if (this.authCode) {
       await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
     }

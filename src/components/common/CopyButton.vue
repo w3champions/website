@@ -5,7 +5,7 @@
         <v-icon>mdi-content-copy</v-icon>
       </v-btn>
     </template>
-    <span>{{$t(`components_common_copybutton.${tooltipText}`)}}</span>
+    <span>{{ $t(`components_common_copybutton.${tooltipText}`) }}</span>
   </v-tooltip>
 </template>
 
@@ -16,7 +16,7 @@ import { Component, Prop } from "vue-property-decorator";
 @Component({})
 export default class CopyButton extends Vue {
   @Prop() copyText!: string;
-  @Prop({default: "tooltip"}) tooltipText!: string;
+  @Prop({ default: "tooltip" }) tooltipText!: string;
 
   public copy() {
     navigator.clipboard.writeText(this.copyText);

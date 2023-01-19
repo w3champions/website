@@ -4,6 +4,8 @@ import { ActionContext } from "vuex";
 import playerManagementModule from "./playerManagement/index";
 import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
+import tournamentsManagementModule from "./tournaments";
+import replayManagementModule from "./replays/index";
 
 import {
   AdminState,
@@ -59,10 +61,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.postBan(
         bannedPlayer,
@@ -70,7 +69,7 @@ const mod = {
       );
 
       let filterPlayer = state.players.find(
-        (p) => p.battleTag === bannedPlayer.battleTag
+        (p: BannedPlayer) => p.battleTag === bannedPlayer.battleTag
       );
 
       if (filterPlayer) {
@@ -84,10 +83,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(
-        context,
-        mod
-      );
+      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       await rootGetters.adminService.deleteBan(
         bannedPlayer,
@@ -95,7 +91,7 @@ const mod = {
       );
 
       const bannedPlayers = state.players.filter(
-        (p) => p.battleTag != bannedPlayer.battleTag
+        (p: BannedPlayer) => p.battleTag != bannedPlayer.battleTag
       );
 
       commit.SET_BANNED_PLAYERS(bannedPlayers);
@@ -124,10 +120,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const searchedPlayers = await rootGetters.adminService.searchByTag(
         search.searchText,
@@ -147,10 +140,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       battleTag: string
     ): Promise<ProxySettings> {
-      const { commit, rootGetters, rootState } = moduleActionContext(
-        context,
-        mod
-      );
+      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
 
       const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
         battleTag,
@@ -291,6 +281,8 @@ const mod = {
     playerManagement: playerManagementModule,
     mapsManagement: mapsManagementModule,
     infoMessageManagement: infoMessageManagementModule,
+    tournamentsManagement: tournamentsManagementModule,
+    replayManagement: replayManagementModule,
   },
 } as const;
 

@@ -6,7 +6,7 @@
           <v-btn
             icon
             v-on="on"
-            :href="'http://twitch.tv/' + userProfile.twitch"
+            :href="'https:///twitch.tv/' + userProfile.twitch"
             target="_blank"
             class="twitchIcon"
           >
@@ -22,7 +22,7 @@
           <v-btn
             icon
             v-on="on"
-            :href="'http://youtube.com/' + userProfile.youtube"
+            :href="'https:///youtube.com/' + userProfile.youtube"
             target="_blank"
           >
             <v-icon color="red darken-2">mdi-youtube</v-icon>
@@ -37,7 +37,7 @@
           <v-btn
             icon
             v-on="on"
-            :href="'http://twitter.com/' + userProfile.twitter"
+            :href="'https:///twitter.com/' + userProfile.twitter"
             target="_blank"
           >
             <v-icon color="blue darken-2">mdi-twitter</v-icon>

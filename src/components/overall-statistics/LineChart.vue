@@ -65,8 +65,8 @@ export default class LineChart extends Mixins(Line) {
     // For each line in graph, create gradient backgroundColor
     if (this.chartData.datasets) {
       const canv = document.getElementById("line-chart") as HTMLCanvasElement;
-      for (var _i = 0; _i < this.chartData.datasets.length; _i++) {
-        let color = this.chartData.datasets[_i]?.borderColor as string;
+      for (let _i = 0; _i < this.chartData.datasets.length; _i++) {
+        const color = this.chartData.datasets[_i]?.borderColor as string;
         if (color) {
           const gradient = canv
             .getContext("2d")

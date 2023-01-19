@@ -159,7 +159,7 @@ export default class AdminBannedPlayers extends Vue {
     text: LocaleMessage;
     value: string | EGameMode;
   }[] {
-    let translatedEnums = [] as {
+    const translatedEnums = [] as {
       text: LocaleMessage;
       value: string | EGameMode;
     }[];
@@ -172,7 +172,7 @@ export default class AdminBannedPlayers extends Vue {
     keys.shift();
     values.shift();
 
-    for (let item in keys) {
+    for (const item in keys) {
       translatedEnums.push({
         text: this.$t(`gameModes.${keys[item]}`),
         value: values[item],

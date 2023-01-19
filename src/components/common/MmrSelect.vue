@@ -1,17 +1,17 @@
 <template>
-  <v-menu offset-x :close-on-content-click=false @input="onMenuToggled">
+  <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
         <v-icon class="mr-1">mdi-chevron-triple-up</v-icon>
-        {{selected}}
+        {{ selected }}
       </v-btn>
     </template>
     <v-card class="px-2 pt-2">
       <v-card-text>
         <v-range-slider
-          v-model="range"
-          max=3000
-          min=0
+          v-model="currentMinMax"
+          max="3000"
+          min="0"
           step="100"
           thumb-label="always"
           :hint="$t('components_common_mmrselect.selectmmr')"
@@ -28,49 +28,46 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { Mmr } from "@/store/match/types";
 
 @Component({})
 export default class MmrSelect extends Vue {
-  @Prop() mmr!: number[];
+  @Prop() mmr!: Mmr;
 
-  range: number[] = []
-  previousMmr: number[] = [];
-  currentMmr: number[] = [];
+  previousMmr = {} as Mmr;
+  currentMmr = { min: 0, max: 3000 } as Mmr;
+  currentMinMax: number[] = [this.currentMmr.min, this.currentMmr.max];
 
-  mounted() {
-    this.range = [this.mmr[0], this.mmr[1]];
-  }
-
-  public selectMmr(mmr: number[]): void {
-    this.currentMmr = mmr;
+  public selectMmr(selectedMmr: number[]): void {
+    this.currentMmr.min = selectedMmr[0];
+    this.currentMmr.max = selectedMmr[1];
   }
 
   get selected(): string {
-    return (this.mmr[0] == 0 && this.mmr[1] == 3000) ? "MMR" : `${this.mmr[0]} - ${this.mmr[1]}`;
+    return (this.mmr.min == 0 && this.mmr.max == 3000) ? "MMR" : `${this.mmr.min} - ${this.mmr.max}`;
   }
 
   public onMenuToggled(opened: boolean): void {
     // Only send a request to backend when closing menu and selecting a different mmr.
     if (!opened && this.hasSelectedDifferentMmr()) {
-      this.previousMmr = this.currentMmr;
+      this.previousMmr.min = this.currentMmr.min;
+      this.previousMmr.max = this.currentMmr.max;
       this.$emit("mmrChanged", this.currentMmr);
     }
   }
 
   public hasSelectedDifferentMmr() {
-    return this.currentMmr.some((val: number, index: number) => val != this.previousMmr[index]);
+    return this.currentMmr.min != this.previousMmr.min || this.currentMmr.max != this.previousMmr.max;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .v-messages {
-    font-size: 15px;
-  }
+::v-deep(.v-messages) {
+  font-size: 15px;
+}
 
-  .theme--dark .v-slider__thumb-label {
-    color: black;
-  }
+::v-deep(.theme--dark .v-slider__thumb-label) {
+  color: black;
 }
 </style>
