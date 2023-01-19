@@ -51,7 +51,7 @@ const mod = {
 
       // Season maps already fetched, skip
       if (!_.isEmpty(state.seasonMaps)) {
-        return
+        return;
       }
 
       const searchMapsResponse = await rootGetters.mapService.getMapsForCurrentSeason();

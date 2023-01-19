@@ -8,7 +8,7 @@ const AT_EQUIVALENT: { [key: number]: EGameMode } = {
   [EGameMode.GM_2ON2]: EGameMode.GM_2ON2_AT,
   [EGameMode.GM_4ON4]: EGameMode.GM_4ON4_AT,
   [EGameMode.GM_LEGION_4v4_X20]: EGameMode.GM_LEGION_4v4_X20_AT,
-}
+};
 
 @Component
 export default class GameModesMixin extends Vue {
@@ -31,7 +31,7 @@ export default class GameModesMixin extends Vue {
   }
 
   public get activeGameModesWithAT() {
-    return this.getGameModes(null, true)
+    return this.getGameModes(null, true);
   }
 
   public get activeMeleeGameModes() {
@@ -51,19 +51,19 @@ export default class GameModesMixin extends Vue {
           result.push({
             ...seasonMap,
             id: AT_EQUIVALENT[seasonMap.id],
-            gameMode: seasonMap.gameMode + ' AT',
+            gameMode: seasonMap.gameMode + " AT",
           });
         }
         return result;
       }, [])
-      .filter(seasonMap => type === null || seasonMap.type === type)
-      .map(seasonMap => {
+      .filter((seasonMap) => type === null || seasonMap.type === type)
+      .map((seasonMap) => {
         const id = seasonMap.id;
         const name = this.$t(`gameModes.${EGameMode[id]}`) || seasonMap.gameMode;
         return {
           id,
           name,
-        }
+        };
       })
       .value();
   }

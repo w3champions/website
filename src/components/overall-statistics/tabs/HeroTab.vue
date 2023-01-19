@@ -69,7 +69,7 @@ export default class HeroTab extends Mixins(GameModesMixin) {
   }
 
   get gameModes() {
-    return this.activeMeleeGameModesWithAT.filter(x => x.id !== EGameMode.GM_4ON4_AT);
+    return this.activeMeleeGameModesWithAT.filter((x) => x.id !== EGameMode.GM_4ON4_AT);
   }
 
   get picks() {
