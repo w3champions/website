@@ -89,8 +89,8 @@ export default class MatchesView extends Vue {
     return this.$store.direct.state.matches.matches;
   }
 
-  get currentSeason(): number {
-    return this.$store.direct.state.rankings.seasons[0]?.id;
+  get currentSeason(): Season {
+    return this.$store.direct.state.rankings.seasons[0];
   }
 
   get maps() {
