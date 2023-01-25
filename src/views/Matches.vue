@@ -69,7 +69,7 @@ export default class MatchesView extends Vue {
     this.getMatches(page);
   }
 
-  get disabledGameModes(): Array<number> {
+  get disabledGameModes(): Array<EGameMode> {
     if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
       return [
         EGameMode.GM_2ON2_AT,

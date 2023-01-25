@@ -134,7 +134,6 @@ export enum EGameMode {
   GM_LEGION_2v2_X20 = 205,
 
   GM_ROC_1ON1 = 301,
-
   GM_LTW_1ON1 = 401,
 
   GM_FROSTCRAFT_4ON4 = 501,
@@ -144,6 +143,11 @@ export enum EGameMode {
   GM_BANJOBALL_4ON4 = 701,
 
   GM_PTR_1ON1 = 801,
+}
+
+export enum EGameModeType {
+  MELEE = "MELEE",
+  NON_MELEE = "NON_MELEE",
 }
 
 export enum EPick {

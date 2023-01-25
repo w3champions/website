@@ -7,9 +7,9 @@
           <v-card-text>
             <v-select
               v-model="selectedGamesPerDayMode"
-              :items="gameModesWithAll"
-              item-text="modeName"
-              item-value="modeId"
+              :items="activeGameModesWithAll"
+              item-text="name"
+              item-value="id"
               @change="setSelectedGamesPerDayMode"
               :label="
                 $t(
@@ -65,9 +65,9 @@
         <v-card-text>
           <v-select
             v-model="selectedModeForMaps"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModes"
+            item-text="name"
+            item-value="id"
             @change="setSelectedModeForMaps"
             :label="
               $t(
@@ -111,9 +111,9 @@
         <v-card-text>
           <v-select
           v-model="selectedPopularHourMode"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModes"
+            item-text="name"
+            item-value="id"
             @change="setSelectedModeGameHour"
             :label="
               $t(
@@ -144,9 +144,9 @@
         <v-card-text>
           <v-select
             v-model="selectedLengthMode"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModes"
+            item-text="name"
+            item-value="id"
             @change="setSelectedLengthMode"
             :label="
               $t(
@@ -167,7 +167,6 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import {
   GameDay,
   GameDayPerMode,
@@ -175,7 +174,8 @@ import {
   MapCount,
   PopularGameHour,
 } from "@/store/overallStats/types";
-import Component from "vue-class-component";
+import { Component, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
@@ -192,13 +192,17 @@ import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonCha
     PopularGameTimeChart,
   },
 })
-export default class PlayerActivityTab extends Vue {
+export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedGamesPerDayMode = EGameMode.UNDEFINED;
   public selectedSeasonForMaps = "All";
   public overWrittenOnce = false;
   public selectedModeForMaps = EGameMode.GM_1ON1;
+
+  async mounted(): Promise<void> {
+    await this.loadActiveGameModes();
+  }
 
   public setSelectedLengthMode(mode: EGameMode) {
     this.selectedLengthMode = mode;
@@ -235,43 +239,12 @@ export default class PlayerActivityTab extends Vue {
     );
   }
 
-  get gameModesWithAll() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
-        modeId: EGameMode.UNDEFINED,
-      },
-      ...this.gameModes,
-    ];
-  }
-
   get selectedSeasonForMapsInitial() {
     return this.$store.direct.state.rankings.seasons[0]?.id?.toString() ?? "";
   }
 
   get isAllMode() {
     return this.selectedGamesPerDayMode === EGameMode.UNDEFINED;
-  }
-
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        modeId: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        modeId: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        modeId: EGameMode.GM_FFA,
-      },
-    ];
   }
 
   get selectedGameHours(): PopularGameHour {

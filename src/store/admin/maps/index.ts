@@ -1,7 +1,8 @@
+import _ from "lodash";
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
-import { AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "./types";
+import { AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse, SeasonMap } from "./types";
 
 const mod = {
   namespaced: true,
@@ -9,7 +10,8 @@ const mod = {
     totalMaps: 0 as number,
     maps: [] as Map[],
     mapsFilter: undefined,
-    mapFiles: [] as MapFileData[],
+    mapFiles: [] as  MapFileData[],
+    seasonMaps: [] as SeasonMap[],
   } as AdminMapsState,
 
   actions: {
@@ -45,7 +47,13 @@ const mod = {
     },
 
     async loadMapsForCurrentSeason(context: ActionContext<AdminMapsState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+
+      // Season maps already fetched, skip
+      if (!_.isEmpty(state.seasonMaps)) {
+        return;
+      }
+
       const searchMapsResponse = await rootGetters.mapService.getMapsForCurrentSeason();
       commit.SET_SEASON_MAPS(searchMapsResponse);
     },

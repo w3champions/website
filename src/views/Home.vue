@@ -163,6 +163,7 @@ import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatches
 import { NewsMessage } from "@/store/admin/messages/types";
 import { Map } from "@/store/admin/maps/types";
 import CopyButton from "@/components/common/CopyButton.vue";
+import { EGameMode } from "@/store/typings";
 
 @Component({
   components: {
@@ -194,9 +195,9 @@ export default class HomeView extends Vue {
     await this.$store.direct.dispatch.rankings.getTopFive();
     await this.$store.direct.dispatch.infoMessages.loadNews();
     await this.$store.direct.dispatch.admin.mapsManagement.loadMapsForCurrentSeason();
-    this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "1vs1")[0].maps;
-    this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "2vs2")[0].maps;
-    this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.gameMode == "4vs4")[0].maps;
+    this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;
+    this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_2ON2)[0].maps;
+    this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id == EGameMode.GM_4ON4)[0].maps;
   }
 
   public goToSetupPage(): void {

@@ -79,9 +79,9 @@
         <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
-            :items="gameModes"
-            item-text="modeName"
-            item-value="modeId"
+            :items="activeGameModesWithAT"
+            item-text="name"
+            item-value="id"
             @change="setSelectedGameModeForSearch"
             label="Mode"
             outlined
@@ -136,8 +136,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
 import {
@@ -149,7 +149,7 @@ import {
 } from "@/store/typings";
 
 @Component({ components: { MatchesGrid } })
-export default class PlayerMatchesTab extends Vue {
+export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   @Prop() public id!: string;
   public searchModel = {} as Ranking;
   public search = "";
@@ -159,6 +159,10 @@ export default class PlayerMatchesTab extends Vue {
   public raceEnums = ERaceEnum;
   public filtersVisible = false;
   private searchTimer: ReturnType<typeof setTimeout> = 0;
+
+  async mounted(): Promise<void> {
+    await this.loadActiveGameModes();
+  }
 
   @Watch("searchModel")
   public onSearchModelChanged(newVal?: Ranking) {
@@ -207,69 +211,6 @@ export default class PlayerMatchesTab extends Vue {
       this.onSearchModelChanged(undefined);
       this.isLoading = false;
     }
-  }
-
-  get gameModes() {
-    return [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        modeId: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        modeId: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        modeId: EGameMode.GM_2ON2_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        modeId: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        gameMode: EGameMode.GM_FFA,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_1v1_x20,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_2v2_X20,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`
-        ),
-        modeId: EGameMode.GM_LEGION_4v4_X20,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
-        modeId: EGameMode.GM_ROC_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ATR_1ON1]}`),
-        modeId: EGameMode.GM_ATR_1ON1,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`
-        ),
-        modeId: EGameMode.GM_BANJOBALL_4ON4,
-      },
-      {
-        modeName: this.$t(
-          `gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`
-        ),
-        modeId: EGameMode.GM_PTR_1ON1,
-      },
-    ];
   }
 
   get races() {

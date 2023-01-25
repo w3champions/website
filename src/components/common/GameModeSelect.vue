@@ -19,11 +19,11 @@
         <v-list dense>
           <v-list-item
             v-for="mode in gameModes"
-            :key="mode.gameMode"
-            @click="selectGameMode(mode.gameMode)"
+            :key="mode.id"
+            @click="selectGameMode(mode.id)"
           >
             <v-list-item-content>
-              <v-list-item-title>{{ mode.modeName }}</v-list-item-title>
+              <v-list-item-title>{{ mode.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -33,79 +33,25 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { Component, Mixins, Prop } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import { LocaleMessage } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
-
 import { EGameMode } from "../../store/typings";
 
 @Component({})
-export default class GameModeSelect extends Vue {
+export default class GameModeSelect extends Mixins(GameModesMixin) {
   @Prop() gameMode?: EGameMode;
   @Prop() disabledModes?: EGameMode[];
 
-  get gameModes(): Array<{ modeName: LocaleMessage; gameMode: number }> {
-    let modes = [
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_1ON1]}`),
-        gameMode: EGameMode.GM_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2]}`),
-        gameMode: EGameMode.GM_2ON2,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_2ON2_AT]}`),
-        gameMode: EGameMode.GM_2ON2_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4]}`),
-        gameMode: EGameMode.GM_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_4ON4_AT]}`),
-        gameMode: EGameMode.GM_4ON4_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_FFA]}`),
-        gameMode: EGameMode.GM_FFA,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_1v1_x20]}`),
-        gameMode: EGameMode.GM_LEGION_1v1_x20,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_2v2_X20]}`),
-        gameMode: EGameMode.GM_LEGION_2v2_X20,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20]}`),
-        gameMode: EGameMode.GM_LEGION_4v4_X20,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_LEGION_4v4_X20_AT]}`),
-        gameMode: EGameMode.GM_LEGION_4v4_X20_AT,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ROC_1ON1]}`),
-        gameMode: EGameMode.GM_ROC_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_ATR_1ON1]}`),
-        gameMode: EGameMode.GM_ATR_1ON1,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_BANJOBALL_4ON4]}`),
-        gameMode: EGameMode.GM_BANJOBALL_4ON4,
-      },
-      {
-        modeName: this.$t(`gameModes.${EGameMode[EGameMode.GM_PTR_1ON1]}`),
-        gameMode: EGameMode.GM_PTR_1ON1,
-      },
-    ];
+  async mounted(): Promise<void> {
+    await this.loadActiveGameModes();
+  }
+
+  get gameModes(): Array<{ name: LocaleMessage; id: number }> {
+    let modes = this.activeGameModesWithAT;
 
     if (this.disabledModes) {
-      modes = modes.filter((x) => !this.disabledModes?.includes(x.gameMode));
+      modes = modes?.filter((x) => !this.disabledModes?.includes(x.id));
     }
 
     return modes;
@@ -116,13 +62,13 @@ export default class GameModeSelect extends Vue {
       return "";
     }
 
-    const mode = this.gameModes.filter((g) => g.gameMode == this.gameMode)[0];
+    const mode = this.activeGameModes?.filter((g) => g.id == this.gameMode)[0];
 
     if (!mode) {
       return "Not Supported";
     }
 
-    return mode.modeName;
+    return mode.name;
   }
 
   public selectGameMode(gameMode: EGameMode): void {
