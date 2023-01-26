@@ -15,7 +15,7 @@
     </template>
     <template v-slot:body="{ items }">
       <tbody>
-        <tr v-for="item in items" :key="item.gameMode + '_' + item.race">
+        <tr v-for="item in items" :key="item.id">
           <td>
             <span>{{ $t("gameModes." + gameModeEnums[item.gameMode]) }}</span>
             <race-icon
@@ -32,7 +32,6 @@
             <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
           </td>
           <td class="number-text text-end">
-            <span v-if="is2v2(item) && item.rank !== 0"></span>
             <div class="text-center">
               {{ item.rank !== 0 ? item.mmr : "-" }}
             </div>
@@ -41,7 +40,6 @@
             </div>
           </td>
           <td class="number-text text-center" style="min-width: 100px">
-            <span v-if="is2v2(item) && item.rank !== 0"></span>
             <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints"></level-progress>
             <div v-else>-</div>
           </td>
@@ -52,100 +50,54 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { EGameMode, ERaceEnum } from "@/store/typings";
-import { Gateways } from "@/store/ranking/types";
+import { Component, Prop, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
+import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import _ from "lodash";
 
 @Component({
   components: { RaceIcon, LevelProgress },
 })
-export default class ModeStatsGrid extends Vue {
+export default class ModeStatsGrid extends Mixins(GameModesMixin) {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;
 
-  public is2v2(stats: ModeStat): boolean {
-    return stats.gameMode === EGameMode.GM_2ON2_AT;
-  }
-
   get gameModeStatsCombined(): ModeStat[] {
-    const gm2v2s = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
+    const AT_stats = this.stats.filter((g) => this.isAtMode(g.gameMode));
 
-    if (gm2v2s.length === 0) return this.stats;
+    if (AT_stats.length === 0) return this.sortByName(this.stats);
 
-    const combindes2v2 = this.combineStats(gm2v2s);
+    // Arrange AT stats in separate arrays for each AT mode.
+    const AT_arranged = this.AT_modes.map((AT_mode) => AT_stats.filter((modeStat) => AT_mode == modeStat.gameMode));
 
-    combindes2v2.winrate =
-      combindes2v2.wins / (combindes2v2.wins + combindes2v2.losses);
-    combindes2v2.mmr = Math.round(combindes2v2.mmr / gm2v2s.length);
-    combindes2v2.rankingPoints = Math.round(
-      combindes2v2.rankingPoints / gm2v2s.length
-    );
-    combindes2v2.quantile = combindes2v2.quantile / gm2v2s.length;
+    // Filter out AT modes that haven't been played, sort by ranking points and get the stat with the highest rank.
+    const topAtStats = AT_arranged
+      .filter((modeStats) => !_.isEmpty(modeStats))
+      .map((modeStats) => modeStats.sort((modeStat) => modeStat.rankingPoints))
+      .map((modeStats) => modeStats.filter((modeStat, index) => index === 0))
+      .flat();
 
-    const combined = new Array<ModeStat>(0);
-    combined.push(combindes2v2);
+    // Filter out the old AT stats.
+    const modifiedStats = this.stats.filter((g) => !this.isAtMode(g.gameMode));
 
-    const gm1v1 = this.stats.filter((g) => g.gameMode === EGameMode.GM_1ON1);
+    // Add the new AT stats.
+    topAtStats.forEach((modeStat) => {
+      modifiedStats.push(modeStat);
+    });
 
-    const ffa = this.stats.filter((g) => g.gameMode === EGameMode.GM_FFA);
-
-    const gm2v2 = this.stats.filter((g) => g.gameMode === EGameMode.GM_2ON2);
-
-    const gm4v4 = this.stats.filter((g) => g.gameMode === EGameMode.GM_4ON4);
-
-    return [...gm1v1, ...gm2v2, combindes2v2, ...gm4v4, ...ffa].filter(
-      (i) => i
-    ); //filter out null & undefined
+    return this.sortByName(modifiedStats);
   }
 
-  private combineStats(gm2v2s: ModeStat[]): ModeStat {
-    const empty: ModeStat = {
-      id: "",
-      gameMode: EGameMode.UNDEFINED,
-      gateWay: Gateways.Europe,
-      race: ERaceEnum.RANDOM,
-      wins: 0,
-      losses: 0,
-      games: 0,
-      winrate: 0,
-      mmr: 0,
-      leagueId: 0,
-      leagueOrder: 0,
-      division: 0,
-      rank: 0,
-      season: 0,
-      rankingPoints: 0,
-      playerIds: [],
-      quantile: 0,
-    };
+  private isAtMode(mode: EGameMode): boolean {
+    return this.AT_modes.includes(mode);
+  }
 
-    return gm2v2s.reduce(
-      (a, b) => ({
-        id: "",
-        gameMode: EGameMode.GM_2ON2_AT,
-        gateWay: b.gateWay,
-        race: b.race,
-        wins: b.wins + a.wins,
-        losses: b.losses + a.losses,
-        games: b.games + a.games,
-        winrate: 0,
-        mmr: b.mmr + a.mmr,
-        rankingPoints: b.rankingPoints + a.rankingPoints,
-        leagueId: 0,
-        leagueOrder: 0,
-        division: 0,
-        rank: b.rank + a.rank, // just so there is something in there, and it gets displayed if at least one team is ranked
-        season: b.season,
-        playerIds: [],
-        quantile: b.quantile + a.quantile,
-      }),
-      empty
-    );
+  private sortByName(mode: ModeStat[]): ModeStat[] {
+    return mode.sort((a, b) => EGameMode[a.gameMode] < EGameMode[b.gameMode] ? -1 : 1);
   }
 
   getTopPercent(modeStat: ModeStat): string {
