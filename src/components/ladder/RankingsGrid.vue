@@ -12,7 +12,7 @@
               width: header.width,
               'min-width': header.minWidth,
             }"
-            v-on:click="sortRankings(header.text, header.sortFunction)"
+            @click="sortRankings(header.text, header.sortFunction)"
           >
             {{ header.text }}
             <div v-if="header.text === sortColumn" class="sort-icon">
