@@ -69,6 +69,7 @@ export default class ActivityPerDayChart extends Vue {
       EGameMode.GM_LEGION_4v4_X20_AT,
       EGameMode.GM_LTW_1ON1,
       EGameMode.GM_FROSTCRAFT_4ON4,
+      EGameMode.GM_DOTA_5ON5_AT,
     ];
   }
 
@@ -105,6 +106,9 @@ export default class ActivityPerDayChart extends Vue {
         return "rgb(21, 189, 124)";
 
       case EGameMode.GM_BANJOBALL_4ON4:
+        return "rgb(58, 58, 186)";
+
+      case EGameMode.GM_DOTA_5ON5:
         return "rgb(58, 58, 186)";
 
       case EGameMode.GM_PTR_1ON1:
@@ -148,6 +152,9 @@ export default class ActivityPerDayChart extends Vue {
         return 1;
 
       case EGameMode.GM_BANJOBALL_4ON4:
+        return 4;
+
+      case EGameMode.GM_DOTA_5ON5:
         return 4;
 
       case EGameMode.GM_PTR_1ON1:

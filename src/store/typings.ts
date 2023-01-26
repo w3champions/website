@@ -143,6 +143,9 @@ export enum EGameMode {
   GM_BANJOBALL_4ON4 = 701,
 
   GM_PTR_1ON1 = 801,
+
+  GM_DOTA_5ON5 = 901,
+  GM_DOTA_5ON5_AT = 902,
 }
 
 export enum EGameModeType {
