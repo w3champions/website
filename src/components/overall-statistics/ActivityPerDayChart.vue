@@ -155,7 +155,7 @@ export default class ActivityPerDayChart extends Vue {
         return 4;
 
       case EGameMode.GM_DOTA_5ON5:
-        return 4;
+        return 5;
 
       case EGameMode.GM_PTR_1ON1:
         return 1;
