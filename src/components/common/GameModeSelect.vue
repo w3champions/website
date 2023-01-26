@@ -62,7 +62,7 @@ export default class GameModeSelect extends Mixins(GameModesMixin) {
       return "";
     }
 
-    const mode = this.activeGameModes?.filter((g) => g.id == this.gameMode)[0];
+    const mode = this.activeGameModesWithAT?.filter((g) => g.id == this.gameMode)[0];
 
     if (!mode) {
       return "Not Supported";
