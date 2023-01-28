@@ -49,8 +49,9 @@ import Vue from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { getAsset } from "@/helpers/url-functions";
-import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
+import { races, defaultStatsTab } from "@/helpers/profile";
 
 @Component({
   components: { RaceIcon },
@@ -60,6 +61,7 @@ export default class PlayerHeroWinRate extends Vue {
   public raceEnums = ERaceEnum;
   public page = 1;
   public paginationSize = 10;
+  public races = races;
   @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
   @Prop() selectedMap!: string;
 
@@ -69,23 +71,12 @@ export default class PlayerHeroWinRate extends Vue {
   }
 
   setSelectedTab(): void {
-    let maxRace = ERaceEnum.RANDOM;
-    let maxGames = 0;
-    this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
-      .filter((s: RaceWinsOnMap) => s.race !== ERaceEnum.TOTAL)
-      .forEach((s: RaceWinsOnMap) =>
-        s.winLossesOnMap.forEach((w: WinLossesOnMap) => {
-          const gamesOfRace = w.winLosses
-            .map((wl: RaceStat) => wl.games)
-            .reduce((a: number, b:number) => a + b, 0);
+    this.selectedTab = defaultStatsTab(this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
+  }
 
-          if (maxGames < gamesOfRace) {
-            maxRace = s.race;
-            maxGames = gamesOfRace;
-          }
-        })
-      );
-    this.selectedTab = `tab-${maxRace}`;
+  // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
+  activated(): void {
+    if (this.isPlayerInitialized) this.setSelectedTab();
   }
 
   get selectedRace() {
@@ -182,35 +173,6 @@ export default class PlayerHeroWinRate extends Vue {
 
   getHeroCell(name: string, heroId: string) {
     return `<span>${this.getImageForTable(heroId)}${name}</span>`;
-  }
-
-  get races() {
-    return [
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
-        raceId: ERaceEnum.HUMAN,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
-        raceId: ERaceEnum.ORC,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
-        raceId: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
-        raceId: ERaceEnum.UNDEAD,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
-        raceId: ERaceEnum.RANDOM,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
-        raceId: ERaceEnum.TOTAL,
-      },
-    ];
   }
 }
 </script>
