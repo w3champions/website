@@ -136,7 +136,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   public async initiateChipGroupIndex(): Promise<void> {
-    // sets the intial index array for the V-Chip-Group component to use
+    // sets the initial index array for the V-Chip-Group component to use
     for (let i = 0; i < this.availableProxies.length; i++) {
       for (let j = 0; j < this.passedOverrides.length; j++) {
         if (this.passedOverrides[j] === this.availableProxies[i].id) {
