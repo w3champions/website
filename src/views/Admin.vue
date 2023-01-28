@@ -1,7 +1,7 @@
 <template>
   <v-container fluid v-show="isAdmin" style="height: 100%">
     <div class="admin-page-wrapper">
-      <admin-navigation :items="navItems" v-on:itemSelected="navItemSelected"></admin-navigation>
+      <admin-navigation :items="navItems" @itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
         <v-card-title>
           {{ selectedNavItem.title }}
