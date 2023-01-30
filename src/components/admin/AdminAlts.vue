@@ -4,17 +4,18 @@
       <!-- Autocomplete Btag search -->
       <v-autocomplete
         class="ml-5 mr-5"
-        v-model="searchPlayerAltsModel"
+        v-model="searchPlayerModel"
         append-icon="mdi-magnify"
         label="Search BattleNet Tag"
         clearable
         placeholder=" "
         :items="searchedPlayers"
         :search-input.sync="search"
-        item-text="player.playerIds[0].battleTag"
-        item-value="player.playerIds[0].id"
+        item-text="battleTag"
+        item-value="battleTag"
         return-object
         @click:clear="revertToDefault"
+        autofocus
       ></v-autocomplete>
     </v-row>
 
@@ -34,11 +35,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { SearchedPlayer } from "@/store/admin/types";
+import { PlayerProfile } from "@/store/player/types";
 
 @Component({})
 export default class AdminAlts extends Vue {
-  public searchPlayerAltsModel = {} as SearchedPlayer;
+  public searchPlayerModel = {} as PlayerProfile;
   public search = "";
   public showAlts = false;
   public oldSearchTerm = "";
@@ -51,18 +52,16 @@ export default class AdminAlts extends Vue {
     this.alts = [];
   }
 
-  @Watch("searchPlayerAltsModel")
+  @Watch("searchPlayerModel")
   public async onSearchStringChanged(
-    searchedPlayer: SearchedPlayer
+    searchedPlayer: PlayerProfile
   ): Promise<void> {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      const btag = searchedPlayer.player.playerIds[0].battleTag;
+      const btag = searchedPlayer.battleTag;
 
-      this.alts = await this.$store.direct.dispatch.admin.getAltsForPlayer(
-        btag
-      );
+      this.alts = await this.$store.direct.dispatch.admin.getAltsForPlayer(btag);
 
       if ((this.alts != null || undefined) && this.alts.length > 0) {
         this.showAlts = true;
@@ -74,7 +73,7 @@ export default class AdminAlts extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue >= this.oldSearchTerm) {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
       this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
@@ -84,7 +83,7 @@ export default class AdminAlts extends Vue {
     }
   }
 
-  get searchedPlayers(): SearchedPlayer[] {
+  get searchedPlayers(): PlayerProfile[] {
     return this.$store.direct.state.admin.searchedPlayers;
   }
 }
