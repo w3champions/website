@@ -37,10 +37,11 @@
                       placeholder=" "
                       :items="searchedPlayers"
                       :search-input.sync="search"
-                      item-text="player.playerIds[0].battleTag"
-                      item-value="player.playerIds[0].id"
+                      item-text="battleTag"
+                      item-value="battleTag"
                       return-object
                       @click:clear="revertToDefault"
+                      autofocus
                     ></v-autocomplete>
                   </v-row>
                   <v-row v-if="showConfirmation" class="ma-2">
@@ -126,11 +127,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import {
-  GloballyMutedPlayer,
-  GlobalMute,
-  SearchedPlayer,
-} from "@/store/admin/types";
+import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
+import { PlayerProfile } from "@/store/player/types";
 
 @Component({})
 export default class AdminGlobalMute extends Vue {
@@ -178,7 +176,7 @@ export default class AdminGlobalMute extends Vue {
   public banExpiry = "";
   public dateMenu = false;
   public dialog = false;
-  public searchPlayerModel = {} as SearchedPlayer;
+  public searchPlayerModel = {} as PlayerProfile;
   public search = "";
   public showConfirmation = false;
   public oldSearchTerm = "";
@@ -193,12 +191,12 @@ export default class AdminGlobalMute extends Vue {
 
   @Watch("searchPlayerModel")
   public async onSearchStringChanged(
-    searchedPlayer: SearchedPlayer
+    searchedPlayer: PlayerProfile
   ): Promise<string> {
     if (!searchedPlayer) return "";
 
     if (searchedPlayer) {
-      this.player = searchedPlayer.player.playerIds[0].battleTag;
+      this.player = searchedPlayer.battleTag;
 
       await this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: this.player.toLowerCase(),
@@ -211,14 +209,14 @@ export default class AdminGlobalMute extends Vue {
       }
     }
 
-    this.player = searchedPlayer.player.playerIds[0].battleTag;
+    this.player = searchedPlayer.battleTag;
     this.showConfirmation = true;
     return this.player;
   }
 
   @Watch("search")
   public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue >= this.oldSearchTerm) {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
       this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
@@ -228,7 +226,7 @@ export default class AdminGlobalMute extends Vue {
     }
   }
 
-  get searchedPlayers(): SearchedPlayer[] {
+  get searchedPlayers(): PlayerProfile[] {
     return this.$store.direct.state.admin.searchedPlayers;
   }
 

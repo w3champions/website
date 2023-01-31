@@ -3,16 +3,17 @@
     <!-- Autocomplete Btag search -->
     <v-autocomplete
       class="ml-5 mr-5"
-      v-model="searchPlayerPortraitsModel"
+      v-model="searchPlayerModel"
       append-icon="mdi-magnify"
       label="Search BattleNet Tag"
       clearable
       placeholder=" "
       :items="searchedPlayers"
       :search-input.sync="search"
-      item-text="player.playerIds[0].battleTag"
-      item-value="player.playerIds[0].id"
+      item-text="battleTag"
+      item-value="battleTag"
       return-object
+      autofocus
       @click:clear="revertToDefault"
     ></v-autocomplete>
 
@@ -166,16 +167,17 @@
 </template>
 
 <script lang="ts">
-import { SearchedPlayer, ChangePortraitsCommand } from "@/store/admin/types";
+import { ChangePortraitsCommand } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
+import { PlayerProfile } from "@/store/player/types";
 
 @Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery } })
 export default class AdminAssignPortraits extends Vue {
-  searchPlayerPortraitsModel = {} as SearchedPlayer;
+  searchPlayerModel = {} as PlayerProfile;
   playerPortraits = [] as number[];
   search = "";
   oldSearchTerm = "";
@@ -195,7 +197,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   get bnetTag() {
-    return this.searchPlayerPortraitsModel.player.playerIds[0].battleTag;
+    return this.searchPlayerModel.battleTag;
   }
 
   get searchedPlayerPortraits(): number[] {
@@ -227,7 +229,7 @@ export default class AdminAssignPortraits extends Vue {
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
       const battleTags = [] as string[];
-      battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
+      battleTags.push(this.searchPlayerModel.battleTag);
 
       const command = {
         battleTags: battleTags,
@@ -239,7 +241,7 @@ export default class AdminAssignPortraits extends Vue {
     }
     if (this.confirmRemovedPortraits.length > 0) {
       const battleTags = [] as string[];
-      battleTags.push(this.searchPlayerPortraitsModel.player.playerIds[0].battleTag);
+      battleTags.push(this.searchPlayerModel.battleTag);
 
       const command = {
         battleTags: battleTags,
@@ -281,12 +283,12 @@ export default class AdminAssignPortraits extends Vue {
     this.confirmRemovedPortraits = this.searchedPlayerPortraits.filter((x) => !this.assignedPortraitsModel.includes(x));
   }
 
-  @Watch("searchPlayerPortraitsModel")
-  public async onSearchStringChanged(searchedPlayer: SearchedPlayer): Promise<void> {
+  @Watch("searchPlayerModel")
+  public async onSearchStringChanged(searchedPlayer: PlayerProfile): Promise<void> {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      const btag = searchedPlayer.player.playerIds[0].battleTag;
+      const btag = searchedPlayer.battleTag;
 
       await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(btag);
       const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
@@ -301,7 +303,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   @Watch("search") public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue >= this.oldSearchTerm) {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
       this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
@@ -311,7 +313,7 @@ export default class AdminAssignPortraits extends Vue {
     }
   }
 
-  get searchedPlayers(): SearchedPlayer[] {
+  get searchedPlayers(): PlayerProfile[] {
     return this.$store.direct.state.admin.searchedPlayers;
   }
 
@@ -329,7 +331,7 @@ export default class AdminAssignPortraits extends Vue {
   private async init(): Promise<void> {
     await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
     const managedPlayer = this.$store.direct.state.admin.playerManagement.managedBattleTag;
-    if (managedPlayer != "") {
+    if (managedPlayer) {
       await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
     }
     this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);

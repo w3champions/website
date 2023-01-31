@@ -4,17 +4,18 @@
       <!-- Autocomplete Btag search -->
       <v-autocomplete
         class="ml-5 mr-5"
-        v-model="searchPlayerProxiesModel"
+        v-model="searchPlayerModel"
         append-icon="mdi-magnify"
         label="Search BattleNet Tag"
         clearable
         placeholder=" "
         :items="searchedPlayers"
         :search-input.sync="search"
-        item-text="player.playerIds[0].battleTag"
-        item-value="player.playerIds[0].id"
+        item-text="battleTag"
+        item-value="battleTag"
         return-object
         @click:clear="revertToDefault"
+        autofocus
       ></v-autocomplete>
     </v-row>
 
@@ -30,11 +31,12 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
-import { Proxy, ProxySettings, SearchedPlayer } from "@/store/admin/types";
+import { Proxy, ProxySettings } from "@/store/admin/types";
+import { PlayerProfile } from "@/store/player/types";
 
 @Component({ components: { nodeOverridesCard, reviewProxies } })
 export default class AdminProxies extends Vue {
-  public searchPlayerProxiesModel = {} as SearchedPlayer;
+  public searchPlayerModel = {} as PlayerProfile;
   public search = "";
   public showProxyOptions = false;
   public oldSearchTerm = "";
@@ -45,18 +47,16 @@ export default class AdminProxies extends Vue {
     this.$store.direct.dispatch.admin.clearSearch();
   }
 
-  @Watch("searchPlayerProxiesModel")
+  @Watch("searchPlayerModel")
   public async onSearchStringChanged(
-    searchedPlayer: SearchedPlayer
+    searchedPlayer: PlayerProfile
   ): Promise<void> {
     if (!searchedPlayer) return;
 
     if (searchedPlayer) {
-      const bTag = searchedPlayer.player.playerIds[0].battleTag;
+      const bTag = searchedPlayer.battleTag;
 
-      const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(
-        bTag
-      );
+      const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag);
       await this.setPlayerProxies(proxies);
 
       if (proxies._id != null || undefined) {
@@ -84,7 +84,7 @@ export default class AdminProxies extends Vue {
 
   @Watch("search")
   public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue >= this.oldSearchTerm) {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
       this.$store.direct.dispatch.admin.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
@@ -94,7 +94,7 @@ export default class AdminProxies extends Vue {
     }
   }
 
-  get searchedPlayers(): SearchedPlayer[] {
+  get searchedPlayers(): PlayerProfile[] {
     return this.$store.direct.state.admin.searchedPlayers;
   }
 
