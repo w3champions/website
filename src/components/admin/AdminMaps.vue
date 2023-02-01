@@ -53,6 +53,11 @@ export default class AdminMaps extends Vue {
         value: "name",
       },
       {
+        text: "ID",
+        align: "start",
+        value: "id",
+      },
+      {
         text: "Category",
         align: "start",
         value: "category",
