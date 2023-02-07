@@ -467,6 +467,8 @@ const data = {
       GM_ROC_1ON1: "RoC 1vs1",
       GM_LTW_1ON1: "Line Tower Wars 1vs1",
       GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
+      GM_DOTA_5ON5: "Dota 5v5",
+      GM_SC_FFA_4: "Survival Chaos"
     },
     gatewayNames: {
       Europe: "Europe",

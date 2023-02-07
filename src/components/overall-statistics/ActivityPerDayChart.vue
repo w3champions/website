@@ -160,6 +160,9 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_PTR_1ON1:
         return 1;
 
+      case EGameMode.GM_SC_FFA_4:
+        return 2;
+
       default:
         return 1;
     }
