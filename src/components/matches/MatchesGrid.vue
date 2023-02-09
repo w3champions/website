@@ -23,7 +23,7 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div v-if="item.gameMode === 5 || item.gameMode === 1001" class="my-3">
+              <div v-if="isFfa(item.gameMode)" class="my-3">
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -45,7 +45,7 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row @click="goToMatchDetailPage(item)" v-if="item.gameMode !== 5 && item.gameMode !== 1001">
+              <v-row @click="goToMatchDetailPage(item)" v-if="!isFfa(item.gameMode)">
                 <v-col cols="5.5">
                   <team-match-info
                     :not-clickable="!unfinished"
@@ -136,6 +136,14 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   gameModeTranslation(gameMode: EGameMode) {
     return this.$t(`gameModes.${EGameMode[gameMode]}`);
+  }
+
+  isFfa(gameMode: EGameMode) {
+    const ffaModes = [
+      EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
+    ];
+
+    return ffaModes.includes(gameMode);
   }
 
   get matches(): Match[] {

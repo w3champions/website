@@ -71,29 +71,29 @@
               v-for="(player, index) in scoresOfWinners"
               v-bind:key="index"
               :heroes-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index].heroes : []
+                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroes : []
               "
               :heroes-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index].heroes : []
+                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroes : []
               "
               :scores-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index].heroScore : []
+                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroScore : []
               "
               :scores-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index].heroScore : []
+                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroScore : []
               "
             />
           </div>
           <match-detail-hero-row
             v-if="matchIsFFA && isCompleteGame"
             :not-color-winner="true"
-            :heroes-of-winner="!!ffaLooser2.heroes ? ffaLooser2.heroes : []"
-            :heroes-of-looser="!!ffaLooser3.heroes ? ffaLooser3.heroes : []"
+            :heroes-of-winner="!!ffaLooser2?.heroes ? ffaLooser2?.heroes : []"
+            :heroes-of-looser="!!ffaLooser3?.heroes ? ffaLooser3?.heroes : []"
             :scores-of-winner="
-              !!ffaLooser2.heroScore ? ffaLooser2.heroScore : []
+              !!ffaLooser2?.heroScore ? ffaLooser2?.heroScore : []
             "
             :scores-of-looser="
-              !!ffaLooser3.heroScore ? ffaLooser3.heroScore : []
+              !!ffaLooser3?.heroScore ? ffaLooser3?.heroScore : []
             "
           />
           <v-row v-if="!isCompleteGame" class="justify-center">
