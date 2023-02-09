@@ -43,6 +43,7 @@ const en = {
     GM_BANJOBALL_4ON4: "Banjoball 4v4",
     GM_PTR_1ON1: "PTR Balance 1v1",
     GM_DOTA_5ON5: "Dota 5v5",
+    GM_SC_FFA_4: "Survival Chaos"
   },
 
   gatewayNames: {

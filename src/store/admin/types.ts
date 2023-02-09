@@ -1,13 +1,14 @@
 import { PlayerOverview } from "@/store/ranking/types";
 import { EChatScope } from "../common/typings";
 import { EColors } from "../typings";
+import { PlayerProfile } from "@/store/player/types";
 
 export type AdminState = {
   total: number;
   players: BannedPlayer[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
-  searchedPlayers: SearchedPlayer[];
+  searchedPlayers: PlayerProfile[];
   proxiesSetForSearchedPlayer: ProxySettings;
   searchedBattletag: string;
   modifiedProxies: ProxySettings;

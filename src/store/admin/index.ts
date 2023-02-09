@@ -6,13 +6,13 @@ import mapsManagementModule from "./maps/index";
 import infoMessageManagementModule from "./messages/index";
 import tournamentsManagementModule from "./tournaments";
 import replayManagementModule from "./replays/index";
+import { PlayerProfile } from "@/store/player/types";
 
 import {
   AdminState,
   BannedPlayer,
   Proxy,
   QueueData,
-  SearchedPlayer,
   ProxySettings,
   OverridesList,
   GloballyMutedPlayer,
@@ -120,13 +120,9 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const searchedPlayers = await rootGetters.adminService.searchByTag(
-        search.searchText,
-        rootState.oauth.token
-      );
-
+      const searchedPlayers = await rootGetters.profileService.searchPlayer(search.searchText);
       commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
     },
 
@@ -254,7 +250,7 @@ const mod = {
     SET_AVAILABLEPROXIES(state: AdminState, availableProxies: Proxy[]) {
       state.availableProxies = availableProxies;
     },
-    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: SearchedPlayer[]) {
+    SET_SEARCH_FOR_BNET_TAG(state: AdminState, searchedPlayers: PlayerProfile[]) {
       state.searchedPlayers = searchedPlayers;
     },
     SET_SEARCHED_PROXIES_FOR_BATTLETAG(state: AdminState, proxies: ProxySettings) {

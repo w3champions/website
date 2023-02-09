@@ -1,5 +1,5 @@
 <template>
-  <v-progress-linear class="level-progress" :value="getProgessToNextLevel()" height="25">
+  <v-progress-linear class="level-progress" :value="getProgressToNextLevel()" height="25">
     <strong>{{ getLevelNumber() }}</strong>
   </v-progress-linear>
 </template>
@@ -12,7 +12,7 @@ import { Component, Prop } from "vue-property-decorator";
 export default class LevelProgress extends Vue {
   @Prop() rp!: number;
 
-  public getProgessToNextLevel() {
+  public getProgressToNextLevel() {
     return Math.round((this.rp % 1) * 100);
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <v-tabs v-model="selectedTab">
+  <v-tabs v-model="selectedTab" v-if="!isEmpty">
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
       <span v-if="stat.race === raceEnums.TOTAL">
@@ -22,6 +22,9 @@
       </v-card-text>
     </v-tab-item>
   </v-tabs>
+  <v-card-text v-else>
+    {{ $t("components_player_tabs_playerstatistictab.playerhasnomatches") }}
+  </v-card-text>
 </template>
 
 <script lang="ts">
@@ -31,6 +34,8 @@ import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
 import RaceIcon from "@/components/player/RaceIcon.vue";
+import _ from "lodash";
+import { defaultStatsTab } from "@/helpers/profile";
 
 @Component({
   components: { RaceToMapStat, RaceIcon },
@@ -45,10 +50,13 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
     return this.$store.direct.state.player.isInitialized;
   }
 
-  mounted(): void {
-    if (this.isPlayerInitialized) {
-      this.setSelectedTab();
-    }
+  // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
+  activated(): void {
+    if (this.isPlayerInitialized) this.setSelectedTab();
+  }
+
+  get isEmpty(): boolean {
+    return _.isEmpty(this.stats);
   }
 
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
@@ -60,23 +68,7 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   }
 
   setSelectedTab(): void {
-    let maxRace = ERaceEnum.RANDOM;
-    let maxGames = 0;
-    this.stats
-      .filter((s) => s.race !== ERaceEnum.TOTAL)
-      .forEach((s) =>
-        s.winLossesOnMap.forEach((w) => {
-          const gamesOfRace = w.winLosses
-            .map((wl) => wl.games)
-            .reduce((a, b) => a + b, 0);
-
-          if (maxGames < gamesOfRace) {
-            maxRace = s.race;
-            maxGames = gamesOfRace;
-          }
-        })
-      );
-    this.selectedTab = `tab-${maxRace}`;
+    this.selectedTab = defaultStatsTab(this.stats);
   }
 }
 </script>

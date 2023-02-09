@@ -48,7 +48,7 @@
           />
           <v-select
             :items="races"
-            item-text="raceName"
+            :item-text="translateRaceName"
             item-value="raceId"
             v-model="selectedRace"
             @change="setTimelineRace"
@@ -65,9 +65,7 @@
             :mmrRpTimeline="playerMmrRpTimeline"
           />
           <v-card-text v-else>
-            {{
-              $t("components_player_tabs_playerstatistictab.playerhasnomatches")
-            }}
+            {{ $t("components_player_tabs_playerstatistictab.playerhasnomatches") }}
           </v-card-text>
         </v-card-text>
       </v-col>
@@ -127,7 +125,6 @@
 <script lang="ts">
 import { Component, Watch, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
-
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/typings";
 import {
@@ -140,6 +137,8 @@ import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceV
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
+import { races } from "@/helpers/profile";
+import { TranslateResult } from "vue-i18n";
 
 @Component({
   components: {
@@ -157,6 +156,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   public updatePlayerHeroStatsKey = 0;
   public selectedMap = "Overall";
   public selectedMapHeroWinRate = "Overall";
+  public races = races;
 
   get selectedSeason() {
     return this.$store.direct.state.player.selectedSeason;
@@ -188,10 +188,14 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
 
   async mounted(): Promise<void> {
     this.getMaps();
+    await this.loadActiveGameModes();
+  }
+
+  // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
+  activated(): void {
     if (this.isPlayerInitialized) {
       this.initMmrRpTimeline();
     }
-    await this.loadActiveGameModes();
   }
 
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
@@ -205,10 +209,10 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   private async initMmrRpTimeline() {
     const raceStats = this.$store.direct.state.player.raceStats;
     let maxRace = ERaceEnum.HUMAN;
-    let maxWins = 0;
+    let maxGames = 0;
     raceStats.forEach((r) => {
-      if (r.wins > maxWins) {
-        maxWins = r.wins;
+      if (r.games > maxGames) {
+        maxGames = r.wins;
         maxRace = r.race;
       }
     });
@@ -265,33 +269,8 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
   }
 
-  get races() {
-    return [
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
-        raceId: ERaceEnum.HUMAN,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
-        raceId: ERaceEnum.ORC,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
-        raceId: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
-        raceId: ERaceEnum.UNDEAD,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
-        raceId: ERaceEnum.RANDOM,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
-        raceId: ERaceEnum.TOTAL,
-      },
-    ];
+  public translateRaceName(race: any): TranslateResult {
+    return this.$t(`races.${race.raceName}`);
   }
 
   public getMaps(): void {

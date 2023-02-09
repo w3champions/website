@@ -81,7 +81,7 @@
         <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
-          v-on:region-change="saveLoginRegion"
+          @region-change="saveLoginRegion"
         ></sign-in-dialog>
       </v-btn>
 

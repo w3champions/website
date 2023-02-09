@@ -43,6 +43,10 @@ export default class GameModesMixin extends Vue {
     return this.getGameModes(EGameModeType.MELEE, true);
   }
 
+  public get AT_modes() {
+    return Object.values(AT_EQUIVALENT);
+  }
+
   private getGameModes(type: EGameModeType | null, withAt: boolean) {
     return _
       .chain(this.$store.direct.state.admin.mapsManagement.seasonMaps)
