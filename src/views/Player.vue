@@ -276,7 +276,11 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   get isOngoingMatchFFA() {
-    return this.ongoingMatch && this.ongoingMatch.gameMode == EGameMode.GM_FFA;
+    const ffaModes = [
+      EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
+    ];
+
+    return this.ongoingMatch && ffaModes.includes(this.ongoingMatch.gameMode);
   }
 
   get ongoingMatchGameModeClass() {
@@ -295,7 +299,8 @@ export default class PlayerView extends Mixins(MatchMixin) {
       case EGameMode.GM_4ON4: {
         return "four-v-four";
       }
-      case EGameMode.GM_FFA: {
+      case EGameMode.GM_FFA:
+      case EGameMode.GM_SC_FFA_4: {
         return "ffa";
       }
     }

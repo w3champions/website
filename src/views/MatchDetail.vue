@@ -298,10 +298,12 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get matchIsFFA() {
-    return (
-      this.$store.direct.state.matches.matchDetail.match.gameMode ===
-      EGameMode.GM_FFA
-    );
+    const ffaModes = [
+      EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
+    ];
+
+    return ffaModes.includes(this.$store.direct.state.matches.matchDetail.match.gameMode);
+
   }
 
   get isCompleteGame() {
