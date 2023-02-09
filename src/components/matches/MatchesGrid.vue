@@ -23,7 +23,7 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div v-if="item.gameMode === 5" class="my-3">
+              <div v-if="item.gameMode === 5 || item.gameMode === 1001" class="my-3">
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -45,7 +45,7 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row @click="goToMatchDetailPage(item)" v-if="item.gameMode !== 5">
+              <v-row @click="goToMatchDetailPage(item)" v-if="item.gameMode !== 5 && item.gameMode !== 1001">
                 <v-col cols="5.5">
                   <team-match-info
                     :not-clickable="!unfinished"
