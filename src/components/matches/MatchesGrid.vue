@@ -23,7 +23,7 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div v-if="isFfa(item.gameMode)" class="my-3">
+              <div v-if="isFfa(item.gameMode)"  @click="goToMatchDetailPage(item)" class="my-3">
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
                     <team-match-info

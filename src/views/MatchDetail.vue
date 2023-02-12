@@ -18,20 +18,25 @@
                   style="padding-right: 0px"
                 ></host-icon>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="4" v-if="!matchIsFFA()">
                 <team-match-info
                   :big-race-icon="true"
                   :left="true"
                   :team="match.teams[0]"
                 />
               </v-col>
-              <v-col cols="1" class="text-center">
-                <span>{{ $t(`views_matchdetail.vs`) }}</span>
+              <v-col cols="1" class="text-center" >
+                <span v-if="!matchIsFFA()">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
-              <v-col v-if="!matchIsFFA" cols="4">
+              <v-col v-if="!matchIsFFA()" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
-              <v-col v-if="matchIsFFA" cols="4">
+              <v-col v-if="matchIsFFA()" cols="6">
+                <team-match-info
+                  class="ma-1"
+                  :big-race-icon="true"
+                  :team="match.teams[0]"
+                />
                 <team-match-info
                   class="ma-1"
                   :big-race-icon="true"
@@ -85,7 +90,7 @@
             />
           </div>
           <match-detail-hero-row
-            v-if="matchIsFFA && isCompleteGame"
+            v-if="matchIsFFA() && isCompleteGame"
             :not-color-winner="true"
             :heroes-of-winner="!!ffaLooser2?.heroes ? ffaLooser2?.heroes : []"
             :heroes-of-looser="!!ffaLooser3?.heroes ? ffaLooser3?.heroes : []"
@@ -101,9 +106,9 @@
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
-          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
+          <v-row  v-if="isCompleteGame && !matchIsFFA()" class="justify-center">
             <v-col cols="5" class="mr-7">
-              <player-performance-on-match
+              <player-performance-on-match class="mt-4"
                 :unit-score="
                   scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
                 "
@@ -136,7 +141,7 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="isCompleteGame && matchIsFFA">
+          <v-row class="mb-3" v-if="isCompleteGame && matchIsFFA()">
             <v-col cols="2" />
             <v-col>
               <v-row dense v-for="(label, index) in rowLabels" :key="label">
@@ -297,7 +302,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
     return this.$store.direct.state.matches.matchDetail.match.season ?? 1;
   }
 
-  get matchIsFFA() {
+  matchIsFFA() {
     const ffaModes = [
       EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
     ];
@@ -311,7 +316,15 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get playerScores() {
-    return this.$store.direct.state.matches.matchDetail.playerScores ?? [];
+    const playerScores = this.$store.direct.state.matches.matchDetail.playerScores;
+    const teams = this.$store.direct.state.matches.matchDetail.match.teams;
+    if(this.matchIsFFA()){
+        playerScores.forEach((playerScore, index) => {
+            playerScore.battleTag = teams[index].players[0].battleTag;
+        });
+    }
+
+    return playerScores ?? [];
   }
 
   get scoresOfWinners() {
