@@ -48,16 +48,6 @@ const mod = {
       const { commit, rootGetters } = moduleActionContext(context, mod);
       const bannedPlayers = await rootGetters.adminService.getBannedPlayers(active);
 
-      for (let i = 0; i < bannedPlayers.players.length; i++) {
-        const player = bannedPlayers.players[i];
-        const formattedDate = moment(
-          player.endDate,
-          "YYYY-MM-DD"
-        ).toISOString();
-        if (formattedDate) {
-          player.endDate = formattedDate.substr(0, 10);
-        }
-      }
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
 
