@@ -41,9 +41,13 @@ const mod = {
   } as AdminState,
 
   actions: {
-    async loadBannedPlayers(context: ActionContext<AdminState, RootState>) {
+    async loadBannedPlayers(
+      context: ActionContext<AdminState, RootState>,
+      active: boolean
+    ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
-      const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
+      const bannedPlayers = await rootGetters.adminService.getBannedPlayers(active);
+
       for (let i = 0; i < bannedPlayers.players.length; i++) {
         const player = bannedPlayers.players[i];
         const formattedDate = moment(
