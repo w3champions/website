@@ -19,9 +19,7 @@
               {{ $t("views_admin.addplayer") }}
             </v-btn>
             <v-tabs v-model="tabsModel">
-              <v-tabs-slider></v-tabs-slider>
-              <v-tab>Active Bans</v-tab>
-              <v-tab>Inactive Bans</v-tab>
+              <v-tab v-for="tab of tabs" :key="tab.id" @click="init(tab.id)">{{ tab.text }}</v-tab>
             </v-tabs>
           </template>
           <v-card>
@@ -33,10 +31,23 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="12">
+                    <!-- Autocomplete Btag search -->
+                    <v-autocomplete
+                      v-if="isAddDialog"
+                      v-model="searchPlayerModel"
+                      append-icon="mdi-magnify"
+                      label="Search BattleTag"
+                      clearable
+                      placeholder=" "
+                      :items="searchedPlayers"
+                      :search-input.sync="search"
+                      @click:clear="resetPlayerSearch"
+                      autofocus
+                    ></v-autocomplete>
                     <v-text-field
+                      v-else
                       v-model="editedItem.battleTag"
                       label="BattleTag"
-                      autofocus
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
@@ -160,6 +171,14 @@ import { LocaleMessage } from "vue-i18n";
 export default class AdminBannedPlayers extends Vue {
   public gameModesEnumValues = this.translateGametypes();
   public tabsModel = 0;
+  public oldSearchTerm = "";
+  public searchPlayerModel = "";
+  public search = "";
+
+  public tabs = [
+    { text: "Active bans", id: 0 },
+    { text: "Inactive bans", id: 1}
+  ]
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: false, value: "battleTag" },
@@ -221,29 +240,24 @@ export default class AdminBannedPlayers extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  get currentTab(): number {
-    return this.tabsModel;
+  get isAddDialog() {
+    return this.editedIndex === -1;
   }
 
-  @Watch("currentTab")
-  onTabChanged(): void {
-    this.init(this.tabsModel);
+  get banValidationError(): string {
+    return this.$store.direct.state.admin.banValidationError;
   }
 
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init(this.tabsModel);
+  get isValidationError(): boolean {
+    return this.$store.direct.state.admin.banValidationError !== "";
   }
 
-  @Watch("dialog")
-  onDialogToggled(): void {
-    if (!this.dialog) {
-      this.$store.direct.dispatch.admin.resetBanValidationMessage();
-      this.resetDialog();
-    }
+  get searchedPlayers() {
+    return this.$store.direct.state.admin.searchedPlayers
+      .map(player => player.battleTag);
   }
 
-  private async init(tab: number) {
+  public async init(tab: number) {
     const active = tab === 0 ? true : false;
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers(active);
@@ -251,11 +265,8 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   public dialog = false;
-  public dialogNews = false;
-  public dialogTips = false;
   public dateMenu = false;
   public editedIndex = -1;
-  public date = "";
 
   public editedItem = {
     battleTag: "",
@@ -274,14 +285,9 @@ export default class AdminBannedPlayers extends Vue {
     banReason: "",
   };
 
-  editItem(item: BannedPlayer): void {
+  async editItem(item: BannedPlayer): Promise<void> {
     this.editedIndex = this.bannedPlayers.indexOf(item);
-
-    if (this.editedIndex === -1) {
-      this.editedItem = this.defaultItem;
-    } else {
-      this.editedItem = Object.assign({}, item);
-    }
+    this.editedItem = Object.assign({}, item);
     this.dialog = true;
   }
 
@@ -294,12 +300,30 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   formTitle(): string {
-    return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    return this.isAddDialog ? "New Item" : "Edit Item";
   }
 
   async save(): Promise<void> {
-    if (this.editedIndex > -1) {
+    if (this.isAddDialog) {
+      this.editedItem.battleTag = this.searchPlayerModel;
+      this.resetPlayerSearch();
+    }
+
+    const bTag = this.editedItem.battleTag.toLowerCase();
+    if (!this.isAddDialog) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
+    } else {
+      const playerIndexInBanList = this.bannedPlayers
+        .map(p => p.battleTag)
+        .indexOf(bTag)
+
+      // If you add a new ban, and the player doesn't already exist, push new entry to bannedPlayers list.
+      if (playerIndexInBanList == -1) {
+        this.bannedPlayers.push(this.editedItem);
+      // If you add a new ban, and the player is already banned, edit that entry.
+      } else {
+        Object.assign(this.bannedPlayers[playerIndexInBanList], this.editedItem);
+      }
     }
     await this.$store.direct.dispatch.admin.postBan(this.editedItem);
 
@@ -313,25 +337,42 @@ export default class AdminBannedPlayers extends Vue {
     this.resetDialog();
   }
 
-  resetDialog(): void {
-    if (this.editedIndex !== -1) {
-      this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
-    });
-    }
-  }
-
   async mounted(): Promise<void> {
     await this.init(this.tabsModel);
   }
 
-  get banValidationError(): string {
-    return this.$store.direct.state.admin.banValidationError;
+  resetDialog(): void {
+    this.$nextTick(() => {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+    });
   }
 
-  get isValidationError(): boolean {
-    return this.$store.direct.state.admin.banValidationError !== "";
+  resetPlayerSearch(): void {
+    this.oldSearchTerm = "";
+    this.searchPlayerModel = "";
+    this.$store.direct.dispatch.admin.clearSearch();
+  }
+
+  @Watch("dialog")
+  onDialogToggled(): void {
+    // Only trigger on dialog close, not dialog open
+    if (!this.dialog) {
+      this.$store.direct.dispatch.admin.resetBanValidationMessage();
+      this.resetDialog();
+    }
+  }
+
+  @Watch("search")
+  public async onSearchChanged(newValue: string): Promise<void> {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
+      await this.$store.direct.dispatch.admin.searchBnetTag({
+        searchText: newValue.toLowerCase(),
+      });
+      this.oldSearchTerm = newValue;
+    } else {
+      this.resetPlayerSearch();
+    }
   }
 }
 </script>
