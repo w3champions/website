@@ -1,154 +1,152 @@
 <template>
-  <div>
-    <v-tabs v-model="tabsModel">
-      <v-tabs-slider></v-tabs-slider>
-      <v-tab>Active Bans</v-tab>
-      <v-tab>Inactive Bans</v-tab>
-    </v-tabs>
-    <v-data-table
-      :headers="headers"
-      :items="bannedPlayers"
-      :items-per-page="-1"
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
-              >
-                {{ $t("views_admin.addplayer") }}
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle() }}</span>
-              </v-card-title>
+  <v-data-table
+    :headers="headers"
+    :items="bannedPlayers"
+    :items-per-page="-1"
+    class="elevation-1"
+  >
+    <template v-slot:top>
+      <v-toolbar flat color="transparent">
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              class="mb-2 w3-race-bg--text"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ $t("views_admin.addplayer") }}
+            </v-btn>
+            <v-tabs v-model="tabsModel">
+              <v-tabs-slider></v-tabs-slider>
+              <v-tab>Active Bans</v-tab>
+              <v-tab>Inactive Bans</v-tab>
+            </v-tabs>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle() }}</span>
+            </v-card-title>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="12">
-                      <v-text-field
-                        v-model="editedItem.battleTag"
-                        label="BattleTag"
-                        autofocus
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="12" md="12">
-                      <v-menu
-                        v-model="dateMenu"
-                        :close-on-content-click="false"
-                        min-width="290px"
-                      >
-                        <template #activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editedItem.endDate"
-                            readonly
-                            :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
-                          />
-                        </template>
-                        <v-date-picker
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="6" md="12">
+                    <v-text-field
+                      v-model="editedItem.battleTag"
+                      label="BattleTag"
+                      autofocus
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-menu
+                      v-model="dateMenu"
+                      :close-on-content-click="false"
+                      min-width="290px"
+                    >
+                      <template #activator="{ on, attrs }">
+                        <v-text-field
                           v-model="editedItem.endDate"
-                          no-title
-                          scrollable
+                          readonly
+                          :label="$t(`views_admin.banenddate`)"
+                          v-bind="attrs"
+                          v-on="on"
+                        />
+                      </template>
+                      <v-date-picker
+                        v-model="editedItem.endDate"
+                        no-title
+                        scrollable
+                      >
+                        <v-spacer />
+                        <v-btn
+                          text
+                          @click="
+                            editedItem.endDate = '';
+                            dateMenu = false;
+                          "
                         >
-                          <v-spacer />
-                          <v-btn
-                            text
-                            @click="
-                              editedItem.endDate = '';
-                              dateMenu = false;
-                            "
-                          >
-                            {{ $t(`views_admin.cancel`) }}
-                          </v-btn>
-                          <v-btn
-                            color="primary"
-                            class="w3-race-bg--text"
-                            @click="dateMenu = false"
-                          >
-                            {{ $t(`views_admin.ok`) }}
-                          </v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                    </v-col>
+                          {{ $t(`views_admin.cancel`) }}
+                        </v-btn>
+                        <v-btn
+                          color="primary"
+                          class="w3-race-bg--text"
+                          @click="dateMenu = false"
+                        >
+                          {{ $t(`views_admin.ok`) }}
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
 
-                    <v-col>
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-select
-                            v-on="on"
-                            v-model="editedItem.gameModes"
-                            :items="gameModesEnumValues"
-                            item-text="text"
-                            item-value="value"
-                            :menu-props="{ maxHeight: '400' }"
-                            :label="$t(`views_admin.gameMode`)"
-                            multiple
-                            hint="Which game modes to ban from?"
-                          ></v-select>
-                        </template>
-                        <span>
-                          To ban from all game modes, leave this field blank
-                        </span>
-                      </v-tooltip>
-                    </v-col>
+                  <v-col>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-select
+                          v-on="on"
+                          v-model="editedItem.gameModes"
+                          :items="gameModesEnumValues"
+                          item-text="text"
+                          item-value="value"
+                          :menu-props="{ maxHeight: '400' }"
+                          :label="$t(`views_admin.gameMode`)"
+                          multiple
+                          hint="Which game modes to ban from?"
+                        ></v-select>
+                      </template>
+                      <span>
+                        To ban from all game modes, leave this field blank
+                      </span>
+                    </v-tooltip>
+                  </v-col>
 
-                    <v-col cols="12" sm="6" md="12">
-                      <v-checkbox
-                        v-model="editedItem.isOnlyChatBan"
-                        :label="$t(`views_admin.onlybannedchat`)"
-                      />
-                    </v-col>
-                    <v-col cols="12" sm="12" md="12">
-                      <v-text-field
-                        v-model="editedItem.banReason"
-                        :label="$t(`views_admin.banreason`)"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
+                  <v-col cols="12" sm="6" md="12">
+                    <v-checkbox
+                      v-model="editedItem.isOnlyChatBan"
+                      :label="$t(`views_admin.onlybannedchat`)"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-text-field
+                      v-model="editedItem.banReason"
+                      :label="$t(`views_admin.banreason`)"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
 
-              <v-alert
-                v-model="isValidationError"
-                type="warning"
-                dense
-                class="ml-4 mr-4"
-              >
-                {{ banValidationError }}
-              </v-alert>
+            <v-alert
+              v-model="isValidationError"
+              type="warning"
+              dense
+              class="ml-4 mr-4"
+            >
+              {{ banValidationError }}
+            </v-alert>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn text @click="close">
-                  {{ $t(`views_admin.cancel`) }}
-                </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="save">
-                  {{ $t(`views_admin.save`) }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-      <template #[`item.gameModesText`]="{ item }">
-        <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
-      </template>
-      <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-      </template>
-    </v-data-table>
-  </div>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="close">
+                {{ $t(`views_admin.cancel`) }}
+              </v-btn>
+              <v-btn color="primary" class="w3-race-bg--text" @click="save">
+                {{ $t(`views_admin.save`) }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template #[`item.gameModesText`]="{ item }">
+      <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
+    </template>
+    <template #[`item.actions`]="{ item }">
+      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+    </template>
+  </v-data-table>
 </template>
 
 <script lang="ts">
