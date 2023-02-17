@@ -17,7 +17,7 @@ export default class MapsPerSeasonChart extends Vue {
 
   get mapNames() {
     return this.mapsPerSeason.map((m) =>
-      this.$t(`mapNames.${m.map}`).toString()
+      m.mapName ?? m.map
     );
   }
 
