@@ -11,7 +11,7 @@
       <template v-slot:body="{ items }">
         <tbody>
           <tr v-for="item in items" :key="item.map">
-            <td>{{ $t("mapNames." + item.map) }}</td>
+            <td>{{ item.mapName ?? item.map }}</td>
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
