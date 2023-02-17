@@ -237,6 +237,13 @@ export default class AdminBannedPlayers extends Vue {
     this.init(this.tabsModel);
   }
 
+  @Watch("dialog")
+  onDialogToggled(): void {
+    if (!this.dialog && this.editedIndex !== -1) {
+      this.resetDialog();
+    }
+  }
+
   private async init(tab: number) {
     const active = tab === 0 ? true : false;
     if (this.isAdmin) {
@@ -287,7 +294,7 @@ export default class AdminBannedPlayers extends Vue {
     await this.init(this.tabsModel);
   }
 
-  formTitle(): unknown {
+  formTitle(): string {
     return this.editedIndex === -1 ? "New Item" : "Edit Item";
   }
 
@@ -304,6 +311,10 @@ export default class AdminBannedPlayers extends Vue {
 
   close(): void {
     this.dialog = false;
+    this.resetDialog();
+  }
+
+  resetDialog(): void {
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
