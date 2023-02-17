@@ -42,7 +42,8 @@ export default class AdminService {
         "Content-Type": "application/json",
       },
     });
-    return response.ok ? "" : (await response.json()).error;
+
+    return response.ok ? "" : await response.json();
   }
 
   public async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {

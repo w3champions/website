@@ -37,6 +37,7 @@
                       <v-text-field
                         v-model="editedItem.battleTag"
                         label="BattleTag"
+                        autofocus
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="12" md="12">
@@ -116,6 +117,15 @@
                   </v-row>
                 </v-container>
               </v-card-text>
+
+              <v-alert
+                v-model="isValidationError"
+                type="warning"
+                dense
+                class="ml-4 mr-4"
+              >
+                {{ banValidationError }}
+              </v-alert>
 
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -284,12 +294,12 @@ export default class AdminBannedPlayers extends Vue {
   async save(): Promise<void> {
     if (this.editedIndex > -1) {
       Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
-    } else {
-      this.bannedPlayers.push(this.editedItem);
     }
     await this.$store.direct.dispatch.admin.postBan(this.editedItem);
 
-    this.close();
+    if (!this.isValidationError) {
+      this.close();
+    }
   }
 
   close(): void {
@@ -302,6 +312,14 @@ export default class AdminBannedPlayers extends Vue {
 
   async mounted(): Promise<void> {
     await this.init(this.tabsModel);
+  }
+
+  get banValidationError(): string {
+    return this.$store.direct.state.admin.banValidationError;
+  }
+
+  get isValidationError(): boolean {
+    return this.$store.direct.state.admin.banValidationError !== "";
   }
 }
 </script>

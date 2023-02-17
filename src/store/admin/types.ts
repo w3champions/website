@@ -14,6 +14,7 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+  banValidationError: string;
 };
 
 export type AdminPlayerManagementState = {
