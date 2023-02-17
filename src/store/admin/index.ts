@@ -65,6 +65,11 @@ const mod = {
       commit.SET_BAN_VALIDATION_ERROR(response);
     },
 
+    resetBanValidationMessage(context: ActionContext<AdminState, RootState>) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_BAN_VALIDATION_ERROR("");
+    },
+
     async deleteBan(
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer

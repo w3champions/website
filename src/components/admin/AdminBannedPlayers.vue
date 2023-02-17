@@ -239,7 +239,8 @@ export default class AdminBannedPlayers extends Vue {
 
   @Watch("dialog")
   onDialogToggled(): void {
-    if (!this.dialog && this.editedIndex !== -1) {
+    if (!this.dialog) {
+      this.$store.direct.dispatch.admin.resetBanValidationMessage();
       this.resetDialog();
     }
   }
@@ -315,10 +316,12 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   resetDialog(): void {
-    this.$nextTick(() => {
+    if (this.editedIndex !== -1) {
+      this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
     });
+    }
   }
 
   async mounted(): Promise<void> {
