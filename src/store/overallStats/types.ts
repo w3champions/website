@@ -121,6 +121,7 @@ export interface PopularGameHour {
 
 export interface MapCount {
   map: string;
+  mapName : string;
   count: number;
 }
 
