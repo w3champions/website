@@ -35,6 +35,7 @@ const data = {
       flosettings: "Flo Settings",
       stats: "Stats",
       smurfs: "Smurfs",
+      banSmurfs: "Ban smurfs",
     },
     views_gettingstarted: {
       manualwarning:

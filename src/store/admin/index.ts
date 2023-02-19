@@ -55,7 +55,7 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
       const response = await rootGetters.adminService.postBan(
         bannedPlayer,
