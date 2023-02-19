@@ -109,6 +109,7 @@ export interface PlayerScore {
   heroes: Hero[];
   heroScore: HeroScore;
   resourceScore: ResourceScore;
+  teamIndex: number;
 }
 
 export type OngoingMatches = Record<

@@ -1,4 +1,4 @@
-import { EGameMode } from "@/store/typings";
+import { EGameMode, PlayerScore } from "@/store/typings";
 import { moduleActionContext } from "..";
 import { MatchState, MatchStatus, Mmr } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
@@ -128,6 +128,10 @@ const mod = {
       commit.SET_PAGE(0);
       await dispatch.loadMatches(undefined);
     },
+    async setPlayerScores(context: ActionContext<MatchState, RootState>, playerScores: PlayerScore[]) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_PLAYER_SCORES(playerScores);
+    },
   },
   mutations: {
     SET_PAGE(state: MatchState, page: number) {
@@ -162,6 +166,9 @@ const mod = {
     },
     SET_SORT(state: MatchState, sort: string) {
       state.sort = sort;
+    },
+    SET_PLAYER_SCORES(state: MatchState, playerScores: PlayerScore[]) {
+      state.matchDetail.playerScores = playerScores;
     },
   },
 } as const;
