@@ -316,14 +316,21 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get playerScores() {
-    const playerScores = this.$store.direct.state.matches.matchDetail.playerScores;
-    const teams = this.$store.direct.state.matches.matchDetail.match.teams;
-    if(this.matchIsFFA()){
-        playerScores.forEach((playerScore, index) => {
-            playerScore.battleTag = teams[index].players[0].battleTag;
-        });
+    const {
+      playerScores,
+      match: { teams },
+    } = this.$store.direct.state.matches.matchDetail;
+    if (this.matchIsFFA()) {
+      const ffaMappedPlayerScores = playerScores.map((playerScore) => {
+        const battleTag = teams[playerScore.teamIndex].players[0].battleTag;
+        return {
+          ...playerScore,
+          battleTag,
+        };
+      });
+      this.$store.direct.dispatch.matches.setPlayerScores(ffaMappedPlayerScores);
+      return ffaMappedPlayerScores ?? [];
     }
-
     return playerScores ?? [];
   }
 
