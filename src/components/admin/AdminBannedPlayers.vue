@@ -124,7 +124,7 @@
                     <v-checkbox
                       v-if="isAddDialog"
                       v-model="banSmurfs"
-                      :label="$t(`views_admin.banSmurfs`)"
+                      :label="$t(`views_admin.bansmurfs`)"
                       @change="getSmurfs(banSmurfs)"
                     />
                   </v-col>
