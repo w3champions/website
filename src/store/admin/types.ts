@@ -14,6 +14,7 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+  banValidationError: string;
 };
 
 export type AdminPlayerManagementState = {
@@ -46,6 +47,7 @@ export interface BannedPlayer {
   gameModes: number[];
   isIpBan: boolean;
   banReason: string;
+  smurfs: string[];
 }
 
 export interface NavigationItem {

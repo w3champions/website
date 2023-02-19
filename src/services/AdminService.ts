@@ -17,8 +17,8 @@ import {
 } from "@/store/admin/types";
 
 export default class AdminService {
-  public async getBannedPlayers(): Promise<AdminState> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
+  public async getBannedPlayers(active: boolean): Promise<AdminState> {
+    const url = `${API_URL}api/admin/bannedPlayers?active=${active}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -42,7 +42,8 @@ export default class AdminService {
         "Content-Type": "application/json",
       },
     });
-    return response.ok ? "" : (await response.json()).error;
+
+    return response.ok ? "" : await response.json();
   }
 
   public async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {

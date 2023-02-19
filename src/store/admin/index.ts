@@ -18,7 +18,6 @@ import {
   GloballyMutedPlayer,
   GlobalMute,
 } from "./types";
-import moment from "moment";
 
 const mod = {
   namespaced: true,
@@ -38,22 +37,17 @@ const mod = {
     } as ProxySettings,
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
+    banValidationError: "",
   } as AdminState,
 
   actions: {
-    async loadBannedPlayers(context: ActionContext<AdminState, RootState>) {
+    async loadBannedPlayers(
+      context: ActionContext<AdminState, RootState>,
+      active: boolean
+    ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
-      const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
-      for (let i = 0; i < bannedPlayers.players.length; i++) {
-        const player = bannedPlayers.players[i];
-        const formattedDate = moment(
-          player.endDate,
-          "YYYY-MM-DD"
-        ).toISOString();
-        if (formattedDate) {
-          player.endDate = formattedDate.substr(0, 10);
-        }
-      }
+      const bannedPlayers = await rootGetters.adminService.getBannedPlayers(active);
+
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
 
@@ -61,22 +55,19 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.postBan(
+      const response = await rootGetters.adminService.postBan(
         bannedPlayer,
         rootState.oauth.token
       );
 
-      let filterPlayer = state.players.find(
-        (p: BannedPlayer) => p.battleTag === bannedPlayer.battleTag
-      );
+      commit.SET_BAN_VALIDATION_ERROR(response);
+    },
 
-      if (filterPlayer) {
-        filterPlayer = bannedPlayer;
-      } else {
-        commit.ADD_BANNED_PLAYER(bannedPlayer);
-      }
+    resetBanValidationMessage(context: ActionContext<AdminState, RootState>) {
+      const { commit } = moduleActionContext(context, mod);
+      commit.SET_BAN_VALIDATION_ERROR("");
     },
 
     async deleteBan(
@@ -241,8 +232,8 @@ const mod = {
     SET_BANNED_PLAYERS(state: AdminState, bannedPlayers: BannedPlayer[]) {
       state.players = bannedPlayers;
     },
-    ADD_BANNED_PLAYER(state: AdminState, bannedPlayer: BannedPlayer) {
-      state.players.push(bannedPlayer);
+    SET_BAN_VALIDATION_ERROR(state: AdminState, error: string) {
+      state.banValidationError = error;
     },
     SET_QUEUEDATA(state: AdminState, queuedata: QueueData[]) {
       state.queuedata = queuedata;

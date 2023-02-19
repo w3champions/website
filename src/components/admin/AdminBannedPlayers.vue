@@ -2,7 +2,8 @@
   <v-data-table
     :headers="headers"
     :items="bannedPlayers"
-    :items-per-page="-1"
+    :items-per-page="10"
+    :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -18,6 +19,9 @@
             >
               {{ $t("views_admin.addplayer") }}
             </v-btn>
+            <v-tabs v-model="tabsModel">
+              <v-tab v-for="tab of tabs" :key="tab.id" @click="loadBanList(tab.id)">{{ tab.text }}</v-tab>
+            </v-tabs>
           </template>
           <v-card>
             <v-card-title>
@@ -27,13 +31,27 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="12">
+                  <v-col cols="12" sm="6" md="12" class="pb-0">
+                    <!-- Autocomplete Btag search -->
+                    <v-autocomplete
+                      v-if="isAddDialog"
+                      v-model="searchPlayerModel"
+                      append-icon="mdi-magnify"
+                      label="Search BattleTag"
+                      clearable
+                      placeholder=" "
+                      :items="searchedPlayers"
+                      :search-input.sync="search"
+                      @click:clear="resetPlayerSearch"
+                      autofocus
+                    ></v-autocomplete>
                     <v-text-field
+                      v-else
                       v-model="editedItem.battleTag"
                       label="BattleTag"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="12" md="12">
+                  <v-col cols="12" sm="12" md="12" class="py-0">
                     <v-menu
                       v-model="dateMenu"
                       :close-on-content-click="false"
@@ -74,7 +92,7 @@
                     </v-menu>
                   </v-col>
 
-                  <v-col>
+                  <v-col class="py-0">
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <v-select
@@ -95,13 +113,30 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="12">
+                  <v-col cols="12" sm="6" md="12" class="py-0">
                     <v-checkbox
                       v-model="editedItem.isOnlyChatBan"
                       :label="$t(`views_admin.onlybannedchat`)"
                     />
                   </v-col>
-                  <v-col cols="12" sm="12" md="12">
+
+                  <v-col cols="12" sm="6" md="12" class="py-0">
+                    <v-checkbox
+                      v-if="isAddDialog"
+                      v-model="banSmurfs"
+                      :label="$t(`views_admin.banSmurfs`)"
+                      @change="getSmurfs(banSmurfs)"
+                    />
+                  </v-col>
+
+                  <v-col cols="12" sm="6" md="12" class="py-0">
+                    <div v-if="banSmurfs">
+                      <div>{{ hasSmurfs ? "The following battletags will be banned:" : "No smurfs found." }}</div>
+                      <div v-for="smurf in editedItem.smurfs" :key="smurf">{{ smurf }}</div>
+                    </div>
+                  </v-col>
+
+                  <v-col cols="12" sm="12" md="12" class="pb-0">
                     <v-text-field
                       v-model="editedItem.banReason"
                       :label="$t(`views_admin.banreason`)"
@@ -110,6 +145,15 @@
                 </v-row>
               </v-container>
             </v-card-text>
+
+            <v-alert
+              v-model="isValidationError"
+              type="warning"
+              dense
+              class="ml-4 mr-4"
+            >
+              {{ banValidationError }}
+            </v-alert>
 
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -144,6 +188,36 @@ import { LocaleMessage } from "vue-i18n";
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
   public gameModesEnumValues = this.translateGametypes();
+  public tabsModel = 0;
+  public oldSearchTerm = "";
+  public searchPlayerModel = "";
+  public search = "";
+  public banSmurfs = false;
+  public dialog = false;
+  public dateMenu = false;
+  public editedIndex = -1;
+
+  public async getSmurfs(checked: boolean) {
+    if (!checked) {
+      this.resetSmurfs();
+      return;
+    }
+
+    const bTag = this.searchPlayerModel;
+    if (bTag) {
+      const smurfs = await this.$store.direct.dispatch.admin.getAltsForPlayer(bTag);
+      this.editedItem.smurfs = smurfs.map((smurf) => smurf.toLowerCase());
+    }
+  }
+
+  get hasSmurfs() {
+    return this.editedItem.smurfs ? this.editedItem.smurfs.length > 0 : false;
+  }
+
+  public tabs = [
+    { text: "Active bans", id: 0 },
+    { text: "Inactive bans", id: 1 }
+  ];
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: false, value: "battleTag" },
@@ -205,23 +279,29 @@ export default class AdminBannedPlayers extends Vue {
     return this.$store.direct.state.oauth.isAdmin;
   }
 
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
+  get isAddDialog() {
+    return this.editedIndex === -1;
   }
 
-  private async init() {
+  get banValidationError(): string {
+    return this.$store.direct.state.admin.banValidationError;
+  }
+
+  get isValidationError(): boolean {
+    return this.$store.direct.state.admin.banValidationError !== "";
+  }
+
+  get searchedPlayers() {
+    return this.$store.direct.state.admin.searchedPlayers
+      .map((player) => player.battleTag);
+  }
+
+  public async loadBanList(tab: number) {
+    const active = tab === 0 ? true : false;
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadBannedPlayers();
+      await this.$store.direct.dispatch.admin.loadBannedPlayers(active);
     }
   }
-
-  public dialog = false;
-  public dialogNews = false;
-  public dialogTips = false;
-  public dateMenu = false;
-  public editedIndex = -1;
-  public date = "";
 
   public editedItem = {
     battleTag: "",
@@ -230,6 +310,7 @@ export default class AdminBannedPlayers extends Vue {
     gameModes: [] as number[],
     isIpBan: false,
     banReason: "",
+    smurfs: [] as string[],
   };
   public defaultItem = {
     battleTag: "",
@@ -238,16 +319,12 @@ export default class AdminBannedPlayers extends Vue {
     gameModes: [] as number[],
     isIpBan: false,
     banReason: "",
+    smurfs: [] as string[],
   };
 
   editItem(item: BannedPlayer): void {
     this.editedIndex = this.bannedPlayers.indexOf(item);
-
-    if (this.editedIndex === -1) {
-      this.editedItem = this.defaultItem;
-    } else {
-      this.editedItem = Object.assign({}, item);
-    }
+    this.editedItem = Object.assign({}, item);
     this.dialog = true;
   }
 
@@ -256,34 +333,84 @@ export default class AdminBannedPlayers extends Vue {
     confirm("Are you sure you want to delete this item?") &&
       this.bannedPlayers.splice(index, 1);
     await this.$store.direct.dispatch.admin.deleteBan(item);
-    await this.$store.direct.dispatch.admin.loadBannedPlayers();
+    await this.loadBanList(this.tabsModel);
   }
 
-  formTitle(): unknown {
-    return this.editedIndex === -1 ? "New Item" : "Edit Item";
+  formTitle(): string {
+    return this.isAddDialog ? "New Item" : "Edit Item";
   }
 
   async save(): Promise<void> {
-    if (this.editedIndex > -1) {
-      Object.assign(this.bannedPlayers[this.editedIndex], this.editedItem);
-    } else {
-      this.bannedPlayers.push(this.editedItem);
+    if (this.isAddDialog) {
+      this.editedItem.battleTag = this.searchPlayerModel;
     }
+
     await this.$store.direct.dispatch.admin.postBan(this.editedItem);
 
-    this.close();
+    if (!this.isValidationError) {
+      this.close();
+      await this.loadBanList(this.tabsModel);
+      if (this.isAddDialog) {
+        this.resetPlayerSearch();
+      }
+    }
   }
 
   close(): void {
     this.dialog = false;
-    this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
-    });
   }
 
   async mounted(): Promise<void> {
-    await this.init();
+    await this.loadBanList(this.tabsModel);
+  }
+
+  resetDialog(): void {
+    this.$nextTick(() => {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+      this.resetSmurfs();
+    });
+    this.resetPlayerSearch();
+  }
+
+  resetSmurfs(): void {
+    this.banSmurfs = false;
+    this.editedItem.smurfs = [];
+  }
+
+  resetPlayerSearch(): void {
+    this.oldSearchTerm = "";
+    this.searchPlayerModel = "";
+    this.$store.direct.dispatch.admin.clearSearch();
+  }
+
+  @Watch("dialog")
+  onDialogToggled(): void {
+    // Only trigger on dialog close, not dialog open
+    if (!this.dialog) {
+      this.$store.direct.dispatch.admin.resetBanValidationMessage();
+      this.resetDialog();
+    }
+  }
+
+  @Watch("search")
+  public async onSearchChanged(newValue: string): Promise<void> {
+    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
+      await this.$store.direct.dispatch.admin.searchBnetTag({
+        searchText: newValue.toLowerCase(),
+      });
+      this.oldSearchTerm = newValue;
+    } else {
+      this.resetPlayerSearch();
+    }
+  }
+
+  @Watch("searchPlayerModel")
+  public onSearchStringChanged(): void {
+    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
+    if (this.banSmurfs) {
+      this.resetSmurfs();
+    }
   }
 }
 </script>
