@@ -193,9 +193,15 @@ export default class AdminBannedPlayers extends Vue {
   public searchPlayerModel = "";
   public search = "";
   public banSmurfs = false;
+  public dialog = false;
+  public dateMenu = false;
+  public editedIndex = -1;
 
   public async getSmurfs(checked: boolean) {
-    if (!checked) return;
+    if (!checked) {
+      this.resetSmurfs();
+      return;
+    }
 
     const bTag = this.searchPlayerModel;
     if (bTag) {
@@ -297,10 +303,6 @@ export default class AdminBannedPlayers extends Vue {
     }
   }
 
-  public dialog = false;
-  public dateMenu = false;
-  public editedIndex = -1;
-
   public editedItem = {
     battleTag: "",
     endDate: "",
@@ -366,8 +368,14 @@ export default class AdminBannedPlayers extends Vue {
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
+      this.resetSmurfs();
     });
     this.resetPlayerSearch();
+  }
+
+  resetSmurfs(): void {
+    this.banSmurfs = false;
+    this.editedItem.smurfs = [];
   }
 
   resetPlayerSearch(): void {
@@ -394,6 +402,14 @@ export default class AdminBannedPlayers extends Vue {
       this.oldSearchTerm = newValue;
     } else {
       this.resetPlayerSearch();
+    }
+  }
+
+  @Watch("searchPlayerModel")
+  public onSearchStringChanged(): void {
+    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
+    if (this.banSmurfs) {
+      this.resetSmurfs();
     }
   }
 }
