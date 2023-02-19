@@ -2,7 +2,8 @@
   <v-data-table
     :headers="headers"
     :items="bannedPlayers"
-    :items-per-page="-1"
+    :items-per-page="10"
+    :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
     class="elevation-1"
   >
     <template v-slot:top>
