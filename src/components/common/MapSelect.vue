@@ -30,11 +30,12 @@
 import Vue from "vue";
 import { TranslateResult } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
+import { MapInfo } from "@/store/common/typings";
 
 @Component({})
 export default class MapSelect extends Vue {
   @Prop({ default: "Overall" }) map?: string;
-  @Prop({ default: [] }) mapKeys!: Array<string>;
+  @Prop({ default: [] }) mapInfo!: Array<MapInfo>;
 
   get selected(): string | TranslateResult {
     const match = this.maps.find((m) => m.key === this.map);
@@ -42,8 +43,8 @@ export default class MapSelect extends Vue {
   }
 
   get maps(): { mapName: TranslateResult; key: string }[] {
-    const maps = this.mapKeys
-      .map((key) => ({ mapName: this.$t(`mapNames.${key}`), key }))
+    const maps = this.mapInfo
+      .map((map) => ({ mapName: (map.mapName ?? map.map), key: map.map }))
       .sort((mapA, mapB) => {
         const nameA = mapA.mapName.toString().toUpperCase();
         const nameB = mapB.mapName.toString().toUpperCase();
