@@ -15,7 +15,7 @@
             ></game-mode-select>
             <map-select
               @mapChanged="mapChanged"
-              :mapKeys="maps"
+              :mapInfo="maps"
               :map="map"
             ></map-select>
             <mmr-select
@@ -117,15 +117,15 @@ export default class MatchesView extends Vue {
       (mapsByMode, matchesOnMapPerSeason) => {
         for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
           // just get the map name and ignore the count
-          const mapNames = modes.maps.map((m) => m.map);
+          const mapsInfos = modes.maps;
 
           if (!mapsByMode[modes.gameMode]) {
-            mapsByMode[modes.gameMode] = new Set(mapNames);
+            mapsByMode[modes.gameMode] = new Set(mapsInfos);
           } else {
             // combine this seasons mode maps with other seasons modes maps without dupes
             mapsByMode[modes.gameMode] = new Set([
               ...mapsByMode[modes.gameMode],
-              ...mapNames,
+              ...mapsInfos,
             ]);
           }
         }
