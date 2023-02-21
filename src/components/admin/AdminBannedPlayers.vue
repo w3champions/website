@@ -4,6 +4,8 @@
     :items="bannedPlayers"
     :items-per-page="10"
     :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
+    sort-by="banInsertDate"
+    :sort-desc="true"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -220,14 +222,16 @@ export default class AdminBannedPlayers extends Vue {
   ];
 
   public headers = [
-    { text: "BattleTag", align: "start", sortable: false, value: "battleTag" },
+    { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
     { text: "Ban End Date", value: "endDate", width: "8vw" },
-    { text: "Is only banned from chat?", value: "isOnlyChatBan" },
-    { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw" },
+    { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc" },
+    { text: "Is only banned from chat?", value: "isOnlyChatBan", width: "11vw" },
+    { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw" },
     { text: "Is IP banned?", value: "isIpBan" },
     { text: "Ban reason", value: "banReason" },
     { text: "Actions", value: "actions", sortable: false },
   ];
+
 
   public translateGametypes(): {
     text: LocaleMessage;
@@ -311,7 +315,9 @@ export default class AdminBannedPlayers extends Vue {
     isIpBan: false,
     banReason: "",
     smurfs: [] as string[],
+    banInsertDate: "",
   };
+
   public defaultItem = {
     battleTag: "",
     endDate: "",
@@ -320,6 +326,7 @@ export default class AdminBannedPlayers extends Vue {
     isIpBan: false,
     banReason: "",
     smurfs: [] as string[],
+    banInsertDate: "",
   };
 
   editItem(item: BannedPlayer): void {
