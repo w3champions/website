@@ -30,12 +30,12 @@
 import Vue from "vue";
 import { TranslateResult } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
-import { MapCount } from "@/store/overallStats/types";
+import { MapInfo } from "@/store/common/typings";
 
 @Component({})
 export default class MapSelect extends Vue {
   @Prop({ default: "Overall" }) map?: string;
-  @Prop({ default: [] }) mapInfo!: Array<MapCount>;
+  @Prop({ default: [] }) mapInfo!: Array<MapInfo>;
 
   get selected(): string | TranslateResult {
     const match = this.maps.find((m) => m.key === this.map);

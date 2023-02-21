@@ -117,7 +117,7 @@ export default class MatchesView extends Vue {
       (mapsByMode, matchesOnMapPerSeason) => {
         for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
           // just get the map name and ignore the count
-          const mapsInfos = modes.maps;
+          const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
 
           if (!mapsByMode[modes.gameMode]) {
             mapsByMode[modes.gameMode] = new Set(mapsInfos);

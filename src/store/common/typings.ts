@@ -4,3 +4,8 @@ export enum EChatScope {
   OBSERVERS = 2,
   PLAYER = 3,
 }
+
+export type MapInfo = {
+  readonly mapName: string;
+  readonly map: string
+}
