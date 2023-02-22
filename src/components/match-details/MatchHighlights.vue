@@ -53,7 +53,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({})
-export default class MatchHiglight extends Vue {
+export default class MatchHighlights extends Vue {
   @Prop() notColorWinner!: boolean;
   @Prop() experience!: number;
   @Prop() experienceOpponent!: number;
