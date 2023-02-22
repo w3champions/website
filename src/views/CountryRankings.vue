@@ -123,13 +123,15 @@ import {
 } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
 import { Countries } from "@/store/countries";
-import CountryFlag from "vue-country-flag";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+
+// Lazy load.
+const CountryFlag = () => import("vue-country-flag");
 
 @Component({
   components: {

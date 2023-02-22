@@ -18,7 +18,9 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { CountriesByCode } from "@/store/countries";
-import CountryFlag from "vue-country-flag";
+
+// Lazy load.
+const CountryFlag = () => import("vue-country-flag");
 
 @Component({ components: { CountryFlag } })
 export default class CountryFlagExtended extends Vue {
