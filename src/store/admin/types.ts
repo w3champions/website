@@ -48,6 +48,7 @@ export interface BannedPlayer {
   isIpBan: boolean;
   banReason: string;
   smurfs: string[];
+  banInsertDate: string;
 }
 
 export interface NavigationItem {
