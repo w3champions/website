@@ -25,12 +25,14 @@ import { Component } from "vue-property-decorator";
 import { EGameMode, Match, PlayerInTeam } from "@/store/typings";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import StreamedMatchInfo from "@/components/matches/StreamedMatchInfo.vue";
+import { useTwitchStore } from "@/store/twitch/store";
 
 @Component({
   components: { StreamedMatchInfo, TeamMatchInfo },
 })
 export default class TopOngoingMatchesWithStreams extends Vue {
   private matches: Match[] = [];
+  private twitchStore = useTwitchStore();
 
   async mounted() {
     await this.$store.direct.dispatch.matches.loadAllOngoingMatches(EGameMode.GM_1ON1);
@@ -44,10 +46,10 @@ export default class TopOngoingMatchesWithStreams extends Vue {
     );
 
     if (streamerNames.length > 0) {
-      await this.$store.direct.dispatch.twitch.getStreamStatus(streamerNames);
+      await this.twitchStore.getStreamStatus(streamerNames);
 
       const activeStreamers =
-        this.$store.direct.state.twitch.twitchStreamResponse.data.map(
+        this.twitchStore.twitchStreamResponse.data.map(
           (stream) => stream.user_name.toLowerCase()
         );
 

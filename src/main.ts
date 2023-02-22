@@ -7,10 +7,15 @@ import vueMoment from "vue-moment";
 import VueI18n from "vue-i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies-ts";
+import { createPinia, PiniaVuePlugin } from "pinia";
 
 Vue.use(VueCookies);
 Vue.use(vueMoment);
 Vue.use(VueI18n);
+// `Pinia` replaces `vuex` as store.
+// Only accessible after this initialisation!
+const pinia = createPinia();
+Vue.use(PiniaVuePlugin);
 
 Vue.config.productionTip = false;
 
@@ -52,5 +57,6 @@ new Vue({
   router,
   store: store.original,
   vuetify,
+  pinia,
   render: (h) => h(App),
 }).$mount("#app");
