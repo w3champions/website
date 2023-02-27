@@ -21,9 +21,6 @@
             >
               {{ $t("views_admin.addplayer") }}
             </v-btn>
-            <v-tabs v-model="tabsModel">
-              <v-tab v-for="tab of tabs" :key="tab.id" @click="loadBanList(tab.id)">{{ tab.text }}</v-tab>
-            </v-tabs>
           </template>
           <v-card>
             <v-card-title>
@@ -190,7 +187,6 @@ import { LocaleMessage } from "vue-i18n";
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
   public gameModesEnumValues = this.translateGametypes();
-  public tabsModel = 0;
   public oldSearchTerm = "";
   public searchPlayerModel = "";
   public search = "";
@@ -215,11 +211,6 @@ export default class AdminBannedPlayers extends Vue {
   get hasSmurfs() {
     return this.editedItem.smurfs ? this.editedItem.smurfs.length > 0 : false;
   }
-
-  public tabs = [
-    { text: "Active bans", id: 0 },
-    { text: "Inactive bans", id: 1 }
-  ];
 
   public headers = [
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
@@ -300,10 +291,9 @@ export default class AdminBannedPlayers extends Vue {
       .map((player) => player.battleTag);
   }
 
-  public async loadBanList(tab: number) {
-    const active = tab === 0 ? true : false;
+  public async loadBanList() {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadBannedPlayers(active);
+      await this.$store.direct.dispatch.admin.loadBannedPlayers();
     }
   }
 
@@ -339,7 +329,7 @@ export default class AdminBannedPlayers extends Vue {
     const index = this.bannedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
     await this.$store.direct.dispatch.admin.deleteBan(item);
-    await this.loadBanList(this.tabsModel);
+    await this.loadBanList();
   }
 
   formTitle(): string {
@@ -355,7 +345,7 @@ export default class AdminBannedPlayers extends Vue {
 
     if (!this.isValidationError) {
       this.close();
-      await this.loadBanList(this.tabsModel);
+      await this.loadBanList();
       if (this.isAddDialog) {
         this.resetPlayerSearch();
       }
@@ -367,7 +357,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   async mounted(): Promise<void> {
-    await this.loadBanList(this.tabsModel);
+    await this.loadBanList();
   }
 
   resetDialog(): void {

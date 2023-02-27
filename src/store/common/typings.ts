@@ -7,5 +7,5 @@ export enum EChatScope {
 
 export type MapInfo = {
   readonly mapName: string;
-  readonly map: string
-}
+  readonly map: string;
+};

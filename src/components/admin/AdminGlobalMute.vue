@@ -162,7 +162,6 @@ export default class AdminGlobalMute extends Vue {
   }
 
   async deleteItem(item: GloballyMutedPlayer): Promise<void> {
-    const index = this.globallyMutedPlayers.indexOf(item);
     confirm("Are you sure you want to delete this item?") &&
     await this.$store.direct.dispatch.admin.deleteGlobalMute(item);
     this.loadMutes();
