@@ -42,11 +42,10 @@ const mod = {
 
   actions: {
     async loadBannedPlayers(
-      context: ActionContext<AdminState, RootState>,
-      active: boolean
+      context: ActionContext<AdminState, RootState>
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
-      const bannedPlayers = await rootGetters.adminService.getBannedPlayers(active);
+      const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
 
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
