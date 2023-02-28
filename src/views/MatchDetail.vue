@@ -12,50 +12,27 @@
                   <br />
                   {{ $t(`views_matchdetail.season`) }}: {{ season }}
                 </v-card-subtitle>
-                <host-icon
-                  v-if="match.serverInfo && match.serverInfo.provider"
-                  :host="match.serverInfo"
-                  style="padding-right: 0px"
-                ></host-icon>
+                <host-icon v-if="match.serverInfo && match.serverInfo.provider" :host="match.serverInfo"
+                  style="padding-right: 0px"></host-icon>
               </v-col>
               <v-col cols="4" v-if="!matchIsFFA()">
-                <team-match-info
-                  :big-race-icon="true"
-                  :left="true"
-                  :team="match.teams[0]"
-                />
+                <team-match-info :big-race-icon="true" :left="true" :team="match.teams[0]" />
               </v-col>
-              <v-col cols="1" class="text-center" >
+              <v-col cols="1" class="text-center">
                 <span v-if="!matchIsFFA()">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
               <v-col v-if="!matchIsFFA()" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
               <v-col v-if="matchIsFFA()" cols="6">
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[0]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[1]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[2]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[3]"
-                />
+                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[0]" />
+                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[1]" />
+                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[2]" />
+                <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[3]" />
               </v-col>
               <v-col cols="1" />
               <div class="subicon">
-                <download-replay-icon :gameId="matchId"/>
+                <download-replay-icon :gameId="matchId" />
               </div>
             </v-row>
           </v-card-title>
@@ -72,73 +49,50 @@
             </v-card-subtitle>
           </v-card-title>
           <div v-if="isCompleteGame">
-            <match-detail-hero-row
-              v-for="(player, index) in scoresOfWinners"
-              v-bind:key="index"
-              :heroes-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroes : []
-              "
-              :heroes-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroes : []
-              "
-              :scores-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroScore : []
-              "
-              :scores-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroScore : []
-              "
-            />
+            <match-detail-hero-row v-for="(player, index) in scoresOfWinners" v-bind:key="index" :heroes-of-winner="
+              !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroes : []
+            " :heroes-of-looser="
+  !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroes : []
+" :scores-of-winner="
+  !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroScore : []
+" :scores-of-looser="
+  !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroScore : []
+" />
           </div>
-          <match-detail-hero-row
-            v-if="matchIsFFA() && isCompleteGame"
-            :not-color-winner="true"
+          <match-detail-hero-row v-if="matchIsFFA() && isCompleteGame" :not-color-winner="true"
             :heroes-of-winner="!!ffaLooser2?.heroes ? ffaLooser2?.heroes : []"
-            :heroes-of-looser="!!ffaLooser3?.heroes ? ffaLooser3?.heroes : []"
-            :scores-of-winner="
+            :heroes-of-looser="!!ffaLooser3?.heroes ? ffaLooser3?.heroes : []" :scores-of-winner="
               !!ffaLooser2?.heroScore ? ffaLooser2?.heroScore : []
-            "
-            :scores-of-looser="
-              !!ffaLooser3?.heroScore ? ffaLooser3?.heroScore : []
-            "
-          />
+            " :scores-of-looser="
+  !!ffaLooser3?.heroScore ? ffaLooser3?.heroScore : []
+" />
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
-          <v-row  v-if="isCompleteGame && !matchIsFFA()" class="justify-center">
+          <v-row v-if="isCompleteGame && !matchIsFFA()" class="justify-center">
             <v-col cols="5" class="mr-7">
-              <player-performance-on-match class="mt-4"
-                :unit-score="
-                  scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-scoure="
-                  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
-                "
-                :unit-score-opponent="
-                  scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-scoure-opponent="
-                  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
-                "
-                :left="true"
-              />
+              <player-performance-on-match class="mt-4" :unit-score="
+                scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
+              " :resource-scoure="
+  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
+" :unit-score-opponent="
+  scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
+" :resource-scoure-opponent="
+  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
+" :left="true" />
             </v-col>
             <v-col cols="5" class="ml-7">
-              <player-performance-on-match
-                :unit-score="
-                  scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-scoure="
-                  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
-                "
-                :unit-score-opponent="
-                  scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-scoure-opponent="
-                  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
-                "
-              />
+              <player-performance-on-match :unit-score="
+                scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
+              " :resource-scoure="
+  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
+" :unit-score-opponent="
+  scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
+" :resource-scoure-opponent="
+  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
+" />
             </v-col>
           </v-row>
           <v-row class="mb-3" v-if="isCompleteGame && matchIsFFA()">
@@ -318,11 +272,11 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   get playerScores() {
     const {
       playerScores,
-      match: { teams },
+      match,
     } = this.$store.direct.state.matches.matchDetail;
     if (this.matchIsFFA()) {
       const ffaMappedPlayerScores = playerScores.map((playerScore) => {
-        const battleTag = teams[playerScore.teamIndex].players[0].battleTag;
+        const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
         return {
           ...playerScore,
           battleTag,
