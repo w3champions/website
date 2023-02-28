@@ -49,6 +49,7 @@ export interface BannedPlayer {
   banReason: string;
   smurfs: string[];
   banInsertDate: string;
+  author: string;
 }
 
 export interface NavigationItem {

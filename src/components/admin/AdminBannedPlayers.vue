@@ -216,9 +216,10 @@ export default class AdminBannedPlayers extends Vue {
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
     { text: "Ban End Date", value: "endDate", width: "8vw" },
     { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc" },
-    { text: "Is only banned from chat?", value: "isOnlyChatBan", width: "11vw" },
+    { text: "Only chat ban", value: "isOnlyChatBan", width: "7vw" },
     { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw" },
-    { text: "Is IP banned?", value: "isIpBan" },
+    { text: "IP ban", value: "isIpBan", width: "5vw" },
+    { text: "Author", value: "author", width: "10vw" },
     { text: "Ban reason", value: "banReason" },
     { text: "Actions", value: "actions", sortable: false },
   ];
@@ -291,6 +292,10 @@ export default class AdminBannedPlayers extends Vue {
       .map((player) => player.battleTag);
   }
 
+  get author() {
+    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+  }
+
   public async loadBanList() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadBannedPlayers();
@@ -306,6 +311,7 @@ export default class AdminBannedPlayers extends Vue {
     banReason: "",
     smurfs: [] as string[],
     banInsertDate: "",
+    author: "",
   };
 
   public defaultItem = {
@@ -317,6 +323,7 @@ export default class AdminBannedPlayers extends Vue {
     banReason: "",
     smurfs: [] as string[],
     banInsertDate: "",
+    author: "",
   };
 
   editItem(item: BannedPlayer): void {
@@ -337,6 +344,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   async save(): Promise<void> {
+    this.editedItem.author = this.author;
     if (this.isAddDialog) {
       this.editedItem.battleTag = this.searchPlayerModel;
     }
