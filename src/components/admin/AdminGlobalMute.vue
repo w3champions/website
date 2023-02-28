@@ -59,7 +59,7 @@
                           v-on="on"
                         />
                       </template>
-                      <v-date-picker v-model="banExpiry" no-title scrollable>
+                      <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
                         <v-spacer />
                         <v-btn
                           text
