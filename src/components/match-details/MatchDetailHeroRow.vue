@@ -18,7 +18,7 @@
       />
     </v-col>
     <v-col cols="2">
-      <match-higlights
+      <match-highlights
         :left="true"
         :not-color-winner="notColorWinner"
         :experience="getDescription(scoresOfWinner.expGained)"
@@ -30,7 +30,7 @@
       />
     </v-col>
     <v-col cols="2">
-      <match-higlights
+      <match-highlights
         :not-color-winner="notColorWinner"
         :experience="getDescription(scoresOfLooser.expGained)"
         :hero-kills="getDescription(scoresOfLooser.heroesKilled)"
@@ -61,10 +61,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Hero, HeroScore } from "@/store/typings";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
-import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
+import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 
 @Component({
-  components: { MatchHiglights, HeroIcon },
+  components: { MatchHighlights, HeroIcon },
 })
 export default class MatchDetailHeroRow extends Vue {
   @Prop() public notColorWinner!: boolean;

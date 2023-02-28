@@ -186,7 +186,7 @@ import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import moment from "moment";
-import MatchHiglights from "@/components/match-details/MatchHiglights.vue";
+import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
@@ -201,7 +201,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
     MatchDetailHeroRow,
     PlayerPerformanceOnMatch,
     HeroIcon,
-    MatchHiglights,
+    MatchHighlights,
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
