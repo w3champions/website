@@ -2,7 +2,7 @@ import { Moment } from "moment";
 import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 
-export type OveralStatisticState = {
+export type OverallStatisticState = {
   gamesPerDay: GameDayPerMode[][];
   loadingGamesPerDayStats: boolean;
   playersPerDay: GameDay[];
