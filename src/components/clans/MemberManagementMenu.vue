@@ -32,37 +32,35 @@ export default class MemberManagementMenu extends Vue {
   @Prop() role!: EClanRole;
   @Prop() loggedInUserRole!: EClanRole;
 
-  public kickPlayer = {
-    name: "kick player",
-    action: async (): Promise<void> =>
-      await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag),
-  };
+  public async kickPlayer(): Promise<void> {
+      await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag);
+  }
 
-  public promoteToShaman = {
-    name: "promote to shaman",
-    action: async (): Promise<void> =>
-      await this.$store.direct.dispatch.clan.addShaman(this.battleTag),
-  };
-  public demoteShaman = {
-    name: "demote to member",
-    action: async (): Promise<void> =>
-      await this.$store.direct.dispatch.clan.removeShaman(this.battleTag),
-  };
+  public async promoteToShaman(): Promise<void> {
+    await this.$store.direct.dispatch.clan.addShaman(this.battleTag);
+  }
 
-  public makeChiefTain = {
-    name: "make chieftain",
-    action: async (): Promise<void> =>
-      await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag),
-  };
+  public async demoteShaman(): Promise<void> {
+    await this.$store.direct.dispatch.clan.removeShaman(this.battleTag);
+  }
+
+  public async makeChiefTain(): Promise<void> {
+    await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag);
+  }
 
   get actions(): Array<{ name: string; action: () => Promise<void> }> {
     switch (this.role) {
       case EClanRole.Member:
         switch (this.loggedInUserRole) {
           case EClanRole.Shaman:
-            return [this.kickPlayer];
+            return [
+              { name: "Kick Player", action: this.kickPlayer }
+            ];
           case EClanRole.ChiefTain:
-            return [this.promoteToShaman, this.kickPlayer];
+            return [
+              { name: "Promote To Shaman", action: this.promoteToShaman },
+              { name: "Kick Player", action: this.kickPlayer }
+            ];
           default:
             return [];
         }
@@ -71,7 +69,11 @@ export default class MemberManagementMenu extends Vue {
           case EClanRole.Shaman:
             return [];
           case EClanRole.ChiefTain:
-            return [this.demoteShaman, this.kickPlayer, this.makeChiefTain];
+            return [
+              { name: "Demote To Member", action: this.demoteShaman },
+              { name: "Kick Player", action: this.kickPlayer },
+              { name: "Make Chieftain", action: this.makeChiefTain }
+            ];
           default:
             return [];
         }
