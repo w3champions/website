@@ -74,7 +74,7 @@
               <span>{{ $_mapNameFromMatch(item) }}</span>
             </td>
             <td>
-              {{ item.startTime | moment($t("dateFormats.dateTime").toString()) }}
+              {{ getStartTime(item) }}
             </td>
             <td>
               <span class="number-text">{{ getDuration(item) }}</span>
@@ -215,6 +215,10 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
     const opponentTeams = match.teams.filter((x) => x != playerTeam);
 
     return opponentTeams;
+  }
+
+  public getStartTime(match: Match): string {
+    return moment(match.startTime).format(this.$t("dateFormats.dateTime").toString());
   }
 
   public getDuration(match: Match) {
