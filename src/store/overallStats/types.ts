@@ -54,7 +54,7 @@ export type MmrDistribution = {
   top2PercentIndex: number;
   top5PercentIndex: number;
   top10PercentIndex: number;
-  top25ercentIndex: number;
+  top25PercentIndex: number;
   top50PercentIndex: number;
   distributedMmrs: MmrCount[];
   standardDeviation: number;
