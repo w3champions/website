@@ -23,7 +23,6 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "pinia": "^2.0.32",
-    "register-service-worker": "^1.7.2",
     "tiptap": "^1.32.2",
     "tiptap-extensions": "^1.35.2",
     "vue": "^2.7.14",
