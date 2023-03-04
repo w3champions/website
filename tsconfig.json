@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "vuetify", "moment", "chart.js", "vue-moment", "lodash"],
+    "types": ["webpack-env", "vuetify", "moment", "chart.js", "lodash"],
     "paths": {
       "@/*": ["src/*"]
     },
