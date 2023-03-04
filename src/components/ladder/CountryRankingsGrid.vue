@@ -203,6 +203,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import { useTwitchStore } from "@/store/twitch/store";
 
 @Component({
   components: {
@@ -219,6 +220,8 @@ export default class CountryRankingsGrid extends Vue {
   @Prop() rankings!: CountryRanking[];
   @Prop() ongoingMatches!: OngoingMatches;
   @Prop() selectedCountry!: string;
+
+  private twitchStore = useTwitchStore();
 
   get headers() {
     return [
@@ -354,7 +357,7 @@ export default class CountryRankingsGrid extends Vue {
     );
 
     if (twitchNames.length > 0) {
-      await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
+      await this.twitchStore.getStreamStatus(twitchNames);
     }
   }
 
@@ -416,8 +419,7 @@ export default class CountryRankingsGrid extends Vue {
 
   isTwitchLive(ranking: Ranking): boolean {
     const twitchName = ranking.playersInfo[0].twitchName;
-    const streamData =
-      this.$store.direct.state.twitch.twitchStreamResponse.data;
+    const streamData = this.twitchStore.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
         const stream = streamData[i];

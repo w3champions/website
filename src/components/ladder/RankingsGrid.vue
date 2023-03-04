@@ -139,6 +139,7 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
 import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { useTwitchStore } from "@/store/twitch/store";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -164,6 +165,8 @@ export default class RankingsGrid extends Vue {
   @Prop() selectedRank!: Ranking;
 
   public gameModes = EGameMode;
+
+  private twitchStore = useTwitchStore();
 
   get headers() {
     return [
@@ -313,7 +316,7 @@ export default class RankingsGrid extends Vue {
       .flat())].filter((r) => (r && r.length > 0));
 
     if (twitchNames.length > 0) {
-      await this.$store.direct.dispatch.twitch.getStreamStatus(twitchNames);
+      await this.twitchStore.getStreamStatus(twitchNames);
     }
   }
 
@@ -391,8 +394,7 @@ export default class RankingsGrid extends Vue {
 
   public isTwitchLive(ranking: Ranking, index: number): boolean {
     const twitchName = ranking.playersInfo[index].twitchName;
-    const streamData =
-      this.$store.direct.state.twitch.twitchStreamResponse.data;
+    const streamData = this.twitchStore.twitchStreamResponse.data;
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
         const stream = streamData[i];

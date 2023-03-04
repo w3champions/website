@@ -9,7 +9,6 @@ import overallStatistics from "./overallStats/index";
 import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
-import twitch from "./twitch/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
 import infoMessages from "./admin/messages/index";
@@ -25,7 +24,6 @@ import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
 import ClanService from "@/services/ClanService";
-import TwitchService from "@/services/TwitchService";
 import AdminService from "@/services/AdminService";
 import MapService from "@/services/MapsService";
 import TournamentsService from "@/services/TournamentsService";
@@ -44,7 +42,6 @@ const services = {
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
   clanService: new ClanService(),
-  twitchService: new TwitchService(),
   adminService: new AdminService(),
   mapsService: new MapService(),
   tournamentsService: new TournamentsService(),
@@ -62,7 +59,6 @@ const mod = {
     oauth,
     personalSettings,
     clan,
-    twitch,
     admin,
     tournaments,
     infoMessages,
@@ -124,9 +120,6 @@ const mod = {
     },
     clanService() {
       return services.clanService;
-    },
-    twitchService() {
-      return services.twitchService;
     },
     adminService() {
       return services.adminService;
