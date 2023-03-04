@@ -8,7 +8,6 @@ import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
-import Admin from "@/views/Admin.vue";
 import GettingStarted from "@/views/GettingStarted.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";
@@ -174,7 +173,7 @@ const routes = [
   {
     path: "/AdminOnlyView",
     name: "Admin",
-    component: Admin,
+    component: () => import(/* webpackChunkName: "admin-view" */ "@/views/Admin.vue"),
   },
   {
     path: "/tournaments",
