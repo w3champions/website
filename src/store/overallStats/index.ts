@@ -6,7 +6,7 @@ import {
   HeroPick,
   MatchesOnMapPerSeason,
   MmrDistribution,
-  OveralStatisticState,
+  OverallStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
   PopularGameHour,
@@ -64,9 +64,9 @@ const mod = {
         race: ERaceEnum.TOTAL,
       },
     ] as HeroPick[],
-  } as OveralStatisticState,
+  } as OverallStatisticState,
   actions: {
-    async loadGamesPerDayStatistics(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadGamesPerDayStatistics(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_GAMES_PER_DAY(true);
@@ -76,14 +76,14 @@ const mod = {
       commit.SET_GAMES_PER_DAY(games);
       commit.SET_LOADING_GAMES_PER_DAY(false);
     },
-    async loadMapsPerSeason(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadMapsPerSeason(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const games = await rootGetters.statisticService.retrieveMapsPerSeason();
 
       commit.SET_MAPS_PER_SEASON(games);
     },
-    async loadPlayersPerDayStatistics(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadPlayersPerDayStatistics(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PLAYERS_PER_DAY(true);
@@ -98,7 +98,7 @@ const mod = {
       commit.SET_PLAYERS_PER_DAY(playersPerDay);
       commit.SET_LOADING_PLAYERS_PER_DAY(false);
     },
-    async loadMapAndRaceStatistics(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadMapAndRaceStatistics(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_MAP_AND_RACE_STATS(true);
@@ -108,28 +108,28 @@ const mod = {
       commit.SET_MAP_AND_RACE_STATS(stats);
       commit.SET_LOADING_MAP_AND_RACE_STATS(false);
     },
-    async loadGameLengthStatistics(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadGameLengthStatistics(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrieveGameTimes();
 
       commit.SET_GAME_LENGTH_STATS(stats);
     },
-    async loadPlayedHeroes(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadPlayedHeroes(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrievePlayedHeroes();
 
       commit.SET_PLAYED_HEROES(stats);
     },
-    async loadpopularGameHours(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadpopularGameHours(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrievePopularGameHours();
 
       commit.SET_POPULAR_GAME_HOURS(stats);
     },
-    async loadHeroWinrates(context: ActionContext<OveralStatisticState, RootState>) {
+    async loadHeroWinrates(context: ActionContext<OverallStatisticState, RootState>) {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       const stats = await rootGetters.statisticService.retrieveHeroWinrates(
@@ -144,7 +144,7 @@ const mod = {
       commit.SET_HERO_WINRATES(stats);
     },
     async loadMmrDistribution(
-      context: ActionContext<OveralStatisticState, RootState>,
+      context: ActionContext<OverallStatisticState, RootState>,
       payload: SeasonGameModeGateWayForMMR
     ) {
       const { commit, rootGetters } = moduleActionContext(context, mod);
@@ -159,43 +159,43 @@ const mod = {
     },
   },
   mutations: {
-    SET_LOADING_GAMES_PER_DAY(state: OveralStatisticState, loading: boolean) {
+    SET_LOADING_GAMES_PER_DAY(state: OverallStatisticState, loading: boolean) {
       state.loadingGamesPerDayStats = loading;
     },
-    SET_GAMES_PER_DAY(state: OveralStatisticState, games: GameDayPerMode[][]) {
+    SET_GAMES_PER_DAY(state: OverallStatisticState, games: GameDayPerMode[][]) {
       state.gamesPerDay = games;
     },
-    SET_MAPS_PER_SEASON(state: OveralStatisticState, games: MatchesOnMapPerSeason[]) {
+    SET_MAPS_PER_SEASON(state: OverallStatisticState, games: MatchesOnMapPerSeason[]) {
       state.matchesOnMapPerSeason = games;
     },
-    SET_LOADING_PLAYERS_PER_DAY(state: OveralStatisticState, loading: boolean) {
+    SET_LOADING_PLAYERS_PER_DAY(state: OverallStatisticState, loading: boolean) {
       state.loadingPlayersPerDayStats = loading;
     },
-    SET_PLAYERS_PER_DAY(state: OveralStatisticState, games: GameDay[]) {
+    SET_PLAYERS_PER_DAY(state: OverallStatisticState, games: GameDay[]) {
       state.playersPerDay = games;
     },
-    SET_LOADING_MAP_AND_RACE_STATS(state: OveralStatisticState, loading: boolean) {
+    SET_LOADING_MAP_AND_RACE_STATS(state: OverallStatisticState, loading: boolean) {
       state.loadingMapAndRaceStats = loading;
     },
-    SET_MAP_AND_RACE_STATS(state: OveralStatisticState, stats: StatsPerWinrate[]) {
+    SET_MAP_AND_RACE_STATS(state: OverallStatisticState, stats: StatsPerWinrate[]) {
       state.statsPerMapAndRace = stats;
     },
-    SET_GAME_LENGTH_STATS(state: OveralStatisticState, stats: GameLength[]) {
+    SET_GAME_LENGTH_STATS(state: OverallStatisticState, stats: GameLength[]) {
       state.gameLengths = stats;
     },
-    SET_POPULAR_GAME_HOURS(state: OveralStatisticState, stats: PopularGameHour[]) {
+    SET_POPULAR_GAME_HOURS(state: OverallStatisticState, stats: PopularGameHour[]) {
       state.popularGameHours = stats;
     },
-    SET_PLAYED_HEROES(state: OveralStatisticState, playedHeroes: PlayedHeroByMode[]) {
+    SET_PLAYED_HEROES(state: OverallStatisticState, playedHeroes: PlayedHeroByMode[]) {
       state.playedHeroes = playedHeroes;
     },
-    SET_HERO_WINRATES(state: OveralStatisticState, winLoss: WinLoss) {
+    SET_HERO_WINRATES(state: OverallStatisticState, winLoss: WinLoss) {
       state.heroWinrate = winLoss;
     },
-    SET_MMR_DISTRIBUTION(state: OveralStatisticState, mmrDistribution: MmrDistribution) {
+    SET_MMR_DISTRIBUTION(state: OverallStatisticState, mmrDistribution: MmrDistribution) {
       state.mmrDistribution = mmrDistribution;
     },
-    SET_HIRO_PICK(state: OveralStatisticState, pick: { index: number; heroPick: HeroPick }) {
+    SET_HIRO_PICK(state: OverallStatisticState, pick: { index: number; heroPick: HeroPick }) {
       const newPicks = [...state.heroPicks];
       newPicks[pick.index] = pick.heroPick;
       state.heroPicks = newPicks;
