@@ -30,9 +30,7 @@
                 <v-card-title>
                   {{ newsItem.date }}
                 </v-card-title>
-                <vue-markdown>
-                  {{ newsItem.message }}
-                </vue-markdown>
+                <div v-html="convertMarkdownToHTML(newsItem.message)"></div>
               </v-carousel-item>
             </v-carousel>
           </v-card-text>
@@ -153,8 +151,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { marked } from "marked";
 import { Ranking } from "@/store/ranking/types";
-import VueMarkdown from "vue-markdown";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
@@ -168,7 +166,6 @@ import { EGameMode } from "@/store/typings";
 @Component({
   components: {
     TopOngoingMatchesWithStreams,
-    VueMarkdown,
     SocialBox,
     SupportBox,
     PartnerBox,
@@ -198,6 +195,10 @@ export default class HomeView extends Vue {
     this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;
     this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_2ON2)[0].maps;
     this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id == EGameMode.GM_4ON4)[0].maps;
+  }
+
+  public convertMarkdownToHTML(input: string): string {
+    return marked(input);
   }
 
   public goToSetupPage(): void {
