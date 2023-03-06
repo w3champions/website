@@ -195,6 +195,7 @@ import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
+import { formatSecondsToDuration } from "@/helpers/date-functions";
 
 @Component({
   components: {
@@ -235,19 +236,8 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
     return [this.ffaWinner, ...this.ffaLoosers];
   }
 
-  get matchDuration() {
-    const format =
-      this.match.durationInSeconds <= 3600
-        ? this.$t("dateFormats.timeShort")
-        : this.$t("dateFormats.timeLong");
-    return moment
-      .utc(
-        moment
-          .duration(this.match.durationInSeconds, "seconds")
-          .asMilliseconds()
-      )
-      .format(format.toString())
-      .toString();
+  get matchDuration(): string {
+    return formatSecondsToDuration(this.match.durationInSeconds);
   }
 
   get playedDate() {
