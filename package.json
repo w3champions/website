@@ -5,9 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
     "serve:prod": "yarn run build:prod && http-server ./dist",
-    "build:prod": "vue-cli-service build",
-    "lint": "vue-cli-service lint --no-fix",
-    "lint:fix": "vue-cli-service lint",
+    "build:prod": "yarn run generate-locales && rimraf ./dist && vue-cli-service build",
+    "lint": "eslint --no-fix src/",
+    "lint:fix": "eslint src/",
     "format": "node_modules/.bin/prettier --write .",
     "generate-locales": "npx ts-node scripts/generate-locales.ts",
     "sass-migrate": "sass-migrator division **/*.scss"
@@ -46,7 +46,6 @@
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
     "@vue/cli-plugin-typescript": "~5.0.8",
     "@vue/cli-service": "~5.0.8",

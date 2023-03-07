@@ -1,7 +1,10 @@
+/* eslint-env node */
 /** @type {import('eslint').Linter.Config} */ // This provides type hints for the configuration options below.
 module.exports = {
   root: true,
   env: {
+    browser: true,
+    es2022: true,
     node: true,
   },
   //plugins: [
@@ -19,10 +22,6 @@ module.exports = {
     // "@vue/prettier/@typescript-eslint",
     "plugin:lodash/recommended",
   ],
-  parser: "vue-eslint-parser",
-  parserOptions: {
-    ecmaVersion: 2020,
-  },
   rules: {
     // "prettier/prettier": "warn",
     "semi": "off",
@@ -40,11 +39,11 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    camelcase: "off",
     "prefer-const": "warn",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-loss-of-precision": "off",
     "@typescript-eslint/explicit-module-boundary-types":"off",
-    camelcase: "off",
     "vue/no-v-text-v-html-on-component": "warn",
     "vue/valid-v-slot": ["error", {
       allowModifiers: true,
@@ -55,5 +54,13 @@ module.exports = {
     "lodash/prefer-lodash-typecheck": "off",
     "lodash/prefer-matches": "off",
     "lodash/prop-shorthand": "off",
+    "prettier/prettier": "off",
   },
+  overrides: [
+    {
+      files: [
+        'src/**/*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}'
+      ],
+    }
+  ],
 };
