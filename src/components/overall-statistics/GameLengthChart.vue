@@ -9,6 +9,7 @@ import moment from "moment";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData } from "chart.js";
 import Vue from "vue";
+import { formatSecondsToDuration } from "@/helpers/date-functions";
 
 @Component({
   components: { BarChart },
@@ -22,12 +23,8 @@ export default class GameLengthChart extends Vue {
     return times;
   }
 
-  get passedTime() {
-    return this.getTrimmedTimes().map((g) =>
-      moment
-        .utc(moment.duration(g.passedTimeInSeconds, "seconds").asMilliseconds())
-        .format("mm:ss")
-    );
+  get passedTime(): string[] {
+    return this.getTrimmedTimes().map((g) => formatSecondsToDuration(g.passedTimeInSeconds));
   }
 
   get gamesCount() {

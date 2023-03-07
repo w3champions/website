@@ -2,8 +2,6 @@ const en = {
   dateFormats: {
     date: "DD-MMM-YYYY",
     dateTime: "DD-MMM-YYYY HH:mm",
-    timeShort: "mm:ss",
-    timeLong: "H:mm:ss",
   },
 
   races: {

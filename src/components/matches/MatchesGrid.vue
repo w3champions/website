@@ -109,6 +109,7 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
+import { formatSecondsToDuration } from "@/helpers/date-functions";
 
 @Component({
   components: {
@@ -221,17 +222,11 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
     return moment(match.startTime).format(this.$t("dateFormats.dateTime").toString());
   }
 
-  public getDuration(match: Match) {
+  public getDuration(match: Match): string {
     if (this.unfinished) {
-      return this.$t("matchStatuses.onGoing");
+      return this.$t("matchStatuses.onGoing").toString();
     }
-
-    const format = match.durationInSeconds <= 3600 ? this.$t("dateFormats.timeShort") : this.$t("dateFormats.timeLong");
-
-    return moment
-      .utc(moment.duration(match.durationInSeconds, "seconds").asMilliseconds())
-      .format(format.toString())
-      .toString();
+    return formatSecondsToDuration(match.durationInSeconds);
   }
 
   showReplayDownload(item: Match): boolean {
