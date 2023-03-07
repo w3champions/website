@@ -19,7 +19,7 @@ export default class LocaleIcon extends Vue {
   @Prop({ default: true }) showTwoLetterCode!: boolean;
 
   flag(): string {
-    return require(`../../assets/localeFlags/${this.locale}.svg`);
+    return `../../assets/localeFlags/${this.locale}.svg`;
   }
 }
 </script>

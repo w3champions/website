@@ -86,7 +86,7 @@ export default class SupportBox extends Vue {
   }
 
   button(button: string): string {
-    return require(`@/assets/socials/${button}_button.png`);
+    return "todo" + button;
   }
 
   get alternates(): string[] {
