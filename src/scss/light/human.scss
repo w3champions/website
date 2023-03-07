@@ -5,11 +5,11 @@
 .theme--light.v-application {
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 
-  @font-face {
-    * {
-      font-family: "Friz Quadrata Std Bold";
-    }
-  }
+  //@font-face {
+  //  * {
+  //    font-family: "Friz Quadrata Std Bold";
+  //  }
+  //}
 
   background: url(./assets/backgrounds/human.jpg) no-repeat !important;
   background-attachment: fixed !important;
