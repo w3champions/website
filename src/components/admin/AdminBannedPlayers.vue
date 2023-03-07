@@ -6,10 +6,19 @@
     :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
     sort-by="banInsertDate"
     :sort-desc="true"
+    :search="tableSearch"
     class="elevation-1"
   >
+
     <template v-slot:top>
       <v-toolbar flat color="transparent">
+        <template>
+            <v-text-field 
+              v-model="tableSearch" 
+              label="Search ban" 
+              prepend-icon="mdi-magnify"
+            ></v-text-field>
+          </template>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
@@ -194,6 +203,7 @@ export default class AdminBannedPlayers extends Vue {
   public dialog = false;
   public dateMenu = false;
   public editedIndex = -1;
+  public tableSearch = "";
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {
