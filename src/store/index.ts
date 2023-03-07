@@ -12,7 +12,6 @@ import clan from "./clan/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
 import infoMessages from "./admin/messages/index";
-import globalSearch from "./globalSearch";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
@@ -30,7 +29,6 @@ import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
 import InfoMessageService from "@/services/InfoMessageService";
-import GlobalSearchService from "@/services/GlobalSearchService";
 
 Vue.use(Vuex);
 
@@ -47,7 +45,6 @@ const services = {
   tournamentsService: new TournamentsService(),
   localeService: new LocaleService(),
   infoMessageService: new InfoMessageService(),
-  globalSearchService: new GlobalSearchService(),
 };
 
 const mod = {
@@ -62,7 +59,6 @@ const mod = {
     admin,
     tournaments,
     infoMessages,
-    globalSearch,
   },
   state: {
     darkMode: false,
@@ -135,9 +131,6 @@ const mod = {
     },
     infoMessageService() {
       return services.infoMessageService;
-    },
-    globalSearchService() {
-      return services.globalSearchService;
     },
   },
 } as const;

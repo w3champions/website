@@ -67,6 +67,7 @@ import { debounce } from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
+import { useGlobalSearchStore } from "@/store/globalSearch/store";
 
 @Component({
   components: {
@@ -80,8 +81,8 @@ export default class GlobalSearch extends Vue {
   public menuOpened = false;
 
   private static SEARCH_DELAY = 500;
-
   private debouncedSearch = debounce(this.dispatchSearch, GlobalSearch.SEARCH_DELAY);
+  private globalSearchStore = useGlobalSearchStore();
 
   // Handler when selecting a player from the list
   @Watch("searchModel")
@@ -98,7 +99,7 @@ export default class GlobalSearch extends Vue {
     this.menuOpened = false;
 
     // Reset the global search state
-    this.$store.direct.dispatch.globalSearch.clearSearch();
+    this.globalSearchStore.clearSearch();
     this.searchModel = {} as PlayerSearchData;
   }
 
@@ -108,7 +109,7 @@ export default class GlobalSearch extends Vue {
   }
 
   private dispatchSearch(append = false) {
-    this.$store.direct.dispatch.globalSearch.search({ searchText: this.search, append });
+    this.globalSearchStore.search({ searchText: this.search, append });
   }
 
   private searchChangeHandler(append = false) {
@@ -116,7 +117,7 @@ export default class GlobalSearch extends Vue {
       this.isLoading = true;
       this.debouncedSearch(append);
     } else {
-      this.$store.direct.dispatch.globalSearch.clearSearch();
+      this.globalSearchStore.clearSearch();
       this.isLoading = false;
       // Prevent previous calls from executing
       this.debouncedSearch.clear();
@@ -148,11 +149,11 @@ export default class GlobalSearch extends Vue {
   }
 
   get players(): PlayerSearchData[] {
-    return this.$store.direct.state.globalSearch.players;
+    return this.globalSearchStore.players;
   }
 
   get allowAppend(): boolean {
-    return this.$store.direct.state.globalSearch.hasMore;
+    return this.globalSearchStore.hasMore;
   }
 
   @Watch("players")
