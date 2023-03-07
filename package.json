@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --mode development",
+    "dev": "vite",
     "serve:prod": "yarn run build:prod && http-server ./dist",
-    "build:prod": "yarn run generate-locales && rimraf ./dist && vue-cli-service build",
+    "build:prod": "vite build",
     "lint": "eslint --no-fix src/",
-    "lint:fix": "eslint src/",
+    "lint:fix": "eslint --fix src/",
     "format": "node_modules/.bin/prettier --write .",
     "generate-locales": "npx ts-node scripts/generate-locales.ts",
     "sass-migrate": "sass-migrator division **/*.scss"
@@ -45,10 +45,8 @@
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
-    "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-router": "~5.0.8",
-    "@vue/cli-plugin-typescript": "~5.0.8",
-    "@vue/cli-service": "~5.0.8",
+    "@vitejs/plugin-legacy": "^3.0.2",
+    "@vitejs/plugin-vue2": "^2.2.0",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.2",
     "babel-runtime": "^6.26.0",
@@ -66,12 +64,13 @@
     "prettier": "^2.8.1",
     "rimraf": "^3.0.2",
     "sass": "~1.32.13",
-    "sass-loader": "^13.2.0",
     "sass-migrator": "^1.7.2",
+    "terser": "^5.16.1",
     "ts-node": "^10.9.1",
     "typescript": "~4.9.4",
+    "unplugin-vue-components": "^0.24.1",
+    "vite": "^4.1.4",
     "vue-cli-plugin-vuetify": "~2.5.8",
-    "vue-template-compiler": "^2.7.14",
-    "vuetify-loader": "^1.7.3"
+    "vuetify-loader": "^1.9.2"
   }
 }
