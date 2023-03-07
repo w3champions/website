@@ -34,4 +34,16 @@ export default defineConfig({
         },
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
+    css: {
+        // https://vitejs.dev/config/#css-preprocessoroptions
+        preprocessorOptions: {
+            sass: {
+                additionalData: [
+                    // vuetify variable overrides
+                    '@import "@/scss/variables.scss"',
+                    '',
+                ].join('\n'),
+            },
+        },
+    },
 })
