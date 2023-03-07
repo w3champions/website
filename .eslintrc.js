@@ -1,3 +1,4 @@
+/** @type {import('eslint').Linter.Config} */ // This provides type hints for the configuration options below.
 module.exports = {
   root: true,
   env: {

@@ -6,6 +6,7 @@ function getPublicPath() {
   return "SITE_CDN_URL";
 }
 
+/** @type {import('@vue/cli-service').ProjectOptions} */ // This provides type hints for the configuration options below.
 module.exports = {
   transpileDependencies: ["vuetify"],
   productionSourceMap: false,
