@@ -224,14 +224,14 @@ export default class AdminBannedPlayers extends Vue {
 
   public headers = [
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
-    { text: "Ban End Date", value: "endDate", width: "8vw" },
-    { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc" },
-    { text: "Only chat ban", value: "isOnlyChatBan", width: "7vw" },
-    { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw" },
-    { text: "IP ban", value: "isIpBan", width: "5vw" },
-    { text: "Author", value: "author", width: "10vw" },
-    { text: "Ban reason", value: "banReason" },
-    { text: "Actions", value: "actions", sortable: false },
+    { text: "Ban End Date", value: "endDate", width: "8vw", filterable: false },
+    { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
+    { text: "Only chat ban", value: "isOnlyChatBan", width: "7vw", filterable: false },
+    { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw", filterable: false },
+    { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
+    { text: "Author", value: "author", width: "10vw", filterable: false },
+    { text: "Ban reason", value: "banReason", filterable: false },
+    { text: "Actions", value: "actions", sortable: false, filterable: false },
   ];
 
 
