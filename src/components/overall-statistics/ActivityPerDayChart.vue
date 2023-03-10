@@ -68,6 +68,7 @@ export default class ActivityPerDayChart extends Vue {
       EGameMode.GM_4ON4_AT,
       EGameMode.GM_LEGION_4v4_X20_AT,
       EGameMode.GM_LTW_1ON1,
+      EGameMode.GM_LTW_FFA,
       EGameMode.GM_FROSTCRAFT_4ON4,
       EGameMode.GM_DOTA_5ON5_AT,
     ];
