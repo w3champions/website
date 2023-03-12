@@ -1,6 +1,5 @@
-import { EGameMode, ERaceEnum, Match } from "../typings";
+import { EGameMode, ERaceEnum, Match, timestampString } from "../typings";
 import { Season, Gateways, PlayerId } from "@/store/ranking/types";
-import { Moment } from "moment";
 
 export type PlayerState = {
   isInitialized: boolean;
@@ -121,7 +120,7 @@ export interface PlayerStatsHeroOnMapVersusRace {
 export type MmrRpAtDate = {
   mmr: number;
   rp: number;
-  date: Moment;
+  date: timestampString;
 };
 
 export type PlayerMmrRpTimeline = {

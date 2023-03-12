@@ -2,6 +2,7 @@
 import { Component, Prop, Mixins } from "vue-property-decorator";
 import { Line, mixins } from "vue-chartjs";
 import { ChartData, TimeUnit } from "chart.js";
+import "chartjs-adapter-date-fns";
 
 @Component({
   mixins: [mixins.reactiveProp],
@@ -48,7 +49,7 @@ export default class LineChart extends Mixins(Line) {
             // Cast prevents a bug
             unit: "day" as TimeUnit,
             displayFormats: {
-              day: "MMM DD, YYYY",
+              day: "MMM dd, yyyy",
             },
           },
         },

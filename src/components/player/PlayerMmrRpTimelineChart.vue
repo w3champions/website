@@ -10,10 +10,10 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import moment from "moment";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
+import { parseJSON } from "date-fns";
 
 @Component({
   components: { LineChart },
@@ -29,12 +29,9 @@ export default class PlayerMmrRpTimelineChart extends Vue {
     return this.mmrRpTimeline.mmrRpAtDates.map((m) => m.rp);
   }
 
-  get Dates(): string[] {
-    return this.mmrRpTimeline.mmrRpAtDates.map((m) =>
-      // utcOffset(0) prevents dates from moving into the next day
-      // due to timezone conversion
-      moment(m.date).utcOffset(0).format("MMM DD, YYYY")
-    );
+  get Dates(): Date[] {
+    // TODO? moment: utcOffset(0) prevents dates from moving into the next day due to timezone conversion
+    return this.mmrRpTimeline.mmrRpAtDates.map((m) => parseJSON(m.date));
   }
 
   get YAxesSettings() {

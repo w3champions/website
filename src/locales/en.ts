@@ -1,9 +1,4 @@
 const en = {
-  dateFormats: {
-    date: "DD-MMM-YYYY",
-    dateTime: "DD-MMM-YYYY HH:mm",
-  },
-
   races: {
     ORC: "Orc",
     HUMAN: "Human",

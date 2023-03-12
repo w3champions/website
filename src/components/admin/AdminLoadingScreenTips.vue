@@ -62,7 +62,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import moment from "moment";
+import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/messages/types";
 
 @Component({ components: {} })
@@ -149,7 +149,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   async saveTips(): Promise<void> {
     this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
-    this.editedTipItem.creationDate = moment().format("MMMM Do YYYY, h:mm:ss a");
+    this.editedTipItem.creationDate = format(new Date(), "MMMM do yyyy, h:mm:ss a");
 
     if (await this.$store.direct.dispatch.infoMessages.editTip(this.editedTipItem)) {
       this.dialogTips = false;

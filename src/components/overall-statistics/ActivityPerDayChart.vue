@@ -4,11 +4,11 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { GameDayPerMode } from "@/store/overallStats/types";
-import moment from "moment";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
 import { EGameMode } from "@/store/typings";
+import { parseJSON } from "date-fns";
 
 @Component({
   components: { LineChart },
@@ -17,11 +17,11 @@ export default class ActivityPerDayChart extends Vue {
   @Prop() public gameDays!: GameDayPerMode[];
   @Prop() public selectedGameMode!: EGameMode;
 
-  get gameDayDates() {
-    return this.allSet.gameDays.map((g) => moment(g.date).format("LL"));
+  get gameDayDates(): Date[] {
+    return this.allSet.gameDays.map((g) => parseJSON(g.date));
   }
 
-  get allSet() {
+  get allSet(): GameDayPerMode {
     return this.gameDays.filter((g) => g.gameMode == EGameMode.GM_1ON1)[0];
   }
 
@@ -49,7 +49,7 @@ export default class ActivityPerDayChart extends Vue {
             data: c.gameDays
               .map((g) => {
                 return {
-                  x: moment(g.date).format("LL"),
+                  x: parseJSON(g.date),
                   y: g.gamesPlayed * this.multiplier(c.gameMode),
                 };
               })
