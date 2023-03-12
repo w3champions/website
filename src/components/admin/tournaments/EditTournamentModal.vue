@@ -1,7 +1,7 @@
 <template>
   <v-card class="edit-tournament-modal">
     <v-card-title>
-      <span class="headline">{{ isEdit ? "Edit" : "Create" }} Tournament</span>
+      <span class="text-h5">{{ isEdit ? "Edit" : "Create" }} Tournament</span>
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
