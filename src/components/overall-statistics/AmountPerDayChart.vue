@@ -1,5 +1,5 @@
 <template>
-  <line-chart :chart-data="gameHourChartData" />
+  <line-chart :chart-data="chartData" />
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
@@ -23,16 +23,18 @@ export default class AmountPerDayChart extends Vue {
     return this.gameDays.map((g) => g.gamesPlayed);
   }
 
-  get gameHourChartData(): ChartData {
+  get chartData(): ChartData {
     return {
       labels: this.gameDayDates,
       datasets: [
         {
           label: this.$t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
           data: this.gameDayCounts,
+          fill: true,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
+          borderWidth: 1.5,
+          tension: 0.4, // Smooth line.
         },
       ],
     };

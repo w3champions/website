@@ -4,7 +4,7 @@
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
-import { ChartData } from "chart.js";
+import { ChartData, ChartOptions } from "chart.js";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
@@ -33,37 +33,37 @@ export default class PlayedHeroesChart extends Vue {
 
   get orderedHeroes(): PlayedHeroExtra[] {
     return _
-      .chain(this.playedHeroes)
-      .map((hero) => {
-        const race = HERO_DATA[hero.icon].race;
-        const color = RACE_COLORS[race];
-        return {
-          ...hero,
-          race,
-          color,
-        };
-      })
-      .orderBy(["race", "count", "icon"], ["asc", "desc", "asc"])
-      .groupBy("race")
-      .mapValues((heroes, race) => {
-        // Compute percentages within the race
-        const groupTotalCount = _.sumBy(heroes, "count");
-        const newHeroesData: PlayedHeroExtra[] = _.map(heroes, (hero) => ({
-          ...hero,
-          icon: this.$t("heroNames." + hero.icon).toString(),
-          count: _.round((hero.count / groupTotalCount) * 100, 1),
-        }));
+        .chain(this.playedHeroes)
+        .map((hero) => {
+          const race = HERO_DATA[hero.icon].race;
+          const color = RACE_COLORS[race];
+          return {
+            ...hero,
+            race,
+            color,
+          };
+        })
+        .orderBy([ "race", "count", "icon" ], [ "asc", "desc", "asc" ])
+        .groupBy("race")
+        .mapValues((heroes, race) => {
+          // Compute percentages within the race
+          const groupTotalCount = _.sumBy(heroes, "count");
+          const newHeroesData: PlayedHeroExtra[] = _.map(heroes, (hero) => ({
+            ...hero,
+            icon: this.$t("heroNames." + hero.icon).toString(),
+            count: _.round(hero.count / groupTotalCount * 100, 1),
+          }));
 
-        // Add empty data point between races
-        if (+race !== ERaceEnum.RANDOM) {
-          newHeroesData.unshift({ icon: "", count: 0, race: ERaceEnum.RANDOM, color: "" });
-        }
+          // Add empty data point between races
+          if (+race !== ERaceEnum.RANDOM) {
+            newHeroesData.unshift({ icon: "", count: 0, race: ERaceEnum.RANDOM, color: "" });
+          }
 
-        return newHeroesData;
-      })
-      .toArray()
-      .flatten()
-      .value();
+          return newHeroesData;
+        })
+        .toArray()
+        .flatten()
+        .value();
   }
 
   get chartData(): ChartData {
@@ -79,32 +79,34 @@ export default class PlayedHeroesChart extends Vue {
     };
   }
 
-  get chartOptions() {
+  get chartOptions(): ChartOptions {
     return {
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        displayColors: false,
-        callbacks: {
-          label: (tooltipItem: { xLabel: string; yLabel: string }) => (
-            `${tooltipItem.xLabel} - ${tooltipItem.yLabel}%`
-          ),
-          title: () => "",
+      plugins: {
+        legend: {
+          display: false,
         },
-      },
-      maintainAspectRatio: false,
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              callback: function (value: number) {
-                return value + "%";
-              },
+        tooltip: {
+          displayColors: false,
+          callbacks: {
+            label: (tooltipItem: { label: string; formattedValue: string }) => {
+              return `${tooltipItem.label} - ${tooltipItem.formattedValue}%`;
+            },
+            title: () => {
+              return "";
             },
           },
-        ],
+        },
+      },
+      maintainAspectRatio: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: (value) => {
+              return value + "%";
+            },
+          },
+        },
       },
     };
   }

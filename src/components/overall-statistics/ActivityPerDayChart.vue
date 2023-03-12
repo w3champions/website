@@ -25,7 +25,7 @@ export default class ActivityPerDayChart extends Vue {
     return this.gameDays.filter((g) => g.gameMode == EGameMode.GM_1ON1)[0];
   }
 
-  get gameHourChartData(): ChartData {
+  get gameHourChartData(): ChartData<"line", unknown> {
     return {
       labels: this.gameDayDates,
       datasets: this.gameDays
@@ -54,9 +54,11 @@ export default class ActivityPerDayChart extends Vue {
                 };
               })
               .splice(0, c.gameDays.length - 1),
+            fill: true,
             backgroundColor: "rgba(126,126,126,0.08)",
             borderColor: this.mapColor(c.gameMode),
             borderWidth: 1.5,
+            tension: 0.4, // Smooth line.
           };
         }),
     };

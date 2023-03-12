@@ -1,95 +1,75 @@
+<template>
+  <line-chart-generic
+      :data="chartData"
+      :options="chartOptions"
+  />
+</template>
+
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
-import { Line, mixins } from "vue-chartjs";
-import { ChartData, TimeUnit } from "chart.js";
+import { Chart as ChartJS, ChartOptions } from "chart.js/auto";
+import chartJSPluginAnnotation from "chartjs-plugin-annotation";
+import { Line as LineChartGeneric } from "vue-chartjs";
 import "chartjs-adapter-date-fns";
 
-@Component({
-  mixins: [mixins.reactiveProp],
-})
-export default class LineChart extends Mixins(Line) {
-  @Prop() public chartData!: ChartData;
-  @Prop() public customYAxes?: {
-    ticks: {
-      beginAtZero: true;
-    };
-  }[];
+ChartJS.register(chartJSPluginAnnotation);
 
-  private options = {
-    legend: {
-      display: true,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const defaultOptionsXAxis: any = {
+  type: "time",
+  time: {
+    unit: "day",
+    tooltipFormat: "MMM dd, yyyy",
+    displayFormats: {
+      day: "MMM dd, yyyy",
     },
-    tooltips: {
-      custom: function (tooltip: { displayColors: boolean }) {
-        if (!tooltip) return;
-        tooltip.displayColors = false;
+  },
+};
+
+export const defaultOptions = (): ChartOptions => {
+  return {
+    plugins: {
+      legend: {
+        display: true,
       },
-      callbacks: {
-        label: function (tooltipItem: { xLabel: string; yLabel: string }) {
-          return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
-        },
-        title: function () {
-          return "";
+      tooltip: {
+        bodyAlign: "center",
+        displayColors: false,
+        // mode: "index",
+        position: "nearest",
+        callbacks: {
+          label: (tooltipItem: { label: string; formattedValue: string }) => {
+            return `${tooltipItem.label} - ${tooltipItem.formattedValue}`;
+          },
+          title: () => {
+            return "";
+          },
         },
       },
     },
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-      xAxes: [
-        {
-          type: "time",
-          time: {
-            // Cast prevents a bug
-            unit: "day" as TimeUnit,
-            displayFormats: {
-              day: "MMM dd, yyyy",
-            },
-          },
-        },
-      ],
+      y: { beginAtZero: true },
+      x: defaultOptionsXAxis,
     },
     elements: {
       point: {
-        radius: 1,
+        radius: 2,
       },
     },
   };
+};
 
-  mounted() {
-    // For each line in graph, create gradient backgroundColor
-    if (this.chartData.datasets) {
-      const canv = document.getElementById("line-chart") as HTMLCanvasElement;
-      for (let _i = 0; _i < this.chartData.datasets.length; _i++) {
-        const color = this.chartData.datasets[_i]?.borderColor as string;
-        if (color) {
-          const gradient = canv
-            .getContext("2d")
-            ?.createLinearGradient(0, 0, 0, canv.height);
-          // regex takes "(X,X,X" from color string
-          // e.g. "rgb(23, 21, 42)" -> "(23, 21, 42"
-          // this will be assembled to full string e.g. "rgba(23, 21, 42, 0.5)"
-          const regex = /\((\d*,\s?){2}\d*/g;
-          gradient?.addColorStop(0.1, "rgba" + color.match(regex) + ", 0.75)");
-          gradient?.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.50)");
-          gradient?.addColorStop(0.6, "rgba" + color.match(regex) + ", 0.25)");
-          gradient?.addColorStop(0.85, "rgba" + color.match(regex) + ", 0.0)");
-          this.chartData.datasets[_i].backgroundColor = gradient;
-        }
-      }
-    }
-    if (this.customYAxes !== undefined) {
-      this.options.scales.yAxes = this.customYAxes;
-    }
-    if (this.chartData) {
-      this.renderChart(this.chartData, this.options);
-    }
+export default {
+  name: "LineChart",
+  components: { LineChartGeneric },
+  props: {
+    chartData: {
+      type: Object,
+    },
+    chartOptions: {
+      type: Object,
+      default: defaultOptions,
+    },
   }
-}
+};
 </script>

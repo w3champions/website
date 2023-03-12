@@ -1,69 +1,59 @@
+<template>
+  <bar-chart-generic
+      :data="chartData"
+      :options="chartOptions"
+  />
+</template>
+
 <script lang="ts">
-import { Component, Prop, Mixins, Watch } from "vue-property-decorator";
-import { Bar, mixins } from "vue-chartjs";
-import { ChartData, ChartOptions } from "chart.js";
-import chartjsPluginAnnotation from "chartjs-plugin-annotation";
+import { Chart as ChartJS, ChartOptions } from "chart.js/auto";
+import chartJSPluginAnnotation from "chartjs-plugin-annotation";
+import { Bar as BarChartGeneric } from "vue-chartjs";
 
-@Component({
-  mixins: [mixins.reactiveProp],
-})
-export default class BarChart extends Mixins(Bar) {
-  @Prop() public chartOptions: ChartOptions | undefined;
-  @Prop() public chartData!: ChartData;
+ChartJS.register(chartJSPluginAnnotation);
 
-  get options() {
-    return this.chartOptions ?? this.defaultOptions;
-  }
-
-  //default options
-  private defaultOptions: ChartOptions = {
-    legend: {
-      display: true,
-    },
-    tooltips: {
-      bodyAlign: "center",
-      custom: function (tooltip: { displayColors: boolean }) {
-        if (!tooltip) return;
-        tooltip.displayColors = false;
+const defaultOptions = (): ChartOptions => {
+  return {
+    plugins: {
+      legend: {
+        display: true,
       },
-      callbacks: {
-        label: function (tooltipItem: { xLabel: string; yLabel: string }) {
-          return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
-        },
-        title: function () {
-          return "";
+      tooltip: {
+        bodyAlign: "center",
+        displayColors: false,
+        callbacks: {
+          label: (tooltipItem: { label: string; formattedValue: string }) => {
+            return `${tooltipItem.label} - ${tooltipItem.formattedValue}`;
+          },
+          title: () => {
+            return "";
+          },
         },
       },
     },
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-      xAxes: [
-        {
-          ticks: {
-            reverse: false,
-          },
-        },
-      ],
+      y: { beginAtZero: true },
+      x: { reverse: false },
     },
   };
+};
 
-  mounted() {
-    if (this.chartData) {
-      this.addPlugin([chartjsPluginAnnotation]);
-      this.renderChart(this.chartData, this.options);
-    }
-  }
-
-  @Watch("chartOptions", { deep: true })
-  onOptionsChanged(newOptions: ChartOptions) {
-    if (this.chartData) this.renderChart(this.chartData, newOptions);
-  }
-}
+export default {
+  name: "BarChart",
+  components: { BarChartGeneric },
+  props: {
+    chartData: {
+      type: Object,
+    },
+    chartOptions: {
+      type: Object,
+      default: defaultOptions,
+    },
+    // datasetIdKey: {
+    //   type: String,
+    //   default: "label",
+    // },
+  },
+};
 </script>
