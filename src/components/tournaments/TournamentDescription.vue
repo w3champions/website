@@ -41,10 +41,10 @@
 import { ETournamentState, ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { format } from "date-fns";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/maps/types";
 import { ERaceEnum } from "@/store/typings";
+import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
 @Component
 export default class TournamentDescription extends Vue {
@@ -55,8 +55,8 @@ export default class TournamentDescription extends Vue {
     return EGatewayLabel[this.tournament.gateway];
   }
 
-  get formattedDate() {
-    return format(this.tournament.startDateTime, "yyyy-MM-dd p");
+  get formattedDate(): string {
+    return formatDateToDateWeekday(this.tournament.startDateTime);
   }
 
   get gameMode() {

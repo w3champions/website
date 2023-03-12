@@ -104,12 +104,15 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from "vue-property-decorator";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/typings";
-import moment from "moment";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
-import { formatSecondsToDuration } from "@/helpers/date-functions";
+import {
+  formatSecondsToDuration,
+  formatTimestampStringToDateTime,
+  formatTimestampStringToUnixTime
+} from "@/helpers/date-functions";
 
 @Component({
   components: {
@@ -219,7 +222,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   }
 
   public getStartTime(match: Match): string {
-    return moment(match.startTime).format(this.$t("dateFormats.dateTime").toString());
+    return formatTimestampStringToDateTime(match.startTime);
   }
 
   public getDuration(match: Match): string {
@@ -231,7 +234,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
 
   showReplayDownload(item: Match): boolean {
     // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
-    return !this.unfinished && moment(item.endTime).unix() > 1664471820 ? true : false;
+    return !this.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
   }
 
   get headers() {

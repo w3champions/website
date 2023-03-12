@@ -6,7 +6,6 @@ import { Component, Prop } from "vue-property-decorator";
 
 import { PopularGameHour } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
-import moment from "moment";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import Vue from "vue";
 
@@ -25,16 +24,9 @@ export default class PopularGameTimeChart extends Vue {
     return times;
   }
 
-  get passedTime() {
+  get gameStartHour(): string[] {
     return this.getTrimmedTimes().map((g) =>
-      moment
-        .utc(
-          moment
-            .duration(g.hours, "hours")
-            .add(moment.duration(g.minutes, "minutes"))
-            .asMilliseconds()
-        )
-        .format("HH:mm")
+      g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
     );
   }
 
@@ -61,7 +53,7 @@ export default class PopularGameTimeChart extends Vue {
 
   get gameHourChartData(): ChartData {
     return {
-      labels: this.passedTime,
+      labels: this.gameStartHour,
       datasets: [
         {
           label: String(

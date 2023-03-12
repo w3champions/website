@@ -28,8 +28,8 @@
 import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { format } from "date-fns";
 import { TournamentStateLabel } from "@/helpers/tournaments";
+import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
 @Component
 export default class TournamentsTable extends Vue {
@@ -67,8 +67,8 @@ export default class TournamentsTable extends Vue {
     this.$emit("click:row", item);
   }
 
-  public formatDate(tournament: ITournament) {
-    return format(tournament.startDateTime, "yyyy-MM-dd p");
+  public formatDate(tournament: ITournament): string {
+    return formatDateToDateWeekday(tournament.startDateTime);
   }
 
   public getStateDescription(tournament: ITournament) {

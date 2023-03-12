@@ -4,10 +4,10 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { GameDay } from "@/store/overallStats/types";
-import moment from "moment";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 import { ChartData } from "chart.js";
+import { parseJSON } from "date-fns";
 
 @Component({
   components: { LineChart },
@@ -15,11 +15,11 @@ import { ChartData } from "chart.js";
 export default class AmountPerDayChart extends Vue {
   @Prop() public gameDays!: GameDay[];
 
-  get gameDayDates() {
-    return this.gameDays.map((g) => moment(g.date).format("LL"));
+  get gameDayDates(): Date[] {
+    return this.gameDays.map((g) => parseJSON(g.date));
   }
 
-  get gameDayCounts() {
+  get gameDayCounts(): number[] {
     return this.gameDays.map((g) => g.gamesPlayed);
   }
 
@@ -28,11 +28,7 @@ export default class AmountPerDayChart extends Vue {
       labels: this.gameDayDates,
       datasets: [
         {
-          label: String(
-            this.$t(
-              "components_overall-statistics_tabs_playeractivitytab.playersperday"
-            )
-          ),
+          label: this.$t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
           data: this.gameDayCounts,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",

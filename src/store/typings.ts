@@ -1,5 +1,6 @@
-import { Moment } from "moment";
 import { Gateways } from "./ranking/types";
+
+export type timestampString = string;
 
 export type RootState = {
   darkMode: boolean;
@@ -39,8 +40,8 @@ export type Match = {
   id: number;
   durationInSeconds: number;
   number: number;
-  startTime: Moment;
-  endTime: Moment;
+  startTime: timestampString;
+  endTime: timestampString;
   gameMode: EGameMode;
   teams: Team[];
   gateWay: number;

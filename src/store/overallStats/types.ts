@@ -1,5 +1,4 @@
-import { Moment } from "moment";
-import { EGameMode, EPick, ERaceEnum } from "@/store/typings";
+import { EGameMode, EPick, ERaceEnum, timestampString } from "@/store/typings";
 import { Gateways } from "@/store/ranking/types";
 
 export type OverallStatisticState = {
@@ -34,7 +33,7 @@ export interface PlayedHero {
 }
 
 export type GameDay = {
-  date: Moment;
+  date: timestampString;
   gamesPlayed: number;
   id: string;
 };
@@ -61,7 +60,7 @@ export type MmrDistribution = {
 };
 
 export type PlayersPerDay = {
-  date: Moment;
+  date: timestampString;
   distinctPlayers: number;
 };
 

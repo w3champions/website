@@ -185,7 +185,6 @@
 import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-import moment from "moment";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
@@ -195,7 +194,7 @@ import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
-import { formatSecondsToDuration } from "@/helpers/date-functions";
+import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
 
 @Component({
   components: {
@@ -240,10 +239,8 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
     return formatSecondsToDuration(this.match.durationInSeconds);
   }
 
-  get playedDate() {
-    return moment(this.match.startTime).format(
-      this.$t("dateFormats.date").toString()
-    );
+  get playedDate(): string {
+    return formatTimestampStringToDate(this.match.startTime);
   }
 
   get match() {
