@@ -8,12 +8,13 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
 import { PlayerMmrRpTimeline } from "@/store/player/types";
+import { ChartData } from "chart.js";
+import { parseJSON, startOfDay } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import { Component, Prop } from "vue-property-decorator";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
-import { ChartData } from "chart.js";
-import { parseJSON } from "date-fns";
 
 @Component({
   components: { LineChart },
@@ -30,8 +31,8 @@ export default class PlayerMmrRpTimelineChart extends Vue {
   }
 
   get Dates(): Date[] {
-    // TODO? moment: utcOffset(0) prevents dates from moving into the next day due to timezone conversion
-    return this.mmrRpTimeline.mmrRpAtDates.map((m) => parseJSON(m.date));
+    // Workaround: prevent dates from moving into the next day due to timezone conversion.
+    return this.mmrRpTimeline.mmrRpAtDates.map((m) => startOfDay(utcToZonedTime(parseJSON(m.date), "UTC")));
   }
 
   get YAxesSettings() {
