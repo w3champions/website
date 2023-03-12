@@ -9,8 +9,7 @@
 </template>
 <script lang="ts">
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import { ChartData } from "chart.js";
-import { ChartOptions } from "chart.js/auto";
+import { ChartData , ChartOptions } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { Component, Prop } from "vue-property-decorator";

@@ -6,15 +6,33 @@
 </template>
 
 <script lang="ts">
-import { Chart as ChartJS, ChartOptions } from "chart.js/auto";
+import {
+  Chart as ChartJS,
+  ChartOptions,
+  Filler,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  ScaleOptions,
+  TimeScale,
+  Tooltip,
+} from "chart.js";
+import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
 import { Line as LineChartGeneric } from "vue-chartjs";
-import "chartjs-adapter-date-fns";
 
+ChartJS.register(LineController);
+ChartJS.register(LineElement);
+ChartJS.register(PointElement);
+ChartJS.register(TimeScale);
+ChartJS.register(LinearScale);
+ChartJS.register(Filler);
+ChartJS.register(Tooltip);
 ChartJS.register(chartJSPluginAnnotation);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const defaultOptionsXAxis: any = {
+export const defaultOptionsXAxis: ScaleOptions<"time"> = {
   type: "time",
   time: {
     unit: "day",
