@@ -17,6 +17,7 @@ import {
   ScaleOptions,
   TimeScale,
   Tooltip,
+  Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
@@ -30,6 +31,7 @@ ChartJS.register(LinearScale);
 ChartJS.register(Filler);
 ChartJS.register(Tooltip);
 ChartJS.register(chartJSPluginAnnotation);
+ChartJS.register(Legend);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultOptionsXAxis: ScaleOptions<"time"> = {
