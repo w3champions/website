@@ -3,17 +3,17 @@
     <line-chart
       ref="chart"
       :chart-data="mmrRpChartData"
-      :custom-y-axes="YAxesSettings"
+      :chart-options="chartOptions"
     />
   </div>
 </template>
 <script lang="ts">
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import { ChartData } from "chart.js";
+import { ChartData , ChartOptions } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { Component, Prop } from "vue-property-decorator";
-import LineChart from "@/components/overall-statistics/LineChart.vue";
+import LineChart, { defaultOptions, defaultOptionsXAxis } from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 
 @Component({
@@ -35,30 +35,28 @@ export default class PlayerMmrRpTimelineChart extends Vue {
     return this.mmrRpTimeline.mmrRpAtDates.map((m) => startOfDay(utcToZonedTime(parseJSON(m.date), "UTC")));
   }
 
-  get YAxesSettings() {
-    return [
-      {
-        id: "y-axis-0",
-        ticks: {
+  get chartOptions(): ChartOptions {
+    const options: ChartOptions = {
+      scales: {
+        x: defaultOptionsXAxis,
+        y: {
           beginAtZero: false,
+          title: {
+            display: true,
+            text: "MMR",
+          },
         },
-        scaleLabel: {
-          display: true,
-          labelString: "MMR",
+        y1: {
+          position: "right",
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: "RP",
+          },
         },
       },
-      {
-        id: "y-axis-1",
-        position: "right",
-        ticks: {
-          beginAtZero: false,
-        },
-        scaleLabel: {
-          display: true,
-          labelString: "RP",
-        },
-      },
-    ];
+    };
+    return { ...defaultOptions(), ...options };
   }
 
   get mmrRpChartData(): ChartData {
@@ -66,24 +64,30 @@ export default class PlayerMmrRpTimelineChart extends Vue {
       labels: this.Dates,
       datasets: [
         {
+          yAxisID: "y",
           label: "MMR",
           data: this.mmrValues,
           borderColor: "rgba(54, 162, 235, 1)",
+          fill: true,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderWidth: 1.0,
           pointStyle: "circle",
           pointRadius: 1.2,
           pointBorderWidth: 1.8,
+          tension: 0.4, // Smooth line.
         },
         {
+          yAxisID: "y1",
           label: "RP",
           data: this.rpValues,
           borderColor: "rgba(150, 80, 100, 1)",
-          backgroundColor: "rgba(126,126,126,0.08)",
+          fill: true,
+          backgroundColor: "rgba(150, 80, 100, 0.2)",
           borderWidth: 1.0,
           pointStyle: "circle",
           pointRadius: 1.2,
           pointBorderWidth: 1.8,
-          yAxisID: "y-axis-1",
+          tension: 0.4, // Smooth line.
         },
       ],
     };

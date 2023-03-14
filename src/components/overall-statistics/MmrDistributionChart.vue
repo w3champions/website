@@ -5,16 +5,17 @@
   />
 </template>
 <script lang="ts">
-import minBy from "lodash/minBy";
-import maxBy from "lodash/maxBy";
-import clamp from "lodash/clamp";
-import { Component, Prop } from "vue-property-decorator";
-import { MmrDistribution } from "@/store/overallStats/types";
-import { ChartData } from "chart.js";
-import Vue from "vue";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import { EGameMode } from "@/store/typings";
+import { MmrDistribution } from "@/store/overallStats/types";
 import { Season } from "@/store/ranking/types";
+import { EGameMode } from "@/store/typings";
+import { ChartOptions } from "chart.js";
+import { AnnotationOptions } from "chartjs-plugin-annotation";
+import clamp from "lodash/clamp";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
 
 @Component({
   components: { BarChart },
@@ -24,8 +25,8 @@ export default class MmrDistributionChart extends Vue {
   @Prop() public selectedSeason!: Season;
   @Prop() public selectedGameMode!: EGameMode;
 
-  private colors() {
-    const colors = [];
+  private colors(): string[] {
+    const colors: string[] = [];
     for (let i = 0; i < this.mmrDistribution.distributedMmrs.length; i++) {
       if (
         i === this.mmrDistribution.top2PercentIndex ||
@@ -110,15 +111,18 @@ export default class MmrDistributionChart extends Vue {
       .reverse();
   }
 
-  get mmrDistributionChartData(): ChartData {
+// get mmrDistributionChartData(): ChartData<"bar" | "line", unknown> | null { // FIXME
+  get mmrDistributionChartData(): unknown | null {
     if (!this.mmrDistribution.distributedMmrs) {
-      return {};
+      return null;
     }
 
     return {
       labels: this.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
       datasets: [
         {
+          type: "bar",
+          yAxisID: "y-axis-0",
           label: "MMR",
           data: this.mmrDistribution.distributedMmrs.map((d) => d.count),
           borderColor: "rgba(54, 162, 235, 1)",
@@ -126,104 +130,84 @@ export default class MmrDistributionChart extends Vue {
           backgroundColor: this.colors,
         },
         {
+          type: "line",
+          yAxisID: "y-axis-1",
           label: "Cumulative",
           data: this.cumulativeSumData,
           borderColor: "rgb(60,208,88)",
-          type: "line",
-          yAxisID: "y-axis-1",
           fill: false,
         },
       ],
     };
   }
 
-  get mmrDistributionChartOptions() {
+  get mmrDistributionChartOptions(): ChartOptions | null {
     if (!this.mmrDistribution.distributedMmrs) {
       return null;
     }
-
-    const annotations = this.mmrGroupOfLoggedInPlayer
-      ? [
-          {
+    const annotations: { [key: string]: AnnotationOptions } = this.mmrGroupOfLoggedInPlayer
+        ? {
+          x: {
             type: "line",
-            mode: "vertical",
-            scaleID: "x-axis-0",
+            scaleID: "x",
             value: `> ${this.mmrGroupOfLoggedInPlayer}`,
             borderColor: "rgb(28,95,47, 0.7)",
             borderWidth: 2,
             borderDash: [10, 10],
             label: {
+              display: true,
               content: "Your MMR",
               backgroundColor: "rgb(28,95,47, 0.7)",
-              enabled: true,
               yAdjust: 10,
               xAdjust: this.isTop50percent ? 40 : -40, //Move label to left or right of line
-              position: "top",
-              cornerRadius: 0,
+              position: "start",
+              borderRadius: 0,
             },
           },
-        ]
-      : [];
+        }
+        : {};
 
     return {
-      legend: {
-        display: true,
-      },
-      tooltips: {
-        bodyAlign: "center",
-        custom: function (tooltip: { displayColors: boolean }) {
-          if (!tooltip) return;
-          tooltip.displayColors = false;
+      plugins: {
+        legend: {
+          display: true,
         },
-        callbacks: {
-          label: (tooltipItem: {
-            xLabel: string;
-            yLabel: number;
-            datasetIndex: number;
-          }) => {
-            if (tooltipItem.datasetIndex === 0) {
-              // MMR
-              return `${tooltipItem.xLabel} - ${tooltipItem.yLabel}`;
-            } else {
-              //Cummulative
-              const percent =
-                100 -
-                (tooltipItem.yLabel / this.mmrDistributionTotalPlayers) * 100;
-              return `top ${Math.max(percent, 0.1).toFixed(0)}%`;
-            }
-          },
-          title: function () {
-            return "";
+        tooltip: {
+          bodyAlign: "center",
+          displayColors: false,
+          callbacks: {
+            label: (tooltipItem: { label: string; formattedValue: string; datasetIndex: number; raw: unknown }) => {
+              if (tooltipItem.datasetIndex === 0) {
+                // MMR
+                return `${tooltipItem.label} - ${tooltipItem.formattedValue}`;
+              } else {
+                // Cumulative
+                const value: number = tooltipItem.raw as number;
+                const percent = 100 - (value / this.mmrDistributionTotalPlayers) * 100;
+                return `top ${Math.max(percent, 0.1).toFixed(0)}%`;
+              }
+            },
+            title: () => {
+              return "";
+            },
           },
         },
+        annotation: {
+          annotations: annotations,
+        },
       },
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       scales: {
-        yAxes: [
-          {
-            id: "y-axis-0",
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-          {
-            id: "y-axis-1",
-            position: "right",
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-        ],
-        xAxes: [
-          {
-            ticks: {
-              reverse: true,
-            },
-          },
-        ],
-      },
-      annotation: {
-        annotations,
+        "y-axis-0": {
+          beginAtZero: true,
+        },
+        "y-axis-1": {
+          position: "right",
+          beginAtZero: true,
+        },
+        x: {
+          reverse: true,
+        },
       },
     };
   }
