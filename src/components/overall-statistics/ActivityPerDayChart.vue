@@ -4,9 +4,9 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { GameDayPerMode } from "@/store/overallStats/types";
-import LineChart from "@/components/overall-statistics/LineChart.vue";
+import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
-import { ChartData } from "chart.js";
+import { ChartData, ScriptableContext } from "chart.js";
 import { EGameMode } from "@/store/typings";
 import { parseJSON } from "date-fns";
 
@@ -55,7 +55,7 @@ export default class ActivityPerDayChart extends Vue {
               })
               .splice(0, c.gameDays.length - 1),
             fill: true,
-            backgroundColor: "rgba(126,126,126,0.08)",
+            backgroundColor: (context: ScriptableContext<"line">) => getBackgroundColor(context, this.mapColor(c.gameMode)),
             borderColor: this.mapColor(c.gameMode),
             borderWidth: 1.5,
             tension: 0.4, // Smooth line.
@@ -77,7 +77,7 @@ export default class ActivityPerDayChart extends Vue {
     ];
   }
 
-  private mapColor(gameMode: EGameMode) {
+  private mapColor(gameMode: EGameMode): string {
     switch (gameMode) {
       case EGameMode.GM_1ON1:
         return "rgb(41,128,101)";
@@ -123,7 +123,7 @@ export default class ActivityPerDayChart extends Vue {
     }
   }
 
-  private multiplier(gameMode: EGameMode) {
+  private multiplier(gameMode: EGameMode): number {
     switch (gameMode) {
       case EGameMode.GM_1ON1:
         return 1;

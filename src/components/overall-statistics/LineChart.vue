@@ -18,6 +18,8 @@ import {
   TimeScale,
   Tooltip,
   Legend,
+  ChartArea,
+  ScriptableContext,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
@@ -73,11 +75,29 @@ export const defaultOptions = (): ChartOptions => {
     },
     elements: {
       point: {
-        radius: 2,
+        radius: 1.2,
       },
     },
   };
 };
+
+const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color: string): CanvasGradient => {
+    const regex = /\((\d*,\s?){2}\d*/g;
+    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    gradient.addColorStop(0.1, "rgba" + color.match(regex) + ", 0.0)");
+    gradient.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.25)");
+    gradient.addColorStop(0.6, "rgba" + color.match(regex) + ", 0.50)");
+    gradient.addColorStop(0.85, "rgba" + color.match(regex) + ", 0.75)");
+    return gradient;
+}
+
+export const getBackgroundColor = (context: ScriptableContext<"line">, color: string) => {
+  const chart = context.chart;
+  const {ctx, chartArea} = chart;
+
+  if (!chartArea) return; // This case happens on initial chart load
+  return getGradient(ctx, chartArea, color);
+}
 
 export default {
   name: "LineChart",

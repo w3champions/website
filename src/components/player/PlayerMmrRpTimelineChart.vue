@@ -9,11 +9,11 @@
 </template>
 <script lang="ts">
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import { ChartData , ChartOptions } from "chart.js";
+import { ChartData , ChartOptions, ScriptableContext } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { Component, Prop } from "vue-property-decorator";
-import LineChart, { defaultOptions, defaultOptionsXAxis } from "@/components/overall-statistics/LineChart.vue";
+import LineChart, { defaultOptions, defaultOptionsXAxis, getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
 import Vue from "vue";
 
 @Component({
@@ -67,9 +67,9 @@ export default class PlayerMmrRpTimelineChart extends Vue {
           yAxisID: "y",
           label: "MMR",
           data: this.mmrValues,
-          borderColor: "rgba(54, 162, 235, 1)",
+          borderColor: "rgb(54, 162, 235)",
           fill: true,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          backgroundColor: (context: ScriptableContext<"line">) => getBackgroundColor(context, "rgb(54, 162, 235)"),
           borderWidth: 1.0,
           pointStyle: "circle",
           pointRadius: 1.2,
@@ -80,9 +80,9 @@ export default class PlayerMmrRpTimelineChart extends Vue {
           yAxisID: "y1",
           label: "RP",
           data: this.rpValues,
-          borderColor: "rgba(150, 80, 100, 1)",
+          borderColor: "rgb(150, 80, 100)",
           fill: true,
-          backgroundColor: "rgba(150, 80, 100, 0.2)",
+          backgroundColor: (context: ScriptableContext<"line">) => getBackgroundColor(context, "rgb(150, 80, 100)"),
           borderWidth: 1.0,
           pointStyle: "circle",
           pointRadius: 1.2,
