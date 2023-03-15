@@ -36,7 +36,7 @@
 import { Component, Mixins, Prop } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { LocaleMessage } from "vue-i18n";
-import { EGameMode } from "../../store/typings";
+import { EGameMode } from "@/store/typings";
 
 @Component({})
 export default class GameModeSelect extends Mixins(GameModesMixin) {

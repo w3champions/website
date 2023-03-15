@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { ITournament, ITournamentPlayer } from "./../store/tournaments/types";
+import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 import { API_URL } from "@/main";
 
 export interface ITournamentsResponse {
