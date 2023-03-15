@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>W3Champions</title>
-    <link rel="preconnect" href="<%= BASE_URL %>">
-    <link rel="dns-prefetch" href="<%= BASE_URL %>">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico?v=5">
+
+    <!-- Preconnect TLS and prefetch DNS to improve pagespeed. -->
+    <link rel="preconnect" href="https://w3champions.wc3.tools" crossorigin>
+    <link rel="preconnect" href="https://website-backend.w3champions.com" crossorigin>
+    <link rel="preconnect" href="https://identification-service.w3champions.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.twitch.tv" crossorigin>
+
     <script type="text/javascript" src="<%= BASE_URL %>env.js?v=4"></script>
   </head>
   <body>
