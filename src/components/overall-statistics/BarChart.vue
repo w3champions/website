@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip } from "chart.js";
+import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend } from "chart.js";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
 import { Bar as BarChartGeneric } from "vue-chartjs";
 
@@ -17,6 +17,7 @@ ChartJS.register(LinearScale);
 ChartJS.register(Filler);
 ChartJS.register(Tooltip);
 ChartJS.register(chartJSPluginAnnotation);
+ChartJS.register(Legend);
 
 const defaultOptions = (): ChartOptions => {
   return {
