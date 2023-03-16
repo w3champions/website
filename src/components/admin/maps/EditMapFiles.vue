@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="headline">Edit map files</span>
+      <span class="text-h5">Edit map files</span>
     </v-card-title>
     <v-card-text>
       <v-container>
@@ -18,7 +18,7 @@
         </v-data-table>
 
         <div class="mt-5"></div>
-        <span class="subtitle-1">Add file</span>
+        <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
             <v-file-input label="Map file" v-model="file"></v-file-input>

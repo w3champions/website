@@ -203,7 +203,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="headline">
+                <span class="text-h5">
                   {{ $t("components_player_playeravatar.userprofile") }}
                 </span>
               </v-card-title>

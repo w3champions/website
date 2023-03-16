@@ -6,7 +6,7 @@
     <v-card v-else>
       <div v-if="!loading">
         <v-card-title class="justify-center">Current Message of the Day:</v-card-title>
-        <v-card-text class="text-center body-1">
+        <v-card-text class="text-center text-body-1">
           <v-divider class="mb-4"></v-divider>
           {{ motd() }}
           <v-divider class="mt-4"></v-divider>
