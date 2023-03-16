@@ -350,10 +350,10 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/typings";
 import { ECountries } from "@/store/countries";
-import { AkaSettings, SpecialPicture } from "../../store/personalSettings/types";
+import { AkaSettings, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
-import { getAvatarUrl } from "../../helpers/url-functions";
-import { enumKeys } from "../../helpers/general";
+import { getAvatarUrl } from "@/helpers/url-functions";
+import { enumKeys } from "@/helpers/general";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
