@@ -2,10 +2,10 @@
   <line-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Mixins } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
-import Vue from "vue";
 import { ChartData, ScriptableContext } from "chart.js";
 import { EGameMode } from "@/store/typings";
 import { parseJSON } from "date-fns";
@@ -13,7 +13,7 @@ import { parseJSON } from "date-fns";
 @Component({
   components: { LineChart },
 })
-export default class ActivityPerDayChart extends Vue {
+export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
   @Prop() public gameDays!: GameDayPerMode[];
   @Prop() public selectedGameMode!: EGameMode;
 
@@ -30,11 +30,10 @@ export default class ActivityPerDayChart extends Vue {
       labels: this.gameDayDates,
       datasets: this.gameDays
         .filter((c) => {
-          // Filter out all game modes that are not present in enum "EGameMode"
-          // and other old game modes.
-          return (
-            Object.values(EGameMode).includes(c.gameMode) && !this.disabledGameModes.includes(c.gameMode)
-          );
+          // Filter out inactive gamemodes, but show total games, which is EGameMode.UNDEFINED.
+          return this.activeGameModes
+            .map(m => m.id)
+            .includes(c.gameMode) || c.gameMode === EGameMode.UNDEFINED;
         })
         // then only show the data that user selected
         .filter((c) => {
@@ -64,19 +63,6 @@ export default class ActivityPerDayChart extends Vue {
     };
   }
 
-  get disabledGameModes(): Array<number> {
-    return [
-      EGameMode.GM_2ON2_AT,
-      EGameMode.GM_4ON4_AT,
-      EGameMode.GM_LEGION_4v4_X20_AT,
-      EGameMode.GM_LTW_1ON1,
-      EGameMode.GM_LTW_FFA,
-      EGameMode.GM_FROSTCRAFT_4ON4,
-      EGameMode.GM_PTR_1ON1,
-      EGameMode.GM_DOTA_5ON5_AT,
-    ];
-  }
-
   private mapColor(gameMode: EGameMode): string {
     switch (gameMode) {
       case EGameMode.GM_1ON1:
@@ -100,23 +86,20 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_LEGION_1v1_x20:
         return "rgb(13, 13, 189)";
 
-      case EGameMode.GM_LEGION_2v2_X20:
-        return "rgb(255,99,240)";
-
       case EGameMode.GM_ROC_1ON1:
         return "rgb(120, 0, 4)";
 
       case EGameMode.GM_ATR_1ON1:
         return "rgb(21, 189, 124)";
 
-      case EGameMode.GM_BANJOBALL_4ON4:
-        return "rgb(58, 58, 186)";
-
       case EGameMode.GM_DOTA_5ON5:
         return "rgb(58, 58, 186)";
 
-      case EGameMode.GM_PTR_1ON1:
+      case EGameMode.GM_SC_FFA_4:
         return "rgb(46, 230, 58)";
+
+      case EGameMode.GM_LTW_FFA:
+        return "rgb(255,99,240)";
 
       default:
         return "rgb(54, 162, 235)";
@@ -146,26 +129,20 @@ export default class ActivityPerDayChart extends Vue {
       case EGameMode.GM_LEGION_1v1_x20:
         return 1;
 
-      case EGameMode.GM_LEGION_2v2_X20:
-        return 2;
-
       case EGameMode.GM_ROC_1ON1:
         return 1;
 
       case EGameMode.GM_ATR_1ON1:
         return 1;
 
-      case EGameMode.GM_BANJOBALL_4ON4:
-        return 4;
-
       case EGameMode.GM_DOTA_5ON5:
         return 5;
 
-      case EGameMode.GM_PTR_1ON1:
-        return 1;
-
       case EGameMode.GM_SC_FFA_4:
         return 2;
+
+      case EGameMode.GM_LTW_FFA:
+        return 2.5;
 
       default:
         return 1;
