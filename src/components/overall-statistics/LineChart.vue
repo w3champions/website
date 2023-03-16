@@ -84,10 +84,10 @@ export const defaultOptions = (): ChartOptions => {
 const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color: string): CanvasGradient => {
     const regex = /\((\d*,\s?){2}\d*/g;
     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-    gradient.addColorStop(0.1, "rgba" + color.match(regex) + ", 0.0)");
+    gradient.addColorStop(0.0, "rgba" + color.match(regex) + ", 0.0)");
     gradient.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.25)");
-    gradient.addColorStop(0.6, "rgba" + color.match(regex) + ", 0.50)");
-    gradient.addColorStop(0.85, "rgba" + color.match(regex) + ", 0.75)");
+    gradient.addColorStop(0.8, "rgba" + color.match(regex) + ", 0.50)");
+    gradient.addColorStop(1, "rgba" + color.match(regex) + ", 0.75)");
     return gradient;
 }
 
