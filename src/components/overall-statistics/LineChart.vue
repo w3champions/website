@@ -51,7 +51,7 @@ export const defaultOptions = (): ChartOptions => {
   return {
     plugins: {
       legend: {
-        display: true,
+        display: window.innerWidth > 680 // Don't display legends for mobile devices, because they overflow into the chart area.
       },
       tooltip: {
         bodyAlign: "center",
