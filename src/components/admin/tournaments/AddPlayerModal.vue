@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import _ from "lodash";
+import map from "lodash/map";
 import { ITournament } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/typings";
 import Vue from "vue";
@@ -53,7 +53,7 @@ export default class AddPlayerModal extends Vue {
   public race: string = ERaceEnum.RANDOM.toString();
 
   get races() {
-    return _.map(ERaceEnumLabel, (raceName, raceId) => ({
+    return map(ERaceEnumLabel, (raceName, raceId) => ({
       raceId,
       raceName,
     }));

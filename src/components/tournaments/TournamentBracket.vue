@@ -28,7 +28,10 @@
 </template>
 
 <script lang="ts">
-import _ from "lodash";
+import assign from "lodash/assign";
+import fromPairs from "lodash/fromPairs";
+import pick from "lodash/pick";
+import times from "lodash/times";
 import { ETournamentState, ITournament, ITournamentRound, BracketDimensions } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
@@ -57,10 +60,10 @@ export default class TournamentBracket extends Vue {
   }
 
   get rounds(): ITournamentRound[] {
-    const playerExtraData = _.fromPairs(
+    const playerExtraData = fromPairs(
       this.tournament.players.map((p) => [
         p.battleTag,
-        _.pick(p, [ "countryCode", "race" ]),
+        pick(p, [ "countryCode", "race" ]),
       ])
     );
     for (const round of this.tournament.rounds) {
@@ -69,7 +72,7 @@ export default class TournamentBracket extends Vue {
           continue;
         }
         for (const player of series.players) {
-          _.assign(player, playerExtraData[player.battleTag]);
+          assign(player, playerExtraData[player.battleTag]);
         }
       }
     }
@@ -81,7 +84,7 @@ export default class TournamentBracket extends Vue {
     let verticalSpace = this.verticalSpace;
     let marginTop = 0;
     const dimensions: BracketDimensions[] = [];
-    _.times(this.rounds.length, () => {
+    times(this.rounds.length, () => {
       dimensions.push({
         verticalSpace,
         marginTop,

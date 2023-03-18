@@ -1,4 +1,5 @@
-import _ from "lodash";
+import pickBy from "lodash/pickBy";
+import isUndefined from "lodash/isUndefined";
 import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 import { API_URL } from "@/main";
 
@@ -117,9 +118,9 @@ export default class TournamentsService {
       "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
       "showWinnerTimeHours", "matcherinoUrl",
     ];
-    const body = _.pickBy(
+    const body = pickBy(
       tournament,
-      (value, key) => fieldNames.includes(key) && !_.isUndefined(value)
+      (value, key) => fieldNames.includes(key) && !isUndefined(value)
     );
     body.registrationTimeMinutes = +body.registrationTimeMinutes!;
     body.readyTimeSeconds = +body.readyTimeSeconds!;

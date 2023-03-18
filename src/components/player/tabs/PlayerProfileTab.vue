@@ -78,7 +78,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import * as _ from "lodash";
+import sortBy from "lodash/sortBy";
+import take from "lodash/take";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
@@ -164,7 +165,7 @@ export default class PlayerProfileTab extends Vue {
 
     const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
 
-    let bestOneVOne = _.sortBy(rankedOneVOnes, [
+    let bestOneVOne = sortBy(rankedOneVOnes, [
       "leagueOrder",
       "division",
       "rank",
@@ -180,7 +181,7 @@ export default class PlayerProfileTab extends Vue {
 
     const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
 
-    let besttwoV2s = _.sortBy(rankedtwoV2s, [
+    let besttwoV2s = sortBy(rankedtwoV2s, [
       "leagueOrder",
       "division",
       "rank",
@@ -196,7 +197,7 @@ export default class PlayerProfileTab extends Vue {
     );
 
     const otherModesRanked = otherModes.filter((g) => g.rank != 0);
-    const bestOtherModes = _.sortBy(otherModesRanked, [
+    const bestOtherModes = sortBy(otherModesRanked, [
       "leagueOrder",
       "division",
       "rank",
@@ -207,13 +208,13 @@ export default class PlayerProfileTab extends Vue {
     if (besttwoV2s) allModes.push(besttwoV2s);
     allModes.push(...bestOtherModes);
 
-    const bestAllModesSorted = _.sortBy(allModes, [
+    const bestAllModesSorted = sortBy(allModes, [
       "leagueOrder",
       "division",
       "rank",
     ]);
 
-    return _.take(
+    return take(
       bestAllModesSorted.filter((x) => x.rank != 0),
       3
     );
