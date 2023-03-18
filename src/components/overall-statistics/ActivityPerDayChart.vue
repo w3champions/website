@@ -32,7 +32,7 @@ export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
         .filter((c) => {
           // Filter out inactive gamemodes, but show total games, which is EGameMode.UNDEFINED.
           return this.activeGameModes
-            .map(m => m.id)
+            .map((m) => m.id)
             .includes(c.gameMode) || c.gameMode === EGameMode.UNDEFINED;
         })
         // then only show the data that user selected

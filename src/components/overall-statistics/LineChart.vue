@@ -89,15 +89,15 @@ const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color:
     gradient.addColorStop(0.8, "rgba" + color.match(regex) + ", 0.50)");
     gradient.addColorStop(1, "rgba" + color.match(regex) + ", 0.75)");
     return gradient;
-}
+};
 
 export const getBackgroundColor = (context: ScriptableContext<"line">, color: string) => {
   const chart = context.chart;
-  const {ctx, chartArea} = chart;
+  const { ctx, chartArea } = chart;
 
   if (!chartArea) return; // This case happens on initial chart load
   return getGradient(ctx, chartArea, color);
-}
+};
 
 export default {
   name: "LineChart",
