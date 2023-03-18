@@ -269,6 +269,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public translateRaceName(race: any): TranslateResult {
     return this.$t(`races.${race.raceName}`);
   }

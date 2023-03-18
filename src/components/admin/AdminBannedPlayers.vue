@@ -245,8 +245,10 @@ export default class AdminBannedPlayers extends Vue {
     }[];
 
     const keys = Object.keys(EGameMode).filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (k) => typeof EGameMode[k as any] === "number"
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const values = keys.map((k) => EGameMode[k as any]);
 
     keys.shift();

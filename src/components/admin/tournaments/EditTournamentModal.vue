@@ -222,6 +222,7 @@ export default class AddPlayerModal extends Vue {
 
   get states() {
     const validStates = _.pickBy(ETournamentState, (_value, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return !isNaN(key as any);
     }) as { [key: number]: string };
     return this.getSelectOptions(validStates);
