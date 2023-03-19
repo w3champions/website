@@ -3,10 +3,12 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import chain from "lodash/chain";
-import map from "lodash/map";
-import round from "lodash/round";
 import sumBy from "lodash/sumBy";
+import orderBy from "lodash/orderBy";
+import groupBy from "lodash/groupBy";
+import mapValues from "lodash/mapValues";
+import toArray from "lodash/toArray";
+import flatten from "lodash/flatten";
 import { ChartData, ChartOptions } from "chart.js";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
@@ -35,37 +37,34 @@ export default class PlayedHeroesChart extends Vue {
   @Prop() public playedHeroes!: PlayedHero[];
 
   get orderedHeroes(): PlayedHeroExtra[] {
-    return chain(this.playedHeroes)
-        .map((hero) => {
-          const race = HERO_DATA[hero.icon].race;
-          const color = RACE_COLORS[race];
-          return {
-            ...hero,
-            race,
-            color,
-          };
-        })
-        .orderBy([ "race", "count", "icon" ], [ "asc", "desc", "asc" ])
-        .groupBy("race")
-        .mapValues((heroes, race) => {
-          // Compute percentages within the race
-          const groupTotalCount = sumBy(heroes, "count");
-          const newHeroesData: PlayedHeroExtra[] = map(heroes, (hero) => ({
-            ...hero,
-            icon: this.$t("heroNames." + hero.icon).toString(),
-            count: round(hero.count / groupTotalCount * 100, 1),
-          }));
+    const result: { race: ERaceEnum; color: string; icon: string; count: number }[] = this.playedHeroes
+      .map((hero) => {
+        const race = HERO_DATA[hero.icon].race;
+        const color = RACE_COLORS[race];
+        return {
+          ...hero,
+          race,
+          color,
+        };
+      });
+    const result0 = orderBy(result, ["race", "count", "icon"], ["asc", "desc", "asc"]);
+    const result1 = groupBy(result0, "race");
+    const result2 = mapValues(result1, (heroes, race) => {
+      // Compute percentages within the race
+      const groupTotalCount = sumBy(heroes, "count");
+      heroes = heroes.map((hero) => ({
+        ...hero,
+        icon: this.$t("heroNames." + hero.icon).toString(),
+        count: Number((hero.count / groupTotalCount * 100).toFixed(1)),
+      }));
+      // Add empty data point between races
+      if (+race !== ERaceEnum.RANDOM) {
+        heroes.unshift({ icon: "", count: 0, race: ERaceEnum.RANDOM, color: "" });
+      }
+      return heroes;
+    });
 
-          // Add empty data point between races
-          if (+race !== ERaceEnum.RANDOM) {
-            newHeroesData.unshift({ icon: "", count: 0, race: ERaceEnum.RANDOM, color: "" });
-          }
-
-          return newHeroesData;
-        })
-        .toArray()
-        .flatten()
-        .value();
+    return flatten(toArray(result2));
   }
 
   get chartData(): ChartData {
