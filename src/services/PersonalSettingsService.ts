@@ -5,7 +5,7 @@ import {
 } from "@/store/personalSettings/types";
 
 export default class PersonalSettingsService {
-  public async retrievePersonalSetting(
+  public static async retrievePersonalSetting(
     battleTag: string
   ): Promise<PersonalSetting> {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(
@@ -17,7 +17,7 @@ export default class PersonalSettingsService {
     return await response.json();
   }
 
-  public async savePersonalSettings(
+  public static async savePersonalSettings(
     battleTag: string,
     value: PersonalSetting,
     authToken: string
@@ -39,7 +39,7 @@ export default class PersonalSettingsService {
     return response.ok;
   }
 
-  public async setAvatar(
+  public static async setAvatar(
     battleTag: string,
     value: ProfilePicture,
     authToken: string

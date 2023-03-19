@@ -7,6 +7,7 @@ import {
   ProfilePicture,
 } from "@/store/personalSettings/types";
 import { useOauthStore } from "@/store/oauth/store";
+import PersonalSettingsService from "@/services/PersonalSettingsService";
 
 const mod = {
   namespaced: true,
@@ -17,7 +18,7 @@ const mod = {
     async loadPersonalSetting(
       context: ActionContext<PersonalSettingsState, RootState>
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
+      const { commit, rootState } = moduleActionContext(
         context,
         mod
       );
@@ -27,7 +28,7 @@ const mod = {
       if (!battleTag) return;
 
       const response =
-        await rootGetters.personalSettingsService.retrievePersonalSetting(
+        await PersonalSettingsService.retrievePersonalSetting(
           battleTag
         );
 
@@ -37,14 +38,14 @@ const mod = {
       context: ActionContext<PersonalSettingsState, RootState>,
       setting: PersonalSetting
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
+      const { commit, rootState } = moduleActionContext(
         context,
         mod
       );
 
       const oauthStore = useOauthStore();
       const success =
-        await rootGetters.personalSettingsService.savePersonalSettings(
+        await PersonalSettingsService.savePersonalSettings(
           rootState.player.battleTag,
           setting,
           oauthStore.token
@@ -55,13 +56,13 @@ const mod = {
       context: ActionContext<PersonalSettingsState, RootState>,
       picture: ProfilePicture
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(
+      const { commit, rootState } = moduleActionContext(
         context,
         mod
       );
 
       const oauthStore = useOauthStore();
-      const success = await rootGetters.personalSettingsService.setAvatar(
+      const success = await PersonalSettingsService.setAvatar(
         rootState.player.battleTag,
         picture,
         oauthStore.token

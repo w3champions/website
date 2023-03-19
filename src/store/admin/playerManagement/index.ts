@@ -9,6 +9,7 @@ import {
   PortraitDefinitionGroup,
 } from "../types";
 import { useOauthStore } from "@/store/oauth/store";
+import PersonalSettingsService from "@/services/PersonalSettingsService";
 
 const mod = {
   namespaced: true,
@@ -30,8 +31,8 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       btag: string
     ): Promise<void> {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const playerSettings = await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
+      const { commit } = moduleActionContext(context, mod);
+      const playerSettings = await PersonalSettingsService.retrievePersonalSetting(btag);
       if (playerSettings.specialPictures != null) {
         commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS(playerSettings.specialPictures.map((x) => x.pictureId));
       } else {
