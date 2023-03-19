@@ -138,7 +138,9 @@
 
 <script lang="ts">
 import { addDays, setHours, startOfHour } from "date-fns";
-import _ from "lodash";
+import map from "lodash/map";
+import pick from "lodash/pick";
+import pickBy from "lodash/pickBy";
 import { ETournamentFormat, ETournamentState, ITournament } from "@/store/tournaments/types";
 import { EGameMode } from "@/store/typings";
 import Vue from "vue";
@@ -212,7 +214,7 @@ export default class AddPlayerModal extends Vue {
       "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
       "showWinnerTimeHours", "matcherinoUrl",
     ];
-    const tournamentData = _.pick(this, fieldNames);
+    const tournamentData = pick(this, fieldNames);
     this.$emit("save", tournamentData);
   }
 
@@ -221,7 +223,7 @@ export default class AddPlayerModal extends Vue {
   }
 
   get states() {
-    const validStates = _.pickBy(ETournamentState, (_value, key) => {
+    const validStates = pickBy(ETournamentState, (_value, key) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return !isNaN(key as any);
     }) as { [key: number]: string };
@@ -241,7 +243,7 @@ export default class AddPlayerModal extends Vue {
   }
 
   private getSelectOptions(labelMap: { [key: number]: string }) {
-    return _.map(labelMap, (name, id) => ({
+    return map(labelMap, (name, id) => ({
       id: +id,
       name,
     }));

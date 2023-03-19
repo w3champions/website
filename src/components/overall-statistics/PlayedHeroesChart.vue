@@ -3,7 +3,10 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import _ from "lodash";
+import chain from "lodash/chain";
+import map from "lodash/map";
+import round from "lodash/round";
+import sumBy from "lodash/sumBy";
 import { ChartData, ChartOptions } from "chart.js";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
@@ -32,8 +35,7 @@ export default class PlayedHeroesChart extends Vue {
   @Prop() public playedHeroes!: PlayedHero[];
 
   get orderedHeroes(): PlayedHeroExtra[] {
-    return _
-        .chain(this.playedHeroes)
+    return chain(this.playedHeroes)
         .map((hero) => {
           const race = HERO_DATA[hero.icon].race;
           const color = RACE_COLORS[race];
@@ -47,11 +49,11 @@ export default class PlayedHeroesChart extends Vue {
         .groupBy("race")
         .mapValues((heroes, race) => {
           // Compute percentages within the race
-          const groupTotalCount = _.sumBy(heroes, "count");
-          const newHeroesData: PlayedHeroExtra[] = _.map(heroes, (hero) => ({
+          const groupTotalCount = sumBy(heroes, "count");
+          const newHeroesData: PlayedHeroExtra[] = map(heroes, (hero) => ({
             ...hero,
             icon: this.$t("heroNames." + hero.icon).toString(),
-            count: _.round(hero.count / groupTotalCount * 100, 1),
+            count: round(hero.count / groupTotalCount * 100, 1),
           }));
 
           // Add empty data point between races

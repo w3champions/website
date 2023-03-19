@@ -34,7 +34,7 @@ import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/typings";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { defaultStatsTab } from "@/helpers/profile";
 
 @Component({
@@ -56,7 +56,7 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
   }
 
   get isEmpty(): boolean {
-    return _.isEmpty(this.stats);
+    return isEmpty(this.stats);
   }
 
   // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here

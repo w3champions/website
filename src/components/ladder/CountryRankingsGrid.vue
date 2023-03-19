@@ -190,7 +190,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import * as _ from "lodash";
+import flatMap from "lodash/flatMap";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/typings";
@@ -352,7 +352,7 @@ export default class CountryRankingsGrid extends Vue {
   }
 
   async getStreamStatus(): Promise<void> {
-    const twitchNames = _.flatMap(this.rankings, (cr) => cr.ranks).map(
+    const twitchNames = flatMap(this.rankings, (cr) => cr.ranks).map(
       (r) => r.playersInfo[0].twitchName
     );
 

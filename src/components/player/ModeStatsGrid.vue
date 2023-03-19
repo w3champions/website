@@ -56,7 +56,7 @@ import { EGameMode } from "@/store/typings";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 
 @Component({
   components: { RaceIcon, LevelProgress },
@@ -76,7 +76,7 @@ export default class ModeStatsGrid extends Mixins(GameModesMixin) {
 
     // Filter out AT modes that haven't been played, sort by ranking points and get the stat with the highest rank.
     const topAtStats = AT_arranged
-      .filter((modeStats) => !_.isEmpty(modeStats))
+      .filter((modeStats) => !isEmpty(modeStats))
       .map((modeStats) => modeStats.sort((modeStat) => modeStat.rankingPoints))
       .map((modeStats) => modeStats.filter((modeStat, index) => index === 0))
       .flat();

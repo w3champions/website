@@ -29,7 +29,7 @@ import { getAsset } from "@/helpers/url-functions";
 import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 import { races, defaultStatsTab } from "@/helpers/profile";
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 
 @Component({
   components: { RaceIcon, PlayerHeroStatisticsTable },
@@ -138,7 +138,7 @@ export default class PlayerHeroStatistics extends Vue {
       [ERaceEnum.TOTAL]: 0,
     };
 
-    if (_.isEmpty(heroStatsData)) return;
+    if (isEmpty(heroStatsData)) return;
 
     const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
       .filter((obj: RaceWinsOnMap) => obj.race == this.selectedRace)[0]

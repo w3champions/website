@@ -36,7 +36,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
-import _ from "lodash";
+import isUndefined from "lodash/isUndefined";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
@@ -68,7 +68,7 @@ export default class AdminMaps extends Vue {
   }
 
   public get maps() {
-    return _.isUndefined(this.search)
+    return isUndefined(this.search)
       ? this.$store.direct.state.admin.mapsManagement.maps
       : this.$store.direct.state.admin.mapsManagement.maps.filter((m) => {
         return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||

@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { EGameMode, EGameModeType } from "@/store/typings";
-import _ from "lodash";
+import chain from "lodash/chain";
 import { SeasonMap } from "@/store/admin/maps/types";
 
 const AT_EQUIVALENT: { [key: number]: EGameMode } = {
@@ -48,8 +48,7 @@ export default class GameModesMixin extends Vue {
   }
 
   private getGameModes(type: EGameModeType | null, withAt: boolean) {
-    return _
-      .chain(this.$store.direct.state.admin.mapsManagement.seasonMaps)
+    return chain(this.$store.direct.state.admin.mapsManagement.seasonMaps)
       .reduce((result: SeasonMap[], seasonMap: SeasonMap) => {
         result.push(seasonMap);
         if (withAt && AT_EQUIVALENT[seasonMap.id]) {
