@@ -9,7 +9,7 @@ import { API_URL } from "@/main";
 import { EGameMode } from "@/store/typings";
 
 export default class RankingService {
-  public async retrieveRankings(
+  public static async retrieveRankings(
     leagueId: number,
     gateway: Gateways,
     gameMode: EGameMode,
@@ -21,7 +21,7 @@ export default class RankingService {
     return await response.json();
   }
 
-  public async retrieveCountryRankings(
+  public static async retrieveCountryRankings(
     countryCode: string,
     gateway: Gateways,
     gameMode: EGameMode,
@@ -33,7 +33,7 @@ export default class RankingService {
     return await response.json();
   }
 
-  public async searchRankings(
+  public static async searchRankings(
     str: string,
     gateway: Gateways,
     gameMode: EGameMode,
@@ -45,14 +45,14 @@ export default class RankingService {
     return await response.json();
   }
 
-  public async retrieveLadders(season: number): Promise<Ladder[]> {
+  public static async retrieveLadders(season: number): Promise<Ladder[]> {
     const url = `${API_URL}api/ladder/league-constellation?season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
-  public async retrieveSeasons(): Promise<Season[]> {
+  public static async retrieveSeasons(): Promise<Season[]> {
     const url = `${API_URL}api/ladder/seasons`;
 
     const response = await fetch(url);
