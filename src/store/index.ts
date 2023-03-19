@@ -23,7 +23,6 @@ import AdminService from "@/services/AdminService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
-import InfoMessageService from "@/services/InfoMessageService";
 
 Vue.use(Vuex);
 
@@ -35,7 +34,6 @@ const services = {
   adminService: new AdminService(),
   tournamentsService: new TournamentsService(),
   localeService: new LocaleService(),
-  infoMessageService: new InfoMessageService(),
 };
 
 const mod = {
@@ -106,9 +104,6 @@ const mod = {
     },
     localeService() {
       return services.localeService;
-    },
-    infoMessageService() {
-      return services.infoMessageService;
     },
   },
 } as const;

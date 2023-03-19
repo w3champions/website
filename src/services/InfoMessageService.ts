@@ -2,7 +2,7 @@ import { API_URL } from "@/main";
 import { LoadingScreenTip, MessageOfTheDay, NewsMessage } from "@/store/admin/messages/types";
 
 export default class InfoMessageService {
-  public async getNews(): Promise<NewsMessage[]> {
+  public static async getNews(): Promise<NewsMessage[]> {
     const url = `${API_URL}api/admin/news`;
     const response = await fetch(url, {
       method: "GET",
@@ -15,7 +15,7 @@ export default class InfoMessageService {
     return await response.json();
   }
 
-  public async editNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
+  public static async editNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
 
     const data = JSON.stringify(newsMessage);
@@ -31,7 +31,7 @@ export default class InfoMessageService {
     return response.ok;
   }
 
-  public async deleteNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
+  public static async deleteNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
     const response = await fetch(url, {
       method: "DELETE",
@@ -44,7 +44,7 @@ export default class InfoMessageService {
     return response.ok;
   }
 
-  public async getTips(): Promise<LoadingScreenTip[]> {
+  public static async getTips(): Promise<LoadingScreenTip[]> {
     const url = `${API_URL}api/admin/loadingScreenTips`;
     const response = await fetch(url, {
       method: "GET",
@@ -56,7 +56,7 @@ export default class InfoMessageService {
     return await response.json();
   }
 
-  public async editTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
+  public static async editTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}?authorization=${token}`;
 
     const data = JSON.stringify(loadingScreenTip);
@@ -74,7 +74,7 @@ export default class InfoMessageService {
     return response.ok;
   }
 
-  public async deleteTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
+  public static async deleteTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}?authorization=${token}`;
     const response = await fetch(url, {
       method: "DELETE",
@@ -87,7 +87,7 @@ export default class InfoMessageService {
     return response.ok;
   }
 
-  public async getMotd(): Promise<MessageOfTheDay> {
+  public static async getMotd(): Promise<MessageOfTheDay> {
     const url = `${API_URL}api/admin/motd/`;
     const response = await fetch(url, {
       method: "GET",
@@ -101,7 +101,7 @@ export default class InfoMessageService {
     return {} as MessageOfTheDay;
   }
 
-  public async putMotd(motd: MessageOfTheDay, token: string): Promise<boolean> {
+  public static async putMotd(motd: MessageOfTheDay, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/motd/?authorization=${token}`;
     const data = JSON.stringify(motd);
 
