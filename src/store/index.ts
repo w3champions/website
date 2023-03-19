@@ -14,7 +14,6 @@ import infoMessages from "./admin/messages/index";
 
 import RankingService from "@/services/RankingService";
 import MatchService from "@/services/MatchService";
-import ProfileService from "@/services/ProfileService";
 import { RootState } from "./typings";
 import StatisticService from "@/services/StatisticService";
 import AuthorizationService from "@/services/AuthorizationService";
@@ -34,7 +33,6 @@ Vue.use(Vuex);
 const services = {
   rankingService: new RankingService(),
   matchService: new MatchService(50),
-  profileService: new ProfileService(),
   statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
@@ -99,9 +97,6 @@ const mod = {
     },
     matchService() {
       return services.matchService;
-    },
-    profileService() {
-      return services.profileService;
     },
     statisticService() {
       return services.statisticService;

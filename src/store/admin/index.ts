@@ -19,6 +19,7 @@ import {
   GlobalMute,
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
+import ProfileService from "@/services/ProfileService";
 
 const mod = {
   namespaced: true,
@@ -113,9 +114,9 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const searchedPlayers = await rootGetters.profileService.searchPlayer(search.searchText);
+      const searchedPlayers = await ProfileService.searchPlayer(search.searchText);
       commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
     },
 

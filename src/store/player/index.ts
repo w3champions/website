@@ -12,6 +12,7 @@ import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
+import ProfileService from "@/services/ProfileService";
 
 const mod = {
   namespaced: true,
@@ -43,12 +44,12 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       params: { battleTag: string; freshLogin: boolean }
     ) {
-      const { commit,  rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 
       const oauthStore = useOauthStore();
-      const profile = await rootGetters.profileService.retrieveProfile(
+      const profile = await ProfileService.retrieveProfile(
         params.battleTag,
         params.freshLogin ? oauthStore.token : null
       );
@@ -61,9 +62,9 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       params: { battleTag?: string; season?: number }
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
-      const modeStats = await rootGetters.profileService.retrieveGameModeStats(
+      const modeStats = await ProfileService.retrieveGameModeStats(
         params.battleTag ?? state.battleTag,
         rootState.gateway,
         params.season ?? state.selectedSeason?.id ?? -1
@@ -72,9 +73,9 @@ const mod = {
       commit.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
-      const raceStats = await rootGetters.profileService.retrieveRaceStats(
+      const raceStats = await ProfileService.retrieveRaceStats(
         state.battleTag,
         rootState.gateway,
         state.selectedSeason?.id ?? -1
@@ -86,10 +87,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag: string
     ) {
-      const { commit, state, rootGetters } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       const profile =
-        await rootGetters.profileService.retrievePlayerStatsRaceVersusRaceOnMap(
+        await ProfileService.retrievePlayerStatsRaceVersusRaceOnMap(
           battleTag,
           state.selectedSeason?.id ?? -1
         );
@@ -100,10 +101,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       battleTag: string
     ) {
-      const { commit, state, rootGetters } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       const profile =
-        await rootGetters.profileService.retrievePlayerStatsHeroVersusRaceOnMap(
+        await ProfileService.retrievePlayerStatsHeroVersusRaceOnMap(
           battleTag,
           state.selectedSeason?.id ?? -1
         );
@@ -159,11 +160,11 @@ const mod = {
       }
     },
     async loadPlayerMmrRpTimeline(context: ActionContext<PlayerState, RootState>) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_MMR_TIMELINE(true);
       const mmrRpTimeline =
-        await rootGetters.profileService.retrievePlayerMmrRpTimeline(
+        await ProfileService.retrievePlayerMmrRpTimeline(
           state.battleTag,
           state.race,
           rootState.gateway,

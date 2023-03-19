@@ -4,6 +4,7 @@ import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { PlayerProfile } from "@/store/player/types";
 import { useOauthStore } from "@/store/oauth/store";
+import ProfileService from "@/services/ProfileService";
 
 const mod = {
   namespaced: true,
@@ -159,9 +160,9 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       search: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit  } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.profileService.searchPlayer(search);
+      const response = await ProfileService.searchPlayer(search);
 
       commit.SET_PLAYERS_SEARCH(response);
     },

@@ -48,6 +48,7 @@ import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import ProfileService from "@/services/ProfileService";
 
 @Component({
   components: { PlayerIcon, CountryFlagExtended },
@@ -130,7 +131,7 @@ export default class PlayerMatchInfo extends Vue {
     }
 
     this.winrate =
-      await this.$store.direct.getters.profileService.retrieveWinRate(
+      await ProfileService.retrieveWinRate(
         this.player.battleTag,
         this.$store.direct.state.rankings.selectedSeason.id
       );
