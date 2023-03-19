@@ -12,7 +12,7 @@ export interface ITournamentResponse {
 }
 
 export default class TournamentsService {
-  public async getTournaments(): Promise<ITournamentsResponse> {
+  public static async getTournaments(): Promise<ITournamentsResponse> {
     const url = `${API_URL}api/tournaments`;
     const response = await fetch(url, {
       method: "GET",
@@ -35,7 +35,7 @@ export default class TournamentsService {
     return data;
   }
 
-  public async getUpcomingTournament(): Promise<ITournamentResponse> {
+  public static async getUpcomingTournament(): Promise<ITournamentResponse> {
     const url = `${API_URL}api/tournaments/upcoming`;
     const response = await fetch(url, {
       method: "GET",
@@ -60,7 +60,7 @@ export default class TournamentsService {
     return data;
   }
 
-  public async registerPlayer(tournamentId: string, player: ITournamentPlayer, token: string): Promise<boolean> {
+  public static async registerPlayer(tournamentId: string, player: ITournamentPlayer, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
     const response = await fetch(url, {
       method: "POST",
@@ -76,7 +76,7 @@ export default class TournamentsService {
     return !!responseBody.tournament;
   }
 
-  public async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
+  public static async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
     const response = await fetch(url, {
       method: "DELETE",
@@ -92,7 +92,7 @@ export default class TournamentsService {
     return !!responseBody.tournament;
   }
 
-  public async createTournament(tournament: ITournament, token: string): Promise<boolean> {
+  public static async createTournament(tournament: ITournament, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments?authorization=${token}`;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...data } = tournament;
@@ -110,7 +110,7 @@ export default class TournamentsService {
     return !!responseBody.tournament;
   }
 
-  public async updateTournament(tournament: ITournament, token: string): Promise<boolean> {
+  public static async updateTournament(tournament: ITournament, token: string): Promise<boolean> {
     const id = tournament.id;
     const url = `${API_URL}api/tournaments/${id}?authorization=${token}`;
 
