@@ -49,7 +49,7 @@ module.exports = {
     "vue/valid-v-slot": ["error", {
       allowModifiers: true,
     }],
-    "lodash/import-scope": ["error", "method"],
+    "lodash/import-scope": ["warn", "method"],
     "lodash/prefer-constant": "off",
     "lodash/prefer-lodash-method": "off",
     "lodash/prefer-lodash-typecheck": "off",
