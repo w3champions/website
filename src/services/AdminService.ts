@@ -17,7 +17,7 @@ import {
 } from "@/store/admin/types";
 
 export default class AdminService {
-  public async getBannedPlayers(): Promise<AdminState> {
+  public static async getBannedPlayers(): Promise<AdminState> {
     const url = `${API_URL}api/admin/bannedPlayers`;
     const response = await fetch(url, {
       method: "GET",
@@ -30,7 +30,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async postBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
+  public static async postBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
     const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);
@@ -46,7 +46,7 @@ export default class AdminService {
     return response.ok ? "" : await response.json();
   }
 
-  public async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
+  public static async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
     const url = `${API_URL}api/admin/bannedPlayers/?authorization=${token}`;
 
     const data = JSON.stringify(bannedPlayer);
@@ -61,7 +61,7 @@ export default class AdminService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async getQueueData(token: string): Promise<QueueData[]> {
+  public static async getQueueData(token: string): Promise<QueueData[]> {
     const url = `${API_URL}api/admin/queue-data/?authorization=${token}`;
     const response = await fetch(url, {
       method: "GET",
@@ -73,7 +73,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async getAvailableProxies(token: string): Promise<Proxy[]> {
+  public static async getAvailableProxies(token: string): Promise<Proxy[]> {
     const url = `${API_URL}api/admin/proxies/?authorization=${token}`;
     const response = await fetch(url, {
       method: "GET",
@@ -85,7 +85,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async searchByTag(battleTagFragment: string, token: string): Promise<SearchedPlayer[]> {
+  public static async searchByTag(battleTagFragment: string, token: string): Promise<SearchedPlayer[]> {
     const url = `${API_URL}api/admin/search/${encodeURIComponent(battleTagFragment)}?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -98,7 +98,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async getProxiesForBattletag(battleTag: string, token: string): Promise<ProxySettings> {
+  public static async getProxiesForBattletag(battleTag: string, token: string): Promise<ProxySettings> {
     const url = `${API_URL}api/admin/proxies-for/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -111,7 +111,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async putProxies(proxies: ProxySettings, battleTag: string, token: string): Promise<Response> {
+  public static async putProxies(proxies: ProxySettings, battleTag: string, token: string): Promise<Response> {
     const url = `${API_URL}api/admin/update-proxies/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
     const data = JSON.stringify(proxies);
@@ -127,7 +127,7 @@ export default class AdminService {
     return response;
   }
 
-  public async getAltsForBattletag(btag: string, token: string): Promise<string[]> {
+  public static async getAltsForBattletag(btag: string, token: string): Promise<string[]> {
     const url = `${API_URL}api/admin/alts/${encodeURIComponent(btag)}?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -141,7 +141,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
+  public static async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
     const url = `${API_URL}api/admin/globalChatBans?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -155,7 +155,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public async deleteGlobalMute(token: string, id: string): Promise<number> {
+  public static async deleteGlobalMute(token: string, id: string): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/${id}?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -169,7 +169,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async putGlobalMute(token: string, globalMutedPlayer: GlobalMute): Promise<number> {
+  public static async putGlobalMute(token: string, globalMutedPlayer: GlobalMute): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/?authorization=${token}`;
 
     const data = JSON.stringify(globalMutedPlayer);
@@ -185,7 +185,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {
+  public static async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {
     const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -199,7 +199,7 @@ export default class AdminService {
     return response.json();
   }
 
-  public async putPortraits(token: string, command: ChangePortraitsCommand): Promise<number> {
+  public static async putPortraits(token: string, command: ChangePortraitsCommand): Promise<number> {
     const url = `${API_URL}api/rewards/portraits?authorization=${token}`;
 
     const data = {
@@ -219,7 +219,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async deletePortraits(token: string, command: ChangePortraitsCommand): Promise<number> {
+  public static async deletePortraits(token: string, command: ChangePortraitsCommand): Promise<number> {
     const url = `${API_URL}api/rewards/portraits?authorization=${token}`;
 
     const data = {
@@ -239,7 +239,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async getAllPortraitDefinitionGroups(): Promise<PortraitDefinitionGroup[]> {
+  public static async getAllPortraitDefinitionGroups(): Promise<PortraitDefinitionGroup[]> {
     const url = `${API_URL}api/rewards/portrait-groups`;
 
     const response = await fetch(url, {
@@ -253,7 +253,7 @@ export default class AdminService {
     return response.json();
   }
 
-  public async postPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+  public static async postPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
     const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -267,7 +267,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async putPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+  public static async putPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
     const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -281,7 +281,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async deletePortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
+  public static async deletePortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
     const url = `${API_URL}api/rewards/portrait-definitions?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -295,7 +295,7 @@ export default class AdminService {
     return response.status;
   }
 
-  public async getChatLog(token: string, matchId: string): Promise<ReplayChatLog> {
+  public static async getChatLog(token: string, matchId: string): Promise<ReplayChatLog> {
     const url = `${API_URL}api/replays/${matchId}/chats?authorization=${token}`;
 
     const response = await fetch(url, {
