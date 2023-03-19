@@ -3,10 +3,14 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import chain from "lodash/chain";
 import map from "lodash/map";
 import round from "lodash/round";
 import sumBy from "lodash/sumBy";
+import orderBy from "lodash/orderBy";
+import groupBy from "lodash/groupBy";
+import mapValues from "lodash/mapValues";
+import toArray from "lodash/toArray";
+import flatten from "lodash/flatten";
 import { ChartData, ChartOptions } from "chart.js";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
@@ -35,7 +39,7 @@ export default class PlayedHeroesChart extends Vue {
   @Prop() public playedHeroes!: PlayedHero[];
 
   get orderedHeroes(): PlayedHeroExtra[] {
-    return chain(this.playedHeroes)
+    const playedHeroesExtra = this.playedHeroes
         .map((hero) => {
           const race = HERO_DATA[hero.icon].race;
           const color = RACE_COLORS[race];
@@ -44,10 +48,11 @@ export default class PlayedHeroesChart extends Vue {
             race,
             color,
           };
-        })
-        .orderBy([ "race", "count", "icon" ], [ "asc", "desc", "asc" ])
-        .groupBy("race")
-        .mapValues((heroes, race) => {
+        });
+
+        const ordered = orderBy(playedHeroesExtra, [ "race", "count", "icon" ], [ "asc", "desc", "asc" ]);
+        const groupedByRace = groupBy(ordered, "race");
+        const computed = mapValues(groupedByRace, (heroes: PlayedHeroExtra[], race: string) => {
           // Compute percentages within the race
           const groupTotalCount = sumBy(heroes, "count");
           const newHeroesData: PlayedHeroExtra[] = map(heroes, (hero) => ({
@@ -62,10 +67,9 @@ export default class PlayedHeroesChart extends Vue {
           }
 
           return newHeroesData;
-        })
-        .toArray()
-        .flatten()
-        .value();
+        });
+        const computedArray = toArray(computed);
+        return flatten(computedArray);
   }
 
   get chartData(): ChartData {
