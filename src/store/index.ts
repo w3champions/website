@@ -57,15 +57,15 @@ const mod = {
   } as RootState,
   actions: {
     loadLocale(context: ActionContext<OauthState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit  } = moduleActionContext(context, mod);
 
-      const locale = rootGetters.localeService.getLocale();
+      const locale = LocaleService.getLocale();
       commit.SET_LOCALE(locale);
     },
     saveLocale(context: ActionContext<OauthState, RootState>, locale: string) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit  } = moduleActionContext(context, mod);
 
-      rootGetters.localeService.setLocale(locale);
+      LocaleService.setLocale(locale);
       commit.SET_LOCALE(locale);
     },
     setGateway(context: ActionContext<OauthState, RootState>, gateway: Gateways) {
