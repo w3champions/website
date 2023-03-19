@@ -14,7 +14,6 @@ import infoMessages from "./admin/messages/index";
 
 import MatchService from "@/services/MatchService";
 import { RootState } from "./typings";
-import StatisticService from "@/services/StatisticService";
 import AuthorizationService from "@/services/AuthorizationService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
@@ -31,7 +30,6 @@ Vue.use(Vuex);
 
 const services = {
   matchService: new MatchService(50),
-  statisticService: new StatisticService(),
   oauthService: new AuthorizationService(),
   personalSettingsService: new PersonalSettingsService(),
   clanService: new ClanService(),
@@ -92,9 +90,6 @@ const mod = {
   getters: {
     matchService() {
       return services.matchService;
-    },
-    statisticService() {
-      return services.statisticService;
     },
     oauthService() {
       return services.oauthService;
