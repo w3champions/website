@@ -197,6 +197,7 @@ import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat, PlayerProfile } from "@/store/player/types";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({
   components: {
@@ -214,6 +215,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
   },
 })
 export default class ClanOverview extends Vue {
+  private oauthStore = useOauthStore();
   @Prop() public id!: string;
 
   private modeEnums = Object.freeze(EGameMode);
@@ -335,7 +337,7 @@ export default class ClanOverview extends Vue {
   }
 
   get verifiedBtag(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get hasNoClan(): boolean {

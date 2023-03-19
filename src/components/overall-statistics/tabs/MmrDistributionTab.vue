@@ -64,11 +64,13 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import { Watch } from "vue-property-decorator";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
 })
 export default class PlayerActivityTab extends Mixins(GameModesMixin) {
+  private oauthStore = useOauthStore();
   public selectedSeason: Season = { id: 1 };
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
@@ -132,7 +134,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get verifiedBtag() {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get mmrDistribution() {
@@ -144,7 +146,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get authCode(): string {
-    return this.$store.direct.state.oauth.token;
+    return this.oauthStore.token;
   }
 
   @Watch("verifiedBtag")

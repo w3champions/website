@@ -34,9 +34,11 @@
 import Vue from "vue";
 import { Component, Watch, Prop } from "vue-property-decorator";
 import { Proxy, ProxySettings } from "@/store/admin/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: {} })
 export default class nodeOverridesCard extends Vue {
+  private oauthStore = useOauthStore();
   @Prop({ default: false }) public automaticNodes?: boolean;
   @Prop() public passedOverrides!: string[];
 
@@ -127,7 +129,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   @Watch("isAdmin")
@@ -149,7 +151,7 @@ export default class nodeOverridesCard extends Vue {
   private async init() {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(
-        this.$store.direct.state.oauth.token
+        this.oauthStore.token
       );
       this.modifiedOverrides = JSON.parse(JSON.stringify(this.passedOverrides));
       await this.initiateChipGroupIndex();

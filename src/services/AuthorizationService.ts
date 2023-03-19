@@ -6,7 +6,7 @@ const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
 
 export default class AuthorizationService {
-  public async authorize(
+  public static async authorize(
     code: string,
     region: BnetOAuthRegion = BnetOAuthRegion.eu
   ): Promise<W3cToken> {
@@ -22,7 +22,7 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public async logoutEverywhere(code: string): Promise<boolean> {
+  public static async logoutEverywhere(code: string): Promise<boolean> {
     const url = `${IDENTIFICATION_URL}api/oauth/token?authorization=${code}`;
     const response = await fetch(url, {
       method: "DELETE",
@@ -35,7 +35,7 @@ export default class AuthorizationService {
     return response.ok;
   }
 
-  public async authorizeWithTwitch(): Promise<TwitchToken> {
+  public static async authorizeWithTwitch(): Promise<TwitchToken> {
     const url = `${IDENTIFICATION_URL}api/oauth/twitch`;
     const response = await fetch(url, {
       method: "GET",
@@ -48,34 +48,34 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public async loadAuthCookie(): Promise<string> {
+  public static async loadAuthCookie(): Promise<string> {
     const cookie = Vue.cookies.get(w3CAuth);
     return (cookie as string) ?? "";
   }
 
-  public async loadAuthRegionCookie(): Promise<BnetOAuthRegion> {
+  public static async loadAuthRegionCookie(): Promise<BnetOAuthRegion> {
     const cookie = Vue.cookies.get(w3CAuthRegion);
     return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
   }
 
-  public async saveAuthRegion(region: BnetOAuthRegion) {
+  public static async saveAuthRegion(region: BnetOAuthRegion) {
     Vue.cookies.set(w3CAuthRegion, region, {
       expires: Infinity,
     });
   }
 
-  public async saveAuthToken(token: W3cToken) {
+  public static async saveAuthToken(token: W3cToken) {
     Vue.cookies.set(w3CAuth, token.jwt, {
       expires: Infinity,
     });
   }
 
-  public deleteAuthCookie() {
+  public static deleteAuthCookie(): void {
     Vue.cookies.remove(w3CAuth);
     Vue.cookies.remove(w3CAuthRegion);
   }
 
-  public async getProfile(bearer: string): Promise<W3cToken | null> {
+  public static async getProfile(bearer: string): Promise<W3cToken | null> {
     const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${bearer}`;
     const response = await fetch(url, {
       method: "GET",

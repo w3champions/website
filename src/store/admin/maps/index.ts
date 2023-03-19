@@ -3,6 +3,7 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { AdminMapsState, GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse, SeasonMap } from "./types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -16,34 +17,39 @@ const mod = {
 
   actions: {
     async loadMaps(context: ActionContext<AdminMapsState, RootState>, filter?: string) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-      const searchMapsResponse = await rootGetters.mapService.getAllMaps(rootState.oauth.token, filter);
+      const { commit, rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const searchMapsResponse = await rootGetters.mapService.getAllMaps(oauthStore.token, filter);
 
       commit.SET_MAPS(searchMapsResponse);
       commit.SET_FILTER(filter);
     },
 
     async createMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
-      const { dispatch, rootGetters, state, rootState } = moduleActionContext(context, mod);
-      await rootGetters.mapService.createMap(rootState.oauth.token, map);
+      const { dispatch, rootGetters, state  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.mapService.createMap(oauthStore.token, map);
       dispatch.loadMaps(state.mapsFilter);
     },
 
     async updateMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
-      const { dispatch, rootGetters, state, rootState } = moduleActionContext(context, mod);
-      await rootGetters.mapService.updateMap(rootState.oauth.token, map.id, map);
+      const { dispatch, rootGetters, state  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.mapService.updateMap(oauthStore.token, map.id, map);
       dispatch.loadMaps(state.mapsFilter);
     },
 
     async loadMapFiles(context: ActionContext<AdminMapsState, RootState>, mapId: number) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
-      const mapFiles = await rootGetters.mapService.getMapFiles(rootState.oauth.token, mapId);
+      const { commit, rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const mapFiles = await rootGetters.mapService.getMapFiles(oauthStore.token, mapId);
       commit.SET_MAP_FILES(mapFiles);
     },
 
     async createMapFile(context: ActionContext<AdminMapsState, RootState>, formData: FormData) {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-      await rootGetters.mapService.createMapFile(rootState.oauth.token, formData);
+      const { rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.mapService.createMapFile(oauthStore.token, formData);
     },
 
     async loadMapsForCurrentSeason(context: ActionContext<AdminMapsState, RootState>) {

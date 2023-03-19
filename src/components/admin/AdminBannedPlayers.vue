@@ -192,9 +192,11 @@ import { Component, Watch } from "vue-property-decorator";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/typings";
 import { LocaleMessage } from "vue-i18n";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: {} })
 export default class AdminBannedPlayers extends Vue {
+  private oauthStore = useOauthStore();
   public gameModesEnumValues = this.translateGametypes();
   public oldSearchTerm = "";
   public searchPlayerModel = "";
@@ -284,7 +286,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   get isAddDialog() {
@@ -305,7 +307,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   get author() {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   public async loadBanList() {

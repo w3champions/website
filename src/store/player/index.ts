@@ -11,6 +11,7 @@ import {
 import { EGameMode, ERaceEnum, Match, RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { Season } from "@/store/ranking/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -42,13 +43,14 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       params: { battleTag: string; freshLogin: boolean }
     ) {
-      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { commit,  rootGetters } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PROFILE(true);
 
+      const oauthStore = useOauthStore();
       const profile = await rootGetters.profileService.retrieveProfile(
         params.battleTag,
-        params.freshLogin ? rootState.oauth.token : null
+        params.freshLogin ? oauthStore.token : null
       );
 
       commit.SET_PROFILE(profile);

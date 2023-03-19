@@ -2,6 +2,7 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { AdminInfoMessageState, LoadingScreenTip, MessageOfTheDay, NewsMessage } from "./types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -19,16 +20,18 @@ const mod = {
     },
 
     async editNews(context: ActionContext<AdminInfoMessageState, RootState>, newsMessage: NewsMessage) {
-      const { rootGetters, rootState, dispatch } = moduleActionContext(context, mod);
-      const success = await rootGetters.infoMessageService.editNews(newsMessage, rootState.oauth.token);
+      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const success = await rootGetters.infoMessageService.editNews(newsMessage, oauthStore.token);
       if (success) {
         await dispatch.loadNews();
       }
     },
 
     async deleteNews(context: ActionContext<AdminInfoMessageState, RootState>, newsMessage: NewsMessage) {
-      const { rootGetters, dispatch, rootState } = moduleActionContext(context, mod);
-      const success = await rootGetters.infoMessageService.deleteNews(newsMessage, rootState.oauth.token);
+      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const success = await rootGetters.infoMessageService.deleteNews(newsMessage, oauthStore.token);
       if (success) {
         await dispatch.loadNews();
       }
@@ -41,8 +44,9 @@ const mod = {
     },
 
     async editTip(context: ActionContext<AdminInfoMessageState, RootState>, loadingScreenTip: LoadingScreenTip) {
-      const { rootGetters, rootState, dispatch } = moduleActionContext(context, mod);
-      const success = await rootGetters.infoMessageService.editTip(loadingScreenTip, rootState.oauth.token);
+      const { rootGetters,  dispatch } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const success = await rootGetters.infoMessageService.editTip(loadingScreenTip, oauthStore.token);
       if (success) {
         await dispatch.loadTips();
         return true;
@@ -51,8 +55,9 @@ const mod = {
     },
 
     async deleteTip(context: ActionContext<AdminInfoMessageState, RootState>, loadingScreenTip: LoadingScreenTip) {
-      const { rootGetters, dispatch, rootState } = moduleActionContext(context, mod);
-      const success = await rootGetters.infoMessageService.deleteTip(loadingScreenTip, rootState.oauth.token);
+      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      const success = await rootGetters.infoMessageService.deleteTip(loadingScreenTip, oauthStore.token);
       if (success) {
         await dispatch.loadTips();
       }
@@ -67,9 +72,10 @@ const mod = {
     },
 
     async setMotd(context: ActionContext<AdminInfoMessageState, RootState>, motd: MessageOfTheDay): Promise<boolean> {
-      const { commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { commit,  rootGetters } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.infoMessageService.putMotd(motd, rootState.oauth.token);
+      const oauthStore = useOauthStore();
+      const response = await rootGetters.infoMessageService.putMotd(motd, oauthStore.token);
 
       if (response) commit.SET_MOTD(motd);
       return response;

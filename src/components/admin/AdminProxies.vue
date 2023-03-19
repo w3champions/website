@@ -33,9 +33,11 @@ import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue"
 import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { PlayerProfile } from "@/store/player/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: { nodeOverridesCard, reviewProxies } })
 export default class AdminProxies extends Vue {
+  private oauthStore = useOauthStore();
   public searchPlayerModel = {} as PlayerProfile;
   public search = "";
   public showProxyOptions = false;
@@ -110,7 +112,7 @@ export default class AdminProxies extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   @Watch("isAdmin")
@@ -121,7 +123,7 @@ export default class AdminProxies extends Vue {
   private async init(): Promise<void> {
     if (this.isAdmin) {
       await this.$store.direct.dispatch.admin.loadAvailableProxies(
-        this.$store.direct.state.oauth.token
+        this.oauthStore.token
       );
     }
   }

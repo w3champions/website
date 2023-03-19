@@ -3,6 +3,7 @@ import { Clan, ClanMembership, ClanState } from "./types";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
 import { PlayerProfile } from "@/store/player/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -17,12 +18,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       clanOptions: { clanName: string; abbreviation: string }
     ) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.createClan(
         clanOptions.clanName,
         clanOptions.abbreviation,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);
@@ -32,12 +34,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit, rootGetters } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.addShaman(
         state.playersClan.clanId,
         battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);
@@ -47,12 +50,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit,  rootGetters } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.removeShaman(
         state.playersClan.clanId,
         battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);
@@ -62,34 +66,37 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit, rootState, rootGetters } = moduleActionContext(context, mod);
+      const { state, commit , rootGetters } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.switchChieftain(
         state.playersClan.clanId,
         battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);
     },
 
     async acceptInvite(context: ActionContext<ClanState, RootState>) {
-      const { rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { rootGetters, state  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       await rootGetters.clanService.acceptInvite(
         state.selectedMemberShip.pendingInviteFromClan,
         state.selectedMemberShip.battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
     },
 
     async rejectInvite(context: ActionContext<ClanState, RootState>) {
-      const { rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { rootGetters, state  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       await rootGetters.clanService.rejectInvite(
         state.selectedMemberShip.pendingInviteFromClan,
         state.selectedMemberShip.battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
     },
 
@@ -104,21 +111,23 @@ const mod = {
     },
 
     async deleteClan(context: ActionContext<ClanState, RootState>) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { state, rootGetters  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       await rootGetters.clanService.deleteClan(
         state.playersClan.clanId,
-        rootState.oauth.token
+        oauthStore.token
       );
     },
 
     async leaveClan(context: ActionContext<ClanState, RootState>) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { state, rootGetters  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       await rootGetters.clanService.leaveClan(
         state.playersClan.clanId,
         state.selectedMemberShip.battleTag,
-        rootState.oauth.token
+        oauthStore.token
       );
     },
 
@@ -136,12 +145,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTagId: string
     ) {
-      const { state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { state, rootGetters  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       await rootGetters.clanService.revokeInvite(
         battleTagId,
         state.playersClan.clanId,
-        rootState.oauth.token
+        oauthStore.token
       );
     },
 
@@ -160,12 +170,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootGetters  } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.invitePlayer(
         battleTag,
         state.playersClan.clanId,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);
@@ -175,12 +186,13 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootGetters } = moduleActionContext(context, mod);
 
+      const oauthStore = useOauthStore();
       const response = await rootGetters.clanService.kickPlayer(
         battleTag,
         state.playersClan.clanId,
-        rootState.oauth.token
+        oauthStore.token
       );
 
       commit.SET_CLAN_ERROR(response);

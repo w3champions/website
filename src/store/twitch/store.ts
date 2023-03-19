@@ -12,8 +12,7 @@ export const useTwitchStore = defineStore("twitch", {
       twitchNames: Array<string | null | undefined>
     ) {
 
-      const oauthService = new AuthorizationService();
-      const token = await oauthService.authorizeWithTwitch();
+      const token = await AuthorizationService.authorizeWithTwitch();
 
       const sanitizedTwitchNames = twitchNames
         .map((name) => (name ? name.replace("https://twitch.tv/", "") : ""))

@@ -64,9 +64,11 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/messages/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
+  private oauthStore = useOauthStore();
   data(): unknown {
     return {
       headersTips: [
@@ -87,7 +89,7 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   @Watch("isAdmin")
@@ -148,7 +150,7 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   async saveTips(): Promise<void> {
-    this.editedTipItem.author = this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    this.editedTipItem.author = this.oauthStore.blizzardVerifiedBtag;
     this.editedTipItem.creationDate = format(new Date(), "MMMM do yyyy, h:mm:ss a");
 
     if (await this.$store.direct.dispatch.infoMessages.editTip(this.editedTipItem)) {

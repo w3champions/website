@@ -6,6 +6,7 @@ import {
   PersonalSettingsState,
   ProfilePicture,
 } from "@/store/personalSettings/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -41,11 +42,12 @@ const mod = {
         mod
       );
 
+      const oauthStore = useOauthStore();
       const success =
         await rootGetters.personalSettingsService.savePersonalSettings(
           rootState.player.battleTag,
           setting,
-          rootState.oauth.token
+          oauthStore.token
         );
       if (success) commit.SET_PERSONAL_SETTING(setting);
     },
@@ -58,10 +60,11 @@ const mod = {
         mod
       );
 
+      const oauthStore = useOauthStore();
       const success = await rootGetters.personalSettingsService.setAvatar(
         rootState.player.battleTag,
         picture,
-        rootState.oauth.token
+        oauthStore.token
       );
       if (success) commit.SET_PICTURE(picture);
     },

@@ -174,9 +174,11 @@ import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import { PlayerProfile } from "@/store/player/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery } })
 export default class AdminAssignPortraits extends Vue {
+  private oauthStore = useOauthStore();
   searchPlayerModel = {} as PlayerProfile;
   playerPortraits = [] as number[];
   search = "";
@@ -343,7 +345,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   async mounted(): Promise<void> {
