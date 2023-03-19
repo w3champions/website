@@ -13,9 +13,9 @@
     <template v-slot:top>
       <v-toolbar flat color="transparent">
         <template>
-            <v-text-field 
-              v-model="tableSearch" 
-              label="Search ban" 
+            <v-text-field
+              v-model="tableSearch"
+              label="Search ban"
               prepend-icon="mdi-magnify"
             ></v-text-field>
           </template>
@@ -245,8 +245,10 @@ export default class AdminBannedPlayers extends Vue {
     }[];
 
     const keys = Object.keys(EGameMode).filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (k) => typeof EGameMode[k as any] === "number"
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const values = keys.map((k) => EGameMode[k as any]);
 
     keys.shift();
@@ -343,9 +345,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   async deleteItem(item: BannedPlayer): Promise<void> {
-    const index = this.bannedPlayers.indexOf(item);
-    confirm("Are you sure you want to delete this item?") &&
-    await this.$store.direct.dispatch.admin.deleteBan(item);
+    confirm("Are you sure you want to delete this item?") && await this.$store.direct.dispatch.admin.deleteBan(item);
     await this.loadBanList();
   }
 
