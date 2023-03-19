@@ -38,7 +38,8 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
-import * as _ from "lodash";
+import groupBy from "lodash/groupBy";
+import orderBy from "lodash/orderBy";
 import { ERaceEnum } from "@/store/typings";
 
 @Component({
@@ -56,7 +57,7 @@ export default class RankingsRaceDistribution extends Vue {
 
     const result: { race: number; total: number; percent: number }[] = [];
 
-    const groupedByRace = _.groupBy(this.rankings, (x) => {
+    const groupedByRace = groupBy(this.rankings, (x) => {
       return x.race;
     });
 
@@ -78,7 +79,7 @@ export default class RankingsRaceDistribution extends Vue {
       }
     }
 
-    return _.orderBy(result, (x) => x.percent, "desc");
+    return orderBy(result, (x) => x.percent, "desc");
   }
 
   public getRaceName(race: number) {

@@ -61,7 +61,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import _ from "lodash";
+import throttle from "lodash/throttle";
 import { Component } from "vue-property-decorator";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
 import Tournament from "../tournaments/Tournament.vue";
@@ -85,7 +85,7 @@ export default class AdminTournaments extends Vue {
   public isCreateTournamentOpen = false;
   public isEditTournamentOpen = false;
 
-  private throttledInit = _.throttle(this.init, 2000, { leading: true });
+  private throttledInit = throttle(this.init, 2000, { leading: true });
 
   async mounted(): Promise<void> {
     this.throttledInit();

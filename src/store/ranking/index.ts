@@ -1,4 +1,4 @@
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { moduleActionContext } from "..";
 import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode, RootState } from "../typings";
@@ -131,7 +131,7 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       // Seasons already fetched, skip
-      if (!_.isEmpty(state.seasons)) {
+      if (!isEmpty(state.seasons)) {
         return;
       }
 

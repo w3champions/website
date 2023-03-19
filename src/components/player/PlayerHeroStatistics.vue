@@ -29,7 +29,7 @@ import { getAsset } from "@/helpers/url-functions";
 import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 import { races, defaultStatsTab } from "@/helpers/profile";
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 
 @Component({
   components: { RaceIcon, PlayerHeroStatisticsTable },
@@ -101,6 +101,7 @@ export default class PlayerHeroStatistics extends Vue {
       heroStatsData.push(rowObject);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tableData: any[] = [];
 
     this.populateDataForTable(tableData, heroStatsData);
@@ -110,7 +111,9 @@ export default class PlayerHeroStatistics extends Vue {
     return tableData;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sortHeroStatsTableData(tableData: any[]) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return tableData.sort((a: any, b: any): number => {
       const aTotal = Number(a.total.replace("%", ""));
       const bTotal = Number(b.total.replace("%", ""));
@@ -124,6 +127,7 @@ export default class PlayerHeroStatistics extends Vue {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   populateDataForTable(tableData: any[], heroStatsData: any[]) {
     const totals: { [key: number]: number } = {
       [ERaceEnum.HUMAN]: 0,
@@ -134,7 +138,7 @@ export default class PlayerHeroStatistics extends Vue {
       [ERaceEnum.TOTAL]: 0,
     };
 
-    if (_.isEmpty(heroStatsData)) return;
+    if (isEmpty(heroStatsData)) return;
 
     const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
       .filter((obj: RaceWinsOnMap) => obj.race == this.selectedRace)[0]

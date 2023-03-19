@@ -17,6 +17,7 @@ module.exports = {
     // "@vue/prettier/@typescript-eslint"
     // "@vue/typescript/recommended",
     // "@vue/prettier/@typescript-eslint",
+    "plugin:lodash/recommended",
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -48,5 +49,11 @@ module.exports = {
     "vue/valid-v-slot": ["error", {
       allowModifiers: true,
     }],
+    "lodash/import-scope": ["error", "method"],
+    "lodash/prefer-constant": "off",
+    "lodash/prefer-lodash-method": "off",
+    "lodash/prefer-lodash-typecheck": "off",
+    "lodash/prefer-matches": "off",
+    "lodash/prop-shorthand": "off",
   },
 };

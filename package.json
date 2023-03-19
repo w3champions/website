@@ -60,6 +60,7 @@
     "dotenv": "^16.0.3",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-lodash": "^7.4.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.8.0",
     "eslint-plugin-vuetify": "^1.1.0",

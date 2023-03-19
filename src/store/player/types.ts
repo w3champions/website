@@ -84,6 +84,7 @@ export interface RaceWinsOnMap {
 }
 
 export interface PlayerStatsRaceOnMapVersusRaceByPatch {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 
   patch: string;
@@ -91,6 +92,7 @@ export interface PlayerStatsRaceOnMapVersusRaceByPatch {
 }
 
 export interface PlayerStatsHeroOnMapVersusRaceByPatch {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 
   patch: string;

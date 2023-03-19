@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import _ from "lodash";
+import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
 import { Component, Prop } from "vue-property-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
@@ -58,15 +58,15 @@ export default class TournamentSeriesPlayer extends Vue {
     if (!this.seriesFinished) {
       return "";
     }
-    if (_.isNil(this.player)) {
+    if (isNil(this.player)) {
       return "";
     }
 
     let score = "";
-    if (!_.isNil(this.player.score)) {
+    if (!isNil(this.player.score)) {
       score = this.player.score.toString();
     }
-    if (!_.isNil(this.player) && !this.seriesCanceled) {
+    if (!isNil(this.player) && !this.seriesCanceled) {
       score = this.player.won ? "1" : "0";
     }
     if (this.seriesSpecial) {
@@ -77,7 +77,7 @@ export default class TournamentSeriesPlayer extends Vue {
   }
 
   get raceClass() {
-    if (_.isNil(this.player)) {
+    if (isNil(this.player)) {
       return "";
     }
     const race = this.player.race;

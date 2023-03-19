@@ -1,4 +1,4 @@
-import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
@@ -50,7 +50,7 @@ const mod = {
       const { commit, rootGetters, state } = moduleActionContext(context, mod);
 
       // Season maps already fetched, skip
-      if (!_.isEmpty(state.seasonMaps)) {
+      if (!isEmpty(state.seasonMaps)) {
         return;
       }
 

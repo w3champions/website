@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import _ from "lodash";
+import difference from "lodash/difference";
 import { isFuture } from "date-fns";
 import TournamentsTable from "@/components/tournaments/TournamentsTable.vue";
 import { ITournament } from "@/store/tournaments/types";
@@ -44,7 +44,7 @@ export default class TournamentsView extends Vue {
   }
 
   get pastTournaments() {
-    return _.difference(this.tournaments, this.upcomingTournaments);
+    return difference(this.tournaments, this.upcomingTournaments);
   }
 
   public onRowClick(item: ITournament) {
