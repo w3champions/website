@@ -2,7 +2,7 @@ import { API_URL } from "@/main";
 import { GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "@/store/admin/maps/types";
 
 export default class MapsService {
-  public async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
+  public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
     const filterParam = filter ? `&filter=${filter}` : "";
 
     const url = `${API_URL}api/maps?authorization=${token}${filterParam}`;
@@ -17,7 +17,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async createMap(token: string, map: Map): Promise<Map> {
+  public static async createMap(token: string, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps?authorization=${token}`;
 
     const data = JSON.stringify(map);
@@ -33,7 +33,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
+  public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps/${mapId}?authorization=${token}`;
 
     const data = JSON.stringify(map);
@@ -49,7 +49,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async getMapFiles(token: string, mapId: number): Promise<MapFileData[]> {
+  public static async getMapFiles(token: string, mapId: number): Promise<MapFileData[]> {
     const url = `${API_URL}api/maps/${mapId}/files?authorization=${token}`;
     const response = await fetch(url, {
       method: "GET",
@@ -62,7 +62,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async createMapFile(token: string, form: FormData): Promise<Map> {
+  public static async createMapFile(token: string, form: FormData): Promise<Map> {
     const mapId = form.get("mapId");
     const url = `${API_URL}api/maps/${mapId}/files?authorization=${token}`;
 
@@ -74,7 +74,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async getMapsForCurrentSeason(): Promise<GetSeasonMapsResponse> {
+  public static async getMapsForCurrentSeason(): Promise<GetSeasonMapsResponse> {
     const url = `${API_URL}api/maps/currentseason`;
     const response = await fetch(url, {
       method: "GET",
@@ -87,7 +87,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public async getTournamentMaps(active: boolean): Promise<GetMapsResponse> {
+  public static async getTournamentMaps(active: boolean): Promise<GetMapsResponse> {
     const url = `${API_URL}api/maps/tournaments?active=${active}`;
     const response = await fetch(url, {
       method: "GET",

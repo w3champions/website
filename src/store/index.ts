@@ -20,7 +20,6 @@ import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
 import ClanService from "@/services/ClanService";
 import AdminService from "@/services/AdminService";
-import MapService from "@/services/MapsService";
 import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
@@ -34,7 +33,6 @@ const services = {
   personalSettingsService: new PersonalSettingsService(),
   clanService: new ClanService(),
   adminService: new AdminService(),
-  mapsService: new MapService(),
   tournamentsService: new TournamentsService(),
   localeService: new LocaleService(),
   infoMessageService: new InfoMessageService(),
@@ -102,9 +100,6 @@ const mod = {
     },
     adminService() {
       return services.adminService;
-    },
-    mapService() {
-      return services.mapsService;
     },
     tournamentsService() {
       return services.tournamentsService;
