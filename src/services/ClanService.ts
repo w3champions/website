@@ -2,7 +2,7 @@ import { API_URL } from "@/main";
 import { Clan, ClanMembership } from "@/store/clan/types";
 
 export default class ClanService {
-  public async retrieveClanForPlayer(battleTag: string): Promise<Clan> {
+  public static async retrieveClanForPlayer(battleTag: string): Promise<Clan> {
     const url = `${API_URL}api/clans?battleTag=${encodeURIComponent(
       battleTag
     )}`;
@@ -12,7 +12,7 @@ export default class ClanService {
     return await response.json();
   }
 
-  public async acceptInvite(
+  public static async acceptInvite(
     clanId: string,
     battleTag: string,
     token: string
@@ -27,7 +27,7 @@ export default class ClanService {
     return response.ok;
   }
 
-  public async rejectInvite(
+  public static async rejectInvite(
     clanId: string,
     battleTag: string,
     token: string
@@ -42,7 +42,7 @@ export default class ClanService {
     return response.ok;
   }
 
-  public async addShaman(
+  public static async addShaman(
     clanId: string,
     battleTag: string,
     token: string
@@ -62,7 +62,7 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async removeShaman(
+  public static async removeShaman(
     clanId: string,
     battleTag: string,
     token: string
@@ -77,7 +77,7 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async switchChieftain(
+  public static async switchChieftain(
     clanId: string,
     battleTag: string,
     token: string
@@ -98,7 +98,7 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async leaveClan(
+  public static async leaveClan(
     clanId: string,
     battleTag: string,
     token: string
@@ -113,7 +113,7 @@ export default class ClanService {
     return response.ok;
   }
 
-  public async deleteClan(clanId: string, token: string): Promise<boolean> {
+  public static async deleteClan(clanId: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/clans/${clanId}/?authorization=${token}`;
 
     const response = await fetch(url, {
@@ -122,7 +122,7 @@ export default class ClanService {
     return response.ok;
   }
 
-  public async retrievePlayerMembership(
+  public static async retrievePlayerMembership(
     battleTag: string
   ): Promise<ClanMembership> {
     const url = `${API_URL}api/memberships/${encodeURIComponent(battleTag)}`;
@@ -131,7 +131,7 @@ export default class ClanService {
     return await response.json();
   }
 
-  public async revokeInvite(
+  public static async revokeInvite(
     battleTag: string,
     clanId: string,
     token: string
@@ -152,7 +152,7 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async invitePlayer(
+  public static async invitePlayer(
     battleTag: string,
     clanId: string,
     token: string
@@ -173,7 +173,7 @@ export default class ClanService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async kickPlayer(
+  public static async kickPlayer(
     battleTag: string,
     clanId: string,
     token: string
@@ -191,7 +191,7 @@ export default class ClanService {
     return (await response.json()).error;
   }
 
-  public async createClan(
+  public static async createClan(
     clanName: string,
     abbreviation: string,
     authToken: string
