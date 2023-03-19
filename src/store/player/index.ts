@@ -13,6 +13,7 @@ import { ActionContext } from "vuex";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
+import MatchService from "@/services/MatchService";
 
 const mod = {
   namespaced: true,
@@ -115,14 +116,14 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
       }
 
       commit.SET_LOADING_RECENT_MATCHES(true);
-      const response = await rootGetters.matchService.retrievePlayerMatches(
+      const response = await MatchService.retrievePlayerMatches(
         state.page,
         state.battleTag,
         state.opponentTag,
@@ -140,10 +141,10 @@ const mod = {
       context: ActionContext<PlayerState, RootState>,
       playerId: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const response =
-        await rootGetters.matchService.retrieveOnGoingPlayerMatch(playerId);
+        await MatchService.retrieveOnGoingPlayerMatch(playerId);
       commit.SET_ONGOING_MATCH(response || {});
     },
     async reloadPlayer(context: ActionContext<PlayerState, RootState>) {

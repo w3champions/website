@@ -12,7 +12,6 @@ import admin from "./admin/index";
 import rankings from "./ranking/index";
 import infoMessages from "./admin/messages/index";
 
-import MatchService from "@/services/MatchService";
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
@@ -20,10 +19,6 @@ import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
 
 Vue.use(Vuex);
-
-const services = {
-  matchService: new MatchService(50),
-};
 
 const mod = {
   modules: {
@@ -70,11 +65,6 @@ const mod = {
     },
     SET_LOCALE(state: RootState, locale: string) {
       state.locale = locale;
-    },
-  },
-  getters: {
-    matchService() {
-      return services.matchService;
     },
   },
 } as const;

@@ -4,13 +4,9 @@ import { Gateways } from "@/store/ranking/types";
 import { Mmr } from "@/store/match/types";
 
 export default class MatchService {
-  private pageSize: number;
+  static pageSize = 50;
 
-  constructor(pageSize: number) {
-    this.pageSize = pageSize;
-  }
-
-  public async retrieveMatches(
+  public static async retrieveMatches(
     page: number,
     gateway: number,
     gameMode: EGameMode,
@@ -26,7 +22,7 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrieveOnGoingMatchesPaged(
+  public static async retrieveOnGoingMatchesPaged(
     page: number,
     gateway: number,
     gameMode: EGameMode,
@@ -47,7 +43,7 @@ export default class MatchService {
     );
   }
 
-  public async retrieveOnGoingMatches(
+  public static async retrieveOnGoingMatches(
     offset: number,
     pageSize: number,
     gateway: number,
@@ -64,7 +60,7 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrieveOnGoingPlayerMatch(playerId: string): Promise<Match> {
+  public static async retrieveOnGoingPlayerMatch(playerId: string): Promise<Match> {
     const url = `${API_URL}api/matches/ongoing/${encodeURIComponent(playerId)}`;
 
     const response = await fetch(url);
@@ -76,14 +72,14 @@ export default class MatchService {
     return await response.json();
   }
 
-  public async retrieveMatchDetail(matchId: string): Promise<MatchDetail> {
+  public static async retrieveMatchDetail(matchId: string): Promise<MatchDetail> {
     const url = `${API_URL}api/matches/${matchId}`;
 
     const response = await fetch(url);
     return await response.json();
   }
 
-  public async retrievePlayerMatches(
+  public static async retrievePlayerMatches(
     page: number,
     battleTag: string,
     opponentTag: string,
