@@ -14,11 +14,8 @@ import infoMessages from "./admin/messages/index";
 
 import MatchService from "@/services/MatchService";
 import { RootState } from "./typings";
-import AuthorizationService from "@/services/AuthorizationService";
-import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
-import TournamentsService from "@/services/TournamentsService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
 
@@ -26,10 +23,6 @@ Vue.use(Vuex);
 
 const services = {
   matchService: new MatchService(50),
-  oauthService: new AuthorizationService(),
-  personalSettingsService: new PersonalSettingsService(),
-  tournamentsService: new TournamentsService(),
-  localeService: new LocaleService(),
 };
 
 const mod = {
@@ -82,18 +75,6 @@ const mod = {
   getters: {
     matchService() {
       return services.matchService;
-    },
-    oauthService() {
-      return services.oauthService;
-    },
-    personalSettingsService() {
-      return services.personalSettingsService;
-    },
-    tournamentsService() {
-      return services.tournamentsService;
-    },
-    localeService() {
-      return services.localeService;
     },
   },
 } as const;
