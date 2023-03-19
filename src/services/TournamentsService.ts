@@ -94,6 +94,7 @@ export default class TournamentsService {
 
   public async createTournament(tournament: ITournament, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments?authorization=${token}`;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...data } = tournament;
     const response = await fetch(url, {
       method: "POST",
