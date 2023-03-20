@@ -2,7 +2,7 @@ import { TwitchStreamResponse } from "@/store/twitch/types";
 import { TwitchToken } from "@/store/oauth/types";
 
 export default class TwitchService {
-  public async getStreamStatus(
+  public static async getStreamStatus(
     token: TwitchToken,
     twitchNames: string[]
   ): Promise<TwitchStreamResponse> {

@@ -19,8 +19,7 @@ export const useTwitchStore = defineStore("twitch", {
         .map((name) => (name ? name.replace("https://twitch.tv/", "") : ""))
         .filter((name) => !!name && encodeURIComponent(name) === name);
 
-      const twitchService = new TwitchService();
-      const response = await twitchService.getStreamStatus(
+      const response = await TwitchService.getStreamStatus(
         token,
         sanitizedTwitchNames
       );
