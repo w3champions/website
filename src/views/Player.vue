@@ -56,22 +56,16 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <div
-            class="live-match__container"
-            v-if="ongoingMatch.id"
-            :class="ongoingMatchGameModeClass"
-          >
+          <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
             <div class="live-match__indicator">
               Live
               <span class="circle red blinker"></span>
-              <span class="live-match__duration">
-                {{ getDuration(ongoingMatch) }}'
-              </span>
+              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}'</span>
             </div>
             <div v-if="!isOngoingMatchFFA">
               <div class="live-match__team1">
                 <team-match-info
-                  :not-clickable="true"
+                  :not-clickable="isOngoingMatchFFA"
                   :team="getPlayerTeam(ongoingMatch)"
                   :unfinishedMatch="true"
                   left="true"
@@ -80,7 +74,7 @@
               <div class="live-match__vstext">VS</div>
               <div class="live-match__team2">
                 <team-match-info
-                  :not-clickable="false"
+                  :not-clickable="isOngoingMatchFFA"
                   :team="getOpponentTeam(ongoingMatch)"
                   :unfinishedMatch="true"
                   right="true"
