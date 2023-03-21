@@ -16,9 +16,11 @@
 import { getProfileUrl } from "@/helpers/url-functions";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({})
 export default class LoginView extends Vue {
+  private oauthStore = useOauthStore();
   @Prop() public code!: string;
 
   mounted() {
@@ -26,16 +28,16 @@ export default class LoginView extends Vue {
   }
 
   get account(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get authCode(): string {
-    return this.$store.direct.state.oauth.token;
+    return this.oauthStore.token;
   }
 
   private async init() {
-    await this.$store.direct.dispatch.oauth.authorizeWithCode(this.code);
-    await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
+    await this.oauthStore.authorizeWithCode(this.code);
+    await this.oauthStore.loadBlizzardBtag(this.authCode);
     this.openPlayerProfile();
   }
 

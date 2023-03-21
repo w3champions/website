@@ -2,6 +2,7 @@ import { moduleActionContext } from "../..";
 import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { AdminReplayManagementState, ReplayChatLog } from "../types";
+import { useOauthStore } from "@/store/oauth/store";
 const mod = {
   namespaced: true,
   state: {
@@ -10,9 +11,10 @@ const mod = {
 
   actions: {
     async loadChatLog(context: ActionContext<AdminReplayManagementState, RootState>, matchId: string) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters  } = moduleActionContext(context, mod);
 
-      const chatLog = await rootGetters.adminService.getChatLog(rootState.oauth.token, matchId);
+      const oauthStore = useOauthStore();
+      const chatLog = await rootGetters.adminService.getChatLog(oauthStore.token, matchId);
       commit.SET_CHAT_LOG_DATA(chatLog);
     },
   },

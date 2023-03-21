@@ -85,11 +85,13 @@ import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { EGameMode } from "@/store/typings";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({
   components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague },
 })
 export default class PlayerProfileTab extends Vue {
+  private oauthStore = useOauthStore();
   @Prop() public id!: string;
 
   get raceHeaders() {
@@ -127,7 +129,7 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get verifiedBtag(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get gameModeStats() {

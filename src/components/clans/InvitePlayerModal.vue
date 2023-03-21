@@ -80,9 +80,11 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({})
 export default class InvitePlayerModal extends Vue {
+  private oauthStore = useOauthStore();
   public searchModel = {} as PlayerProfile;
   public search = "";
 
@@ -93,7 +95,7 @@ export default class InvitePlayerModal extends Vue {
   }
 
   get verifiedBtag(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get clanValidationError(): string {

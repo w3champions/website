@@ -31,6 +31,7 @@ import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({
   components: {
@@ -51,6 +52,7 @@ import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
   },
 })
 export default class Admin extends Vue {
+  private oauthStore = useOauthStore();
   navItems: Array<NavigationItem> = [
     {
       title: "Data Science",
@@ -182,7 +184,7 @@ export default class Admin extends Vue {
   selectedNavItem = {};
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   navItemSelected(item: NavigationItem): void {

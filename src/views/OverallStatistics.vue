@@ -55,6 +55,7 @@ import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import { Season } from "@/store/ranking/types";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({
   components: {
@@ -67,12 +68,13 @@ import { Season } from "@/store/ranking/types";
   },
 })
 export default class OverallStatisticsView extends Vue {
+  private oauthStore = useOauthStore();
   get seasons(): Season[] {
     return this.$store.direct.state.rankings.seasons;
   }
 
   get verifiedBtag(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   mounted(): void {

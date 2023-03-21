@@ -165,6 +165,7 @@ import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
+import { useOauthStore } from "@/store/oauth/store";
 
 export type ItemType = {
   title: string;
@@ -175,6 +176,7 @@ export type ItemType = {
 
 @Component({ components: { BrandLogo, SignInDialog, localeIcon, GlobalSearch } })
 export default class App extends Vue {
+  private oauthStore = useOauthStore();
   private _savedLocale = "en";
   private selectedTheme = "human";
   private isNavigationDrawerOpen = false;
@@ -229,12 +231,12 @@ export default class App extends Vue {
     region: BnetOAuthRegion;
     done: () => void;
   }) {
-    await this.$store.direct.dispatch.oauth.saveLoginRegion(region);
+    await this.oauthStore.saveLoginRegion(region);
     done();
   }
 
   logout() {
-    this.$store.direct.dispatch.oauth.logout();
+    this.oauthStore.logout();
   }
 
   /**
@@ -258,19 +260,19 @@ export default class App extends Vue {
   }
 
   get authCode(): string {
-    return this.$store.direct.state.oauth.token;
+    return this.oauthStore.token;
   }
 
   get loginName(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag?.split("#")[0];
+    return this.oauthStore.blizzardVerifiedBtag?.split("#")[0];
   }
 
   get battleTag(): string {
-    return this.$store.direct.state.oauth.blizzardVerifiedBtag;
+    return this.oauthStore.blizzardVerifiedBtag;
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   get isDarkTheme(): boolean {
@@ -335,9 +337,9 @@ export default class App extends Vue {
   private async init() {
     this.$store.direct.dispatch.loadLocale();
     this.$i18n.locale = this.savedLocale;
-    await this.$store.direct.dispatch.oauth.loadAuthCodeToState();
+    await this.oauthStore.loadAuthCodeToState();
     if (this.authCode) {
-      await this.$store.direct.dispatch.oauth.loadBlizzardBtag(this.authCode);
+      await this.oauthStore.loadBlizzardBtag(this.authCode);
     }
   }
   private setThemeColors() {

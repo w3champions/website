@@ -229,9 +229,11 @@ import {
   Underline,
   History,
 } from "tiptap-extensions";
+import { useOauthStore } from "@/store/oauth/store";
 
 @Component({ components: { EditorContent, EditorMenuBar } })
 export default class AdminNewsForLauncher extends Vue {
+  private oauthStore = useOauthStore();
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {
@@ -248,7 +250,7 @@ export default class AdminNewsForLauncher extends Vue {
   }
 
   get isAdmin(): boolean {
-    return this.$store.direct.state.oauth.isAdmin;
+    return this.oauthStore.isAdmin;
   }
 
   @Watch("isAdmin")

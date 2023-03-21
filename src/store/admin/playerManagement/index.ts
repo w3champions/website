@@ -8,6 +8,7 @@ import {
   PortraitDefinitionDTO,
   PortraitDefinitionGroup,
 } from "../types";
+import { useOauthStore } from "@/store/oauth/store";
 
 const mod = {
   namespaced: true,
@@ -18,9 +19,10 @@ const mod = {
 
   actions: {
     async loadAllSpecialPortraits(context: ActionContext<AdminPlayerManagementState, RootState>) {
-      const { commit, rootGetters, rootState } = moduleActionContext(context, mod);
+      const { commit, rootGetters } = moduleActionContext(context, mod);
 
-      const availablePortraits = await rootGetters.adminService.getAllSpecialPortraits(rootState.oauth.token);
+      const oauthStore = useOauthStore();
+      const availablePortraits = await rootGetters.adminService.getAllSpecialPortraits(oauthStore.token);
       commit.SET_SPECIAL_PORTRAITS(availablePortraits);
     },
 
@@ -42,18 +44,20 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       portraitCommand: ChangePortraitsCommand
     ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      const { rootGetters  } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.putPortraits(rootState.oauth.token, portraitCommand);
+      const oauthStore = useOauthStore();
+      await rootGetters.adminService.putPortraits(oauthStore.token, portraitCommand);
     },
 
     async removePortraits(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       portraitCommand: ChangePortraitsCommand
     ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
+      const { rootGetters  } = moduleActionContext(context, mod);
 
-      await rootGetters.adminService.deletePortraits(rootState.oauth.token, portraitCommand);
+      const oauthStore = useOauthStore();
+      await rootGetters.adminService.deletePortraits(oauthStore.token, portraitCommand);
     },
 
     clearManagedPlayer(context: ActionContext<AdminPlayerManagementState, RootState>): void {
@@ -72,24 +76,27 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-      await rootGetters.adminService.postPortraitDefinitions(rootState.oauth.token, definition);
+      const { rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.adminService.postPortraitDefinitions(oauthStore.token, definition);
     },
 
     async removePortraitDefinition(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-      await rootGetters.adminService.deletePortraitDefinitions(rootState.oauth.token, definition);
+      const { rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.adminService.deletePortraitDefinitions(oauthStore.token, definition);
     },
 
     async updatePortraitDefinition(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters, rootState } = moduleActionContext(context, mod);
-      await rootGetters.adminService.putPortraitDefinitions(rootState.oauth.token, definition);
+      const { rootGetters  } = moduleActionContext(context, mod);
+      const oauthStore = useOauthStore();
+      await rootGetters.adminService.putPortraitDefinitions(oauthStore.token, definition);
     },
   },
 

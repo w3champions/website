@@ -6,7 +6,6 @@ import tournaments from "./tournaments/index";
 import player from "./player/index";
 import matches from "./match/index";
 import overallStatistics from "./overallStats/index";
-import oauth from "./oauth/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
 import admin from "./admin/index";
@@ -53,7 +52,6 @@ const mod = {
     rankings,
     matches,
     overallStatistics,
-    oauth,
     personalSettings,
     clan,
     admin,
