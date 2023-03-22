@@ -19,6 +19,8 @@ import {
   GlobalMute,
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
+import ProfileService from "@/services/ProfileService";
+import AdminService from "@/services/AdminService";
 
 const mod = {
   namespaced: true,
@@ -45,8 +47,8 @@ const mod = {
     async loadBannedPlayers(
       context: ActionContext<AdminState, RootState>
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const bannedPlayers = await rootGetters.adminService.getBannedPlayers();
+      const { commit } = moduleActionContext(context, mod);
+      const bannedPlayers = await AdminService.getBannedPlayers();
 
       commit.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
@@ -55,10 +57,10 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { commit,  rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const response = await rootGetters.adminService.postBan(
+      const response = await AdminService.postBan(
         bannedPlayer,
         oauthStore.token
       );
@@ -75,10 +77,10 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       bannedPlayer: BannedPlayer
     ) {
-      const { state, commit,  rootGetters } = moduleActionContext(context, mod);
+      const { state, commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.deleteBan(
+      await AdminService.deleteBan(
         bannedPlayer,
         oauthStore.token
       );
@@ -94,8 +96,8 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       token: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const queuedata = await rootGetters.adminService.getQueueData(token);
+      const { commit } = moduleActionContext(context, mod);
+      const queuedata = await AdminService.getQueueData(token);
       commit.SET_QUEUEDATA(queuedata);
     },
 
@@ -103,9 +105,9 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       token: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       const availableProxies =
-        await rootGetters.adminService.getAvailableProxies(token);
+        await AdminService.getAvailableProxies(token);
       commit.SET_AVAILABLEPROXIES(availableProxies);
     },
 
@@ -113,9 +115,9 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       search: { searchText: string }
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const searchedPlayers = await rootGetters.profileService.searchPlayer(search.searchText);
+      const searchedPlayers = await ProfileService.searchPlayer(search.searchText);
       commit.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
     },
 
@@ -129,10 +131,10 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       battleTag: string
     ): Promise<ProxySettings> {
-      const { commit, rootGetters  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const proxiesSet = await rootGetters.adminService.getProxiesForBattletag(
+      const proxiesSet = await AdminService.getProxiesForBattletag(
         battleTag,
         oauthStore.token
       );
@@ -170,14 +172,14 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       proxies: ProxySettings
     ): Promise<void> {
-      const { commit, rootGetters  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       if (mod.state.proxiesSetForSearchedPlayer._id === undefined || null) {
         return;
       }
 
       const oauthStore = useOauthStore();
-      const response = await rootGetters.adminService.putProxies(
+      const response = await AdminService.putProxies(
         proxies,
         mod.state.proxiesSetForSearchedPlayer._id,
         oauthStore.token
@@ -192,10 +194,8 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       btag: string
     ): Promise<string[]> {
-      const { rootGetters  } = moduleActionContext(context, mod);
-
       const oauthStore = useOauthStore();
-      const getAlts = await rootGetters.adminService.getAltsForBattletag(btag, oauthStore.token);
+      const getAlts = await AdminService.getAltsForBattletag(btag, oauthStore.token);
 
       return getAlts;
     },
@@ -203,10 +203,10 @@ const mod = {
     async loadGlobalMutes(
       context: ActionContext<AdminState, RootState>
     ): Promise<void> {
-      const { commit, rootGetters  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const getGlobalMutes = await rootGetters.adminService.getGlobalMutes(
+      const getGlobalMutes = await AdminService.getGlobalMutes(
         oauthStore.token
       );
 
@@ -217,10 +217,8 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       player: GloballyMutedPlayer
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
-
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.deleteGlobalMute(
+      await AdminService.deleteGlobalMute(
         oauthStore.token,
         player.id
       );
@@ -230,10 +228,8 @@ const mod = {
       context: ActionContext<AdminState, RootState>,
       mute: GlobalMute
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
-
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.putGlobalMute(oauthStore.token, mute);
+      await AdminService.putGlobalMute(oauthStore.token, mute);
     },
   },
 

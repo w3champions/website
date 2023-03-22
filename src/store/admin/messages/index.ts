@@ -3,6 +3,7 @@ import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { AdminInfoMessageState, LoadingScreenTip, MessageOfTheDay, NewsMessage } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
+import InfoMessageService from "@/services/InfoMessageService";
 
 const mod = {
   namespaced: true,
@@ -14,39 +15,39 @@ const mod = {
 
   actions: {
     async loadNews(context: ActionContext<AdminInfoMessageState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const news = await rootGetters.infoMessageService.getNews();
+      const { commit } = moduleActionContext(context, mod);
+      const news = await InfoMessageService.getNews();
       commit.SET_NEWS(news);
     },
 
     async editNews(context: ActionContext<AdminInfoMessageState, RootState>, newsMessage: NewsMessage) {
-      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const { dispatch } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      const success = await rootGetters.infoMessageService.editNews(newsMessage, oauthStore.token);
+      const success = await InfoMessageService.editNews(newsMessage, oauthStore.token);
       if (success) {
         await dispatch.loadNews();
       }
     },
 
     async deleteNews(context: ActionContext<AdminInfoMessageState, RootState>, newsMessage: NewsMessage) {
-      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const { dispatch } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      const success = await rootGetters.infoMessageService.deleteNews(newsMessage, oauthStore.token);
+      const success = await InfoMessageService.deleteNews(newsMessage, oauthStore.token);
       if (success) {
         await dispatch.loadNews();
       }
     },
 
     async loadTips(context: ActionContext<AdminInfoMessageState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const tips = await rootGetters.infoMessageService.getTips();
+      const { commit } = moduleActionContext(context, mod);
+      const tips = await InfoMessageService.getTips();
       commit.SET_TIPS(tips);
     },
 
     async editTip(context: ActionContext<AdminInfoMessageState, RootState>, loadingScreenTip: LoadingScreenTip) {
-      const { rootGetters,  dispatch } = moduleActionContext(context, mod);
+      const { dispatch } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      const success = await rootGetters.infoMessageService.editTip(loadingScreenTip, oauthStore.token);
+      const success = await InfoMessageService.editTip(loadingScreenTip, oauthStore.token);
       if (success) {
         await dispatch.loadTips();
         return true;
@@ -55,16 +56,16 @@ const mod = {
     },
 
     async deleteTip(context: ActionContext<AdminInfoMessageState, RootState>, loadingScreenTip: LoadingScreenTip) {
-      const { rootGetters, dispatch } = moduleActionContext(context, mod);
+      const { dispatch } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      const success = await rootGetters.infoMessageService.deleteTip(loadingScreenTip, oauthStore.token);
+      const success = await InfoMessageService.deleteTip(loadingScreenTip, oauthStore.token);
       if (success) {
         await dispatch.loadTips();
       }
     },
     async loadMotd(context: ActionContext<AdminInfoMessageState, RootState>): Promise<boolean> {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const motd = await rootGetters.infoMessageService.getMotd();
+      const { commit } = moduleActionContext(context, mod);
+      const motd = await InfoMessageService.getMotd();
       commit.SET_MOTD(motd);
 
       if (motd) return true;
@@ -72,14 +73,14 @@ const mod = {
     },
 
     async setMotd(context: ActionContext<AdminInfoMessageState, RootState>, motd: MessageOfTheDay): Promise<boolean> {
-      const { commit,  rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const response = await rootGetters.infoMessageService.putMotd(motd, oauthStore.token);
+      const response = await InfoMessageService.putMotd(motd, oauthStore.token);
 
       if (response) commit.SET_MOTD(motd);
       return response;
-    },
+    }
   },
 
   mutations: {

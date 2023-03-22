@@ -16,6 +16,7 @@ import {
 } from "./types";
 import { ERaceEnum, RootState } from "../typings";
 import { ActionContext } from "vuex";
+import StatisticService from "@/services/StatisticService";
 
 const mod = {
   namespaced: true,
@@ -67,28 +68,28 @@ const mod = {
   } as OverallStatisticState,
   actions: {
     async loadGamesPerDayStatistics(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_GAMES_PER_DAY(true);
 
-      const games = await rootGetters.statisticService.retrieveGamesPerDay();
+      const games = await StatisticService.retrieveGamesPerDay();
 
       commit.SET_GAMES_PER_DAY(games);
       commit.SET_LOADING_GAMES_PER_DAY(false);
     },
     async loadMapsPerSeason(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const games = await rootGetters.statisticService.retrieveMapsPerSeason();
+      const games = await StatisticService.retrieveMapsPerSeason();
 
       commit.SET_MAPS_PER_SEASON(games);
     },
     async loadPlayersPerDayStatistics(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_PLAYERS_PER_DAY(true);
 
-      const games = await rootGetters.statisticService.retrievePlayersPerDay();
+      const games = await StatisticService.retrievePlayersPerDay();
 
       function mapToGameDay(r: PlayersPerDay): GameDay {
         return { date: r.date, gamesPlayed: r.distinctPlayers } as GameDay;
@@ -99,40 +100,40 @@ const mod = {
       commit.SET_LOADING_PLAYERS_PER_DAY(false);
     },
     async loadMapAndRaceStatistics(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_MAP_AND_RACE_STATS(true);
 
-      const stats = await rootGetters.statisticService.retrieveMapAndRaceStats();
+      const stats = await StatisticService.retrieveMapAndRaceStats();
 
       commit.SET_MAP_AND_RACE_STATS(stats);
       commit.SET_LOADING_MAP_AND_RACE_STATS(false);
     },
     async loadGameLengthStatistics(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrieveGameTimes();
+      const stats = await StatisticService.retrieveGameTimes();
 
       commit.SET_GAME_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrievePlayedHeroes();
+      const stats = await StatisticService.retrievePlayedHeroes();
 
       commit.SET_PLAYED_HEROES(stats);
     },
     async loadpopularGameHours(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrievePopularGameHours();
+      const stats = await StatisticService.retrievePopularGameHours();
 
       commit.SET_POPULAR_GAME_HOURS(stats);
     },
     async loadHeroWinrates(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrieveHeroWinrates(
+      const stats = await StatisticService.retrieveHeroWinrates(
         state.heroPicks[0].heroId,
         state.heroPicks[1].heroId,
         state.heroPicks[2].heroId,
@@ -147,9 +148,9 @@ const mod = {
       context: ActionContext<OverallStatisticState, RootState>,
       payload: SeasonGameModeGateWayForMMR
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
-      const stats = await rootGetters.statisticService.retrieveMmrDistribution(
+      const stats = await StatisticService.retrieveMmrDistribution(
         payload.season,
         payload.gameMode,
         payload.gateWay

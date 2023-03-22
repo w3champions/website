@@ -3,6 +3,7 @@ import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 import { useOauthStore } from "@/store/oauth/store";
+import TournamentsService from "@/services/TournamentsService";
 
 interface AdminTournamentsState {
   upcomingTournament: ITournament;
@@ -17,43 +18,43 @@ const mod = {
   } as AdminTournamentsState,
   actions: {
     async loadUpcomingTournament(context: ActionContext<AdminTournamentsState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const data = await rootGetters.tournamentsService.getUpcomingTournament();
+      const { commit } = moduleActionContext(context, mod);
+      const data = await TournamentsService.getUpcomingTournament();
       commit.SET_UPCOMING_TOURNAMENT(data.tournament);
     },
     async registerPlayer(context: ActionContext<AdminTournamentsState, RootState>, player: ITournamentPlayer): Promise<boolean> {
-      const { rootGetters, commit, state  } = moduleActionContext(context, mod);
+      const {  commit, state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
-      const registered = await rootGetters.tournamentsService.registerPlayer(state.upcomingTournament.id, player, token);
+      const registered = await TournamentsService.registerPlayer(state.upcomingTournament.id, player, token);
       commit.SET_IS_LOADING(false);
       return registered;
     },
     async unregisterPlayer(context: ActionContext<AdminTournamentsState, RootState>, battleTag: string): Promise<boolean> {
-      const { rootGetters, commit, state  } = moduleActionContext(context, mod);
+      const {  commit, state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
-      const registered = await rootGetters.tournamentsService.unregisterPlayer(state.upcomingTournament.id, battleTag, token);
+      const registered = await TournamentsService.unregisterPlayer(state.upcomingTournament.id, battleTag, token);
       commit.SET_IS_LOADING(false);
       return registered;
     },
     async createTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament): Promise<boolean> {
-      const { rootGetters, commit  } = moduleActionContext(context, mod);
+      const {  commit } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
-      const created = await rootGetters.tournamentsService.createTournament(tournament, token);
+      const created = await TournamentsService.createTournament(tournament, token);
       commit.SET_IS_LOADING(false);
       return created;
     },
     async updateTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament): Promise<boolean> {
-      const { rootGetters, commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
-      const updated = await rootGetters.tournamentsService.updateTournament(tournament, token);
+      const updated = await TournamentsService.updateTournament(tournament, token);
       commit.SET_IS_LOADING(false);
       return updated;
     },

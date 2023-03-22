@@ -3,6 +3,7 @@ import { moduleActionContext } from "..";
 import { MatchState, MatchStatus, Mmr } from "./types";
 import { Match, MatchDetail, RootState } from "../typings";
 import { ActionContext } from "vuex";
+import MatchService from "@/services/MatchService";
 
 const mod = {
   namespaced: true,
@@ -24,7 +25,7 @@ const mod = {
       context: ActionContext<MatchState, RootState>,
       page?: number
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
       if (page != null && !isNaN(page)) {
         commit.SET_PAGE(page - 1);
@@ -33,7 +34,7 @@ const mod = {
       let response: { count: number; matches: Match[] };
 
       if (state.status == MatchStatus.onGoing) {
-        response = await rootGetters.matchService.retrieveOnGoingMatchesPaged(
+        response = await MatchService.retrieveOnGoingMatchesPaged(
           state.page,
           rootState.gateway,
           state.gameMode,
@@ -42,7 +43,7 @@ const mod = {
           state.sort
         );
       } else {
-        response = await rootGetters.matchService.retrieveMatches(
+        response = await MatchService.retrieveMatches(
           state.page,
           rootState.gateway,
           state.gameMode,
@@ -59,9 +60,9 @@ const mod = {
       gameMode?: EGameMode,
       map?: string
     ) {
-      const { commit, rootGetters, state, rootState } = moduleActionContext(context, mod);
+      const { commit, state, rootState } = moduleActionContext(context, mod);
 
-      const response = await rootGetters.matchService.retrieveOnGoingMatches(
+      const response = await MatchService.retrieveOnGoingMatches(
         0,
         200,
         rootState.gateway,
@@ -77,10 +78,10 @@ const mod = {
       context: ActionContext<MatchState, RootState>,
       id: string
     ) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       commit.SET_LOADING_MATCH_DETAIL(true);
-      const response = await rootGetters.matchService.retrieveMatchDetail(id);
+      const response = await MatchService.retrieveMatchDetail(id);
 
       commit.SET_MATCH_DETAIL(response);
       commit.SET_LOADING_MATCH_DETAIL(false);

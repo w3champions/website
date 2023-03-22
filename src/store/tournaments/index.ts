@@ -3,6 +3,8 @@ import { ActionContext } from "vuex";
 import { TournamentsState, ITournament } from "./types";
 import { RootState } from "../typings";
 import { Map } from "../admin/maps/types";
+import TournamentsService from "@/services/TournamentsService";
+import MapsService from "@/services/MapsService";
 
 const mod = {
   namespaced: true,
@@ -16,33 +18,33 @@ const mod = {
     async retrieveTournaments(
       context: ActionContext<TournamentsState, RootState>
     ) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       if (state.tournaments.length > 0) {
         return;
       }
 
-      const response = await rootGetters.tournamentsService.getTournaments();
+      const response = await TournamentsService.getTournaments();
       commit.SET_TOURNAMENTS(response.tournaments);
     },
     async loadTournamentMaps(context: ActionContext<TournamentsState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       if (state.maps.length > 0) {
         return;
       }
 
-      const response = await rootGetters.mapService.getTournamentMaps(false);
+      const response = await MapsService.getTournamentMaps(false);
       commit.SET_MAPS(response.items);
     },
     async loadActiveTournamentMaps(context: ActionContext<TournamentsState, RootState>) {
-      const { commit, rootGetters, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       if (state.activeMaps.length > 0) {
         return;
       }
 
-      const response = await rootGetters.mapService.getTournamentMaps(true);
+      const response = await MapsService.getTournamentMaps(true);
       commit.SET_ACTIVE_MAPS(response.items);
     },
   },

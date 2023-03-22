@@ -9,6 +9,8 @@ import {
   PortraitDefinitionGroup,
 } from "../types";
 import { useOauthStore } from "@/store/oauth/store";
+import PersonalSettingsService from "@/services/PersonalSettingsService";
+import AdminService from "@/services/AdminService";
 
 const mod = {
   namespaced: true,
@@ -19,10 +21,10 @@ const mod = {
 
   actions: {
     async loadAllSpecialPortraits(context: ActionContext<AdminPlayerManagementState, RootState>) {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const availablePortraits = await rootGetters.adminService.getAllSpecialPortraits(oauthStore.token);
+      const availablePortraits = await AdminService.getAllSpecialPortraits(oauthStore.token);
       commit.SET_SPECIAL_PORTRAITS(availablePortraits);
     },
 
@@ -30,8 +32,8 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       btag: string
     ): Promise<void> {
-      const { commit, rootGetters } = moduleActionContext(context, mod);
-      const playerSettings = await rootGetters.personalSettingsService.retrievePersonalSetting(btag);
+      const { commit } = moduleActionContext(context, mod);
+      const playerSettings = await PersonalSettingsService.retrievePersonalSetting(btag);
       if (playerSettings.specialPictures != null) {
         commit.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS(playerSettings.specialPictures.map((x) => x.pictureId));
       } else {
@@ -44,20 +46,16 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       portraitCommand: ChangePortraitsCommand
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
-
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.putPortraits(oauthStore.token, portraitCommand);
+      await AdminService.putPortraits(oauthStore.token, portraitCommand);
     },
 
     async removePortraits(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       portraitCommand: ChangePortraitsCommand
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
-
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.deletePortraits(oauthStore.token, portraitCommand);
+      await AdminService.deletePortraits(oauthStore.token, portraitCommand);
     },
 
     clearManagedPlayer(context: ActionContext<AdminPlayerManagementState, RootState>): void {
@@ -66,9 +64,9 @@ const mod = {
     },
 
     async loadPortraitDefinitionGroups(context: ActionContext<AdminPlayerManagementState, RootState>): Promise<void> {
-      const { rootGetters, commit } = moduleActionContext(context, mod);
+      const {  commit } = moduleActionContext(context, mod);
 
-      const portDefGroups = await rootGetters.adminService.getAllPortraitDefinitionGroups();
+      const portDefGroups = await AdminService.getAllPortraitDefinitionGroups();
       commit.SET_PORTRAIT_DEFINITION_GROUPS(portDefGroups);
     },
 
@@ -76,27 +74,24 @@ const mod = {
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.postPortraitDefinitions(oauthStore.token, definition);
+      await AdminService.postPortraitDefinitions(oauthStore.token, definition);
     },
 
     async removePortraitDefinition(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.deletePortraitDefinitions(oauthStore.token, definition);
+      await AdminService.deletePortraitDefinitions(oauthStore.token, definition);
     },
 
     async updatePortraitDefinition(
       context: ActionContext<AdminPlayerManagementState, RootState>,
       definition: PortraitDefinitionDTO
     ): Promise<void> {
-      const { rootGetters  } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
-      await rootGetters.adminService.putPortraitDefinitions(oauthStore.token, definition);
+      await AdminService.putPortraitDefinitions(oauthStore.token, definition);
     },
   },
 

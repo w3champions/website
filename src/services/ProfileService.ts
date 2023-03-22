@@ -11,7 +11,7 @@ import { Gateways } from "@/store/ranking/types";
 import { ERaceEnum, EGameMode } from "@/store/typings";
 
 export default class ProfileService {
-  public async retrieveWinRate(
+  public static async retrieveWinRate(
     battleTag: string,
     season: number
   ): Promise<RaceStat> {
@@ -24,7 +24,7 @@ export default class ProfileService {
     return data.stats;
   }
 
-  public async retrieveProfile(
+  public static async retrieveProfile(
     battleTag: string,
     authCode: string | null
   ): Promise<PlayerProfile> {
@@ -39,7 +39,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async searchPlayer(search: string): Promise<PlayerProfile[]> {
+  public static async searchPlayer(search: string): Promise<PlayerProfile[]> {
     const url = `${API_URL}api/players/?search=${encodeURIComponent(search)}`;
 
     const response = await fetch(url);
@@ -47,7 +47,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async invitePlayer(
+  public static async invitePlayer(
     battleTag: string,
     clanId: string,
     token: string
@@ -68,7 +68,7 @@ export default class ProfileService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public async retrieveGameModeStats(
+  public static async retrieveGameModeStats(
     battleTag: string,
     gateWay: Gateways,
     season: number
@@ -82,7 +82,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrieveRaceStats(
+  public static async retrieveRaceStats(
     battleTag: string,
     gateWay: Gateways,
     season: number
@@ -95,7 +95,7 @@ export default class ProfileService {
 
     return await response.json();
   }
-  public async retrievePlayerStatsRaceVersusRaceOnMap(
+  public static async retrievePlayerStatsRaceVersusRaceOnMap(
     battleTag: string,
     season: number
   ): Promise<PlayerStatsRaceOnMapVersusRace> {
@@ -107,7 +107,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrievePlayerStatsHeroVersusRaceOnMap(
+  public static async retrievePlayerStatsHeroVersusRaceOnMap(
     battleTag: string,
     season: number
   ): Promise<PlayerStatsHeroOnMapVersusRace> {
@@ -119,7 +119,7 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public async retrievePlayerMmrRpTimeline(
+  public static async retrievePlayerMmrRpTimeline(
     battleTag: string,
     race: ERaceEnum,
     gateWay: Gateways,

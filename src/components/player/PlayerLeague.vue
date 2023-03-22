@@ -65,6 +65,7 @@ import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import MatchService from "@/services/MatchService";
 
 @Component({
   components: { RecentPerformance, LevelProgress },
@@ -117,7 +118,7 @@ export default class PlayerLeague extends Vue {
 
   public async init() {
     const { matches } =
-      await this.$store.direct.getters.matchService.retrievePlayerMatches(
+      await MatchService.retrievePlayerMatches(
         0,
         this.battleTag,
         "",
