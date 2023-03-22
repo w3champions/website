@@ -52,7 +52,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit  } = moduleActionContext(context, mod);
+      const { state, commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.removeShaman(
@@ -68,7 +68,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit  } = moduleActionContext(context, mod);
+      const { state, commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.switchChieftain(
@@ -81,7 +81,7 @@ const mod = {
     },
 
     async acceptInvite(context: ActionContext<ClanState, RootState>) {
-      const {  state } = moduleActionContext(context, mod);
+      const { state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.acceptInvite(
@@ -92,7 +92,7 @@ const mod = {
     },
 
     async rejectInvite(context: ActionContext<ClanState, RootState>) {
-      const {  state } = moduleActionContext(context, mod);
+      const { state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.rejectInvite(
@@ -103,7 +103,7 @@ const mod = {
     },
 
     async retrievePlayersClan(context: ActionContext<ClanState, RootState>) {
-      const { commit,  rootState } = moduleActionContext(context, mod);
+      const { commit, rootState } = moduleActionContext(context, mod);
 
       const response = await ClanService.retrieveClanForPlayer(
         rootState.player.battleTag
@@ -113,7 +113,7 @@ const mod = {
     },
 
     async deleteClan(context: ActionContext<ClanState, RootState>) {
-      const { state  } = moduleActionContext(context, mod);
+      const { state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.deleteClan(
@@ -123,7 +123,7 @@ const mod = {
     },
 
     async leaveClan(context: ActionContext<ClanState, RootState>) {
-      const { state  } = moduleActionContext(context, mod);
+      const { state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.leaveClan(
@@ -134,7 +134,7 @@ const mod = {
     },
 
     async retrievePlayersMembership(context: ActionContext<ClanState, RootState>) {
-      const { commit,  rootState } = moduleActionContext(context, mod);
+      const { commit, rootState } = moduleActionContext(context, mod);
 
       const response = await ClanService.retrievePlayerMembership(
         rootState.player.battleTag
@@ -147,7 +147,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTagId: string
     ) {
-      const { state  } = moduleActionContext(context, mod);
+      const { state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.revokeInvite(
@@ -172,7 +172,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state  } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.invitePlayer(
