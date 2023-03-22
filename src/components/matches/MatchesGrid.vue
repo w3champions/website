@@ -128,11 +128,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   @Prop() public alwaysLeftName!: string;
   @Prop() public unfinished!: boolean;
 
-  data() {
-    return {
-      page: 1,
-    };
-  }
+  public page = 1;
 
   destroyed() {
     this.$emit("pageChanged", 1);
@@ -155,18 +151,13 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   }
 
   get currentMatchesLowRange() {
-    if (this.totalMatches === 0) {
-      return 0;
-    }
-    if (this.totalMatches <= 50) {
-      return 1;
-    }
-    return this.$data.page * 50 - 49;
+    if (this.totalMatches === 0) return 0;
+    if (this.totalMatches <= 50) return 1;
+    return this.page * 50 - 49;
   }
 
   get currentMatchesHighRange() {
-    const highRange = this.$data.page * 50;
-
+    const highRange = this.page * 50;
     return highRange > this.totalMatches ? this.totalMatches : highRange;
   }
 

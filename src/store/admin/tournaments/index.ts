@@ -23,7 +23,7 @@ const mod = {
       commit.SET_UPCOMING_TOURNAMENT(data.tournament);
     },
     async registerPlayer(context: ActionContext<AdminTournamentsState, RootState>, player: ITournamentPlayer): Promise<boolean> {
-      const {  commit, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
@@ -32,7 +32,7 @@ const mod = {
       return registered;
     },
     async unregisterPlayer(context: ActionContext<AdminTournamentsState, RootState>, battleTag: string): Promise<boolean> {
-      const {  commit, state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);
@@ -41,7 +41,7 @@ const mod = {
       return registered;
     },
     async createTournament(context: ActionContext<AdminTournamentsState, RootState>, tournament: ITournament): Promise<boolean> {
-      const {  commit } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const token = oauthStore.token;
       commit.SET_IS_LOADING(true);

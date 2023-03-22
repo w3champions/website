@@ -105,31 +105,31 @@
             <v-tab
               exact
               class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}`"
+              :to="`/player/${encodeURIComponent(battleTag)}`"
             >
               {{ $t("views_player.profile") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/matches`"
+              :to="`/player/${encodeURIComponent(battleTag)}/matches`"
             >
               {{ $t("views_player.matchhistory") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/at-teams`"
+              :to="`/player/${encodeURIComponent(battleTag)}/at-teams`"
             >
               {{ $t("views_player.teams") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/statistics`"
+              :to="`/player/${encodeURIComponent(battleTag)}/statistics`"
             >
               {{ $t("views_player.statistics") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="`/player/${encodeURIComponent(this.battleTag)}/clan`"
+              :to="`/player/${encodeURIComponent(battleTag)}/clan`"
             >
               {{ $t("views_player.clan") }}
             </v-tab>
