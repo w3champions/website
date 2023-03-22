@@ -120,7 +120,7 @@ const mod = {
     async retrieveLeagueConstellation(
       context: ActionContext<RankingState, RootState>
     ) {
-      const { commit,  state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       const ladders = await RankingService.retrieveLadders(
         state.selectedSeason.id
@@ -129,7 +129,7 @@ const mod = {
       commit.SET_LEAGUE_CONSTELLATION(ladders);
     },
     async retrieveSeasons(context: ActionContext<RankingState, RootState>) {
-      const { commit,  state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       // Seasons already fetched, skip
       if (!isEmpty(state.seasons)) {

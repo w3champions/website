@@ -20,7 +20,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       clanOptions: { clanName: string; abbreviation: string }
     ) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.createClan(
@@ -36,7 +36,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit  } = moduleActionContext(context, mod);
+      const { state, commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.addShaman(
@@ -52,7 +52,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit   } = moduleActionContext(context, mod);
+      const { state, commit  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.removeShaman(
@@ -68,7 +68,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { state, commit   } = moduleActionContext(context, mod);
+      const { state, commit  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.switchChieftain(
@@ -81,7 +81,7 @@ const mod = {
     },
 
     async acceptInvite(context: ActionContext<ClanState, RootState>) {
-      const {  state  } = moduleActionContext(context, mod);
+      const {  state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.acceptInvite(
@@ -92,7 +92,7 @@ const mod = {
     },
 
     async rejectInvite(context: ActionContext<ClanState, RootState>) {
-      const {  state  } = moduleActionContext(context, mod);
+      const {  state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.rejectInvite(
@@ -113,7 +113,7 @@ const mod = {
     },
 
     async deleteClan(context: ActionContext<ClanState, RootState>) {
-      const { state   } = moduleActionContext(context, mod);
+      const { state  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.deleteClan(
@@ -123,7 +123,7 @@ const mod = {
     },
 
     async leaveClan(context: ActionContext<ClanState, RootState>) {
-      const { state   } = moduleActionContext(context, mod);
+      const { state  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.leaveClan(
@@ -147,7 +147,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTagId: string
     ) {
-      const { state   } = moduleActionContext(context, mod);
+      const { state  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       await ClanService.revokeInvite(
@@ -161,7 +161,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       search: string
     ) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const response = await ProfileService.searchPlayer(search);
 
@@ -172,7 +172,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state   } = moduleActionContext(context, mod);
+      const { commit, state  } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.invitePlayer(
@@ -188,7 +188,7 @@ const mod = {
       context: ActionContext<ClanState, RootState>,
       battleTag: string
     ) {
-      const { commit, state  } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
       const response = await ClanService.kickPlayer(

@@ -18,7 +18,7 @@ const mod = {
 
   actions: {
     async loadMaps(context: ActionContext<AdminMapsState, RootState>, filter?: string) {
-      const { commit   } = moduleActionContext(context, mod);
+      const { commit  } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter);
 
@@ -27,21 +27,21 @@ const mod = {
     },
 
     async createMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
-      const { dispatch,  state  } = moduleActionContext(context, mod);
+      const { dispatch,  state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       await MapsService.createMap(oauthStore.token, map);
       dispatch.loadMaps(state.mapsFilter);
     },
 
     async updateMap(context: ActionContext<AdminMapsState, RootState>, map: Map) {
-      const { dispatch,  state  } = moduleActionContext(context, mod);
+      const { dispatch,  state } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       await MapsService.updateMap(oauthStore.token, map.id, map);
       dispatch.loadMaps(state.mapsFilter);
     },
 
     async loadMapFiles(context: ActionContext<AdminMapsState, RootState>, mapId: number) {
-      const { commit   } = moduleActionContext(context, mod);
+      const { commit  } = moduleActionContext(context, mod);
       const oauthStore = useOauthStore();
       const mapFiles = await MapsService.getMapFiles(oauthStore.token, mapId);
       commit.SET_MAP_FILES(mapFiles);
@@ -53,7 +53,7 @@ const mod = {
     },
 
     async loadMapsForCurrentSeason(context: ActionContext<AdminMapsState, RootState>) {
-      const { commit,  state } = moduleActionContext(context, mod);
+      const { commit, state } = moduleActionContext(context, mod);
 
       // Season maps already fetched, skip
       if (!isEmpty(state.seasonMaps)) {

@@ -110,21 +110,21 @@ const mod = {
       commit.SET_LOADING_MAP_AND_RACE_STATS(false);
     },
     async loadGameLengthStatistics(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const stats = await StatisticService.retrieveGameTimes();
 
       commit.SET_GAME_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const stats = await StatisticService.retrievePlayedHeroes();
 
       commit.SET_PLAYED_HEROES(stats);
     },
     async loadpopularGameHours(context: ActionContext<OverallStatisticState, RootState>) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const stats = await StatisticService.retrievePopularGameHours();
 
@@ -148,7 +148,7 @@ const mod = {
       context: ActionContext<OverallStatisticState, RootState>,
       payload: SeasonGameModeGateWayForMMR
     ) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const stats = await StatisticService.retrieveMmrDistribution(
         payload.season,

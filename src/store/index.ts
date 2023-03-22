@@ -39,13 +39,13 @@ const mod = {
   } as RootState,
   actions: {
     loadLocale(context: ActionContext<OauthState, RootState>) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       const locale = LocaleService.getLocale();
       commit.SET_LOCALE(locale);
     },
     saveLocale(context: ActionContext<OauthState, RootState>, locale: string) {
-      const { commit  } = moduleActionContext(context, mod);
+      const { commit } = moduleActionContext(context, mod);
 
       LocaleService.setLocale(locale);
       commit.SET_LOCALE(locale);
