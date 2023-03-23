@@ -40,19 +40,12 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="12" class="pb-0">
-                    <!-- Autocomplete Btag search -->
-                    <v-autocomplete
+                    <player-search
                       v-if="isAddDialog"
-                      v-model="searchPlayerModel"
-                      append-icon="mdi-magnify"
-                      label="Search BattleTag"
-                      clearable
-                      placeholder=" "
-                      :items="searchedPlayers"
-                      :search-input.sync="search"
-                      @click:clear="resetPlayerSearch"
-                      autofocus
-                    ></v-autocomplete>
+                      @playerFound="playerFound"
+                      @searchCleared="searchCleared"
+                      :clearSearchFromParent="clearPlayerSearchToggle"
+                    ></player-search>
                     <v-text-field
                       v-else
                       v-model="editedItem.battleTag"
@@ -193,19 +186,19 @@ import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/typings";
 import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-@Component({ components: {} })
+@Component({ components: { PlayerSearch } })
 export default class AdminBannedPlayers extends Vue {
   private oauthStore = useOauthStore();
   public gameModesEnumValues = this.translateGametypes();
-  public oldSearchTerm = "";
-  public searchPlayerModel = "";
-  public search = "";
   public banSmurfs = false;
   public dialog = false;
   public dateMenu = false;
   public editedIndex = -1;
   public tableSearch = "";
+  public foundPlayer = "";
+  public clearPlayerSearchToggle = false;
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {
@@ -213,7 +206,7 @@ export default class AdminBannedPlayers extends Vue {
       return;
     }
 
-    const bTag = this.searchPlayerModel;
+    const bTag = this.foundPlayer;
     if (bTag) {
       const smurfs = await this.$store.direct.dispatch.admin.getAltsForPlayer(bTag);
       this.editedItem.smurfs = smurfs.map((smurf) => smurf.toLowerCase());
@@ -358,7 +351,7 @@ export default class AdminBannedPlayers extends Vue {
   async save(): Promise<void> {
     this.editedItem.author = this.author;
     if (this.isAddDialog) {
-      this.editedItem.battleTag = this.searchPlayerModel;
+      this.editedItem.battleTag = this.foundPlayer;
     }
 
     await this.$store.direct.dispatch.admin.postBan(this.editedItem);
@@ -367,7 +360,7 @@ export default class AdminBannedPlayers extends Vue {
       this.close();
       await this.loadBanList();
       if (this.isAddDialog) {
-        this.resetPlayerSearch();
+        this.clearPlayerSearch();
       }
     }
   }
@@ -386,18 +379,16 @@ export default class AdminBannedPlayers extends Vue {
       this.editedIndex = -1;
       this.resetSmurfs();
     });
-    this.resetPlayerSearch();
+    this.clearPlayerSearch();
+  }
+
+  clearPlayerSearch() {
+    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
   }
 
   resetSmurfs(): void {
     this.banSmurfs = false;
     this.editedItem.smurfs = [];
-  }
-
-  resetPlayerSearch(): void {
-    this.oldSearchTerm = "";
-    this.searchPlayerModel = "";
-    this.$store.direct.dispatch.admin.clearSearch();
   }
 
   @Watch("dialog")
@@ -409,21 +400,18 @@ export default class AdminBannedPlayers extends Vue {
     }
   }
 
-  @Watch("search")
-  public async onSearchChanged(newValue: string): Promise<void> {
-    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      await this.$store.direct.dispatch.admin.searchBnetTag({
-        searchText: newValue.toLowerCase(),
-      });
-      this.oldSearchTerm = newValue;
-    } else {
-      this.resetPlayerSearch();
+  playerFound(bTag: string): void {
+    this.foundPlayer = bTag;
+
+    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
+    if (this.banSmurfs) {
+      this.resetSmurfs();
     }
   }
 
-  @Watch("searchPlayerModel")
-  public onSearchStringChanged(): void {
-    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
+  searchCleared(): void {
+    this.foundPlayer = "";
+
     if (this.banSmurfs) {
       this.resetSmurfs();
     }

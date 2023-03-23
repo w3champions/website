@@ -1,7 +1,7 @@
 import { API_URL } from "@/main";
 import {
-  AdminState,
   BannedPlayer,
+  BannedPlayersResponse,
   QueueData,
   Proxy,
   SearchedPlayer,
@@ -17,7 +17,7 @@ import {
 } from "@/store/admin/types";
 
 export default class AdminService {
-  public static async getBannedPlayers(): Promise<AdminState> {
+  public static async getBannedPlayers(): Promise<BannedPlayersResponse> {
     const url = `${API_URL}api/admin/bannedPlayers`;
     const response = await fetch(url, {
       method: "GET",
