@@ -9,24 +9,33 @@
     :items="searchedPlayers"
     :search-input.sync="search"
     :no-data-text="noDataText"
-    autofocus
+    :loading="isLoading"
+    :autofocus="setAutofocus ? true : false"
   ></v-autocomplete>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import { debounce } from "debounce";
 
 @Component({})
 export default class PlayerSearch extends Vue {
   @Prop({ default: "" }) classes?: string;
+  @Prop({ default: true }) setAutofocus?: boolean;
+  @Prop() clearSearchFromParent?: boolean;
   public searchModel = "";
   public search = "";
+  public isLoading = false;
+  private static SEARCH_DELAY = 500;
+  private debouncedSearch = debounce(this.dispatchSearch, PlayerSearch.SEARCH_DELAY);
+
+  private dispatchSearch() {
+    this.$store.direct.dispatch.admin.searchBnetTag({ searchText: this.search.toLowerCase() });
+  }
 
   @Watch("searchModel")
-  public async onSearchStringChanged(
-    btag: string
-  ): Promise<void> {
+  public onSearchModelChanged(btag: string): void {
     if (!btag) return;
     this.$emit("playerFound", btag);
   }
@@ -34,10 +43,19 @@ export default class PlayerSearch extends Vue {
   @Watch("search")
   public onSearchChanged(): void {
     if (this.search && this.search.length > 2) {
-      this.$store.direct.dispatch.admin.searchBnetTag({ searchText: this.search.toLowerCase() });
+      this.isLoading = true;
+      this.debouncedSearch();
     } else {
       this.clearSearch();
+      this.isLoading = false;
+      // Prevent previous calls from executing
+      this.debouncedSearch.clear();
     }
+  }
+
+  @Watch("clearSearchFromParent")
+  public onClearSearchFromParent(): void {
+    this.clearSearch();
   }
 
   public clearSearch(): void {
@@ -52,7 +70,13 @@ export default class PlayerSearch extends Vue {
   }
 
   get noDataText(): string {
-    return (!this.search || this.search.length < 3) ? "Type at least 3 letters" : "No player found";
+    return (!this.search || this.search.length < 3) ? "Type at least 3 letters" : this.isLoading ? "Loading..." : "No player found";
+  }
+
+  @Watch("searchedPlayers")
+  public onPlayersChanged() {
+    // If the players array has changed it means the search request finished
+    this.isLoading = false;
   }
 }
 </script>
