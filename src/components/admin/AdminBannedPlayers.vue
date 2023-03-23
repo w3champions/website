@@ -43,6 +43,8 @@
                     <player-search
                       v-if="isAddDialog"
                       @playerFound="playerFound"
+                      @searchCleared="searchCleared"
+                      :clearSearchFromParent="clearPlayerSearchToggle"
                     ></player-search>
                     <v-text-field
                       v-else
@@ -196,6 +198,7 @@ export default class AdminBannedPlayers extends Vue {
   public editedIndex = -1;
   public tableSearch = "";
   public foundPlayer = "";
+  public clearPlayerSearchToggle = false;
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {
@@ -357,7 +360,7 @@ export default class AdminBannedPlayers extends Vue {
       this.close();
       await this.loadBanList();
       if (this.isAddDialog) {
-        this.resetPlayerSearch();
+        this.clearPlayerSearch();
       }
     }
   }
@@ -376,17 +379,16 @@ export default class AdminBannedPlayers extends Vue {
       this.editedIndex = -1;
       this.resetSmurfs();
     });
-    this.resetPlayerSearch();
+    this.clearPlayerSearch();
+  }
+
+  clearPlayerSearch() {
+    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
   }
 
   resetSmurfs(): void {
     this.banSmurfs = false;
     this.editedItem.smurfs = [];
-  }
-
-  resetPlayerSearch(): void {
-    this.foundPlayer = "";
-    this.$store.direct.dispatch.admin.clearSearch();
   }
 
   @Watch("dialog")
@@ -402,6 +404,14 @@ export default class AdminBannedPlayers extends Vue {
     this.foundPlayer = bTag;
 
     // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
+    if (this.banSmurfs) {
+      this.resetSmurfs();
+    }
+  }
+
+  searchCleared(): void {
+    this.foundPlayer = "";
+
     if (this.banSmurfs) {
       this.resetSmurfs();
     }
