@@ -1,22 +1,11 @@
 <template>
   <v-container>
     <v-row>
-      <!-- Autocomplete Btag search -->
-      <v-autocomplete
-        class="ml-5 mr-5"
-        v-model="searchPlayerModel"
-        append-icon="mdi-magnify"
-        label="Search BattleNet Tag"
-        clearable
-        placeholder=" "
-        :items="searchedPlayers"
-        :search-input.sync="search"
-        item-text="battleTag"
-        item-value="battleTag"
-        return-object
-        @click:clear="revertToDefault"
-        autofocus
-      ></v-autocomplete>
+      <player-search
+        @searchCleared="searchCleared"
+        @playerFound="playerFound"
+        classes="ml-5 mr-5"
+      ></player-search>
     </v-row>
 
     <review-proxies
@@ -32,41 +21,25 @@ import { Component, Watch } from "vue-property-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
-import { PlayerProfile } from "@/store/player/types";
 import { useOauthStore } from "@/store/oauth/store";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-@Component({ components: { nodeOverridesCard, reviewProxies } })
+@Component({ components: { nodeOverridesCard, reviewProxies, PlayerSearch } })
 export default class AdminProxies extends Vue {
   private oauthStore = useOauthStore();
-  public searchPlayerModel = {} as PlayerProfile;
-  public search = "";
   public showProxyOptions = false;
-  public oldSearchTerm = "";
 
-  public revertToDefault(): void {
-    this.showProxyOptions = false;
-    this.oldSearchTerm = "";
-    this.$store.direct.dispatch.admin.clearSearch();
-  }
-
-  @Watch("searchPlayerModel")
-  public async onSearchStringChanged(
-    searchedPlayer: PlayerProfile
-  ): Promise<void> {
-    if (!searchedPlayer) return;
-
-    if (searchedPlayer) {
-      const bTag = searchedPlayer.battleTag;
-
-      const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag);
+  async playerFound(bTag: string): Promise<void> {
+    const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag);
       await this.setPlayerProxies(proxies);
 
-      if (proxies._id != null || undefined) {
+      if (proxies._id) {
         this.showProxyOptions = true;
-      } else {
-        this.revertToDefault();
       }
-    }
+  }
+
+  searchCleared() {
+    this.showProxyOptions = false;
   }
 
   public async setPlayerProxies(proxies: ProxySettings): Promise<void> {
@@ -84,29 +57,6 @@ export default class AdminProxies extends Vue {
     return this.$store.direct.state.admin.proxiesSetForSearchedPlayer;
   }
 
-  @Watch("search")
-  public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.$store.direct.dispatch.admin.searchBnetTag({
-        searchText: newValue.toLowerCase(),
-      });
-      this.oldSearchTerm = newValue;
-    } else {
-      this.revertToDefault();
-    }
-  }
-
-  get searchedPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.admin.searchedPlayers;
-  }
-
-  public sanitizeString(string: string): string {
-    let str = string;
-    str = str.replace(/-/g, `_`);
-
-    return str;
-  }
-
   get availableProxies(): Proxy[] {
     return this.$store.direct.state.admin.availableProxies;
   }
@@ -122,9 +72,7 @@ export default class AdminProxies extends Vue {
 
   private async init(): Promise<void> {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadAvailableProxies(
-        this.oauthStore.token
-      );
+      await this.$store.direct.dispatch.admin.loadAvailableProxies(this.oauthStore.token);
     }
   }
 

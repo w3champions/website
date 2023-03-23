@@ -1,27 +1,16 @@
 <template>
   <v-container>
-    <!-- Autocomplete Btag search -->
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="searchPlayerModel"
-      append-icon="mdi-magnify"
-      label="Search BattleNet Tag"
-      clearable
-      placeholder=" "
-      :items="searchedPlayers"
-      :search-input.sync="search"
-      item-text="battleTag"
-      item-value="battleTag"
-      return-object
-      autofocus
-      @click:clear="revertToDefault"
-    ></v-autocomplete>
+    <player-search
+      @searchCleared="searchCleared"
+      @playerFound="playerFound"
+      classes="ml-5 mr-5"
+    ></player-search>
 
     <v-card v-if="showPlayersPortraits">
       <v-container>
         <v-row class="justify-center align-center ma-1 mt-0">
           <v-col class="ml-0 pl-0">
-            <v-card-title class="justify-left pl=0 ml-0">Portraits for {{ bnetTag }}</v-card-title>
+            <v-card-title class="justify-left pl=0 ml-0">Portraits for {{ bTag }}</v-card-title>
           </v-col>
           <v-col>
             <v-row v-if="assignmentsChanged" class="justify-end">
@@ -51,7 +40,7 @@
                             The following portraits will be
                             <strong>ADDED</strong>
                             for
-                            <strong>{{ bnetTag }}:</strong>
+                            <strong>{{ bTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
                             <v-row no-gutters>
@@ -80,7 +69,7 @@
                             The following portraits will be
                             <strong>REMOVED</strong>
                             for
-                            <strong>{{ bnetTag }}:</strong>
+                            <strong>{{ bTag }}:</strong>
                           </v-card-subtitle>
                           <v-card-actions>
                             <v-row no-gutters>
@@ -173,16 +162,13 @@ import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
-import { PlayerProfile } from "@/store/player/types";
 import { useOauthStore } from "@/store/oauth/store";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-@Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery } })
+@Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery, PlayerSearch } })
 export default class AdminAssignPortraits extends Vue {
   private oauthStore = useOauthStore();
-  searchPlayerModel = {} as PlayerProfile;
   playerPortraits = [] as number[];
-  search = "";
-  oldSearchTerm = "";
   showPlayersPortraits = false;
   assignedPortraitsModel = [] as number[];
   allSpecialPortraits = [] as number[];
@@ -190,16 +176,17 @@ export default class AdminAssignPortraits extends Vue {
   confirmAddedPortraits = [] as number[];
   confirmRemovedPortraits = [] as number[];
   mouseoverText = "";
+  foundPlayer = "";
 
-  get rules(): unknown {
+  get rules(): { required: (value: string) => string | boolean; min: (text: string) => string | boolean } {
     return {
-      required: (value: string | unknown[]) => !!value || "Required",
-      min: (text: string | unknown[]) => text.length >= 3 || "Min 3 characters",
+      required: (value: string) => !!value || "Required",
+      min: (text: string) => text.length >= 3 || "Min 3 characters",
     };
   }
 
-  get bnetTag() {
-    return this.searchPlayerModel.battleTag;
+  get bTag(): string {
+    return this.foundPlayer;
   }
 
   get searchedPlayerPortraits(): number[] {
@@ -231,7 +218,7 @@ export default class AdminAssignPortraits extends Vue {
   async confirmDialog(): Promise<void> {
     if (this.confirmAddedPortraits.length > 0) {
       const battleTags = [] as string[];
-      battleTags.push(this.searchPlayerModel.battleTag);
+      battleTags.push(this.foundPlayer);
 
       const command = {
         battleTags: battleTags,
@@ -243,7 +230,7 @@ export default class AdminAssignPortraits extends Vue {
     }
     if (this.confirmRemovedPortraits.length > 0) {
       const battleTags = [] as string[];
-      battleTags.push(this.searchPlayerModel.battleTag);
+      battleTags.push(this.foundPlayer);
 
       const command = {
         battleTags: battleTags,
@@ -285,44 +272,20 @@ export default class AdminAssignPortraits extends Vue {
     this.confirmRemovedPortraits = this.searchedPlayerPortraits.filter((x) => !this.assignedPortraitsModel.includes(x));
   }
 
-  @Watch("searchPlayerModel")
-  public async onSearchStringChanged(searchedPlayer: PlayerProfile): Promise<void> {
-    if (!searchedPlayer) return;
+  async playerFound(bTag: string): Promise<void> {
+    await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(bTag);
+    const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
+    this.assignedPortraitsModel = Object.create(playerPortraits);
 
-    if (searchedPlayer) {
-      const btag = searchedPlayer.battleTag;
-
-      await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(btag);
-      const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
-      this.assignedPortraitsModel = Object.create(playerPortraits);
-
-      if (playerPortraits) {
-        this.showPlayersPortraits = true;
-      } else {
-        this.revertToDefault();
-      }
+    if (playerPortraits) {
+      this.showPlayersPortraits = true;
     }
+    this.foundPlayer = bTag;
   }
 
-  @Watch("search") public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.$store.direct.dispatch.admin.searchBnetTag({
-        searchText: newValue.toLowerCase(),
-      });
-      this.oldSearchTerm = newValue;
-    } else {
-      this.revertToDefault();
-    }
-  }
-
-  get searchedPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.admin.searchedPlayers;
-  }
-
-  public revertToDefault(): void {
+  searchCleared() {
     this.showPlayersPortraits = false;
-    this.oldSearchTerm = "";
-    this.$store.direct.dispatch.admin.clearSearch();
+    this.foundPlayer = "";
   }
 
   @Watch("isAdmin")

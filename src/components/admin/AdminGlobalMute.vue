@@ -28,21 +28,11 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-autocomplete
-                      class="ml-5 mr-5"
-                      v-model="searchPlayerModel"
-                      append-icon="mdi-magnify"
-                      label="Search BattleNet Tag"
-                      clearable
-                      placeholder=" "
-                      :items="searchedPlayers"
-                      :search-input.sync="search"
-                      item-text="battleTag"
-                      item-value="battleTag"
-                      return-object
-                      @click:clear="revertToDefault"
-                      autofocus
-                    ></v-autocomplete>
+                    <player-search
+                      @searchCleared="searchCleared"
+                      @playerFound="playerFound"
+                      classes="ml-5 mr-5"
+                    ></player-search>
                   </v-row>
                   <v-row v-if="showConfirmation" class="ma-2">
                     <v-menu
@@ -92,7 +82,7 @@
                   <v-row>
                     <v-col>
                       <v-btn
-                        v-if="showConfirmation && banSet"
+                        v-if="showConfirmation && banDateSet"
                         color="primary"
                         class="w3-race-bg--text"
                         @click="save"
@@ -126,11 +116,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import { PlayerProfile } from "@/store/player/types";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-@Component({})
+@Component({ components: { PlayerSearch } })
 export default class AdminGlobalMute extends Vue {
   public headers = [
     {
@@ -167,62 +158,15 @@ export default class AdminGlobalMute extends Vue {
     this.loadMutes();
   }
 
-  get banSet(): boolean {
+  get banDateSet(): boolean {
     return this.banExpiry != "";
   }
 
   public banExpiry = "";
   public dateMenu = false;
   public dialog = false;
-  public searchPlayerModel = {} as PlayerProfile;
-  public search = "";
   public showConfirmation = false;
-  public oldSearchTerm = "";
   public player = "";
-
-  public revertToDefault(): void {
-    this.showConfirmation = false;
-    this.banExpiry = "";
-    this.oldSearchTerm = "";
-    this.$store.direct.dispatch.admin.clearSearch();
-  }
-
-  @Watch("searchPlayerModel")
-  public async onSearchStringChanged(
-    searchedPlayer: PlayerProfile
-  ): Promise<string> {
-    if (!searchedPlayer) return "";
-
-    if (searchedPlayer) {
-      this.player = searchedPlayer.battleTag;
-
-      await this.$store.direct.dispatch.admin.searchBnetTag({
-        searchText: this.player.toLowerCase(),
-      });
-
-      if ((this.player != null || undefined) && this.player.length > 0) {
-        this.showConfirmation = true;
-      } else {
-        this.revertToDefault();
-      }
-    }
-
-    this.player = searchedPlayer.battleTag;
-    this.showConfirmation = true;
-    return this.player;
-  }
-
-  @Watch("search")
-  public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.$store.direct.dispatch.admin.searchBnetTag({
-        searchText: newValue.toLowerCase(),
-      });
-      this.oldSearchTerm = newValue;
-    } else {
-      this.revertToDefault();
-    }
-  }
 
   get searchedPlayers(): PlayerProfile[] {
     return this.$store.direct.state.admin.searchedPlayers;
@@ -255,6 +199,16 @@ export default class AdminGlobalMute extends Vue {
 
   public async init(): Promise<void> {
     await this.loadMutes();
+  }
+
+  searchCleared(): void {
+    this.showConfirmation = false;
+    this.banExpiry = "";
+  }
+
+  playerFound(bTag: string): void {
+    this.showConfirmation = true;
+    this.player = bTag;
   }
 }
 </script>
