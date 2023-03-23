@@ -52,6 +52,11 @@ export interface BannedPlayer {
   author: string;
 }
 
+export interface BannedPlayersResponse {
+  total: number;
+  players: BannedPlayer[];
+}
+
 export interface NavigationItem {
   key?: string;
   title: string;
