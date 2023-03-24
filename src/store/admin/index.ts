@@ -17,8 +17,6 @@ import {
   OverridesList,
   GloballyMutedPlayer,
   GlobalMute,
-  LoungeMute,
-  LoungeMuteResponse
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
@@ -43,7 +41,6 @@ const mod = {
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
     banValidationError: "",
-    loungeMutedPlayers: [] as LoungeMuteResponse[]
   } as AdminState,
 
   actions: {
@@ -234,27 +231,6 @@ const mod = {
       const oauthStore = useOauthStore();
       await AdminService.putGlobalMute(oauthStore.token, mute);
     },
-
-    async loadLoungeMutes(
-      context: ActionContext<AdminState, RootState>
-    ): Promise<void> {
-      const { commit } = moduleActionContext(context, mod);
-
-      const oauthStore = useOauthStore();
-      const loungeMutes = await AdminService.getLoungeMutes(oauthStore.token);
-
-      commit.SET_LOUNGE_MUTED_PLAYERS(loungeMutes);
-    },
-
-    async addLoungeMute(context: ActionContext<AdminState, RootState>, loungeMute: LoungeMute): Promise<void> {
-      const oauthStore = useOauthStore();
-      await AdminService.postLoungeMute(oauthStore.token, loungeMute);
-    },
-
-    async deleteLoungeMute(context: ActionContext<AdminState, RootState>, battleTag: string): Promise<void> {
-      const oauthStore = useOauthStore();
-      await AdminService.deleteLoungeMute(oauthStore.token, battleTag);
-    },
   },
 
   mutations: {
@@ -290,9 +266,6 @@ const mod = {
     },
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
-    },
-    SET_LOUNGE_MUTED_PLAYERS(state: AdminState, mutedPlayers: LoungeMuteResponse[]) {
-      state.loungeMutedPlayers = mutedPlayers;
     },
   },
 

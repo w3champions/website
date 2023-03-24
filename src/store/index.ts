@@ -11,6 +11,7 @@ import clan from "./clan/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
 import infoMessages from "./admin/messages/index";
+import loungeMute from "./admin/loungeMute/index";
 
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
@@ -31,6 +32,7 @@ const mod = {
     admin,
     tournaments,
     infoMessages,
+    loungeMute,
   },
   state: {
     darkMode: false,

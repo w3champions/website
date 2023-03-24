@@ -15,7 +15,6 @@ export type AdminState = {
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
   banValidationError: string;
-  loungeMutedPlayers: LoungeMuteResponse[]
 };
 
 export type AdminPlayerManagementState = {
@@ -86,16 +85,6 @@ export interface GlobalMute {
 
 export interface GloballyMutedPlayer extends GlobalMute {
   id: string;
-}
-
-export interface LoungeMute {
-  battleTag: string;
-  author: string;
-  endDate: string;
-}
-
-export interface LoungeMuteResponse extends LoungeMute {
-  insertDate: string;
 }
 
 export interface Proxy {

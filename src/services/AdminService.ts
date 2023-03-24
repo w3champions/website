@@ -14,9 +14,9 @@ import {
   PortraitDefinitionGroup,
   PortraitDefinitionDTO,
   ReplayChatLog,
-  LoungeMute,
-  LoungeMuteResponse,
 } from "@/store/admin/types";
+
+import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 
 export default class AdminService {
   public static async getBannedPlayers(): Promise<BannedPlayersResponse> {
