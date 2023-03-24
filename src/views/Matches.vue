@@ -53,6 +53,7 @@ import MmrSelect from "@/components/common/MmrSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: {
@@ -65,6 +66,8 @@ import AppConstants from "@/constants";
   },
 })
 export default class MatchesView extends Vue {
+  private overallStatsStore = useOverallStatsStore();
+
   onPageChanged(page: number): void {
     this.getMatches(page);
   }
@@ -111,7 +114,7 @@ export default class MatchesView extends Vue {
         : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
           matchesOnMapPerSeason.season >= 0;
 
-    return this.$store.direct.state.overallStatistics.matchesOnMapPerSeason
+    return this.overallStatsStore.matchesOnMapPerSeason
       .filter(filterSeasons)
       .reduce<Record<EGameMode, Set<unknown>>>(
       (mapsByMode, matchesOnMapPerSeason) => {
@@ -155,7 +158,7 @@ export default class MatchesView extends Vue {
   }
 
   public getMaps(): void {
-    this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
+    this.overallStatsStore.loadMapsPerSeason();
   }
 
   _intervalRefreshHandle?: number = undefined;

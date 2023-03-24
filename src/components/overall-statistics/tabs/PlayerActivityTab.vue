@@ -182,6 +182,7 @@ import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTim
 import { EGameMode } from "@/store/typings";
 import ActivityPerDayChart from "@/components/overall-statistics/ActivityPerDayChart.vue";
 import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonChart.vue";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: {
@@ -199,6 +200,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public selectedSeasonForMaps = "All";
   public overWrittenOnce = false;
   public selectedModeForMaps = EGameMode.GM_1ON1;
+  private overallStatsStore = useOverallStatsStore();
 
   async mounted(): Promise<void> {
     await this.loadActiveGameModes();
@@ -254,7 +256,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get loadingGamesPerDayStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingGamesPerDayStats;
+    return this.overallStatsStore.loadingGamesPerDayStats;
   }
 
   get mapsPerSeason(): MapCount[] {
@@ -264,7 +266,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     }
 
     const selectedSeasonMaps =
-      this.$store.direct.state.overallStatistics.matchesOnMapPerSeason.filter(
+      this.overallStatsStore.matchesOnMapPerSeason.filter(
         (m) =>
           m.season ===
           (this.selectedSeasonForMaps === "All"
@@ -280,17 +282,17 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get loadingPlayersPerDayStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingPlayersPerDayStats;
+    return this.overallStatsStore.loadingPlayersPerDayStats;
   }
 
   get gameDays(): GameDayPerMode[] {
-    return this.$store.direct.state.overallStatistics.gamesPerDay[0];
+    return this.overallStatsStore.gamesPerDay[0];
   }
 
   get gameDaysForGateways(): GameDayPerMode[][] {
-    const all = this.$store.direct.state.overallStatistics.gamesPerDay[0];
-    const us = this.$store.direct.state.overallStatistics.gamesPerDay[1];
-    const eu = this.$store.direct.state.overallStatistics.gamesPerDay[2];
+    const all = this.overallStatsStore.gamesPerDay[0];
+    const us = this.overallStatsStore.gamesPerDay[1];
+    const eu = this.overallStatsStore.gamesPerDay[2];
     const filterForCurrentMode = (all: GameDayPerMode[]) => {
       return all.filter((g) => g.gameMode === this.selectedGamesPerDayMode);
     };
@@ -303,21 +305,21 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
 
   get playersPerDay(): GameDay[] {
     return (
-      this.$store.direct.state.overallStatistics.playersPerDay
+      this.overallStatsStore.playersPerDay
         .reverse()
         ?.splice(
           0,
-          this.$store.direct.state.overallStatistics.playersPerDay.length - 1
+          this.overallStatsStore.playersPerDay.length - 1
         ) ?? []
     );
   }
 
   get gameLength(): GameLength[] {
-    return this.$store.direct.state.overallStatistics.gameLengths;
+    return this.overallStatsStore.gameLengths;
   }
 
   get popularGameHours(): PopularGameHour[] {
-    return this.$store.direct.state.overallStatistics.popularGameHours;
+    return this.overallStatsStore.popularGameHours;
   }
 }
 </script>

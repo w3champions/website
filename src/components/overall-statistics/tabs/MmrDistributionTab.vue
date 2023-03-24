@@ -65,12 +65,14 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
 })
 export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   private oauthStore = useOauthStore();
+  private overallStatsStore = useOverallStatsStore();
   public selectedSeason: Season = { id: 1 };
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
@@ -81,7 +83,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get loadingMapAndRaceStats(): boolean {
-    return this.$store.direct.state.overallStatistics.loadingMapAndRaceStats;
+    return this.overallStatsStore.loadingMapAndRaceStats;
   }
 
   public async setSelectedSeason(season: Season) {
@@ -105,7 +107,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
       gameMode: this.selectedGameMode,
       gateWay: this.selectedGateWay,
     };
-    await this.$store.direct.dispatch.overallStatistics.loadMmrDistribution(payload);
+    await this.overallStatsStore.loadMmrDistribution(payload);
     this.loadingData = false;
   }
 
@@ -138,7 +140,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get mmrDistribution() {
-    return this.$store.direct.state.overallStatistics.mmrDistribution;
+    return this.overallStatsStore.mmrDistribution;
   }
 
   get standardDeviation(): string {
