@@ -16,8 +16,6 @@ import {
   ReplayChatLog,
 } from "@/store/admin/types";
 
-import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
-
 export default class AdminService {
   public static async getBannedPlayers(): Promise<BannedPlayersResponse> {
     const url = `${API_URL}api/admin/bannedPlayers`;
@@ -185,50 +183,6 @@ export default class AdminService {
     });
 
     return response.status;
-  }
-
-  public static async getLoungeMutes(token: string): Promise<LoungeMuteResponse[]> {
-    const url = `${API_URL}api/admin/loungeMutes?authorization=${token}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-      },
-    });
-
-    return await response.json();
-  }
-
-  public static async postLoungeMute(token: string, loungeMute: LoungeMute): Promise<number> {
-    const url = `${API_URL}api/admin/loungeMutes/?authorization=${token}`;
-
-    const data = JSON.stringify(loungeMute);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: data,
-    });
-
-    return response.status;
-  }
-
-  public static async deleteLoungeMute(token: string, battleTag: string): Promise<number> {
-    const url = `${API_URL}api/admin/loungeMutes/${encodeURIComponent(battleTag)}?authorization=${token}`;
-
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    return response.ok ? "" : await response.json();
   }
 
   public static async getAllSpecialPortraits(token: string): Promise<PortraitDefinition[]> {

@@ -3,7 +3,7 @@ import { RootState } from "../../typings";
 import { ActionContext } from "vuex";
 import { LoungeMuteState, LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import { useOauthStore } from "@/store/oauth/store";
-import AdminService from "@/services/AdminService";
+import ModerationService from "@/services/ModerationService";
 
 const mod = {
   namespaced: true,
@@ -18,19 +18,19 @@ const mod = {
       const { commit } = moduleActionContext(context, mod);
 
       const oauthStore = useOauthStore();
-      const loungeMutes = await AdminService.getLoungeMutes(oauthStore.token);
+      const loungeMutes = await ModerationService.getLoungeMutes(oauthStore.token);
 
       commit.SET_LOUNGE_MUTED_PLAYERS(loungeMutes);
     },
 
     async addLoungeMute(context: ActionContext<LoungeMuteState, RootState>, loungeMute: LoungeMute): Promise<void> {
       const oauthStore = useOauthStore();
-      await AdminService.postLoungeMute(oauthStore.token, loungeMute);
+      await ModerationService.postLoungeMute(oauthStore.token, loungeMute);
     },
 
     async deleteLoungeMute(context: ActionContext<LoungeMuteState, RootState>, battleTag: string): Promise<void> {
       const oauthStore = useOauthStore();
-      await AdminService.deleteLoungeMute(oauthStore.token, battleTag);
+      await ModerationService.deleteLoungeMute(oauthStore.token, battleTag);
     },
   },
   mutations: {
