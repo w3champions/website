@@ -120,7 +120,6 @@ import { Component } from "vue-property-decorator";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
-import { setDate, setMonth, setYear } from "date-fns";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminLoungeMute extends Vue {
@@ -173,14 +172,11 @@ export default class AdminLoungeMute extends Vue {
 
   get muteEndDateTime(): string {
     if (!this.endDate) return "";
-    const endDateArr = this.endDate.split("-");
-    const endDateYear = +endDateArr[0];
-    const endDateMonth = +endDateArr[1];
-    const endDateDay = +endDateArr[2];
-    let now = new Date();
-    now = setDate(now, endDateDay);
-    now = setMonth(now, endDateMonth - 1);
-    now = setYear(now, endDateYear);
+    const endDate = new Date(this.endDate);
+    const now = new Date();
+    now.setDate(endDate.getDate());
+    now.setMonth(endDate.getMonth());
+    now.setFullYear(endDate.getFullYear());
     return now.toISOString();
   }
 
@@ -189,6 +185,22 @@ export default class AdminLoungeMute extends Vue {
   }
 
   async mounted(): Promise<void> {
+    const endDateArr = "2044-04-15".split("-");
+    const endDateYear = +endDateArr[0];
+    const endDateMonth = +endDateArr[1];
+    const endDateDay = +endDateArr[2];
+    const fisk = new Date("2044-04-15");
+    let now = new Date();
+    now.setDate(fisk.getDate());
+    now.setMonth(fisk.getMonth());
+    now.setFullYear(fisk.getFullYear());
+    let now2 = new Date();
+    now2.setDate(endDateDay);
+    now2.setMonth(endDateMonth - 1);
+    now2.setFullYear(endDateYear);
+    console.log(now.toISOString());
+    console.log(now2.toISOString());
+    
     await this.init();
   }
 
