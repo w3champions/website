@@ -118,7 +118,6 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
-import { PlayerProfile } from "@/store/player/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
 @Component({ components: { PlayerSearch } })
@@ -167,10 +166,6 @@ export default class AdminGlobalMute extends Vue {
   public dialog = false;
   public showConfirmation = false;
   public player = "";
-
-  get searchedPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.admin.searchedPlayers;
-  }
 
   public close(): void {
     this.dialog = false;

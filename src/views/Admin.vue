@@ -25,6 +25,7 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
+import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
 import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
@@ -43,6 +44,7 @@ import { useOauthStore } from "@/store/oauth/store";
     AdminProxies,
     AdminAlts,
     AdminGlobalMute,
+    AdminLoungeMute,
     AdminAssignPortraits,
     AdminManagePortraits,
     AdminMaps,
@@ -87,6 +89,12 @@ export default class Admin extends Vue {
           title: "Global Mute",
           icon: "mdi-chat-remove",
           component: "admin-global-mute",
+        },
+        {
+          key: "lounge_mute",
+          title: "Lounge Mute",
+          icon: "mdi-chat-remove-outline",
+          component: "admin-lounge-mute",
         },
         {
           key: "view_game_chat",
