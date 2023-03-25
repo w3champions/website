@@ -185,22 +185,6 @@ export default class AdminLoungeMute extends Vue {
   }
 
   async mounted(): Promise<void> {
-    const endDateArr = "2044-04-15".split("-");
-    const endDateYear = +endDateArr[0];
-    const endDateMonth = +endDateArr[1];
-    const endDateDay = +endDateArr[2];
-    const fisk = new Date("2044-04-15");
-    let now = new Date();
-    now.setDate(fisk.getDate());
-    now.setMonth(fisk.getMonth());
-    now.setFullYear(fisk.getFullYear());
-    let now2 = new Date();
-    now2.setDate(endDateDay);
-    now2.setMonth(endDateMonth - 1);
-    now2.setFullYear(endDateYear);
-    console.log(now.toISOString());
-    console.log(now2.toISOString());
-    
     await this.init();
   }
 
