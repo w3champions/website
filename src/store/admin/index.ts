@@ -1,7 +1,6 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import tournamentsManagementModule from "./tournaments";
 import { PlayerProfile } from "@/store/player/types";
 
 import {
@@ -263,10 +262,6 @@ const mod = {
     SET_MUTED_PLAYERS(state: AdminState, mutedPlayers: GloballyMutedPlayer[]) {
       state.globallyMutedPlayers = mutedPlayers;
     },
-  },
-
-  modules: {
-    tournamentsManagement: tournamentsManagementModule,
   },
 } as const;
 

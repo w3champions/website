@@ -71,6 +71,7 @@ import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
 import { ERaceEnum } from "@/store/typings";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
+import { useTournamentsManagementStore } from "@/store/admin/tournamentsManagement/store";
 
 @Component({
   components: {
@@ -88,6 +89,7 @@ export default class AdminTournaments extends Vue {
 
   private throttledInit = throttle(this.init, 2000, { leading: true });
   private tournamentsStore = useTournamentsStore();
+  private tournamentsManagementStore = useTournamentsManagementStore();
 
   async mounted(): Promise<void> {
     this.throttledInit();
@@ -98,7 +100,7 @@ export default class AdminTournaments extends Vue {
   }
 
   private async init(): Promise<void> {
-    await this.$store.direct.dispatch.admin.tournamentsManagement.loadUpcomingTournament();
+    await this.tournamentsManagementStore.loadUpcomingTournament();
   }
 
   get activeMaps(): Map[] {
@@ -106,11 +108,11 @@ export default class AdminTournaments extends Vue {
   }
 
   get isLoading() {
-    return this.$store.direct.state.admin.tournamentsManagement.isLoading;
+    return this.tournamentsManagementStore.isLoading;
   }
 
   get tournament(): ITournament {
-    return this.$store.direct.state.admin.tournamentsManagement.upcomingTournament;
+    return this.tournamentsManagementStore.upcomingTournament;
   }
 
   public openAddPlayer() {
@@ -127,7 +129,7 @@ export default class AdminTournaments extends Vue {
         battleTag,
         race,
       } as ITournamentPlayer;
-      const added = await this.$store.direct.dispatch.admin.tournamentsManagement.registerPlayer(player);
+      const added = await this.tournamentsManagementStore.registerPlayer(player);
 
       if (added) {
         this.isAddPlayerOpen = false;
@@ -148,7 +150,7 @@ export default class AdminTournaments extends Vue {
 
   public async removePlayer(battleTag: string) {
     try {
-      const removed = await this.$store.direct.dispatch.admin.tournamentsManagement.unregisterPlayer(battleTag);
+      const removed = await this.tournamentsManagementStore.unregisterPlayer(battleTag);
 
       if (removed) {
         this.isRemovePlayerOpen = false;
@@ -173,7 +175,7 @@ export default class AdminTournaments extends Vue {
   }
 
   public async createTournament(tournamentData: ITournament) {
-    const created = await this.$store.direct.dispatch.admin.tournamentsManagement.createTournament(tournamentData);
+    const created = await this.tournamentsManagementStore.createTournament(tournamentData);
     if (created) {
       this.closeCreateTournament();
       this.throttledInit();
@@ -190,7 +192,7 @@ export default class AdminTournaments extends Vue {
 
   public async updateTournament(tournamentData: ITournament) {
     tournamentData.id = this.tournament.id;
-    const updated = await this.$store.direct.dispatch.admin.tournamentsManagement.updateTournament(tournamentData);
+    const updated = await this.tournamentsManagementStore.updateTournament(tournamentData);
     if (updated) {
       this.closeEditTournament();
       this.throttledInit();
