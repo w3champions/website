@@ -17,6 +17,7 @@ import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import { Map } from "@/store/admin/maps/types";
+import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({
   components: {
@@ -26,13 +27,14 @@ import { Map } from "@/store/admin/maps/types";
 })
 export default class Tournament extends Vue {
   @Prop() public tournament!: ITournament;
+  private tournamentsStore = useTournamentsStore();
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.tournaments.loadTournamentMaps();
+    await this.tournamentsStore.loadTournamentMaps();
   }
 
   get maps(): Map[] {
-    return this.$store.direct.state.tournaments.maps;
+    return this.tournamentsStore.maps;
   }
 }
 </script>

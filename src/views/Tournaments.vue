@@ -25,15 +25,18 @@ import { ITournament } from "@/store/tournaments/types";
 import { Component } from "vue-property-decorator";
 import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
+import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({ components: { TournamentsTable } })
 export default class TournamentsView extends Vue {
+  private tournamentsStore = useTournamentsStore();
+
   async mounted() {
-    await this.$store.direct.dispatch.tournaments.retrieveTournaments();
+    await this.tournamentsStore.retrieveTournaments();
   }
 
   get tournaments() {
-    return this.$store.direct.state.tournaments.tournaments;
+    return this.tournamentsStore.tournaments;
   }
 
   get upcomingTournaments() {

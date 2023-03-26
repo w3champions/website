@@ -70,6 +70,7 @@ import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
 import { ERaceEnum } from "@/store/typings";
 import { Map } from "@/store/admin/maps/types";
+import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({
   components: {
@@ -86,10 +87,11 @@ export default class AdminTournaments extends Vue {
   public isEditTournamentOpen = false;
 
   private throttledInit = throttle(this.init, 2000, { leading: true });
+  private tournamentsStore = useTournamentsStore();
 
   async mounted(): Promise<void> {
     this.throttledInit();
-    await this.$store.direct.dispatch.tournaments.loadActiveTournamentMaps();
+    await this.tournamentsStore.loadActiveTournamentMaps();
     setInterval(() => {
       this.throttledInit();
     }, 15000);
@@ -100,7 +102,7 @@ export default class AdminTournaments extends Vue {
   }
 
   get activeMaps(): Map[] {
-    return this.$store.direct.state.tournaments.activeMaps;
+    return this.tournamentsStore.activeMaps;
   }
 
   get isLoading() {

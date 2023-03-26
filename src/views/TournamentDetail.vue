@@ -13,6 +13,7 @@ import { ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import Tournament from "@/components/tournaments/Tournament.vue";
+import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({
   components: {
@@ -21,13 +22,14 @@ import Tournament from "@/components/tournaments/Tournament.vue";
 })
 export default class TournamentDetail extends Vue {
   @Prop() public tournamentId!: string;
+  private tournamentsStore = useTournamentsStore();
 
   async mounted() {
-    await this.$store.direct.dispatch.tournaments.retrieveTournaments();
+    await this.tournamentsStore.retrieveTournaments();
   }
 
   get tournament(): ITournament | undefined {
-    return this.$store.direct.state.tournaments.tournaments.find((t) => t.id === this.tournamentId);
+    return this.tournamentsStore.tournaments.find((t) => t.id === this.tournamentId);
   }
 }
 </script>
