@@ -1,7 +1,6 @@
 import { moduleActionContext } from "..";
 import { RootState } from "../typings";
 import { ActionContext } from "vuex";
-import playerManagementModule from "./playerManagement/index";
 import tournamentsManagementModule from "./tournaments";
 import replayManagementModule from "./replays/index";
 import { PlayerProfile } from "@/store/player/types";
@@ -268,7 +267,6 @@ const mod = {
   },
 
   modules: {
-    playerManagement: playerManagementModule,
     tournamentsManagement: tournamentsManagementModule,
     replayManagement: replayManagementModule,
   },

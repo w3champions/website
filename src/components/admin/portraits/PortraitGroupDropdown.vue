@@ -38,12 +38,14 @@ import { PortraitDefinitionGroup } from "@/store/admin/types";
 import AssignPortrait from "./AssignPortrait.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: { AssignPortrait } })
 export default class PortraitGroupDropdown extends Vue {
   selectedGroups = [] as string[];
   portraitDefGroups = [] as PortraitDefinitionGroup[];
   groupNames = [] as string[];
+  private playerManagement = usePlayerManagementStore();
 
   addPortraitGroup(group: string): void {
     const portraitsToAdd = this.portraitDefGroups.find((x) => x.group == group)?.portraitIds;
@@ -57,8 +59,8 @@ export default class PortraitGroupDropdown extends Vue {
   }
 
   async init(): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.loadPortraitDefinitionGroups();
-    this.portraitDefGroups = this.$store.direct.state.admin.playerManagement.portraitDefinitionGroups;
+    await this.playerManagement.loadPortraitDefinitionGroups();
+    this.portraitDefGroups = this.playerManagement.portraitDefinitionGroups;
     this.groupNames = this.portraitDefGroups
       .filter((x) => x.group) // no scuffed group names like "" or null
       .map((x) => x.group);

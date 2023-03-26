@@ -58,6 +58,7 @@ import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
@@ -65,9 +66,10 @@ export default class NewPortraitDefinitionDialog extends Vue {
   dialogOpen = false;
   valid = false;
   groups = [] as string[];
+  private playerManagement = usePlayerManagementStore();
 
   get allSpecialPortraits(): PortraitDefinition[] {
-    return this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
+    return this.playerManagement.allSpecialPortraits;
   }
 
   get rules(): unknown {
@@ -93,14 +95,14 @@ export default class NewPortraitDefinitionDialog extends Vue {
   confirmDialog(): void {
     if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
       this.dialogOpen = false;
-      this.$store.direct.dispatch.admin.playerManagement.addNewPortraitDefinition(this.newPortraitDefinition());
+      this.playerManagement.addNewPortraitDefinition(this.newPortraitDefinition());
     }
   }
 
   async init(): Promise<void> {
-    const allSpecialPortraits = this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
+    const allSpecialPortraits = this.playerManagement.allSpecialPortraits;
     if (!(allSpecialPortraits.length > 0)) {
-      await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
+      await this.playerManagement.loadAllSpecialPortraits();
     }
     this.dialogOpen = false;
   }

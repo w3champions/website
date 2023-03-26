@@ -25,6 +25,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: {} })
 export default class PortraitGroupCombobox extends Vue {
@@ -32,10 +33,11 @@ export default class PortraitGroupCombobox extends Vue {
 
   chips = [] as string[];
   items = [] as string[];
+  private playerManagement = usePlayerManagementStore();
 
   @Watch("portraitId")
   async onPortraitIdChanged(): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.loadPortraitDefinitionGroups();
+    await this.playerManagement.loadPortraitDefinitionGroups();
     this.chips = this.getChips();
   }
 
@@ -50,28 +52,28 @@ export default class PortraitGroupCombobox extends Vue {
   }
 
   get portraitDefGroups() {
-    return this.$store.direct.state.admin.playerManagement.portraitDefinitionGroups;
+    return this.playerManagement.portraitDefinitionGroups;
   }
 
   async init(): Promise<void> {
-    const portraitDefGroups = this.$store.direct.state.admin.playerManagement.portraitDefinitionGroups;
+    const portraitDefGroups = this.playerManagement.portraitDefinitionGroups;
     if (!portraitDefGroups || portraitDefGroups.length < 1) {
-      await this.$store.direct.dispatch.admin.playerManagement.loadPortraitDefinitionGroups();
+      await this.playerManagement.loadPortraitDefinitionGroups();
     }
-    const allSpecialPortraits = this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
+    const allSpecialPortraits = this.playerManagement.allSpecialPortraits;
     if (!allSpecialPortraits || allSpecialPortraits.length < 1) {
-      await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
+      await this.playerManagement.loadAllSpecialPortraits();
     }
     this.items = this.initItems();
     this.chips = this.getChips();
   }
 
   initItems(): string[] {
-    return this.$store.direct.state.admin.playerManagement.portraitDefinitionGroups.map((x) => x.group);
+    return this.playerManagement.portraitDefinitionGroups.map((x) => x.group);
   }
 
   getChips(): string[] {
-    return this.$store.direct.state.admin.playerManagement.portraitDefinitionGroups
+    return this.playerManagement.portraitDefinitionGroups
       .filter((x) => x.portraitIds.includes(this.portraitId))
       .map((x) => x.group);
   }
