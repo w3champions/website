@@ -56,6 +56,7 @@ import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: {
@@ -69,6 +70,8 @@ import { useOauthStore } from "@/store/oauth/store";
 })
 export default class OverallStatisticsView extends Vue {
   private oauthStore = useOauthStore();
+  private overallStatsStore = useOverallStatsStore();
+
   get seasons(): Season[] {
     return this.$store.direct.state.rankings.seasons;
   }
@@ -82,12 +85,12 @@ export default class OverallStatisticsView extends Vue {
   }
 
   private async init() {
-    await this.$store.direct.dispatch.overallStatistics.loadGamesPerDayStatistics();
-    await this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
-    await this.$store.direct.dispatch.overallStatistics.loadPlayersPerDayStatistics();
-    await this.$store.direct.dispatch.overallStatistics.loadGameLengthStatistics();
-    await this.$store.direct.dispatch.overallStatistics.loadpopularGameHours();
-    await this.$store.direct.dispatch.overallStatistics.loadMapAndRaceStatistics();
+    await this.overallStatsStore.loadGamesPerDayStatistics();
+    await this.overallStatsStore.loadMapsPerSeason();
+    await this.overallStatsStore.loadPlayersPerDayStatistics();
+    await this.overallStatsStore.loadGameLengthStatistics();
+    await this.overallStatsStore.loadPopularGameHours();
+    await this.overallStatsStore.loadMapAndRaceStatistics();
     if (this.verifiedBtag) {
       await this.$store.direct.dispatch.player.loadProfile({
         battleTag: this.verifiedBtag,

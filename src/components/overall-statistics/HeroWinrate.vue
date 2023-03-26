@@ -40,11 +40,14 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import HeroPictureSelect from "@/components/overall-statistics/HeroPictureSelect.vue";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: { HeroPictureSelect },
 })
 export default class HeroWinrate extends Vue {
+  private overallStatsStore = useOverallStatsStore();
+
   get winrateClass() {
     if (this.winrate > 0.55) return "won";
     if (this.winrate < 0.45) return "lost";
@@ -52,19 +55,19 @@ export default class HeroWinrate extends Vue {
   }
 
   get winrate() {
-    return this.$store.direct.state.overallStatistics.heroWinrate.winrate;
+    return this.overallStatsStore.heroWinrate.winrate;
   }
 
   get wins() {
-    return this.$store.direct.state.overallStatistics.heroWinrate.wins;
+    return this.overallStatsStore.heroWinrate.wins;
   }
 
   get losses() {
-    return this.$store.direct.state.overallStatistics.heroWinrate.losses;
+    return this.overallStatsStore.heroWinrate.losses;
   }
 
   mounted() {
-    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
+    this.overallStatsStore.loadHeroWinrates();
   }
 }
 </script>

@@ -101,6 +101,7 @@ import {
 } from "@/store/overallStats/types";
 import { Watch } from "vue-property-decorator";
 import { ERaceEnum } from "@/store/typings";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 @Component({
   components: { PlayerStatsRaceVersusRaceOnMapTableCell },
 })
@@ -109,6 +110,7 @@ export default class WinratesTab extends Vue {
   public selectedPatch = "All";
   public selectedMmr = 0;
   public selectedMap = this.$t("common.overall");
+  private overallStatsStore = useOverallStatsStore();
 
   get headers() {
     return [
@@ -203,7 +205,7 @@ export default class WinratesTab extends Vue {
   }
 
   get statsPerRaceAndMap(): StatsPerWinrate[] {
-    return this.$store.direct.state.overallStatistics.statsPerMapAndRace;
+    return this.overallStatsStore.statsPerMapAndRace;
   }
 
   get patches() {

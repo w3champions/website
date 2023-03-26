@@ -139,6 +139,7 @@ import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
 import { races } from "@/helpers/profile";
 import { TranslateResult } from "vue-i18n";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({
   components: {
@@ -157,6 +158,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   public selectedMap = "Overall";
   public selectedMapHeroWinRate = "Overall";
   public races = races;
+  private overallStatsStore = useOverallStatsStore();
 
   get selectedSeason() {
     return this.$store.direct.state.player.selectedSeason;
@@ -275,7 +277,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   }
 
   public getMaps(): void {
-    this.$store.direct.dispatch.overallStatistics.loadMapsPerSeason();
+    this.overallStatsStore.loadMapsPerSeason();
   }
 
   get maps() {

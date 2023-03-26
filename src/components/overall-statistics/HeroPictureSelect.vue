@@ -77,12 +77,14 @@ import { Component, Prop } from "vue-property-decorator";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/typings";
 import { getAsset } from "@/helpers/url-functions";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 
 @Component({})
 export default class HeroPictureSelect extends Vue {
   @Prop() heroIndex!: number;
 
   public dialogOpened = false;
+  private overallStatsStore = useOverallStatsStore();
 
   openDialog() {
     this.dialogOpened = true;
@@ -93,17 +95,17 @@ export default class HeroPictureSelect extends Vue {
 
     if (hero.heroId === "none" || hero.heroId === "all") {
       if (this.heroIndex === 0 || this.heroIndex === 3) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 1,
           heroPick: hero,
         });
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 2,
           heroPick: hero,
         });
       }
       if (this.heroIndex === 1 || this.heroIndex === 4) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 1,
           heroPick: hero,
         });
@@ -121,7 +123,7 @@ export default class HeroPictureSelect extends Vue {
         allPickedRaces[1] !== hero.race &&
         allPickedRaces[1] !== ERaceEnum.RANDOM
       ) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 1,
           heroPick: {
             name: "anyhero",
@@ -129,7 +131,7 @@ export default class HeroPictureSelect extends Vue {
             race: ERaceEnum.TOTAL,
           },
         });
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 2,
           heroPick: {
             name: "anyhero",
@@ -143,7 +145,7 @@ export default class HeroPictureSelect extends Vue {
         allPickedRaces[2] !== hero.race &&
         allPickedRaces[2] !== ERaceEnum.RANDOM
       ) {
-        this.$store.direct.commit.overallStatistics.SET_HIRO_PICK({
+       this.overallStatsStore.SET_HERO_PICK({
           index: this.heroIndex + 2,
           heroPick: {
             name: "anyhero",
@@ -154,8 +156,8 @@ export default class HeroPictureSelect extends Vue {
       }
     }
 
-    this.$store.direct.commit.overallStatistics.SET_HIRO_PICK(newPick);
-    this.$store.direct.dispatch.overallStatistics.loadHeroWinrates();
+   this.overallStatsStore.SET_HERO_PICK(newPick);
+    this.overallStatsStore.loadHeroWinrates();
     this.dialogOpened = false;
   }
 
@@ -245,7 +247,7 @@ export default class HeroPictureSelect extends Vue {
   }
 
   get heroPicks() {
-    return this.$store.direct.state.overallStatistics.heroPicks;
+    return this.overallStatsStore.heroPicks;
   }
 
   get heroPickName() {

@@ -50,6 +50,7 @@ import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import { EGameMode, EPick } from "@/store/typings";
 import { PlayedHero } from "@/store/overallStats/types";
+import { useOverallStatsStore } from "@/store/overallStats/store";
 @Component({
   components: {
     PlayedHeroesChart,
@@ -62,10 +63,11 @@ import { PlayedHero } from "@/store/overallStats/types";
 export default class HeroTab extends Mixins(GameModesMixin) {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
+  private overallStatsStore = useOverallStatsStore();
 
   async mounted() {
     await this.loadActiveGameModes();
-    await this.$store.direct.dispatch.overallStatistics.loadPlayedHeroes();
+    await this.overallStatsStore.loadPlayedHeroes();
   }
 
   get gameModes() {
@@ -94,7 +96,7 @@ export default class HeroTab extends Mixins(GameModesMixin) {
   }
 
   get selectedPlayedHeroes(): PlayedHero[] {
-    const heroes = this.$store.direct.state.overallStatistics.playedHeroes;
+    const heroes = this.overallStatsStore.playedHeroes;
     if (heroes.length === 0) return [];
     return (
       heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
