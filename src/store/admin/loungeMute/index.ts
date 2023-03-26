@@ -4,6 +4,7 @@ import { ActionContext } from "vuex";
 import { LoungeMuteState, LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import { useOauthStore } from "@/store/oauth/store";
 import ModerationService from "@/services/ModerationService";
+import { format, parseISO } from "date-fns";
 
 const mod = {
   namespaced: true,
@@ -19,6 +20,11 @@ const mod = {
 
       const oauthStore = useOauthStore();
       const loungeMutes = await ModerationService.getLoungeMutes(oauthStore.token);
+
+      loungeMutes.forEach((loungeMute) => {
+        loungeMute.insertDate = format(parseISO(loungeMute.insertDate), "yyyy-MM-dd HH:mm:ss");
+        loungeMute.endDate = format(parseISO(loungeMute.endDate), "yyyy-MM-dd HH:mm:ss");
+      });
 
       commit.SET_LOUNGE_MUTED_PLAYERS(loungeMutes);
     },
