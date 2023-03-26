@@ -43,6 +43,6 @@ export default class ModerationService {
       },
     });
 
-    return response.ok ? "" : await response.json();
+    return response.status;
   }
 }
