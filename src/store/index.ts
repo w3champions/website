@@ -7,7 +7,6 @@ import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
 import rankings from "./ranking/index";
-import loungeMute from "./admin/loungeMute/index";
 
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
@@ -24,7 +23,6 @@ const mod = {
     matches,
     personalSettings,
     clan,
-    loungeMute,
   },
   state: {
     darkMode: false,
