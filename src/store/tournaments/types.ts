@@ -1,6 +1,6 @@
 import { ERaceEnum, EGameMode } from "../typings";
 import { Gateways } from "../ranking/types";
-import { Map } from "../admin/maps/types";
+import { Map } from "../admin/mapsManagement/types";
 
 export enum ETournamentFormat {
   SINGLE_ELIM,

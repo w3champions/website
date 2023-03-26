@@ -159,10 +159,11 @@ import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/typings";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
+import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({
   components: {
@@ -179,6 +180,7 @@ export default class HomeView extends Vue {
   maps2v2: Map[] = [];
   maps4v4: Map[] = [];
   private infoMessagesStore = useInfoMessagesStore();
+  private mapsManagementStore = useMapsManagementStore();
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;

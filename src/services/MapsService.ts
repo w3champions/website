@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "@/store/admin/maps/types";
+import { GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {

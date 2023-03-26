@@ -147,7 +147,7 @@ import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
 import { Gateways } from "@/store/ranking/types";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 
 @Component({})
 export default class AddPlayerModal extends Vue {

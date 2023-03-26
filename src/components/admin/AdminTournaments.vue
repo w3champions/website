@@ -69,7 +69,7 @@ import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
 import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
 import { ERaceEnum } from "@/store/typings";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({

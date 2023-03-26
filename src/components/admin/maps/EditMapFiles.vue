@@ -42,9 +42,10 @@
 </template>
 
 <script lang="ts">
-import { Map, MapFileData } from "@/store/admin/maps/types";
+import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
+import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({})
 export default class EditMapFiles extends Vue {
@@ -53,6 +54,7 @@ export default class EditMapFiles extends Vue {
   public fileName = "";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public file: File = {} as any;
+  private mapsManagementStore = useMapsManagementStore();
 
   public get headers() {
     return [
@@ -66,7 +68,7 @@ export default class EditMapFiles extends Vue {
   }
 
   public get mapFiles() {
-    return this.$store.direct.state.admin.mapsManagement.mapFiles;
+    return this.mapsManagementStore.mapFiles;
   }
 
   public selectMapFile(file: MapFileData) {
@@ -85,8 +87,8 @@ export default class EditMapFiles extends Vue {
       formData.append("mapId", this.map.id.toString());
       formData.append("mapFile", this.file, this.file.name);
       formData.append("fileName", this.fileName);
-      await this.$store.direct.dispatch.admin.mapsManagement.createMapFile(formData);
-      await this.$store.direct.dispatch.admin.mapsManagement.loadMapFiles(this.map.id);
+      await this.mapsManagementStore.createMapFile(formData);
+      await this.mapsManagementStore.loadMapFiles(this.map.id);
 
       this.fileName = "";
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,7 +99,7 @@ export default class EditMapFiles extends Vue {
   }
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.admin.mapsManagement.loadMapFiles(this.map.id);
+    await this.mapsManagementStore.loadMapFiles(this.map.id);
   }
 }
 </script>

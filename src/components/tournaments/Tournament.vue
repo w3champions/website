@@ -16,7 +16,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 @Component({

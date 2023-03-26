@@ -1,5 +1,5 @@
 import { ITournament, TournamentsState } from "./types";
-import { Map } from "../admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import TournamentsService from "@/services/TournamentsService";
 import MapsService from "@/services/MapsService";
 import { defineStore } from "pinia";

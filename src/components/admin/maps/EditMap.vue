@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 
