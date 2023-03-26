@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { LoadingScreenTip, MessageOfTheDay, NewsMessage } from "@/store/admin/messages/types";
+import { LoadingScreenTip, MessageOfTheDay, NewsMessage } from "@/store/admin/infoMessages/types";
 
 export default class InfoMessageService {
   public static async getNews(): Promise<NewsMessage[]> {

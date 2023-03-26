@@ -8,7 +8,6 @@ import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
 import admin from "./admin/index";
 import rankings from "./ranking/index";
-import infoMessages from "./admin/messages/index";
 import loungeMute from "./admin/loungeMute/index";
 
 import { RootState } from "./typings";
@@ -27,7 +26,6 @@ const mod = {
     personalSettings,
     clan,
     admin,
-    infoMessages,
     loungeMute,
   },
   state: {
