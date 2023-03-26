@@ -187,6 +187,7 @@ import { EGameMode } from "@/store/typings";
 import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminBannedPlayers extends Vue {
@@ -199,6 +200,7 @@ export default class AdminBannedPlayers extends Vue {
   public tableSearch = "";
   public foundPlayer = "";
   public clearPlayerSearchToggle = false;
+  private adminStore = useAdminStore();
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {
@@ -208,7 +210,7 @@ export default class AdminBannedPlayers extends Vue {
 
     const bTag = this.foundPlayer;
     if (bTag) {
-      const smurfs = await this.$store.direct.dispatch.admin.getAltsForPlayer(bTag);
+      const smurfs = await this.adminStore.getAltsForPlayer(bTag);
       this.editedItem.smurfs = smurfs.map((smurf) => smurf.toLowerCase());
     }
   }
@@ -275,7 +277,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   get bannedPlayers(): BannedPlayer[] {
-    return this.$store.direct.state.admin.players;
+    return this.adminStore.players;
   }
 
   get isAdmin(): boolean {
@@ -287,15 +289,15 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   get banValidationError(): string {
-    return this.$store.direct.state.admin.banValidationError;
+    return this.adminStore.banValidationError;
   }
 
   get isValidationError(): boolean {
-    return this.$store.direct.state.admin.banValidationError !== "";
+    return this.adminStore.banValidationError !== "";
   }
 
   get searchedPlayers() {
-    return this.$store.direct.state.admin.searchedPlayers
+    return this.adminStore.searchedPlayers
       .map((player) => player.battleTag);
   }
 
@@ -305,7 +307,7 @@ export default class AdminBannedPlayers extends Vue {
 
   public async loadBanList() {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadBannedPlayers();
+      await this.adminStore.loadBannedPlayers();
     }
   }
 
@@ -340,7 +342,7 @@ export default class AdminBannedPlayers extends Vue {
   }
 
   async deleteItem(item: BannedPlayer): Promise<void> {
-    confirm("Are you sure you want to delete this item?") && await this.$store.direct.dispatch.admin.deleteBan(item);
+    confirm("Are you sure you want to delete this item?") && await this.adminStore.deleteBan(item);
     await this.loadBanList();
   }
 
@@ -354,7 +356,7 @@ export default class AdminBannedPlayers extends Vue {
       this.editedItem.battleTag = this.foundPlayer;
     }
 
-    await this.$store.direct.dispatch.admin.postBan(this.editedItem);
+    await this.adminStore.postBan(this.editedItem);
 
     if (!this.isValidationError) {
       this.close();
@@ -395,7 +397,7 @@ export default class AdminBannedPlayers extends Vue {
   onDialogToggled(): void {
     // Only trigger on dialog close, not dialog open
     if (!this.dialog) {
-      this.$store.direct.dispatch.admin.resetBanValidationMessage();
+      this.adminStore.resetBanValidationMessage();
       this.resetDialog();
     }
   }

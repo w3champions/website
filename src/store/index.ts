@@ -6,7 +6,6 @@ import player from "./player/index";
 import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
-import admin from "./admin/index";
 import rankings from "./ranking/index";
 import loungeMute from "./admin/loungeMute/index";
 
@@ -25,7 +24,6 @@ const mod = {
     matches,
     personalSettings,
     clan,
-    admin,
     loungeMute,
   },
   state: {

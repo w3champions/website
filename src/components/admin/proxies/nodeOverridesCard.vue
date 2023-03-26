@@ -35,6 +35,7 @@ import Vue from "vue";
 import { Component, Watch, Prop } from "vue-property-decorator";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: {} })
 export default class nodeOverridesCard extends Vue {
@@ -46,6 +47,7 @@ export default class nodeOverridesCard extends Vue {
   public isLoaded = false;
   public isProxyListChanged = false;
   public modifiedOverrides = [] as string[];
+  private adminStore = useAdminStore();
 
   // todo:
   // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
@@ -76,7 +78,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   public setProxyModified(val: boolean): void {
-    this.$store.direct.dispatch.admin.proxyModified(val);
+    this.adminStore.SET_PROXY_MODIFIED(val);
   }
 
   public updateProxies(node: string): void {
@@ -93,11 +95,11 @@ export default class nodeOverridesCard extends Vue {
   }
 
   public updateProxyState(newOverrides: string[]): void {
-    this.$store.direct.dispatch.admin.updateModifiedProxies({
+    this.adminStore.updateModifiedProxies({
       overrides: newOverrides,
       isAutomatic: this.isAutomaticNode,
     });
-    this.$store.direct.dispatch.admin.proxyModified(this.isProxyListModified());
+    this.adminStore.SET_PROXY_MODIFIED(this.isProxyListModified());
   }
 
   public showAsChecked(index: number): boolean {
@@ -114,7 +116,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   get searchedPlayersSetProxies(): ProxySettings {
-    return this.$store.direct.state.admin.proxiesSetForSearchedPlayer;
+    return this.adminStore.proxiesSetForSearchedPlayer;
   }
 
   get isAutomaticNode(): boolean {
@@ -125,7 +127,7 @@ export default class nodeOverridesCard extends Vue {
   }
 
   get availableProxies(): Proxy[] {
-    return this.$store.direct.state.admin.availableProxies;
+    return this.adminStore.availableProxies;
   }
 
   get isAdmin(): boolean {
@@ -150,7 +152,7 @@ export default class nodeOverridesCard extends Vue {
 
   private async init() {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadAvailableProxies(
+      await this.adminStore.loadAvailableProxies(
         this.oauthStore.token
       );
       this.modifiedOverrides = JSON.parse(JSON.stringify(this.passedOverrides));
