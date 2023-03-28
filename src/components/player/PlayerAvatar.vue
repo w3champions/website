@@ -355,6 +355,7 @@ import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePlayerStore } from "@/store/player/store";
+import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -377,6 +378,7 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.TOTAL,
   ];
   private player = usePlayerStore();
+  private personalSettingsStore = usePersonalSettingsStore();
 
   enumToString(race: ERaceEnum) {
     return this.$t(`races.${ERaceEnum[race]}`);
@@ -490,7 +492,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   get personalSetting() {
-    return this.$store.direct.state.personalSettings.personalSettings;
+    return this.personalSettingsStore.personalSettings;
   }
 
   get starterAvatarCategory() {
@@ -569,7 +571,7 @@ export default class PlayerAvatar extends Vue {
     personalSetting.country = this.selectedCountry || "";
     personalSetting.countryCode = this.selectedCountryCode || "";
 
-    await this.$store.direct.dispatch.personalSettings.saveUserProfile(personalSetting);
+    await this.personalSettingsStore.saveUserProfile(personalSetting);
     this.userProfile.editDialogOpened = false;
   }
 
@@ -650,7 +652,7 @@ export default class PlayerAvatar extends Vue {
     description?: string
   ) {
     if (!this.enabledIfEnoughWins(avatarCategory, picture)) return;
-    await this.$store.direct.dispatch.personalSettings.saveAvatar({
+    await this.personalSettingsStore.saveAvatar({
       race: avatarCategory,
       pictureId: picture,
       isClassic: this.useClassicIcons,
@@ -669,7 +671,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   async init() {
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
+    await this.personalSettingsStore.loadPersonalSetting();
     this.userProfile = {
       twitch: this.twitch,
       homePage: this.homePage,

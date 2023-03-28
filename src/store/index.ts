@@ -48,7 +48,6 @@ export const useRootStore = defineStore("root", {
 const mod = {
   modules: {
     matches,
-    personalSettings,
   },
   state: {
     darkMode: false,
