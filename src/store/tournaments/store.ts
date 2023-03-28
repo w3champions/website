@@ -6,7 +6,6 @@ import { defineStore } from "pinia";
 
 export const useTournamentsStore = defineStore("tournaments", {
   state: (): TournamentsState => ({
-    // loaded: false,
     tournaments: [],
     maps: [],
     activeMaps: [],
