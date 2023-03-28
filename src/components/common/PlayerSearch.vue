@@ -18,6 +18,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { debounce } from "debounce";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({})
 export default class PlayerSearch extends Vue {
@@ -29,9 +30,10 @@ export default class PlayerSearch extends Vue {
   public isLoading = false;
   private static SEARCH_DELAY = 500;
   private debouncedSearch = debounce(this.dispatchSearch, PlayerSearch.SEARCH_DELAY);
+  private adminStore = useAdminStore();
 
   private dispatchSearch() {
-    this.$store.direct.dispatch.admin.searchBnetTag({ searchText: this.search.toLowerCase() });
+    this.adminStore.searchBnetTag({ searchText: this.search.toLowerCase() });
   }
 
   @Watch("searchModel")
@@ -61,11 +63,11 @@ export default class PlayerSearch extends Vue {
   public clearSearch(): void {
     this.$emit("searchCleared");
     this.searchModel = "";
-    this.$store.direct.dispatch.admin.clearSearch();
+    this.adminStore.clearSearch();
   }
 
   get searchedPlayers(): string[] {
-    return this.$store.direct.state.admin.searchedPlayers
+    return this.adminStore.searchedPlayers
       .map((player) => player.battleTag);
   }
 

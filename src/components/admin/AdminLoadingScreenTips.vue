@@ -63,12 +63,15 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { format } from "date-fns";
-import { LoadingScreenTip } from "@/store/admin/messages/types";
+import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
+import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
   private oauthStore = useOauthStore();
+  private infoMessagesStore = useInfoMessagesStore();
+
   data(): unknown {
     return {
       headersTips: [
@@ -85,7 +88,7 @@ export default class AdminLoadingScreenTips extends Vue {
   }
 
   get tips(): LoadingScreenTip[] {
-    return this.$store.direct.state.infoMessages.tips;
+    return this.infoMessagesStore.tips;
   }
 
   get isAdmin(): boolean {
@@ -99,7 +102,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   private async init(): Promise<void> {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.infoMessages.loadTips();
+      await this.infoMessagesStore.loadTips();
     }
   }
 
@@ -141,7 +144,7 @@ export default class AdminLoadingScreenTips extends Vue {
 
   async deleteTipItem(item: LoadingScreenTip): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-      (await this.$store.direct.dispatch.infoMessages.deleteTip(item));
+      (await this.infoMessagesStore.deleteTip(item));
     this.dialogTips = false;
   }
 
@@ -153,7 +156,7 @@ export default class AdminLoadingScreenTips extends Vue {
     this.editedTipItem.author = this.oauthStore.blizzardVerifiedBtag;
     this.editedTipItem.creationDate = format(new Date(), "MMMM do yyyy, h:mm:ss a");
 
-    if (await this.$store.direct.dispatch.infoMessages.editTip(this.editedTipItem)) {
+    if (await this.infoMessagesStore.editTip(this.editedTipItem)) {
       this.dialogTips = false;
       this.editedTipItem = {
         message: "",

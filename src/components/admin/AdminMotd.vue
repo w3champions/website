@@ -23,35 +23,37 @@
 </template>
 
 <script lang="ts">
-import { MessageOfTheDay } from "@/store/admin/messages/types";
+import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
 @Component({ components: {} })
 export default class AdminMotd extends Vue {
   public loading = true;
   public loaded = false;
   public newMotd = "";
+  private infoMessagesStore = useInfoMessagesStore();
 
   get rules(): unknown {
     return [(value: string) => value.length <= 400 || "Max 400 characters"];
   }
 
   motd(): string {
-    return this.$store.direct.state.infoMessages.messageOfTheDay.motd;
+    return this.infoMessagesStore.messageOfTheDay.motd;
   }
 
   async confirmNewMotd(): Promise<void> {
     await this.setMotd(this.newMotd);
-    await this.$store.direct.dispatch.infoMessages.loadMotd();
+    await this.infoMessagesStore.loadMotd();
   }
 
   async setMotd(value: string): Promise<boolean> {
-    return await this.$store.direct.dispatch.infoMessages.setMotd({ motd: value } as MessageOfTheDay);
+    return await this.infoMessagesStore.setMotd({ motd: value } as MessageOfTheDay);
   }
 
   async mounted() {
-    this.loaded = await this.$store.direct.dispatch.infoMessages.loadMotd();
+    this.loaded = await this.infoMessagesStore.loadMotd();
     if (this.motd() === "" || this.motd() === undefined) {
       this.loaded = false;
     }

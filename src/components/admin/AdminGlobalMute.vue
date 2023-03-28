@@ -119,9 +119,11 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminGlobalMute extends Vue {
+  private adminStore = useAdminStore();
   public headers = [
     {
       text: "Flo Ban Id",
@@ -148,12 +150,12 @@ export default class AdminGlobalMute extends Vue {
   ];
 
   get globallyMutedPlayers(): GloballyMutedPlayer[] {
-    return this.$store.direct.state.admin.globallyMutedPlayers;
+    return this.adminStore.globallyMutedPlayers;
   }
 
   async deleteItem(item: GloballyMutedPlayer): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-    await this.$store.direct.dispatch.admin.deleteGlobalMute(item);
+    await this.adminStore.deleteGlobalMute(item);
     this.loadMutes();
   }
 
@@ -180,12 +182,12 @@ export default class AdminGlobalMute extends Vue {
       expiresAt: this.banExpiry,
     } as GlobalMute;
 
-    await this.$store.direct.dispatch.admin.addGlobalMute(mute);
+    await this.adminStore.addGlobalMute(mute);
     this.loadMutes();
   }
 
   public async loadMutes(): Promise<void> {
-    await this.$store.direct.dispatch.admin.loadGlobalMutes();
+    await this.adminStore.loadGlobalMutes();
   }
 
   async mounted(): Promise<void> {

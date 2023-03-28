@@ -1,7 +1,8 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { EGameMode, EGameModeType } from "@/store/typings";
-import { SeasonMap } from "@/store/admin/maps/types";
+import { SeasonMap } from "@/store/admin/mapsManagement/types";
+import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 const AT_EQUIVALENT: { [key: number]: EGameMode } = {
   [EGameMode.GM_2ON2]: EGameMode.GM_2ON2_AT,
@@ -12,8 +13,10 @@ const AT_EQUIVALENT: { [key: number]: EGameMode } = {
 
 @Component
 export default class GameModesMixin extends Vue {
+  private mapsManagementStore = useMapsManagementStore();
+
   public async loadActiveGameModes() {
-    await this.$store.direct.dispatch.admin.mapsManagement.loadMapsForCurrentSeason();
+    await this.mapsManagementStore.loadMapsForCurrentSeason();
   }
 
   public get activeGameModes() {
@@ -47,7 +50,7 @@ export default class GameModesMixin extends Vue {
   }
 
   private getGameModes(type: EGameModeType | null, withAt: boolean) {
-    return this.$store.direct.state.admin.mapsManagement.seasonMaps
+    return this.mapsManagementStore.seasonMaps
       .reduce((result: SeasonMap[], seasonMap: SeasonMap) => {
         result.push(seasonMap);
         if (withAt && AT_EQUIVALENT[seasonMap.id]) {

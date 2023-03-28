@@ -120,6 +120,7 @@ import { Component } from "vue-property-decorator";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
+import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminLoungeMute extends Vue {
@@ -129,6 +130,7 @@ export default class AdminLoungeMute extends Vue {
   public battleTag = "";
   public endDate = "";
   private oauthStore = useOauthStore();
+  private loungeMuteStore = useLoungeMuteStore();
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
@@ -139,12 +141,12 @@ export default class AdminLoungeMute extends Vue {
   ];
 
   get loungeMutes(): LoungeMuteResponse[] {
-    return this.$store.direct.state.loungeMute.loungeMutedPlayers;
+    return this.loungeMuteStore.loungeMutedPlayers;
   }
 
   async deleteItem(item: LoungeMute): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-    await this.$store.direct.dispatch.loungeMute.deleteLoungeMute(item.battleTag);
+    await this.loungeMuteStore.deleteLoungeMute(item.battleTag);
     this.loadMutes();
   }
 
@@ -166,7 +168,7 @@ export default class AdminLoungeMute extends Vue {
       endDate: this.muteEndDateTime,
     } as LoungeMute;
 
-    await this.$store.direct.dispatch.loungeMute.addLoungeMute(mute);
+    await this.loungeMuteStore.addLoungeMute(mute);
     this.loadMutes();
   }
 
@@ -181,7 +183,7 @@ export default class AdminLoungeMute extends Vue {
   }
 
   public async loadMutes(): Promise<void> {
-    await this.$store.direct.dispatch.loungeMute.loadLoungeMutes();
+    await this.loungeMuteStore.loadLoungeMutes();
   }
 
   async mounted(): Promise<void> {

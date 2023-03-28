@@ -84,6 +84,7 @@ import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupCombobox from "./portraits/PortraitGroupCombobox.vue";
 import { PortraitDefinitionDTO } from "@/store/admin/types";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({
   components: {
@@ -98,6 +99,7 @@ export default class AdminManagePortraits extends Vue {
   editDialogOpen = false;
   confirmDeleteDialogOpen = false;
   groupsModel = [] as string[];
+  private playerManagement = usePlayerManagementStore();
 
   selectPortrait(portraitId: number): void {
     this.editPortraitId = portraitId;
@@ -114,7 +116,7 @@ export default class AdminManagePortraits extends Vue {
   }
 
   async changeGroups(): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.updatePortraitDefinition({
+    await this.playerManagement.updatePortraitDefinition({
       ids: [this.editPortraitId],
       groups: this.groupsModel,
     } as PortraitDefinitionDTO);
@@ -122,7 +124,7 @@ export default class AdminManagePortraits extends Vue {
   }
 
   async confirmDelete(): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.removePortraitDefinition({
+    await this.playerManagement.removePortraitDefinition({
       ids: [this.editPortraitId],
     } as PortraitDefinitionDTO);
     this.confirmDeleteDialogOpen = false;

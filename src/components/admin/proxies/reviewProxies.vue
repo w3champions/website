@@ -121,6 +121,7 @@ import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import { ProxySettings } from "@/store/admin/types";
+import { useAdminStore } from "@/store/admin/store";
 
 //! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
 //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
@@ -140,19 +141,20 @@ export default class reviewProxies extends Vue {
     automaticNodeOverrides: [],
   } as ProxySettings;
   public dialog = false;
+  private adminStore = useAdminStore();
 
   get availableProxies(): ProxySettings {
     return this.proxies;
   }
 
   get modifiedProxies(): ProxySettings {
-    return this.$store.direct.state.admin.modifiedProxies;
+    return this.adminStore.modifiedProxies;
   }
 
   public putNewProxies(): void {
     if (this.getProxyModified()) {
-      this.$store.direct.dispatch.admin.putNewProxies(
-        this.$store.direct.state.admin.modifiedProxies
+      this.adminStore.putNewProxies(
+        this.adminStore.modifiedProxies
       );
     }
   }
@@ -165,15 +167,15 @@ export default class reviewProxies extends Vue {
 
   public newNodeOverrides(auto: boolean): string[] {
     if (auto) {
-      return this.$store.direct.state.admin.modifiedProxies
+      return this.adminStore.modifiedProxies
         .automaticNodeOverrides;
     }
 
-    return this.$store.direct.state.admin.modifiedProxies.nodeOverrides;
+    return this.adminStore.modifiedProxies.nodeOverrides;
   }
 
   public getProxyModified(): boolean {
-    return this.$store.direct.state.admin.proxyModified;
+    return this.adminStore.proxyModified;
   }
 
   public checkOverridesAreSame(
@@ -194,23 +196,23 @@ export default class reviewProxies extends Vue {
   }
 
   private async init(): Promise<void> {
-    this.searchedPlayerTag = this.$store.direct.state.admin.searchedBattletag;
+    this.searchedPlayerTag = this.adminStore.searchedBattletag;
     this.initProxySettings =
-      await this.$store.direct.dispatch.admin.getProxiesForPlayer(
+      await this.adminStore.getProxiesForPlayer(
         this.searchedPlayerTag
       );
-    await this.$store.direct.dispatch.admin.updateModifiedProxies({
+    await this.adminStore.updateModifiedProxies({
       overrides: this.initProxySettings.nodeOverrides,
       isAutomatic: false,
     });
-    await this.$store.direct.dispatch.admin.updateModifiedProxies({
+    await this.adminStore.updateModifiedProxies({
       overrides: this.initProxySettings.automaticNodeOverrides,
       isAutomatic: true,
     });
     this.originalProxySettings = JSON.parse(
       JSON.stringify(this.initProxySettings)
     );
-    this.$store.direct.dispatch.admin.proxyModified(false);
+    this.adminStore.SET_PROXY_MODIFIED(false);
   }
 
   async mounted(): Promise<void> {

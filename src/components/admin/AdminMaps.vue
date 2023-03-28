@@ -31,12 +31,13 @@
 </template>
 
 <script lang="ts">
-import { Map, MapFileData } from "@/store/admin/maps/types";
+import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import isUndefined from "lodash/isUndefined";
+import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
@@ -44,6 +45,7 @@ export default class AdminMaps extends Vue {
   public editedMap?: Map = {} as Map;
   public isEditOpen = false;
   public isEditFilesOpen = false;
+  private mapsManagementStore = useMapsManagementStore();
 
   public get headers() {
     return [
@@ -69,15 +71,15 @@ export default class AdminMaps extends Vue {
 
   public get maps() {
     return isUndefined(this.search)
-      ? this.$store.direct.state.admin.mapsManagement.maps
-      : this.$store.direct.state.admin.mapsManagement.maps.filter((m) => {
+      ? this.mapsManagementStore.maps
+      : this.mapsManagementStore.maps.filter((m) => {
         return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||
                m.name.toLowerCase().includes(this.search!.toLowerCase());
       });
   }
 
   public get totalMaps() {
-    return this.$store.direct.state.admin.mapsManagement.totalMaps;
+    return this.mapsManagementStore.totalMaps;
   }
 
   public getMapPath(map: Map) {
@@ -116,9 +118,9 @@ export default class AdminMaps extends Vue {
   public async saveMap(map: Map) {
     try {
       if (map.id === -1) {
-        await this.$store.direct.dispatch.admin.mapsManagement.createMap(map);
+        await this.mapsManagementStore.createMap(map);
       } else {
-        await this.$store.direct.dispatch.admin.mapsManagement.updateMap(map);
+        await this.mapsManagementStore.updateMap(map);
       }
 
       this.isEditOpen = false;
@@ -155,7 +157,7 @@ export default class AdminMaps extends Vue {
   }
 
   private async init(): Promise<void> {
-    await this.$store.direct.dispatch.admin.mapsManagement.loadMaps();
+    await this.mapsManagementStore.loadMaps();
   }
 }
 </script>

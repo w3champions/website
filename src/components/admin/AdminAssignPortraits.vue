@@ -164,6 +164,7 @@ import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery, PlayerSearch } })
 export default class AdminAssignPortraits extends Vue {
@@ -177,6 +178,7 @@ export default class AdminAssignPortraits extends Vue {
   confirmRemovedPortraits = [] as number[];
   mouseoverText = "";
   foundPlayer = "";
+  private playerManagement = usePlayerManagementStore();
 
   get rules(): { required: (value: string) => string | boolean; min: (text: string) => string | boolean } {
     return {
@@ -190,7 +192,7 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   get searchedPlayerPortraits(): number[] {
-    return this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
+    return this.playerManagement.searchedPlayerSpecialPortraits;
   }
 
   get hasSpecialPortraits(): boolean {
@@ -226,7 +228,7 @@ export default class AdminAssignPortraits extends Vue {
         mouseover: this.mouseoverText || "",
       } as ChangePortraitsCommand;
 
-      await this.$store.direct.dispatch.admin.playerManagement.addPortraits(command);
+      await this.playerManagement.addPortraits(command);
     }
     if (this.confirmRemovedPortraits.length > 0) {
       const battleTags = [] as string[];
@@ -237,7 +239,7 @@ export default class AdminAssignPortraits extends Vue {
         portraitIds: this.confirmRemovedPortraits,
       } as ChangePortraitsCommand;
 
-      await this.$store.direct.dispatch.admin.playerManagement.removePortraits(command);
+      await this.playerManagement.removePortraits(command);
     }
     await this.init();
     this.assignDialogOpen = false;
@@ -273,8 +275,8 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   async playerFound(bTag: string): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(bTag);
-    const playerPortraits = this.$store.direct.state.admin.playerManagement.searchedPlayerSpecialPortraits;
+    await this.playerManagement.loadSpecialPortraitsForPlayer(bTag);
+    const playerPortraits = this.playerManagement.searchedPlayerSpecialPortraits;
     this.assignedPortraitsModel = Object.create(playerPortraits);
 
     if (playerPortraits) {
@@ -294,14 +296,14 @@ export default class AdminAssignPortraits extends Vue {
   }
 
   private async init(): Promise<void> {
-    await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
-    const managedPlayer = this.$store.direct.state.admin.playerManagement.managedBattleTag;
+    await this.playerManagement.loadAllSpecialPortraits();
+    const managedPlayer = this.playerManagement.managedBattleTag;
     if (managedPlayer) {
-      await this.$store.direct.dispatch.admin.playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
+      await this.playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
     }
     this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);
     this.allSpecialPortraits = Object.create(
-      this.$store.direct.state.admin.playerManagement.allSpecialPortraits
+      this.playerManagement.allSpecialPortraits
         .map((x) => parseInt(x.id))
         .sort((a, b) => b - a)
     );

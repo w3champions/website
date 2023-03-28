@@ -23,14 +23,16 @@ import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: { nodeOverridesCard, reviewProxies, PlayerSearch } })
 export default class AdminProxies extends Vue {
   private oauthStore = useOauthStore();
   public showProxyOptions = false;
+  private adminStore = useAdminStore();
 
   async playerFound(bTag: string): Promise<void> {
-    const proxies = await this.$store.direct.dispatch.admin.getProxiesForPlayer(bTag);
+    const proxies = await this.adminStore.getProxiesForPlayer(bTag);
       await this.setPlayerProxies(proxies);
 
       if (proxies._id) {
@@ -43,22 +45,22 @@ export default class AdminProxies extends Vue {
   }
 
   public async setPlayerProxies(proxies: ProxySettings): Promise<void> {
-    this.$store.direct.dispatch.admin.updateModifiedProxies({
+    this.adminStore.updateModifiedProxies({
       overrides: proxies.nodeOverrides,
       isAutomatic: false,
     });
-    this.$store.direct.dispatch.admin.updateModifiedProxies({
+    this.adminStore.updateModifiedProxies({
       overrides: proxies.automaticNodeOverrides,
       isAutomatic: true,
     });
   }
 
   get proxiesOnSearchedTag(): ProxySettings {
-    return this.$store.direct.state.admin.proxiesSetForSearchedPlayer;
+    return this.adminStore.proxiesSetForSearchedPlayer;
   }
 
   get availableProxies(): Proxy[] {
-    return this.$store.direct.state.admin.availableProxies;
+    return this.adminStore.availableProxies;
   }
 
   get isAdmin(): boolean {
@@ -72,7 +74,7 @@ export default class AdminProxies extends Vue {
 
   private async init(): Promise<void> {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadAvailableProxies(this.oauthStore.token);
+      await this.adminStore.loadAvailableProxies(this.oauthStore.token);
     }
   }
 

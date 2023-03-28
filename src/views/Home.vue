@@ -158,10 +158,12 @@ import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
-import { NewsMessage } from "@/store/admin/messages/types";
-import { Map } from "@/store/admin/maps/types";
+import { NewsMessage } from "@/store/admin/infoMessages/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/typings";
+import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
+import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({
   components: {
@@ -177,24 +179,26 @@ export default class HomeView extends Vue {
   maps1v1: Map[] = [];
   maps2v2: Map[] = [];
   maps4v4: Map[] = [];
+  private infoMessagesStore = useInfoMessagesStore();
+  private mapsManagementStore = useMapsManagementStore();
 
   get topFive(): Ranking[] {
     return this.$store.direct.state.rankings.topFive;
   }
 
   get news(): NewsMessage[] {
-    return this.$store.direct.state.infoMessages.news;
+    return this.infoMessagesStore.news;
   }
 
   async mounted(): Promise<void> {
     await this.$store.direct.dispatch.rankings.retrieveSeasons();
     this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
     await this.$store.direct.dispatch.rankings.getTopFive();
-    await this.$store.direct.dispatch.infoMessages.loadNews();
-    await this.$store.direct.dispatch.admin.mapsManagement.loadMapsForCurrentSeason();
-    this.maps1v1 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;
-    this.maps2v2 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id === EGameMode.GM_2ON2)[0].maps;
-    this.maps4v4 = this.$store.direct.state.admin.mapsManagement.seasonMaps.filter((m) => m.id == EGameMode.GM_4ON4)[0].maps;
+    await this.infoMessagesStore.loadNews();
+    await this.mapsManagementStore.loadMapsForCurrentSeason();
+    this.maps1v1 = this.mapsManagementStore.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;
+    this.maps2v2 = this.mapsManagementStore.seasonMaps.filter((m) => m.id === EGameMode.GM_2ON2)[0].maps;
+    this.maps4v4 = this.mapsManagementStore.seasonMaps.filter((m) => m.id == EGameMode.GM_4ON4)[0].maps;
   }
 
   public convertMarkdownToHTML(input: string): string {

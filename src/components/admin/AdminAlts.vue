@@ -36,6 +36,7 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({})
 export default class AdminAlts extends Vue {
@@ -44,11 +45,12 @@ export default class AdminAlts extends Vue {
   public showAlts = false;
   public oldSearchTerm = "";
   public alts = [] as string[];
+  private adminStore = useAdminStore();
 
   public revertToDefault(): void {
     this.showAlts = false;
     this.oldSearchTerm = "";
-    this.$store.direct.dispatch.admin.clearSearch();
+    this.adminStore.clearSearch();
     this.alts = [];
   }
 
@@ -61,7 +63,7 @@ export default class AdminAlts extends Vue {
     if (searchedPlayer) {
       const btag = searchedPlayer.battleTag;
 
-      this.alts = await this.$store.direct.dispatch.admin.getAltsForPlayer(btag);
+      this.alts = await this.adminStore.getAltsForPlayer(btag);
 
       if ((this.alts != null || undefined) && this.alts.length > 0) {
         this.showAlts = true;
@@ -74,7 +76,7 @@ export default class AdminAlts extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string): void {
     if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.$store.direct.dispatch.admin.searchBnetTag({
+      this.adminStore.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
       this.oldSearchTerm = newValue;
@@ -84,7 +86,7 @@ export default class AdminAlts extends Vue {
   }
 
   get searchedPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.admin.searchedPlayers;
+    return this.adminStore.searchedPlayers;
   }
 }
 </script>

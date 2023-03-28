@@ -14,21 +14,23 @@ import { PortraitDefinition } from "@/store/admin/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import AssignPortrait from "./AssignPortrait.vue";
+import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: { AssignPortrait } })
 export default class AvailablePortraitsGallery extends Vue {
   @Prop({ default: true }) public selectable?: boolean;
   allSpecialPortraits = [] as PortraitDefinition[];
+  private playerManagement = usePlayerManagementStore();
 
   async init(): Promise<void> {
-    const specials = this.$store.direct.state.admin.playerManagement.allSpecialPortraits;
+    const specials = this.playerManagement.allSpecialPortraits;
 
     if (specials && specials.length > 0) {
       this.allSpecialPortraits = Object.create(specials.map((x) => parseInt(x.id)).sort((a, b) => b - a));
     } else {
-      await this.$store.direct.dispatch.admin.playerManagement.loadAllSpecialPortraits();
+      await this.playerManagement.loadAllSpecialPortraits();
       this.allSpecialPortraits = Object.create(
-        this.$store.direct.state.admin.playerManagement.allSpecialPortraits
+        this.playerManagement.allSpecialPortraits
           .map((x) => parseInt(x.id))
           .sort((a, b) => b - a)
       );

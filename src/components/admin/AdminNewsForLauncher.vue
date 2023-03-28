@@ -206,7 +206,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { NewsMessage } from "@/store/admin/messages/types";
+import { NewsMessage } from "@/store/admin/infoMessages/types";
 import { Editor, EditorContent, EditorMenuBar } from "tiptap";
 import { Command } from "tiptap-commands";
 import {
@@ -230,10 +230,13 @@ import {
   History,
 } from "tiptap-extensions";
 import { useOauthStore } from "@/store/oauth/store";
+import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
 @Component({ components: { EditorContent, EditorMenuBar } })
 export default class AdminNewsForLauncher extends Vue {
   private oauthStore = useOauthStore();
+  private infoMessagesStore = useInfoMessagesStore();
+
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {
@@ -246,7 +249,7 @@ export default class AdminNewsForLauncher extends Vue {
   }
 
   get news(): NewsMessage[] {
-    return this.$store.direct.state.infoMessages.news;
+    return this.infoMessagesStore.news;
   }
 
   get isAdmin(): boolean {
@@ -260,7 +263,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   private async init() {
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.infoMessages.loadNews();
+      await this.infoMessagesStore.loadNews();
     }
   }
 
@@ -307,7 +310,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   async deleteNewsItem(item: NewsMessage): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-      (await this.$store.direct.dispatch.infoMessages.deleteNews(item));
+      (await this.infoMessagesStore.deleteNews(item));
     this.dialogNews = false;
   }
 
@@ -317,7 +320,7 @@ export default class AdminNewsForLauncher extends Vue {
 
   async saveNews() {
     this.editedNewsItem.message = this.editor.getHTML();
-    await this.$store.direct.dispatch.infoMessages.editNews(this.editedNewsItem);
+    await this.infoMessagesStore.editNews(this.editedNewsItem);
     this.dialogNews = false;
     this.editor.clearContent();
     this.editedNewsItem = { bsonId: "", date: "", message: "" };

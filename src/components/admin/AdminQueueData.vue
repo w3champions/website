@@ -40,12 +40,14 @@ import { Component, Watch, Mixins, Prop } from "vue-property-decorator";
 import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
+import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: {} })
 export default class AdminQueueData extends Mixins(GameModesMixin) {
   private oauthStore = useOauthStore();
   @Prop() disabledModes?: EGameMode[];
   _intervalRefreshHandle?: number = undefined;
+  private adminStore = useAdminStore();
 
   get headers(): Array<unknown> {
     return [
@@ -115,20 +117,20 @@ export default class AdminQueueData extends Mixins(GameModesMixin) {
     await this.loadActiveGameModes();
 
     if (this.isAdmin) {
-      await this.$store.direct.dispatch.admin.loadQueueData(
+      await this.adminStore.loadQueueData(
         this.oauthStore.token
       );
     }
   }
 
   private async refresh(): Promise<void> {
-    await this.$store.direct.dispatch.admin.loadQueueData(
+    await this.adminStore.loadQueueData(
       this.oauthStore.token
     );
   }
 
   get queueData(): QueueData[] {
-    return this.$store.direct.state.admin.queuedata;
+    return this.adminStore.queuedata;
   }
 
   get isAdmin(): boolean {

@@ -6,10 +6,7 @@ import player from "./player/index";
 import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
-import admin from "./admin/index";
 import rankings from "./ranking/index";
-import infoMessages from "./admin/messages/index";
-import loungeMute from "./admin/loungeMute/index";
 
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
@@ -26,9 +23,6 @@ const mod = {
     matches,
     personalSettings,
     clan,
-    admin,
-    infoMessages,
-    loungeMute,
   },
   state: {
     darkMode: false,

@@ -37,12 +37,14 @@ import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue"
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchDetailView from "@/views/MatchDetail.vue";
+import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 
 @Component({ components: { ReplayChatMessage, DownloadReplayIcon, MatchDetailView } })
 export default class AdminReplayChatLog extends Vue {
   @Prop() matchId!: string;
   log = {} as ReplayChatLog;
   openGameDetail = false;
+  private replayManagementStore = useReplayManagementStore();
 
   get messages(): ReplayMessage[] {
     return this.log.messages;
@@ -68,8 +70,8 @@ export default class AdminReplayChatLog extends Vue {
   }
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.admin.replayManagement.loadChatLog(this.matchId);
-    this.log = this.$store.direct.state.admin.replayManagement.chatLog;
+    await this.replayManagementStore.loadChatLog(this.matchId);
+    this.log = this.replayManagementStore.chatLog;
   }
 }
 </script>

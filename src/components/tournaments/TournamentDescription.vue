@@ -42,7 +42,7 @@ import { ETournamentState, ITournament } from "@/store/tournaments/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
-import { Map } from "@/store/admin/maps/types";
+import { Map } from "@/store/admin/mapsManagement/types";
 import { ERaceEnum } from "@/store/typings";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
