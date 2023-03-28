@@ -21,7 +21,6 @@
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
     "debounce": "^1.2.1",
-    "direct-vuex": "^0.12.1",
     "lodash": "^4.17.21",
     "marked": "^4.2.12",
     "pinia": "^2.0.32",
@@ -36,8 +35,7 @@
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.6.5",
     "vuetify": "^2.6.13",
-    "vuetify-datetime-picker": "^2.1.1",
-    "vuex": "^3.6.2"
+    "vuetify-datetime-picker": "^2.1.1"
   },
   "devDependencies": {
     "@types/debounce": "^1.2.1",
@@ -51,7 +49,6 @@
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
     "@vue/cli-plugin-typescript": "~5.0.8",
-    "@vue/cli-plugin-vuex": "~5.0.8",
     "@vue/cli-service": "~5.0.8",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.2",
