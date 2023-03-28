@@ -1,5 +1,5 @@
 export type LoungeMuteState = {
-  loungeMutedPlayers: LoungeMuteResponse[]
+  loungeMutedPlayers: LoungeMuteResponse[];
 };
 
 export interface LoungeMute {
@@ -7,7 +7,7 @@ export interface LoungeMute {
   author: string;
   endDate: string;
 }
-  
+
 export interface LoungeMuteResponse extends LoungeMute {
   insertDate: string;
 }
