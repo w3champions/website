@@ -19,8 +19,6 @@ export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
     players: [],
-    // news: [], // FIXME
-    // tips: [], // FIXME
     queuedata: [],
     availableProxies: [],
     searchedPlayers: [],
