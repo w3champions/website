@@ -4,7 +4,6 @@ import { createDirectStore } from "direct-vuex";
 
 import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
-import clan from "./clan/index";
 
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
@@ -50,7 +49,6 @@ const mod = {
   modules: {
     matches,
     personalSettings,
-    clan,
   },
   state: {
     darkMode: false,

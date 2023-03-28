@@ -38,25 +38,27 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({})
 export default class LeaveClanModal extends Vue {
   public invitePlayerDialog = false;
   @Prop() isChieftain!: boolean;
+  private clanStore = useClanStore();
 
   public closeDialog(): void {
     this.invitePlayerDialog = false;
   }
 
   get clanName(): string {
-    return this.$store.direct.state.clan.playersClan.clanName;
+    return this.clanStore.playersClan.clanName;
   }
 
   public async leaveClan(): Promise<void> {
-    await this.$store.direct.dispatch.clan.leaveClan();
+    await this.clanStore.leaveClan();
     this.invitePlayerDialog = false;
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
-    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
+    await this.clanStore.retrievePlayersClan();
+    await this.clanStore.retrievePlayersMembership();
   }
 }
 </script>
