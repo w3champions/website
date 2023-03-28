@@ -2,7 +2,6 @@ import Vue from "vue";
 import Vuex, { ActionContext } from "vuex";
 import { createDirectStore } from "direct-vuex";
 
-import tournaments from "./tournaments/index";
 import player from "./player/index";
 import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
@@ -28,7 +27,6 @@ const mod = {
     personalSettings,
     clan,
     admin,
-    tournaments,
     infoMessages,
     loungeMute,
   },
