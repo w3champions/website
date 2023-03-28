@@ -30,6 +30,7 @@ import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat
 import { ERaceEnum } from "@/store/typings";
 import { races, defaultStatsTab } from "@/helpers/profile";
 import isEmpty from "lodash/isEmpty";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { RaceIcon, PlayerHeroStatisticsTable },
@@ -40,6 +41,7 @@ export default class PlayerHeroStatistics extends Vue {
   public races = races;
   @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
   @Prop() selectedMap!: string;
+  private player = usePlayerStore();
 
   @Watch("isPlayerInitialized")
   onPlayerInitialized(): void {
@@ -47,7 +49,7 @@ export default class PlayerHeroStatistics extends Vue {
   }
 
   setSelectedTab(): void {
-    this.selectedTab = defaultStatsTab(this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
+    this.selectedTab = defaultStatsTab(this.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
   }
 
   // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
@@ -60,7 +62,7 @@ export default class PlayerHeroStatistics extends Vue {
   }
 
   get isPlayerInitialized(): boolean {
-    return this.$store.direct.state.player.isInitialized;
+    return this.player.isInitialized;
   }
 
   get heroUsages() {
@@ -140,7 +142,7 @@ export default class PlayerHeroStatistics extends Vue {
 
     if (isEmpty(heroStatsData)) return;
 
-    const winLossesOnMap = this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+    const winLossesOnMap = this.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
       .filter((obj: RaceWinsOnMap) => obj.race == this.selectedRace)[0]
       .winLossesOnMap
       .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == this.selectedMap)[0];

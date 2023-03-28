@@ -8,6 +8,7 @@ import {
 } from "@/store/personalSettings/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
+import { usePlayerStore } from "@/store/player/store";
 
 const mod = {
   namespaced: true,
@@ -24,7 +25,8 @@ const mod = {
       );
       commit.SET_PERSONAL_SETTING({} as PersonalSetting);
 
-      const battleTag = rootState.player.battleTag;
+      const player = usePlayerStore();
+      const battleTag = player.battleTag;
       if (!battleTag) return;
 
       const response =
@@ -44,9 +46,10 @@ const mod = {
       );
 
       const oauthStore = useOauthStore();
+      const player = usePlayerStore();
       const success =
         await PersonalSettingsService.savePersonalSettings(
-          rootState.player.battleTag,
+          player.battleTag,
           setting,
           oauthStore.token
         );
@@ -62,8 +65,9 @@ const mod = {
       );
 
       const oauthStore = useOauthStore();
+      const player = usePlayerStore();
       const success = await PersonalSettingsService.setAvatar(
-        rootState.player.battleTag,
+        player.battleTag,
         picture,
         oauthStore.token
       );

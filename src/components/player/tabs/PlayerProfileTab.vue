@@ -86,6 +86,7 @@ import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { EGameMode } from "@/store/typings";
 import { useOauthStore } from "@/store/oauth/store";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague },
@@ -93,6 +94,7 @@ import { useOauthStore } from "@/store/oauth/store";
 export default class PlayerProfileTab extends Vue {
   private oauthStore = useOauthStore();
   @Prop() public id!: string;
+  private player = usePlayerStore();
 
   get raceHeaders() {
     return [
@@ -120,7 +122,7 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get loadingProfile(): boolean {
-    return this.$store.direct.state.player.loadingProfile;
+    return this.player.loadingProfile;
   }
 
   get isLoggedInPlayer(): boolean {
@@ -133,7 +135,7 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get gameModeStats() {
-    return this.$store.direct.state.player.gameModeStats;
+    return this.player.gameModeStats;
   }
 
   get selectedRaceStats() {
@@ -149,11 +151,11 @@ export default class PlayerProfileTab extends Vue {
   }
 
   get selectedSeason() {
-    return this.$store.direct.state.player.selectedSeason;
+    return this.player.selectedSeason;
   }
 
   get raceStats() {
-    return this.$store.direct.state.player.raceStats;
+    return this.player.raceStats;
   }
 
   get topGameModeStats() {

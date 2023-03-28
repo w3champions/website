@@ -49,6 +49,7 @@ import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import ProfileService from "@/services/ProfileService";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: { PlayerIcon, CountryFlagExtended },
@@ -63,6 +64,7 @@ export default class PlayerMatchInfo extends Vue {
   @Prop() public isAnonymous!: boolean;
 
   public winrate: RaceStat = {} as RaceStat;
+  private rankingsStore = useRankingStore();
 
   get won() {
     if (this.unfinishedMatch) {
@@ -133,7 +135,7 @@ export default class PlayerMatchInfo extends Vue {
     this.winrate =
       await ProfileService.retrieveWinRate(
         this.player.battleTag,
-        this.$store.direct.state.rankings.selectedSeason.id
+        this.rankingsStore.selectedSeason.id
       );
   }
 

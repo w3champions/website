@@ -354,6 +354,7 @@ import { AkaSettings, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
+import { usePlayerStore } from "@/store/player/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -375,6 +376,7 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.RANDOM,
     ERaceEnum.TOTAL,
   ];
+  private player = usePlayerStore();
 
   enumToString(race: ERaceEnum) {
     return this.$t(`races.${ERaceEnum[race]}`);
@@ -435,7 +437,7 @@ export default class PlayerAvatar extends Vue {
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    const playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
+    const playerAkaData = this.player.playerProfile.playerAkaData;
 
     if (playerAkaData == null) return false;
 
@@ -451,15 +453,15 @@ export default class PlayerAvatar extends Vue {
   }
 
   get w3infoId(): string | number {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? "";
+    return this.player.playerProfile.playerAkaData.id ?? "";
   }
 
   get liquipediaString(): string {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? "";
+    return this.player.playerProfile.playerAkaData.liquipedia ?? "";
   }
 
   get aliasOrW3infoId(): string {
-    const name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
+    const name = this.player.playerProfile.playerAkaData.name;
 
     if (name != null) {
       return name;

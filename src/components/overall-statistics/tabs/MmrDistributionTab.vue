@@ -66,6 +66,8 @@ import MmrDistributionChart from "@/components/overall-statistics/MmrDistributio
 import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
@@ -77,9 +79,11 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
   public loadingData = true;
+  private rankingsStore = useRankingStore();
+  private player = usePlayerStore();
 
   get seasons() {
-    return this.$store.direct.state.rankings.seasons;
+    return this.rankingsStore.seasons;
   }
 
   get loadingMapAndRaceStats(): boolean {
@@ -90,11 +94,11 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     this.loadingData = true;
     this.selectedSeason = season;
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile({
+      await this.player.loadProfile({
         battleTag: this.verifiedBtag,
         freshLogin: false,
       });
-      await this.$store.direct.dispatch.player.loadGameModeStats({
+      await this.player.loadGameModeStats({
         battleTag: this.verifiedBtag,
         season: season.id,
       });
@@ -131,7 +135,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
 
   private async init() {
     await this.loadActiveGameModes();
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.rankingsStore.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
   }
 
@@ -154,11 +158,11 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   @Watch("verifiedBtag")
   async onBattleTagChanged(newBattleTag: string) {
     if (newBattleTag) {
-      await this.$store.direct.dispatch.player.loadProfile({
+      await this.player.loadProfile({
         battleTag: newBattleTag,
         freshLogin: false,
       });
-      await this.$store.direct.dispatch.player.loadGameModeStats({
+      await this.player.loadGameModeStats({
         battleTag: newBattleTag,
         season: this.selectedSeason.id,
       });

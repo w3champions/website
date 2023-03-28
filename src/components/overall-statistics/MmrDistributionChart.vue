@@ -16,6 +16,7 @@ import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { BarChart },
@@ -24,6 +25,7 @@ export default class MmrDistributionChart extends Vue {
   @Prop() public mmrDistribution!: MmrDistribution;
   @Prop() public selectedSeason!: Season;
   @Prop() public selectedGameMode!: EGameMode;
+  private player = usePlayerStore();
 
   private colors(): string[] {
     const colors: string[] = [];
@@ -56,7 +58,7 @@ export default class MmrDistributionChart extends Vue {
   }
 
   get gameModeStats() {
-    return this.$store.direct.state.player.gameModeStats;
+    return this.player.gameModeStats;
   }
 
   get mmrGroupOfLoggedInPlayer(): number {

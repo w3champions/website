@@ -2,24 +2,52 @@ import Vue from "vue";
 import Vuex, { ActionContext } from "vuex";
 import { createDirectStore } from "direct-vuex";
 
-import player from "./player/index";
 import matches from "./match/index";
 import personalSettings from "./personalSettings/index";
 import clan from "./clan/index";
-import rankings from "./ranking/index";
 
 import { RootState } from "./typings";
 import { Gateways } from "./ranking/types";
 import GatewaysService from "@/services/GatewaysService";
 import LocaleService from "@/services/LocaleService";
 import { OauthState } from "@/store/oauth/types";
+import { defineStore } from "pinia";
 
 Vue.use(Vuex);
 
+export const useRootStore = defineStore("root", {
+  state: (): RootState => ({
+    darkMode: false,
+    gateway: GatewaysService.getGateway(),
+    locale: "en",
+  }),
+  actions: {
+    loadLocale() {
+      const locale = LocaleService.getLocale();
+      this.SET_LOCALE(locale);
+    },
+    saveLocale(locale: string) {
+      LocaleService.setLocale(locale);
+      this.SET_LOCALE(locale);
+    },
+    setGateway(gateway: Gateways) {
+      this.SET_GATEWAY(gateway);
+    },
+    SET_DARK_MODE(darkMode: boolean): void {
+      this.darkMode = darkMode;
+    },
+    SET_GATEWAY(gateway: Gateways): void {
+      this.gateway = gateway;
+      GatewaysService.setGateway(gateway);
+    },
+    SET_LOCALE(locale: string): void {
+      this.locale = locale;
+    },
+  },
+});
+
 const mod = {
   modules: {
-    player,
-    rankings,
     matches,
     personalSettings,
     clan,

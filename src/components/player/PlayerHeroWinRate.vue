@@ -52,6 +52,7 @@ import { getAsset } from "@/helpers/url-functions";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
 import { ERaceEnum } from "@/store/typings";
 import { races, defaultStatsTab } from "@/helpers/profile";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { RaceIcon },
@@ -64,6 +65,7 @@ export default class PlayerHeroWinRate extends Vue {
   public races = races;
   @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
   @Prop() selectedMap!: string;
+  private player = usePlayerStore();
 
   @Watch("isPlayerInitialized")
   onPlayerInitialized(): void {
@@ -71,7 +73,7 @@ export default class PlayerHeroWinRate extends Vue {
   }
 
   setSelectedTab(): void {
-    this.selectedTab = defaultStatsTab(this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
+    this.selectedTab = defaultStatsTab(this.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
   }
 
   // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
@@ -84,7 +86,7 @@ export default class PlayerHeroWinRate extends Vue {
   }
 
   get isPlayerInitialized(): boolean {
-    return this.$store.direct.state.player.isInitialized;
+    return this.player.isInitialized;
   }
 
   get headers() {

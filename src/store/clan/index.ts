@@ -6,6 +6,7 @@ import { PlayerProfile } from "@/store/player/types";
 import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
 import ClanService from "@/services/ClanService";
+import { usePlayerStore } from "@/store/player/store";
 
 const mod = {
   namespaced: true,
@@ -105,8 +106,9 @@ const mod = {
     async retrievePlayersClan(context: ActionContext<ClanState, RootState>) {
       const { commit, rootState } = moduleActionContext(context, mod);
 
+      const player = usePlayerStore();
       const response = await ClanService.retrieveClanForPlayer(
-        rootState.player.battleTag
+        player.battleTag
       );
 
       commit.SET_PLAYERS_CLAN(response);
@@ -136,8 +138,9 @@ const mod = {
     async retrievePlayersMembership(context: ActionContext<ClanState, RootState>) {
       const { commit, rootState } = moduleActionContext(context, mod);
 
+      const player = usePlayerStore();
       const response = await ClanService.retrievePlayerMembership(
-        rootState.player.battleTag
+        player.battleTag
       );
 
       commit.SET_PLAYERS_MEMBERSHIP(response);

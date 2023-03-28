@@ -198,6 +198,8 @@ import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat, PlayerProfile } from "@/store/player/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: {
@@ -216,6 +218,8 @@ import { useOauthStore } from "@/store/oauth/store";
 })
 export default class ClanOverview extends Vue {
   private oauthStore = useOauthStore();
+  private rankingsStore = useRankingStore();
+  private player = usePlayerStore();
   @Prop() public id!: string;
 
   private modeEnums = Object.freeze(EGameMode);
@@ -225,7 +229,7 @@ export default class ClanOverview extends Vue {
   }
 
   get currentSeason(): number {
-    return this.$store.direct.state.rankings.seasons[0].id;
+    return this.rankingsStore.seasons[0].id;
   }
 
   public getLeagueOrder(battleTag: string): number {
@@ -349,7 +353,7 @@ export default class ClanOverview extends Vue {
   }
 
   get selectedPlayer(): string {
-    return this.$store.direct.state.player.battleTag;
+    return this.player.battleTag;
   }
 
   get playersClan(): Clan {
@@ -365,9 +369,9 @@ export default class ClanOverview extends Vue {
   }
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.rankingsStore.retrieveSeasons();
 
-    await this.$store.direct.dispatch.player.loadProfile({
+    await this.player.loadProfile({
       battleTag: this.battleTag,
       freshLogin: false,
     });
@@ -376,7 +380,7 @@ export default class ClanOverview extends Vue {
   // Load clans on activate instead of mount,
   // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
   async activated(): Promise<void> {
-    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
+    this.player.SET_BATTLE_TAG(this.battleTag);
     await this.$store.direct.dispatch.clan.retrievePlayersMembership();
     await this.$store.direct.dispatch.clan.retrievePlayersClan();
   }

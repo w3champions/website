@@ -54,6 +54,7 @@ import SortSelect from "@/components/matches/SortSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -67,6 +68,7 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 })
 export default class MatchesView extends Vue {
   private overallStatsStore = useOverallStatsStore();
+  private rankingsStore = useRankingStore();
 
   onPageChanged(page: number): void {
     this.getMatches(page);
@@ -94,7 +96,7 @@ export default class MatchesView extends Vue {
   }
 
   get currentSeason(): Season {
-    return this.$store.direct.state.rankings.seasons[0];
+    return this.rankingsStore.seasons[0];
   }
 
   get maps() {
@@ -170,8 +172,8 @@ export default class MatchesView extends Vue {
   }
 
   async mounted() {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+    await this.rankingsStore.retrieveSeasons();
+    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
     this.getMatches(1);
     this.getMaps();
     this.refreshMatches();

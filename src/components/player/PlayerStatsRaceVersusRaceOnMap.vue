@@ -36,6 +36,7 @@ import { ERaceEnum } from "@/store/typings";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import isEmpty from "lodash/isEmpty";
 import { defaultStatsTab } from "@/helpers/profile";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { RaceToMapStat, RaceIcon },
@@ -45,9 +46,10 @@ export default class PlayerStatsRaceVersusRaceOnMap extends Vue {
 
   public raceEnums = ERaceEnum;
   public selectedTab = "tab-1";
+  private player = usePlayerStore();
 
   get isPlayerInitialized(): boolean {
-    return this.$store.direct.state.player.isInitialized;
+    return this.player.isInitialized;
   }
 
   // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.

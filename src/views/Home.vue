@@ -164,6 +164,7 @@ import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/typings";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -181,9 +182,10 @@ export default class HomeView extends Vue {
   maps4v4: Map[] = [];
   private infoMessagesStore = useInfoMessagesStore();
   private mapsManagementStore = useMapsManagementStore();
+  private rankingsStore = useRankingStore();
 
   get topFive(): Ranking[] {
-    return this.$store.direct.state.rankings.topFive;
+    return this.rankingsStore.topFive;
   }
 
   get news(): NewsMessage[] {
@@ -191,9 +193,9 @@ export default class HomeView extends Vue {
   }
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
-    await this.$store.direct.dispatch.rankings.getTopFive();
+    await this.rankingsStore.retrieveSeasons();
+    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
+    await this.rankingsStore.getTopFive();
     await this.infoMessagesStore.loadNews();
     await this.mapsManagementStore.loadMapsForCurrentSeason();
     this.maps1v1 = this.mapsManagementStore.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;

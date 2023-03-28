@@ -204,6 +204,7 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { useTwitchStore } from "@/store/twitch/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -222,6 +223,7 @@ export default class CountryRankingsGrid extends Vue {
   @Prop() selectedCountry!: string;
 
   private twitchStore = useTwitchStore();
+  private rankingsStore = useRankingStore();
 
   get headers() {
     return [
@@ -363,11 +365,11 @@ export default class CountryRankingsGrid extends Vue {
 
   // methods
   initLeagueMap() {
-    const league = this.$store.direct.state.rankings.ladders?.filter(
+    const league = this.rankingsStore.ladders?.filter(
       (l) =>
         l.gateway === this.$store.direct.state.gateway &&
-        l.gameMode === this.$store.direct.state.rankings.gameMode &&
-        l.season === this.$store.direct.state.rankings.selectedSeason.id
+        l.gameMode === this.rankingsStore.gameMode &&
+        l.season === this.rankingsStore.selectedSeason.id
     )[0];
     this.leagueMap = new Map(league?.leagues.map((l) => [l.id, l]));
   }
