@@ -55,6 +55,7 @@ import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({
   components: {
@@ -69,13 +70,14 @@ import { useRankingStore } from "@/store/ranking/store";
 export default class MatchesView extends Vue {
   private overallStatsStore = useOverallStatsStore();
   private rankingsStore = useRankingStore();
+  private matchStore = useMatchStore();
 
   onPageChanged(page: number): void {
     this.getMatches(page);
   }
 
   get disabledGameModes(): Array<EGameMode> {
-    if (this.$store.direct.state.matches.status == MatchStatus.onGoing) {
+    if (this.matchStore.status == MatchStatus.onGoing) {
       return [
         EGameMode.GM_2ON2_AT,
         EGameMode.GM_4ON4_AT,
@@ -88,11 +90,11 @@ export default class MatchesView extends Vue {
   }
 
   get totalMatches(): number {
-    return this.$store.direct.state.matches.totalMatches;
+    return this.matchStore.totalMatches;
   }
 
   get matches(): Match[] {
-    return this.$store.direct.state.matches.matches;
+    return this.matchStore.matches;
   }
 
   get currentSeason(): Season {
@@ -110,7 +112,7 @@ export default class MatchesView extends Vue {
 
   get mapsByGameMode() {
     const filterSeasons =
-      this.$store.direct.state.matches.status == MatchStatus.onGoing
+      this.matchStore.status == MatchStatus.onGoing
         ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
           matchesOnMapPerSeason.season === this.currentSeason.id
         : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
@@ -140,23 +142,23 @@ export default class MatchesView extends Vue {
   }
 
   get unfinished(): boolean {
-    return this.$store.direct.state.matches.status == MatchStatus.onGoing;
+    return this.matchStore.status == MatchStatus.onGoing;
   }
 
   get gameMode(): EGameMode {
-    return this.$store.direct.state.matches.gameMode;
+    return this.matchStore.gameMode;
   }
 
   get map(): string {
-    return this.$store.direct.state.matches.map;
+    return this.matchStore.map;
   }
 
   get mmr(): Mmr {
-    return this.$store.direct.state.matches.mmr;
+    return this.matchStore.mmr;
   }
 
   public async getMatches(page?: number): Promise<void> {
-    await this.$store.direct.dispatch.matches.loadMatches(page);
+    await this.matchStore.loadMatches(page);
   }
 
   public getMaps(): void {
@@ -188,15 +190,15 @@ export default class MatchesView extends Vue {
   }
 
   gameModeChanged(gameMode: EGameMode): void {
-    this.$store.direct.dispatch.matches.setGameMode(gameMode);
+    this.matchStore.setGameMode(gameMode);
   }
 
   mapChanged(map: string): void {
-    this.$store.direct.dispatch.matches.setMap(map);
+    this.matchStore.setMap(map);
   }
 
   mmrChanged(mmr: Mmr): void {
-    this.$store.direct.dispatch.matches.setMmr(mmr);
+    this.matchStore.setMmr(mmr);
   }
 }
 </script>

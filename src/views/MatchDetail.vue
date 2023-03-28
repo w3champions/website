@@ -195,6 +195,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({
   components: {
@@ -209,6 +210,7 @@ import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/
 })
 export default class MatchDetailView extends Mixins(MatchMixin) {
   @Prop() public matchId!: string;
+  private matchStore = useMatchStore();
 
   @Watch("matchId")
   onMatchIdChanged() {
@@ -244,7 +246,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get match() {
-    return this.$store.direct.state.matches.matchDetail.match;
+    return this.matchStore.matchDetail.match;
   }
 
   get isJubileeGame() {
@@ -282,11 +284,11 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get gateWay() {
-    return Gateways[this.$store.direct.state.matches.matchDetail.match.gateWay];
+    return Gateways[this.matchStore.matchDetail.match.gateWay];
   }
 
   get season() {
-    return this.$store.direct.state.matches.matchDetail.match.season ?? 1;
+    return this.matchStore.matchDetail.match.season ?? 1;
   }
 
   matchIsFFA() {
@@ -294,19 +296,19 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
       EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
     ];
 
-    return ffaModes.includes(this.$store.direct.state.matches.matchDetail.match.gameMode);
+    return ffaModes.includes(this.matchStore.matchDetail.match.gameMode);
 
   }
 
   get isCompleteGame() {
-    return this.$store.direct.state.matches.matchDetail.playerScores;
+    return this.matchStore.matchDetail.playerScores;
   }
 
   get playerScores() {
     const {
       playerScores,
       match,
-    } = this.$store.direct.state.matches.matchDetail;
+    } = this.matchStore.matchDetail;
     if (this.matchIsFFA()) {
       const ffaMappedPlayerScores = playerScores.map((playerScore) => {
         const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
@@ -315,7 +317,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
           battleTag,
         };
       });
-      this.$store.direct.dispatch.matches.setPlayerScores(ffaMappedPlayerScores);
+      this.matchStore.setPlayerScores(ffaMappedPlayerScores);
       return ffaMappedPlayerScores ?? [];
     }
     return playerScores ?? [];
@@ -362,11 +364,11 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get loading() {
-    return this.$store.direct.state.matches.loadingMatchDetail;
+    return this.matchStore.loadingMatchDetail;
   }
 
   private async init() {
-    await this.$store.direct.dispatch.matches.loadMatchDetail(this.matchId);
+    await this.matchStore.loadMatchDetail(this.matchId);
   }
 
   private getPlayerScores(team: Team): PlayerScore[] {

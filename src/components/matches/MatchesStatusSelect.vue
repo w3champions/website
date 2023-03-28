@@ -37,11 +37,14 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import { MatchStatus } from "@/store/match/types";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({})
 export default class MatchesStatusSelect extends Vue {
+  private matchStore = useMatchStore();
+
   get status() {
-    const selectedStatus = this.$store.direct.state.matches.status;
+    const selectedStatus = this.matchStore.status;
     return this.matchStatuses.filter((x) => x.status == selectedStatus)[0].name;
   }
 
@@ -59,7 +62,7 @@ export default class MatchesStatusSelect extends Vue {
   }
 
   public setStatus(status: MatchStatus) {
-    this.$store.direct.dispatch.matches.setStatus(status);
+    this.matchStore.setStatus(status);
   }
 }
 </script>

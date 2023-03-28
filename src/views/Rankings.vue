@@ -188,6 +188,7 @@ import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistributi
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({
   components: {
@@ -216,6 +217,7 @@ export default class RankingsView extends Vue {
 
   private _intervalRefreshHandle?: number = undefined;
   private rankingsStore = useRankingStore();
+  private matchStore = useMatchStore();
 
   @Watch("searchModel")
   public onSearchModelChanged(rank: Ranking) {
@@ -416,10 +418,10 @@ export default class RankingsView extends Vue {
   }
 
   public async loadOngoingMatches() {
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+    await this.matchStore.loadAllOngoingMatches();
 
     this.ongoingMatchesMap = {};
-    this.$store.direct.state.matches.allOngoingMatches.forEach((x) => {
+    this.matchStore.allOngoingMatches.forEach((x) => {
       x.teams.forEach((t) => {
         t.players.forEach((p) => {
           const playerTag = p.battleTag;

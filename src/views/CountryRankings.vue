@@ -130,6 +130,7 @@ import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
+import { useMatchStore } from "@/store/match/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -153,6 +154,7 @@ export default class CountryRankingsView extends Vue {
   @Prop() season!: number;
   @Prop() gateway!: Gateways;
   @Prop() country!: string;
+  private matchStore = useMatchStore();
 
   @Watch("country")
   onCountryChanged(newValue: string) {
@@ -282,10 +284,10 @@ export default class CountryRankingsView extends Vue {
   }
 
   public async loadOngoingMatches() {
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+    await this.matchStore.loadAllOngoingMatches();
 
     this.ongoingMatchesMap = {};
-    this.$store.direct.state.matches.allOngoingMatches.forEach((x) => {
+    this.matchStore.allOngoingMatches.forEach((x) => {
       x.teams.forEach((t) => {
         t.players.forEach((p) => {
           const playerTag = p.battleTag;
