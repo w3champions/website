@@ -52,7 +52,7 @@
 <script lang="ts">
 import { Component, Prop, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";

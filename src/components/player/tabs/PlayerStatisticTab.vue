@@ -126,7 +126,7 @@
 import { Component, Watch, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { EGameMode, ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/types";
 import {
   PlayerMmrRpTimeline,
   PlayerStatsHeroOnMapVersusRace,

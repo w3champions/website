@@ -50,7 +50,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { getAsset } from "@/helpers/url-functions";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import { races, defaultStatsTab } from "@/helpers/profile";
 import { usePlayerStore } from "@/store/player/store";
 

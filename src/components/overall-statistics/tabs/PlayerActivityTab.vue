@@ -179,7 +179,7 @@ import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import ActivityPerDayChart from "@/components/overall-statistics/ActivityPerDayChart.vue";
 import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonChart.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";

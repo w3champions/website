@@ -83,7 +83,7 @@ import { Component, Prop, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";

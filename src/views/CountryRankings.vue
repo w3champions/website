@@ -121,7 +121,7 @@ import {
   Ranking,
   Season,
 } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -131,6 +131,7 @@ import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -155,6 +156,7 @@ export default class CountryRankingsView extends Vue {
   @Prop() gateway!: Gateways;
   @Prop() country!: string;
   private matchStore = useMatchStore();
+  private rootStateStore = useRootStateStore();
 
   @Watch("country")
   onCountryChanged(newValue: string) {
@@ -209,7 +211,7 @@ export default class CountryRankingsView extends Vue {
   get ladders(): League[] {
     const league = this.rankingsStore.ladders?.filter(
       (l) =>
-        l.gateway === this.$store.direct.state.gateway &&
+        l.gateway === this.rootStateStore.gateway &&
         EGameMode.GM_1ON1 &&
         l.season === this.rankingsStore.selectedSeason.id
     )[0];
@@ -243,7 +245,7 @@ export default class CountryRankingsView extends Vue {
       : this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
 
     if (this.gateway) {
-      this.$store.direct.commit.SET_GATEWAY(this.gateway);
+      this.rootStateStore.SET_GATEWAY(this.gateway);
     }
 
     const country =
@@ -265,7 +267,7 @@ export default class CountryRankingsView extends Vue {
   }
 
   get selectedGateway() {
-    return this.$store.direct.state.gateway;
+    return this.rootStateStore.gateway;
   }
 
   public async refreshRankings() {

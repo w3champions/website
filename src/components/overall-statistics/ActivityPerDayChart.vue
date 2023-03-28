@@ -7,7 +7,7 @@ import GameModesMixin from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
 import { ChartData, ScriptableContext } from "chart.js";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { parseJSON } from "date-fns";
 
 @Component({

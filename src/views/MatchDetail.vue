@@ -189,7 +189,7 @@ import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
-import { EGameMode, PlayerScore, Team } from "@/store/typings";
+import { EGameMode, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import MatchMixin from "@/mixins/MatchMixin";

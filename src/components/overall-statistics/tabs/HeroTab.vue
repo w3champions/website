@@ -48,7 +48,7 @@ import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
-import { EGameMode, EPick } from "@/store/typings";
+import { EGameMode, EPick } from "@/store/types";
 import { PlayedHero } from "@/store/overallStats/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 @Component({

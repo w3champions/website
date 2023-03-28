@@ -348,7 +348,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum, EAvatarCategory } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";

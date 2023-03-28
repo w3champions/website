@@ -1,9 +1,9 @@
 import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { DataTableOptions, EGameMode } from "../typings";
+import { DataTableOptions, EGameMode } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
 import RankingService from "@/services/RankingService";
-import { useRootStore } from "@/store";
+import { useRootStateStore } from "@/store/rootState/store";
 import { usePlayerStore } from "@/store/player/store";
 
 export const useRankingStore = defineStore("ranking", {
@@ -29,10 +29,10 @@ export const useRankingStore = defineStore("ranking", {
         this.SET_PAGE(options.page - 1);
       }
       const player = usePlayerStore();
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const response = await RankingService.retrieveRankings(
         this.league,
-        rootstate.gateway,
+        rootStateStore.gateway,
         this.gameMode,
         this.selectedSeason.id ?? player.selectedSeason.id,
       );
@@ -40,10 +40,10 @@ export const useRankingStore = defineStore("ranking", {
       this.SET_RANKINGS(response);
     },
     async getTopFive() {
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const rankings = await RankingService.retrieveRankings(
         0,
-        rootstate.gateway,
+        rootStateStore.gateway,
         EGameMode.GM_1ON1,
         this.selectedSeason.id,
       );
@@ -51,10 +51,10 @@ export const useRankingStore = defineStore("ranking", {
     },
     async getCountryRankings() {
       this.SET_COUNTRY_RANKINGS_LOADING(true);
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const rankings = await RankingService.retrieveCountryRankings(
         this.selectedCountry,
-        rootstate.gateway,
+        rootStateStore.gateway,
         this.gameMode,
         this.selectedSeason.id,
       );
@@ -62,10 +62,10 @@ export const useRankingStore = defineStore("ranking", {
       this.SET_COUNTRY_RANKINGS_LOADING(false);
     },
     async search(search: { searchText: string; gameMode: EGameMode }) {
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const rankings = await RankingService.searchRankings(
         search.searchText,
-        rootstate.gateway,
+        rootStateStore.gateway,
         search.gameMode,
         this.selectedSeason.id,
       );

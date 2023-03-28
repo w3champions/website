@@ -22,7 +22,7 @@ import Vue from "vue";
 import orderBy from "lodash/orderBy";
 import sumBy from "lodash/sumBy";
 import { Component } from "vue-property-decorator";
-import { EGameMode, Match, PlayerInTeam } from "@/store/typings";
+import { EGameMode, Match, PlayerInTeam } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import StreamedMatchInfo from "@/components/matches/StreamedMatchInfo.vue";
 import { useTwitchStore } from "@/store/twitch/store";

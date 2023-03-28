@@ -190,7 +190,7 @@ import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
 import MemberManagementMenu from "@/components/clans/MemberManagementMenu.vue";
 import { Clan, EClanRole } from "@/store/clan/types";
 import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";

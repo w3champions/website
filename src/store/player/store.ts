@@ -1,4 +1,3 @@
-import { useRootStore } from "..";
 import {
   ModeStat,
   PlayerMmrRpTimeline,
@@ -8,9 +7,10 @@ import {
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
 } from "./types";
-import { EGameMode, ERaceEnum, Match } from "../typings";
+import { EGameMode, ERaceEnum, Match } from "../types";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRootStateStore } from "@/store/rootState/store";
 import ProfileService from "@/services/ProfileService";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
@@ -52,19 +52,19 @@ export const usePlayerStore = defineStore("player", {
       this.SET_LOADING_PROFILE(false);
     },
     async loadGameModeStats(params: { battleTag?: string; season?: number }) {
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const modeStats = await ProfileService.retrieveGameModeStats(
         params.battleTag ?? this.battleTag,
-        rootstate.gateway,
+        rootStateStore.gateway,
         params.season ?? this.selectedSeason?.id ?? -1,
       );
       this.SET_MODE_STATS(modeStats);
     },
     async loadRaceStats() {
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const raceStats = await ProfileService.retrieveRaceStats(
         this.battleTag,
-        rootstate.gateway,
+        rootStateStore.gateway,
         this.selectedSeason?.id ?? -1,
       );
       this.SET_RACE_STATS(raceStats);
@@ -90,7 +90,7 @@ export const usePlayerStore = defineStore("player", {
         this.SET_PAGE(page - 1);
       }
       this.SET_LOADING_RECENT_MATCHES(true);
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const response = await MatchService.retrievePlayerMatches(
         this.page,
         this.battleTag,
@@ -98,7 +98,7 @@ export const usePlayerStore = defineStore("player", {
         this.gameMode,
         this.playerRace,
         this.opponentRace,
-        rootstate.gateway,
+        rootStateStore.gateway,
         this.selectedSeason?.id ?? -1,
       );
       this.SET_TOTAL_MATCHES(response.count);
@@ -121,12 +121,12 @@ export const usePlayerStore = defineStore("player", {
     },
     async loadPlayerMmrRpTimeline() {
       this.SET_LOADING_MMR_TIMELINE(true);
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const mmrRpTimeline =
         await ProfileService.retrievePlayerMmrRpTimeline(
           this.battleTag,
           this.race,
-          rootstate.gateway,
+          rootStateStore.gateway,
           this.selectedSeason?.id ?? -1,
           this.gameMode,
         );

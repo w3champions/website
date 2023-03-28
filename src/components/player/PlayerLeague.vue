@@ -60,13 +60,14 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { EGameMode, ERaceEnum, Match } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 @Component({
   components: { RecentPerformance, LevelProgress },
@@ -79,6 +80,7 @@ export default class PlayerLeague extends Vue {
   private player = usePlayerStore();
 
   matches: Match[] = [];
+  private rootStateStore = useRootStateStore();
 
   get playerId() {
     return this.modeStat.id;
@@ -97,7 +99,7 @@ export default class PlayerLeague extends Vue {
   }
 
   get gateWay() {
-    return this.$store.direct.state.gateway;
+    return this.rootStateStore.gateway;
   }
 
   get selectedSeason() {

@@ -59,7 +59,7 @@ import { Component, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";

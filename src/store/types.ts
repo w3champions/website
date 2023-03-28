@@ -1,12 +1,4 @@
-import { Gateways } from "./ranking/types";
-
 export type timestampString = string;
-
-export type RootState = {
-  darkMode: boolean;
-  gateway: Gateways;
-  locale: string;
-};
 
 export type DataTableOptions = {
   sortDest: boolean;

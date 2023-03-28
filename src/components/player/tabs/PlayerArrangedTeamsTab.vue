@@ -34,7 +34,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { usePlayerStore } from "@/store/player/store";
 
 @Component({

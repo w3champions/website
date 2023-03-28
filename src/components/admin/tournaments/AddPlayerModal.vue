@@ -39,7 +39,7 @@
 <script lang="ts">
 import map from "lodash/map";
 import { ITournament } from "@/store/tournaments/types";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 import { ERaceEnumLabel } from "@/helpers/tournaments";

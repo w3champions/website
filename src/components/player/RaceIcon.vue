@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import { Component, Prop } from "vue-property-decorator";
 import { getAsset } from "@/helpers/url-functions";
 

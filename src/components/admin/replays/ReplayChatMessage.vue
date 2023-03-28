@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
-import { EChatScope } from "@/store/common/typings";
+import { EChatScope } from "@/store/common/types";
 import Vue from "vue";
 
 @Component({})

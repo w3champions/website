@@ -16,7 +16,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { HERO_DATA } from "@/store/heroes";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 
 type PlayedHeroExtra = PlayedHero & {
   race: ERaceEnum;

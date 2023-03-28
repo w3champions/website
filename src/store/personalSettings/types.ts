@@ -1,4 +1,4 @@
-import { ERaceEnum, EAvatarCategory } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { RaceStat } from "@/store/player/types";
 
 export type PersonalSettingsState = {

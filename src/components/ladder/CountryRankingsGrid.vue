@@ -193,7 +193,7 @@ import Vue from "vue";
 import flatMap from "lodash/flatMap";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -205,6 +205,7 @@ import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 @Component({
   components: {
@@ -224,6 +225,7 @@ export default class CountryRankingsGrid extends Vue {
 
   private twitchStore = useTwitchStore();
   private rankingsStore = useRankingStore();
+  private rootStateStore = useRootStateStore();
 
   get headers() {
     return [
@@ -367,7 +369,7 @@ export default class CountryRankingsGrid extends Vue {
   initLeagueMap() {
     const league = this.rankingsStore.ladders?.filter(
       (l) =>
-        l.gateway === this.$store.direct.state.gateway &&
+        l.gateway === this.rootStateStore.gateway &&
         l.gameMode === this.rankingsStore.gameMode &&
         l.season === this.rankingsStore.selectedSeason.id
     )[0];

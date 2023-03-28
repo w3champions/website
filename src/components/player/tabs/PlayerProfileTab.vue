@@ -84,9 +84,10 @@ import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerStore } from "@/store/player/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 @Component({
   components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague },
@@ -95,6 +96,7 @@ export default class PlayerProfileTab extends Vue {
   private oauthStore = useOauthStore();
   @Prop() public id!: string;
   private player = usePlayerStore();
+  private rootStateStore = useRootStateStore();
 
   get raceHeaders() {
     return [
@@ -145,7 +147,7 @@ export default class PlayerProfileTab extends Vue {
 
     return this.raceStats.filter(
       (r) =>
-        r.gateWay === this.$store.direct.state.gateway &&
+        r.gateWay === this.rootStateStore.gateway &&
         r.season === this.selectedSeason?.id
     );
   }

@@ -1,9 +1,9 @@
-import { EGameMode, PlayerScore } from "@/store/typings";
+import { EGameMode, PlayerScore } from "@/store/types";
 import { MatchState, MatchStatus, Mmr } from "./types";
-import { Match, MatchDetail } from "../typings";
+import { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
-import { useRootStore } from "@/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
@@ -25,11 +25,11 @@ export const useMatchStore = defineStore("match", {
         this.SET_PAGE(page - 1);
       }
       let response: { count: number; matches: Match[] };
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       if (this.status == MatchStatus.onGoing) {
         response = await MatchService.retrieveOnGoingMatchesPaged(
           this.page,
-          rootstate.gateway,
+          rootStateStore.gateway,
           this.gameMode,
           this.map,
           this.mmr,
@@ -38,7 +38,7 @@ export const useMatchStore = defineStore("match", {
       } else {
         response = await MatchService.retrieveMatches(
           this.page,
-          rootstate.gateway,
+          rootStateStore.gateway,
           this.gameMode,
           this.map,
           this.mmr,
@@ -48,11 +48,11 @@ export const useMatchStore = defineStore("match", {
       this.SET_MATCHES(response.matches);
     },
     async loadAllOngoingMatches(gameMode?: EGameMode, map?: string) {
-      const rootstate = useRootStore();
+      const rootStateStore = useRootStateStore();
       const response = await MatchService.retrieveOnGoingMatches(
         0,
         200,
-        rootstate.gateway,
+        rootStateStore.gateway,
         gameMode || this.gameMode,
         map || this.map,
         this.mmr,

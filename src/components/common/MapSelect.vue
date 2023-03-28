@@ -30,7 +30,7 @@
 import Vue from "vue";
 import { TranslateResult } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
-import { MapInfo } from "@/store/common/typings";
+import { MapInfo } from "@/store/common/types";
 
 @Component({})
 export default class MapSelect extends Vue {

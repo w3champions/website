@@ -1,5 +1,5 @@
 import { WinLoss } from "@/store/overallStats/types";
-import { EGameMode, ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/types";
 
 export type RankingState = {
   league: number;

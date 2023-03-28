@@ -146,7 +146,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
+import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
@@ -347,7 +347,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
   public isGatewayNeeded() {
     const seasonId = this.player.selectedSeason.id;
     if (seasonId > 5) {
-      //this.$store.direct.state.gateway = Gateways.Europe;
+      //this.rootStateStore.gateway = Gateways.Europe;
       return false;
     } else {
       return true;

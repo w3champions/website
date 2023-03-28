@@ -59,7 +59,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Hero, HeroScore } from "@/store/typings";
+import { Hero, HeroScore } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 

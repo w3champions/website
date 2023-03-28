@@ -41,7 +41,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
-import { Match, EGameMode } from "@/store/typings";
+import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
 

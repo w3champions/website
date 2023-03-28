@@ -32,7 +32,7 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import isEmpty from "lodash/isEmpty";
 import { defaultStatsTab } from "@/helpers/profile";

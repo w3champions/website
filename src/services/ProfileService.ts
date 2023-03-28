@@ -8,7 +8,7 @@ import {
 } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
-import { ERaceEnum, EGameMode } from "@/store/typings";
+import { ERaceEnum, EGameMode } from "@/store/types";
 
 export default class ProfileService {
   public static async retrieveWinRate(

@@ -179,7 +179,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -189,6 +189,7 @@ import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 @Component({
   components: {
@@ -218,6 +219,7 @@ export default class RankingsView extends Vue {
   private _intervalRefreshHandle?: number = undefined;
   private rankingsStore = useRankingStore();
   private matchStore = useMatchStore();
+  private rootStateStore = useRootStateStore();
 
   @Watch("searchModel")
   public onSearchModelChanged(rank: Ranking) {
@@ -321,7 +323,7 @@ export default class RankingsView extends Vue {
   get ladders(): League[] {
     const league = this.rankingsStore.ladders?.filter(
       (l) =>
-        l.gateway === this.$store.direct.state.gateway &&
+        l.gateway === this.rootStateStore.gateway &&
         l.gameMode === this.rankingsStore.gameMode &&
         l.season === this.rankingsStore.selectedSeason.id
     )[0];
@@ -370,7 +372,7 @@ export default class RankingsView extends Vue {
       await this.rankingsStore.setGameMode(this.gamemode);
     }
     if (this.gateway) {
-      this.$store.direct.dispatch.setGateway(this.gateway);
+      this.rootStateStore.setGateway(this.gateway);
     }
 
     await this.loadOngoingMatches();
@@ -399,7 +401,7 @@ export default class RankingsView extends Vue {
   }
 
   get selectedGateway() {
-    return this.$store.direct.state.gateway;
+    return this.rootStateStore.gateway;
   }
 
   public async refreshRankings() {

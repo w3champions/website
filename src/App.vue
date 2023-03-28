@@ -166,6 +166,7 @@ import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 export type ItemType = {
   title: string;
@@ -215,6 +216,7 @@ export default class App extends Vue {
   ];
 
   private showSignInDialog = false;
+  private rootStateStore = useRootStateStore();
 
   loginOrGoToProfile() {
     if (this.authCode) {
@@ -314,16 +316,16 @@ export default class App extends Vue {
     this.selectedTheme = val;
     this.$vuetify.theme.dark = this.isDarkTheme;
     this.setThemeColors();
-    this.$store.direct.commit.SET_DARK_MODE(this.isDarkTheme);
+    this.rootStateStore.SET_DARK_MODE(this.isDarkTheme);
   }
 
   set savedLocale(val: string) {
     this.$i18n.locale = val;
-    this.$store.direct.dispatch.saveLocale(val);
+    this.rootStateStore.saveLocale(val);
   }
 
   get savedLocale(): string {
-    return this.$store.direct.state.locale;
+    return this.rootStateStore.locale;
   }
 
   get languages(): Array<string> {
@@ -335,7 +337,7 @@ export default class App extends Vue {
   }
 
   private async init() {
-    this.$store.direct.dispatch.loadLocale();
+    this.rootStateStore.loadLocale();
     this.$i18n.locale = this.savedLocale;
     await this.oauthStore.loadAuthCodeToState();
     if (this.authCode) {

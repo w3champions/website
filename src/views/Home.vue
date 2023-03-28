@@ -161,7 +161,7 @@ import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatches
 import { NewsMessage } from "@/store/admin/infoMessages/types";
 import { Map } from "@/store/admin/mapsManagement/types";
 import CopyButton from "@/components/common/CopyButton.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useRankingStore } from "@/store/ranking/store";

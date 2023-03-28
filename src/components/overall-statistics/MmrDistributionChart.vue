@@ -8,7 +8,7 @@
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { MmrDistribution } from "@/store/overallStats/types";
 import { Season } from "@/store/ranking/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import clamp from "lodash/clamp";

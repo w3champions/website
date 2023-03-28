@@ -43,7 +43,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { PlayerInTeam } from "@/store/typings";
+import { PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
