@@ -142,7 +142,7 @@ import map from "lodash/map";
 import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
 import { ETournamentFormat, ETournamentState, ITournament } from "@/store/tournaments/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
 import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";

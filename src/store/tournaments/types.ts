@@ -1,4 +1,4 @@
-import { ERaceEnum, EGameMode } from "../typings";
+import { ERaceEnum, EGameMode } from "../types";
 import { Gateways } from "../ranking/types";
 import { Map } from "../admin/mapsManagement/types";
 

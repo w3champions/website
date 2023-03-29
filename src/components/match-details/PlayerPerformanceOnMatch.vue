@@ -83,7 +83,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ResourceScore, UnitScore } from "@/store/typings";
+import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 
 export enum AddValuesDelimiter {

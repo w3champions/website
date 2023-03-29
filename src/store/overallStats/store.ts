@@ -13,7 +13,7 @@ import {
   StatsPerWinrate,
   WinLoss,
 } from "./types";
-import { ERaceEnum } from "../typings";
+import { ERaceEnum } from "../types";
 import StatisticService from "@/services/StatisticService";
 import { defineStore } from "pinia";
 

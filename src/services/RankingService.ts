@@ -6,7 +6,7 @@ import {
   CountryRanking,
 } from "@/store/ranking/types";
 import { API_URL } from "@/main";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 
 export default class RankingService {
   public static async retrieveRankings(

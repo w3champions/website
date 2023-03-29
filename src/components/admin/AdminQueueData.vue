@@ -35,7 +35,7 @@
 <script lang="ts">
 import { QueueData } from "@/store/admin/types";
 import GameModesMixin from "@/mixins/GameModesMixin";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { Component, Watch, Mixins, Prop } from "vue-property-decorator";
 import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";

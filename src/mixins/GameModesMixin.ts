@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { EGameMode, EGameModeType } from "@/store/typings";
+import { EGameMode, EGameModeType } from "@/store/types";
 import { SeasonMap } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 

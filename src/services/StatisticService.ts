@@ -10,7 +10,7 @@ import {
   StatsPerWinrate,
   WinLoss,
 } from "@/store/overallStats/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 
 export default class StatisticService {

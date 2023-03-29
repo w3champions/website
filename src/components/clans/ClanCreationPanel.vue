@@ -48,11 +48,13 @@
 import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
 import { Component } from "vue-property-decorator";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({})
 export default class ClanCreationPanel extends Vue {
   public clanNameToCreate = "";
   public clanAbbreviationToCreate = "";
+  private clanStore = useClanStore();
 
   public mustBeBetween(min: number, max: number, space: string) {
     return (v: string): LocaleMessage => {
@@ -76,19 +78,19 @@ export default class ClanCreationPanel extends Vue {
   }
 
   get clanValidationError(): string {
-    return this.$store.direct.state.clan.clanValidationError;
+    return this.clanStore.clanValidationError;
   }
 
   get isValidationError(): boolean {
-    return this.$store.direct.state.clan.clanValidationError !== "";
+    return this.clanStore.clanValidationError !== "";
   }
 
   public async createClan(): Promise<void> {
-    await this.$store.direct.dispatch.clan.createClan({
+    await this.clanStore.createClan({
       clanName: this.clanNameToCreate.trim(),
       abbreviation: this.clanAbbreviationToCreate,
     });
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    await this.clanStore.retrievePlayersClan();
   }
 }
 </script>

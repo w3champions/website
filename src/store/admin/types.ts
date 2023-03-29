@@ -1,6 +1,6 @@
 import { PlayerOverview } from "@/store/ranking/types";
-import { EChatScope } from "../common/typings";
-import { EColors } from "../typings";
+import { EChatScope } from "../common/types";
+import { EColors } from "../types";
 import { PlayerProfile } from "@/store/player/types";
 
 export type AdminState = {

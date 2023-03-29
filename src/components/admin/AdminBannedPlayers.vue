@@ -183,7 +183,7 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { BannedPlayer } from "@/store/admin/types";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";

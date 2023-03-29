@@ -1,4 +1,4 @@
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import { RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 
 export const races = [

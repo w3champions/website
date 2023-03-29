@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from "vue-property-decorator";
-import { Match, Team, PlayerInTeam, EGameMode } from "@/store/typings";
+import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";

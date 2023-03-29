@@ -10,7 +10,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { Hero } from "@/store/typings";
+import { Hero } from "@/store/types";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
 @Component({

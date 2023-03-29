@@ -31,11 +31,14 @@ import { Component } from "vue-property-decorator";
 
 import { Gateways } from "@/store/ranking/types";
 import { LocaleMessage } from "vue-i18n";
+import { useRootStateStore } from "@/store/rootState/store";
 
 @Component({})
 export default class GatewaySelect extends Vue {
+  private rootStateStore = useRootStateStore();
+
   get gateway(): LocaleMessage {
-    const gateway = this.$store.direct.state.gateway;
+    const gateway = this.rootStateStore.gateway;
     return this.gateWays.filter((g) => g.gateway == gateway)[0].name;
   }
 
@@ -53,7 +56,7 @@ export default class GatewaySelect extends Vue {
   }
 
   public setGateway(gateway: Gateways): void {
-    this.$store.direct.commit.SET_GATEWAY(gateway);
+    this.rootStateStore.SET_GATEWAY(gateway);
     this.$emit("gatewayChanged", gateway);
   }
 }

@@ -146,7 +146,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/typings";
+import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
@@ -167,6 +167,8 @@ import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeams
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import MatchMixin from "@/mixins/MatchMixin";
+import { usePlayerStore } from "@/store/player/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -193,6 +195,8 @@ export default class PlayerView extends Mixins(MatchMixin) {
 
   public tabsModel = {};
   private _intervalRefreshHandle?: number = undefined;
+  private player = usePlayerStore();
+  private rankingsStore = useRankingStore();
 
   @Watch("battleTag")
   onBattleTagChanged() {
@@ -200,31 +204,31 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   get raceStats() {
-    return this.$store.direct.state.player.raceStats;
+    return this.player.raceStats;
   }
 
   get gameModeStats() {
-    return this.$store.direct.state.player.gameModeStats;
+    return this.player.gameModeStats;
   }
 
   public selectSeason(season: Season) {
-    this.$store.direct.commit.player.SET_SELECTED_SEASON(season);
-    this.$store.direct.dispatch.player.loadGameModeStats({});
-    this.$store.direct.dispatch.player.loadRaceStats();
-    this.$store.direct.dispatch.player.loadMatches(1);
-    this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
-    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.player.SET_SELECTED_SEASON(season);
+    this.player.loadGameModeStats({});
+    this.player.loadRaceStats();
+    this.player.loadMatches(1);
+    this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
+    this.player.loadPlayerMmrRpTimeline();
   }
 
   get seasons() {
-    return this.$store.direct.state.player.playerProfile.participatedInSeasons;
+    return this.player.playerProfile.participatedInSeasons;
   }
 
   get aliasName(): string | false {
-    if (this.$store.direct.state.player.playerProfile.playerAkaData != null) {
+    if (this.player.playerProfile.playerAkaData != null) {
       return (
-        this.$store.direct.state.player.playerProfile.playerAkaData.name ??
+        this.player.playerProfile.playerAkaData.name ??
         false
       );
     }
@@ -235,22 +239,22 @@ export default class PlayerView extends Mixins(MatchMixin) {
     return (
       this.seasons
         ?.filter(
-          (s) => s.id !== this.$store.direct.state.rankings.seasons[0]?.id
+          (s) => s.id !== this.rankingsStore.seasons[0]?.id
         )
         .reverse() ?? []
     );
   }
 
   get profile(): PlayerProfile {
-    return this.$store.direct.state.player.playerProfile;
+    return this.player.playerProfile;
   }
 
   get loadingProfile(): boolean {
-    return this.$store.direct.state.player.loadingProfile;
+    return this.player.loadingProfile;
   }
 
   get selectedSeason() {
-    return this.$store.direct.state.player.selectedSeason;
+    return this.player.selectedSeason;
   }
 
   get battleTag(): string {
@@ -258,15 +262,15 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   get totalMatches(): number {
-    return this.$store.direct.state.player.totalMatches;
+    return this.player.totalMatches;
   }
 
   get matches(): Match[] {
-    return this.$store.direct.state.player.matches;
+    return this.player.matches;
   }
 
   get ongoingMatch() {
-    return this.$store.direct.state.player.ongoingMatch;
+    return this.player.ongoingMatch;
   }
 
   get isOngoingMatchFFA() {
@@ -337,13 +341,13 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   public gatewayChanged() {
-    this.$store.direct.dispatch.player.reloadPlayer();
+    this.player.reloadPlayer();
   }
 
   public isGatewayNeeded() {
-    const seasonId = this.$store.direct.state.player.selectedSeason.id;
+    const seasonId = this.player.selectedSeason.id;
     if (seasonId > 5) {
-      //this.$store.direct.state.gateway = Gateways.Europe;
+      //this.rootStateStore.gateway = Gateways.Europe;
       return false;
     } else {
       return true;
@@ -361,22 +365,22 @@ export default class PlayerView extends Mixins(MatchMixin) {
       this.stopLoadingMatches();
     }
 
-    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
+    this.player.SET_BATTLE_TAG(this.battleTag);
 
-    await this.$store.direct.dispatch.player.loadProfile({
+    await this.player.loadProfile({
       battleTag: this.battleTag,
       freshLogin: this.freshLogin,
     });
-    await this.$store.direct.dispatch.player.loadGameModeStats({});
-    await this.$store.direct.dispatch.player.loadRaceStats();
-    await this.$store.direct.dispatch.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
-    await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+    await this.player.loadGameModeStats({});
+    await this.player.loadRaceStats();
+    await this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
+    await this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
+    await this.player.loadOngoingPlayerMatch(this.battleTag);
 
     this._intervalRefreshHandle = setInterval(async () => {
-      await this.$store.direct.dispatch.player.loadOngoingPlayerMatch(this.battleTag);
+      await this.player.loadOngoingPlayerMatch(this.battleTag);
     }, AppConstants.ongoingMatchesRefreshInterval);
-    this.$store.direct.commit.player.SET_INITIALIZED();
+    this.player.SET_INITIALIZED();
     window.scrollTo(0, 0);
   }
 
@@ -385,7 +389,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
   }
 
   stopLoadingMatches() {
-    this.$store.direct.commit.player.SET_ONGOING_MATCH({} as Match);
+    this.player.SET_ONGOING_MATCH({} as Match);
     clearInterval(this._intervalRefreshHandle);
   }
 }

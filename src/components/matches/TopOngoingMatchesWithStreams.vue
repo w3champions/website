@@ -22,10 +22,11 @@ import Vue from "vue";
 import orderBy from "lodash/orderBy";
 import sumBy from "lodash/sumBy";
 import { Component } from "vue-property-decorator";
-import { EGameMode, Match, PlayerInTeam } from "@/store/typings";
+import { EGameMode, Match, PlayerInTeam } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import StreamedMatchInfo from "@/components/matches/StreamedMatchInfo.vue";
 import { useTwitchStore } from "@/store/twitch/store";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({
   components: { StreamedMatchInfo, TeamMatchInfo },
@@ -33,12 +34,13 @@ import { useTwitchStore } from "@/store/twitch/store";
 export default class TopOngoingMatchesWithStreams extends Vue {
   private matches: Match[] = [];
   private twitchStore = useTwitchStore();
+  private matchStore = useMatchStore();
 
   async mounted() {
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches(EGameMode.GM_1ON1);
+    await this.matchStore.loadAllOngoingMatches(EGameMode.GM_1ON1);
 
     const matchesWithStreamers =
-      this.$store.direct.state.matches.allOngoingMatches.filter((match) =>
+      this.matchStore.allOngoingMatches.filter((match) =>
         match.teams.some((team) => team.players.some((player) => player.twitch))
       );
     const streamerNames = matchesWithStreamers.flatMap((match) =>

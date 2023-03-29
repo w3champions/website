@@ -30,11 +30,14 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { SortMode } from "@/store/match/types";
+import { useMatchStore } from "@/store/match/store";
 
 @Component({})
 export default class MapSelect extends Vue {
+  private matchStore = useMatchStore();
+
   get sortName() {
-    const selectedSort = this.$store.direct.state.matches.sort;
+    const selectedSort = this.matchStore.sort;
     return this.sortings.find((sort) => sort.mode == selectedSort)!.name;
   }
 
@@ -52,7 +55,7 @@ export default class MapSelect extends Vue {
   }
 
   public setSort(sort: string): void {
-    this.$store.direct.dispatch.matches.setSort(sort);
+    this.matchStore.setSort(sort);
   }
 }
 </script>

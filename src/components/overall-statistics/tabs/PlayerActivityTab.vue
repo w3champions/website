@@ -179,10 +179,11 @@ import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import ActivityPerDayChart from "@/components/overall-statistics/ActivityPerDayChart.vue";
 import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonChart.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -201,6 +202,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public overWrittenOnce = false;
   public selectedModeForMaps = EGameMode.GM_1ON1;
   private overallStatsStore = useOverallStatsStore();
+  private rankingsStore = useRankingStore();
 
   async mounted(): Promise<void> {
     await this.loadActiveGameModes();
@@ -229,7 +231,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   get seasons() {
     return [
       "All",
-      ...this.$store.direct.state.rankings.seasons.map((s) => s.id.toString()),
+      ...this.rankingsStore.seasons.map((s) => s.id.toString()),
     ];
   }
 
@@ -242,7 +244,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get selectedSeasonForMapsInitial() {
-    return this.$store.direct.state.rankings.seasons[0]?.id?.toString() ?? "";
+    return this.rankingsStore.seasons[0]?.id?.toString() ?? "";
   }
 
   get isAllMode() {

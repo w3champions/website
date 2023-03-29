@@ -1,7 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
 import vuetify from "./plugins/vuetify";
 import VueI18n from "vue-i18n";
 import languages from "@/locales/languages";
@@ -10,7 +9,6 @@ import { createPinia, PiniaVuePlugin } from "pinia";
 
 Vue.use(VueCookies);
 Vue.use(VueI18n);
-// `Pinia` replaces `vuex` as store.
 // Only accessible after this initialisation!
 const pinia = createPinia();
 Vue.use(PiniaVuePlugin);
@@ -53,7 +51,6 @@ const i18n = new VueI18n({
 new Vue({
   i18n,
   router,
-  store: store.original,
   vuetify,
   pinia,
   render: (h) => h(App),

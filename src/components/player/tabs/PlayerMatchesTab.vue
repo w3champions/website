@@ -83,8 +83,10 @@ import { Component, Prop, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/typings";
+import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { useRankingStore } from "@/store/ranking/store";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({ components: { MatchesGrid, PlayerSearch } })
 export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
@@ -94,6 +96,8 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   public raceEnums = ERaceEnum;
   public filtersVisible = false;
   public foundPlayer = "";
+  private rankingsStore = useRankingStore();
+  private player = usePlayerStore();
 
   async mounted(): Promise<void> {
     await this.loadActiveGameModes();
@@ -101,14 +105,14 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
 
   async playerFound(bTag: string): Promise<void> {
     this.foundPlayer = bTag;
-    this.$store.direct.commit.player.SET_OPPONENT_TAG(bTag);
+    this.player.SET_OPPONENT_TAG(bTag);
     await this.getMatches();
   }
 
   async searchCleared(): Promise<void> {
     this.foundPlayer = "";
-    this.$store.direct.commit.player.SET_OPPONENT_TAG("");
-    this.$store.direct.dispatch.rankings.clearSearch();
+    this.player.SET_OPPONENT_TAG("");
+    this.rankingsStore.clearSearch();
     await this.getMatches();
   }
 
@@ -117,8 +121,8 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   public async activated() {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
-    this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+    await this.rankingsStore.retrieveSeasons();
+    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
     setTimeout(async () => await this.getMatches(), 500);
   }
 
@@ -152,11 +156,11 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   get totalMatches(): number {
-    return this.$store.direct.state.player.totalMatches;
+    return this.player.totalMatches;
   }
 
   get matches(): Match[] {
-    return this.$store.direct.state.player.matches;
+    return this.player.matches;
   }
 
   get winRateVsOpponent() {
@@ -176,26 +180,26 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   get searchRanks(): Ranking[] {
-    return this.$store.direct.state.rankings.searchRanks;
+    return this.rankingsStore.searchRanks;
   }
 
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
-    this.$store.direct.commit.player.SET_GAMEMODE(gameMode);
+    this.player.SET_GAMEMODE(gameMode);
     this.getMatches();
   }
 
   public setPlayerRaceForSearch(race: ERaceEnum) {
-    this.$store.direct.commit.player.SET_PLAYER_RACE(race);
+    this.player.SET_PLAYER_RACE(race);
     this.getMatches();
   }
 
   public setOpponentRaceForSearch(race: ERaceEnum) {
-    this.$store.direct.commit.player.SET_OPPONENT_RACE(race);
+    this.player.SET_OPPONENT_RACE(race);
     this.getMatches();
   }
 
   get totalMatchesAgainstOpponent() {
-    const opponentTag = this.$store.direct.state.player.opponentTag;
+    const opponentTag = this.player.opponentTag;
     if (!opponentTag || !this.matches) {
       return 0;
     }
@@ -211,7 +215,7 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
         const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
           return otherTeam.players.some(
             (player: PlayerInTeam) =>
-              player.battleTag === this.$store.direct.state.player.opponentTag
+              player.battleTag === this.player.opponentTag
           );
         });
 
@@ -223,7 +227,7 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   get opponentWins(): number {
-    if (this.$store.direct.state.player.opponentTag.length) {
+    if (this.player.opponentTag.length) {
       return this.matches.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerHasWin = team.players.some(
@@ -236,7 +240,7 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
               (player: PlayerInTeam) =>
-                player.battleTag === this.$store.direct.state.player.opponentTag
+                player.battleTag === this.player.opponentTag
             );
           });
 
@@ -249,12 +253,12 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   public async getMatches(page?: number) {
-    if (this.isLoadingMatches || !this.$store.direct.state.player.selectedSeason.id) {
+    if (this.isLoadingMatches || !this.player.selectedSeason.id) {
       return;
     }
 
     this.isLoadingMatches = true;
-    await this.$store.direct.dispatch.player.loadMatches(page);
+    await this.player.loadMatches(page);
     this.isLoadingMatches = false;
   }
 

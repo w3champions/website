@@ -1610,7 +1610,7 @@
     ts-loader "^9.2.5"
     webpack "^5.54.0"
 
-"@vue/cli-plugin-vuex@^5.0.8", "@vue/cli-plugin-vuex@~5.0.8":
+"@vue/cli-plugin-vuex@^5.0.8":
   version "5.0.8"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-vuex/-/cli-plugin-vuex-5.0.8.tgz#0d4cb3020f9102bea9288d750729dde176c66ccd"
   integrity sha512-HSYWPqrunRE5ZZs8kVwiY6oWcn95qf/OQabwLfprhdpFWAGtLStShjsGED2aDpSSeGAskQETrtR/5h7VqgIlBA==
@@ -2931,11 +2931,6 @@ dir-glob@^3.0.1:
   integrity sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==
   dependencies:
     path-type "^4.0.0"
-
-direct-vuex@^0.12.1:
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/direct-vuex/-/direct-vuex-0.12.1.tgz#19afc96b58faa3414837ae06154897a381a9a8af"
-  integrity sha512-U1eVqJuUasjZvpTUBvogfTEWkvPPntqimK5pzZKehuPeGMvMbb/iimP/ahsG+G4vsZDOY4IsRtq8x2xsAl+fmQ==
 
 dns-equal@^1.0.0:
   version "1.0.0"
@@ -6709,11 +6704,6 @@ vuetify@^2.1.3, vuetify@^2.6.13:
   version "2.6.14"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.6.14.tgz#a5bf662de938efe0450ac59776b04f760f5407d2"
   integrity sha512-nr6wU3uTzhhEPssH23cW0Ee/hCrayp7cjl3nNjM2OmNwiJlV91tZiL1VO3597SqZyjh1xIa+m9J2rpKTSdIlrA==
-
-vuex@^3.6.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.6.2.tgz#236bc086a870c3ae79946f107f16de59d5895e71"
-  integrity sha512-ETW44IqCgBpVomy520DT5jf8n0zoCac+sxWnn+hMe/CzaSejb/eVw2YToiXYX+Ex/AuHHia28vWTq4goAexFbw==
 
 w3c-keyname@^2.2.0:
   version "2.2.6"

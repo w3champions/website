@@ -1,4 +1,4 @@
-import { EGameMode, EPick, ERaceEnum, timestampString } from "@/store/typings";
+import { EGameMode, EPick, ERaceEnum, timestampString } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 
 export type OverallStatisticState = {

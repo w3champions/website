@@ -1,5 +1,5 @@
-import { EGameMode } from "@/store/typings";
-import { Match, MatchDetail } from "../typings";
+import { EGameMode } from "@/store/types";
+import { Match, MatchDetail } from "../types";
 
 export type MatchState = {
   matches: Match[];

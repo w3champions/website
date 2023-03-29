@@ -1,6 +1,6 @@
 import { Gateways } from "@/store/ranking/types";
 import { ETournamentFormat, ETournamentState } from "@/store/tournaments/types";
-import { EGameMode, ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/types";
 
 export const TournamentStateLabel: { [key in ETournamentState]: string } = {
   [ETournamentState.INIT]: "Created",

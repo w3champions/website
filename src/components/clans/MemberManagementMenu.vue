@@ -25,27 +25,29 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EClanRole } from "@/store/clan/types";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({})
 export default class MemberManagementMenu extends Vue {
   @Prop() battleTag!: string;
   @Prop() role!: EClanRole;
   @Prop() loggedInUserRole!: EClanRole;
+  private clanStore = useClanStore();
 
   public async kickPlayer(): Promise<void> {
-      await this.$store.direct.dispatch.clan.kickPlayer(this.battleTag);
+      await this.clanStore.kickPlayer(this.battleTag);
   }
 
   public async promoteToShaman(): Promise<void> {
-    await this.$store.direct.dispatch.clan.addShaman(this.battleTag);
+    await this.clanStore.addShaman(this.battleTag);
   }
 
   public async demoteShaman(): Promise<void> {
-    await this.$store.direct.dispatch.clan.removeShaman(this.battleTag);
+    await this.clanStore.removeShaman(this.battleTag);
   }
 
   public async makeChiefTain(): Promise<void> {
-    await this.$store.direct.dispatch.clan.switchChieftain(this.battleTag);
+    await this.clanStore.switchChieftain(this.battleTag);
   }
 
   get actions(): Array<{ name: string; action: () => Promise<void> }> {
@@ -84,8 +86,8 @@ export default class MemberManagementMenu extends Vue {
 
   public async invoke(f: () => Promise<never>): Promise<void> {
     await f();
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
-    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
+    await this.clanStore.retrievePlayersClan();
+    await this.clanStore.retrievePlayersMembership();
   }
 }
 </script>

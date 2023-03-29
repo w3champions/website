@@ -34,14 +34,17 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { PlayerLeague },
 })
 export default class PlayerArrangedTeamsTab extends Vue {
+  private player = usePlayerStore();
+
   get gameModeStats() {
-    return this.$store.direct.state.player.gameModeStats;
+    return this.player.gameModeStats;
   }
 
   get gameModeStatsAt() {

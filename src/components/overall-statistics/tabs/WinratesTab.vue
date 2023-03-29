@@ -100,7 +100,7 @@ import {
   StatsPerWinrate,
 } from "@/store/overallStats/types";
 import { Watch } from "vue-property-decorator";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 @Component({
   components: { PlayerStatsRaceVersusRaceOnMapTableCell },

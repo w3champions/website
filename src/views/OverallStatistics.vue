@@ -57,6 +57,8 @@ import MmrDistributionChart from "@/components/overall-statistics/MmrDistributio
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { usePlayerStore } from "@/store/player/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: {
@@ -71,9 +73,11 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 export default class OverallStatisticsView extends Vue {
   private oauthStore = useOauthStore();
   private overallStatsStore = useOverallStatsStore();
+  private player = usePlayerStore();
+  private rankingsStore = useRankingStore();
 
   get seasons(): Season[] {
-    return this.$store.direct.state.rankings.seasons;
+    return this.rankingsStore.seasons;
   }
 
   get verifiedBtag(): string {
@@ -92,7 +96,7 @@ export default class OverallStatisticsView extends Vue {
     await this.overallStatsStore.loadPopularGameHours();
     await this.overallStatsStore.loadMapAndRaceStatistics();
     if (this.verifiedBtag) {
-      await this.$store.direct.dispatch.player.loadProfile({
+      await this.player.loadProfile({
         battleTag: this.verifiedBtag,
         freshLogin: false,
       });

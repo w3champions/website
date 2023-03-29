@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { Match } from "@/store/typings";
+import { Match } from "@/store/types";
 
 @Component
 export default class MatchMixin extends Vue {

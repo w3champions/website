@@ -75,7 +75,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { HeroPick } from "@/store/overallStats/types";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 import { getAsset } from "@/helpers/url-functions";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 

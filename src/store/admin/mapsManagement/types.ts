@@ -1,6 +1,6 @@
 import {
   EColors, EComputer, ERaceEnum, EGameMode, EGameModeType,
-} from "@/store/typings";
+} from "@/store/types";
 
 export type AdminMapsState = {
   totalMaps: number;

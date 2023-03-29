@@ -121,7 +121,7 @@ import {
   Ranking,
   Season,
 } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/typings";
+import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -129,6 +129,9 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { useRankingStore } from "@/store/ranking/store";
+import { useMatchStore } from "@/store/match/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -147,10 +150,13 @@ export default class CountryRankingsView extends Vue {
   ongoingMatchesMap: OngoingMatches = {};
   races = ERaceEnum;
   countries: { country: string; countryCode: string }[] = Countries;
+  private rankingsStore = useRankingStore();
 
   @Prop() season!: number;
   @Prop() gateway!: Gateways;
   @Prop() country!: string;
+  private matchStore = useMatchStore();
+  private rootStateStore = useRootStateStore();
 
   @Watch("country")
   onCountryChanged(newValue: string) {
@@ -160,7 +166,7 @@ export default class CountryRankingsView extends Vue {
   private _intervalRefreshHandle?: number = undefined;
 
   get selectedCountryCode() {
-    return this.$store.direct.state.rankings.selectedCountry;
+    return this.rankingsStore.selectedCountry;
   }
 
   get selectedCountry() {
@@ -180,49 +186,49 @@ export default class CountryRankingsView extends Vue {
 
   get isLoading() {
     return (
-      (this.$store.direct.state.rankings.countryRankingsLoading &&
+      (this.rankingsStore.countryRankingsLoading &&
         this.selectedCountryCode !== this.currentCountryCode) ||
       (!this.initialized && this.rankings.length === 0)
     );
   }
 
   get selectedGameMode() {
-    return this.$store.direct.state.rankings.gameMode;
+    return this.rankingsStore.gameMode;
   }
 
   get selectedSeason() {
-    return this.$store.direct.state.rankings.selectedSeason;
+    return this.rankingsStore.selectedSeason;
   }
 
   get seasons() {
-    return this.$store.direct.state.rankings.seasons;
+    return this.rankingsStore.seasons;
   }
 
   get rankings(): CountryRanking[] {
-    return this.$store.direct.state.rankings.countryRankings;
+    return this.rankingsStore.countryRankings;
   }
 
   get ladders(): League[] {
-    const league = this.$store.direct.state.rankings.ladders?.filter(
+    const league = this.rankingsStore.ladders?.filter(
       (l) =>
-        l.gateway === this.$store.direct.state.gateway &&
+        l.gateway === this.rootStateStore.gateway &&
         EGameMode.GM_1ON1 &&
-        l.season === this.$store.direct.state.rankings.selectedSeason.id
+        l.season === this.rankingsStore.selectedSeason.id
     )[0];
     return league?.leagues;
   }
 
   public async onGatewayChanged() {
-    this.$store.direct.commit.rankings.SET_PAGE(0);
+    this.rankingsStore.SET_PAGE(0);
     this.refreshRankings();
   }
 
   public isGatewayNeeded() {
-    return this.$store.direct.state.rankings.selectedSeason.id <= 5;
+    return this.rankingsStore.selectedSeason.id <= 5;
   }
 
   public async onGameModeChanged(gameMode: EGameMode) {
-    await this.$store.direct.dispatch.rankings.setGameMode(gameMode);
+    await this.rankingsStore.setGameMode(gameMode);
     this.refreshRankings();
   }
 
@@ -232,21 +238,21 @@ export default class CountryRankingsView extends Vue {
 
   async mounted() {
     window.scrollTo(0, 0);
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.rankingsStore.retrieveSeasons();
 
     this.season
-      ? this.$store.direct.dispatch.rankings.setSeason({ id: this.season })
-      : this.$store.direct.dispatch.rankings.setSeason(this.$store.direct.state.rankings.seasons[0]);
+      ? this.rankingsStore.setSeason({ id: this.season })
+      : this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
 
     if (this.gateway) {
-      this.$store.direct.commit.SET_GATEWAY(this.gateway);
+      this.rootStateStore.SET_GATEWAY(this.gateway);
     }
 
     const country =
       this.country || this.selectedCountryCode || this.countries[0].countryCode;
 
     await this.getLadders();
-    await this.$store.direct.dispatch.rankings.setCountry(country);
+    await this.rankingsStore.setCountry(country);
     this.initialized = true;
 
     await this.loadOngoingMatches();
@@ -261,7 +267,7 @@ export default class CountryRankingsView extends Vue {
   }
 
   get selectedGateway() {
-    return this.$store.direct.state.gateway;
+    return this.rootStateStore.gateway;
   }
 
   public async refreshRankings() {
@@ -272,18 +278,18 @@ export default class CountryRankingsView extends Vue {
   }
 
   public async getRankings() {
-    await this.$store.direct.dispatch.rankings.getCountryRankings();
+    await this.rankingsStore.getCountryRankings();
   }
 
   public async getLadders() {
-    await this.$store.direct.dispatch.rankings.retrieveLeagueConstellation();
+    await this.rankingsStore.retrieveLeagueConstellation();
   }
 
   public async loadOngoingMatches() {
-    await this.$store.direct.dispatch.matches.loadAllOngoingMatches();
+    await this.matchStore.loadAllOngoingMatches();
 
     this.ongoingMatchesMap = {};
-    this.$store.direct.state.matches.allOngoingMatches.forEach((x) => {
+    this.matchStore.allOngoingMatches.forEach((x) => {
       x.teams.forEach((t) => {
         t.players.forEach((p) => {
           const playerTag = p.battleTag;
@@ -302,12 +308,12 @@ export default class CountryRankingsView extends Vue {
   }
 
   async selectSeason(season: Season) {
-    this.$store.direct.dispatch.rankings.setSeason(season);
+    this.rankingsStore.setSeason(season);
     this.refreshRankings();
   }
 
   async setCountry(countryCode: string) {
-    await this.$store.direct.dispatch.rankings.setCountry(countryCode);
+    await this.rankingsStore.setCountry(countryCode);
   }
 
   public playerIsRanked(rank: Ranking): boolean {

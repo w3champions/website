@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { PlayerInTeam } from "@/store/typings";
+import { PlayerInTeam } from "@/store/types";
 
 @Component({})
 export default class StreamedMatchPlayerInfo extends Vue {

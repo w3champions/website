@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { getAsset } from "@/helpers/url-functions";
-import { ServerInfo } from "@/store/typings";
+import { ServerInfo } from "@/store/types";
 import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";

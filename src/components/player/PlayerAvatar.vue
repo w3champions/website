@@ -348,12 +348,14 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { ERaceEnum, EAvatarCategory } from "@/store/typings";
+import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
+import { usePlayerStore } from "@/store/player/store";
+import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 
 // Lazy load.
 const CountryFlag = () => import("vue-country-flag");
@@ -375,6 +377,8 @@ export default class PlayerAvatar extends Vue {
     ERaceEnum.RANDOM,
     ERaceEnum.TOTAL,
   ];
+  private player = usePlayerStore();
+  private personalSettingsStore = usePersonalSettingsStore();
 
   enumToString(race: ERaceEnum) {
     return this.$t(`races.${ERaceEnum[race]}`);
@@ -435,7 +439,7 @@ export default class PlayerAvatar extends Vue {
 
   get hasAnAlias(): boolean {
     // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    const playerAkaData = this.$store.direct.state.player.playerProfile.playerAkaData;
+    const playerAkaData = this.player.playerProfile.playerAkaData;
 
     if (playerAkaData == null) return false;
 
@@ -451,15 +455,15 @@ export default class PlayerAvatar extends Vue {
   }
 
   get w3infoId(): string | number {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.id ?? "";
+    return this.player.playerProfile.playerAkaData.id ?? "";
   }
 
   get liquipediaString(): string {
-    return this.$store.direct.state.player.playerProfile.playerAkaData.liquipedia ?? "";
+    return this.player.playerProfile.playerAkaData.liquipedia ?? "";
   }
 
   get aliasOrW3infoId(): string {
-    const name = this.$store.direct.state.player.playerProfile.playerAkaData.name;
+    const name = this.player.playerProfile.playerAkaData.name;
 
     if (name != null) {
       return name;
@@ -488,7 +492,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   get personalSetting() {
-    return this.$store.direct.state.personalSettings.personalSettings;
+    return this.personalSettingsStore.personalSettings;
   }
 
   get starterAvatarCategory() {
@@ -567,7 +571,7 @@ export default class PlayerAvatar extends Vue {
     personalSetting.country = this.selectedCountry || "";
     personalSetting.countryCode = this.selectedCountryCode || "";
 
-    await this.$store.direct.dispatch.personalSettings.saveUserProfile(personalSetting);
+    await this.personalSettingsStore.saveUserProfile(personalSetting);
     this.userProfile.editDialogOpened = false;
   }
 
@@ -648,7 +652,7 @@ export default class PlayerAvatar extends Vue {
     description?: string
   ) {
     if (!this.enabledIfEnoughWins(avatarCategory, picture)) return;
-    await this.$store.direct.dispatch.personalSettings.saveAvatar({
+    await this.personalSettingsStore.saveAvatar({
       race: avatarCategory,
       pictureId: picture,
       isClassic: this.useClassicIcons,
@@ -667,7 +671,7 @@ export default class PlayerAvatar extends Vue {
   }
 
   async init() {
-    await this.$store.direct.dispatch.personalSettings.loadPersonalSetting();
+    await this.personalSettingsStore.loadPersonalSetting();
     this.userProfile = {
       twitch: this.twitch,
       homePage: this.homePage,

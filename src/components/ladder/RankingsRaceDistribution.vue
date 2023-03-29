@@ -40,7 +40,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 
 @Component({
   components: {

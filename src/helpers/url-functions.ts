@@ -1,5 +1,5 @@
 import { INGAME_STATIC_RESOURCES_URL } from "@/main";
-import { EAvatarCategory } from "@/store/typings";
+import { EAvatarCategory } from "@/store/types";
 
 export function getAvatarUrl(
   category: EAvatarCategory,

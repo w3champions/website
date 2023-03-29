@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue, { CreateElement, RenderContext, VNode } from "vue";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 
 interface IProps {
   race: ERaceEnum;

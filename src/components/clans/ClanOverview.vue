@@ -190,7 +190,7 @@ import LeaveClanModal from "@/components/clans/LeaveClanModal.vue";
 import MemberManagementMenu from "@/components/clans/MemberManagementMenu.vue";
 import { Clan, EClanRole } from "@/store/clan/types";
 import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
-import { EGameMode } from "@/store/typings";
+import { EGameMode } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
@@ -198,6 +198,9 @@ import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { ModeStat, PlayerProfile } from "@/store/player/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { usePlayerStore } from "@/store/player/store";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({
   components: {
@@ -216,7 +219,10 @@ import { useOauthStore } from "@/store/oauth/store";
 })
 export default class ClanOverview extends Vue {
   private oauthStore = useOauthStore();
+  private rankingsStore = useRankingStore();
+  private player = usePlayerStore();
   @Prop() public id!: string;
+  private clanStore = useClanStore();
 
   private modeEnums = Object.freeze(EGameMode);
 
@@ -225,7 +231,7 @@ export default class ClanOverview extends Vue {
   }
 
   get currentSeason(): number {
-    return this.$store.direct.state.rankings.seasons[0].id;
+    return this.rankingsStore.seasons[0].id;
   }
 
   public getLeagueOrder(battleTag: string): number {
@@ -294,16 +300,16 @@ export default class ClanOverview extends Vue {
   }
 
   get clanValidationError(): string {
-    return this.$store.direct.state.clan.clanValidationError;
+    return this.clanStore.clanValidationError;
   }
 
   get hasPendingInvite(): boolean {
-    return !!this.$store.direct.state.clan.selectedMemberShip
+    return !!this.clanStore.selectedMemberShip
       ?.pendingInviteFromClan;
   }
 
   get searchPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.clan.searchPlayers;
+    return this.clanStore.searchPlayers;
   }
 
   public gotToChiefTain(): void {
@@ -349,25 +355,25 @@ export default class ClanOverview extends Vue {
   }
 
   get selectedPlayer(): string {
-    return this.$store.direct.state.player.battleTag;
+    return this.player.battleTag;
   }
 
   get playersClan(): Clan {
-    return this.$store.direct.state.clan.playersClan;
+    return this.clanStore.playersClan;
   }
 
   get shamans(): string[] {
-    return this.$store.direct.state.clan.playersClan.shamans;
+    return this.clanStore.playersClan.shamans;
   }
 
   get members(): string[] {
-    return this.$store.direct.state.clan.playersClan.members;
+    return this.clanStore.playersClan.members;
   }
 
   async mounted(): Promise<void> {
-    await this.$store.direct.dispatch.rankings.retrieveSeasons();
+    await this.rankingsStore.retrieveSeasons();
 
-    await this.$store.direct.dispatch.player.loadProfile({
+    await this.player.loadProfile({
       battleTag: this.battleTag,
       freshLogin: false,
     });
@@ -376,9 +382,9 @@ export default class ClanOverview extends Vue {
   // Load clans on activate instead of mount,
   // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
   async activated(): Promise<void> {
-    this.$store.direct.commit.player.SET_BATTLE_TAG(this.battleTag);
-    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    this.player.SET_BATTLE_TAG(this.battleTag);
+    await this.clanStore.retrievePlayersMembership();
+    await this.clanStore.retrievePlayersClan();
   }
 }
 </script>

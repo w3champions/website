@@ -26,7 +26,7 @@ import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
 import { Component, Prop } from "vue-property-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 
 @Component({
   components: {

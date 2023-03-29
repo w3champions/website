@@ -81,6 +81,7 @@ import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useOauthStore } from "@/store/oauth/store";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({})
 export default class InvitePlayerModal extends Vue {
@@ -89,6 +90,7 @@ export default class InvitePlayerModal extends Vue {
   public search = "";
 
   public dialog = false;
+  private clanStore = useClanStore();
 
   get loggedInPlayerIsChiefTain(): boolean {
     return this.playersClan.chiefTain === this.verifiedBtag;
@@ -99,11 +101,11 @@ export default class InvitePlayerModal extends Vue {
   }
 
   get clanValidationError(): string {
-    return this.$store.direct.state.clan.clanValidationError;
+    return this.clanStore.clanValidationError;
   }
 
   get isValidationError(): boolean {
-    return this.$store.direct.state.clan.clanValidationError !== "";
+    return this.clanStore.clanValidationError !== "";
   }
 
   public isDuplicateName(name: string): boolean {
@@ -119,29 +121,29 @@ export default class InvitePlayerModal extends Vue {
   }
 
   public async invitePlayer(): Promise<void> {
-    await this.$store.direct.dispatch.clan.invitePlayer(
+    await this.clanStore.invitePlayer(
       this.searchModel.battleTag
     );
 
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
+    await this.clanStore.retrievePlayersClan();
     this.search = "";
   }
 
   @Watch("search")
   public onSearchChanged(newValue: string): void {
     if (newValue && newValue.length > 2) {
-      this.$store.direct.dispatch.clan.searchPlayers(newValue.toLowerCase());
+      this.clanStore.searchForPlayers(newValue.toLowerCase());
     } else {
-      this.$store.direct.commit.clan.SET_PLAYERS_SEARCH([]);
+      this.clanStore.SET_PLAYERS_SEARCH([]);
     }
   }
 
   get searchPlayers(): PlayerProfile[] {
-    return this.$store.direct.state.clan.searchPlayers;
+    return this.clanStore.searchPlayers;
   }
 
   get playersClan(): Clan {
-    return this.$store.direct.state.clan.playersClan;
+    return this.clanStore.playersClan;
   }
 }
 </script>

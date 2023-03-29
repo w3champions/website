@@ -13,7 +13,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { Match } from "@/store/typings";
+import { Match } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import StreamedMatchPlayerInfo from "@/components/matches/StreamedMatchPlayerInfo.vue";
 

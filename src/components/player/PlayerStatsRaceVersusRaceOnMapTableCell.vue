@@ -16,7 +16,7 @@ import Vue from "vue";
 import isNil from "lodash/isNil";
 import { Component, Prop } from "vue-property-decorator";
 import { RaceWinLoss } from "@/store/overallStats/types";
-import { ERaceEnum } from "@/store/typings";
+import { ERaceEnum } from "@/store/types";
 
 @Component({
   components: {},

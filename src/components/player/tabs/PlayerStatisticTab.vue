@@ -126,7 +126,7 @@
 import { Component, Watch, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { EGameMode, ERaceEnum } from "@/store/typings";
+import { EGameMode, ERaceEnum } from "@/store/types";
 import {
   PlayerMmrRpTimeline,
   PlayerStatsHeroOnMapVersusRace,
@@ -140,6 +140,7 @@ import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
 import { races } from "@/helpers/profile";
 import { TranslateResult } from "vue-i18n";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: {
@@ -151,9 +152,11 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
   },
 })
 export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
+  private player = usePlayerStore();
+
   public selectedPatch = "All";
-  public selectedGameMode = this.$store.direct.state.player.gameMode;
-  public selectedRace = this.$store.direct.state.player.race;
+  public selectedGameMode = this.player.gameMode;
+  public selectedRace = this.player.race;
   public updatePlayerHeroStatsKey = 0;
   public selectedMap = "Overall";
   public selectedMapHeroWinRate = "Overall";
@@ -161,31 +164,31 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   private overallStatsStore = useOverallStatsStore();
 
   get selectedSeason() {
-    return this.$store.direct.state.player.selectedSeason;
+    return this.player.selectedSeason;
   }
 
   get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
-    return this.$store.direct.state.player.playerStatsRaceVersusRaceOnMap;
+    return this.player.playerStatsRaceVersusRaceOnMap;
   }
 
   get playerStatsHeroVersusRaceOnMap(): PlayerStatsHeroOnMapVersusRace {
-    return this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap ?? [];
+    return this.player.playerStatsHeroVersusRaceOnMap ?? [];
   }
 
   get loadingMmrRpTimeline(): boolean {
-    return this.$store.direct.state.player.loadingMmrRpTimeline;
+    return this.player.loadingMmrRpTimeline;
   }
 
   get playerMmrRpTimeline(): PlayerMmrRpTimeline | undefined {
-    return this.$store.direct.state.player.mmrRpTimeline;
+    return this.player.mmrRpTimeline;
   }
 
   get isPlayerMmrRpTimelineEmpty(): boolean {
-    return this.$store.direct.state.player.mmrRpTimeline == undefined;
+    return this.player.mmrRpTimeline == undefined;
   }
 
   get isPlayerInitialized(): boolean {
-    return this.$store.direct.state.player.isInitialized;
+    return this.player.isInitialized;
   }
 
   async mounted(): Promise<void> {
@@ -209,7 +212,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   }
 
   private async initMmrRpTimeline() {
-    const raceStats = this.$store.direct.state.player.raceStats;
+    const raceStats = this.player.raceStats;
     let maxRace = ERaceEnum.HUMAN;
     let maxGames = 0;
     raceStats.forEach((r) => {
@@ -218,21 +221,21 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
         maxRace = r.race;
       }
     });
-    await this.$store.direct.commit.player.SET_GAMEMODE(EGameMode.GM_1ON1);
-    await this.$store.direct.commit.player.SET_RACE(maxRace);
+    await this.player.SET_GAMEMODE(EGameMode.GM_1ON1);
+    await this.player.SET_RACE(maxRace);
     this.selectedGameMode = EGameMode.GM_1ON1;
     this.selectedRace = maxRace;
 
-    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.player.loadPlayerMmrRpTimeline();
   }
 
   private async setTimelineMode(mode: EGameMode) {
-    this.$store.direct.commit.player.SET_GAMEMODE(mode);
-    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.player.SET_GAMEMODE(mode);
+    this.player.loadPlayerMmrRpTimeline();
   }
   private async setTimelineRace(race: ERaceEnum) {
-    this.$store.direct.commit.player.SET_RACE(race);
-    this.$store.direct.dispatch.player.loadPlayerMmrRpTimeline();
+    this.player.SET_RACE(race);
+    this.player.loadPlayerMmrRpTimeline();
   }
 
   get patches() {
@@ -286,7 +289,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
       mapId: "Overall",
     }];
     const mapsList: string[] = [];
-    this.$store.direct.state.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
+    this.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
       heroItemList.stats.map((stats) => {
         stats.winLossesOnMap.map((winLossOnMap) => {
           const map = winLossOnMap.map;

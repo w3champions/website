@@ -28,23 +28,26 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { useClanStore } from "@/store/clan/store";
 
 @Component({})
 export default class AcceptInvitePanel extends Vue {
+  private clanStore = useClanStore();
+
   get clanName(): string {
-    return this.$store.direct.state.clan.selectedMemberShip.clanName;
+    return this.clanStore.selectedMemberShip.clanName;
   }
 
   public async joinClan(): Promise<void> {
-    await this.$store.direct.dispatch.clan.acceptInvite();
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
-    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
+    await this.clanStore.acceptInvite();
+    await this.clanStore.retrievePlayersClan();
+    await this.clanStore.retrievePlayersMembership();
   }
 
   public async rejectClan(): Promise<void> {
-    await this.$store.direct.dispatch.clan.rejectInvite();
-    await this.$store.direct.dispatch.clan.retrievePlayersClan();
-    await this.$store.direct.dispatch.clan.retrievePlayersMembership();
+    await this.clanStore.rejectInvite();
+    await this.clanStore.retrievePlayersClan();
+    await this.clanStore.retrievePlayersMembership();
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import { Duration, format, getUnixTime, intervalToDuration, parseJSON } from "date-fns";
-import { timestampString } from "@/store/typings";
+import { timestampString } from "@/store/types";
 
 export const formatSecondsToDuration = (seconds: number): string => {
   const duration: Duration = intervalToDuration({ start: 0, end: seconds * 1000 });
