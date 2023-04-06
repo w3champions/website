@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "@/store/admin/mapsManagement/types";
+import { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
@@ -69,19 +69,6 @@ export default class MapsService {
     const response = await fetch(url, {
       method: "POST",
       body: form,
-    });
-
-    return await response.json();
-  }
-
-  public static async getMapsForCurrentSeason(): Promise<GetSeasonMapsResponse> {
-    const url = `${API_URL}api/maps/currentseason`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
     });
 
     return await response.json();

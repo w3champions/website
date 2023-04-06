@@ -77,21 +77,13 @@
         </v-card>
         <v-card>
           <v-card-title>{{ $t("views_home.mappooltitle") }}</v-card-title>
-          <div class="seasonMaps">
-            <div>
-              <b class="mode">{{ $t("gameModes.GM_1ON1") }}</b>
-              <copy-button :copyText="mapNamesAsString('1vs1')" tooltipText="maptooltip"></copy-button>
-              <ul><li v-for="map in maps1v1" :key="map.id">{{ map.name }}</li></ul>
-            </div>
-            <div>
-              <b class="mode">{{ $t("gameModes.GM_2ON2") }}</b>
-              <copy-button :copyText="mapNamesAsString('2vs2')" tooltipText="maptooltip"></copy-button>
-              <ul><li v-for="map in maps2v2" :key="map.id">{{ map.name }}</li></ul>
-            </div>
-            <div>
-              <b class="mode">{{ $t("gameModes.GM_4ON4") }}</b>
-              <copy-button :copyText="mapNamesAsString('4vs4')" tooltipText="maptooltip"></copy-button>
-              <ul><li v-for="map in maps4v4" :key="map.id">{{ map.name }}</li></ul>
+          <div class="ladderMaps">
+            <div v-for="mode in activeGameModes" :key="mode.id">
+              <div v-if="mode.id === 1 || mode.id === 2 || mode.id === 4">
+                <b class="mode">{{ mode.name }}</b>
+                <copy-button :copyText="mapNamesAsString(mode.id)" tooltipText="maptooltip"></copy-button>
+                <ul><li v-for="map in mode.maps" :key="map.id">{{ map.name }}</li></ul>
+              </div>
             </div>
           </div>
           <br />
@@ -152,18 +144,16 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { marked } from "marked";
-import { Ranking } from "@/store/ranking/types";
+import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
 import PartnerBox from "@/components/common/PartnerBox.vue";
 import TopOngoingMatchesWithStreams from "@/components/matches/TopOngoingMatchesWithStreams.vue";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
-import { Map } from "@/store/admin/mapsManagement/types";
 import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
-import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
@@ -177,12 +167,9 @@ import { useRankingStore } from "@/store/ranking/store";
 })
 export default class HomeView extends Vue {
   public model = 0;
-  maps1v1: Map[] = [];
-  maps2v2: Map[] = [];
-  maps4v4: Map[] = [];
   private infoMessagesStore = useInfoMessagesStore();
-  private mapsManagementStore = useMapsManagementStore();
   private rankingsStore = useRankingStore();
+  // activeGameModes: ActiveGameMode[] = [];
 
   get topFive(): Ranking[] {
     return this.rankingsStore.topFive;
@@ -197,10 +184,8 @@ export default class HomeView extends Vue {
     this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
     await this.rankingsStore.getTopFive();
     await this.infoMessagesStore.loadNews();
-    await this.mapsManagementStore.loadMapsForCurrentSeason();
-    this.maps1v1 = this.mapsManagementStore.seasonMaps.filter((m) => m.id === EGameMode.GM_1ON1)[0].maps;
-    this.maps2v2 = this.mapsManagementStore.seasonMaps.filter((m) => m.id === EGameMode.GM_2ON2)[0].maps;
-    this.maps4v4 = this.mapsManagementStore.seasonMaps.filter((m) => m.id == EGameMode.GM_4ON4)[0].maps;
+    await this.rankingsStore.retrieveActiveGameModes();
+    // this.activeGameModes = this.rankingsStore.activeModes;
   }
 
   public convertMarkdownToHTML(input: string): string {
@@ -219,15 +204,16 @@ export default class HomeView extends Vue {
     });
   }
 
-  public mapNamesAsString(mode: string) {
-    switch (mode) {
-      case "1vs1":
-        return this.maps1v1.map((m) => m.name).join("\n");
-      case "2vs2":
-        return this.maps2v2.map((m) => m.name).join("\n");
-      case "4vs4":
-        return this.maps4v4.map((m) => m.name).join("\n");
-    }
+  public mapNamesAsString(gameMode: EGameMode) {
+    return this.activeGameModes
+             .filter((mode) => mode.id === gameMode)
+             .flatMap((mode) => mode.maps)
+             .map((map) => map.name).join("\n");
+  }
+
+  // Temp fix to only display 1v1, 2v2 and 4v4 instead of all game modes, because it needs some better design on the frontend.
+  get activeGameModes(): ActiveGameMode[] {
+    return this.rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4);
   }
 }
 </script>
@@ -243,7 +229,7 @@ export default class HomeView extends Vue {
   font-size: 20px;
 }
 
-.seasonMaps {
+.ladderMaps {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;

@@ -1,5 +1,5 @@
 import { WinLoss } from "@/store/overallStats/types";
-import { EGameMode, ERaceEnum } from "@/store/types";
+import { EGameMode, ERaceEnum, EGameModeType } from "@/store/types";
 
 export type RankingState = {
   league: number;
@@ -16,6 +16,7 @@ export type RankingState = {
   seasons: Season[];
   selectedSeason: Season;
   selectedCountry: string;
+  activeModes: ActiveGameMode[];
 };
 
 export type Ladder = {
@@ -28,6 +29,19 @@ export type Ladder = {
 export type Season = {
   id: number;
 };
+
+export type ActiveGameMode = {
+  id: EGameMode;
+  type: EGameModeType;
+  name: string;
+  maps: MapShortInfo[];
+};
+
+export interface MapShortInfo {
+  id: number;
+  name: string;
+  path: string;
+}
 
 export type League = {
   id: number;
