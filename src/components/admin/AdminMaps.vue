@@ -16,6 +16,7 @@
         :items="maps"
         :items-per-page="10"
         :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
+        :search="search"
         class="elevation-1"
       >
         <template #[`item.path`]="{ item }">
@@ -41,7 +42,7 @@ import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
-  public search?: string = "";
+  public search = "";
   public editedMap?: Map = {} as Map;
   public isEditOpen = false;
   public isEditFilesOpen = false;
@@ -70,12 +71,7 @@ export default class AdminMaps extends Vue {
   }
 
   public get maps() {
-    return isUndefined(this.search)
-      ? this.mapsManagementStore.maps
-      : this.mapsManagementStore.maps.filter((m) => {
-        return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||
-               m.name.toLowerCase().includes(this.search!.toLowerCase());
-      });
+    return this.mapsManagementStore.maps;
   }
 
   public get totalMaps() {
