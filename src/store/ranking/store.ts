@@ -1,4 +1,4 @@
-import { CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
+import { CountryRanking, Ladder, Ranking, RankingState, Season, ActiveGameMode } from "./types";
 import { DataTableOptions, EGameMode } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
@@ -22,6 +22,7 @@ export const useRankingStore = defineStore("ranking", {
     seasons: [] as Season[],
     selectedSeason: {} as Season,
     selectedCountry: "",
+    activeModes: [] as ActiveGameMode[],
   }),
   actions: {
     async retrieveRankings(options?: DataTableOptions) {
@@ -102,6 +103,16 @@ export const useRankingStore = defineStore("ranking", {
       const seasons = await RankingService.retrieveSeasons();
       this.SET_SEASONS(seasons);
     },
+    async retrieveActiveGameModes() {
+      // Currently active game modes already fetched, skip
+      if (!isEmpty(this.activeModes)) {
+        return;
+      }
+      const modes = await RankingService.retrieveActiveGameModes();
+      if (modes) {
+        this.SET_ACTIVE_MODES(modes);
+      }
+    },
     SET_RANKINGS(rankings: Ranking[]): void {
       this.rankings = rankings;
     },
@@ -140,6 +151,9 @@ export const useRankingStore = defineStore("ranking", {
     },
     SET_COUNTRY(country: string): void {
       this.selectedCountry = country;
+    },
+    SET_ACTIVE_MODES(modes: ActiveGameMode[]) {
+      this.activeModes = modes;
     },
   },
 });

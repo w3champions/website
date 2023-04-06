@@ -1,5 +1,4 @@
-import isEmpty from "lodash/isEmpty";
-import { AdminMapsState, GetMapsResponse, GetSeasonMapsResponse, Map, MapFileData, SeasonMap } from "./types";
+import { AdminMapsState, GetMapsResponse, Map, MapFileData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import MapsService from "@/services/MapsService";
 import { defineStore } from "pinia";
@@ -10,7 +9,6 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     maps: [] as Map[],
     mapsFilter: undefined,
     mapFiles: [] as MapFileData[],
-    seasonMaps: [] as SeasonMap[],
   }),
   actions: {
     async loadMaps(filter?: string) {
@@ -38,14 +36,6 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       const oauthStore = useOauthStore();
       await MapsService.createMapFile(oauthStore.token, formData);
     },
-    async loadMapsForCurrentSeason() {
-      // Season maps already fetched, skip
-      if (!isEmpty(this.seasonMaps)) {
-        return;
-      }
-      const searchMapsResponse = await MapsService.getMapsForCurrentSeason();
-      this.SET_SEASON_MAPS(searchMapsResponse);
-    },
     SET_MAPS(getMapsResponse: GetMapsResponse) {
       this.maps = getMapsResponse?.items ?? [];
       this.totalMaps = getMapsResponse?.total ?? 0;
@@ -55,9 +45,6 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     },
     SET_MAP_FILES(mapFiles: MapFileData[]) {
       this.mapFiles = mapFiles || [];
-    },
-    SET_SEASON_MAPS(getSeasonMapsResponse: GetSeasonMapsResponse) {
-      this.seasonMaps = getSeasonMapsResponse?.items ?? [];
     },
   },
 });
