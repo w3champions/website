@@ -37,7 +37,6 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
-import isUndefined from "lodash/isUndefined";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({ components: { EditMap, EditMapFiles } })
