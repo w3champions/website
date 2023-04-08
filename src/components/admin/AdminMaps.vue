@@ -119,6 +119,7 @@ export default class AdminMaps extends Vue {
       }
 
       this.isEditOpen = false;
+
     } catch {
       alert("Error trying to save map");
     }
