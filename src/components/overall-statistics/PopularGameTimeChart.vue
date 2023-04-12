@@ -33,11 +33,17 @@ export default class PopularGameTimeChart extends Vue {
   }
 
   private shiftGameCount(gamesCount: number[]) {
-    const numberOfBarsToOffset = this.utcTimeOffset * 4;
+    const numberOfBarsToOffset = Math.abs(this.utcTimeOffset * 4);
+    const isPositiveOffset = Math.abs(this.utcTimeOffset) === this.utcTimeOffset;
 
     for (let i = 0; i < numberOfBarsToOffset; i++) {
-      const firstItem = gamesCount.shift()!;
-      gamesCount.push(firstItem);
+      if (isPositiveOffset) {
+        const firstItem = gamesCount.shift()!;
+        gamesCount.push(firstItem);
+      } else {
+        const lastItem = gamesCount.pop()!;
+        gamesCount.unshift(lastItem);
+      }
     }
     return gamesCount;
   }
