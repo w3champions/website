@@ -110,11 +110,11 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
-          v-model="selectedPopularHourMode"
+            v-model="selectedPopularHourMode"
             :items="activeGameModes"
             item-text="name"
             item-value="id"
-            @change="setSelectedModeGameHour"
+            @change="setSelectedPopularHourMode"
             :label="
               $t(
                 `components_overall-statistics_tabs_playeractivitytab.selectmode`
@@ -129,7 +129,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <popular-game-time-chart :popular-game-hour="selectedGameHours" />
+          <popular-game-time-chart :popular-game-hours="selectedGameHours" />
         </v-card-text>
       </v-col>
     </v-row>
@@ -172,7 +172,7 @@ import {
   GameDayPerMode,
   GameLength,
   MapCount,
-  PopularGameHour,
+  PopularHours,
 } from "@/store/overallStats/types";
 import { Component, Mixins } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
@@ -222,7 +222,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     this.selectedGamesPerDayMode = mode;
   }
 
-  public setSelectedModeGameHour(mode: EGameMode) {
+  public setSelectedPopularHourMode(mode: EGameMode) {
     this.selectedPopularHourMode = mode;
   }
 
@@ -249,7 +249,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     return this.selectedGamesPerDayMode === EGameMode.UNDEFINED;
   }
 
-  get selectedGameHours(): PopularGameHour {
+  get selectedGameHours(): PopularHours {
     return this.popularGameHours.filter(
       (g) => g.gameMode == this.selectedPopularHourMode
     )[0];
@@ -318,8 +318,8 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     return this.overallStatsStore.gameLengths;
   }
 
-  get popularGameHours(): PopularGameHour[] {
-    return this.overallStatsStore.popularGameHours;
+  get popularGameHours(): PopularHours[] {
+    return this.overallStatsStore.popularHours;
   }
 }
 </script>

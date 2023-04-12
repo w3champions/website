@@ -6,7 +6,7 @@ import {
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
-  PopularGameHour,
+  PopularHours,
   StatsPerWinrate,
   WinLoss,
 } from "@/store/overallStats/types";
@@ -93,7 +93,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public static async retrievePopularGameHours(): Promise<PopularGameHour[]> {
+  public static async retrievePopularGameHours(): Promise<PopularHours[]> {
     const url = `${API_URL}api/w3c-stats/play-hours`;
     const response = await fetch(url, {
       method: "GET",
