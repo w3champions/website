@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">mdi-controller-classic</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
         {{ status }}
       </v-btn>
     </template>
@@ -38,9 +38,11 @@ import { Component } from "vue-property-decorator";
 
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
+import { mdiControllerClassic } from "@mdi/js";
 
 @Component({})
 export default class MatchesStatusSelect extends Vue {
+  public mdiControllerClassic = mdiControllerClassic;
   private matchStore = useMatchStore();
 
   get status() {

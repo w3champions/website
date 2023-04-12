@@ -16,7 +16,7 @@
             <v-text-field
               v-model="tableSearch"
               label="Search ban"
-              prepend-icon="mdi-magnify"
+              :prepend-icon="mdiMagnify"
             ></v-text-field>
           </template>
         <v-spacer></v-spacer>
@@ -173,8 +173,8 @@
       <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
+      <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -188,6 +188,7 @@ import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
+import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminBannedPlayers extends Vue {
@@ -201,6 +202,9 @@ export default class AdminBannedPlayers extends Vue {
   public foundPlayer = "";
   public clearPlayerSearchToggle = false;
   private adminStore = useAdminStore();
+  public mdiDelete = mdiDelete;
+  public mdiMagnify = mdiMagnify;
+  public mdiPencil = mdiPencil;
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {

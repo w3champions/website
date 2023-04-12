@@ -11,14 +11,14 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn text tile v-on="on">
-        <v-icon class="mr-2">mdi-magnify</v-icon>
+        <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
     <v-card>
       <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
         <v-autocomplete
           v-model="searchModel"
-          append-icon="mdi-magnify"
+          :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
@@ -68,6 +68,7 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
+import { mdiMagnify } from "@mdi/js";
 
 @Component({
   components: {
@@ -79,6 +80,7 @@ export default class GlobalSearch extends Vue {
   public search = "";
   public isLoading = false;
   public menuOpened = false;
+  public mdiMagnify = mdiMagnify;
 
   private static SEARCH_DELAY = 500;
   private debouncedSearch = debounce(this.dispatchSearch, GlobalSearch.SEARCH_DELAY);

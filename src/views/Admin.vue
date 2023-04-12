@@ -33,6 +33,16 @@ import AdminMotd from "@/components/admin/AdminMotd.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 import { useOauthStore } from "@/store/oauth/store";
+import {
+  mdiAccountBoxOutline,
+  mdiAccountGroup, mdiAccountNetwork,
+  mdiAccountQuestion,
+  mdiAccountRemove, mdiBriefcase,
+  mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
+  mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
+  mdiMonitorDashboard,
+  mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
+} from "@mdi/js";
 
 @Component({
   components: {
@@ -58,89 +68,89 @@ export default class Admin extends Vue {
   navItems: Array<NavigationItem> = [
     {
       title: "Data Science",
-      icon: "mdi-chart-line",
+      icon: mdiChartLine,
       items: [
         {
           key: "queue",
           title: "Live Queue Data",
-          icon: "mdi-table",
+          icon: mdiTable,
           component: "admin-queue-data",
         },
       ],
     },
     {
       title: "Moderation",
-      icon: "mdi-account-group",
+      icon: mdiAccountGroup,
       items: [
         {
           key: "banned_players",
           title: "Banned Players",
-          icon: "mdi-account-remove",
+          icon: mdiAccountRemove,
           component: "admin-banned-players",
         },
         {
           key: "alts",
           title: "Smurf Checker",
-          icon: "mdi-account-question",
+          icon: mdiAccountQuestion,
           component: "admin-alts",
         },
         {
           key: "mute",
           title: "Global Mute",
-          icon: "mdi-chat-remove",
+          icon: mdiChatRemove,
           component: "admin-global-mute",
         },
         {
           key: "lounge_mute",
           title: "Lounge Mute",
-          icon: "mdi-chat-remove-outline",
+          icon: mdiChatRemoveOutline,
           component: "admin-lounge-mute",
         },
         {
           key: "view_game_chat",
           title: "View Game Chat",
-          icon: "mdi-format-align-left",
+          icon: mdiFormatAlignLeft,
           component: "admin-view-game-chat",
         },
       ],
     },
     {
       title: "Player Settings",
-      icon: "mdi-cog",
+      icon: mdiCog,
       items: [
         {
           key: "proxy_settings",
           title: "Proxy Settings",
-          icon: "mdi-account-network",
+          icon: mdiAccountNetwork,
           component: "admin-proxies",
         },
       ],
     },
     {
       title: "Launcher",
-      icon: "mdi-rocket",
+      icon: mdiRocket,
       items: [
         {
           key: "news",
           title: "News",
-          icon: "mdi-rss",
+          icon: mdiRss,
           component: "admin-news-for-launcher",
         },
       ],
     },
     {
       title: "In-Game Settings",
-      icon: "mdi-monitor-dashboard",
+      icon: mdiMonitorDashboard,
       items: [
         {
           key: "tips",
-          icon: "mdi-tooltip-text-outline",
+          icon: mdiTooltipTextOutline,
           title: "Loading screen tips",
           component: "admin-loading-screen-tips",
         },
         {
           key: "motd",
-          icon: "mdi-message-alert",
+          icon: mdiMessageAlert,
           title: "Message of the Day",
           component: "admin-motd",
         },
@@ -148,42 +158,42 @@ export default class Admin extends Vue {
     },
     {
       title: "Rewards",
-      icon: "mdi-gift",
+      icon: mdiGift,
       items: [
         {
           key: "portraits",
           title: "Assign Portraits",
-          icon: "mdi-account-box-outline",
+          icon: mdiAccountBoxOutline,
           component: "admin-assign-portraits",
         },
         {
           key: "manage-portraits",
           title: "Manage Portraits",
-          icon: "mdi-briefcase",
+          icon: mdiBriefcase,
           component: "admin-manage-portraits",
         },
       ],
     },
     {
       title: "Maps",
-      icon: "mdi-map-search",
+      icon: mdiMapSearch,
       items: [
         {
           key: "maps",
           title: "Manage Maps",
-          icon: "mdi-map-plus",
+          icon: mdiMapPlus,
           component: "admin-maps",
         },
       ],
     },
     {
       title: "Tournaments",
-      icon: "mdi-sword-cross",
+      icon: mdiSwordCross,
       items: [
         {
           key: "tournaments",
           title: "Manage Tournaments",
-          icon: "mdi-sword-cross",
+          icon: mdiSwordCross,
           component: "admin-tournaments",
         },
       ],

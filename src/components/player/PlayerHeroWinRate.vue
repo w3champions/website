@@ -33,8 +33,8 @@
               <v-pagination
                 v-model="page"
                 :length="pageLength"
-                prev-icon="mdi-menu-left"
-                next-icon="mdi-menu-right"
+                :prev-icon="mdiMenuLeft"
+                :next-icon="mdiMenuRight"
               ></v-pagination>
             </div>
           </v-col>
@@ -53,6 +53,7 @@ import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } fro
 import { ERaceEnum } from "@/store/types";
 import { races, defaultStatsTab } from "@/helpers/profile";
 import { usePlayerStore } from "@/store/player/store";
+import { mdiMenuLeft, mdiMenuRight } from "@mdi/js";
 
 @Component({
   components: { RaceIcon },
@@ -66,6 +67,8 @@ export default class PlayerHeroWinRate extends Vue {
   @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
   @Prop() selectedMap!: string;
   private player = usePlayerStore();
+  public mdiMenuLeft = mdiMenuLeft;
+  public mdiMenuRight = mdiMenuRight;
 
   @Watch("isPlayerInitialized")
   onPlayerInitialized(): void {

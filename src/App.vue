@@ -14,7 +14,7 @@
             </router-link>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">mdi-close</v-icon>
+            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">{{ mdiClose }}</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list>
@@ -78,7 +78,7 @@
       <global-search />
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">mdi-account-circle-outline</v-icon>
+        <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
           @region-change="saveLoginRegion"
@@ -89,7 +89,7 @@
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
-            <v-icon>mdi-account-circle</v-icon>
+            <v-icon>{{ mdiAccountCircle }}</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -105,7 +105,7 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
-            <v-icon>mdi-invert-colors</v-icon>
+            <v-icon>{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
         <v-list class="theme-selector">
@@ -167,6 +167,18 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import {
+  mdiAccountCircle,
+  mdiAccountCircleOutline,
+  mdiAccountTie,
+  mdiChartAreaspline,
+  mdiClose,
+  mdiControllerClassic,
+  mdiHelpCircleOutline,
+  mdiInvertColors,
+  mdiTrophy,
+  mdiViewList,
+} from "@mdi/js";
 
 export type ItemType = {
   title: string;
@@ -177,6 +189,10 @@ export type ItemType = {
 
 @Component({ components: { BrandLogo, SignInDialog, localeIcon, GlobalSearch } })
 export default class App extends Vue {
+  public mdiAccountCircle = mdiAccountCircle;
+  public mdiAccountCircleOutline = mdiAccountCircleOutline;
+  public mdiClose = mdiClose;
+  public mdiInvertColors = mdiInvertColors;
   private oauthStore = useOauthStore();
   private _savedLocale = "en";
   private selectedTheme = "human";
@@ -184,32 +200,32 @@ export default class App extends Vue {
   public items: ItemType[] = [
     {
       title: "tournaments",
-      icon: "mdi-trophy",
+      icon: mdiTrophy,
       to: "Tournaments",
     },
     {
       title: "rankings",
-      icon: "mdi-view-list",
+      icon: mdiViewList,
       to: "Rankings",
     },
     {
       title: "matches",
-      icon: "mdi-controller-classic",
+      icon: mdiControllerClassic,
       to: "Matches",
     },
     {
       title: "statistics",
-      icon: "mdi-chart-areaspline",
+      icon: mdiChartAreaspline,
       to: "OverallStatistics",
     },
     {
       title: "admin",
-      icon: "mdi-account-tie",
+      icon: mdiAccountTie,
       to: "Admin",
     },
     {
       title: "faq",
-      icon: "mdi-help-circle-outline",
+      icon: mdiHelpCircleOutline,
       to: "FAQ",
       class: "d-none d-md-flex",
     },

@@ -17,7 +17,7 @@
             </v-col>
             <v-col class="text-right pa-0">
               <v-btn @click="revokeInvite(member)">
-                <v-icon>mdi-delete</v-icon>
+                <v-icon>{{ mdiDelete }}</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -37,12 +37,14 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
+import { mdiDelete } from "@mdi/js";
 
 @Component({
   components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
 })
 export default class PendingInvitesPanel extends Vue {
   public search = "";
+  public mdiDelete = mdiDelete;
   private clanStore = useClanStore();
 
   public async revokeInvite(member: string): Promise<void> {

@@ -2,7 +2,7 @@
   <v-container class="ma-0 pa-0" @click="assignPortrait">
     <v-img max-width="250" max-height="250" :src="urlById" />
     <v-btn class="cancel-button" right v-if="isAssigned" icon @click="removeAssignedPortrait">
-      <v-icon large>mdi-close-circle-outline</v-icon>
+      <v-icon large>{{ mdiCloseCircleOutline }}</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -12,9 +12,11 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { EAvatarCategory } from "@/store/types";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { mdiCloseCircleOutline } from "@mdi/js";
 
 @Component({ components: {} })
 export default class AssignPortrait extends Vue {
+  public mdiCloseCircleOutline = mdiCloseCircleOutline;
   @Prop({}) public portraitId!: number;
   @Prop({ default: false }) public isAssigned!: boolean;
   @Prop({ default: true }) public selectable!: boolean;

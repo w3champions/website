@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">mdi-pencil</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiPencil }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -26,12 +26,14 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { EClanRole } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
+import { mdiPencil } from "@mdi/js";
 
 @Component({})
 export default class MemberManagementMenu extends Vue {
   @Prop() battleTag!: string;
   @Prop() role!: EClanRole;
   @Prop() loggedInUserRole!: EClanRole;
+  public mdiPencil = mdiPencil;
   private clanStore = useClanStore();
 
   public async kickPlayer(): Promise<void> {

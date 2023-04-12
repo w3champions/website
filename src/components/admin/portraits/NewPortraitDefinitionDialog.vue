@@ -18,7 +18,7 @@
                   </v-col>
 
                   <v-btn icon @click="dialogOpen = false">
-                    <v-icon>mdi-close</v-icon>
+                    <v-icon>{{ mdiClose }}</v-icon>
                   </v-btn>
                 </v-row>
 
@@ -59,6 +59,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import { mdiClose } from "@mdi/js";
 
 @Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
@@ -66,6 +67,7 @@ export default class NewPortraitDefinitionDialog extends Vue {
   dialogOpen = false;
   valid = false;
   groups = [] as string[];
+  public mdiClose = mdiClose;
   private playerManagement = usePlayerManagementStore();
 
   get allSpecialPortraits(): PortraitDefinition[] {
