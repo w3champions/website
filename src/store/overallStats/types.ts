@@ -8,13 +8,13 @@ export type OverallStatisticState = {
   loadingPlayersPerDayStats: boolean;
   statsPerMapAndRace: StatsPerWinrate[];
   gameLengths: GameLength[];
-  popularGameHours: PopularGameHour[];
   playedHeroes: PlayedHeroByMode[];
   heroWinrate: WinLoss;
   loadingMapAndRaceStats: boolean;
   mmrDistribution: MmrDistribution;
   heroPicks: HeroPick[];
   matchesOnMapPerSeason: MatchesOnMapPerSeason[];
+  popularHours: PopularHours[];
 };
 
 export interface PlayedHeroPick {
@@ -101,21 +101,20 @@ export interface Length {
   games: number;
 }
 
-export interface SpecificGameHour {
-  passedTimeInSeconds: number;
-  games: number;
-  minutes: number;
-  hours: number;
-}
-
 export interface GameLength {
   gameMode: EGameMode;
   lengths: Length[];
 }
 
-export interface PopularGameHour {
+export interface PopularHours {
   gameMode: EGameMode;
-  playTimePerHour: SpecificGameHour[];
+  timeslots: Timeslot[];
+}
+
+export interface Timeslot {
+  games: number;
+  minutes: number;
+  hours: number;
 }
 
 export interface MapCount {

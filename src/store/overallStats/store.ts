@@ -8,10 +8,10 @@ import {
   OverallStatisticState,
   PlayedHeroByMode,
   PlayersPerDay,
-  PopularGameHour,
   SeasonGameModeGateWayForMMR,
   StatsPerWinrate,
   WinLoss,
+  PopularHours,
 } from "./types";
 import { ERaceEnum } from "../types";
 import StatisticService from "@/services/StatisticService";
@@ -26,42 +26,18 @@ export const useOverallStatsStore = defineStore("overallStats", {
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
-    popularGameHours: [] as PopularGameHour[],
     playedHeroes: [] as PlayedHeroByMode[],
     matchesOnMapPerSeason: [] as MatchesOnMapPerSeason[],
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
+    popularHours: [] as PopularHours[],
     heroPicks: [
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: "anyhero",
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
+      { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
     ] as HeroPick[],
   }),
   actions: {
@@ -146,8 +122,8 @@ export const useOverallStatsStore = defineStore("overallStats", {
     SET_GAME_LENGTH_STATS(stats: GameLength[]): void {
       this.gameLengths = stats;
     },
-    SET_POPULAR_GAME_HOURS(stats: PopularGameHour[]): void {
-      this.popularGameHours = stats;
+    SET_POPULAR_GAME_HOURS(stats: PopularHours[]): void {
+      this.popularHours = stats;
     },
     SET_PLAYED_HEROES(playedHeroes: PlayedHeroByMode[]): void {
       this.playedHeroes = playedHeroes;
