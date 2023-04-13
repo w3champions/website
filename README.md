@@ -77,12 +77,12 @@ permission request is send to the [w3champions/identification-service](https://g
 could spin up your own local identification server and grant yourself admin permission.
 
 A more convenient option is to overwrite the vue mutation which sets the
-`isAdmin` property in the [`oauth` store](src/store/oauth/index.ts):
+`isAdmin` property in the [`oauth` store](src/store/oauth/store.ts):
 
-```javascript
-SET_IS_ADMIN(state: OauthState, isAdmin: boolean) {
-    state.isAdmin = true; // state.isAdmin = isAdmin;
-},
+```typescript
+SET_IS_ADMIN(isAdmin: boolean): void {
+  this.isAdmin = true; // this.isAdmin = isAdmin;
+}
 ```
 
 ### Deploying to a Pull Request Environment
