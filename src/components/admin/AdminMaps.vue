@@ -23,8 +23,8 @@
           {{ getMapPath(item) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="editMap(item)">mdi-pencil</v-icon>
-          <v-icon small class="mr-2" @click="editMapFiles(item)">mdi-file</v-icon>
+          <v-icon small class="mr-2" @click="editMap(item)">{{ mdiPencil }}</v-icon>
+          <v-icon small class="mr-2" @click="editMapFiles(item)">{{ mdiFile }}</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -38,6 +38,7 @@ import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { mdiFile, mdiPencil } from "@mdi/js";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
@@ -46,6 +47,8 @@ export default class AdminMaps extends Vue {
   public isEditOpen = false;
   public isEditFilesOpen = false;
   private mapsManagementStore = useMapsManagementStore();
+  public mdiFile = mdiFile;
+  public mdiPencil = mdiPencil;
 
   public get headers() {
     return [

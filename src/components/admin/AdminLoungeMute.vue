@@ -109,7 +109,7 @@
     </template>
 
     <template #[`item.actions`]="{ item }">
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -121,6 +121,7 @@ import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
+import { mdiDelete } from "@mdi/js";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminLoungeMute extends Vue {
@@ -129,6 +130,7 @@ export default class AdminLoungeMute extends Vue {
   public showConfirmation = false;
   public battleTag = "";
   public endDate = "";
+  public mdiDelete = mdiDelete;
   private oauthStore = useOauthStore();
   private loungeMuteStore = useLoungeMuteStore();
 

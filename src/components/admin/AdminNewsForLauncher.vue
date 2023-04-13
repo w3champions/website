@@ -42,7 +42,7 @@
                       :class="{ 'is-active': isActive.bold() }"
                       @click="commands.bold"
                     >
-                      <v-icon>mdi-format-bold</v-icon>
+                      <v-icon>{{ mdiFormatBold }}</v-icon>
                     </button>
 
                     <button
@@ -50,7 +50,7 @@
                       :class="{ 'is-active': isActive.italic() }"
                       @click="commands.italic"
                     >
-                      <v-icon>mdi-format-italic</v-icon>
+                      <v-icon>{{ mdiFormatItalic }}</v-icon>
                     </button>
 
                     <button
@@ -58,7 +58,7 @@
                       :class="{ 'is-active': isActive.strike() }"
                       @click="commands.strike"
                     >
-                      <v-icon>mdi-format-strikethrough</v-icon>
+                      <v-icon>{{ mdiFormatStrikethrough }}</v-icon>
                     </button>
 
                     <button
@@ -66,7 +66,7 @@
                       :class="{ 'is-active': isActive.underline() }"
                       @click="commands.underline"
                     >
-                      <v-icon>mdi-format-underline</v-icon>
+                      <v-icon>{{ mdiFormatUnderline }}</v-icon>
                     </button>
 
                     <button
@@ -74,7 +74,7 @@
                       :class="{ 'is-active': isActive.code() }"
                       @click="commands.code"
                     >
-                      <v-icon>mdi-code-tags</v-icon>
+                      <v-icon>{{ mdiCodeTags }}</v-icon>
                     </button>
 
                     <button
@@ -82,7 +82,7 @@
                       :class="{ 'is-active': isActive.paragraph() }"
                       @click="commands.paragraph"
                     >
-                      <v-icon>mdi-format-paragraph</v-icon>
+                      <v-icon>{{ mdiFormatParagraph }}</v-icon>
                     </button>
 
                     <button
@@ -92,7 +92,7 @@
                       }"
                       @click="commands.heading({ level: 1 })"
                     >
-                      <v-icon>mdi-format-header-1</v-icon>
+                      <v-icon>{{ mdiFormatHeader1 }}</v-icon>
                     </button>
 
                     <button
@@ -102,7 +102,7 @@
                       }"
                       @click="commands.heading({ level: 2 })"
                     >
-                      <v-icon>mdi-format-header-2</v-icon>
+                      <v-icon>{{ mdiFormatHeader2 }}</v-icon>
                     </button>
 
                     <button
@@ -112,7 +112,7 @@
                       }"
                       @click="commands.heading({ level: 3 })"
                     >
-                      <v-icon>mdi-format-header-3</v-icon>
+                      <v-icon>{{ mdiFormatHeader3 }}</v-icon>
                     </button>
 
                     <button
@@ -122,7 +122,7 @@
                       }"
                       @click="commands.bullet_list"
                     >
-                      <v-icon>mdi-format-list-bulleted</v-icon>
+                      <v-icon>{{ mdiFormatListBulleted }}</v-icon>
                     </button>
 
                     <button
@@ -132,7 +132,7 @@
                       }"
                       @click="commands.ordered_list"
                     >
-                      <v-icon>mdi-format-list-numbered</v-icon>
+                      <v-icon>{{ mdiFormatListNumbered }}</v-icon>
                     </button>
 
                     <button
@@ -142,14 +142,14 @@
                       }"
                       @click="commands.blockquote"
                     >
-                      <v-icon>mdi-format-quote-close</v-icon>
+                      <v-icon>{{ mdiFormatQuoteClose }}</v-icon>
                     </button>
 
                     <button
                       class="menubar__button"
                       @click="showImagePrompt(commands.image)"
                     >
-                      <v-icon>mdi-file-image</v-icon>
+                      <v-icon>{{ mdiFileImage }}</v-icon>
                     </button>
 
                     <button
@@ -159,7 +159,7 @@
                       }"
                       @click="commands.code_block"
                     >
-                      <v-icon>mdi-code-tags</v-icon>
+                      <v-icon>{{ mdiCodeTags }}</v-icon>
                     </button>
 
                     <button
@@ -170,11 +170,11 @@
                     </button>
 
                     <button class="menubar__button" @click="commands.undo">
-                      <v-icon>mdi-undo</v-icon>
+                      <v-icon>{{ mdiUndo }}</v-icon>
                     </button>
 
                     <button class="menubar__button" @click="commands.redo">
-                      <v-icon>mdi-redo</v-icon>
+                      <v-icon>{{ mdiRedo }}</v-icon>
                     </button>
                   </div>
                 </editor-menu-bar>
@@ -197,8 +197,8 @@
       </v-toolbar>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editNewsItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteNewsItem(item)">mdi-delete</v-icon>
+      <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
+      <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -231,11 +231,34 @@ import {
 } from "tiptap-extensions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
+import {
+  mdiCodeTags, mdiDelete,
+  mdiFileImage, mdiFormatBold, mdiFormatHeader1, mdiFormatHeader2, mdiFormatHeader3, mdiFormatItalic,
+  mdiFormatListBulleted,
+  mdiFormatListNumbered,
+  mdiFormatParagraph, mdiFormatQuoteClose, mdiFormatStrikethrough, mdiFormatUnderline, mdiPencil, mdiRedo, mdiUndo } from "@mdi/js";
 
 @Component({ components: { EditorContent, EditorMenuBar } })
 export default class AdminNewsForLauncher extends Vue {
   private oauthStore = useOauthStore();
   private infoMessagesStore = useInfoMessagesStore();
+  public mdiDelete = mdiDelete;
+  public mdiPencil = mdiPencil;
+  public mdiFormatItalic = mdiFormatItalic;
+  public mdiFormatStrikethrough = mdiFormatStrikethrough;
+  public mdiFormatUnderline = mdiFormatUnderline;
+  public mdiFormatBold = mdiFormatBold;
+  public mdiCodeTags = mdiCodeTags;
+  public mdiFormatParagraph = mdiFormatParagraph;
+  public mdiFormatHeader1 = mdiFormatHeader1;
+  public mdiFormatHeader2 = mdiFormatHeader2;
+  public mdiFormatHeader3 = mdiFormatHeader3;
+  public mdiFormatListBulleted = mdiFormatListBulleted;
+  public mdiFormatListNumbered = mdiFormatListNumbered;
+  public mdiFormatQuoteClose = mdiFormatQuoteClose;
+  public mdiFileImage = mdiFileImage;
+  public mdiUndo = mdiUndo;
+  public mdiRedo = mdiRedo;
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {

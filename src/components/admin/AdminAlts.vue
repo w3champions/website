@@ -5,7 +5,7 @@
       <v-autocomplete
         class="ml-5 mr-5"
         v-model="searchPlayerModel"
-        append-icon="mdi-magnify"
+        :append-icon="mdiMagnify"
         label="Search BattleNet Tag"
         clearable
         placeholder=" "
@@ -37,6 +37,7 @@ import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { useAdminStore } from "@/store/admin/store";
+import { mdiMagnify } from "@mdi/js";
 
 @Component({})
 export default class AdminAlts extends Vue {
@@ -46,6 +47,7 @@ export default class AdminAlts extends Vue {
   public oldSearchTerm = "";
   public alts = [] as string[];
   private adminStore = useAdminStore();
+  public mdiMagnify = mdiMagnify;
 
   public revertToDefault(): void {
     this.showAlts = false;

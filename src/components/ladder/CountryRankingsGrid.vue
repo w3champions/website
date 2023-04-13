@@ -90,14 +90,14 @@
                             v-if="!isCurrentlyLive(item.player.playerIds)"
                             color="purple accent-4"
                           >
-                            mdi-twitch
+                            {{ mdiTwitch }}
                           </v-icon>
                           <v-icon
                             v-if="isCurrentlyLive(item.player.playerIds)"
                             class="blinker"
                             color="red accent-4"
                           >
-                            mdi-twitch
+                            {{ mdiTwitch }}
                           </v-icon>
                         </v-btn>
                       </span>
@@ -206,6 +206,7 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { mdiTwitch } from "@mdi/js";
 
 @Component({
   components: {
@@ -222,6 +223,7 @@ export default class CountryRankingsGrid extends Vue {
   @Prop() rankings!: CountryRanking[];
   @Prop() ongoingMatches!: OngoingMatches;
   @Prop() selectedCountry!: string;
+  public mdiTwitch = mdiTwitch;
 
   private twitchStore = useTwitchStore();
   private rankingsStore = useRankingStore();

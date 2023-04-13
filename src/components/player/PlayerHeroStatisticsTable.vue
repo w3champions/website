@@ -20,8 +20,8 @@
     <v-pagination
       v-model="page"
       :length="pageLength"
-      prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right"
+      :prev-icon="mdiMenuLeft"
+      :next-icon="mdiMenuRight"
     ></v-pagination>
   </div>
 </template>
@@ -30,12 +30,16 @@
 import Vue from "vue";
 import { PlayerHeroStatistic } from "@/store/player/types";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import { mdiMenuLeft } from "@mdi/js";
+import { mdiMenuRight } from "@mdi/js";
 
 @Component
 export default class PlayerHeroStatisticsTable extends Vue {
   @Prop() private heroStatistics!: PlayerHeroStatistic[];
   private page = 1;
   private paginationSize = 10;
+  public mdiMenuLeft = mdiMenuLeft;
+  public mdiMenuRight = mdiMenuRight;
 
   get pageOffset(): number {
     return this.paginationSize * this.page;

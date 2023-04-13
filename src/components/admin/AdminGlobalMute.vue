@@ -108,7 +108,7 @@
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </v-container>
@@ -120,9 +120,11 @@ import { Component } from "vue-property-decorator";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
+import { mdiDelete } from "@mdi/js";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminGlobalMute extends Vue {
+  public mdiDelete = mdiDelete;
   private adminStore = useAdminStore();
   public headers = [
     {

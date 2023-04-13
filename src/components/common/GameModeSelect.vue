@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">mdi-controller-classic</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName }}
       </v-btn>
     </template>
@@ -37,11 +37,13 @@ import { Component, Mixins, Prop } from "vue-property-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { LocaleMessage } from "vue-i18n";
 import { EGameMode } from "@/store/types";
+import { mdiControllerClassic } from "@mdi/js";
 
 @Component({})
 export default class GameModeSelect extends Mixins(GameModesMixin) {
   @Prop() gameMode?: EGameMode;
   @Prop() disabledModes?: EGameMode[];
+  public mdiControllerClassic = mdiControllerClassic;
 
   async mounted(): Promise<void> {
     await this.loadActiveGameModes();

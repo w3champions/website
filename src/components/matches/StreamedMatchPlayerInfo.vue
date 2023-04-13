@@ -5,7 +5,7 @@
       :style="{ order: this.alignRight ? 3 : 1 }"
     >
       <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank">
-        <v-icon color="purple accent-4">mdi-twitch</v-icon>
+        <v-icon color="purple accent-4">{{ mdiTwitch }}</v-icon>
       </v-btn>
     </div>
     <div class="streamed-match-player-info__player">
@@ -29,11 +29,13 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { PlayerInTeam } from "@/store/types";
+import { mdiTwitch } from "@mdi/js";
 
 @Component({})
 export default class StreamedMatchPlayerInfo extends Vue {
   @Prop() readonly player!: PlayerInTeam;
   @Prop({ default: false }) readonly alignRight!: boolean;
+  public mdiTwitch = mdiTwitch;
 
   get twitchLink(): string {
     return `https://twitch.tv/${this.player.twitch}`;

@@ -10,7 +10,7 @@
             target="_blank"
             class="twitchIcon"
           >
-            <v-icon color="purple accent-4">mdi-twitch</v-icon>
+            <v-icon color="purple accent-4">{{ mdiTwitch }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.twitch }}</span>
@@ -25,7 +25,7 @@
             :href="'https:///youtube.com/' + userProfile.youtube"
             target="_blank"
           >
-            <v-icon color="red darken-2">mdi-youtube</v-icon>
+            <v-icon color="red darken-2">{{ mdiYoutube }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.youtube }}</span>
@@ -40,7 +40,7 @@
             :href="'https:///twitter.com/' + userProfile.twitter"
             target="_blank"
           >
-            <v-icon color="blue darken-2">mdi-twitter</v-icon>
+            <v-icon color="blue darken-2">{{ mdiTwitter }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.twitter }}</span>
@@ -98,9 +98,13 @@
 import Vue from "vue";
 import { PlayerProfile } from "@/store/player/types";
 import { Component, Prop } from "vue-property-decorator";
+import { mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 
 @Component
 export default class PlayerSocials extends Vue {
+  public mdiTwitch = mdiTwitch;
+  public mdiTwitter = mdiTwitter;
+  public mdiYoutube = mdiYoutube;
   @Prop() public userProfile!: PlayerProfile;
 }
 </script>

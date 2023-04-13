@@ -4,7 +4,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">mdi-skull</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiSkull }}</v-icon>
           </template>
           <div>
             {{ $t("components_match-details_matchhighlights.heroeskilled") }}
@@ -19,7 +19,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">mdi-chevron-triple-up</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiChevronTripleUp }}</v-icon>
           </template>
           <div>
             {{ $t("components_match-details_matchhighlights.xpgained") }}
@@ -34,7 +34,7 @@
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">mdi-treasure-chest</v-icon>
+            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiTreasureChest }}</v-icon>
           </template>
           <div>
             {{ $t("components_match-details_matchhighlights.itemscollected") }}
@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import { mdiChevronTripleUp, mdiSkull, mdiTreasureChest } from "@mdi/js";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -62,6 +63,9 @@ export default class MatchHighlights extends Vue {
   @Prop() heroKillsOpponent!: number;
   @Prop() itemsCollected!: number;
   @Prop() itemsCollectedOpponent!: number;
+  public mdiTreasureChest = mdiTreasureChest;
+  public mdiChevronTripleUp = mdiChevronTripleUp;
+  public mdiSkull = mdiSkull;
 
   get heroKillsComparison() {
     return this.comparison(this.heroKillsOpponent, this.heroKills);

@@ -8,7 +8,7 @@
         v-on="on"
         color="primary"
       >
-        <v-icon left>mdi-pencil</v-icon>
+        <v-icon left>{{ mdiPencil }}</v-icon>
         <span>{{ $t("components_clans_inviteplayermodal.inviteplayer") }}</span>
       </v-btn>
     </template>
@@ -19,7 +19,7 @@
       <v-card-text>
         <v-autocomplete
           v-model="searchModel"
-          append-icon="mdi-magnify"
+          :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
@@ -82,12 +82,15 @@ import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useClanStore } from "@/store/clan/store";
+import { mdiMagnify, mdiPencil } from "@mdi/js";
 
 @Component({})
 export default class InvitePlayerModal extends Vue {
   private oauthStore = useOauthStore();
   public searchModel = {} as PlayerProfile;
   public search = "";
+  public mdiMagnify = mdiMagnify;
+  public mdiPencil = mdiPencil;
 
   public dialog = false;
   private clanStore = useClanStore();
