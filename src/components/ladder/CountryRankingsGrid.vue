@@ -12,12 +12,12 @@
             class="text-uppercase font-weight-bold"
             v-if="leagueMap.get(countryRank.league)"
           >
-            <league-icon :league="leagueMap.get(countryRank.league).order" />
+            <league-icon :league="leagueMap.get(countryRank.league)?.order" />
             <div class="d-inline-block ml-2 my-4">
-              {{ leagueMap.get(countryRank.league).name }}
+              {{ leagueMap.get(countryRank.league)?.name }}
               {{
-                leagueMap.get(countryRank.league).division !== 0
-                  ? leagueMap.get(countryRank.league).division
+                leagueMap.get(countryRank.league)?.division !== 0
+                  ? leagueMap.get(countryRank.league)?.division
                   : null
               }}
             </div>
@@ -28,9 +28,9 @@
         <tr>
           <td
             class="header"
-            v-for="header in headers"
-            :key="header.text"
-            v-bind:style="{
+            v-for="(header, index) in headers"
+            :key="index"
+            :style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
@@ -63,9 +63,7 @@
                 <div
                   class="player-avatar mr-1 alignRight race-icon"
                   :title="getTitleRace(item, index)"
-                  :style="{
-                    'background-image': 'url(' + getRaceIcon(item, index) + ')',
-                  }"
+                  :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
                 />
 
                 <player-rank-info
@@ -80,10 +78,7 @@
                         <v-btn
                           icon
                           v-on="on"
-                          :href="
-                            'https:///twitch.tv/' +
-                            item.playersInfo[index].twitchName
-                          "
+                          :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
                           target="_blank"
                         >
                           <v-icon
@@ -139,9 +134,7 @@
             </div>
             <span
               style="position: relative"
-              v-if="
-                isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)
-              "
+              v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -161,9 +154,7 @@
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
-            {{
-              item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/")
-            }}
+            {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
           </td>
           <td class="number-text text-end won">{{ item.player.wins }}</td>
           <td class="number-text text-end lost">{{ item.player.losses }}</td>
@@ -175,7 +166,7 @@
     </table>
     <table
       class="custom-table"
-      v-if="!this.rankings || this.rankings.length === 0"
+      v-if="!rankings || rankings.length === 0"
     >
       <tbody>
         <tr>
@@ -378,9 +369,9 @@ export default class CountryRankingsGrid extends Vue {
     this.leagueMap = new Map(league?.leagues.map((l) => [l.id, l]));
   }
 
-  public getRaceIcon(ranking: Ranking, playerIndex: number): string {
+  public getPlayerIcon(ranking: Ranking, playerIndex: number): string {
     const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
+    if (!playersInfo) return this.getRaceIcon(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
     if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
       return getAvatarUrl(
@@ -389,7 +380,7 @@ export default class CountryRankingsGrid extends Vue {
         playerInfo.isClassicPicture
       );
     } else {
-      return this.raceIcon(playerInfo.calculatedRace);
+      return this.getRaceIcon(playerInfo.calculatedRace);
     }
   }
 
@@ -419,7 +410,7 @@ export default class CountryRankingsGrid extends Vue {
     return false;
   }
 
-  raceIcon(race: ERaceEnum) {
+  getRaceIcon(race: ERaceEnum) {
     return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
