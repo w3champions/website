@@ -94,7 +94,7 @@ export default class StatisticService {
   }
 
   public static async retrievePopularGameHours(): Promise<PopularHours[]> {
-    const url = `${API_URL}api/w3c-stats/play-hours`;
+    const url = `${API_URL}api/w3c-stats/popular-hours`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
