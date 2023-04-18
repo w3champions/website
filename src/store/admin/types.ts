@@ -43,7 +43,6 @@ export interface ChangePortraitsDto {
 export interface BannedPlayer {
   battleTag: string;
   endDate: string;
-  isOnlyChatBan: boolean;
   gameModes: number[];
   isIpBan: boolean;
   banReason: string;

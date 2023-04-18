@@ -116,13 +116,6 @@
 
                   <v-col cols="12" sm="6" md="12" class="py-0">
                     <v-checkbox
-                      v-model="editedItem.isOnlyChatBan"
-                      :label="$t(`views_admin.onlybannedchat`)"
-                    />
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="12" class="py-0">
-                    <v-checkbox
                       v-if="isAddDialog"
                       v-model="banSmurfs"
                       :label="$t(`views_admin.bansmurfs`)"
@@ -227,7 +220,6 @@ export default class AdminBannedPlayers extends Vue {
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
     { text: "Ban End Date", value: "endDate", width: "8vw", filterable: false },
     { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
-    { text: "Only chat ban", value: "isOnlyChatBan", width: "7vw", filterable: false },
     { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw", filterable: false },
     { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
     { text: "Author", value: "author", width: "10vw", filterable: false },
@@ -318,7 +310,6 @@ export default class AdminBannedPlayers extends Vue {
   public editedItem = {
     battleTag: "",
     endDate: "",
-    isOnlyChatBan: false,
     gameModes: [] as number[],
     isIpBan: false,
     banReason: "",
@@ -330,7 +321,6 @@ export default class AdminBannedPlayers extends Vue {
   public defaultItem = {
     battleTag: "",
     endDate: "",
-    isOnlyChatBan: false,
     gameModes: [] as number[],
     isIpBan: false,
     banReason: "",
