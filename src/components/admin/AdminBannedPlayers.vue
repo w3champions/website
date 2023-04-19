@@ -115,15 +115,6 @@
                   </v-col>
 
                   <v-col cols="12" sm="6" md="12" class="py-0">
-                    <v-checkbox
-                      v-if="isAddDialog"
-                      v-model="banSmurfs"
-                      :label="$t(`views_admin.bansmurfs`)"
-                      @change="getSmurfs(banSmurfs)"
-                    />
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="12" class="py-0">
                     <div v-if="banSmurfs">
                       <div>{{ hasSmurfs ? "The following battletags will be banned:" : "No smurfs found." }}</div>
                       <div v-for="smurf in editedItem.smurfs" :key="smurf">{{ smurf }}</div>
