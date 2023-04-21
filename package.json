@@ -65,7 +65,7 @@
     "http-server": "^14.1.1",
     "lodash.set": "^4.3.2",
     "prettier": "^2.8.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.0",
     "sass": "~1.32.13",
     "sass-loader": "^13.2.0",
     "sass-migrator": "^1.7.2",
