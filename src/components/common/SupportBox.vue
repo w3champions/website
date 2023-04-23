@@ -12,7 +12,7 @@
       outlined
       style="padding-bottom: 0px"
     >
-      <v-img src="@/assets/socials/Patreon_button.png" />
+      <v-img src="@/assets/socials/Patreon_button.png" alt="Patreon"/>
     </v-card>
 
     <!-- PAYPAL -->
@@ -22,7 +22,7 @@
       tile
       outlined
     >
-      <v-img src="@/assets/socials/PayPal_button.png" />
+      <v-img src="@/assets/socials/PayPal_button.png" alt="Paypal"/>
     </v-card>
 
     <!-- CRYPTOCURRENCIES -->
@@ -35,7 +35,7 @@
       outlined
       @click.stop="updateTracker(index, cryptoDialogTracker)"
     >
-      <v-img :src="button(crypto.coin)"></v-img>
+      <v-img :src="button(crypto.coin)" :alt="crypto.name"></v-img>
       <crypto-dialog
         v-model="cryptoDialogTracker[index]"
         :crypto="crypto.coin"
@@ -57,7 +57,7 @@
         v-model="alternateDialogTracker[index]"
         :name="name"
       ></alternate-payments-dialog>
-      <v-img :src="button(name)"></v-img>
+      <v-img :src="button(name)" :alt="name"></v-img>
     </v-card>
   </v-card>
 </template>

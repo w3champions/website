@@ -70,6 +70,7 @@
                 <img
                   src="../assets/gettingStarted/startButton_preview_h320.jpg"
                   style="max-width: 90%; max-height: 320px"
+                  alt="Screenshot main menu W3Champions start button"
                 />
               </v-col>
             </v-row>
