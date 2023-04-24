@@ -12,7 +12,7 @@
       target="_blank"
       outlined
     >
-      <v-img :src="imgSource(partner.img)"></v-img>
+      <v-img :src="imgSource(partner.img)" :alt="partner.img"></v-img>
     </v-card>
   </v-card>
 </template>
