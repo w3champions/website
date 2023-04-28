@@ -315,6 +315,9 @@ export default class RankingsView extends Vue {
     if (!this.search || this.search.length < 3) {
       return "Type at least 3 letters";
     }
+    if (this.isLoading) {
+      return "Loading...";
+    }
 
     return "No player found";
   }
