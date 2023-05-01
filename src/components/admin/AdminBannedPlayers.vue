@@ -99,7 +99,7 @@
                         <v-select
                           v-on="on"
                           v-model="editedItem.gameModes"
-                          :items="activeGameModesWithAT"
+                          :items="selectableGameModes"
                           item-text="name"
                           item-value="id"
                           :menu-props="{ maxHeight: '400' }"
@@ -223,7 +223,25 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   ];
 
   getGameModeName(id: EGameMode): TranslateResult | undefined {
-    return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name;
+    return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
+  }
+
+  // For a new ban, only allow active game modes to be chosen.
+  // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
+  get selectableGameModes() {
+    const bannedModesForEditedItem = this.editedItem.gameModes;
+    const activeModeIds = this.activeGameModesWithAT.map((mode) => mode.id);
+    const bannedInactiveModesForEditedItem = bannedModesForEditedItem
+      .filter((mode) => !activeModeIds.includes(mode))
+      .map((id) => {
+        return {
+          id,
+          name: this.$t(`gameModes.${EGameMode[id]}`)
+        };
+      });
+    const activeModes = this.activeGameModesWithAT;
+
+    return activeModes.concat(bannedInactiveModesForEditedItem);
   }
 
   get bannedPlayers(): BannedPlayer[] {
@@ -264,7 +282,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   public editedItem = {
     battleTag: "",
     endDate: "",
-    gameModes: [] as number[],
+    gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
     smurfs: [] as string[],
@@ -275,7 +293,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   public defaultItem = {
     battleTag: "",
     endDate: "",
-    gameModes: [] as number[],
+    gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
     smurfs: [] as string[],
