@@ -99,9 +99,9 @@
                         <v-select
                           v-on="on"
                           v-model="editedItem.gameModes"
-                          :items="gameModesEnumValues"
-                          item-text="text"
-                          item-value="value"
+                          :items="activeGameModesWithAT"
+                          item-text="name"
+                          item-value="id"
                           :menu-props="{ maxHeight: '400' }"
                           :label="$t(`views_admin.gameMode`)"
                           multiple
@@ -154,7 +154,10 @@
       </v-toolbar>
     </template>
     <template #[`item.gameModesText`]="{ item }">
-      <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
+      <td v-if="!isEmpty(item.gameModes)">
+        <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
+      </td>
+      <td v-else>All</td>
     </template>
     <template #[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
@@ -164,20 +167,20 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Mixins, Watch } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
-import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
+import { TranslateResult } from "vue-i18n";
+import isEmpty from "lodash/isEmpty";
 
 @Component({ components: { PlayerSearch } })
-export default class AdminBannedPlayers extends Vue {
+export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   private oauthStore = useOauthStore();
-  public gameModesEnumValues = this.translateGametypes();
   public banSmurfs = false;
   public dialog = false;
   public dateMenu = false;
@@ -189,6 +192,7 @@ export default class AdminBannedPlayers extends Vue {
   public mdiDelete = mdiDelete;
   public mdiMagnify = mdiMagnify;
   public mdiPencil = mdiPencil;
+  public isEmpty = isEmpty;
 
   public async getSmurfs(checked: boolean) {
     if (!checked) {
@@ -211,56 +215,15 @@ export default class AdminBannedPlayers extends Vue {
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
     { text: "Ban End Date", value: "endDate", width: "8vw", filterable: false },
     { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
-    { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw", filterable: false },
+    { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
     { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
     { text: "Author", value: "author", width: "10vw", filterable: false },
     { text: "Ban reason", value: "banReason", filterable: false },
     { text: "Actions", value: "actions", sortable: false, filterable: false },
   ];
 
-
-  public translateGametypes(): {
-    text: LocaleMessage;
-    value: string | EGameMode;
-  }[] {
-    const translatedEnums = [] as {
-      text: LocaleMessage;
-      value: string | EGameMode;
-    }[];
-
-    const keys = Object.keys(EGameMode).filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (k) => typeof EGameMode[k as any] === "number"
-    );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const values = keys.map((k) => EGameMode[k as any]);
-
-    keys.shift();
-    values.shift();
-
-    for (const item in keys) {
-      translatedEnums.push({
-        text: this.$t(`gameModes.${keys[item]}`),
-        value: values[item],
-      });
-    }
-    return translatedEnums;
-  }
-
-  getGametypeText(gameModes: number[]): string {
-    if (!gameModes || gameModes.length === 0) {
-      return this.$t(`gameModes.UNDEFINED`).toString();
-    }
-
-    let stringBuilder = "";
-    gameModes.forEach((element) => {
-      const gameMode = this.gameModesEnumValues.find((o) => o.value === element) || undefined;
-      if (gameMode) {
-        stringBuilder = stringBuilder + this.$t(`gameModes.${EGameMode[element]}`) + "\n";
-      }
-    });
-
-    return stringBuilder;
+  getGameModeName(id: EGameMode): TranslateResult | undefined {
+    return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name;
   }
 
   get bannedPlayers(): BannedPlayer[] {
@@ -358,6 +321,7 @@ export default class AdminBannedPlayers extends Vue {
 
   async mounted(): Promise<void> {
     await this.loadBanList();
+    await this.loadActiveGameModes();
   }
 
   resetDialog(): void {
