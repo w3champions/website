@@ -32,155 +32,150 @@
                 :label="$t(`views_admin.headline`)"
               />
               <div class="editor">
-                <editor-menu-bar
-                  :editor="editor"
-                  v-slot="{ commands, isActive }"
-                >
-                  <div class="menubar">
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.bold() }"
-                      @click="commands.bold"
-                    >
-                      <v-icon>{{ mdiFormatBold }}</v-icon>
-                    </button>
+                <div class="menubar">
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('bold') }"
+                    :disabled="!editor.can().chain().focus().toggleBold().run()"
+                    @click="editor.chain().focus().toggleBold().run()"
+                  >
+                    <v-icon>{{ mdiFormatBold }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.italic() }"
-                      @click="commands.italic"
-                    >
-                      <v-icon>{{ mdiFormatItalic }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('italic') }"
+                    :disabled="!editor.can().chain().focus().toggleItalic().run()"
+                    @click="editor.chain().focus().toggleItalic().run()"
+                  >
+                    <v-icon>{{ mdiFormatItalic }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.strike() }"
-                      @click="commands.strike"
-                    >
-                      <v-icon>{{ mdiFormatStrikethrough }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('strike') }"
+                    :disabled="!editor.can().chain().focus().toggleStrike().run()"
+                    @click="editor.chain().focus().toggleStrike().run()"
+                  >
+                    <v-icon>{{ mdiFormatStrikethrough }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.underline() }"
-                      @click="commands.underline"
-                    >
-                      <v-icon>{{ mdiFormatUnderline }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('underline') }"
+                    :disabled="!editor.can().chain().focus().toggleUnderline().run()"
+                    @click="editor.chain().focus().toggleUnderline().run()"
+                  >
+                    <v-icon>{{ mdiFormatUnderline }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.code() }"
-                      @click="commands.code"
-                    >
-                      <v-icon>{{ mdiCodeTags }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('code') }"
+                    :disabled="!editor.can().chain().focus().toggleCode().run()"
+                    @click="editor.chain().focus().toggleCode().run()"
+                  >
+                    <v-icon>{{ mdiCodeTags }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{ 'is-active': isActive.paragraph() }"
-                      @click="commands.paragraph"
-                    >
-                      <v-icon>{{ mdiFormatParagraph }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('paragraph') }"
+                    @click="editor.chain().focus().setParagraph().run()"
+                  >
+                    <v-icon>{{ mdiFormatParagraph }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.heading({ level: 1 }),
-                      }"
-                      @click="commands.heading({ level: 1 })"
-                    >
-                      <v-icon>{{ mdiFormatHeader1 }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+                    @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+                  >
+                    <v-icon>{{ mdiFormatHeader1 }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.heading({ level: 2 }),
-                      }"
-                      @click="commands.heading({ level: 2 })"
-                    >
-                      <v-icon>{{ mdiFormatHeader2 }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+                    @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+                  >
+                    <v-icon>{{ mdiFormatHeader2 }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.heading({ level: 3 }),
-                      }"
-                      @click="commands.heading({ level: 3 })"
-                    >
-                      <v-icon>{{ mdiFormatHeader3 }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+                    @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+                  >
+                    <v-icon>{{ mdiFormatHeader3 }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.bullet_list(),
-                      }"
-                      @click="commands.bullet_list"
-                    >
-                      <v-icon>{{ mdiFormatListBulleted }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('bulletList') }"
+                    @click="editor.chain().focus().toggleBulletList().run()"
+                  >
+                    <v-icon>{{ mdiFormatListBulleted }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.ordered_list(),
-                      }"
-                      @click="commands.ordered_list"
-                    >
-                      <v-icon>{{ mdiFormatListNumbered }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('orderedList') }"
+                    @click="editor.chain().focus().toggleOrderedList().run()"
+                  >
+                    <v-icon>{{ mdiFormatListNumbered }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.blockquote(),
-                      }"
-                      @click="commands.blockquote"
-                    >
-                      <v-icon>{{ mdiFormatQuoteClose }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('blockquote') }"
+                    @click="editor.chain().focus().toggleBlockquote().run()"
+                  >
+                    <v-icon>{{ mdiFormatQuoteClose }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      @click="showImagePrompt(commands.image)"
-                    >
-                      <v-icon>{{ mdiFileImage }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    @click="showImagePrompt()"
+                  >
+                    <v-icon>{{ mdiFileImage }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      :class="{
-                        'is-active': isActive.code_block(),
-                      }"
-                      @click="commands.code_block"
-                    >
-                      <v-icon>{{ mdiCodeTags }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :class="{ 'is-active': editor.isActive('codeblock') }"
+                    @click="editor.chain().focus().toggleCodeBlock().run()"
+                  >
+                    <v-icon>{{ mdiCodeTags }}</v-icon>
+                  </button>
 
-                    <button
-                      class="menubar__button"
-                      @click="commands.horizontal_rule"
-                    >
-                      hr
-                    </button>
+                  <button
+                    class="menubar__button"
+                    @click="editor.chain().focus().setHorizontalRule().run()"
+                  >
+                    <v-icon>{{ mdiMinus }}</v-icon>
+                    hr
+                  </button>
 
-                    <button class="menubar__button" @click="commands.undo">
-                      <v-icon>{{ mdiUndo }}</v-icon>
-                    </button>
+                  <button
+                    class="menubar__button"
+                    :disabled="!editor.can().chain().focus().undo().run()"
+                    @click="editor.chain().focus().undo().run()"
+                  >
+                    <v-icon>{{ mdiUndo }}</v-icon>
+                  </button>
 
-                    <button class="menubar__button" @click="commands.redo">
-                      <v-icon>{{ mdiRedo }}</v-icon>
-                    </button>
-                  </div>
-                </editor-menu-bar>
-
-                <editor-content class="editor__content" :editor="editor" />
+                  <button
+                    class="menubar__button"
+                    :disabled="!editor.can().chain().focus().redo().run()"
+                    @click="editor.chain().focus().redo().run()"
+                  >
+                    <v-icon>{{ mdiRedo }}</v-icon>
+                  </button>
+                </div>
               </div>
+
+              <editor-content class="editor__content" :editor="editor" />
             </v-card-text>
 
             <v-card-actions>
@@ -207,38 +202,53 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
-import { Editor, EditorContent, EditorMenuBar } from "tiptap";
-import { Command } from "tiptap-commands";
-import {
-  Blockquote,
-  CodeBlock,
-  HardBreak,
-  Heading,
-  HorizontalRule,
-  OrderedList,
-  BulletList,
-  ListItem,
-  TodoItem,
-  TodoList,
-  Bold,
-  Code,
-  Italic,
-  Image,
-  Link,
-  Strike,
-  Underline,
-  History,
-} from "tiptap-extensions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import {
-  mdiCodeTags, mdiDelete,
-  mdiFileImage, mdiFormatBold, mdiFormatHeader1, mdiFormatHeader2, mdiFormatHeader3, mdiFormatItalic,
+  mdiCodeTags,
+  mdiDelete,
+  mdiFileImage,
+  mdiFormatBold,
+  mdiFormatHeader1,
+  mdiFormatHeader2,
+  mdiFormatHeader3,
+  mdiFormatItalic,
   mdiFormatListBulleted,
   mdiFormatListNumbered,
-  mdiFormatParagraph, mdiFormatQuoteClose, mdiFormatStrikethrough, mdiFormatUnderline, mdiPencil, mdiRedo, mdiUndo } from "@mdi/js";
+  mdiFormatParagraph,
+  mdiFormatQuoteClose,
+  mdiFormatStrikethrough,
+  mdiFormatUnderline,
+  mdiMinus,
+  mdiPencil,
+  mdiRedo,
+  mdiUndo,
+} from "@mdi/js";
+import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Document } from "@tiptap/extension-document";
+import { Paragraph } from "@tiptap/extension-paragraph";
+import { Text } from "@tiptap/extension-text";
+import { History } from "@tiptap/extension-history";
+import { Strike } from "@tiptap/extension-strike";
+import { Underline } from "@tiptap/extension-underline";
+import { Italic } from "@tiptap/extension-italic";
+import { Bold } from "@tiptap/extension-bold";
+import { Code } from "@tiptap/extension-code";
+import { Link } from "@tiptap/extension-link";
+import { Blockquote } from "@tiptap/extension-blockquote";
+import { Image } from "@tiptap/extension-image";
+import { BulletList } from "@tiptap/extension-bullet-list";
+import { ListItem } from "@tiptap/extension-list-item";
+import { Heading } from "@tiptap/extension-heading";
+import { HardBreak } from "@tiptap/extension-hard-break";
+import { CodeBlock } from "@tiptap/extension-code-block";
+import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
+import { OrderedList } from "@tiptap/extension-ordered-list";
+import { TaskList } from "@tiptap/extension-task-list";
+import { TaskItem } from "@tiptap/extension-task-item";
+import { Dropcursor } from "@tiptap/extension-dropcursor";
 
-@Component({ components: { EditorContent, EditorMenuBar } })
+@Component({ components: { EditorContent } })
 export default class AdminNewsForLauncher extends Vue {
   private oauthStore = useOauthStore();
   private infoMessagesStore = useInfoMessagesStore();
@@ -259,6 +269,7 @@ export default class AdminNewsForLauncher extends Vue {
   public mdiFileImage = mdiFileImage;
   public mdiUndo = mdiUndo;
   public mdiRedo = mdiRedo;
+  public mdiMinus = mdiMinus;
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
@@ -290,30 +301,6 @@ export default class AdminNewsForLauncher extends Vue {
     }
   }
 
-  private editor = new Editor({
-    extensions: [
-      new Blockquote(),
-      new BulletList(),
-      new CodeBlock(),
-      new HardBreak(),
-      new Heading({ levels: [1, 2, 3] }),
-      new HorizontalRule(),
-      new ListItem(),
-      new OrderedList(),
-      new TodoItem(),
-      new TodoList(),
-      new Link(),
-      new Image(),
-      new Bold(),
-      new Code(),
-      new Italic(),
-      new Strike(),
-      new Underline(),
-      new History(),
-    ],
-    content: "",
-  });
-
   public dialogNews = false;
   public dateMenu = false;
   public editedIndex = -1;
@@ -325,15 +312,45 @@ export default class AdminNewsForLauncher extends Vue {
     date: "",
   };
 
+  private editor = new Editor({
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Blockquote,
+      BulletList,
+      ListItem,
+      CodeBlock,
+      HardBreak,
+      Heading.configure({ levels: [1, 2, 3] }),
+      HorizontalRule,
+      OrderedList,
+      Link,
+      Image,
+      Bold,
+      Code,
+      Italic,
+      Strike,
+      Underline,
+      History,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Dropcursor,
+    ],
+    content: "",
+  });
+
   editNewsItem(item: NewsMessage): void {
     this.editedNewsItem = item;
-    this.editor.setContent(item.message);
+    this.editor.chain().focus().setContent(item.message).run();
     this.dialogNews = true;
   }
 
   async deleteNewsItem(item: NewsMessage): Promise<void> {
     confirm("Are you sure you want to delete this item?") &&
-      (await this.infoMessagesStore.deleteNews(item));
+    (await this.infoMessagesStore.deleteNews(item));
     this.dialogNews = false;
   }
 
@@ -345,7 +362,7 @@ export default class AdminNewsForLauncher extends Vue {
     this.editedNewsItem.message = this.editor.getHTML();
     await this.infoMessagesStore.editNews(this.editedNewsItem);
     this.dialogNews = false;
-    this.editor.clearContent();
+    this.editor.chain().focus().clearContent().run();
     this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
 
@@ -354,16 +371,20 @@ export default class AdminNewsForLauncher extends Vue {
     this.editedNewsItem = { bsonId: "", date: "", message: "" };
   }
 
-  showImagePrompt(command: Command) {
+  showImagePrompt() {
     // TODO Use a dialog instead of a browser prompt.
-    const src = prompt("Enter the url of your image here");
-    if (src !== null) {
-      command({ src });
+    const url = window.prompt("Enter the url of your image here");
+    if (url) {
+      this.editor.chain().focus().setImage({ src: url, alt: "" }).run();
     }
   }
 
   async mounted() {
     await this.init();
+  }
+
+  beforeUnmount() {
+    this.editor.destroy();
   }
 }
 </script>
