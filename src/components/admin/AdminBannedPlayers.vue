@@ -222,7 +222,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     { text: "Actions", value: "actions", sortable: false, filterable: false },
   ];
 
-  getGameModeName(id: EGameMode): TranslateResult | undefined {
+  getGameModeName(id: EGameMode) {
     return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
   }
 
@@ -230,7 +230,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
   get selectableGameModes() {
     const bannedModesForEditedItem = this.editedItem.gameModes;
-    const activeModeIds = this.activeGameModesWithAT.map((mode) => mode.id);
+    const activeModeIds = this.activeGameModes.map((mode) => mode.id);
     const bannedInactiveModesForEditedItem = bannedModesForEditedItem
       .filter((mode) => !activeModeIds.includes(mode))
       .map((id) => {
@@ -239,7 +239,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
           name: this.$t(`gameModes.${EGameMode[id]}`)
         };
       });
-    const activeModes = this.activeGameModesWithAT;
+    const activeModes = this.activeGameModes;
 
     return activeModes.concat(bannedInactiveModesForEditedItem);
   }
