@@ -175,7 +175,6 @@ import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
-import { TranslateResult } from "vue-i18n";
 import isEmpty from "lodash/isEmpty";
 
 @Component({ components: { PlayerSearch } })
