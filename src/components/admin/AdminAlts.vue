@@ -6,7 +6,7 @@
         class="ml-5 mr-5"
         v-model="searchPlayerModel"
         :append-icon="mdiMagnify"
-        label="Search BattleNet Tag"
+        label="Search BattleTag"
         clearable
         placeholder=" "
         :items="searchedPlayers"
@@ -23,7 +23,7 @@
       <v-card-title>Smurfs:</v-card-title>
       <v-list>
         <template v-for="alt in alts">
-          <v-list-item :key="alt">
+          <v-list-item :key="alt" @click="goToProfile(alt)">
             {{ alt }}
           </v-list-item>
         </template>
@@ -38,6 +38,7 @@ import { Component, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiMagnify } from "@mdi/js";
+import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({})
 export default class AdminAlts extends Vue {
@@ -89,6 +90,12 @@ export default class AdminAlts extends Vue {
 
   get searchedPlayers(): PlayerProfile[] {
     return this.adminStore.searchedPlayers;
+  }
+
+  public goToProfile(alt: string): void {
+    this.$router.push({
+      path: getProfileUrl(alt),
+    }).catch(() => null);
   }
 }
 </script>
