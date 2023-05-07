@@ -66,7 +66,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public static async retrieveGameTimes(): Promise<GameLength[]> {
+  public static async retrieveGameLengths(): Promise<GameLength[]> {
     const url = `${API_URL}api/w3c-stats/games-lengths`;
     const response = await fetch(url, {
       method: "GET",
@@ -76,8 +76,7 @@ export default class StatisticService {
       },
     });
 
-    const data = await response.json();
-    return data.gameLengths;
+    return await response.json();
   }
 
   public static async retrievePlayedHeroes(): Promise<PlayedHeroByMode[]> {

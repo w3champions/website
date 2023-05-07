@@ -97,7 +97,7 @@ export type StatsPerWinrate = {
 };
 
 export interface Length {
-  passedTimeInSeconds: number;
+  seconds: number;
   games: number;
 }
 

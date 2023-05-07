@@ -68,7 +68,7 @@ export const useOverallStatsStore = defineStore("overallStats", {
       this.SET_LOADING_MAP_AND_RACE_STATS(false);
     },
     async loadGameLengthStatistics() {
-      const stats = await StatisticService.retrieveGameTimes();
+      const stats = await StatisticService.retrieveGameLengths();
       this.SET_GAME_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes() {
