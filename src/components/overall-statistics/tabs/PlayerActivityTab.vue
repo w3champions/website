@@ -204,6 +204,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
 
   async mounted(): Promise<void> {
     await this.loadActiveGameModes();
+    await this.rankingsStore.retrieveSeasons();
   }
 
   public setSelectedLengthMode(mode: EGameMode) {
