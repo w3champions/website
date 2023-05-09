@@ -11,8 +11,6 @@
         placeholder=" "
         :items="searchedPlayers"
         :search-input.sync="search"
-        item-text="battleTag"
-        item-value="battleTag"
         return-object
         @click:clear="revertToDefault"
         autofocus
@@ -23,8 +21,10 @@
       <v-card-title>Smurfs:</v-card-title>
       <v-list>
         <template v-for="alt in alts">
-          <v-list-item :key="alt" @click="goToProfile(alt)">
-            {{ alt }}
+          <v-list-item :key="alt">
+            <div @click="searchAltsFromClick(alt)" class="pointer">{{ alt }}</div>
+            <v-spacer></v-spacer>
+            <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
           </v-list-item>
         </template>
       </v-list>
@@ -35,14 +35,13 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "@/store/player/types";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
 
 @Component({})
 export default class AdminAlts extends Vue {
-  public searchPlayerModel = {} as PlayerProfile;
+  public searchPlayerModel = "";
   public search = "";
   public showAlts = false;
   public oldSearchTerm = "";
@@ -58,15 +57,11 @@ export default class AdminAlts extends Vue {
   }
 
   @Watch("searchPlayerModel")
-  public async onSearchStringChanged(
-    searchedPlayer: PlayerProfile
-  ): Promise<void> {
-    if (!searchedPlayer) return;
+  public async onSearchStringChanged(bTag: string): Promise<void> {
+    if (!bTag) return;
 
-    if (searchedPlayer) {
-      const btag = searchedPlayer.battleTag;
-
-      this.alts = await this.adminStore.getAltsForPlayer(btag);
+    if (bTag) {
+      this.alts = await this.adminStore.getAltsForPlayer(bTag);
 
       if ((this.alts != null || undefined) && this.alts.length > 0) {
         this.showAlts = true;
@@ -88,8 +83,8 @@ export default class AdminAlts extends Vue {
     }
   }
 
-  get searchedPlayers(): PlayerProfile[] {
-    return this.adminStore.searchedPlayers;
+  get searchedPlayers(): string[] {
+    return this.adminStore.searchedPlayers.map((player) => player.battleTag);
   }
 
   public goToProfile(alt: string): void {
@@ -97,7 +92,16 @@ export default class AdminAlts extends Vue {
       path: getProfileUrl(alt),
     }).catch(() => null);
   }
+
+  public searchAltsFromClick(bTag: string) {
+    this.searchPlayerModel = bTag;
+    this.search = bTag;
+  }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.pointer {
+  cursor: pointer;
+}
+</style>
