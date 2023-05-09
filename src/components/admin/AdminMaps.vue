@@ -3,7 +3,7 @@
     <v-card class="pa-md-4">
       <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
       <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
-        <edit-map v-if="isEditOpen" :map="editedMap" @cancel="closeEdit" @save="saveMap"></edit-map>
+        <edit-map v-if="isEditOpen" :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
       </v-dialog>
 
       <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">

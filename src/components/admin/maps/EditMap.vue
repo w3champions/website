@@ -50,9 +50,12 @@ import { Prop, Component } from "vue-property-decorator";
 @Component({})
 export default class EditMap extends Vue {
   @Prop() public map!: Map;
-  public title = "";
-  public isAddDialog = false;
+  @Prop() public isAddDialog!: boolean;
   public mapId = null;
+
+  public get title() {
+    return this.isAddDialog ? "Create map" : "Edit map";
+  }
 
   public cancel() {
     this.$emit("cancel");
@@ -63,11 +66,6 @@ export default class EditMap extends Vue {
       this.map.id = this.mapId;
     }
     this.$emit("save", this.map);
-  }
-
-  mounted() {
-    this.isAddDialog = this.map.id === -1;
-    this.title = this.isAddDialog ? "Create map" : "Edit map";
   }
 }
 </script>
