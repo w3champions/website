@@ -46,6 +46,7 @@ export default class AdminMaps extends Vue {
   public editedMap?: Map = {} as Map;
   public isEditOpen = false;
   public isEditFilesOpen = false;
+  public isAddDialog = false;
   private mapsManagementStore = useMapsManagementStore();
   public mdiFile = mdiFile;
   public mdiPencil = mdiPencil;
@@ -91,22 +92,26 @@ export default class AdminMaps extends Vue {
   }
 
   public addMap() {
+    this.isAddDialog = true;
     this.isEditOpen = true;
     this.editedMap = this.createDefaultMap();
   }
 
   public editMap(map: Map) {
+    this.isAddDialog = false;
     this.isEditOpen = true;
     this.editedMap = map;
   }
 
   public editMapFiles(map: Map) {
+    this.isAddDialog = false;
     this.isEditFilesOpen = true;
     this.editedMap = map;
   }
 
   public closeEdit() {
     this.isEditOpen = false;
+    this.isAddDialog = false;
   }
 
   public closeEditFiles() {
@@ -115,16 +120,16 @@ export default class AdminMaps extends Vue {
 
   public async saveMap(map: Map) {
     try {
-      if (map.id === -1) {
+      if (this.isAddDialog) {
         await this.mapsManagementStore.createMap(map);
       } else {
         await this.mapsManagementStore.updateMap(map);
       }
 
-      this.isEditOpen = false;
+      this.closeEdit();
 
-    } catch {
-      alert("Error trying to save map");
+    } catch(err) {
+      err ? alert(err) : alert("Error trying to save map.");
     }
   }
 

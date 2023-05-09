@@ -7,8 +7,17 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="map.name" label="Name"></v-text-field>
+            <v-text-field v-model="map.name" label="Name" autofocus></v-text-field>
           </v-col>
+
+          <v-tooltip left v-if="isAddDialog">
+            <template v-slot:activator="{ on, attrs }">
+              <v-col cols="12" sm="6" md="12">
+                <v-text-field v-model="mapId" label="Id" v-bind="attrs" v-on="on"></v-text-field>
+              </v-col>
+            </template>
+            <span>Leave blank to auto assign an Id</span>
+          </v-tooltip>
 
           <v-col cols="12" sm="6" md="12">
             <v-text-field v-model="map.category" label="Category"></v-text-field>
@@ -41,17 +50,24 @@ import { Prop, Component } from "vue-property-decorator";
 @Component({})
 export default class EditMap extends Vue {
   @Prop() public map!: Map;
-
-  public get title() {
-    return this.map?.id > -1 ? "Edit map" : "Create map";
-  }
+  public title = "";
+  public isAddDialog = false;
+  public mapId = null;
 
   public cancel() {
     this.$emit("cancel");
   }
 
   public save() {
+    if (this.isAddDialog && this.mapId !== null) {
+      this.map.id = this.mapId;
+    }
     this.$emit("save", this.map);
+  }
+
+  mounted() {
+    this.isAddDialog = this.map.id === -1;
+    this.title = this.isAddDialog ? "Create map" : "Edit map";
   }
 }
 </script>

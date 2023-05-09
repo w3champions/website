@@ -17,7 +17,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public static async createMap(token: string, map: Map): Promise<Map> {
+  public static async createMap(token: string, map: Map): Promise<void> {
     const url = `${API_URL}api/maps?authorization=${token}`;
 
     const data = JSON.stringify(map);
@@ -30,7 +30,10 @@ export default class MapsService {
       body: data,
     });
 
-    return await response.json();
+    if (!response.ok) {
+      const msg = await response.json();
+      throw new Error(msg);
+    }
   }
 
   public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
