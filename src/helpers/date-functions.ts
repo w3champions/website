@@ -17,6 +17,7 @@ export const formatDateToDateWeekday = (d: Date): string => {
 export const formatTimestampStringToUnixTime = (str: timestampString): number => {
   return getUnixTime(parseJSON(str));
 };
+
 export const formatTimestampStringToDate = (str: timestampString): string => {
   return format(parseJSON(str), "dd-MMM-yyyy");
 };
@@ -25,8 +26,8 @@ export const formatTimestampStringToDateTime = (str: timestampString): string =>
   return format(parseJSON(str), "dd-MMM-yyyy HH:mm");
 };
 
-export const formatTimestampStringToDateTime2 = (str: timestampString): string => {
-  return format(parseJSON(str), "yyyy-MM-dd HH:mm:ss");
+export const formatTimestampString = (str: timestampString, formatting: string): string => {
+  return format(parseJSON(str), formatting);
 };
 
 // Converts a date string formatted as "yyyy-MM-dd" to 'yyyy-MM-ddTHH:mm:ss.SSSZ", where the time is the current UTC time.
