@@ -24,3 +24,19 @@ export const formatTimestampStringToDate = (str: timestampString): string => {
 export const formatTimestampStringToDateTime = (str: timestampString): string => {
   return format(parseJSON(str), "dd-MMM-yyyy HH:mm");
 };
+
+export const formatTimestampStringToDateTime2 = (str: timestampString): string => {
+  return format(parseJSON(str), "yyyy-MM-dd HH:mm:ss");
+};
+
+// Converts a date string formatted as "yyyy-MM-dd" to 'yyyy-MM-ddTHH:mm:ss.SSSZ", where the time is the current UTC time.
+// Example: "2023-05-15" becomes "2023-05-15T19:39:49.603Z"
+export const dateToCurrentTimeDate = (endDateString: string): string => {
+  if (!endDateString) return "";
+  const endDate = new Date(endDateString);
+  const now = new Date();
+  now.setDate(endDate.getDate());
+  now.setMonth(endDate.getMonth());
+  now.setFullYear(endDate.getFullYear());
+  return now.toISOString();
+};

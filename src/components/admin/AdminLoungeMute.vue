@@ -124,6 +124,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { mdiDelete } from "@mdi/js";
+import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminLoungeMute extends Vue {
@@ -169,21 +170,11 @@ export default class AdminLoungeMute extends Vue {
     const mute = {
       battleTag: this.battleTag,
       author: this.author,
-      endDate: this.muteEndDateTime,
+      endDate: dateToCurrentTimeDate(this.endDate),
     } as LoungeMute;
 
     await this.loungeMuteStore.addLoungeMute(mute);
     this.loadMutes();
-  }
-
-  get muteEndDateTime(): string {
-    if (!this.endDate) return "";
-    const endDate = new Date(this.endDate);
-    const now = new Date();
-    now.setDate(endDate.getDate());
-    now.setMonth(endDate.getMonth());
-    now.setFullYear(endDate.getFullYear());
-    return now.toISOString();
   }
 
   public async loadMutes(): Promise<void> {
