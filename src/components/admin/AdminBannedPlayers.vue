@@ -318,7 +318,9 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
 
   async save(): Promise<void> {
     this.editedItem.author = this.author;
-    this.editedItem.endDate = dateToCurrentTimeDate(this.editedItem.endDate);
+    if (this.endDateIsSet) {
+      this.editedItem.endDate = dateToCurrentTimeDate(this.editedItem.endDate);
+    }
     if (this.isAddDialog) {
       this.editedItem.battleTag = this.foundPlayer;
     }
@@ -385,6 +387,11 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     if (this.banSmurfs) {
       this.resetSmurfs();
     }
+  }
+
+  // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
+  get endDateIsSet(): boolean {
+    return this.editedItem.endDate.length == 10;
   }
 }
 </script>
