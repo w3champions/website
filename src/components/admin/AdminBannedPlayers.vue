@@ -176,6 +176,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
+import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
@@ -212,7 +213,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
 
   public headers = [
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
-    { text: "Ban End Date", value: "endDate", width: "8vw", filterable: false },
+    { text: "Ban End Date", value: "endDate", width: "10vw", filterable: false },
     { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
     { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
     { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
@@ -317,6 +318,9 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
 
   async save(): Promise<void> {
     this.editedItem.author = this.author;
+    if (this.endDateIsSet) {
+      this.editedItem.endDate = dateToCurrentTimeDate(this.editedItem.endDate);
+    }
     if (this.isAddDialog) {
       this.editedItem.battleTag = this.foundPlayer;
     }
@@ -383,6 +387,11 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     if (this.banSmurfs) {
       this.resetSmurfs();
     }
+  }
+
+  // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
+  get endDateIsSet(): boolean {
+    return this.editedItem.endDate.length == 10;
   }
 }
 </script>

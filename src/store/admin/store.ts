@@ -14,6 +14,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
 import AdminService from "@/services/AdminService";
 import { defineStore } from "pinia";
+import { formatTimestampString } from "@/helpers/date-functions";
 
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
@@ -35,6 +36,12 @@ export const useAdminStore = defineStore("admin", {
   actions: {
     async loadBannedPlayers() {
       const bannedPlayers = await AdminService.getBannedPlayers();
+
+      bannedPlayers.players.forEach((bannedPlayer) => {
+        bannedPlayer.endDate = formatTimestampString(bannedPlayer.endDate, "yyyy-MM-dd HH:mm:ss");
+        bannedPlayer.banInsertDate = formatTimestampString(bannedPlayer.banInsertDate, "yyyy-MM-dd HH:mm:ss");
+      });
+
       this.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
     async postBan(bannedPlayer: BannedPlayer) {
