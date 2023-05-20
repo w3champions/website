@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :headers="headersNews"
+    :headers="headers"
     :items="news"
     :items-per-page="5"
     class="elevation-1"
@@ -128,25 +128,9 @@
 
                   <button
                     class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('blockquote') }"
-                    @click="editor.chain().focus().toggleBlockquote().run()"
-                  >
-                    <v-icon>{{ mdiFormatQuoteClose }}</v-icon>
-                  </button>
-
-                  <button
-                    class="menubar__button"
                     @click="showImagePrompt()"
                   >
                     <v-icon>{{ mdiFileImage }}</v-icon>
-                  </button>
-
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('codeblock') }"
-                    @click="editor.chain().focus().toggleCodeBlock().run()"
-                  >
-                    <v-icon>{{ mdiCodeTags }}</v-icon>
                   </button>
 
                   <button
@@ -235,17 +219,12 @@ import { Italic } from "@tiptap/extension-italic";
 import { Bold } from "@tiptap/extension-bold";
 import { Code } from "@tiptap/extension-code";
 import { Link } from "@tiptap/extension-link";
-import { Blockquote } from "@tiptap/extension-blockquote";
 import { Image } from "@tiptap/extension-image";
 import { BulletList } from "@tiptap/extension-bullet-list";
 import { ListItem } from "@tiptap/extension-list-item";
 import { Heading } from "@tiptap/extension-heading";
-import { HardBreak } from "@tiptap/extension-hard-break";
-import { CodeBlock } from "@tiptap/extension-code-block";
 import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
 import { OrderedList } from "@tiptap/extension-ordered-list";
-import { TaskList } from "@tiptap/extension-task-list";
-import { TaskItem } from "@tiptap/extension-task-item";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
 
 @Component({ components: { EditorContent } })
@@ -271,16 +250,11 @@ export default class AdminNewsForLauncher extends Vue {
   public mdiRedo = mdiRedo;
   public mdiMinus = mdiMinus;
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  data() {
-    return {
-      headersNews: [
-        { text: "Text", value: "message", align: "start" },
-        { text: "Headline", align: "start", value: "date" },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-    };
-  }
+  public headers = [
+    { text: "Text", value: "message", align: "start" },
+    { text: "Headline", align: "start", value: "date" },
+    { text: "Actions", value: "actions", sortable: false },
+  ];
 
   get news(): NewsMessage[] {
     return this.infoMessagesStore.news;
@@ -312,16 +286,13 @@ export default class AdminNewsForLauncher extends Vue {
     date: "",
   };
 
-  private editor = new Editor({
+  public editor = new Editor({
     extensions: [
       Document,
       Paragraph,
       Text,
-      Blockquote,
       BulletList,
       ListItem,
-      CodeBlock,
-      HardBreak,
       Heading.configure({ levels: [1, 2, 3] }),
       HorizontalRule,
       OrderedList,
@@ -333,10 +304,6 @@ export default class AdminNewsForLauncher extends Vue {
       Strike,
       Underline,
       History,
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
       Dropcursor,
     ],
     content: "",
