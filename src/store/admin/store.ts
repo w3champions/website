@@ -61,10 +61,6 @@ export const useAdminStore = defineStore("admin", {
         bannedPlayer,
         oauthStore.token,
       );
-      const bannedPlayers = this.players.filter(
-        (p: BannedPlayer) => p.battleTag != bannedPlayer.battleTag,
-      );
-      this.SET_BANNED_PLAYERS(bannedPlayers);
     },
     async loadQueueData(token: string) {
       const queuedata = await AdminService.getQueueData(token);
