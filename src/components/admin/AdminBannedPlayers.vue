@@ -114,13 +114,6 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="12" class="py-0">
-                    <div v-if="banSmurfs">
-                      <div>{{ hasSmurfs ? "The following battletags will be banned:" : "No smurfs found." }}</div>
-                      <div v-for="smurf in editedItem.smurfs" :key="smurf">{{ smurf }}</div>
-                    </div>
-                  </v-col>
-
                   <v-col cols="12" sm="12" md="12" class="pb-0">
                     <v-text-field
                       v-model="editedItem.banReason"
@@ -181,7 +174,6 @@ import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 @Component({ components: { PlayerSearch } })
 export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   private oauthStore = useOauthStore();
-  public banSmurfs = false;
   public dialog = false;
   public dateMenu = false;
   public editedIndex = -1;
@@ -193,23 +185,6 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   public mdiMagnify = mdiMagnify;
   public mdiPencil = mdiPencil;
   public isEmpty = isEmpty;
-
-  public async getSmurfs(checked: boolean) {
-    if (!checked) {
-      this.resetSmurfs();
-      return;
-    }
-
-    const bTag = this.foundPlayer;
-    if (bTag) {
-      const smurfs = await this.adminStore.getAltsForPlayer(bTag);
-      this.editedItem.smurfs = smurfs.map((smurf) => smurf.toLowerCase());
-    }
-  }
-
-  get hasSmurfs() {
-    return this.editedItem.smurfs ? this.editedItem.smurfs.length > 0 : false;
-  }
 
   public headers = [
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
@@ -285,7 +260,6 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
-    smurfs: [] as string[],
     banInsertDate: "",
     author: "",
   };
@@ -296,7 +270,6 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
-    smurfs: [] as string[],
     banInsertDate: "",
     author: "",
   };
@@ -349,18 +322,12 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
-      this.resetSmurfs();
     });
     this.clearPlayerSearch();
   }
 
   clearPlayerSearch() {
     this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
-  }
-
-  resetSmurfs(): void {
-    this.banSmurfs = false;
-    this.editedItem.smurfs = [];
   }
 
   @Watch("dialog")
@@ -374,19 +341,10 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
 
   playerFound(bTag: string): void {
     this.foundPlayer = bTag;
-
-    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
-    if (this.banSmurfs) {
-      this.resetSmurfs();
-    }
   }
 
   searchCleared(): void {
     this.foundPlayer = "";
-
-    if (this.banSmurfs) {
-      this.resetSmurfs();
-    }
   }
 
   // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
