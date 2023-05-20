@@ -46,7 +46,6 @@ export interface BannedPlayer {
   gameModes: number[];
   isIpBan: boolean;
   banReason: string;
-  smurfs: string[];
   banInsertDate: string;
   author: string;
 }
