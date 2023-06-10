@@ -19,7 +19,7 @@
               outlined
             />
           </v-card-text>
-          <div v-if="isAllMode">
+          <div v-if="displayDetailedModeDescription">
             {{
               $t(
                 "components_overall-statistics_tabs_playeractivitytab.gamemodedesc1"
@@ -246,8 +246,19 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
     return this.rankingsStore.seasons[0]?.id?.toString() ?? "";
   }
 
-  get isAllMode() {
-    return this.selectedGamesPerDayMode === EGameMode.UNDEFINED;
+  get displayDetailedModeDescription() {
+    // Only display the extra description (e.g. 2v2 mode is counted twice)
+    // for game modes which are included in the description.
+    const applicableModes = [
+      EGameMode.UNDEFINED,  // "All"
+      EGameMode.GM_2ON2,
+      EGameMode.GM_4ON4,
+      EGameMode.GM_FFA,
+      EGameMode.GM_LEGION_4v4_X20,
+      EGameMode.GM_LTW_FFA,
+      EGameMode.GM_SC_FFA_4,
+    ];
+    return applicableModes.includes(this.selectedGamesPerDayMode);
   }
 
   get selectedGameHours(): PopularHours {
