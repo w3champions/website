@@ -41,6 +41,18 @@
                     </v-btn>
                   </v-card-text>
                   <br />
+                  <p>{{ $t("views_gettingstarted.downloadlaunchere") }}</p>
+                  <v-card-text>
+                    <v-btn
+                      :href="launcher_e_url"
+                      target="_blank"
+                      class="join-button mt-0 mb-4"
+                    >
+                      <v-icon>{{ mdiDownload }}</v-icon>
+                      <span class="mr-2 hidden-xs-only">Windows (beta)</span>
+                    </v-btn>
+                  </v-card-text>
+                  <br />
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                   <br />
                   <br />
@@ -331,6 +343,10 @@ export default class GettingStartedView extends Vue {
 
   get launcherUrlWin() {
     return LAUNCHER_UPDATE_URL + "launcher/win";
+  }
+
+  get launcher_e_url() {
+    return "https://github.com/w3champions/launcher-e-release/releases/latest/download/W3Champions_0.0.13_x64_en-US.msi";
   }
 
   data() {

@@ -44,6 +44,7 @@ const data = {
       manualwin: "Manual Windows",
       manualmac: "Manual Mac",
       downloadw3ctitle: "Download W3Champions",
+      downloadlaunchere: "Below you can download the new W3Champions launcher (beta). Some features are still missing, such as AT, custom games and score screen.",
       launchertitle: "After the Installation, open W3Champions and join us!",
       launcherfeaturestitle: "Launcher features:",
       launcherfeaturesbody1: "Always have W3C installed and updated",
