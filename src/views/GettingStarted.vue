@@ -346,7 +346,7 @@ export default class GettingStartedView extends Vue {
   }
 
   get launcher_e_url() {
-    return "https://github.com/w3champions/launcher-e-release/releases/latest/download/W3Champions_0.0.13_x64_en-US.msi";
+    return "https://github.com/w3champions/launcher-e-release/releases/latest/download/W3Champions_0.0.14_x64_en-US.msi";
   }
 
   data() {
