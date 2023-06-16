@@ -324,6 +324,7 @@ import { mdiDownload } from "@mdi/js";
 @Component({})
 export default class GettingStartedView extends Vue {
   public mdiDownload = mdiDownload;
+  public launcher_e_url = "";
 
   get alertMessage() {
     return "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!";
@@ -345,8 +346,15 @@ export default class GettingStartedView extends Vue {
     return LAUNCHER_UPDATE_URL + "launcher/win";
   }
 
-  get launcher_e_url() {
-    return "https://github.com/w3champions/launcher-e-release/releases/latest/download/W3Champions_0.0.17_x64_en-US.msi";
+  async mounted() {
+    await this.set_launcher_e_url();
+  }
+
+  public async set_launcher_e_url(): Promise<void> {
+    const apiUrl = "https://api.github.com/repos/w3champions/launcher-e-release/releases/latest";
+    const response = await fetch(apiUrl);
+    const releaseInfo = await response.json();
+    this.launcher_e_url = releaseInfo?.assets.find((asset: { name: string; browser_download_url: string }) => asset.name.endsWith("msi"))?.browser_download_url;
   }
 
   data() {
