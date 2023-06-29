@@ -32,7 +32,7 @@ yarn run lint
 See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
 ## Optional: Setup website backend server (and authenticate as admin)
-By default the website you started using `yarn run serve` will connect to the productive
+By default, the website you started using `yarn run serve` will connect to the productive
 backend of [www.w3champions.com](https://www.w3champions.com/). The API serving the dynamic content
 is available at [website-backend.w3champions.com/api/](https://website-backend.w3champions.com/api/). 
 
