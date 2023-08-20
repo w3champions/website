@@ -50,7 +50,7 @@
       </v-row>
 
       <div v-if="tournament.id">
-        <tournament :tournament="tournament" />
+        <Tournament :tournament="tournament" />
       </div>
       <div v-else>
         No upcoming tournament.
@@ -90,11 +90,12 @@ export default class AdminTournaments extends Vue {
   private throttledInit = throttle(this.init, 2000, { leading: true });
   private tournamentsStore = useTournamentsStore();
   private tournamentsManagementStore = useTournamentsManagementStore();
+  _intervalRefreshHandle?: number = undefined;
 
   async mounted(): Promise<void> {
     this.throttledInit();
     await this.tournamentsStore.loadActiveTournamentMaps();
-    setInterval(() => {
+    this._intervalRefreshHandle = setInterval(() => {
       this.throttledInit();
     }, 15000);
   }
@@ -197,6 +198,10 @@ export default class AdminTournaments extends Vue {
       this.closeEditTournament();
       this.throttledInit();
     }
+  }
+
+  destroyed(): void {
+    clearInterval(this._intervalRefreshHandle);
   }
 }
 </script>
