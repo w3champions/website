@@ -1,5 +1,6 @@
 <template>
   <v-container fluid v-show="isAdmin" style="height: 100%">
+    <admin-check-jwt-lifetime />
     <div class="admin-page-wrapper">
       <admin-navigation :items="navItems" @itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
@@ -32,6 +33,7 @@ import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
+import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import {
   mdiAccountBoxOutline,
@@ -61,10 +63,12 @@ import {
     AdminMotd,
     AdminTournaments,
     AdminViewGameChat,
+    AdminCheckJwtLifetime,
   },
 })
 export default class Admin extends Vue {
   private oauthStore = useOauthStore();
+
   navItems: Array<NavigationItem> = [
     {
       title: "Data Science",
@@ -199,7 +203,7 @@ export default class Admin extends Vue {
       ],
     },
   ];
-  selectedNavItem = {};
+  selectedNavItem = {} as NavigationItem;
 
   get isAdmin(): boolean {
     return this.oauthStore.isAdmin;

@@ -220,7 +220,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   }
 
   get bannedPlayers(): BannedPlayer[] {
-    return this.adminStore.players;
+    return this.adminStore.bannedPlayers;
   }
 
   get isAdmin(): boolean {

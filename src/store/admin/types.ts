@@ -5,7 +5,7 @@ import { PlayerProfile } from "@/store/player/types";
 
 export type AdminState = {
   total: number;
-  players: BannedPlayer[];
+  bannedPlayers: BannedPlayer[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
   searchedPlayers: PlayerProfile[];
@@ -15,6 +15,7 @@ export type AdminState = {
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
   banValidationError: string;
+  showJwtExpiredDialog: boolean;
 };
 
 export type AdminPlayerManagementState = {
