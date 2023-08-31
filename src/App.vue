@@ -196,7 +196,7 @@ export default class App extends Vue {
   private oauthStore = useOauthStore();
   private _savedLocale = "en";
   private selectedTheme = "human";
-  private isNavigationDrawerOpen = false;
+  public isNavigationDrawerOpen = false;
   public items: ItemType[] = [
     {
       title: "tournaments",
@@ -231,7 +231,7 @@ export default class App extends Vue {
     },
   ];
 
-  private showSignInDialog = false;
+  public showSignInDialog = false;
   private rootStateStore = useRootStateStore();
 
   loginOrGoToProfile() {

@@ -42,10 +42,7 @@ export const useOauthStore = defineStore("oauth", {
         this.SET_IS_ADMIN(profile.isAdmin);
         await AuthorizationService.saveAuthToken(profile);
       } else {
-        AuthorizationService.deleteAuthCookie();
-        this.SET_PROFILE_NAME("");
-        this.SET_IS_ADMIN(false);
-        this.SET_BEARER("");
+        this.logout();
       }
     },
     async saveLoginRegion(region: BnetOAuthRegion) {
