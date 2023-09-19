@@ -24,7 +24,7 @@
                   <br />
                   <v-card-text>
                     <v-btn
-                      :href="launcherUrlWin"
+                      :href="launcher_e_url"
                       target="_blank"
                       class="join-button mt-0 mb-4"
                     >
@@ -41,15 +41,15 @@
                     </v-btn>
                   </v-card-text>
                   <br />
-                  <p>{{ $t("views_gettingstarted.downloadlaunchere") }}</p>
+                  <p>{{ $t("views_gettingstarted.downloadlegacylauncher") }}</p>
                   <v-card-text>
                     <v-btn
-                      :href="launcher_e_url"
+                      :href="launcherUrlWin"
                       target="_blank"
                       class="join-button mt-0 mb-4"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2 hidden-xs-only">Windows (beta)</span>
+                      <span class="mr-2 hidden-xs-only">Windows (legacy)</span>
                     </v-btn>
                   </v-card-text>
                   <br />
