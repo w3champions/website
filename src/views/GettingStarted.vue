@@ -24,7 +24,7 @@
                   <br />
                   <v-card-text>
                     <v-btn
-                      :href="launcher_e_url"
+                      :href="launcherEUrl"
                       target="_blank"
                       class="join-button mt-0 mb-4"
                     >
@@ -346,15 +346,8 @@ export default class GettingStartedView extends Vue {
     return LAUNCHER_UPDATE_URL + "launcher/win";
   }
 
-  async mounted() {
-    await this.set_launcher_e_url();
-  }
-
-  public async set_launcher_e_url(): Promise<void> {
-    const apiUrl = "https://api.github.com/repos/w3champions/launcher-e-release/releases/latest";
-    const response = await fetch(apiUrl);
-    const releaseInfo = await response.json();
-    this.launcher_e_url = releaseInfo?.assets.find((asset: { name: string; browser_download_url: string }) => asset.name.endsWith("msi"))?.browser_download_url;
+  get launcherEUrl() {
+    return LAUNCHER_UPDATE_URL + "launcher-e";
   }
 
   data() {
