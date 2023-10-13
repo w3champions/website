@@ -34,16 +34,15 @@ import AdminMotd from "@/components/admin/AdminMotd.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
+import AdminPermissions from "@/components/admin/AdminPermissions.vue";
+import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import {
-  mdiAccountBoxOutline,
-  mdiAccountGroup, mdiAccountNetwork,
-  mdiAccountQuestion,
-  mdiAccountRemove, mdiBriefcase,
-  mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
+  mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
+  mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
-  mdiMonitorDashboard,
-  mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
+  mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
+  mdiAccountKey, mdiFileDocumentOutline,
 } from "@mdi/js";
 
 @Component({
@@ -64,6 +63,8 @@ import {
     AdminTournaments,
     AdminViewGameChat,
     AdminCheckJwtLifetime,
+    AdminPermissions,
+    AdminServerLogs,
   },
 })
 export default class Admin extends Vue {
@@ -202,6 +203,30 @@ export default class Admin extends Vue {
         },
       ],
     },
+    {
+      title: "Permissions",
+      icon: mdiAccountKey,
+      items: [
+        {
+          key: "user_management",
+          title: "Manage Permissions",
+          icon: mdiAccountKey,
+          component: "admin-permissions",
+        },
+      ],
+    },
+    // {
+    //   title: "Server Logs",
+    //   icon: mdiFileDocumentOutline,
+    //   items: [
+    //     {
+    //       key: "admin-server-logs",
+    //       title: "View Server Logs",
+    //       icon: mdiFileDocumentOutline,
+    //       component: "admin-server-logs",
+    //     },
+    //   ],
+    // },
   ];
   selectedNavItem = {} as NavigationItem;
 
