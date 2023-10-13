@@ -54,8 +54,6 @@ export default class TournamentsService {
   }
 
   public static async deleteAdmin(token: string, id: string): Promise<string> {
-    console.log("token");
-    console.log(token);
     const encodedBattleTag = encodeURIComponent(id);
     const url = `${API_URL}api/admin/permissions/delete?id=${encodedBattleTag}&authorization=${token}`;
 
