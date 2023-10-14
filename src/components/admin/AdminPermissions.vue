@@ -141,7 +141,7 @@ export default class AdminPermissions extends Vue {
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
-    { text: "Description", sortable: true, filterable: false, value: "description" },
+    { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
     { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
     { text: "Author", sortable: true, filterable: false, value: "author" },
     { text: "Actions", sortable: false, value: "actions" },
