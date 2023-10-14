@@ -42,7 +42,7 @@ import {
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline,
+  mdiAccountKey,
 } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 
@@ -284,8 +284,8 @@ export default class Admin extends Vue {
     return this.navItems[0];
   }
 
-  mounted(): void {
-    this.navItemSelected(this.getFirstItem(this.navItems));
+  async mounted(): Promise<void> {
+    this.navItemSelected(this.getFirstItem(this.filteredNavItems));
   }
 }
 </script>

@@ -1,7 +1,6 @@
 import { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 import { defineStore } from "pinia";
 import AuthorizationService from "@/services/AuthorizationService";
-import { EPermission } from "../admin/permission/types";
 
 export const useOauthStore = defineStore("oauth", {
   state: (): OauthState => ({
@@ -45,6 +44,9 @@ export const useOauthStore = defineStore("oauth", {
       if (profile) {
         this.SET_PROFILE_NAME(profile.battleTag);
         this.SET_IS_ADMIN(profile.isAdmin);
+        if (profile.isAdmin) {
+          this.SET_PERMISSIONS(profile.permissions);
+        }
         await AuthorizationService.saveAuthToken(profile);
       } else {
         this.logout();

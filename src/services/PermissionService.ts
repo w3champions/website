@@ -16,11 +16,7 @@ export default class TournamentsService {
       },
     });
 
-    if (response.status == 404) {
-      return [];
-    }
-
-    return await response?.json();
+    return response.ok ? await response.json() : [];
   }
 
   public static async addAdmin(token: string, permission: IPermission): Promise<string> {

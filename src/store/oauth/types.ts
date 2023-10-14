@@ -1,5 +1,3 @@
-import { EPermission } from "../admin/permission/types";
-
 export type OauthState = {
   code: string;
   token: string;
@@ -15,7 +13,7 @@ export type W3cToken = {
   isAdmin: boolean;
   bnetID: string;
   name: string;
-  permissions: string[]
+  permissions: string[];
 };
 
 export interface TwitchToken {
