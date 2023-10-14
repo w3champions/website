@@ -2,7 +2,7 @@
   <v-container fluid v-show="isAdmin" style="height: 100%">
     <admin-check-jwt-lifetime />
     <div class="admin-page-wrapper">
-      <admin-navigation :items="navItems" @itemSelected="navItemSelected"></admin-navigation>
+      <admin-navigation :items="filteredNavItems" @itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
         <v-card-title>
           {{ selectedNavItem.title }}
@@ -42,8 +42,9 @@ import {
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline,
+  mdiAccountKey,
 } from "@mdi/js";
+import { EPermission } from "@/store/admin/permission/types";
 
 @Component({
   components: {
@@ -74,11 +75,13 @@ export default class Admin extends Vue {
     {
       title: "Data Science",
       icon: mdiChartLine,
+      permission: EPermission.Queue,
       items: [
         {
           key: "queue",
           title: "Live Queue Data",
           icon: mdiTable,
+          permission: EPermission.Queue,
           component: "admin-queue-data",
         },
       ],
@@ -86,35 +89,41 @@ export default class Admin extends Vue {
     {
       title: "Moderation",
       icon: mdiAccountGroup,
+      permission: EPermission.Moderation,
       items: [
         {
           key: "banned_players",
           title: "Banned Players",
           icon: mdiAccountRemove,
+          permission: EPermission.Moderation,
           component: "admin-banned-players",
         },
         {
           key: "alts",
           title: "Smurf Checker",
           icon: mdiAccountQuestion,
+          permission: EPermission.Moderation,
           component: "admin-alts",
         },
         {
           key: "mute",
           title: "Global Mute",
           icon: mdiChatRemove,
+          permission: EPermission.Moderation,
           component: "admin-global-mute",
         },
         {
           key: "lounge_mute",
           title: "Lounge Mute",
           icon: mdiChatRemoveOutline,
+          permission: EPermission.Moderation,
           component: "admin-lounge-mute",
         },
         {
           key: "view_game_chat",
           title: "View Game Chat",
           icon: mdiFormatAlignLeft,
+          permission: EPermission.Moderation,
           component: "admin-view-game-chat",
         },
       ],
@@ -122,11 +131,13 @@ export default class Admin extends Vue {
     {
       title: "Player Settings",
       icon: mdiCog,
+      permission: EPermission.Proxies,
       items: [
         {
           key: "proxy_settings",
           title: "Proxy Settings",
           icon: mdiAccountNetwork,
+          permission: EPermission.Proxies,
           component: "admin-proxies",
         },
       ],
@@ -134,11 +145,13 @@ export default class Admin extends Vue {
     {
       title: "Launcher",
       icon: mdiRocket,
+      permission: EPermission.Content,
       items: [
         {
           key: "news",
           title: "News",
           icon: mdiRss,
+          permission: EPermission.Content,
           component: "admin-news-for-launcher",
         },
       ],
@@ -146,17 +159,20 @@ export default class Admin extends Vue {
     {
       title: "In-Game Settings",
       icon: mdiMonitorDashboard,
+      permission: EPermission.Content,
       items: [
         {
           key: "tips",
-          icon: mdiTooltipTextOutline,
           title: "Loading screen tips",
+          icon: mdiTooltipTextOutline,
+          permission: EPermission.Content,
           component: "admin-loading-screen-tips",
         },
         {
           key: "motd",
-          icon: mdiMessageAlert,
           title: "Message of the Day",
+          icon: mdiMessageAlert,
+          permission: EPermission.Content,
           component: "admin-motd",
         },
       ],
@@ -164,17 +180,20 @@ export default class Admin extends Vue {
     {
       title: "Rewards",
       icon: mdiGift,
+      permission: EPermission.Content,
       items: [
         {
           key: "portraits",
           title: "Assign Portraits",
           icon: mdiAccountBoxOutline,
+          permission: EPermission.Content,
           component: "admin-assign-portraits",
         },
         {
           key: "manage-portraits",
           title: "Manage Portraits",
           icon: mdiBriefcase,
+          permission: EPermission.Content,
           component: "admin-manage-portraits",
         },
       ],
@@ -182,11 +201,13 @@ export default class Admin extends Vue {
     {
       title: "Maps",
       icon: mdiMapSearch,
+      permission: EPermission.Maps,
       items: [
         {
           key: "maps",
           title: "Manage Maps",
           icon: mdiMapPlus,
+          permission: EPermission.Maps,
           component: "admin-maps",
         },
       ],
@@ -194,11 +215,13 @@ export default class Admin extends Vue {
     {
       title: "Tournaments",
       icon: mdiSwordCross,
+      permission: EPermission.Tournaments,
       items: [
         {
           key: "tournaments",
           title: "Manage Tournaments",
           icon: mdiSwordCross,
+          permission: EPermission.Tournaments,
           component: "admin-tournaments",
         },
       ],
@@ -206,11 +229,13 @@ export default class Admin extends Vue {
     {
       title: "Permissions",
       icon: mdiAccountKey,
+      permission: EPermission.Permissions,
       items: [
         {
           key: "user_management",
           title: "Manage Permissions",
           icon: mdiAccountKey,
+          permission: EPermission.Permissions,
           component: "admin-permissions",
         },
       ],
@@ -230,8 +255,16 @@ export default class Admin extends Vue {
   ];
   selectedNavItem = {} as NavigationItem;
 
+  get filteredNavItems(): NavigationItem[] {
+    return this.navItems.filter((item) => this.permissions.includes(EPermission[item.permission]));
+  }
+
   get isAdmin(): boolean {
     return this.oauthStore.isAdmin;
+  }
+
+  get permissions(): string[] {
+    return this.oauthStore.permissions;
   }
 
   navItemSelected(item: NavigationItem): void {
@@ -251,8 +284,8 @@ export default class Admin extends Vue {
     return this.navItems[0];
   }
 
-  mounted(): void {
-    this.navItemSelected(this.getFirstItem(this.navItems));
+  async mounted(): Promise<void> {
+    this.navItemSelected(this.getFirstItem(this.filteredNavItems));
   }
 }
 </script>
