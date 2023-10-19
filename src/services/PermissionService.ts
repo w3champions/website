@@ -5,7 +5,7 @@ export interface IPermissionsResponse {
   permissions: IPermission[];
 }
 
-export default class TournamentsService {
+export default class PermissionService {
   public static async getPermissions(token: string): Promise<IPermission[]> {
     const url = `${API_URL}api/admin/permissions?authorization=${token}`;
     const response = await fetch(url, {

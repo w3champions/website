@@ -42,7 +42,7 @@ import {
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey,
+  mdiAccountKey, mdiFileDocumentOutline
 } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 
@@ -240,18 +240,20 @@ export default class Admin extends Vue {
         },
       ],
     },
-    // {
-    //   title: "Server Logs",
-    //   icon: mdiFileDocumentOutline,
-    //   items: [
-    //     {
-    //       key: "admin-server-logs",
-    //       title: "View Server Logs",
-    //       icon: mdiFileDocumentOutline,
-    //       component: "admin-server-logs",
-    //     },
-    //   ],
-    // },
+    {
+      title: "Server Logs",
+      icon: mdiFileDocumentOutline,
+      permission: EPermission.Logs,
+      items: [
+        {
+          key: "admin-server-logs",
+          title: "View Server Logs",
+          icon: mdiFileDocumentOutline,
+          permission: EPermission.Logs,
+          component: "admin-server-logs",
+        },
+      ],
+    },
   ];
   selectedNavItem = {} as NavigationItem;
 
