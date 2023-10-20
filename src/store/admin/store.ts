@@ -12,7 +12,7 @@ import {
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
-import AdminService from "@/services/AdminService";
+import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
 
