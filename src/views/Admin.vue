@@ -36,6 +36,7 @@ import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
+import AdminStorageAlibaba from "@/components/admin/rewards/AdminStorageAlibaba.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
@@ -66,6 +67,7 @@ import { EPermission } from "@/store/admin/permission/types";
     AdminCheckJwtLifetime,
     AdminPermissions,
     AdminServerLogs,
+    AdminStorageAlibaba,
   },
 })
 export default class Admin extends Vue {
@@ -195,6 +197,13 @@ export default class Admin extends Vue {
           icon: mdiBriefcase,
           permission: EPermission.Content,
           component: "admin-manage-portraits",
+        },
+        {
+          key: "storage-alibaba",
+          title: "Manage Alibaba Files",
+          icon: mdiFileDocumentOutline,
+          permission: EPermission.Content,
+          component: "admin-storage-alibaba",
         },
       ],
     },
