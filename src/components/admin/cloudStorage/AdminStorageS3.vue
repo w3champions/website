@@ -7,9 +7,17 @@
       :items="files"
       sort-by="lastModified"
       :sort-desc="true"
+      :search="tableSearch"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
+          <template>
+            <v-text-field
+              v-model="tableSearch"
+              label="Search"
+              :prepend-icon="mdiMagnify"
+            ></v-text-field>
+          </template>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
@@ -74,7 +82,7 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
-import { mdiDelete, mdiDownload, mdiCamera } from "@mdi/js";
+import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
 @Component({})
@@ -84,12 +92,14 @@ export default class AdminStorageS3 extends Vue {
   public mdiDelete = mdiDelete;
   public mdiDownload = mdiDownload;
   public mdiCamera = mdiCamera;
+  public mdiMagnify = mdiMagnify;
   public fileToUpload = null;
   public isValidationMessageVisible = false;
+  public tableSearch = "";
 
   public headers = [
     { text: "Name", align: "start", sortable: true, value: "name" },
-    { text: "Size (KB)", sortable: true, value: "size" },
+    { text: "Size (KB)", sortable: true, value: "size", filterable: false },
     { text: "Last Modified", sortable: true, value: "lastModified" },
     { text: "Actions", sortable: false, value: "actions" },
   ];
