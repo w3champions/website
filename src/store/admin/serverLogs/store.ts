@@ -1,5 +1,5 @@
 import { ServerLogsState } from "@/store/admin/serverLogs/types";
-import ServerLogsService from "@/services/ServerLogsService";
+import ServerLogsService from "@/services/admin/ServerLogsService";
 import { useOauthStore } from "@/store/oauth/store";
 import { defineStore } from "pinia";
 

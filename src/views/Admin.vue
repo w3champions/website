@@ -36,13 +36,15 @@ import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
+import AdminStorageAlibaba from "@/components/admin/cloudStorage/AdminStorageAlibaba.vue";
+import AdminStorageS3 from "@/components/admin/cloudStorage/AdminStorageS3.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline
+  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument
 } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 
@@ -66,6 +68,8 @@ import { EPermission } from "@/store/admin/permission/types";
     AdminCheckJwtLifetime,
     AdminPermissions,
     AdminServerLogs,
+    AdminStorageAlibaba,
+    AdminStorageS3,
   },
 })
 export default class Admin extends Vue {
@@ -195,6 +199,20 @@ export default class Admin extends Vue {
           icon: mdiBriefcase,
           permission: EPermission.Content,
           component: "admin-manage-portraits",
+        },
+        {
+          key: "storage-alibaba",
+          title: "Manage Alibaba Files",
+          icon: mdiFileDocumentOutline,
+          permission: EPermission.Content,
+          component: "admin-storage-alibaba",
+        },
+        {
+          key: "storage-s3",
+          title: "Manage S3 Files",
+          icon: mdiFileDocument,
+          permission: EPermission.Content,
+          component: "admin-storage-s3",
         },
       ],
     },

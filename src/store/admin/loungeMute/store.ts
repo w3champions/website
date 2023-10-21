@@ -1,6 +1,6 @@
 import { LoungeMute, LoungeMuteResponse, LoungeMuteState } from "@/store/admin/loungeMute/types";
 import { useOauthStore } from "@/store/oauth/store";
-import ModerationService from "@/services/ModerationService";
+import ModerationService from "@/services/admin/ModerationService";
 import { format, parseISO } from "date-fns";
 import { defineStore } from "pinia";
 

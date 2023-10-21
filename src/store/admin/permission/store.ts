@@ -1,5 +1,5 @@
 import { IPermission, PermissionState } from "@/store/admin/permission/types";
-import PermissionService from "@/services/PermissionService";
+import PermissionService from "@/services/admin/PermissionService";
 import { useOauthStore } from "@/store/oauth/store";
 import { defineStore } from "pinia";
 
