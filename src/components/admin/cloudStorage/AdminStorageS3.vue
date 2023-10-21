@@ -78,7 +78,7 @@ import { mdiDelete, mdiDownload, mdiCamera } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
 @Component({})
-export default class AdminStorageAlibaba extends Vue {
+export default class AdminStorageS3 extends Vue {
   private cloudStorageStore = useCloudStorageStore();
   public dialog = false;
   public mdiDelete = mdiDelete;
@@ -101,21 +101,21 @@ export default class AdminStorageAlibaba extends Vue {
   async deleteFile(file: CloudFile): Promise<void> {
     const confirmation = confirm(`Are you sure you want to delete ${file.name}?`);
     if (!confirmation) return;
-    await this.cloudStorageStore.deleteFile(file.name, CloudStorageProvider.ALIBABA);
+    await this.cloudStorageStore.deleteFile(file.name, CloudStorageProvider.S3);
     this.isValidationMessageVisible = true;
     await this.loadFiles();
   }
 
   downloadFile(file: CloudFile): void {
-    this.cloudStorageStore.downloadFile(file.name, CloudStorageProvider.ALIBABA);
+    this.cloudStorageStore.downloadFile(file.name, CloudStorageProvider.S3);
   }
 
   async uploadFile(): Promise<void> {
     if (!this.fileToUpload) return;
-    await this.cloudStorageStore.uploadFile(this.fileToUpload, CloudStorageProvider.ALIBABA);
+    await this.cloudStorageStore.uploadFile(this.fileToUpload, CloudStorageProvider.S3);
     this.isValidationMessageVisible = true;
-    await this.loadFiles();
     this.close();
+    await this.loadFiles();
   }
 
   public close(): void {
@@ -132,7 +132,7 @@ export default class AdminStorageAlibaba extends Vue {
   }
 
   public async loadFiles(): Promise<void> {
-    await this.cloudStorageStore.fetchFiles(CloudStorageProvider.ALIBABA);
+    await this.cloudStorageStore.fetchFiles(CloudStorageProvider.S3);
   }
 
   async mounted(): Promise<void> {

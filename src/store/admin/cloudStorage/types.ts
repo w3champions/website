@@ -1,5 +1,5 @@
 export type CloudStorageState = {
-  fileNames: CloudFile[];
+  files: CloudFile[];
   validationMessage: CloudValidationMessage;
 };
 
@@ -7,9 +7,14 @@ export type CloudFile = {
     name: string;
     size: number;
     lastModified: Date;
-}
+};
 
 export type CloudValidationMessage = {
-  successMessage: string;
-  errorMessage: string;
+  message: string;
+  isSuccess: boolean;
+};
+
+export enum CloudStorageProvider {
+  ALIBABA = "alibaba",
+  S3 = "s3"
 }

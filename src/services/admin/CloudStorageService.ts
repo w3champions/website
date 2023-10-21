@@ -1,9 +1,9 @@
 import { API_URL } from "@/main";
-import { CloudFile, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
+import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
 export default class CloudStorageService {
-  public static async fetchAlibabaFiles(token: string): Promise<CloudFile[]> {
-    const url = `${API_URL}api/admin/storage?authorization=${token}`;
+  public static async fetchFiles(token: string, provider: CloudStorageProvider): Promise<CloudFile[]> {
+    const url = `${API_URL}api/admin/storage/${provider}?authorization=${token}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -13,12 +13,12 @@ export default class CloudStorageService {
       },
     });
 
-    const fileNames: CloudFile[] = response.ok ? await response.json() : [];
-    return fileNames;
+    const files: CloudFile[] = response.ok ? await response.json() : [];
+    return files;
   }
 
-  public static async uploadToAlibaba(token: string, file: File): Promise<CloudValidationMessage> {
-    const url = `${API_URL}api/admin/storage/upload?authorization=${token}`;
+  public static async uploadFile(token: string, file: File, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
+    const url = `${API_URL}api/admin/storage/${provider}/upload?authorization=${token}`;
 
     const filePromise = new Promise<Response>((resolve, reject) => {
       const reader = new FileReader();
@@ -51,23 +51,19 @@ export default class CloudStorageService {
     const response = await filePromise;
     const message = await response.json();
     if (response.ok) {
-      return { successMessage: message, errorMessage: "" } as CloudValidationMessage;
+      return { message, isSuccess: true } as CloudValidationMessage;
     } else {
-      return { successMessage: "", errorMessage: message } as CloudValidationMessage;
+      return { message, isSuccess: false } as CloudValidationMessage;
     }
   }
 
-  public static downloadAlibabaFile(token: string, fileName: string): void {
-    const url = `${API_URL}api/admin/storage/download/${fileName}?authorization=${token}`;
-    try {
-      window.open(url);
-    } catch (e: unknown) {
-      console.error(e);
-    }
+  public static downloadFile(token: string, fileName: string, provider: CloudStorageProvider): void {
+    const url = `${API_URL}api/admin/storage/${provider}/download/${fileName}?authorization=${token}`;
+    window.open(url);
   }
 
-  public static async deleteAlibabaFile(token: string, fileName: string): Promise<CloudValidationMessage> {
-    const url = `${API_URL}api/admin/storage/${fileName}?authorization=${token}`;
+  public static async deleteFile(token: string, fileName: string, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
+    const url = `${API_URL}api/admin/storage/${provider}/${fileName}?authorization=${token}`;
     try {
       const response = await fetch(url, {
         method: "DELETE",
@@ -79,13 +75,12 @@ export default class CloudStorageService {
 
       const message = await response.json();
       if (response.ok) {
-        return { successMessage: message, errorMessage: "" } as CloudValidationMessage;
+        return { message, isSuccess: true } as CloudValidationMessage;
       } else {
-        return { successMessage: "", errorMessage: message } as CloudValidationMessage;
+        return { message, isSuccess: false } as CloudValidationMessage;
       }
-    } catch (e: any) {
-      console.error(e);
-      return { successMessage: "", errorMessage: e } as CloudValidationMessage;
+    } catch (e: unknown) {
+      return { message: e, isSuccess: false } as CloudValidationMessage;
     }
   }
 }

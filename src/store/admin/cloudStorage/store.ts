@@ -1,37 +1,40 @@
-import { CloudStorageState, CloudFile, CloudValidationMessage } from "./types";
+import { CloudStorageState, CloudFile, CloudValidationMessage, CloudStorageProvider } from "./types";
 import CloudStorageService from "@/services/admin/CloudStorageService";
 import { useOauthStore } from "@/store/oauth/store";
 import { defineStore } from "pinia";
 
 export const useCloudStorageStore = defineStore("cloudStorage", {
   state: (): CloudStorageState => ({
-    fileNames: [],
-    validationMessage: { successMessage: "", errorMessage: "" } as CloudValidationMessage,
+    files: [] as CloudFile[],
+    validationMessage: { message: "", isSuccess: true } as CloudValidationMessage,
   }),
   actions: {
-    async fetchAlibabaFiles(): Promise<void> {
+    async fetchFiles(provider: CloudStorageProvider): Promise<void> {
       const oauthStore = useOauthStore();
-      const response = await CloudStorageService.fetchAlibabaFiles(oauthStore.token);
-      this.SET_FILE_NAMES(response);
+      const response = await CloudStorageService.fetchFiles(oauthStore.token, provider);
+      this.SET_FILES(response);
     },
-    async uploadToAlibaba(file: File): Promise<void> {
+    async uploadFile(file: File, provider: CloudStorageProvider): Promise<void> {
       const oauthStore = useOauthStore();
-      const responseMessage = await CloudStorageService.uploadToAlibaba(oauthStore.token, file);
-      this.SET_RESPONSE_MESSAGE(responseMessage);
+      const validationMessage = await CloudStorageService.uploadFile(oauthStore.token, file, provider);
+      this.SET_VALIDATION_MESSAGE(validationMessage);
     },
-    downloadAlibabaFile(fileName: string): void {
+    downloadFile(fileName: string, provider: CloudStorageProvider): void {
       const oauthStore = useOauthStore();
-      CloudStorageService.downloadAlibabaFile(oauthStore.token, fileName);
+      CloudStorageService.downloadFile(oauthStore.token, fileName, provider);
     },
-    async deleteAlibabaFile(fileName: string): Promise<void> {
+    async deleteFile(fileName: string, provider: CloudStorageProvider): Promise<void> {
       const oauthStore = useOauthStore();
-      const responseMessage = await CloudStorageService.deleteAlibabaFile(oauthStore.token, fileName);
-      this.SET_RESPONSE_MESSAGE(responseMessage);
+      const validationMessage = await CloudStorageService.deleteFile(oauthStore.token, fileName, provider);
+      this.SET_VALIDATION_MESSAGE(validationMessage);
     },
-    SET_FILE_NAMES(fileNames: CloudFile[]) {
-      this.fileNames = fileNames;
+    resetFiles() {
+      this.SET_FILES([]);
     },
-    SET_RESPONSE_MESSAGE(message: CloudValidationMessage) {
+    SET_FILES(files: CloudFile[]) {
+      this.files = files;
+    },
+    SET_VALIDATION_MESSAGE(message: CloudValidationMessage) {
       this.validationMessage = message;
     },
   },
