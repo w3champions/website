@@ -61,6 +61,14 @@ import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiClose } from "@mdi/js";
 
+type RULES = {
+  required: (value: string) => boolean | string;
+  min: (text: string) => boolean | string;
+  taken: (id: string) => boolean | string;
+  number: (value: number) => boolean | string;
+  notZero: (value: number) => boolean | string;
+};
+
 @Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
   portraitId = 0;
@@ -74,7 +82,7 @@ export default class NewPortraitDefinitionDialog extends Vue {
     return this.playerManagement.allSpecialPortraits;
   }
 
-  get rules(): unknown {
+  get rules(): RULES {
     return {
       required: (value: string) => !!value || "Required",
       min: (text: string) => text.length >= 1 || "Min 1 characters",
@@ -83,7 +91,7 @@ export default class NewPortraitDefinitionDialog extends Vue {
         const pattern = /^[0-9]*$/;
         return pattern.test(value.toString()) || "Must be a number";
       },
-      notZero: (value: number) => value != 0 || "Don't use zero",
+      notZero: (value: number) => !value.toString().startsWith("0") || "Leading zero not allowed",
     };
   }
 
