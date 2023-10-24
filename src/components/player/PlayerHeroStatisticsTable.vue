@@ -11,7 +11,14 @@
         </thead>
         <tbody class="player-hero-statistics-table__body">
           <tr v-for="item in heroStatsCurrentPage" :key="item.id">
-            <td v-for="header in headers" :key="header.value" v-html="item[header.value]"></td>
+            <v-tooltip v-for="header in headers" :key="header.value" top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" v-html="item[header.value]"></td>
+              </template>
+              <div v-if="item.numbers_by_race[header.value]">
+                {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
+              </div>
+            </v-tooltip>
           </tr>
         </tbody>
       </template>

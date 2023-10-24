@@ -142,6 +142,7 @@ export type PlayerHeroWinRateForStatisticsTab = {
   hero: string;
   name: string;
   image: string;
+  numbers_by_race: Object;
   [ERaceEnum.TOTAL]: string;
   [ERaceEnum.UNDEAD]: string;
   [ERaceEnum.ORC]: string;

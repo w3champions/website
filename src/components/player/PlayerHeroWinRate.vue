@@ -24,7 +24,14 @@
                   </thead>
                   <tbody>
                     <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-                      <td v-for="header in headers" :key="header.value" v-html="item[header.value]"></td>
+                      <v-tooltip v-for="header in headers" :key="header.value" top>
+                        <template v-slot:activator="{ on }">
+                          <td v-on="on" v-html="item[header.value]"></td>
+                        </template>
+                        <div v-if="item.numbers_by_race[header.value]">
+                          {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
+                        </div>
+                      </v-tooltip>
                     </tr>
                   </tbody>
                 </template>
@@ -140,6 +147,15 @@ export default class PlayerHeroWinRate extends Vue {
         hero: item.heroId,
         name: this.$t(`heroNames.${item.heroId}`).toString(),
         image: this.getImageForTable(item.heroId),
+        numbers_by_race: {
+          [ERaceEnum.UNDEAD]: {},
+          [ERaceEnum.ORC]: {},
+          [ERaceEnum.NIGHT_ELF]: {},
+          [ERaceEnum.HUMAN]: {},
+          [ERaceEnum.RANDOM]: {},
+          [ERaceEnum.TOTAL]: {},
+          [ERaceEnum.STARTER]: {},
+        },
         [ERaceEnum.TOTAL]: "",
         [ERaceEnum.UNDEAD]: "",
         [ERaceEnum.ORC]: "",
@@ -158,6 +174,10 @@ export default class PlayerHeroWinRate extends Vue {
       filtered
         .winLosses
         .map((winLoss) => {
+          playerWinRate.numbers_by_race[winLoss.race] = {
+            number: winLoss.wins,
+            total: winLoss.games,
+          };
           playerWinRate[winLoss.race] = "-";
           if (winLoss.games > 0) {
             playerWinRate[winLoss.race] = `${(winLoss.winrate * 100).toFixed(2)}%`;
@@ -166,6 +186,10 @@ export default class PlayerHeroWinRate extends Vue {
           wins += winLoss.wins;
         });
       playerWinRate[ERaceEnum.TOTAL] = `${((wins / total) * 100).toFixed(2)}%`;
+      playerWinRate.numbers_by_race[ERaceEnum.TOTAL] = {
+        number: wins,
+        total: total,
+      };
       resp.push(playerWinRate);
     }) || [];
     return resp;
