@@ -11,7 +11,9 @@
         </thead>
         <tbody class="player-hero-statistics-table__body">
           <tr v-for="item in heroStatsCurrentPage" :key="item.id">
-            <v-tooltip v-for="header in headers" :key="header.value" top>
+            <td v-html="item.image"></td>
+            <td v-html="item.name"></td>
+            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
               <template v-slot:activator="{ on }">
                 <td v-on="on" v-html="item[header.value]"></td>
               </template>
@@ -57,6 +59,10 @@ export default class PlayerHeroStatisticsTable extends Vue {
   }
   get heroStatsCurrentPage(): PlayerHeroStatistic[] {
     return this.heroStatistics.slice((this.pageOffset - this.paginationSize), this.pageOffset);
+  }
+
+  get headersWithoutImageAndName() {
+    return this.headers.slice(2);
   }
 
   get headers() {

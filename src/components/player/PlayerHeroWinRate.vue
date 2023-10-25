@@ -24,7 +24,9 @@
                   </thead>
                   <tbody>
                     <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-                      <v-tooltip v-for="header in headers" :key="header.value" top>
+                      <td v-html="item.image"></td>
+                      <td v-html="item.name"></td>
+                      <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
                         <template v-slot:activator="{ on }">
                           <td v-on="on" v-html="item[header.value]"></td>
                         </template>
@@ -99,6 +101,10 @@ export default class PlayerHeroWinRate extends Vue {
     return this.player.isInitialized;
   }
 
+  get headersWithoutImageAndName() {
+    return this.headers.slice(2);
+  }
+
   get headers() {
     return [
       { text: "", value: "image" },
@@ -148,13 +154,13 @@ export default class PlayerHeroWinRate extends Vue {
         name: this.$t(`heroNames.${item.heroId}`).toString(),
         image: this.getImageForTable(item.heroId),
         numbers_by_race: {
-          [ERaceEnum.UNDEAD]: {},
-          [ERaceEnum.ORC]: {},
-          [ERaceEnum.NIGHT_ELF]: {},
-          [ERaceEnum.HUMAN]: {},
-          [ERaceEnum.RANDOM]: {},
-          [ERaceEnum.TOTAL]: {},
-          [ERaceEnum.STARTER]: {},
+          [ERaceEnum.UNDEAD]: {number: 0, total: 0},
+          [ERaceEnum.ORC]: {number: 0, total: 0},
+          [ERaceEnum.NIGHT_ELF]: {number: 0, total: 0},
+          [ERaceEnum.HUMAN]: {number: 0, total: 0},
+          [ERaceEnum.RANDOM]: {number: 0, total: 0},
+          [ERaceEnum.TOTAL]: {number: 0, total: 0},
+          [ERaceEnum.STARTER]: {number: 0, total: 0},
         },
         [ERaceEnum.TOTAL]: "",
         [ERaceEnum.UNDEAD]: "",
