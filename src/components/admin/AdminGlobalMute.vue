@@ -4,6 +4,8 @@
       :headers="headers"
       :items-per-page="-1"
       :items="globallyMutedPlayers"
+      sort-by="id"
+      :sort-desc="true"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
