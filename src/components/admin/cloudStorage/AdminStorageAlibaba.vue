@@ -8,6 +8,8 @@
       sort-by="lastModified"
       :sort-desc="true"
       :search="tableSearch"
+      :loading="isLoadingFiles"
+      loading-text="Loading... Please wait"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
@@ -51,11 +53,11 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text @click="close">
+                <v-btn text @click="close" :disabled="isUploadingFile">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile">
-                  Upload
+                <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile" :disabled="isUploadingFile">
+                  {{ isUploadingFile ? "Uploading..." : "Upload" }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -96,6 +98,8 @@ export default class AdminStorageAlibaba extends Vue {
   public fileToUpload = null;
   public isValidationMessageVisible = false;
   public tableSearch = "";
+  public isLoadingFiles = true;
+  public isUploadingFile = false;
 
   public headers = [
     { text: "Name", align: "start", sortable: true, value: "name" },
@@ -122,10 +126,13 @@ export default class AdminStorageAlibaba extends Vue {
 
   async uploadFile(): Promise<void> {
     if (!this.fileToUpload) return;
+    this.isUploadingFile = true;
     await this.cloudStorageStore.uploadFile(this.fileToUpload, CloudStorageProvider.ALIBABA);
     this.isValidationMessageVisible = true;
-    await this.loadFiles();
     this.close();
+    this.isUploadingFile = false;
+    this.fileToUpload = null;
+    await this.loadFiles();
   }
 
   public close(): void {
@@ -143,15 +150,13 @@ export default class AdminStorageAlibaba extends Vue {
 
   public async loadFiles(): Promise<void> {
     await this.cloudStorageStore.fetchFiles(CloudStorageProvider.ALIBABA);
+    this.isLoadingFiles = false;
   }
 
   async mounted(): Promise<void> {
-    await this.loadFiles();
-  }
-
-  destroyed(): void {
-    this.resetValidationMessage();
     this.cloudStorageStore.resetFiles();
+    this.resetValidationMessage();
+    await this.loadFiles();
   }
 }
 </script>
