@@ -139,18 +139,18 @@ export type PlayerHeroStatistic = {
 };
 
 export type FractionForTooltip = {
-  number: number,
-  total: number,
-}
+  number: number;
+  total: number;
+};
 
 export type NumbersByRaceForTooltip = {
-  [ERaceEnum.HUMAN]: FractionForTooltip,
-  [ERaceEnum.NIGHT_ELF]: FractionForTooltip,
-  [ERaceEnum.ORC]: FractionForTooltip,
-  [ERaceEnum.UNDEAD]: FractionForTooltip,
-  [ERaceEnum.TOTAL]: FractionForTooltip,
-  [ERaceEnum.STARTER]: FractionForTooltip,
-}
+  [ERaceEnum.HUMAN]: FractionForTooltip;
+  [ERaceEnum.NIGHT_ELF]: FractionForTooltip;
+  [ERaceEnum.ORC]: FractionForTooltip;
+  [ERaceEnum.UNDEAD]: FractionForTooltip;
+  [ERaceEnum.TOTAL]: FractionForTooltip;
+  [ERaceEnum.STARTER]: FractionForTooltip;
+};
 
 export type PlayerHeroWinRateForStatisticsTab = {
   hero: string;
