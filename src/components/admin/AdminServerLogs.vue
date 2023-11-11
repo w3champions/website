@@ -28,11 +28,7 @@
     </v-row>
     <v-row>
       <v-col>
-          <v-row no-gutters :justify="'start'">
-            <div v-for="(line, index) in logContent" :key="index" class="mb-1">
-              {{ line }}
-            </div>
-        </v-row>
+        <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>
       </v-col>
     </v-row>
   </v-container>
@@ -48,11 +44,11 @@ export default class AdminServerLogs extends Vue {
   private serverLogsStore = useServerLogsStore();
   public selectedLog = "";
 
-  get logfileNames() {
+  get logfileNames(): string[] {
     return this.serverLogsStore.logfileNames;
   }
 
-  get logContent() {
+  get logContent(): string[] {
     return this.serverLogsStore.logContent;
   }
 
@@ -60,13 +56,13 @@ export default class AdminServerLogs extends Vue {
     this.serverLogsStore.logContent = content;
   }
 
-  public async fetchLogContent(logfileName: string) {
+  public async fetchLogContent(logfileName: string): Promise<void> {
     this.selectedLog = logfileName;
     window.scrollTo(0,0);
     await this.serverLogsStore.fetchLogContent(logfileName);
   }
 
-  public downloadLog(logfileName: string) {
+  public downloadLog(logfileName: string): void {
     this.serverLogsStore.downloadLog(logfileName);
   }
 
