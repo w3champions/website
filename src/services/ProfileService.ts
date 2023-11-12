@@ -1,5 +1,6 @@
 import {
   ModeStat,
+  PlayerGameLengthStats,
   PlayerMmrRpTimeline,
   PlayerProfile,
   PlayerStatsHeroOnMapVersusRace,
@@ -136,5 +137,18 @@ export default class ProfileService {
     } else {
       return undefined;
     }
+  }
+  public static async retrievePlayerGameLengthStats(
+    battleTag: string,
+    season: number
+  ): Promise<PlayerGameLengthStats | undefined> {
+    const url = `${API_URL}api/players/${encodeURIComponent(
+      battleTag
+    )}/game-length-stats?season=${season}`;
+    const response = await fetch(url);
+    if (response.ok && response.status == 200) {
+      return await response.json();
+    }
+    return undefined;
   }
 }

@@ -219,6 +219,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
     this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
     this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
     this.player.loadPlayerMmrRpTimeline();
+    this.player.loadPlayerGameLengths();
   }
 
   get seasons() {

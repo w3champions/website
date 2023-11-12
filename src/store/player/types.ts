@@ -24,6 +24,7 @@ export type PlayerState = {
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
   mmrRpTimeline: PlayerMmrRpTimeline | undefined;
+  playerGameLengthStats: PlayerGameLengthStats | undefined;
 };
 
 export type PlayerProfile = {
@@ -128,6 +129,28 @@ export type MmrRpAtDate = {
 export type PlayerMmrRpTimeline = {
   mmrRpAtDates: MmrRpAtDate[];
 };
+
+export type PlayerGameLengthStats = {
+  id: string;
+  averageGameLengthByOpponentRace: any;
+  playerGameLengthIntervalByOpponentRace: GameLengthMapByRace;
+  battleTag: string;
+  season: number;
+};
+
+export type GameLengthMapByRace = {
+  [ERaceEnum.RANDOM]: PlayerGameLength;
+  [ERaceEnum.HUMAN]: PlayerGameLength;
+  [ERaceEnum.NIGHT_ELF]: PlayerGameLength;
+  [ERaceEnum.ORC]: PlayerGameLength;
+  [ERaceEnum.UNDEAD]: PlayerGameLength;
+  [ERaceEnum.TOTAL]: PlayerGameLength;
+  [ERaceEnum.STARTER]: PlayerGameLength;
+}
+
+export type PlayerGameLength = {
+  lengths: Record<number, number>;
+}
 
 export type PlayerHeroStatistic = {
   hero: string;
