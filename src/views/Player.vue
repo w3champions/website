@@ -219,6 +219,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
     this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
     this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
     this.player.loadPlayerMmrRpTimeline();
+    this.player.loadPlayerGameLengths();
   }
 
   get seasons() {
@@ -376,6 +377,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
     await this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
     await this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
     await this.player.loadOngoingPlayerMatch(this.battleTag);
+    await this.player.loadPlayerGameLengths();
 
     this._intervalRefreshHandle = setInterval(async () => {
       await this.player.loadOngoingPlayerMatch(this.battleTag);

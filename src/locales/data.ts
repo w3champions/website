@@ -376,6 +376,8 @@ const data = {
       title: "Matchup Statistics",
       playerheroesstatisticstitle: "Hero Usage Statistics",
       playerherowinratetitle: "Hero Winrate",
+      playergamelengthtitle: "Player Game Length",
+      playergamelengthaveragelabel: "Average game length against",
     },
     components_player_modestatsgrid: {
       mode: "Mode",
