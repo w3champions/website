@@ -8,6 +8,7 @@ export type OverallStatisticState = {
   loadingPlayersPerDayStats: boolean;
   statsPerMapAndRace: StatsPerWinrate[];
   gameLengths: GameLength[];
+  matchupLength: MatchupLength;
   playedHeroes: PlayedHeroByMode[];
   heroWinrate: WinLoss;
   loadingMapAndRaceStats: boolean;
@@ -15,6 +16,7 @@ export type OverallStatisticState = {
   heroPicks: HeroPick[];
   matchesOnMapPerSeason: MatchesOnMapPerSeason[];
   popularHours: PopularHours[];
+  matchupMmrRange: MmrRangeValues;
 };
 
 export interface PlayedHeroPick {
@@ -104,6 +106,48 @@ export interface Length {
 export interface GameLength {
   gameMode: EGameMode;
   lengths: Length[];
+}
+
+export interface MatchupLength {
+  id: string;
+  lengthsByMmrRange: LengthsByMmrRange;
+  race1: string;
+  race2: string;
+  season: number;
+}
+
+export enum MmrRangeValues {
+  ALL = "all",
+  M600 = "600",
+  M800 = "800",
+  M1000 = "1000",
+  M1200 = "1200",
+  M1400 = "1400",
+  M1600 = "1600",
+  M1800 = "1800",
+  M2000 = "2000",
+  M2200 = "2200",
+  M2400 = "2400",
+  M2600 = "2600",
+  M2800 = "2800",
+  M3000 = "3000",
+}
+
+export interface LengthsByMmrRange {
+  [MmrRangeValues.ALL]: Length[];
+  [MmrRangeValues.M600]: Length[];
+  [MmrRangeValues.M800]: Length[];
+  [MmrRangeValues.M1000]: Length[];
+  [MmrRangeValues.M1200]: Length[];
+  [MmrRangeValues.M1400]: Length[];
+  [MmrRangeValues.M1600]: Length[];
+  [MmrRangeValues.M1800]: Length[];
+  [MmrRangeValues.M2000]: Length[];
+  [MmrRangeValues.M2200]: Length[];
+  [MmrRangeValues.M2400]: Length[];
+  [MmrRangeValues.M2600]: Length[];
+  [MmrRangeValues.M2800]: Length[];
+  [MmrRangeValues.M3000]: Length[];
 }
 
 export interface PopularHours {
