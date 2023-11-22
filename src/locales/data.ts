@@ -318,7 +318,10 @@ const data = {
       playedmaps: "Played Maps",
       popularhours: "Popular Hours",
       gamelengths: "Game Lengths",
+      matchuplengths: "Matchup Lengths",
       selectseason: "Select Season",
+      selectrace: "Select Race",
+      selectmmr: "Select MMR",
     },
     "components_overall-statistics_tabs_winratestab": {
       selectmap: "Select Map",

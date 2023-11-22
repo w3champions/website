@@ -3,6 +3,7 @@ import {
   GameDayPerMode,
   GameLength,
   MatchesOnMapPerSeason,
+  MatchupLength,
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
@@ -68,6 +69,19 @@ export default class StatisticService {
 
   public static async retrieveGameLengths(): Promise<GameLength[]> {
     const url = `${API_URL}api/w3c-stats/games-lengths`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  }
+
+  public static async retrieveMatchupLengths(race1 = 1, race2 = 1, season = "all"): Promise<MatchupLength> {
+    const url = `${API_URL}api/w3c-stats/matchup-lengths?season=${season}&race1=${race1}&race2=${race2}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

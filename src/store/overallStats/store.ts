@@ -12,6 +12,8 @@ import {
   StatsPerWinrate,
   WinLoss,
   PopularHours,
+  MatchupLength,
+  MmrRangeValues,
 } from "./types";
 import { ERaceEnum } from "../types";
 import StatisticService from "@/services/StatisticService";
@@ -26,11 +28,13 @@ export const useOverallStatsStore = defineStore("overallStats", {
     playersPerDay: [] as GameDay[],
     statsPerMapAndRace: [] as StatsPerWinrate[],
     gameLengths: [] as GameLength[],
+    matchupLength: {} as MatchupLength,
     playedHeroes: [] as PlayedHeroByMode[],
     matchesOnMapPerSeason: [] as MatchesOnMapPerSeason[],
     heroWinrate: {} as WinLoss,
     mmrDistribution: {} as MmrDistribution,
     popularHours: [] as PopularHours[],
+    matchupMmrRange: "all" as MmrRangeValues,
     heroPicks: [
       { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
       { name: "anyhero", heroId: "all", race: ERaceEnum.TOTAL },
@@ -70,6 +74,10 @@ export const useOverallStatsStore = defineStore("overallStats", {
     async loadGameLengthStatistics() {
       const stats = await StatisticService.retrieveGameLengths();
       this.SET_GAME_LENGTH_STATS(stats);
+    },
+    async loadMatchupLengthStatistics(race1 = 1, race2 = 1, season = "all") {
+       const stats = await StatisticService.retrieveMatchupLengths(race1, race2, season);
+      this.SET_MATCHUP_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes() {
       const stats = await StatisticService.retrievePlayedHeroes();
@@ -122,6 +130,9 @@ export const useOverallStatsStore = defineStore("overallStats", {
     SET_GAME_LENGTH_STATS(stats: GameLength[]): void {
       this.gameLengths = stats;
     },
+    SET_MATCHUP_LENGTH_STATS(stats: MatchupLength): void {
+      this.matchupLength = stats;
+    },
     SET_POPULAR_GAME_HOURS(stats: PopularHours[]): void {
       this.popularHours = stats;
     },
@@ -139,5 +150,8 @@ export const useOverallStatsStore = defineStore("overallStats", {
       newPicks[pick.index] = pick.heroPick;
       this.heroPicks = newPicks;
     },
+    SET_MATCHUP_MMR_RANGE(mmrRange: MmrRangeValues) {
+      this.matchupMmrRange = mmrRange;
+    }
   },
 });
