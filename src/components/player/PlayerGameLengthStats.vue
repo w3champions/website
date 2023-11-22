@@ -31,10 +31,10 @@ export default class PlayerGameLengthStats extends Vue {
     const lengthStatsIntervals = this.player.playerGameLengthStats?.playerGameLengthIntervalByOpponentRace;
     const lengths = lengthStatsIntervals?.[this.selectedOpponentRace]?.lengths || {};
     this.fillNonExistingIntervals(lengths);
-    
+
     return lengths;
   }
-  
+
   fillNonExistingIntervals(lengths: Record<number, number>): void {
     const lengthsKeys = Object.keys(lengths);
 
@@ -42,7 +42,7 @@ export default class PlayerGameLengthStats extends Vue {
     if (lengthsKeys.length) {
       const maxNumberOfIntervals = 60;
       for (let i = 0; i < maxNumberOfIntervals; i++) {
-        const key: number = i*60;
+        const key: number = i * 60;
         const shouldAdd = !(key in lengths);
         if ( shouldAdd ) {
           lengths[key] = 0;
@@ -54,7 +54,7 @@ export default class PlayerGameLengthStats extends Vue {
   get intervals() {
     const intervals = Object.keys(this.lengths).map((e) => formatSecondsToDuration(parseInt(e)));
     // games in the last position have 60 min or more, so add + as suffix
-    intervals[intervals.length-1] = intervals[intervals.length-1] + "+";
+    intervals[intervals.length - 1] = intervals[intervals.length - 1] + "+";
     return intervals.slice(2); // slicing to ignoring first 2 min of game
   }
 

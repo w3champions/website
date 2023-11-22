@@ -132,11 +132,21 @@ export type PlayerMmrRpTimeline = {
 
 export type PlayerGameLengthStats = {
   id: string;
-  averageGameLengthByOpponentRace: any;
+  averageGameLengthByOpponentRace: AverageGameLengthByOpponentRace;
   playerGameLengthIntervalByOpponentRace: GameLengthMapByRace;
   battleTag: string;
   season: number;
 };
+
+export type AverageGameLengthByOpponentRace = {
+  [ERaceEnum.RANDOM]: number;
+  [ERaceEnum.HUMAN]: number;
+  [ERaceEnum.NIGHT_ELF]: number;
+  [ERaceEnum.ORC]: number;
+  [ERaceEnum.UNDEAD]: number;
+  [ERaceEnum.TOTAL]: number;
+  [ERaceEnum.STARTER]: number;
+}
 
 export type GameLengthMapByRace = {
   [ERaceEnum.RANDOM]: PlayerGameLength;
@@ -146,11 +156,11 @@ export type GameLengthMapByRace = {
   [ERaceEnum.UNDEAD]: PlayerGameLength;
   [ERaceEnum.TOTAL]: PlayerGameLength;
   [ERaceEnum.STARTER]: PlayerGameLength;
-}
+};
 
 export type PlayerGameLength = {
   lengths: Record<number, number>;
-}
+};
 
 export type PlayerHeroStatistic = {
   hero: string;
