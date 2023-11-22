@@ -27,12 +27,12 @@ export default class PlayerGameLengthStats extends Vue {
   get intervals() {
     const intervals = this.lengths.map((e) => formatSecondsToDuration(e.seconds));
     // games in the last position have 60 min or more, so add + as suffix
-    intervals[intervals.length-1] = intervals[intervals.length-1] + "+";
+    intervals[intervals.length - 1] = intervals[intervals.length - 1] + "+";
     return intervals.slice(4); // slicing to ignoring first 2 min of game
   }
 
   get games() {
-    return this.lengths.slice(4).map(e => e.games); // slicing to ignoring first 2 min of game
+    return this.lengths.slice(4).map((e) => e.games); // slicing to ignoring first 2 min of game
   }
 
   get matchupLengthChartData() {

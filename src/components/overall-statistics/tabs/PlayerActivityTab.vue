@@ -163,7 +163,7 @@
         </v-card-text>
       </v-col>
     </v-row>
-    
+
     <v-card-title>
       {{
         $t(`components_overall-statistics_tabs_playeractivitytab.matchuplengths`)
@@ -336,7 +336,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   get seasonsForMatchup() {
-    return this.seasons.map(e => { return { id: e.toLowerCase(), name: e}; });
+    return this.seasons.map((e) => { return { id: e.toLowerCase(), name: e }; });
   }
 
   get raceOptions() {
@@ -357,27 +357,27 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
         name: "Undead",
         id: ERaceEnum.UNDEAD,
       },
-    ]
+    ];
   }
 
   get race1String(): string {
-    return this.raceOptions.filter(r => r.id == this.selectedMatchupRace1)[0].name;
+    return this.raceOptions.filter((r) => r.id == this.selectedMatchupRace1)[0].name;
   }
 
   get race2String(): string {
-    return this.raceOptions.filter(r => r.id == this.selectedMatchupRace2)[0].name;
+    return this.raceOptions.filter((r) => r.id == this.selectedMatchupRace2)[0].name;
   }
 
   get matchupMmrOptions() {
     const mmrOptions = ["all"];
-    for (let i = 600; i <= 3000; i+=200) {
+    for (let i = 600; i <= 3000; i += 200) {
       mmrOptions.push(i.toString());
     }
     return mmrOptions.map((mmr) => {
       return {
-        id: mmr, 
-        name: mmr == "all" ? "All": `${mmr}-${parseInt(mmr)+200}`
-      }
+        id: mmr,
+        name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`
+      };
     });
   }
 
