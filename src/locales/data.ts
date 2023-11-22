@@ -462,6 +462,7 @@ const data = {
       UNDEFINED: "All",
       GM_1ON1: "1 vs 1",
       GM_2ON2: "2 vs 2",
+      GM_3ON3: "3 vs 3",
       GM_2ON2_AT: "2 vs 2 AT",
       GM_4ON4: "4 vs 4",
       GM_FFA: "FFA",
