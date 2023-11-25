@@ -74,6 +74,9 @@ export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
       case EGameMode.GM_2ON2:
         return "rgb(163,54,255)";
 
+      case EGameMode.GM_3ON3:
+        return "rgb(255,255,0)";
+
       case EGameMode.GM_4ON4:
         return "rgb(237, 0, 8)";
 
@@ -116,6 +119,9 @@ export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
 
       case EGameMode.GM_2ON2:
         return 2;
+
+      case EGameMode.GM_3ON3:
+        return 3;
 
       case EGameMode.GM_4ON4:
         return 4;
