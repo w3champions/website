@@ -370,7 +370,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
 
   get matchupMmrOptions() {
     const mmrOptions = ["all"];
-    for (let i = 600; i <= 3000; i += 200) {
+    for (let i = 400; i < 3000; i += 200) {
       mmrOptions.push(i.toString());
     }
     return mmrOptions.map((mmr) => {
