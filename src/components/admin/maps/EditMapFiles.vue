@@ -11,6 +11,7 @@
           class="elevation-1"
           :hide-default-header="true"
           :hide-default-footer="true"
+          :items-per-page="100"
         >
           <template #[`item.actions`]="{ item }">
             <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>
