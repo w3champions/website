@@ -359,7 +359,7 @@ import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 
 // Lazy load.
-const CountryFlag = () => import("vue-country-flag");
+const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
 type CountryType = { country: string; countryCode: string };
 
