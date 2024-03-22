@@ -127,9 +127,12 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   @Prop() public itemsPerPage!: number;
   @Prop() public alwaysLeftName!: string;
   @Prop() public unfinished!: boolean;
-
-  public page = 1;
-
+  
+  public page = 1
+  mounted(){
+    this.page = Number.parseInt(this.$router.currentRoute.query.page as string ?? 1);
+    this.$emit("pageChanged", this.page);
+  }
   destroyed() {
     this.$emit("pageChanged", 1);
   }
@@ -162,6 +165,12 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   }
 
   public onPageChanged(page: number) {
+    this.$router.push({
+      query: {
+        ...this.$router.currentRoute.query,
+        page: this.page.toString()
+      }
+    });
     this.$emit("pageChanged", page);
   }
 
@@ -181,10 +190,6 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
     if (this.unfinished) {
       return true;
     }
-
-    this.$router.push({
-      path: `/match/${match.id}`,
-    });
   }
 
   public getLoser(match: Match) {
