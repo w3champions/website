@@ -63,7 +63,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
-import { debounce } from "debounce";
+import debounce from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";

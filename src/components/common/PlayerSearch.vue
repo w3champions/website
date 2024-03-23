@@ -17,7 +17,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { debounce } from "debounce";
+import debounce from "debounce";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiMagnify } from "@mdi/js";
 
