@@ -6,9 +6,8 @@
           <tr>
             <td
               v-for="header in headers"
-              :key="header.text"
-              v-bind:style="{
-                width: header.width,
+              :key="header.name"
+              :style="{
                 'min-width': header.minWidth,
                 'text-align': header.align,
               }"
@@ -231,6 +230,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   get headers() {
     return [
       {
+        name: "Players",
         text: this.$t("components_matches_matchesgrid.players"),
         align: "center",
         sortable: false,
@@ -238,6 +238,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
         minWidth: "475px",
       },
       {
+        name: "Gamemode",
         text: this.$t("components_matches_matchesgrid.gamemode"),
         align: "start",
         sortable: false,
@@ -245,12 +246,14 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
         maxWidth: "100px",
       },
       {
+        name: "Map",
         text: this.$t("components_matches_matchesgrid.map"),
         align: "start",
         sortable: false,
         value: "map",
       },
       {
+        name: "Starttime",
         text: this.$t("components_matches_matchesgrid.starttime"),
         align: "start",
         sortable: false,
@@ -258,6 +261,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
         minWidth: "170px",
       },
       {
+        name: "Duration",
         text: this.$t("components_matches_matchesgrid.duration"),
         align: "start",
         sortable: false,

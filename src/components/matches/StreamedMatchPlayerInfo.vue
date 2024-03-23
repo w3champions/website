@@ -2,7 +2,7 @@
   <div class="streamed-match-player-info">
     <div
       class="streamed-match-player-info__twitch"
-      :style="{ order: this.alignRight ? 3 : 1 }"
+      :style="{ order: alignRight ? 3 : 1 }"
     >
       <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank">
         <v-icon color="purple accent-4">{{ mdiTwitch }}</v-icon>

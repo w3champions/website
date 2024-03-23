@@ -19,7 +19,7 @@ import StreamedMatchPlayerInfo from "@/components/matches/StreamedMatchPlayerInf
 
 @Component({ components: { StreamedMatchPlayerInfo, PlayerIcon } })
 export default class StreamedMatchInfo extends Vue {
-  @Prop() private match!: Match;
+  @Prop() public match!: Match;
 }
 </script>
 

@@ -74,21 +74,12 @@ export default class AdminLoadingScreenTips extends Vue {
   public mdiPencil = mdiPencil;
   private oauthStore = useOauthStore();
   private infoMessagesStore = useInfoMessagesStore();
-
-  data(): unknown {
-    return {
-      headersTips: [
-        {
-          text: "Author",
-          align: "start",
-          value: "author",
-        },
-        { text: "Creation Date", align: "start", value: "creationDate" },
-        { text: "Text", value: "message", align: "start" },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-    };
-  }
+  public headersTips = [
+    { text: "Author", align: "start", value: "author" },
+    { text: "Creation Date", align: "start", value: "creationDate" },
+    { text: "Text", value: "message", align: "start" },
+    { text: "Actions", value: "actions", sortable: false },
+  ];
 
   get tips(): LoadingScreenTip[] {
     return this.infoMessagesStore.tips;
