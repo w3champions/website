@@ -135,7 +135,7 @@ import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight } from "@mdi/js";
 
 // Lazy load.
-const CountryFlag = () => import("vue-country-flag");
+const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
 @Component({
   components: {
