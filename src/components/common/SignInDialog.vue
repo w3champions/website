@@ -12,6 +12,13 @@
         >
           <v-btn @click="signIn(gateway)" block x-large>
             <v-col cols="2" align-self="center">
+              <v-img
+                min-width="32"
+                max-width="48"
+                min-height="32"
+                max-height="48"
+                :src="`/assets/flags/${gateway.id}.svg`"
+              ></v-img>
             </v-col>
             <v-col cols="2" align-self="center">
               {{ gateway.name }}
