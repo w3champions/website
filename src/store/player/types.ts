@@ -146,7 +146,7 @@ export type AverageGameLengthByOpponentRace = {
   [ERaceEnum.UNDEAD]: number;
   [ERaceEnum.TOTAL]: number;
   [ERaceEnum.STARTER]: number;
-}
+};
 
 export type GameLengthMapByRace = {
   [ERaceEnum.RANDOM]: PlayerGameLength;
