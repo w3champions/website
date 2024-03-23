@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite",
     "serve:prod": "yarn run build:prod && http-server ./dist",
-    "build:prod": "vite build",
+    "build:prod": "yarn run generate-locales && rimraf ./dist && vite build",
+    "serve:dev": "yarn run build:dev && http-server ./dist",
+    "build:dev": "rimraf ./dist && vite build",
     "lint": "eslint --no-fix src/",
     "lint:fix": "eslint --fix src/",
     "format": "node_modules/.bin/prettier --write .",
