@@ -189,7 +189,7 @@ export default class HomeView extends Vue {
     // this.activeGameModes = this.rankingsStore.activeModes;
   }
 
-  public convertMarkdownToHTML(input: string): string {
+  public convertMarkdownToHTML(input: string): string | Promise<string> {
     return marked(input);
   }
 
