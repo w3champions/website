@@ -4,7 +4,7 @@
       <template v-slot:activator="{ on: onMenu }">
         <v-btn color="primary w3-race-bg--text" dark v-on="{ ...onMenu }">
           Select Portrait Groups
-          <v-icon>mdi-chevron-down</v-icon>
+          <v-icon>{{ mdiChevronDown }}</v-icon>
         </v-btn>
       </template>
 
@@ -39,6 +39,7 @@ import AssignPortrait from "./AssignPortrait.vue";
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import { mdiChevronDown } from "@mdi/js";
 
 @Component({ components: { AssignPortrait } })
 export default class PortraitGroupDropdown extends Vue {
@@ -46,6 +47,7 @@ export default class PortraitGroupDropdown extends Vue {
   portraitDefGroups = [] as PortraitDefinitionGroup[];
   groupNames = [] as string[];
   private playerManagement = usePlayerManagementStore();
+  public mdiChevronDown = mdiChevronDown;
 
   addPortraitGroup(group: string): void {
     const portraitsToAdd = this.portraitDefGroups.find((x) => x.group == group)?.portraitIds;

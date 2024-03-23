@@ -67,7 +67,7 @@
               style="background-color: transparent"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
-              <v-icon class="ml-4">mdi-chevron-right</v-icon>
+              <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
             </v-btn>
           </template>
           <v-card>
@@ -132,9 +132,10 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { mdiChevronRight } from "@mdi/js";
 
 // Lazy load.
-const CountryFlag = () => import("vue-country-flag");
+const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
 @Component({
   components: {
@@ -151,6 +152,7 @@ export default class CountryRankingsView extends Vue {
   races = ERaceEnum;
   countries: { country: string; countryCode: string }[] = Countries;
   private rankingsStore = useRankingStore();
+  public mdiChevronRight = mdiChevronRight;
 
   @Prop() season!: number;
   @Prop() gateway!: Gateways;

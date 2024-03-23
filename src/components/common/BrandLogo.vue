@@ -5,6 +5,7 @@
         ? '/assets/logos/small-logo-full.png'
         : '/assets/logos/small-logo-full-black.png'
     "
+    alt="W3Champions Logo"
   />
 </template>
 

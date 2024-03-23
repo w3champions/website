@@ -1,8 +1,8 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { EGameMode, EGameModeType } from "@/store/types";
-import { SeasonMap } from "@/store/admin/mapsManagement/types";
-import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { ActiveGameMode } from "@/store/ranking/types";
 
 const AT_EQUIVALENT: { [key: number]: EGameMode } = {
   [EGameMode.GM_2ON2]: EGameMode.GM_2ON2_AT,
@@ -13,10 +13,10 @@ const AT_EQUIVALENT: { [key: number]: EGameMode } = {
 
 @Component
 export default class GameModesMixin extends Vue {
-  private mapsManagementStore = useMapsManagementStore();
+  public rankingsStore = useRankingStore();
 
   public async loadActiveGameModes() {
-    await this.mapsManagementStore.loadMapsForCurrentSeason();
+    await this.rankingsStore.retrieveActiveGameModes();
   }
 
   public get activeGameModes() {
@@ -50,22 +50,22 @@ export default class GameModesMixin extends Vue {
   }
 
   private getGameModes(type: EGameModeType | null, withAt: boolean) {
-    return this.mapsManagementStore.seasonMaps
-      .reduce((result: SeasonMap[], seasonMap: SeasonMap) => {
-        result.push(seasonMap);
-        if (withAt && AT_EQUIVALENT[seasonMap.id]) {
+    return this.rankingsStore.activeModes
+      .reduce((result: ActiveGameMode[], mode: ActiveGameMode) => {
+        result.push(mode);
+        if (withAt && AT_EQUIVALENT[mode.id]) {
           result.push({
-            ...seasonMap,
-            id: AT_EQUIVALENT[seasonMap.id],
-            gameMode: seasonMap.gameMode + " AT",
+            ...mode,
+            id: AT_EQUIVALENT[mode.id],
+            name: mode.name + " AT",
           });
         }
         return result;
       }, [])
-      .filter((seasonMap) => type === null || seasonMap.type === type)
-      .map((seasonMap) => {
-        const id = seasonMap.id;
-        const name = this.$t(`gameModes.${EGameMode[id]}`) || seasonMap.gameMode;
+      .filter((mode) => type === null || mode.type === type)
+      .map((mode) => {
+        const id = mode.id;
+        const name = this.$t(`gameModes.${EGameMode[id]}`) || mode.name;
         return {
           id,
           name,

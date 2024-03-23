@@ -197,7 +197,7 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>mdi-pencil</v-icon>
+                <v-icon left>{{ mdiPencil }}</v-icon>
                 {{ $t("components_player_playeravatar.edit") }}
               </v-btn>
             </template>
@@ -211,7 +211,7 @@
                 <v-container>
                   <v-row>
                     <v-text-field
-                      prepend-icon="mdi-twitch"
+                      :prepend-icon="mdiTwitch"
                       color="purple accent-4"
                       dense
                       clearable
@@ -222,7 +222,7 @@
                       v-model="userProfile.twitch"
                     ></v-text-field>
                     <v-text-field
-                      prepend-icon="mdi-youtube"
+                      :prepend-icon="mdiYoutube"
                       color="red darken-2"
                       dense
                       clearable
@@ -233,7 +233,7 @@
                       v-model="userProfile.youtube"
                     ></v-text-field>
                     <v-text-field
-                      prepend-icon="mdi-twitter"
+                      :prepend-icon="mdiTwitter"
                       color="blue darken-2"
                       dense
                       clearable
@@ -255,7 +255,7 @@
                       v-model="userProfile.trovo"
                     ></v-text-field>
                     <v-text-field
-                      prepend-icon="mdi-home"
+                      :prepend-icon="mdiHome"
                       color="blue darken-2"
                       dense
                       :rules="[rules.maxLength(50)]"
@@ -270,7 +270,7 @@
                       <v-checkbox
                         dense
                         class="alias-checkbox"
-                        prepend-icon="mdi-account-check"
+                        :prepend-icon="mdiAccountCheck"
                         v-model="userProfile.aliasSettings.showAka"
                         :label="$t('components_player_playeravatar.showalias')"
                       ></v-checkbox>
@@ -290,7 +290,7 @@
                   <v-row no-gutters class="countryInput">
                     <v-col md="12">
                       <v-autocomplete
-                        prepend-icon="mdi-flag"
+                        :prepend-icon="mdiFlag"
                         clearable
                         :item-value="countryCode"
                         :items="countries"
@@ -356,14 +356,22 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePlayerStore } from "@/store/player/store";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
+import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 
 // Lazy load.
-const CountryFlag = () => import("vue-country-flag");
+const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
 type CountryType = { country: string; countryCode: string };
 
 @Component({ components: { CountryFlag, PlayerSocials } })
 export default class PlayerAvatar extends Vue {
+  public mdiAccountCheck = mdiAccountCheck;
+  public mdiFlag = mdiFlag;
+  public mdiHome = mdiHome;
+  public mdiPencil = mdiPencil;
+  public mdiTwitch = mdiTwitch;
+  public mdiTwitter = mdiTwitter;
+  public mdiYoutube = mdiYoutube;
   @Prop() isLoggedInPlayer!: boolean;
 
   public useClassicIcons = false;

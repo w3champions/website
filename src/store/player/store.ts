@@ -6,6 +6,7 @@ import {
   PlayerStatsHeroOnMapVersusRace,
   PlayerStatsRaceOnMapVersusRace,
   RaceStat,
+  PlayerGameLengthStats,
 } from "./types";
 import { EGameMode, ERaceEnum, Match } from "../types";
 import { Season } from "@/store/ranking/types";
@@ -38,6 +39,7 @@ export const usePlayerStore = defineStore("player", {
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
     mmrRpTimeline: {} as PlayerMmrRpTimeline | undefined,
+    playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
   } as PlayerState),
   actions: {
     async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
@@ -116,6 +118,7 @@ export const usePlayerStore = defineStore("player", {
         await this.loadRaceStats();
         await this.loadGameModeStats({});
         await this.loadPlayerMmrRpTimeline();
+        await this.loadPlayerGameLengths();
         await this.loadPlayerStatsHeroVersusRaceOnMap;
       }
     },
@@ -132,6 +135,13 @@ export const usePlayerStore = defineStore("player", {
         );
       this.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       this.SET_LOADING_MMR_TIMELINE(false);
+    },
+    async loadPlayerGameLengths() {
+      const playerGameLengthStats = await ProfileService.retrievePlayerGameLengthStats(
+        this.battleTag,
+        this.selectedSeason?.id ?? -1,
+      );
+      this.SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats);
     },
     SET_INITIALIZED(): void {
       this.isInitialized = true;
@@ -196,5 +206,8 @@ export const usePlayerStore = defineStore("player", {
     SET_MMR_RP_TIMELINE(mmrRpTimeline: PlayerMmrRpTimeline | undefined): void {
       this.mmrRpTimeline = mmrRpTimeline;
     },
+    SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats: PlayerGameLengthStats | undefined): void {
+      this.playerGameLengthStats = playerGameLengthStats;
+    }
   },
 });

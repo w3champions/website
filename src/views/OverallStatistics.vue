@@ -95,6 +95,7 @@ export default class OverallStatisticsView extends Vue {
     await this.overallStatsStore.loadGameLengthStatistics();
     await this.overallStatsStore.loadPopularGameHours();
     await this.overallStatsStore.loadMapAndRaceStatistics();
+    await this.overallStatsStore.loadMatchupLengthStatistics(1, 1, "all");
     if (this.verifiedBtag) {
       await this.player.loadProfile({
         battleTag: this.verifiedBtag,

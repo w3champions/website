@@ -8,7 +8,8 @@ export const useOauthStore = defineStore("oauth", {
     blizzardVerifiedBtag: "",
     token: "",
     twitch_token: {} as TwitchToken,
-    isAdmin: false
+    isAdmin: false,
+    permissions: [],
   }),
   actions: {
     async authorizeWithCode(code: string) {
@@ -21,6 +22,9 @@ export const useOauthStore = defineStore("oauth", {
       if (profile) {
         this.SET_PROFILE_NAME(profile.battleTag);
         this.SET_IS_ADMIN(profile.isAdmin);
+        if (profile.isAdmin) {
+          this.SET_PERMISSIONS(profile.permissions);
+        }
         await AuthorizationService.saveAuthToken(bearer);
       }
 
@@ -40,12 +44,12 @@ export const useOauthStore = defineStore("oauth", {
       if (profile) {
         this.SET_PROFILE_NAME(profile.battleTag);
         this.SET_IS_ADMIN(profile.isAdmin);
+        if (profile.isAdmin) {
+          this.SET_PERMISSIONS(profile.permissions);
+        }
         await AuthorizationService.saveAuthToken(profile);
       } else {
-        AuthorizationService.deleteAuthCookie();
-        this.SET_PROFILE_NAME("");
-        this.SET_IS_ADMIN(false);
-        this.SET_BEARER("");
+        this.logout();
       }
     },
     async saveLoginRegion(region: BnetOAuthRegion) {
@@ -68,6 +72,9 @@ export const useOauthStore = defineStore("oauth", {
     },
     SET_IS_ADMIN(isAdmin: boolean): void {
       this.isAdmin = isAdmin;
-    }
+    },
+    SET_PERMISSIONS(permissions: string[]): void {
+      this.permissions = permissions;
+    },
   }
 });

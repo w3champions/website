@@ -1,6 +1,7 @@
 <template>
   <bar-chart :chart-data="gameHourChartData" />
 </template>
+
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 
@@ -16,18 +17,18 @@ import { formatSecondsToDuration } from "@/helpers/date-functions";
 export default class GameLengthChart extends Vue {
   @Prop() public gameLength!: GameLength;
 
-  getTrimmedTimes() {
-    const times = this.gameLength.lengths.slice(4);
-    times.pop();
-    return times;
+  get trimmedStats() {
+    const stats = this.gameLength.lengths.slice(4); // Do not display games lasting less than 2 minutes.
+    stats.pop(); // Do not display the last entry, because all games longer than the last timeslot are accumulated here.
+    return stats;
   }
 
   get passedTime(): string[] {
-    return this.getTrimmedTimes().map((g) => formatSecondsToDuration(g.passedTimeInSeconds));
+    return this.trimmedStats.map((g) => formatSecondsToDuration(g.seconds));
   }
 
   get gamesCount() {
-    return this.getTrimmedTimes().map((g) => g.games);
+    return this.trimmedStats.map((g) => g.games);
   }
 
   get gameHourChartData(): ChartData {

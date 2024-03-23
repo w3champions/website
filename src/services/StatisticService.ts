@@ -3,10 +3,11 @@ import {
   GameDayPerMode,
   GameLength,
   MatchesOnMapPerSeason,
+  MatchupLength,
   MmrDistribution,
   PlayedHeroByMode,
   PlayersPerDay,
-  PopularGameHour,
+  PopularHours,
   StatsPerWinrate,
   WinLoss,
 } from "@/store/overallStats/types";
@@ -66,7 +67,7 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public static async retrieveGameTimes(): Promise<GameLength[]> {
+  public static async retrieveGameLengths(): Promise<GameLength[]> {
     const url = `${API_URL}api/w3c-stats/games-lengths`;
     const response = await fetch(url, {
       method: "GET",
@@ -76,8 +77,20 @@ export default class StatisticService {
       },
     });
 
-    const data = await response.json();
-    return data.gameLengths;
+    return await response.json();
+  }
+
+  public static async retrieveMatchupLengths(race1 = 1, race2 = 1, season = "all"): Promise<MatchupLength> {
+    const url = `${API_URL}api/w3c-stats/matchup-lengths?season=${season}&race1=${race1}&race2=${race2}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
   }
 
   public static async retrievePlayedHeroes(): Promise<PlayedHeroByMode[]> {
@@ -93,8 +106,8 @@ export default class StatisticService {
     return await response.json();
   }
 
-  public static async retrievePopularGameHours(): Promise<PopularGameHour[]> {
-    const url = `${API_URL}api/w3c-stats/play-hours`;
+  public static async retrievePopularGameHours(): Promise<PopularHours[]> {
+    const url = `${API_URL}api/w3c-stats/popular-hours`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

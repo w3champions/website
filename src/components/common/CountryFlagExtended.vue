@@ -20,7 +20,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { CountriesByCode } from "@/store/countries";
 
 // Lazy load.
-const CountryFlag = () => import("vue-country-flag");
+const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
 @Component({ components: { CountryFlag } })
 export default class CountryFlagExtended extends Vue {

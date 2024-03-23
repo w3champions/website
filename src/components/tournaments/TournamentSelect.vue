@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon style="margin-right: 5px">mdi-trophy</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon>
         {{ selectedTournamentText }}
       </v-btn>
     </template>
@@ -34,6 +34,7 @@
 
 <script lang="ts">
 import { ITournament } from "@/store/tournaments/types";
+import { mdiTrophy } from "@mdi/js";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
@@ -41,6 +42,7 @@ import { Component, Prop } from "vue-property-decorator";
 export default class TournamentSelect extends Vue {
   @Prop() tournaments!: ITournament[];
   @Prop() selectedTournament!: ITournament;
+  public mdiTrophy = mdiTrophy;
 
   get selectedTournamentText() {
     return this.selectedTournament

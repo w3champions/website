@@ -24,6 +24,7 @@ export type PlayerState = {
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
   mmrRpTimeline: PlayerMmrRpTimeline | undefined;
+  playerGameLengthStats: PlayerGameLengthStats | undefined;
 };
 
 export type PlayerProfile = {
@@ -129,6 +130,38 @@ export type PlayerMmrRpTimeline = {
   mmrRpAtDates: MmrRpAtDate[];
 };
 
+export type PlayerGameLengthStats = {
+  id: string;
+  averageGameLengthByOpponentRace: AverageGameLengthByOpponentRace;
+  playerGameLengthIntervalByOpponentRace: GameLengthMapByRace;
+  battleTag: string;
+  season: number;
+};
+
+export type AverageGameLengthByOpponentRace = {
+  [ERaceEnum.RANDOM]: number;
+  [ERaceEnum.HUMAN]: number;
+  [ERaceEnum.NIGHT_ELF]: number;
+  [ERaceEnum.ORC]: number;
+  [ERaceEnum.UNDEAD]: number;
+  [ERaceEnum.TOTAL]: number;
+  [ERaceEnum.STARTER]: number;
+};
+
+export type GameLengthMapByRace = {
+  [ERaceEnum.RANDOM]: PlayerGameLength;
+  [ERaceEnum.HUMAN]: PlayerGameLength;
+  [ERaceEnum.NIGHT_ELF]: PlayerGameLength;
+  [ERaceEnum.ORC]: PlayerGameLength;
+  [ERaceEnum.UNDEAD]: PlayerGameLength;
+  [ERaceEnum.TOTAL]: PlayerGameLength;
+  [ERaceEnum.STARTER]: PlayerGameLength;
+};
+
+export type PlayerGameLength = {
+  lengths: Record<number, number>;
+};
+
 export type PlayerHeroStatistic = {
   hero: string;
   total: string;
@@ -138,10 +171,25 @@ export type PlayerHeroStatistic = {
   ne: string;
 };
 
+export type FractionForTooltip = {
+  number: number;
+  total: number;
+};
+
+export type NumbersByRaceForTooltip = {
+  [ERaceEnum.HUMAN]: FractionForTooltip;
+  [ERaceEnum.NIGHT_ELF]: FractionForTooltip;
+  [ERaceEnum.ORC]: FractionForTooltip;
+  [ERaceEnum.UNDEAD]: FractionForTooltip;
+  [ERaceEnum.TOTAL]: FractionForTooltip;
+  [ERaceEnum.STARTER]: FractionForTooltip;
+};
+
 export type PlayerHeroWinRateForStatisticsTab = {
   hero: string;
   name: string;
   image: string;
+  numbers_by_race: NumbersByRaceForTooltip;
   [ERaceEnum.TOTAL]: string;
   [ERaceEnum.UNDEAD]: string;
   [ERaceEnum.ORC]: string;

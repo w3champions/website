@@ -24,11 +24,11 @@
                   <br />
                   <v-card-text>
                     <v-btn
-                      :href="launcherUrlWin"
+                      :href="launcherEUrl"
                       target="_blank"
                       class="join-button mt-0 mb-4"
                     >
-                      <v-icon>mdi-download</v-icon>
+                      <v-icon>{{ mdiDownload }}</v-icon>
                       <span class="mr-2 hidden-xs-only">Windows</span>
                     </v-btn>
                     <v-btn
@@ -36,8 +36,20 @@
                       target="_blank"
                       class="join-button mt-0 mb-4 ml-8"
                     >
-                      <v-icon>mdi-download</v-icon>
+                      <v-icon>{{ mdiDownload }}</v-icon>
                       <span class="mr-2 hidden-xs-only">Mac</span>
+                    </v-btn>
+                  </v-card-text>
+                  <br />
+                  <p>{{ $t("views_gettingstarted.downloadlegacylauncher") }}</p>
+                  <v-card-text>
+                    <v-btn
+                      :href="launcherUrlWin"
+                      target="_blank"
+                      class="join-button mt-0 mb-4"
+                    >
+                      <v-icon>{{ mdiDownload }}</v-icon>
+                      <span class="mr-2 hidden-xs-only">Windows (legacy)</span>
                     </v-btn>
                   </v-card-text>
                   <br />
@@ -91,7 +103,7 @@
                     target="_blank"
                     outlined
                   >
-                    <v-icon>mdi-download</v-icon>
+                    <v-icon>{{ mdiDownload }}</v-icon>
                     <span class="mr-2 hidden-xs-only">
                       {{ $t("views_gettingstarted.manualwinbody2") }}
                     </span>
@@ -114,7 +126,7 @@
                     target="_blank"
                     outlined
                   >
-                    <v-icon>mdi-download</v-icon>
+                    <v-icon>{{ mdiDownload }}</v-icon>
                     <span class="mr-2 hidden-xs-only">
                       {{ $t("views_gettingstarted.manualwinbody8") }}
                     </span>
@@ -198,7 +210,7 @@
                     target="_blank"
                     outlined
                   >
-                    <v-icon>mdi-download</v-icon>
+                    <v-icon>{{ mdiDownload }}</v-icon>
                     <span class="mr-2 hidden-xs-only">
                       {{ $t("views_gettingstarted.manualmacbody2") }}
                     </span>
@@ -225,7 +237,7 @@
                     target="_blank"
                     outlined
                   >
-                    <v-icon>mdi-download</v-icon>
+                    <v-icon>{{ mdiDownload }}</v-icon>
                     <span class="mr-2 hidden-xs-only">
                       {{ $t("views_gettingstarted.manualmacbody8") }}
                     </span>
@@ -307,10 +319,13 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { LAUNCHER_UPDATE_URL } from "@/main";
+import { mdiDownload } from "@mdi/js";
 
 @Component({})
 export default class GettingStartedView extends Vue {
   tabsModel = null;
+  public mdiDownload = mdiDownload;
+  public launcher_e_url = "";
 
   get alertMessage() {
     return "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!";
@@ -330,6 +345,10 @@ export default class GettingStartedView extends Vue {
 
   get launcherUrlWin() {
     return LAUNCHER_UPDATE_URL + "launcher/win";
+  }
+
+  get launcherEUrl() {
+    return LAUNCHER_UPDATE_URL + "launcher-e";
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon class="mr-1">mdi-sort-ascending</v-icon>
+        <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
         {{ sortName }}
       </v-btn>
     </template>
@@ -31,9 +31,11 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
+import { mdiSortAscending } from "@mdi/js";
 
 @Component({})
 export default class MapSelect extends Vue {
+  public mdiSortAscending = mdiSortAscending;
   private matchStore = useMatchStore();
 
   get sortName() {

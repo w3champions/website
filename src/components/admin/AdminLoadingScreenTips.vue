@@ -53,8 +53,8 @@
       </v-toolbar>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editTipItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteTipItem(item)">mdi-delete</v-icon>
+      <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
+      <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -66,9 +66,12 @@ import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
+import { mdiDelete, mdiPencil } from "@mdi/js";
 
 @Component({ components: {} })
 export default class AdminLoadingScreenTips extends Vue {
+  public mdiDelete = mdiDelete;
+  public mdiPencil = mdiPencil;
   private oauthStore = useOauthStore();
   private infoMessagesStore = useInfoMessagesStore();
 

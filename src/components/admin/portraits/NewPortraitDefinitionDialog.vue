@@ -18,7 +18,7 @@
                   </v-col>
 
                   <v-btn icon @click="dialogOpen = false">
-                    <v-icon>mdi-close</v-icon>
+                    <v-icon>{{ mdiClose }}</v-icon>
                   </v-btn>
                 </v-row>
 
@@ -59,6 +59,15 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import { mdiClose } from "@mdi/js";
+
+type RULES = {
+  required: (value: string) => boolean | string;
+  min: (text: string) => boolean | string;
+  taken: (id: string) => boolean | string;
+  number: (value: number) => boolean | string;
+  notZero: (value: number) => boolean | string;
+};
 
 @Component({ components: { PortraitGroupCombobox } })
 export default class NewPortraitDefinitionDialog extends Vue {
@@ -66,13 +75,14 @@ export default class NewPortraitDefinitionDialog extends Vue {
   dialogOpen = false;
   valid = false;
   groups = [] as string[];
+  public mdiClose = mdiClose;
   private playerManagement = usePlayerManagementStore();
 
   get allSpecialPortraits(): PortraitDefinition[] {
     return this.playerManagement.allSpecialPortraits;
   }
 
-  get rules(): unknown {
+  get rules(): RULES {
     return {
       required: (value: string) => !!value || "Required",
       min: (text: string) => text.length >= 1 || "Min 1 characters",
@@ -81,7 +91,7 @@ export default class NewPortraitDefinitionDialog extends Vue {
         const pattern = /^[0-9]*$/;
         return pattern.test(value.toString()) || "Must be a number";
       },
-      notZero: (value: number) => value != 0 || "Don't use zero",
+      notZero: (value: number) => !value.toString().startsWith("0") || "Leading zero not allowed",
     };
   }
 

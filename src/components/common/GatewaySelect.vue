@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">mdi-earth</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>
         {{ gateway }}
       </v-btn>
     </template>
@@ -32,9 +32,11 @@ import { Component } from "vue-property-decorator";
 import { Gateways } from "@/store/ranking/types";
 import { LocaleMessage } from "vue-i18n";
 import { useRootStateStore } from "@/store/rootState/store";
+import { mdiEarth } from "@mdi/js";
 
 @Component({})
 export default class GatewaySelect extends Vue {
+  public mdiEarth = mdiEarth;
   private rootStateStore = useRootStateStore();
 
   get gateway(): LocaleMessage {

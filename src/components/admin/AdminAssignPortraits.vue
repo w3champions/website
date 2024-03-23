@@ -29,7 +29,7 @@
                         </v-col>
 
                         <v-btn icon @click="assignDialogOpen = false">
-                          <v-icon>mdi-close</v-icon>
+                          <v-icon>{{ mdiClose }}</v-icon>
                         </v-btn>
                       </v-row>
 
@@ -165,6 +165,7 @@ import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import { mdiClose } from "@mdi/js";
 
 @Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery, PlayerSearch } })
 export default class AdminAssignPortraits extends Vue {
@@ -178,6 +179,7 @@ export default class AdminAssignPortraits extends Vue {
   confirmRemovedPortraits = [] as number[];
   mouseoverText = "";
   foundPlayer = "";
+  public mdiClose = mdiClose;
   private playerManagement = usePlayerManagementStore();
 
   get rules(): { required: (value: string) => string | boolean; min: (text: string) => string | boolean } {

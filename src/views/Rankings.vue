@@ -51,7 +51,7 @@
         <v-spacer></v-spacer>
         <v-autocomplete
           v-model="searchModel"
-          append-icon="mdi-magnify"
+          :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
@@ -111,7 +111,7 @@
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
-            <v-icon class="ml-4">mdi-chevron-right</v-icon>
+            <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
           </v-btn>
         </template>
         <v-card>
@@ -190,6 +190,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { mdiChevronRight, mdiMagnify } from "@mdi/js";
 
 @Component({
   components: {
@@ -208,6 +209,8 @@ export default class RankingsView extends Vue {
   public gameModes = EGameMode;
   public races = ERaceEnum;
   private searchTimer: ReturnType<typeof setTimeout> = 0;
+  public mdiMagnify = mdiMagnify;
+  public mdiChevronRight = mdiChevronRight;
 
   @Prop() public season!: number;
   @Prop() public league!: number;
@@ -311,6 +314,9 @@ export default class RankingsView extends Vue {
   get noDataText(): string {
     if (!this.search || this.search.length < 3) {
       return "Type at least 3 letters";
+    }
+    if (this.isLoading) {
+      return "Loading...";
     }
 
     return "No player found";

@@ -16,8 +16,8 @@
           >
             {{ header.text }}
             <div v-if="header.text === sortColumn" class="sort-icon">
-              <v-icon v-if="isSortedAsc">mdi-chevron-up</v-icon>
-              <v-icon v-if="!isSortedAsc">mdi-chevron-down</v-icon>
+              <v-icon v-if="isSortedAsc">{{ mdiChevronUp }}</v-icon>
+              <v-icon v-if="!isSortedAsc">{{ mdiChevronDown }}</v-icon>
             </div>
           </td>
         </tr>
@@ -76,14 +76,14 @@
                           v-if="!isCurrentlyLive(item.player.playerIds)"
                           color="purple accent-4"
                         >
-                          mdi-twitch
+                          {{ mdiTwitch }}
                         </v-icon>
                         <v-icon
                           v-if="isCurrentlyLive(item.player.playerIds)"
                           class="blinker"
                           color="red accent-4"
                         >
-                          mdi-twitch
+                          {{ mdiTwitch }}
                         </v-icon>
                       </v-btn>
                     </span>
@@ -148,6 +148,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 
 @Component({
   components: {
@@ -163,6 +164,9 @@ export default class RankingsGrid extends Vue {
   @Prop() rankings!: Ranking[];
   @Prop() ongoingMatches!: OngoingMatches;
   @Prop() selectedRank!: Ranking;
+  public mdiChevronUp = mdiChevronUp;
+  public mdiChevronDown = mdiChevronDown;
+  public mdiTwitch = mdiTwitch;
 
   public gameModes = EGameMode;
 

@@ -1,7 +1,8 @@
 <template>
   <v-container fluid v-show="isAdmin" style="height: 100%">
+    <admin-check-jwt-lifetime />
     <div class="admin-page-wrapper">
-      <admin-navigation :items="navItems" @itemSelected="navItemSelected"></admin-navigation>
+      <admin-navigation :items="filteredNavItems" @itemSelected="navItemSelected"></admin-navigation>
       <v-card tile>
         <v-card-title>
           {{ selectedNavItem.title }}
@@ -32,7 +33,20 @@ import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminMotd from "@/components/admin/AdminMotd.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
+import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
+import AdminPermissions from "@/components/admin/AdminPermissions.vue";
+import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
+import AdminStorageAlibaba from "@/components/admin/cloudStorage/AdminStorageAlibaba.vue";
+import AdminStorageS3 from "@/components/admin/cloudStorage/AdminStorageS3.vue";
 import { useOauthStore } from "@/store/oauth/store";
+import {
+  mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
+  mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
+  mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
+  mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
+  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument
+} from "@mdi/js";
+import { EPermission } from "@/store/admin/permission/types";
 
 @Component({
   components: {
@@ -51,148 +65,226 @@ import { useOauthStore } from "@/store/oauth/store";
     AdminMotd,
     AdminTournaments,
     AdminViewGameChat,
+    AdminCheckJwtLifetime,
+    AdminPermissions,
+    AdminServerLogs,
+    AdminStorageAlibaba,
+    AdminStorageS3,
   },
 })
 export default class Admin extends Vue {
   private oauthStore = useOauthStore();
+
   navItems: Array<NavigationItem> = [
     {
       title: "Data Science",
-      icon: "mdi-chart-line",
+      icon: mdiChartLine,
+      permission: EPermission.Queue,
       items: [
         {
           key: "queue",
           title: "Live Queue Data",
-          icon: "mdi-table",
+          icon: mdiTable,
+          permission: EPermission.Queue,
           component: "admin-queue-data",
         },
       ],
     },
     {
       title: "Moderation",
-      icon: "mdi-account-group",
+      icon: mdiAccountGroup,
+      permission: EPermission.Moderation,
       items: [
         {
           key: "banned_players",
           title: "Banned Players",
-          icon: "mdi-account-remove",
+          icon: mdiAccountRemove,
+          permission: EPermission.Moderation,
           component: "admin-banned-players",
         },
         {
           key: "alts",
           title: "Smurf Checker",
-          icon: "mdi-account-question",
+          icon: mdiAccountQuestion,
+          permission: EPermission.Moderation,
           component: "admin-alts",
         },
         {
           key: "mute",
           title: "Global Mute",
-          icon: "mdi-chat-remove",
+          icon: mdiChatRemove,
+          permission: EPermission.Moderation,
           component: "admin-global-mute",
         },
         {
           key: "lounge_mute",
           title: "Lounge Mute",
-          icon: "mdi-chat-remove-outline",
+          icon: mdiChatRemoveOutline,
+          permission: EPermission.Moderation,
           component: "admin-lounge-mute",
         },
         {
           key: "view_game_chat",
           title: "View Game Chat",
-          icon: "mdi-format-align-left",
+          icon: mdiFormatAlignLeft,
+          permission: EPermission.Moderation,
           component: "admin-view-game-chat",
         },
       ],
     },
     {
       title: "Player Settings",
-      icon: "mdi-cog",
+      icon: mdiCog,
+      permission: EPermission.Proxies,
       items: [
         {
           key: "proxy_settings",
           title: "Proxy Settings",
-          icon: "mdi-account-network",
+          icon: mdiAccountNetwork,
+          permission: EPermission.Proxies,
           component: "admin-proxies",
         },
       ],
     },
     {
       title: "Launcher",
-      icon: "mdi-rocket",
+      icon: mdiRocket,
+      permission: EPermission.Content,
       items: [
         {
           key: "news",
           title: "News",
-          icon: "mdi-rss",
+          icon: mdiRss,
+          permission: EPermission.Content,
           component: "admin-news-for-launcher",
         },
       ],
     },
     {
       title: "In-Game Settings",
-      icon: "mdi-monitor-dashboard",
+      icon: mdiMonitorDashboard,
+      permission: EPermission.Content,
       items: [
         {
           key: "tips",
-          icon: "mdi-tooltip-text-outline",
           title: "Loading screen tips",
+          icon: mdiTooltipTextOutline,
+          permission: EPermission.Content,
           component: "admin-loading-screen-tips",
         },
         {
           key: "motd",
-          icon: "mdi-message-alert",
           title: "Message of the Day",
+          icon: mdiMessageAlert,
+          permission: EPermission.Content,
           component: "admin-motd",
         },
       ],
     },
     {
       title: "Rewards",
-      icon: "mdi-gift",
+      icon: mdiGift,
+      permission: EPermission.Content,
       items: [
         {
           key: "portraits",
           title: "Assign Portraits",
-          icon: "mdi-account-box-outline",
+          icon: mdiAccountBoxOutline,
+          permission: EPermission.Content,
           component: "admin-assign-portraits",
         },
         {
           key: "manage-portraits",
           title: "Manage Portraits",
-          icon: "mdi-briefcase",
+          icon: mdiBriefcase,
+          permission: EPermission.Content,
           component: "admin-manage-portraits",
+        },
+        {
+          key: "storage-alibaba",
+          title: "Manage Alibaba Files",
+          icon: mdiFileDocumentOutline,
+          permission: EPermission.Content,
+          component: "admin-storage-alibaba",
+        },
+        {
+          key: "storage-s3",
+          title: "Manage S3 Files",
+          icon: mdiFileDocument,
+          permission: EPermission.Content,
+          component: "admin-storage-s3",
         },
       ],
     },
     {
       title: "Maps",
-      icon: "mdi-map-search",
+      icon: mdiMapSearch,
+      permission: EPermission.Maps,
       items: [
         {
           key: "maps",
           title: "Manage Maps",
-          icon: "mdi-map-plus",
+          icon: mdiMapPlus,
+          permission: EPermission.Maps,
           component: "admin-maps",
         },
       ],
     },
     {
       title: "Tournaments",
-      icon: "mdi-sword-cross",
+      icon: mdiSwordCross,
+      permission: EPermission.Tournaments,
       items: [
         {
           key: "tournaments",
           title: "Manage Tournaments",
-          icon: "mdi-sword-cross",
+          icon: mdiSwordCross,
+          permission: EPermission.Tournaments,
           component: "admin-tournaments",
         },
       ],
     },
+    {
+      title: "Permissions",
+      icon: mdiAccountKey,
+      permission: EPermission.Permissions,
+      items: [
+        {
+          key: "user_management",
+          title: "Manage Permissions",
+          icon: mdiAccountKey,
+          permission: EPermission.Permissions,
+          component: "admin-permissions",
+        },
+      ],
+    },
+    {
+      title: "Server Logs",
+      icon: mdiFileDocumentOutline,
+      permission: EPermission.Logs,
+      items: [
+        {
+          key: "admin-server-logs",
+          title: "View Server Logs",
+          icon: mdiFileDocumentOutline,
+          permission: EPermission.Logs,
+          component: "admin-server-logs",
+        },
+      ],
+    },
   ];
-  selectedNavItem = {};
+  selectedNavItem = {} as NavigationItem;
+
+  get filteredNavItems(): NavigationItem[] {
+    return this.navItems.filter((item) => this.permissions.includes(EPermission[item.permission]));
+  }
 
   get isAdmin(): boolean {
     return this.oauthStore.isAdmin;
+  }
+
+  get permissions(): string[] {
+    return this.oauthStore.permissions;
   }
 
   navItemSelected(item: NavigationItem): void {
@@ -212,8 +304,8 @@ export default class Admin extends Vue {
     return this.navItems[0];
   }
 
-  mounted(): void {
-    this.navItemSelected(this.getFirstItem(this.navItems));
+  async mounted(): Promise<void> {
+    this.navItemSelected(this.getFirstItem(this.filteredNavItems));
   }
 }
 </script>

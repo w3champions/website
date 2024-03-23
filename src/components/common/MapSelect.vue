@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon style="margin-right: 5px">mdi-map</v-icon>
+        <v-icon style="margin-right: 5px">{{ mdiMap }}</v-icon>
         {{ selected }}
       </v-btn>
     </template>
@@ -31,11 +31,13 @@ import Vue from "vue";
 import { TranslateResult } from "vue-i18n";
 import { Component, Prop } from "vue-property-decorator";
 import { MapInfo } from "@/store/common/types";
+import { mdiMap } from "@mdi/js";
 
 @Component({})
 export default class MapSelect extends Vue {
   @Prop({ default: "Overall" }) map?: string;
   @Prop({ default: [] }) mapInfo!: Array<MapInfo>;
+  public mdiMap = mdiMap;
 
   get selected(): string | TranslateResult {
     const match = this.maps.find((m) => m.key === this.map);

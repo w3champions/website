@@ -12,13 +12,14 @@ import {
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import ProfileService from "@/services/ProfileService";
-import AdminService from "@/services/AdminService";
+import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
+import { formatTimestampString } from "@/helpers/date-functions";
 
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
-    players: [],
+    bannedPlayers: [],
     queuedata: [],
     availableProxies: [],
     searchedPlayers: [],
@@ -31,18 +32,23 @@ export const useAdminStore = defineStore("admin", {
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
     banValidationError: "",
+    showJwtExpiredDialog: false,
   }),
   actions: {
     async loadBannedPlayers() {
-      const bannedPlayers = await AdminService.getBannedPlayers();
+      const oauthStore = useOauthStore();
+      const bannedPlayers = await AdminService.getBannedPlayers(oauthStore.token);
+
+      bannedPlayers.players.forEach((bannedPlayer) => {
+        bannedPlayer.endDate = formatTimestampString(bannedPlayer.endDate, "yyyy-MM-dd HH:mm:ss");
+        bannedPlayer.banInsertDate = formatTimestampString(bannedPlayer.banInsertDate, "yyyy-MM-dd HH:mm:ss");
+      });
+
       this.SET_BANNED_PLAYERS(bannedPlayers.players);
     },
     async postBan(bannedPlayer: BannedPlayer) {
       const oauthStore = useOauthStore();
-      const response = await AdminService.postBan(
-        bannedPlayer,
-        oauthStore.token,
-      );
+      const response = await AdminService.postBan(bannedPlayer, oauthStore.token);
       this.SET_BAN_VALIDATION_ERROR(response);
     },
     resetBanValidationMessage() {
@@ -50,14 +56,7 @@ export const useAdminStore = defineStore("admin", {
     },
     async deleteBan(bannedPlayer: BannedPlayer) {
       const oauthStore = useOauthStore();
-      await AdminService.deleteBan(
-        bannedPlayer,
-        oauthStore.token,
-      );
-      const bannedPlayers = this.players.filter(
-        (p: BannedPlayer) => p.battleTag != bannedPlayer.battleTag,
-      );
-      this.SET_BANNED_PLAYERS(bannedPlayers);
+      await AdminService.deleteBan(bannedPlayer, oauthStore.token);
     },
     async loadQueueData(token: string) {
       const queuedata = await AdminService.getQueueData(token);
@@ -78,10 +77,7 @@ export const useAdminStore = defineStore("admin", {
     },
     async getProxiesForPlayer(battleTag: string): Promise<ProxySettings> {
       const oauthStore = useOauthStore();
-      const proxiesSet = await AdminService.getProxiesForBattletag(
-        battleTag,
-        oauthStore.token,
-      );
+      const proxiesSet = await AdminService.getProxiesForBattletag(battleTag, oauthStore.token);
       this.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxiesSet);
       this.SET_SEARCHED_PLAYER_BTAG(battleTag);
 
@@ -114,26 +110,33 @@ export const useAdminStore = defineStore("admin", {
     },
     async loadGlobalMutes(): Promise<void> {
       const oauthStore = useOauthStore();
-      const getGlobalMutes = await AdminService.getGlobalMutes(
-        oauthStore.token,
-      );
+      const getGlobalMutes = await AdminService.getGlobalMutes(oauthStore.token);
       this.SET_MUTED_PLAYERS(getGlobalMutes);
     },
     async deleteGlobalMute(
       player: GloballyMutedPlayer,
     ): Promise<void> {
       const oauthStore = useOauthStore();
-      await AdminService.deleteGlobalMute(
-        oauthStore.token,
-        player.id,
-      );
+      await AdminService.deleteGlobalMute(oauthStore.token, player.id);
     },
     async addGlobalMute(mute: GlobalMute): Promise<void> {
       const oauthStore = useOauthStore();
       await AdminService.putGlobalMute(oauthStore.token, mute);
     },
+    async checkJwtLifetime(): Promise<void> {
+      const oauthStore = useOauthStore();
+      if (!oauthStore.token) return;
+      const isExpired = !(await AdminService.checkJwtLifetime(oauthStore.token));
+      if (isExpired) {
+        oauthStore.logout();
+        this.SET_SHOW_JWT_EXPIRED_DIALOG(true);
+      }
+    },
+    hideJwtExpiredDialog(): void {
+      this.SET_SHOW_JWT_EXPIRED_DIALOG(false);
+    },
     SET_BANNED_PLAYERS(bannedPlayers: BannedPlayer[]): void {
-      this.players = bannedPlayers;
+      this.bannedPlayers = bannedPlayers;
     },
     SET_BAN_VALIDATION_ERROR(error: string): void {
       this.banValidationError = error;
@@ -165,5 +168,8 @@ export const useAdminStore = defineStore("admin", {
     SET_MUTED_PLAYERS(mutedPlayers: GloballyMutedPlayer[]): void {
       this.globallyMutedPlayers = mutedPlayers;
     },
+    SET_SHOW_JWT_EXPIRED_DIALOG(value: boolean): void {
+      this.showJwtExpiredDialog = value;
+    }
   },
 });

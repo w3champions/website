@@ -119,6 +119,30 @@
         />
       </v-col>
     </v-row>
+    <v-card-title>
+      {{ $t("components_player_tabs_playerstatistictab.playergamelengthtitle") }}
+    </v-card-title>
+    <v-row v-if="selectedSeason.id !== 0">
+      <v-col cols="md-2">
+        <v-card-text>
+          <v-select
+            v-model="selectedGameLengthOpponentRace"
+            :items="gameLengthOpponentRaces"
+            item-text="opponentRace"
+            item-value="raceId"
+            label="Opponent Race"
+            outlined
+          />
+        </v-card-text>
+      </v-col>
+      <v-col cols="md-10">
+        <player-game-length-stats
+          v-if="selectedSeason.id !== 0"
+          :selectedOpponentRace="selectedGameLengthOpponentRace"
+          :selectedOpponentRaceName="gameLengthOpponentRaces.filter(e => e.raceId === selectedGameLengthOpponentRace)[0].opponentRace"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -137,6 +161,7 @@ import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceV
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
+import PlayerGameLengthStats from "@/components/player/PlayerGameLengthStats.vue";
 import { races } from "@/helpers/profile";
 import { TranslateResult } from "vue-i18n";
 import { useOverallStatsStore } from "@/store/overallStats/store";
@@ -149,6 +174,7 @@ import { usePlayerStore } from "@/store/player/store";
     PlayerHeroStatistics,
     PlayerHeroWinRate,
     MatchesGrid,
+    PlayerGameLengthStats,
   },
 })
 export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
@@ -160,6 +186,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   public updatePlayerHeroStatsKey = 0;
   public selectedMap = "Overall";
   public selectedMapHeroWinRate = "Overall";
+  public selectedGameLengthOpponentRace = ERaceEnum.TOTAL;
   public races = races;
   private overallStatsStore = useOverallStatsStore();
 
@@ -209,6 +236,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   @Watch("isPlayerInitialized")
   onPlayerInitialized(): void {
     this.initMmrRpTimeline();
+    this.player.loadPlayerGameLengths();
   }
 
   private async initMmrRpTimeline() {
@@ -302,6 +330,37 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
     return maps;
   }
+
+  get gameLengthOpponentRaces() {
+    const races = [
+      {
+        opponentRace: "All",
+        raceId: ERaceEnum.TOTAL,
+      },
+      {
+        opponentRace: "Random",
+        raceId: ERaceEnum.RANDOM,
+      },
+      {
+        opponentRace: "Human",
+        raceId: ERaceEnum.HUMAN,
+      },
+      {
+        opponentRace: "Orc",
+        raceId: ERaceEnum.ORC,
+      },
+      {
+        opponentRace: "Night Elf",
+        raceId: ERaceEnum.NIGHT_ELF,
+      },
+      {
+        opponentRace: "Undead",
+        raceId: ERaceEnum.UNDEAD,
+      },
+    ];
+    return races;
+  }
+
 }
 </script>
 

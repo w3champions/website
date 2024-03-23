@@ -85,7 +85,6 @@ import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
-import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";
 
 @Component({ components: { MatchesGrid, PlayerSearch } })
@@ -96,7 +95,6 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   public raceEnums = ERaceEnum;
   public filtersVisible = false;
   public foundPlayer = "";
-  private rankingsStore = useRankingStore();
   private player = usePlayerStore();
 
   async mounted(): Promise<void> {

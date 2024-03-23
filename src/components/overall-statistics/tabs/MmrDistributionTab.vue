@@ -66,7 +66,6 @@ import MmrDistributionChart from "@/components/overall-statistics/MmrDistributio
 import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";
 
 @Component({
@@ -79,7 +78,6 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
   public loadingData = true;
-  private rankingsStore = useRankingStore();
   private player = usePlayerStore();
 
   get seasons() {

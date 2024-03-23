@@ -1,6 +1,6 @@
 import { AdminReplayManagementState, ReplayChatLog } from "../types";
 import { useOauthStore } from "@/store/oauth/store";
-import AdminService from "@/services/AdminService";
+import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 
 export const useReplayManagementStore = defineStore("replayManagement", {

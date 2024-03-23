@@ -3,7 +3,7 @@
     <v-card class="pa-md-4">
       <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
       <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
-        <edit-map v-if="isEditOpen" :map="editedMap" @cancel="closeEdit" @save="saveMap"></edit-map>
+        <edit-map v-if="isEditOpen" :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
       </v-dialog>
 
       <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
@@ -16,14 +16,15 @@
         :items="maps"
         :items-per-page="10"
         :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
+        :search="search"
         class="elevation-1"
       >
         <template #[`item.path`]="{ item }">
           {{ getMapPath(item) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="editMap(item)">mdi-pencil</v-icon>
-          <v-icon small class="mr-2" @click="editMapFiles(item)">mdi-file</v-icon>
+          <v-icon small class="mr-2" @click="editMap(item)">{{ mdiPencil }}</v-icon>
+          <v-icon small class="mr-2" @click="editMapFiles(item)">{{ mdiFile }}</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -36,16 +37,19 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
-import isUndefined from "lodash/isUndefined";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { mdiFile, mdiPencil } from "@mdi/js";
 
 @Component({ components: { EditMap, EditMapFiles } })
 export default class AdminMaps extends Vue {
-  public search?: string = "";
+  public search = "";
   public editedMap?: Map = {} as Map;
   public isEditOpen = false;
   public isEditFilesOpen = false;
+  public isAddDialog = false;
   private mapsManagementStore = useMapsManagementStore();
+  public mdiFile = mdiFile;
+  public mdiPencil = mdiPencil;
 
   public get headers() {
     return [
@@ -70,12 +74,7 @@ export default class AdminMaps extends Vue {
   }
 
   public get maps() {
-    return isUndefined(this.search)
-      ? this.mapsManagementStore.maps
-      : this.mapsManagementStore.maps.filter((m) => {
-        return m.category?.toLowerCase().includes(this.search!.toLowerCase()) ||
-               m.name.toLowerCase().includes(this.search!.toLowerCase());
-      });
+    return this.mapsManagementStore.maps;
   }
 
   public get totalMaps() {
@@ -93,22 +92,26 @@ export default class AdminMaps extends Vue {
   }
 
   public addMap() {
+    this.isAddDialog = true;
     this.isEditOpen = true;
     this.editedMap = this.createDefaultMap();
   }
 
   public editMap(map: Map) {
+    this.isAddDialog = false;
     this.isEditOpen = true;
     this.editedMap = map;
   }
 
   public editMapFiles(map: Map) {
+    this.isAddDialog = false;
     this.isEditFilesOpen = true;
     this.editedMap = map;
   }
 
   public closeEdit() {
     this.isEditOpen = false;
+    this.isAddDialog = false;
   }
 
   public closeEditFiles() {
@@ -117,15 +120,16 @@ export default class AdminMaps extends Vue {
 
   public async saveMap(map: Map) {
     try {
-      if (map.id === -1) {
+      if (this.isAddDialog) {
         await this.mapsManagementStore.createMap(map);
       } else {
         await this.mapsManagementStore.updateMap(map);
       }
 
-      this.isEditOpen = false;
-    } catch {
-      alert("Error trying to save map");
+      this.closeEdit();
+
+    } catch(err) {
+      err ? alert(err) : alert("Error trying to save map.");
     }
   }
 

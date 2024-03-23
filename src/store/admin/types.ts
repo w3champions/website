@@ -2,10 +2,11 @@ import { PlayerOverview } from "@/store/ranking/types";
 import { EChatScope } from "../common/types";
 import { EColors } from "../types";
 import { PlayerProfile } from "@/store/player/types";
+import { EPermission } from "./permission/types";
 
 export type AdminState = {
   total: number;
-  players: BannedPlayer[];
+  bannedPlayers: BannedPlayer[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
   searchedPlayers: PlayerProfile[];
@@ -15,6 +16,7 @@ export type AdminState = {
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
   banValidationError: string;
+  showJwtExpiredDialog: boolean;
 };
 
 export type AdminPlayerManagementState = {
@@ -43,11 +45,9 @@ export interface ChangePortraitsDto {
 export interface BannedPlayer {
   battleTag: string;
   endDate: string;
-  isOnlyChatBan: boolean;
   gameModes: number[];
   isIpBan: boolean;
   banReason: string;
-  smurfs: string[];
   banInsertDate: string;
   author: string;
 }
@@ -63,6 +63,7 @@ export interface NavigationItem {
   icon?: string;
   component?: string;
   items?: Array<NavigationItem>;
+  permission: EPermission;
 }
 
 export interface QueueData {

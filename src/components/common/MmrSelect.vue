@@ -2,7 +2,7 @@
   <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon class="mr-1">mdi-chevron-triple-up</v-icon>
+        <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
       </v-btn>
     </template>
@@ -29,10 +29,12 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Mmr } from "@/store/match/types";
+import { mdiChevronTripleUp } from "@mdi/js";
 
 @Component({})
 export default class MmrSelect extends Vue {
   @Prop() mmr!: Mmr;
+  public mdiChevronTripleUp = mdiChevronTripleUp;
 
   previousMmr = {} as Mmr;
   currentMmr = { min: 0, max: 3000 } as Mmr;

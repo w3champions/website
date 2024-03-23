@@ -2,7 +2,7 @@
   <v-autocomplete
     :class="classes"
     v-model="searchModel"
-    append-icon="mdi-magnify"
+    :append-icon="mdiMagnify"
     label="Search BattleTag"
     clearable
     placeholder=" "
@@ -17,8 +17,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import { debounce } from "debounce";
+import debounce from "debounce";
 import { useAdminStore } from "@/store/admin/store";
+import { mdiMagnify } from "@mdi/js";
 
 @Component({})
 export default class PlayerSearch extends Vue {
@@ -31,6 +32,7 @@ export default class PlayerSearch extends Vue {
   private static SEARCH_DELAY = 500;
   private debouncedSearch = debounce(this.dispatchSearch, PlayerSearch.SEARCH_DELAY);
   private adminStore = useAdminStore();
+  public mdiMagnify = mdiMagnify;
 
   private dispatchSearch() {
     this.adminStore.searchBnetTag({ searchText: this.search.toLowerCase() });

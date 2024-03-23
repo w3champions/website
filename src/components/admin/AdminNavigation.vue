@@ -16,7 +16,7 @@
           @click="itemSelected(item, index)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon || "mdi-account-tie" }}</v-icon>
+            <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -45,7 +45,7 @@
             link
           >
             <v-list-item-icon>
-              <v-icon>{{ subItem.icon || "mdi-account-tie" }}</v-icon>
+              <v-icon>{{ subItem.icon || mdiAccountTie }}</v-icon>
             </v-list-item-icon>
 
             <v-list-item-title>{{ subItem.title }}</v-list-item-title>
@@ -58,12 +58,14 @@
 
 <script lang="ts">
 import { ItemType } from "@/App.vue";
+import { mdiAccountTie } from "@mdi/js";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({ components: {} })
 export default class AdminNavigation extends Vue {
   @Prop() items!: ItemType[];
+  public mdiAccountTie = mdiAccountTie;
 
   itemSelected(item: ItemType, index: number) {
     this.$emit("itemSelected", item, index);

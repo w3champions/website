@@ -161,6 +161,32 @@ export default class PlayerHeroStatistics extends Vue {
         id: heroStat.id,
         name: heroStat.name,
         image: heroStat.image,
+        numbers_by_race: {
+          hu: {
+            total: totals[ERaceEnum.HUMAN],
+            number: heroStat.hu,
+          },
+          orc: {
+            total: totals[ERaceEnum.ORC],
+            number: heroStat.orc,
+          },
+          ud: {
+            total: totals[ERaceEnum.UNDEAD],
+            number: heroStat.ud,
+          },
+          ne: {
+            total: totals[ERaceEnum.NIGHT_ELF],
+            number: heroStat.ne,
+          },
+          rand: {
+            total: totals[ERaceEnum.RANDOM],
+            number: heroStat.rand,
+          },
+          total: {
+            total: totals[ERaceEnum.TOTAL],
+            number: heroStat.total,
+          },
+        },
         hu: totals[ERaceEnum.HUMAN] > 0 ? String((heroStat.hu * 100 / totals[ERaceEnum.HUMAN]).toFixed(2)) + "%" : "N/A",
         orc: totals[ERaceEnum.ORC] > 0 ? String((heroStat.orc * 100 / totals[ERaceEnum.ORC]).toFixed(2)) + "%" : "N/A",
         ne: totals[ERaceEnum.NIGHT_ELF] > 0 ? String((heroStat.ne * 100 / totals[ERaceEnum.NIGHT_ELF]).toFixed(2)) + "%" : "N/A",

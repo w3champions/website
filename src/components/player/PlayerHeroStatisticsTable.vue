@@ -11,7 +11,16 @@
         </thead>
         <tbody class="player-hero-statistics-table__body">
           <tr v-for="item in heroStatsCurrentPage" :key="item.id">
-            <td v-for="header in headers" :key="header.value" v-html="item[header.value]"></td>
+            <td v-html="item.image"></td>
+            <td v-html="item.name"></td>
+            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
+              <template v-slot:activator="{ on }">
+                <td v-on="on" v-html="item[header.value]"></td>
+              </template>
+              <div v-if="item.numbers_by_race[header.value]">
+                {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
+              </div>
+            </v-tooltip>
           </tr>
         </tbody>
       </template>
@@ -20,8 +29,8 @@
     <v-pagination
       v-model="page"
       :length="pageLength"
-      prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right"
+      :prev-icon="mdiMenuLeft"
+      :next-icon="mdiMenuRight"
     ></v-pagination>
   </div>
 </template>
@@ -30,12 +39,16 @@
 import Vue from "vue";
 import { PlayerHeroStatistic } from "@/store/player/types";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import { mdiMenuLeft } from "@mdi/js";
+import { mdiMenuRight } from "@mdi/js";
 
 @Component
 export default class PlayerHeroStatisticsTable extends Vue {
   @Prop() private heroStatistics!: PlayerHeroStatistic[];
   private page = 1;
   private paginationSize = 10;
+  public mdiMenuLeft = mdiMenuLeft;
+  public mdiMenuRight = mdiMenuRight;
 
   get pageOffset(): number {
     return this.paginationSize * this.page;
@@ -46,6 +59,10 @@ export default class PlayerHeroStatisticsTable extends Vue {
   }
   get heroStatsCurrentPage(): PlayerHeroStatistic[] {
     return this.heroStatistics.slice((this.pageOffset - this.paginationSize), this.pageOffset);
+  }
+
+  get headersWithoutImageAndName() {
+    return this.headers.slice(2);
   }
 
   get headers() {

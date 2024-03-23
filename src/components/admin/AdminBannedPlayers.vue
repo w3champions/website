@@ -13,12 +13,12 @@
     <template v-slot:top>
       <v-toolbar flat color="transparent">
         <template>
-            <v-text-field
-              v-model="tableSearch"
-              label="Search ban"
-              prepend-icon="mdi-magnify"
-            ></v-text-field>
-          </template>
+          <v-text-field
+            v-model="tableSearch"
+            label="Search ban"
+            :prepend-icon="mdiMagnify"
+          ></v-text-field>
+        </template>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
@@ -99,9 +99,9 @@
                         <v-select
                           v-on="on"
                           v-model="editedItem.gameModes"
-                          :items="gameModesEnumValues"
-                          item-text="text"
-                          item-value="value"
+                          :items="selectableGameModes"
+                          item-text="name"
+                          item-value="id"
                           :menu-props="{ maxHeight: '400' }"
                           :label="$t(`views_admin.gameMode`)"
                           multiple
@@ -112,29 +112,6 @@
                         To ban from all game modes, leave this field blank
                       </span>
                     </v-tooltip>
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="12" class="py-0">
-                    <v-checkbox
-                      v-model="editedItem.isOnlyChatBan"
-                      :label="$t(`views_admin.onlybannedchat`)"
-                    />
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="12" class="py-0">
-                    <v-checkbox
-                      v-if="isAddDialog"
-                      v-model="banSmurfs"
-                      :label="$t(`views_admin.bansmurfs`)"
-                      @change="getSmurfs(banSmurfs)"
-                    />
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="12" class="py-0">
-                    <div v-if="banSmurfs">
-                      <div>{{ hasSmurfs ? "The following battletags will be banned:" : "No smurfs found." }}</div>
-                      <div v-for="smurf in editedItem.smurfs" :key="smurf">{{ smurf }}</div>
-                    </div>
                   </v-col>
 
                   <v-col cols="12" sm="12" md="12" class="pb-0">
@@ -170,30 +147,33 @@
       </v-toolbar>
     </template>
     <template #[`item.gameModesText`]="{ item }">
-      <td style="white-space: pre-line">{{ getGametypeText(item.gameModes) }}</td>
+      <td v-if="!isEmpty(item.gameModes)">
+        <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
+      </td>
+      <td v-else>All</td>
     </template>
     <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
+      <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
     </template>
   </v-data-table>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Mixins, Watch } from "vue-property-decorator";
+import GameModesMixin from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
-import { LocaleMessage } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
+import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
+import isEmpty from "lodash/isEmpty";
+import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 
 @Component({ components: { PlayerSearch } })
-export default class AdminBannedPlayers extends Vue {
+export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   private oauthStore = useOauthStore();
-  public gameModesEnumValues = this.translateGametypes();
-  public banSmurfs = false;
   public dialog = false;
   public dateMenu = false;
   public editedIndex = -1;
@@ -201,83 +181,46 @@ export default class AdminBannedPlayers extends Vue {
   public foundPlayer = "";
   public clearPlayerSearchToggle = false;
   private adminStore = useAdminStore();
-
-  public async getSmurfs(checked: boolean) {
-    if (!checked) {
-      this.resetSmurfs();
-      return;
-    }
-
-    const bTag = this.foundPlayer;
-    if (bTag) {
-      const smurfs = await this.adminStore.getAltsForPlayer(bTag);
-      this.editedItem.smurfs = smurfs.map((smurf) => smurf.toLowerCase());
-    }
-  }
-
-  get hasSmurfs() {
-    return this.editedItem.smurfs ? this.editedItem.smurfs.length > 0 : false;
-  }
+  public mdiDelete = mdiDelete;
+  public mdiMagnify = mdiMagnify;
+  public mdiPencil = mdiPencil;
+  public isEmpty = isEmpty;
 
   public headers = [
     { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
-    { text: "Ban End Date", value: "endDate", width: "8vw", filterable: false },
+    { text: "Ban End Date", value: "endDate", width: "10vw", filterable: false },
     { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
-    { text: "Only chat ban", value: "isOnlyChatBan", width: "7vw", filterable: false },
-    { text: "Game modes", value: "gameModesText", sortable: false, width: "9vw", filterable: false },
+    { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
     { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
     { text: "Author", value: "author", width: "10vw", filterable: false },
     { text: "Ban reason", value: "banReason", filterable: false },
     { text: "Actions", value: "actions", sortable: false, filterable: false },
   ];
 
-
-  public translateGametypes(): {
-    text: LocaleMessage;
-    value: string | EGameMode;
-  }[] {
-    const translatedEnums = [] as {
-      text: LocaleMessage;
-      value: string | EGameMode;
-    }[];
-
-    const keys = Object.keys(EGameMode).filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (k) => typeof EGameMode[k as any] === "number"
-    );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const values = keys.map((k) => EGameMode[k as any]);
-
-    keys.shift();
-    values.shift();
-
-    for (const item in keys) {
-      translatedEnums.push({
-        text: this.$t(`gameModes.${keys[item]}`),
-        value: values[item],
-      });
-    }
-    return translatedEnums;
+  getGameModeName(id: EGameMode) {
+    return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
   }
 
-  getGametypeText(gameModes: number[]): string {
-    if (!gameModes || gameModes.length === 0) {
-      return this.$t(`gameModes.UNDEFINED`).toString();
-    }
+  // For a new ban, only allow active game modes to be chosen.
+  // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
+  get selectableGameModes() {
+    const bannedModesForEditedItem = this.editedItem.gameModes;
+    const activeModeIds = this.activeGameModes.map((mode) => mode.id);
+    const bannedInactiveModesForEditedItem = bannedModesForEditedItem
+      .filter((mode) => !activeModeIds.includes(mode))
+      .map((id) => {
+        return {
+          id,
+          name: this.$t(`gameModes.${EGameMode[id]}`)
+        };
+      });
+    const activeModes = this.activeGameModes;
 
-    let stringBuilder = "";
-    gameModes.forEach((element) => {
-      const gameMode = this.gameModesEnumValues.find((o) => o.value === element) || undefined;
-      if (gameMode) {
-        stringBuilder = stringBuilder + this.$t(`gameModes.${EGameMode[element]}`) + "\n";
-      }
-    });
-
-    return stringBuilder;
+    return activeModes.concat(bannedInactiveModesForEditedItem);
   }
 
   get bannedPlayers(): BannedPlayer[] {
-    return this.adminStore.players;
+    return this.adminStore.bannedPlayers;
   }
 
   get isAdmin(): boolean {
@@ -314,11 +257,9 @@ export default class AdminBannedPlayers extends Vue {
   public editedItem = {
     battleTag: "",
     endDate: "",
-    isOnlyChatBan: false,
-    gameModes: [] as number[],
+    gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
-    smurfs: [] as string[],
     banInsertDate: "",
     author: "",
   };
@@ -326,11 +267,9 @@ export default class AdminBannedPlayers extends Vue {
   public defaultItem = {
     battleTag: "",
     endDate: "",
-    isOnlyChatBan: false,
-    gameModes: [] as number[],
+    gameModes: [] as EGameMode[],
     isIpBan: false,
     banReason: "",
-    smurfs: [] as string[],
     banInsertDate: "",
     author: "",
   };
@@ -352,6 +291,9 @@ export default class AdminBannedPlayers extends Vue {
 
   async save(): Promise<void> {
     this.editedItem.author = this.author;
+    if (this.endDateIsSet) {
+      this.editedItem.endDate = dateToCurrentTimeDate(this.editedItem.endDate);
+    }
     if (this.isAddDialog) {
       this.editedItem.battleTag = this.foundPlayer;
     }
@@ -373,24 +315,19 @@ export default class AdminBannedPlayers extends Vue {
 
   async mounted(): Promise<void> {
     await this.loadBanList();
+    await this.loadActiveGameModes();
   }
 
   resetDialog(): void {
     this.$nextTick(() => {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
-      this.resetSmurfs();
     });
     this.clearPlayerSearch();
   }
 
   clearPlayerSearch() {
     this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
-  }
-
-  resetSmurfs(): void {
-    this.banSmurfs = false;
-    this.editedItem.smurfs = [];
   }
 
   @Watch("dialog")
@@ -404,19 +341,15 @@ export default class AdminBannedPlayers extends Vue {
 
   playerFound(bTag: string): void {
     this.foundPlayer = bTag;
-
-    // Reset smurfs to avoid the possibility of smurfs being sent for the wrong player.
-    if (this.banSmurfs) {
-      this.resetSmurfs();
-    }
   }
 
   searchCleared(): void {
     this.foundPlayer = "";
+  }
 
-    if (this.banSmurfs) {
-      this.resetSmurfs();
-    }
+  // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
+  get endDateIsSet(): boolean {
+    return this.editedItem.endDate.length == 10;
   }
 }
 </script>

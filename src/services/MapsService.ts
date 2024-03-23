@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { GetMapsResponse, Map, MapFileData, GetSeasonMapsResponse } from "@/store/admin/mapsManagement/types";
+import { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
@@ -17,7 +17,7 @@ export default class MapsService {
     return await response.json();
   }
 
-  public static async createMap(token: string, map: Map): Promise<Map> {
+  public static async createMap(token: string, map: Map): Promise<void> {
     const url = `${API_URL}api/maps?authorization=${token}`;
 
     const data = JSON.stringify(map);
@@ -30,7 +30,10 @@ export default class MapsService {
       body: data,
     });
 
-    return await response.json();
+    if (!response.ok) {
+      const msg = await response.json();
+      throw new Error(msg);
+    }
   }
 
   public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
@@ -69,19 +72,6 @@ export default class MapsService {
     const response = await fetch(url, {
       method: "POST",
       body: form,
-    });
-
-    return await response.json();
-  }
-
-  public static async getMapsForCurrentSeason(): Promise<GetSeasonMapsResponse> {
-    const url = `${API_URL}api/maps/currentseason`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
     });
 
     return await response.json();

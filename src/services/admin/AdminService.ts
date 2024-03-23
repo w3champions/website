@@ -17,8 +17,8 @@ import {
 } from "@/store/admin/types";
 
 export default class AdminService {
-  public static async getBannedPlayers(): Promise<BannedPlayersResponse> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
+  public static async getBannedPlayers(token: string): Promise<BannedPlayersResponse> {
+    const url = `${API_URL}api/admin/bannedPlayers?authorization=${token}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -306,5 +306,18 @@ export default class AdminService {
       },
     });
     return response.json();
+  }
+
+  public static async checkJwtLifetime(token: string): Promise<boolean> {
+    const url = `${API_URL}api/admin/checkJwtLifetime?authorization=${token}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok;
   }
 }

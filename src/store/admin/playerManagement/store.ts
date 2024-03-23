@@ -7,7 +7,7 @@ import {
 } from "../types";
 import { useOauthStore } from "@/store/oauth/store";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
-import AdminService from "@/services/AdminService";
+import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 
 export const usePlayerManagementStore = defineStore("playerManagement", {

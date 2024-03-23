@@ -4,12 +4,16 @@ export type OauthState = {
   blizzardVerifiedBtag: string;
   twitch_token: TwitchToken;
   isAdmin: boolean;
+  permissions: string[];
 };
 
 export type W3cToken = {
   jwt: string;
   battleTag: string;
   isAdmin: boolean;
+  bnetID: string;
+  name: string;
+  permissions: string[];
 };
 
 export interface TwitchToken {
