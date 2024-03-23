@@ -386,28 +386,28 @@ export default class GettingStartedView extends Vue {
 .w3c-screenshot {
   width: 100%;
   padding-bottom: 56%;
-  background-image: url("../assets/gettingStarted/startButton.png");
+  background-image: url("/assets/gettingStarted/startButton.png");
   background-size: cover;
 }
 
 .w3c-launcher-screenshot {
   width: 100%;
   padding-bottom: 64.5%;
-  background-image: url("../assets/gettingStarted/launcher.png");
+  background-image: url("/assets/gettingStarted/launcher.png");
   background-size: cover;
 }
 
 .w3c-screenshot-chat {
   width: 100%;
   padding-bottom: 56%;
-  background-image: url("../assets/gettingStarted/chatOverview.png");
+  background-image: url("/assets/gettingStarted/chatOverview.png");
   background-size: cover;
 }
 
 .w3c-screenshot-map-select {
   width: 100%;
   padding-bottom: 56%;
-  background-image: url("../assets/gettingStarted/mapSelection.png");
+  background-image: url("/assets/gettingStarted/mapSelection.png");
   background-size: cover;
 }
 </style>

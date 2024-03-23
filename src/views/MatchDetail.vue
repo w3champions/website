@@ -417,7 +417,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   height: 80%;
   left: 10%;
   z-index: 100;
-  background-image: url("../assets/giphy.gif") !important;
+  background-image: url("/assets/giphy.gif") !important;
   background-size: cover !important;
 }
 
