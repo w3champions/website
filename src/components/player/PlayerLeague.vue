@@ -2,7 +2,7 @@
   <div
     class="LadderSummaryShowcase-card mt-1"
     @click="isRanked && !smallMode ? navigateToLeague() : null"
-    :title="isRanked && !smallMode ? 'Go to League Rankings' : null"
+    :title="isRanked && !smallMode ? 'Go to League Rankings' : undefined"
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
   >
     <h2 class="LadderSummaryShowcase-title">
@@ -13,7 +13,7 @@
       <div v-if="showAtPartner">
         <span
           class="text-center pointer"
-          @click="navigateToPartner(atPartner.battleTag)"
+          @click="navigateToPartner()"
         >
           {{ atPartner.name }}
         </span>
@@ -33,7 +33,7 @@
     <div>
       <img
         class="LadderSummaryShowcase-divider"
-        src="../../../src/assets/profiles/profile-ladders-divider.png"
+        src="/assets/profiles/profile-ladders-divider.png"
       />
       <div class="text-center" v-if="isRanked && !smallMode">
         <span>

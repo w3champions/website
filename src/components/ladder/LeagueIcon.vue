@@ -1,5 +1,5 @@
 <template>
-  <img :src="leagueIcon()" class="league-icon" :alt="league" />
+  <img :src="leagueIcon()" class="league-icon" />
 </template>
 
 <script lang="ts">
@@ -12,12 +12,7 @@ export default class LeagueIcon extends Vue {
 
   leagueIcon() {
     if (this.league != undefined) {
-      const images = require.context(
-        "../../assets/leagueIcons/",
-        false,
-        /\.png$/
-      );
-      return images("./" + this.league + ".png");
+      return `/assets/leagueIcons/${this.league}.png`;
     }
 
     return "";

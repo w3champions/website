@@ -2,8 +2,8 @@
   <img
     :src="
       isDarkTheme
-        ? './../../assets/logos/small-logo-full.png'
-        : './../../assets/logos/small-logo-full-black.png'
+        ? '/assets/logos/small-logo-full.png'
+        : '/assets/logos/small-logo-full-black.png'
     "
   />
 </template>

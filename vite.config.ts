@@ -12,7 +12,7 @@ export function VuetifyResolverMod(): ComponentResolver {
         type: "component",
         resolve: (name: string) => {
             if (name.match(/^V[A-Z]/)){
-              const blockList = ['VDatetimePicker']
+              const blockList = ["VDatetimePicker"];
               if (!blockList.includes(name)) // Exclude addon from autoloader.
                     return { name, from: "vuetify/lib" };
             }
@@ -28,11 +28,15 @@ export default defineConfig({
         }),
         legacy(), // Build for old browser.
     ],
+    // server: {
+    //     port: 8080,
+    //     strictPort: true,
+    // },
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
-        extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+        extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue", ".png"],
     },
     css: {
         // https://vitejs.dev/config/#css-preprocessoroptions
@@ -41,9 +45,9 @@ export default defineConfig({
                 additionalData: [
                     // vuetify variable overrides
                     '@import "@/scss/variables.scss"',
-                    '',
-                ].join('\n'),
+                    "",
+                ].join("\n"),
             },
         },
     },
-})
+});

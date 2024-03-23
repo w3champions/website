@@ -4,7 +4,7 @@
       <v-col>
         <img :src="flag()" width="22px" height="22px" />
       </v-col>
-      <v-col v-if="showTwoLetterCode">{{ this.locale.toUpperCase() }}</v-col>
+      <v-col v-if="showTwoLetterCode">{{ locale.toUpperCase() }}</v-col>
     </v-row>
   </v-container>
 </template>
@@ -19,7 +19,7 @@ export default class LocaleIcon extends Vue {
   @Prop({ default: true }) showTwoLetterCode!: boolean;
 
   flag(): string {
-    return `../../assets/localeFlags/${this.locale}.svg`;
+    return `/assets/localeFlags/${this.locale}.svg`;
   }
 }
 </script>

@@ -12,12 +12,7 @@ export default class ClanRoleIcon extends Vue {
   @Prop() role!: EClanRole;
 
   icon(): string {
-    const images = require.context(
-      "../../assets/clanRoleIcon/",
-      false,
-      /\.jpg$/
-    );
-    return images("./" + EClanRole[this.role] + ".jpg");
+    return `/assets/clanRoleIcon/${EClanRole[this.role]}.jpg`;
   }
 }
 </script>

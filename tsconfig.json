@@ -11,16 +11,11 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "vuetify", "chart.js", "lodash"],
+    "types": ["vuetify", "chart.js", "lodash"],
     "paths": {
       "@/*": ["./src/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"]
 }

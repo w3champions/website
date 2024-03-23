@@ -6,7 +6,7 @@
       </v-card-title>
       <v-container>
         <v-row>
-          <v-img :src="`@/assets/socials/QR/${name}_QR.png`"></v-img>
+          <v-img :src="`/assets/socials/QR/${name}_QR.png`"></v-img>
         </v-row>
 
         <v-row class="mt-2">

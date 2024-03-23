@@ -310,6 +310,8 @@ import { LAUNCHER_UPDATE_URL } from "@/main";
 
 @Component({})
 export default class GettingStartedView extends Vue {
+  tabsModel = null;
+
   get alertMessage() {
     return "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!";
   }
@@ -328,12 +330,6 @@ export default class GettingStartedView extends Vue {
 
   get launcherUrlWin() {
     return LAUNCHER_UPDATE_URL + "launcher/win";
-  }
-
-  data() {
-    return {
-      tabsModel: null,
-    };
   }
 }
 </script>
