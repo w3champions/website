@@ -28,10 +28,9 @@ export default defineConfig({
         }),
         legacy(), // Build for old browser.
     ],
-    // server: {
-    //     port: 8080,
-    //     strictPort: true,
-    // },
+    server: {
+        port: 8080,
+    },
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
