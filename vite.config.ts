@@ -12,9 +12,7 @@ export function VuetifyResolverMod(): ComponentResolver {
         type: "component",
         resolve: (name: string) => {
             if (name.match(/^V[A-Z]/)){
-              const blockList = ["VDatetimePicker"];
-              if (!blockList.includes(name)) // Exclude addon from autoloader.
-                    return { name, from: "vuetify/lib" };
+                return { name, from: "vuetify/lib" };
             }
         }
     };

@@ -26,11 +26,6 @@
             hide-details
             single-line
           />
-          <v-datetime-picker
-            label="Date / Time (UTC)"
-            v-model="startDateTime"
-            :textFieldProps="{ 'single-line': true, 'hide-details': true }"
-          />
           <v-select
             v-if="isEdit"
             :items="states"
@@ -41,6 +36,17 @@
             hide-details
             single-line
           />
+          <div class="mt-5 d-flex justify-center">
+            <v-date-picker
+              v-model="startDate"
+              landscape
+            ></v-date-picker>
+            <v-time-picker
+              v-model="startTime"
+              landscape
+              format="24hr"
+            ></v-time-picker>
+          </div>
           <div class="mt-4">
             Map Pool
           </div>
@@ -137,7 +143,6 @@
 </template>
 
 <script lang="ts">
-import { addDays, setHours, startOfHour } from "date-fns";
 import map from "lodash/map";
 import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
@@ -148,6 +153,8 @@ import { Prop, Component } from "vue-property-decorator";
 import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
 import { Gateways } from "@/store/ranking/types";
 import { Map } from "@/store/admin/mapsManagement/types";
+import { formatISO } from "date-fns";
+import { formatTimestampString } from "@/helpers/date-functions";
 
 @Component({})
 export default class AddPlayerModal extends Vue {
@@ -155,9 +162,13 @@ export default class AddPlayerModal extends Vue {
   @Prop() public saving!: boolean;
   @Prop() public maps!: Map[];
 
+  private now = formatISO(new Date());
+
   public name = "Standard One vs One Tournament";
   public gateway = Gateways.Europe;
-  public startDateTime = startOfHour(setHours(addDays(new Date(), 1), 20));
+  public startDate = this.now.substring(0, 10);
+  public startTime = this.now.substring(11, 16);
+  public startDateTime = new Date();
   public mode = EGameMode.GM_1ON1;
   public format = ETournamentFormat.SINGLE_ELIM;
   public mapPool: number[] = [];
@@ -179,9 +190,13 @@ export default class AddPlayerModal extends Vue {
       this.mapPool = this.maps.slice(0, 5).map((m) => m.id);
       return;
     }
+
+    const startDateTime = formatTimestampString(this.tournament.startDateTime, "yyyy-MM-dd HH:mm");
+
     this.name = this.tournament.name;
     this.gateway = this.tournament.gateway;
-    this.startDateTime = this.tournament.startDateTime;
+    this.startDate = startDateTime.toString().substring(0, 10);
+    this.startTime = startDateTime.toString().substring(11, 16);
     this.mode = this.tournament.mode;
     this.format = this.tournament.format;
     this.mapPool = this.tournament.mapPool;
@@ -214,6 +229,9 @@ export default class AddPlayerModal extends Vue {
       "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
       "showWinnerTimeHours", "matcherinoUrl",
     ];
+
+    this.startDateTime = new Date(`${this.startDate} ${this.startTime}`);
+
     const tournamentData = pick(this, fieldNames);
     this.$emit("save", tournamentData);
   }

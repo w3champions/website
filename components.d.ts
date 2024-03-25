@@ -200,6 +200,7 @@ declare module 'vue' {
     VTabsSlider: typeof import('vuetify/lib')['VTabsSlider']
     VTextarea: typeof import('vuetify/lib')['VTextarea']
     VTextField: typeof import('vuetify/lib')['VTextField']
+    VTimePicker: typeof import('vuetify/lib')['VTimePicker']
     VToolbar: typeof import('vuetify/lib')['VToolbar']
     VToolbarTitle: typeof import('vuetify/lib')['VToolbarTitle']
     VTooltip: typeof import('vuetify/lib')['VTooltip']
