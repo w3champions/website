@@ -31,8 +31,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";

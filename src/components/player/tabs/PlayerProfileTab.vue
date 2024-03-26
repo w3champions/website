@@ -76,8 +76,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";

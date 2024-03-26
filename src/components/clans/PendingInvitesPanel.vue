@@ -28,8 +28,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";

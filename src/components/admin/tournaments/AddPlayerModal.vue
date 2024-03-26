@@ -40,8 +40,7 @@
 import map from "lodash/map";
 import { ITournament } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { Prop, Component, Vue } from "vue-facing-decorator";
 import { ERaceEnumLabel } from "@/helpers/tournaments";
 
 @Component({})

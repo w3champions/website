@@ -50,14 +50,13 @@
         </v-menu>
         <v-spacer></v-spacer>
         <v-autocomplete
-          v-model="searchModel"
+          v-model::search-input.sync="searchModel"
           :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
           :items="searchRanks"
           :loading="isLoading"
-          :search-input.sync="search"
           :no-data-text="noDataText"
           item-text="player.name"
           item-value="player.id"
@@ -176,8 +175,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";

@@ -36,8 +36,7 @@
 <script lang="ts">
 import { PortraitDefinitionGroup } from "@/store/admin/types";
 import AssignPortrait from "./AssignPortrait.vue";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiChevronDown } from "@mdi/js";
 

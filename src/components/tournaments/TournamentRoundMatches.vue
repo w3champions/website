@@ -4,14 +4,13 @@
       {{ round.name }}
     </div>
     <div v-bind:style="matchesStyle">
-      <template v-for="(s, index) in series">
+      <template v-for="(s, index) in series" v-bind:key="s.id">
         <tournament-series
           :series="s"
           :seriesIndex="index"
           :playerHeight="playerHeight"
           :verticalSpace="verticalSpace"
           :roundWidth="roundWidth"
-          v-bind:key="s.id"
         />
       </template>
     </div>
@@ -20,8 +19,7 @@
 
 <script lang="ts">
 import { ITournamentRound, ITournamentSeries } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import TournamentSeries from "./TournamentSeries.vue";
 
 @Component({

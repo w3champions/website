@@ -17,7 +17,7 @@
     <v-card>
       <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
         <v-autocomplete
-          v-model="searchModel"
+          v-model::search-input.sync="searchModel"
           :append-icon="mdiMagnify"
           label="Search"
           single-line
@@ -25,7 +25,6 @@
           autofocus
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
-          :search-input.sync="search"
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
@@ -61,8 +60,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import debounce from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";

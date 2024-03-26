@@ -6,9 +6,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import Vue from "vue";
 import { usePlayerStore } from "@/store/player/store";
 import { ERaceEnum } from "@/store/types";
 import { formatSecondsToDuration } from "@/helpers/date-functions";

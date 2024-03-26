@@ -95,9 +95,8 @@
   </v-row>
 </template>
 <script lang="ts">
-import Vue from "vue";
 import { PlayerProfile } from "@/store/player/types";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 
 @Component

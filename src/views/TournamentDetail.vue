@@ -10,8 +10,7 @@
 
 <script lang="ts">
 import { ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import Tournament from "@/components/tournaments/Tournament.vue";
 import { useTournamentsStore } from "@/store/tournaments/store";
 

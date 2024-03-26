@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { CountriesByCode } from "@/store/countries";
 
 // Lazy load.

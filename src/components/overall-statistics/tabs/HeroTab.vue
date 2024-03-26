@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
+import { Component, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
@@ -59,8 +59,9 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
     AmountPerDayChart,
     PopularGameTimeChart,
   },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class HeroTab extends Mixins(GameModesMixin) {
+export default class HeroTab extends Vue {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
   private overallStatsStore = useOverallStatsStore();

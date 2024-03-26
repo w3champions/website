@@ -183,8 +183,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
@@ -208,7 +207,7 @@ import {
   mdiRedo,
   mdiUndo,
 } from "@mdi/js";
-import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Editor, EditorContent } from "@tiptap/vue-3";
 import { Document } from "@tiptap/extension-document";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Text } from "@tiptap/extension-text";

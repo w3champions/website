@@ -27,9 +27,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import { TranslateResult } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";
 

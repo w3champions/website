@@ -1,5 +1,4 @@
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { EGameMode, EGameModeType } from "@/store/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { ActiveGameMode } from "@/store/ranking/types";

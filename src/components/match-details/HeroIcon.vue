@@ -8,8 +8,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { Hero } from "@/store/types";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 

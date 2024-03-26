@@ -50,8 +50,7 @@
 
 <script lang="ts">
 import { mdiChevronTripleUp, mdiSkull, mdiTreasureChest } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class MatchHighlights extends Vue {

@@ -5,9 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import Vue from "vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { MmrRangeValues } from "@/store/overallStats/types";

@@ -27,8 +27,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";

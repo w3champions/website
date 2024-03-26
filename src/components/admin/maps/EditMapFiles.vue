@@ -44,8 +44,7 @@
 
 <script lang="ts">
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { Prop, Component, Vue } from "vue-facing-decorator";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
 @Component({})

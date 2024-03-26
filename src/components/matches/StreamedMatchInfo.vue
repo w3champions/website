@@ -10,14 +10,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Prop, Component, Vue } from "vue-facing-decorator";
 import { Match } from "@/store/types";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import StreamedMatchPlayerInfo from "@/components/matches/StreamedMatchPlayerInfo.vue";
 
-@Component({ components: { StreamedMatchPlayerInfo, PlayerIcon } })
+@Component({ components: { StreamedMatchPlayerInfo } })
 export default class StreamedMatchInfo extends Vue {
   @Prop() public match!: Match;
 }

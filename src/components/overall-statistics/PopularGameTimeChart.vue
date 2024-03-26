@@ -1,13 +1,12 @@
 <template>
   <bar-chart :chart-data="gameHourChartData" />
 </template>
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
 
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { PopularHours } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import Vue from "vue";
 
 @Component({
   components: { BarChart },

@@ -91,15 +91,13 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import {
   Ratio,
   StatsPerMapAndRace,
   StatsPerWinrate,
 } from "@/store/overallStats/types";
-import { Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 @Component({

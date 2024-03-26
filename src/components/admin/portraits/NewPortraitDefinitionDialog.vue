@@ -55,8 +55,7 @@
 
 <script lang="ts">
 import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiClose } from "@mdi/js";

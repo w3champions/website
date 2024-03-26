@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue, toNative } from "vue-facing-decorator";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
@@ -119,8 +119,9 @@ import {
     HostIcon,
     DownloadReplayIcon,
   },
+  mixins: [toNative(MatchMixin)]
 })
-export default class MatchesGrid extends Mixins(MatchMixin) {
+export default class MatchesGrid extends Vue {
   @Prop() public value!: Match[];
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;

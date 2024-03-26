@@ -316,8 +316,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
 

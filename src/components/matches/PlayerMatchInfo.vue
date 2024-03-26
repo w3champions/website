@@ -41,10 +41,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { PlayerInTeam } from "@/store/types";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
@@ -52,7 +50,7 @@ import ProfileService from "@/services/ProfileService";
 import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
-  components: { PlayerIcon, CountryFlagExtended },
+  components: { CountryFlagExtended },
 })
 export default class PlayerMatchInfo extends Vue {
   @Prop() public player!: PlayerInTeam;

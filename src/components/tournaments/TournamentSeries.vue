@@ -23,8 +23,7 @@
 
 <script lang="ts">
 import { ITournamentSeries, ESeriesState, EMatchState } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
 
 @Component({

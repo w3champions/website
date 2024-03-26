@@ -142,8 +142,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { marked } from "marked";
 import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";

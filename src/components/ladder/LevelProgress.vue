@@ -5,8 +5,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class LevelProgress extends Vue {

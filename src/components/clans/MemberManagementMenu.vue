@@ -22,8 +22,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { EClanRole } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiPencil } from "@mdi/js";

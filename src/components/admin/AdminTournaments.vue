@@ -60,9 +60,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import throttle from "lodash/throttle";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
 import Tournament from "../tournaments/Tournament.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";

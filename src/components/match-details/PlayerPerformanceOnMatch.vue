@@ -81,8 +81,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 

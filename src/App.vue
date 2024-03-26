@@ -157,8 +157,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";

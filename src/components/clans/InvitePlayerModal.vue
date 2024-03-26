@@ -18,13 +18,12 @@
       </v-card-title>
       <v-card-text>
         <v-autocomplete
-          v-model="searchModel"
+          v-model::search-input.sync="searchModel"
           :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
           :items="searchPlayers"
-          :search-input.sync="search"
           :no-data-text="noDataText"
           item-text="battleTag"
           item-value="battleTag"
@@ -76,8 +75,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useOauthStore } from "@/store/oauth/store";

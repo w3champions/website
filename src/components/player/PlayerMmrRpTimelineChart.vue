@@ -12,9 +12,8 @@ import { PlayerMmrRpTimeline } from "@/store/player/types";
 import { ChartData , ChartOptions, ScriptableContext } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import LineChart, { defaultOptions, defaultOptionsXAxis, getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
-import Vue from "vue";
 
 @Component({
   components: { LineChart },

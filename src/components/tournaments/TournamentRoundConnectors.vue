@@ -1,15 +1,13 @@
 <template>
   <div v-bind:style="containerStyle">
-    <template v-for="index in (seriesCount / 2)">
+    <template v-for="index in (seriesCount / 2)" v-bind:key="`top-${index}`">
       <tournament-round-connector
-        v-bind:key="`top-${index}`"
         :index="index - 1"
         :side="'top'"
         :playerHeight="playerHeight"
         :verticalSpace="verticalSpace"
       />
       <tournament-round-connector
-        v-bind:key="`bottom-${index}`"
         :index="index - 1"
         :side="'bottom'"
         :playerHeight="playerHeight"
@@ -20,8 +18,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import TournamentRoundConnector from "./TournamentRoundConnector.vue";
 
 @Component({

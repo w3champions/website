@@ -9,9 +9,8 @@
     </v-list-item>
 
     <v-list dense nav>
-      <template v-for="(item, index) in items">
+      <template v-for="(item, index) in items" :key="index">
         <v-list-item
-          :key="index"
           v-if="!item.items || item.items.length === 0"
           @click="itemSelected(item, index)"
         >
@@ -25,7 +24,6 @@
         </v-list-item>
 
         <v-list-group
-          :key="index"
           v-if="item.items && item.items.length > 0"
           :value="false"
           v-bind:prepend-icon="item.icon"
@@ -59,8 +57,7 @@
 <script lang="ts">
 import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({ components: {} })
 export default class AdminNavigation extends Vue {

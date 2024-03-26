@@ -33,8 +33,7 @@
 
 <script lang="ts">
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";

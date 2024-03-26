@@ -39,8 +39,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import MatchDetailView from "@/views/MatchDetail.vue";
 import AdminReplayChatLog from "@/components/admin/replays/AdminReplayChatLog.vue";
 import { ReplayChatLog } from "@/store/admin/types";

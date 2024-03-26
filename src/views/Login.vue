@@ -14,8 +14,7 @@
 </template>
 <script lang="ts">
 import { getProfileUrl } from "@/helpers/url-functions";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 
 @Component({})

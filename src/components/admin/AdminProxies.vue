@@ -16,8 +16,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";

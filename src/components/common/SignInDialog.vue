@@ -37,8 +37,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
 

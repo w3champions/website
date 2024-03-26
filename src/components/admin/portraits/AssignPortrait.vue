@@ -15,8 +15,7 @@
 <script lang="ts">
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { EAvatarCategory } from "@/store/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { mdiCloseCircleOutline } from "@mdi/js";
 
 @Component({ components: {} })

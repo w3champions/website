@@ -18,8 +18,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { Team } from "@/store/types";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 

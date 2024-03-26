@@ -58,8 +58,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { EGameMode, ERaceEnum, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";

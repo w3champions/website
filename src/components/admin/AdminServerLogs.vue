@@ -35,8 +35,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
 
 @Component({ components: {} })

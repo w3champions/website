@@ -3,12 +3,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
-
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { GameLength } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData } from "chart.js";
-import Vue from "vue";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 
 @Component({

@@ -31,8 +31,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { EGameMode } from "@/store/types";
 import { usePlayerStore } from "@/store/player/store";

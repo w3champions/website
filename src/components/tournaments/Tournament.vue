@@ -11,8 +11,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";

@@ -14,9 +14,8 @@
 <script lang="ts">
 import { API_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
-import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class DownloadReplayIcon extends Vue {

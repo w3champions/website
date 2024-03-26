@@ -13,9 +13,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import { ERaceEnum } from "@/store/types";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { getAsset } from "@/helpers/url-functions";
 
 @Component({})

@@ -36,8 +36,7 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { useClanStore } from "@/store/clan/store";
 
 @Component({})

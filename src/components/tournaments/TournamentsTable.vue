@@ -26,8 +26,7 @@
 
 <script lang="ts">
 import { ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { TournamentStateLabel } from "@/helpers/tournaments";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
