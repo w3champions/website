@@ -12,8 +12,8 @@ const fs = require("fs");
 const set = require("lodash.set");
 const prettier = require("prettier");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
-import constants from "../src/constants";
-import keyConstant from "./key";
+const activeLanguages = require("./active-languages");
+const keyConstant = require ("./key");
 
 const doc = new GoogleSpreadsheet(
   "1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc"
@@ -21,7 +21,7 @@ const doc = new GoogleSpreadsheet(
 
 doc.useApiKey(keyConstant);
 
-const languages = constants.activeLanguages || ["en", "de"];
+const languages = activeLanguages || ["en", "de"];
 const locales = {};
 
 async function main() {
