@@ -1,7 +1,10 @@
+/* eslint-env node */
 /** @type {import('eslint').Linter.Config} */ // This provides type hints for the configuration options below.
 module.exports = {
   root: true,
   env: {
+    browser: true,
+    es2022: true,
     node: true,
   },
   //plugins: [
@@ -19,10 +22,6 @@ module.exports = {
     // "@vue/prettier/@typescript-eslint",
     "plugin:lodash/recommended",
   ],
-  parser: "vue-eslint-parser",
-  parserOptions: {
-    ecmaVersion: 2020,
-  },
   rules: {
     // "prettier/prettier": "warn",
     "arrow-parens": ["warn", "always"],

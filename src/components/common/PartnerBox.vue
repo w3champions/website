@@ -40,7 +40,7 @@ export default class PartnerBox extends Vue {
     ];
   }
   imgSource(name: string): string {
-    return require(`@/assets/partners/${name}.jpg`);
+    return `/assets/partners/${name}.jpg`;
   }
 }
 </script>

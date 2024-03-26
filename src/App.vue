@@ -41,10 +41,10 @@
 
     <v-app-bar :class="{ darkmode: isDarkTheme }" :dark="isDarkTheme" app>
       <!-- toggle button for drawer menu, only for lower than lg -->
-      <v-app-bar-nav-icon
-        @click.stop="isNavigationDrawerOpen = true"
-        class="d-lg-none"
-      ></v-app-bar-nav-icon>
+     <v-app-bar-nav-icon
+       @click.stop="isNavigationDrawerOpen = true"
+       class="d-lg-none"
+     ></v-app-bar-nav-icon>
       <v-toolbar-title class="pa-0">
         <router-link :to="{ name: 'Home' }">
           <brand-logo

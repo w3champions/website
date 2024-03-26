@@ -30,7 +30,7 @@ export function getProfileUrl(playerId: string) {
 }
 
 export function getAsset(path: string) {
-  return require(`../assets/${path}`);
+  return `/assets/${path}`;
 }
 
 export function getTournamentUrl(tournamentId: string) {

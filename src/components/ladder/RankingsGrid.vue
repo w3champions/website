@@ -7,12 +7,12 @@
             class="header"
             v-bind:class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
-            :key="header.text"
+            :key="header.name"
             v-bind:style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
-            @click="sortRankings(header.text, header.sortFunction)"
+            @click="sortRankings(header.name, header.sortFunction)"
           >
             {{ header.text }}
             <div v-if="header.text === sortColumn" class="sort-icon">
@@ -41,7 +41,7 @@
             >
               <div
                 class="player-avatar mr-1 alignRight race-icon"
-                :title="getTitleRace(item, index)"
+                :title="getTitleRace(item, index).toString()"
                 :style="{
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
                 }"
@@ -175,6 +175,7 @@ export default class RankingsGrid extends Vue {
   get headers() {
     return [
       {
+        name: "Rank",
         text: this.$t("components_ladder_rankingsgrid.rank"),
         align: "start",
         sortable: false,
@@ -184,6 +185,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Player",
         text: this.$t("components_ladder_rankingsgrid.player"),
         align: "start",
         sortable: false,
@@ -193,6 +195,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Level",
         text: this.$t("components_ladder_rankingsgrid.level"),
         align: "center",
         sortable: false,
@@ -202,6 +205,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Race",
         text: this.$t("components_ladder_rankingsgrid.race"),
         align: "end",
         sortable: false,
@@ -211,6 +215,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Clan",
         text: this.$t("components_ladder_rankingsgrid.clan"),
         align: "end",
         sortable: false,
@@ -222,6 +227,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Wins",
         text: this.$t("components_ladder_rankingsgrid.wins"),
         align: "end",
         sortable: false,
@@ -231,6 +237,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Losses",
         text: this.$t("components_ladder_rankingsgrid.losses"),
         align: "end",
         sortable: false,
@@ -240,6 +247,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Total",
         text: this.$t("components_ladder_rankingsgrid.total"),
         align: "end",
         sortable: false,
@@ -249,6 +257,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "Winrate",
         text: this.$t("components_ladder_rankingsgrid.winrate"),
         align: "end",
         sortable: false,
@@ -258,6 +267,7 @@ export default class RankingsGrid extends Vue {
         },
       },
       {
+        name: "MMR",
         text: this.$t("components_ladder_rankingsgrid.mmr"),
         align: "end",
         sortable: false,
@@ -348,7 +358,7 @@ export default class RankingsGrid extends Vue {
 
   public getRaceIcon(ranking: Ranking, playerIndex: number): string {
     const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.raceIcon(ERaceEnum.RANDOM);
+    if (!playersInfo) return this.raceIconImage(ERaceEnum.RANDOM);
     const playerInfo = playersInfo[playerIndex];
     if (RankingsGrid.hasSelectedIcon(playerInfo)) {
       return getAvatarUrl(
@@ -392,7 +402,7 @@ export default class RankingsGrid extends Vue {
     return false;
   }
 
-  raceIcon(race: ERaceEnum) {
+  raceIconImage(race: ERaceEnum) {
     return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
   }
 
@@ -455,7 +465,7 @@ export default class RankingsGrid extends Vue {
 
   public sortRankings(
     columnName: string,
-    sortFunction: <T>(a: T, b: T) => number
+    sortFunction: (a: Ranking, b: Ranking) => number
   ): void {
     if (sortFunction) {
       if (this.sortColumn === columnName) {

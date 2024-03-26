@@ -63,38 +63,38 @@ export default Vue.component<IProps>("PlayerIcon", {
 }
 
 .race-icon-HUMAN {
-  background-image: url("../../assets/raceIcons/HUMAN.png");
+  background-image: url("/assets/raceIcons/HUMAN.png");
 }
 
 .race-icon-RANDOM_HUMAN {
-  background-image: url("../../assets/raceIcons/HumanRandom.png");
+  background-image: url("/assets/raceIcons/HumanRandom.png");
 }
 
 .race-icon-ORC {
-  background-image: url("../../assets/raceIcons/ORC.png");
+  background-image: url("/assets/raceIcons/ORC.png");
 }
 
 .race-icon-RANDOM_ORC {
-  background-image: url("../../assets/raceIcons/OrcRandom.png");
+  background-image: url("/assets/raceIcons/OrcRandom.png");
 }
 
 .race-icon-UNDEAD {
-  background-image: url("../../assets/raceIcons/UNDEAD.png");
+  background-image: url("/assets/raceIcons/UNDEAD.png");
 }
 
 .race-icon-RANDOM_UNDEAD {
-  background-image: url("../../assets/raceIcons/UndeadRandom.png");
+  background-image: url("/assets/raceIcons/UndeadRandom.png");
 }
 
 .race-icon-NIGHT_ELF {
-  background-image: url("../../assets/raceIcons/NIGHT_ELF.png");
+  background-image: url("/assets/raceIcons/NIGHT_ELF.png");
 }
 
 .race-icon-RANDOM_NIGHT_ELF {
-  background-image: url("../../assets/raceIcons/NightElfRandom.png");
+  background-image: url("/assets/raceIcons/NightElfRandom.png");
 }
 
 .race-icon-RANDOM {
-  background-image: url("../../assets/raceIcons/RANDOM.png");
+  background-image: url("/assets/raceIcons/RANDOM.png");
 }
 </style>

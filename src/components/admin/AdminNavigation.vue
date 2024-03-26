@@ -57,17 +57,17 @@
 </template>
 
 <script lang="ts">
-import { ItemType } from "@/App.vue";
+import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component({ components: {} })
 export default class AdminNavigation extends Vue {
-  @Prop() items!: ItemType[];
+  @Prop() items!: NavigationItem[];
   public mdiAccountTie = mdiAccountTie;
 
-  itemSelected(item: ItemType, index: number) {
+  itemSelected(item: NavigationItem, index: number) {
     this.$emit("itemSelected", item, index);
   }
 }

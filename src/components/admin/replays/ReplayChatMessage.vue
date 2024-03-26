@@ -1,12 +1,12 @@
 <template>
   <v-container class="ma-0 pa-0">
     <div v-if="isPrivate()">
-      <span class="font-weight-bold" :class="getTeamColor(this.team)">{{ sentBy }} (to {{ sentTo }}):</span>
+      <span class="font-weight-bold" :class="getTeamColor(team)">{{ sentBy }} (to {{ sentTo }}):</span>
       <span class="black--text">{{ content }}</span>
     </div>
     <div v-else>
-      <span class="font-weight-bold" :class="getTeamColor(this.team)">
-        {{ sentBy }} ({{ scopeToString(this.scope) }}):
+      <span class="font-weight-bold" :class="getTeamColor(team)">
+        {{ sentBy }} ({{ scopeToString(scope) }}):
       </span>
       <span class="black--text">{{ content }}</span>
     </div>

@@ -2,8 +2,8 @@
   <img
     :src="
       isDarkTheme
-        ? require('./../../assets/logos/small-logo-full.png')
-        : require('./../../assets/logos/small-logo-full-black.png')
+        ? '/assets/logos/small-logo-full.png'
+        : '/assets/logos/small-logo-full-black.png'
     "
     alt="W3Champions Logo"
   />

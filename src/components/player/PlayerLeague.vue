@@ -2,7 +2,7 @@
   <div
     class="LadderSummaryShowcase-card mt-1"
     @click="isRanked && !smallMode ? navigateToLeague() : null"
-    :title="isRanked && !smallMode ? 'Go to League Rankings' : null"
+    :title="isRanked && !smallMode ? 'Go to League Rankings' : undefined"
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
   >
     <h2 class="LadderSummaryShowcase-title">
@@ -13,7 +13,7 @@
       <div v-if="showAtPartner">
         <span
           class="text-center pointer"
-          @click="navigateToPartner(atPartner.battleTag)"
+          @click="navigateToPartner()"
         >
           {{ atPartner.name }}
         </span>
@@ -33,7 +33,7 @@
     <div>
       <img
         class="LadderSummaryShowcase-divider"
-        src="../../../src/assets/profiles/profile-ladders-divider.png"
+        src="/assets/profiles/profile-ladders-divider.png"
       />
       <div class="text-center" v-if="isRanked && !smallMode">
         <span>
@@ -219,7 +219,7 @@ export default class PlayerLeague extends Vue {
 <style lang="scss" scoped>
 // grandmaster
 .grandmaster:after {
-  background-image: url(../../assets/leagueFlags/grandmaster.png);
+  background-image: url(/assets/leagueFlags/grandmaster.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -231,7 +231,7 @@ export default class PlayerLeague extends Vue {
 
 // master
 .master:after {
-  background-image: url(../../assets/leagueFlags/master.png);
+  background-image: url(/assets/leagueFlags/master.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -243,7 +243,7 @@ export default class PlayerLeague extends Vue {
 
 // adept
 .adept:after {
-  background-image: url(../../assets/leagueFlags/adept.png);
+  background-image: url(/assets/leagueFlags/adept.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -256,7 +256,7 @@ export default class PlayerLeague extends Vue {
 
 // diamond
 .diamond:after {
-  background-image: url(../../assets/leagueFlags/diamond.png);
+  background-image: url(/assets/leagueFlags/diamond.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -268,7 +268,7 @@ export default class PlayerLeague extends Vue {
 
 // platinum
 .platinum:after {
-  background-image: url(../../assets/leagueFlags/platinum.png);
+  background-image: url(/assets/leagueFlags/platinum.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -280,7 +280,7 @@ export default class PlayerLeague extends Vue {
 
 // gold
 .gold:after {
-  background-image: url(../../assets/leagueFlags/gold.png);
+  background-image: url(/assets/leagueFlags/gold.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -292,7 +292,7 @@ export default class PlayerLeague extends Vue {
 
 // silver
 .silver:after {
-  background-image: url(../../assets/leagueFlags/silver.png);
+  background-image: url(/assets/leagueFlags/silver.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -304,7 +304,7 @@ export default class PlayerLeague extends Vue {
 
 // bronze
 .bronze:after {
-  background-image: url(../../assets/leagueFlags/bronze.png);
+  background-image: url(/assets/leagueFlags/bronze.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -316,7 +316,7 @@ export default class PlayerLeague extends Vue {
 
 // grass
 .grass:after {
-  background-image: url(../../assets/leagueFlags/grass.png);
+  background-image: url(/assets/leagueFlags/grass.png);
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 190px;
@@ -328,7 +328,7 @@ export default class PlayerLeague extends Vue {
 
 // unranked
 .unranked:after {
-  background-image: url(../../assets/leagueFlags/unranked.png);
+  background-image: url(/assets/leagueFlags/unranked.png);
   background-repeat: no-repeat;
   background-position: 0 -315px;
 }

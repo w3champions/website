@@ -9,22 +9,22 @@ yarn install
 ### Compiles and hot-reloads for development
 
 ```
-yarn run serve
+yarn dev
 ```
 
 #### .env
 When running locally, environmental variables will be taken from [this](https://github.com/w3champions/website/blob/master/public/env.js) file.
 
 ### Compiles and minifies for production
-
+This also spins up a web server after the build, so you can check your work after building.
 ```
-yarn run build
+yarn serve:dev
 ```
 
 ### Lints and fixes files
 
 ```
-yarn run lint
+yarn lint
 ```
 
 ### Customize configuration

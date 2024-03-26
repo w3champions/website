@@ -26,7 +26,7 @@ export const formatTimestampStringToDateTime = (str: timestampString): string =>
   return format(parseJSON(str), "dd-MMM-yyyy HH:mm");
 };
 
-export const formatTimestampString = (str: timestampString, formatting: string): string => {
+export const formatTimestampString = (str: timestampString | Date, formatting: string): string => {
   return format(parseJSON(str), formatting);
 };
 

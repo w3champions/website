@@ -62,7 +62,7 @@
               >
                 <div
                   class="player-avatar mr-1 alignRight race-icon"
-                  :title="getTitleRace(item, index)"
+                  :title="getTitleRace(item, index).toString()"
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
                 />
 
@@ -388,10 +388,7 @@ export default class CountryRankingsGrid extends Vue {
     const playersInfo = ranking.playersInfo;
     if (!playersInfo) return this.$t("races.RANDOM");
     const playerInfo = playersInfo[playerIndex];
-    if (
-      CountryRankingsGrid.hasSelectedIcon(playerInfo) &&
-      playerInfo.selectedRace <= ERaceEnum.UNDEAD
-    ) {
+    if (CountryRankingsGrid.hasSelectedIcon(playerInfo) && playerInfo.selectedRace <= ERaceEnum.UNDEAD) {
       return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
     } else {
       return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
@@ -420,15 +417,11 @@ export default class CountryRankingsGrid extends Vue {
     if (twitchName && streamData) {
       for (let i = 0; i < streamData.length; i++) {
         const stream = streamData[i];
-        if (
-          stream &&
-          stream.user_name.toLowerCase() == twitchName.toLowerCase()
-        ) {
+        if (stream && stream.user_name.toLowerCase() == twitchName.toLowerCase()) {
           return true;
         }
       }
     }
-
     return false;
   }
 

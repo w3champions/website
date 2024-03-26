@@ -2,11 +2,11 @@
   <v-dialog v-model="show" max-width="500">
     <v-card>
       <v-card-title class="justify-center">
-        {{ this.name }}
+        {{ name }}
       </v-card-title>
       <v-container>
         <v-row>
-          <v-img :src="require(`@/assets/socials/QR/${name}_QR.png`)"></v-img>
+          <v-img :src="`/assets/socials/QR/${name}_QR.png`"></v-img>
         </v-row>
 
         <v-row class="mt-2">

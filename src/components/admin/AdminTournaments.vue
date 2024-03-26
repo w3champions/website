@@ -17,7 +17,7 @@
           @save="removePlayer"
         />
       </v-dialog>
-      <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="800px">
+      <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="1000px">
         <edit-tournament-modal
           :saving="isLoading"
           :maps="activeMaps"
@@ -25,7 +25,7 @@
           @save="createTournament"
         />
       </v-dialog>
-      <v-dialog v-if="isEditTournamentOpen" v-model="isEditTournamentOpen" max-width="800px">
+      <v-dialog v-if="isEditTournamentOpen" v-model="isEditTournamentOpen" max-width="1000px">
         <edit-tournament-modal
           :tournament="tournament"
           :saving="isLoading"

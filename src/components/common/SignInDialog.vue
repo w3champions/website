@@ -17,7 +17,7 @@
                 max-width="48"
                 min-height="32"
                 max-height="48"
-                :src="require(`@/assets/flags/${gateway.id}.svg`)"
+                :src="`/assets/flags/${gateway.id}.svg`"
               ></v-img>
             </v-col>
             <v-col cols="2" align-self="center">

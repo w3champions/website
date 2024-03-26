@@ -3,11 +3,11 @@
     <img
       v-if="renderIcon"
       :src="renderIcon"
-      :title="enumToString"
+      :title="enumToString.toString()"
       class="race-icon"
       height="24px"
       width="auto"
-      :alt="enumToString"
+      :alt="enumToString.toString()"
     />
   </div>
 </template>
