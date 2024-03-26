@@ -1,5 +1,5 @@
 # build stage
-FROM node:18-alpine as build-stage
+FROM node:20-bullseye as build-stage
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
