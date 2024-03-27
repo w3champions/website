@@ -1,9 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import "vuetify/dist/vuetify.js";
 import vuetify from "./plugins/vuetify";
-import VueI18n from "vue-i18n";
 import { i18n } from "./plugins/i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies-ts";

@@ -1,5 +1,5 @@
 <template>
-  <v-app class="w3app" :class="theme" :dark="isDarkTheme">
+  <v-app class="w3app">
     <v-navigation-drawer
       temporary
       absolute
@@ -9,7 +9,7 @@
       <v-list dense>
         <v-list-item prepend-icon="mdi-close">
           <router-link :to="{ name: 'Home' }">
-            <brand-logo :is-dark-theme="isDarkTheme" />
+            <brand-logo :is-dark-theme="isDarkTheme.get()" />
           </router-link>
           <!-- <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">{{ mdiClose }}</v-icon> -->
         </v-list-item>
@@ -40,7 +40,7 @@
       <v-toolbar-title class="pa-0">
         <router-link :to="{ name: 'Home' }">
           <brand-logo
-            :is-dark-theme="isDarkTheme"
+            :is-dark-theme="isDarkTheme.get()"
             style="max-height: 30px"
             class="ml-2 d-none d-sm-flex"
           />
@@ -61,11 +61,7 @@
           <span class="mr-2">
             {{ $t(`views_app.${item.title}`) }}
           </span>
-          <v-icon
-            size="x-large"
-            :icon="item.icon"
-          >
-          </v-icon>
+          <v-icon size="x-large" :icon="item.icon" />
         </v-btn>
         <v-divider vertical />
       </span>
@@ -84,7 +80,7 @@
         <template #activator="{ props }">
           <v-btn tile v-bind="props">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
-            <v-icon icon="mdi-account-circle" size="x-large" />
+            <v-icon size="x-large">mdi-account-circle</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -100,20 +96,20 @@
       <v-menu offset-y>
         <template #activator="{ props }">
           <v-btn tile v-bind="props" class="right-menu">
-            <v-icon icon="mdi-invert-colors" size="x-large" />
+            <v-icon size="x-large">mdi-invert-colors</v-icon>
           </v-btn>
         </template>
         <v-list class="theme-selector">
-          <v-list-item @click="theme = 'human'">
+          <v-list-item @click="currentTheme = 'human'">
             <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme = 'orc'">
+          <v-list-item @click="currentTheme = 'orc'">
             <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme = 'nightelf'">
+          <v-list-item @click="currentTheme = 'nightelf'">
             <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme = 'undead'">
+          <v-list-item @click="currentTheme = 'undead'">
             <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -123,16 +119,16 @@
         <template #activator="{ props }">
           <v-btn tile v-bind="props" style="margin-top: 2px">
             <locale-icon
-              :locale="savedLocale"
+              :locale="savedLocale.get()"
               :showTwoLetterCode="false"
             ></locale-icon>
           </v-btn>
         </template>
         <v-list class="locale-selector">
           <v-list-item
-            v-for="lang in languages"
+            v-for="lang in languages.get()"
             :key="lang"
-            @click="savedLocale = lang"
+            @click="savedLocale.set(lang)"
           >
             <locale-icon :locale="lang"></locale-icon>
           </v-list-item>
@@ -152,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-facing-decorator";
+// import { Component, Vue } from "vue-facing-decorator";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
@@ -162,18 +158,8 @@ import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { i18n, locale } from "./plugins/i18n";
-import {
-  mdiAccountCircle,
-  mdiAccountCircleOutline,
-  mdiAccountTie,
-  mdiChartAreaspline,
-  mdiClose,
-  mdiControllerClassic,
-  mdiHelpCircleOutline,
-  mdiInvertColors,
-  mdiTrophy,
-  mdiViewList,
-} from "@mdi/js";
+import { useTheme } from 'vuetify';
+import { useRoute, useRouter } from 'vue-router';
 
 export type ItemType = {
   title: string;
@@ -182,17 +168,24 @@ export type ItemType = {
   class?: string;
 };
 
-@Component({ components: { BrandLogo, SignInDialog, localeIcon, GlobalSearch } })
-export default class App extends Vue {
-  public mdiAccountCircle = mdiAccountCircle;
-  public mdiAccountCircleOutline = mdiAccountCircleOutline;
-  public mdiClose = mdiClose;
-  public mdiInvertColors = mdiInvertColors;
-  private oauthStore = useOauthStore();
-  private _savedLocale = "en";
-  private selectedTheme = "human";
-  public isNavigationDrawerOpen = false;
-  public items: ItemType[] = [
+import { defineComponent, computed, ComputedRef, ref } from 'vue';
+import { onMounted } from "vue";
+
+export default defineComponent({
+  name: "App",
+  components: {
+    BrandLogo,
+    SignInDialog,
+    localeIcon,
+    GlobalSearch,
+  },
+  setup(props, context) {
+    const router = useRouter();
+    const route = useRoute();
+    const oauthStore = useOauthStore();
+    const _savedLocale = "en";
+    const isNavigationDrawerOpen = false;
+    const items: ItemType[] = [
     {
       title: "tournaments",
       icon: "mdi-trophy",
@@ -225,153 +218,134 @@ export default class App extends Vue {
       class: "d-none d-md-flex",
     },
   ];
+  let showSignInDialog = false;
+  const rootStateStore = useRootStateStore();
+  const theme = useTheme();
 
-  public showSignInDialog = false;
-  private rootStateStore = useRootStateStore();
+  const currentTheme = computed({
+    get: () => theme.global.name.value,
+    set: (newValue: string) => {
+      console.log(newValue);
+      theme.global.name.value = newValue;
+    }
+  });
 
-  loginOrGoToProfile() {
-    if (this.authCode) {
-      this.openPlayerProfile();
+  const authCode = oauthStore.token;
+
+  // const authCode = computed({
+  //   get: () => oauthStore.token,
+  //   set: () => {},
+  // })
+
+  function loginOrGoToProfile(): void {
+    if (authCode) {
+      openPlayerProfile();
     } else {
-      this.showSignInDialog = true;
+      showSignInDialog = true;
     }
   }
 
-  async saveLoginRegion({
-    region,
-    done,
-  }: {
-    region: BnetOAuthRegion;
-    done: () => void;
-  }) {
-    await this.oauthStore.saveLoginRegion(region);
-    done();
+  function logout(): void {
+    oauthStore.logout();
   }
 
-  logout() {
-    this.oauthStore.logout();
-  }
+  const loginName = computed({
+    get: () => oauthStore.blizzardVerifiedBtag?.split("#")[0],
+    set: () => {},
+  })
 
-  /**
-   * Check if given ItemType element is visible for
-   * the current user
-   *
-   * @return boolean
-   * @param item
-   */
-  public isNavItemVisible(item: ItemType): boolean {
-    if (item.title == "admin" && !this.isAdmin) {
-      return false;
-    }
-    return true;
-  }
+  const battleTag = ({
+    get: () => oauthStore.blizzardVerifiedBtag,
+    set: () => {},
+  })
 
-  public openPlayerProfile(): void {
-    this.$router.push({
-      path: getProfileUrl(this.battleTag),
+  const isAdmin = ({
+    get: () => oauthStore.isAdmin,
+    set: () => {},
+  })
+
+  function openPlayerProfile(): void {
+    router.push({
+      path: getProfileUrl(battleTag.get()),
     });
   }
 
-  get authCode(): string {
-    return this.oauthStore.token;
+  const savedLocale = ({
+    get: () => rootStateStore.locale,
+    set: (newVal: string) => {
+      rootStateStore.saveLocale(newVal);
+    }
+  })
+
+  const languages = ({
+    get: () => ["en", "fr"],
+    set: () => {},
+  })
+
+  // Check if given ItemType element is visible for the current user
+  function isNavItemVisible(item: ItemType): boolean {
+    if (item.title == "admin" && !isAdmin) {
+        return false;
+      }
+      return true;
+  }
+  async function saveLoginRegion({ region, done }: { region: BnetOAuthRegion; done: () => void }) {
+    await oauthStore.saveLoginRegion(region);
+    done();
   }
 
-  get loginName(): string {
-    return this.oauthStore.blizzardVerifiedBtag?.split("#")[0];
-  }
+  const isDarkTheme = ({
+    get: () => theme.current.value.dark,
+    set: () => {}
+  })
 
-  get battleTag(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
+  onMounted(async () => {
+    await init();
+  })
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  get isDarkTheme(): boolean {
-    const isDark = this.theme === "nightelf" || this.theme === "undead";
-    return isDark;
-  }
-
-  get themeColors(): unknown {
-    switch (this.theme) {
-      case "nightelf":
-        return {
-          primary: "#ffd428",
-          "w3-race-bg": "#0d0718",
-        };
-      case "undead":
-        return {
-          primary: "#ffd428",
-          "w3-race-bg": "#000",
-        };
-      case "orc":
-        return {
-          primary: "#5c2604",
-          "w3-race-bg": "#c7baa1",
-        };
-      default:
-        return {
-          primary: "#1976d2",
-          "w3-race-bg": "#e9e9e9",
-        };
+  async function init() {
+    rootStateStore.loadLocale();
+    // i18n.locale = savedLocale;
+    await oauthStore.loadAuthCodeToState();
+    if (authCode) {
+      await oauthStore.loadBlizzardBtag(authCode);
     }
   }
 
-  get theme(): string {
-    return this.selectedTheme;
-  }
+  // created(): void {
+  //   const t = window.localStorage.getItem("theme");
+  //   if (t && t.length > 0) {
+  //     // this.theme = t;
+  //   }
+  //   // this.setThemeColors();
+  // }
 
-  set theme(val: string) {
-    window.localStorage.setItem("theme", val);
-    this.selectedTheme = val;
-    // this.$vuetify.theme.dark = this.isDarkTheme;
-    this.setThemeColors();
-    this.rootStateStore.SET_DARK_MODE(this.isDarkTheme);
-  }
-
-  set savedLocale(val: string) {
-    this.$i18n.locale = val;
-    this.rootStateStore.saveLocale(val);
-  }
-
-  get savedLocale(): string {
-    return this.rootStateStore.locale;
-  }
-
-  get languages(): Array<string> {
-    return ["en", "fr"];
-  }
-
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-
-  private async init() {
-    this.rootStateStore.loadLocale();
-    this.$i18n.locale = this.savedLocale;
-    await this.oauthStore.loadAuthCodeToState();
-    if (this.authCode) {
-      await this.oauthStore.loadBlizzardBtag(this.authCode);
+    return {
+      oauthStore,
+      _savedLocale,
+      isNavigationDrawerOpen,
+      items,
+      showSignInDialog,
+      rootStateStore,
+      theme,
+      currentTheme,
+      authCode,
+      loginOrGoToProfile,
+      logout,
+      loginName,
+      battleTag,
+      isAdmin,
+      openPlayerProfile,
+      savedLocale,
+      languages,
+      isNavItemVisible,
+      saveLoginRegion,
+      isDarkTheme,
+      init,
     }
-  }
-  private setThemeColors() {
-    this.$vuetify.theme.themes[this.isDarkTheme ? "dark" : "light"] =
-      Object.assign(
-        {},
-        this.$vuetify.theme.themes[this.isDarkTheme ? "dark" : "light"],
-        this.themeColors
-      );
-  }
+  },
+});
 
-  created(): void {
-    const t = window.localStorage.getItem("theme");
-    if (t && t.length > 0) {
-      this.theme = t;
-    }
-    this.setThemeColors();
-  }
-}
 </script>
 
 <style lang="scss">
