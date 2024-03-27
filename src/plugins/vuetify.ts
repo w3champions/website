@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue, { getCurrentInstance } from "vue";
 import Vuetify from "vuetify/lib";
 import TrovoIcon from "@/components/player/TrovoIcon.vue";
 import LiquipediaIcon from "@/components/player/LiquipediaIcon.vue";
@@ -35,3 +35,9 @@ export default new Vuetify({
     }
   }
 });
+
+
+export const useVuetify = () => {
+  const vm = getCurrentInstance();
+  return vm!.proxy?.$vuetify || undefined;
+};

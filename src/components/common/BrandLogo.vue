@@ -10,13 +10,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
-import Vue from "vue";
-
-@Component({})
-export default class BrandLogo extends Vue {
-  @Prop() isDarkTheme!: boolean;
-}
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: "BrandLogo",
+  components: {},
+  props: {
+    isDarkTheme: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+  setup(props, context) {
+  },
+});
 </script>
 
 <style scoped>
