@@ -21,10 +21,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/types";
 

@@ -18,13 +18,12 @@
       </v-card-title>
       <v-card-text>
         <v-autocomplete
-          v-model="searchModel"
+          v-model::search-input.sync="searchModel"
           :append-icon="mdiMagnify"
           label="Search"
           single-line
           clearable
           :items="searchPlayers"
-          :search-input.sync="search"
           :no-data-text="noDataText"
           item-text="battleTag"
           item-value="battleTag"
@@ -33,19 +32,17 @@
         >
           <template v-slot:item="data">
             <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+              {{ data.item }}
             </template>
             <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.name)">
-                    {{ data.item.name }}
-                  </span>
-                  <span v-if="isDuplicateName(data.item.name)">
-                    {{ data.item.battleTag }}
-                  </span>
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title>
+                <span v-if="!isDuplicateName(data.item.name)">
+                  {{ data.item.name }}
+                </span>
+                <span v-if="isDuplicateName(data.item.name)">
+                  {{ data.item.battleTag }}
+                </span>
+              </v-list-item-title>
             </template>
           </template>
         </v-autocomplete>
@@ -76,8 +73,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useOauthStore } from "@/store/oauth/store";

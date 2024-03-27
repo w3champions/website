@@ -77,8 +77,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
 import AssignPortrait from "./portraits/AssignPortrait.vue";

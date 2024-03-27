@@ -23,8 +23,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 @Component({ components: {} })

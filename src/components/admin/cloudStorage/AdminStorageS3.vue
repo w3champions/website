@@ -81,8 +81,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";

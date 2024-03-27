@@ -1,12 +1,11 @@
 <template>
   <bar-chart :chart-data="barChartData" />
 </template>
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
 
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import Vue from "vue";
 import { MapCount } from "@/store/overallStats/types";
 
 @Component({

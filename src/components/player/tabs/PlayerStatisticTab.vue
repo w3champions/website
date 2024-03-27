@@ -147,7 +147,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Watch, Mixins } from "vue-property-decorator";
+import { Component, Watch, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/types";
@@ -176,8 +176,9 @@ import { usePlayerStore } from "@/store/player/store";
     MatchesGrid,
     PlayerGameLengthStats,
   },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
+export default class PlayerStatisticTab extends Vue {
   private player = usePlayerStore();
 
   public selectedPatch = "All";

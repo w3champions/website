@@ -2,7 +2,6 @@
   <bar-chart :chart-data="chartData" :chart-options="chartOptions" />
 </template>
 <script lang="ts">
-import Vue from "vue";
 import map from "lodash/map";
 import round from "lodash/round";
 import sumBy from "lodash/sumBy";
@@ -12,7 +11,7 @@ import mapValues from "lodash/mapValues";
 import toArray from "lodash/toArray";
 import flatten from "lodash/flatten";
 import { ChartData, ChartOptions } from "chart.js";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { PlayedHero } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { HERO_DATA } from "@/store/heroes";

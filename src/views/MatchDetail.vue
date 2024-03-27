@@ -182,7 +182,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, toNative, Vue } from "vue-facing-decorator";
 import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
@@ -207,8 +207,9 @@ import { useMatchStore } from "@/store/match/store";
     HostIcon,
     DownloadReplayIcon,
   },
+  mixins: [toNative(MatchMixin)]
 })
-export default class MatchDetailView extends Mixins(MatchMixin) {
+export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
   private matchStore = useMatchStore();
 

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 import Vue, { CreateElement, RenderContext, VNode } from "vue";
 import { ERaceEnum } from "@/store/types";
 
@@ -97,4 +97,4 @@ export default Vue.component<IProps>("PlayerIcon", {
 .race-icon-RANDOM {
   background-image: url("/assets/raceIcons/RANDOM.png");
 }
-</style>
+</style> -->

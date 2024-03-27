@@ -9,11 +9,9 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_common_gamemodeselect.selectgamemode") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_common_gamemodeselect.selectgamemode") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
@@ -22,9 +20,7 @@
             :key="mode.id"
             @click="selectGameMode(mode.id)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -33,14 +29,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { LocaleMessage } from "vue-i18n";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
 
-@Component({})
-export default class GameModeSelect extends Mixins(GameModesMixin) {
+@Component({
+  mixins: [toNative(GameModesMixin)]
+})
+export default class GameModeSelect extends Vue {
   @Prop() gameMode?: EGameMode;
   @Prop() disabledModes?: EGameMode[];
   public mdiControllerClassic = mdiControllerClassic;

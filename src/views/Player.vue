@@ -43,11 +43,9 @@
                           :key="item.id"
                           @click="selectSeason(item)"
                         >
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              {{ $t("views_rankings.season") }} {{ item.id }}
-                            </v-list-item-title>
-                          </v-list-item-content>
+                          <v-list-item-title>
+                            {{ $t("views_rankings.season") }} {{ item.id }}
+                          </v-list-item-title>
                         </v-list-item>
                       </v-list>
                     </v-card>
@@ -144,7 +142,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+import { Component, toNative, Prop, Watch, Vue } from "vue-facing-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 
@@ -188,8 +186,9 @@ import { useRankingStore } from "@/store/ranking/store";
     TeamMatchInfo,
     HostIcon,
   },
+  mixins: [toNative(MatchMixin)]
 })
-export default class PlayerView extends Mixins(MatchMixin) {
+export default class PlayerView extends Vue {
   @Prop() public id!: string;
   @Prop() public freshLogin!: boolean;
 

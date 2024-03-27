@@ -2,10 +2,9 @@
   <line-chart :chart-data="chartData" />
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { GameDay } from "@/store/overallStats/types";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
-import Vue from "vue";
 import { ChartData } from "chart.js";
 import { parseJSON } from "date-fns";
 

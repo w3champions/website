@@ -1,13 +1,12 @@
 <template>
   <v-autocomplete
     :class="classes"
-    v-model="searchModel"
+    v-model::search-input.sync="searchModel"
     :append-icon="mdiMagnify"
     label="Search BattleTag"
     clearable
     placeholder=" "
     :items="searchedPlayers"
-    :search-input.sync="search"
     :no-data-text="noDataText"
     :loading="isLoading"
     :autofocus="setAutofocus ? true : false"
@@ -15,8 +14,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import debounce from "debounce";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiMagnify } from "@mdi/js";

@@ -2,9 +2,8 @@
   <div v-if="showBracket" class="black--text">
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" v-bind:style="style">
-      <template v-for="(round, roundIndex) in rounds">
+      <template v-for="(round, roundIndex) in rounds" :key="`matches-${roundIndex}`">
         <tournament-round-matches
-          :key="`matches-${roundIndex}`"
           :round="round"
           :roundWidth="roundWidth"
           :playerHeight="playerHeight"
@@ -33,8 +32,7 @@ import fromPairs from "lodash/fromPairs";
 import pick from "lodash/pick";
 import times from "lodash/times";
 import { ETournamentState, ITournament, ITournamentRound, BracketDimensions } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import TournamentRoundMatches from "./TournamentRoundMatches.vue";
 import TournamentRoundConnectors from "./TournamentRoundConnectors.vue";
 

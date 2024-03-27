@@ -1,40 +1,29 @@
 <template>
   <v-navigation-drawer permanent>
     <v-list-item>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("views_admin.adminpage") }}
-        </v-list-item-title>
-      </v-list-item-content>
+      <v-list-item-title>
+        {{ $t("views_admin.adminpage") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list dense nav>
-      <template v-for="(item, index) in items">
+      <template v-for="(item, index) in items" :key="index">
         <v-list-item
-          :key="index"
           v-if="!item.items || item.items.length === 0"
           @click="itemSelected(item, index)"
+          :prepend-icon="item.icon || mdiAccountTie"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
 
         <v-list-group
-          :key="index"
           v-if="item.items && item.items.length > 0"
           :value="false"
           v-bind:prepend-icon="item.icon"
           no-action
         >
           <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </template>
 
           <v-list-item
@@ -59,8 +48,7 @@
 <script lang="ts">
 import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({ components: {} })
 export default class AdminNavigation extends Vue {

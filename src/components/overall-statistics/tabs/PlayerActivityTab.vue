@@ -248,7 +248,7 @@ import {
   MmrRangeValues,
   PopularHours,
 } from "@/store/overallStats/types";
-import { Component, Mixins } from "vue-property-decorator";
+import { Component, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import MatchupLengthBarChart from "@/components/overall-statistics/MatchupLengthBarChart.vue";
@@ -268,8 +268,9 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
     AmountPerDayChart,
     PopularGameTimeChart,
   },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class PlayerActivityTab extends Mixins(GameModesMixin) {
+export default class PlayerActivityTab extends Vue {
   public selectedLengthMode = EGameMode.GM_1ON1;
   public selectedPopularHourMode = EGameMode.GM_1ON1;
   public selectedGamesPerDayMode = EGameMode.UNDEFINED;

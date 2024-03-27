@@ -36,9 +36,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import { PlayerHeroStatistic } from "@/store/player/types";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { mdiMenuLeft } from "@mdi/js";
 import { mdiMenuRight } from "@mdi/js";
 

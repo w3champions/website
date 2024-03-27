@@ -180,12 +180,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import flatMap from "lodash/flatMap";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -202,7 +200,6 @@ import { mdiTwitch } from "@mdi/js";
 @Component({
   components: {
     RaceIcon,
-    PlayerIcon,
     SwordIcon,
     LeagueIcon,
     PlayerRankInfo,

@@ -10,8 +10,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { Prop, Vue, Component } from "vue-facing-decorator";
 
 @Component({})
 export default class LocaleIcon extends Vue {

@@ -14,9 +14,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { EChatScope } from "@/store/common/types";
-import Vue from "vue";
 
 @Component({})
 export default class ReplayChatMessage extends Vue {

@@ -6,7 +6,7 @@
       v-if="object.length > 1 && delimiter !== AddValuesDelimiter.SLASH"
     >
       <template v-slot:activator="{ on, attrs }">
-        <span v-on="on" v-bind="attrs">{{ stringValues }}</span>
+        <span v-bind="attrs" v-on="on">{{ stringValues }}</span>
       </template>
       <div>{{ addValues }}</div>
     </v-tooltip>
@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { AddValuesDelimiter } from "./PlayerPerformanceOnMatch.vue";
 
 @Component({})

@@ -17,12 +17,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import difference from "lodash/difference";
 import { isFuture } from "date-fns";
 import TournamentsTable from "@/components/tournaments/TournamentsTable.vue";
 import { ITournament } from "@/store/tournaments/types";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
 import { useTournamentsStore } from "@/store/tournaments/store";

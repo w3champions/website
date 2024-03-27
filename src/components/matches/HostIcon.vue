@@ -23,9 +23,8 @@
 <script lang="ts">
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";
-import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class HostIcon extends Vue {

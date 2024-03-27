@@ -16,9 +16,7 @@
           :key="mode.gateway"
           @click="setGateway(mode.gateway)"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ mode.name }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ mode.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>
@@ -26,8 +24,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 
 import { Gateways } from "@/store/ranking/types";
 import { LocaleMessage } from "vue-i18n";

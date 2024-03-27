@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
+import { Component, Vue, toNative, Watch } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
@@ -63,15 +63,15 @@ import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
-import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class PlayerActivityTab extends Mixins(GameModesMixin) {
+export default class PlayerActivityTab extends Vue {
   private oauthStore = useOauthStore();
   private overallStatsStore = useOverallStatsStore();
   public selectedSeason: Season = { id: 1 };

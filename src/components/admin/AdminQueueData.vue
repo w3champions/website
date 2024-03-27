@@ -36,14 +36,17 @@
 import { QueueData } from "@/store/admin/types";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
-import { Component, Watch, Mixins, Prop } from "vue-property-decorator";
+import { Component, Watch, toNative, Prop, Vue } from "vue-facing-decorator";
 import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
-@Component({ components: {} })
-export default class AdminQueueData extends Mixins(GameModesMixin) {
+@Component({
+  components: {},
+  mixins: [toNative(GameModesMixin)]
+})
+export default class AdminQueueData extends Vue {
   private oauthStore = useOauthStore();
   @Prop() disabledModes?: EGameMode[];
   _intervalRefreshHandle?: number = undefined;

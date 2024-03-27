@@ -2,7 +2,7 @@
   <line-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
@@ -12,8 +12,9 @@ import { parseJSON } from "date-fns";
 
 @Component({
   components: { LineChart },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
+export default class ActivityPerDayChart extends Vue {
   @Prop() public gameDays!: GameDayPerMode[];
   @Prop() public selectedGameMode!: EGameMode;
 

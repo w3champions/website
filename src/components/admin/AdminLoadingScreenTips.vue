@@ -60,8 +60,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";

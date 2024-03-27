@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
@@ -87,8 +87,11 @@ import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 
-@Component({ components: { MatchesGrid, PlayerSearch } })
-export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
+@Component({
+  components: { MatchesGrid, PlayerSearch },
+  mixins: [toNative(GameModesMixin)],
+})
+export default class PlayerMatchesTab extends Vue {
   @Prop() public id!: string;
   public isLoadingMatches = false;
   public gameModeEnums = EGameMode;

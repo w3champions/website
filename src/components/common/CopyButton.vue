@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn small v-bind="attrs" v-on="on" @click="copy"
+      <v-btn v-bind="attrs" small v-on="on" @click="copy"
              :aria-label="$t(`components_common_copybutton.${tooltipText}`)">
         <v-icon>{{ mdiContentCopy }}</v-icon>
       </v-btn>
@@ -12,8 +12,7 @@
 
 <script lang="ts">
 import { mdiContentCopy } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class CopyButton extends Vue {

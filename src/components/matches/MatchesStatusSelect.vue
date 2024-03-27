@@ -9,11 +9,9 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_matches_matchesstatusselect.selectstatus") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_matches_matchesstatusselect.selectstatus") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
@@ -22,9 +20,7 @@
             :key="mode.status"
             @click="setStatus(mode.status)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -33,8 +29,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";

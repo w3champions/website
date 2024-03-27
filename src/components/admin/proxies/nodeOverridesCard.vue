@@ -31,8 +31,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch, Prop } from "vue-property-decorator";
+import { Component, Watch, Prop, Vue } from "vue-facing-decorator";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";

@@ -63,8 +63,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import CryptoDialog from "@/components/common/CryptoDialog.vue";
 import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 

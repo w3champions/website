@@ -67,8 +67,8 @@
                 </v-card-subtitle>
                 <v-spacer></v-spacer>
 
-                <template v-for="node in newNodeOverrides(false)">
-                  <v-container class="py-0 my-0 justify-center" :key="node">
+                <template v-for="node in newNodeOverrides(false)" :key="node">
+                  <v-container class="py-0 my-0 justify-center">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>
@@ -83,8 +83,8 @@
                 </v-card-subtitle>
                 <v-spacer></v-spacer>
 
-                <template v-for="node in newNodeOverrides(true)">
-                  <v-container class="py-0 my-0 justify-center" :key="node">
+                <template v-for="node in newNodeOverrides(true)" :key="node">
+                  <v-container class="py-0 my-0 justify-center">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>
@@ -117,8 +117,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { Prop, Component, Vue } from "vue-facing-decorator";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import { ProxySettings } from "@/store/admin/types";
 import { useAdminStore } from "@/store/admin/store";

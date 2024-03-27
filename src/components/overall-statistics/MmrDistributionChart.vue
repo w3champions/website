@@ -14,8 +14,7 @@ import { AnnotationOptions } from "chartjs-plugin-annotation";
 import clamp from "lodash/clamp";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { usePlayerStore } from "@/store/player/store";
 
 @Component({

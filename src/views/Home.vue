@@ -22,8 +22,6 @@
             <v-carousel
               v-model="model"
               :show-arrows="false"
-              :dark="$vuetify.theme.dark"
-              :light="!$vuetify.theme.dark"
               height="350px"
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
@@ -142,8 +140,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { marked } from "marked";
 import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";

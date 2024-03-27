@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router';
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import Tournaments from "@/views/Tournaments.vue";
@@ -22,8 +22,6 @@ import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
 import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
 import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
-
-Vue.use(VueRouter);
 
 const routes = [
   {
@@ -188,9 +186,9 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
-  routes,
-});
+const router = createRouter({
+  history: createWebHistory(),
+  routes: routes,
+})
 
 export default router;

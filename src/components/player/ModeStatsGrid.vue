@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
@@ -60,8 +60,9 @@ import isEmpty from "lodash/isEmpty";
 
 @Component({
   components: { RaceIcon, LevelProgress },
+  mixins: [toNative(GameModesMixin)]
 })
-export default class ModeStatsGrid extends Mixins(GameModesMixin) {
+export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;

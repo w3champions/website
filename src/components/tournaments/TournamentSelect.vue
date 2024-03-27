@@ -9,11 +9,9 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_tournaments_tournamentselect.selecttourney") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_tournaments_tournamentselect.selecttourney") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
@@ -22,9 +20,7 @@
             :key="tournament.id"
             @click="selectTournament(tournament)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ tournament.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ tournament.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -35,8 +31,7 @@
 <script lang="ts">
 import { ITournament } from "@/store/tournaments/types";
 import { mdiTrophy } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 
 @Component({})
 export default class TournamentSelect extends Vue {

@@ -47,8 +47,7 @@
 
 <script lang="ts">
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";

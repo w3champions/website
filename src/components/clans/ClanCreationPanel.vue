@@ -45,9 +45,8 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
 import { LocaleMessage } from "vue-i18n";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { useClanStore } from "@/store/clan/store";
 
 @Component({})

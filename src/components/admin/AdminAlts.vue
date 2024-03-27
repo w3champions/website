@@ -4,13 +4,12 @@
       <!-- Autocomplete Btag search -->
       <v-autocomplete
         class="ml-5 mr-5"
-        v-model="searchPlayerModel"
+        v-model::search-input.sync="searchPlayerModel"
         :append-icon="mdiMagnify"
         label="Search BattleTag"
         clearable
         placeholder=" "
         :items="searchedPlayers"
-        :search-input.sync="search"
         return-object
         @click:clear="revertToDefault"
         autofocus
@@ -20,8 +19,8 @@
     <v-card v-if="showAlts">
       <v-card-title>Smurfs:</v-card-title>
       <v-list>
-        <template v-for="alt in alts">
-          <v-list-item :key="alt">
+        <template v-for="alt in alts" :key="alt">
+          <v-list-item>
             <div @click="searchAltsFromClick(alt)" class="pointer">{{ alt }}</div>
             <v-spacer></v-spacer>
             <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
@@ -33,8 +32,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-facing-decorator";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";

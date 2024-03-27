@@ -24,8 +24,7 @@
 
 <script lang="ts">
 import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
 @Component({ components: {} })

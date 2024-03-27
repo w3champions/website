@@ -12,9 +12,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import isNil from "lodash/isNil";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { RaceWinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 

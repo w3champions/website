@@ -57,8 +57,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import { Hero, HeroScore } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";

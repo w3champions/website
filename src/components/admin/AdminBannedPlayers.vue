@@ -160,7 +160,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from "vue-property-decorator";
+import { Component, Watch, Vue, toNative } from "vue-facing-decorator";
 import GameModesMixin from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
@@ -171,8 +171,11 @@ import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 
-@Component({ components: { PlayerSearch } })
-export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
+@Component({
+  components: { PlayerSearch },
+  mixins: [toNative(GameModesMixin)]
+})
+export default class AdminBannedPlayers extends Vue {
   private oauthStore = useOauthStore();
   public dialog = false;
   public dateMenu = false;

@@ -9,16 +9,12 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("components_matches_sortselect.sortmatchesby") }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t("components_matches_sortselect.sortmatchesby") }}</v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
           <v-list-item v-for="sort in sortings" :key="sort.mode" @click="setSort(sort.mode)">
-            <v-list-item-content>
-              <v-list-item-title>{{ sort.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ sort.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -27,8 +23,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-facing-decorator";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";

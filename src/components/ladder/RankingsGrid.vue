@@ -135,12 +135,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-facing-decorator";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
 import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import { useTwitchStore } from "@/store/twitch/store";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
@@ -153,7 +151,6 @@ import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 @Component({
   components: {
     RaceIcon,
-    PlayerIcon,
     SwordIcon,
     PlayerRankInfo,
     CountryFlagExtended,

@@ -11,8 +11,7 @@
 
 <script lang="ts">
 import { PortraitDefinition } from "@/store/admin/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-facing-decorator";
 import AssignPortrait from "./AssignPortrait.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
