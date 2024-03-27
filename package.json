@@ -2,6 +2,7 @@
   "name": "third",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "serve:prod": "yarn run build:prod && http-server ./dist",
@@ -11,7 +12,7 @@
     "lint": "eslint --no-fix src/",
     "lint:fix": "eslint --fix src/",
     "format": "node_modules/.bin/prettier --write .",
-    "generate-locales": "npx ts-node scripts/generate-locales.ts"
+    "generate-locales": "tsx scripts/generate-locales.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "~5.0.16",
@@ -38,8 +39,7 @@
     "@tiptap/vue-2": "^2.0.3",
     "chart.js": "^4.2.1",
     "chartjs-adapter-date-fns": "^3.0.0",
-    "chartjs-plugin-annotation": "^2.1.2",
-    "core-js": "^3.27.1",
+    "chartjs-plugin-annotation": "^3.0.1",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
     "debounce": "^2.0.0",
@@ -59,14 +59,14 @@
   "devDependencies": {
     "@types/google-spreadsheet": "^3.3.0",
     "@types/lodash": "^4.14.191",
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.10.1",
-    "@typescript-eslint/parser": "^5.10.1",
-    "@vitejs/plugin-legacy": "^4.0.2",
-    "@vitejs/plugin-vue2": "^2.2.0",
+    "@types/node": "^20.11.30",
+    "@types/prettier": "^2.7.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-legacy": "^5.3.2",
+    "@vitejs/plugin-vue2": "^2.3.1",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.2",
-    "babel-runtime": "^6.26.0",
     "deepmerge": "^4.2.2",
     "dotenv": "^16.0.3",
     "eslint": "^8.31.0",
@@ -83,10 +83,9 @@
     "sass": "~1.32.13",
     "terser": "^5.29.2",
     "ts-node": "^10.9.1",
-    "typescript": "~4.9.4",
-    "unplugin-vue-components": "^0.24.1",
-    "vite": "^4.2.0",
-    "vue-cli-plugin-vuetify": "~2.5.8",
-    "vuetify-loader": "^1.9.2"
+    "tsx": "^4.7.1",
+    "typescript": "~4.9.5",
+    "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.2.6"
   }
 }
