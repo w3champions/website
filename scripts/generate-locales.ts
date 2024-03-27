@@ -12,7 +12,7 @@ import set from "lodash/set";
 import prettier from "prettier";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { activeLanguages } from "./active-languages";
-import { keyConstant } from "./key";
+import keyConstant from "./key";
 
 async function main() {
   if (!keyConstant) {
