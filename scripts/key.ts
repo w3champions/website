@@ -1,5 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("dotenv").config();
+import dotenv from "dotenv";
 
-module.exports = process.env.GOOGLE_API_KEY;
+dotenv.config();
+
+export const keyConstant = process.env.GOOGLE_API_KEY;
 
