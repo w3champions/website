@@ -42,7 +42,7 @@ export const LAUNCHER_UPDATE_URL = _launcherUrl;
 export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 export const BNET_API_CLIENT_ID = _bnetApiClientId;
 
-const i18n = new VueI18n({
+export const i18n = new VueI18n({
   locale: "en",
   fallbackLocale: "en",
   messages: languages,
