@@ -6,3 +6,5 @@ export const i18n = createI18n({
   fallbackLocale: "en",
   messages: languages,
 });
+
+export const { t, tc, locale } = i18n.global;

@@ -12,9 +12,7 @@
           :key="a.name"
           @click="invoke(a.action)"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ a.name }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ a.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

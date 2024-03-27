@@ -23,11 +23,9 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.selectleague") }}
-                  </v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>
+                  {{ $t("views_rankings.selectleague") }}
+                </v-list-item-title>
               </v-list>
               <v-divider></v-divider>
               <v-list dense class="leagues-list">
@@ -36,13 +34,11 @@
                   :key="item.id"
                   @click="setLeague(item.id)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <league-icon :league="listLeagueIcon(item)" />
-                      {{ item.name }}
-                      {{ item.division !== 0 ? item.division : null }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>
+                    <league-icon :league="listLeagueIcon(item)" />
+                    {{ item.name }}
+                    {{ item.division !== 0 ? item.division : null }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -65,41 +61,39 @@
         >
           <template v-slot:item="data">
             <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+              {{ data.item }}
             </template>
             <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">
-                    {{ data.item.player.name }}
-                  </span>
-                  <span v-if="isDuplicateName(data.item.player.name)">
-                    {{
-                      data.item.player.playerIds
-                        .map((p) => p.battleTag)
-                        .join(" & ")
-                    }}
-                  </span>
-                  <span
-                    v-if="
-                      data.item.player.gameMode === gameModes.GM_1ON1 &&
-                      data.item.player.race
-                    "
-                  >
-                    ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                  {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
-                  {{ $t(`common.losses`) }}
-                  {{ data.item.player.losses }} |
-                  {{ $t(`common.total`) }}
-                  {{ data.item.player.games }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle v-else>
-                  {{ $t(`views_rankings.unranked`) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
+              <v-list-item-title>
+                <span v-if="!isDuplicateName(data.item.player.name)">
+                  {{ data.item.player.name }}
+                </span>
+                <span v-if="isDuplicateName(data.item.player.name)">
+                  {{
+                    data.item.player.playerIds
+                      .map((p) => p.battleTag)
+                      .join(" & ")
+                  }}
+                </span>
+                <span
+                  v-if="
+                    data.item.player.gameMode === gameModes.GM_1ON1 &&
+                    data.item.player.race
+                  "
+                >
+                  ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
+                </span>
+              </v-list-item-title>
+              <v-list-item-subtitle v-if="playerIsRanked(data.item)">
+                {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
+                {{ $t(`common.losses`) }}
+                {{ data.item.player.losses }} |
+                {{ $t(`common.total`) }}
+                {{ data.item.player.games }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle v-else>
+                {{ $t(`views_rankings.unranked`) }}
+              </v-list-item-subtitle>
             </template>
           </template>
         </v-autocomplete>
@@ -116,11 +110,9 @@
         <v-card>
           <v-card-text>
             <v-list>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t("views_rankings.prevseasons") }}
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title>
+                {{ $t("views_rankings.prevseasons") }}
+              </v-list-item-title>
             </v-list>
             <v-list dense>
               <v-list-item
@@ -128,11 +120,9 @@
                 :key="item.id"
                 @click="selectSeason(item)"
               >
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.season") }} {{ item.id }}
-                  </v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>
+                  {{ $t("views_rankings.season") }} {{ item.id }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card-text>

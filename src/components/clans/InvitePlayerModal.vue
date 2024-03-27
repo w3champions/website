@@ -32,19 +32,17 @@
         >
           <template v-slot:item="data">
             <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+              {{ data.item }}
             </template>
             <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.name)">
-                    {{ data.item.name }}
-                  </span>
-                  <span v-if="isDuplicateName(data.item.name)">
-                    {{ data.item.battleTag }}
-                  </span>
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title>
+                <span v-if="!isDuplicateName(data.item.name)">
+                  {{ data.item.name }}
+                </span>
+                <span v-if="isDuplicateName(data.item.name)">
+                  {{ data.item.battleTag }}
+                </span>
+              </v-list-item-title>
             </template>
           </template>
         </v-autocomplete>

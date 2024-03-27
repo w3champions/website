@@ -9,11 +9,9 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_common_gamemodeselect.selectgamemode") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_common_gamemodeselect.selectgamemode") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
@@ -22,9 +20,7 @@
             :key="mode.id"
             @click="selectGameMode(mode.id)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>

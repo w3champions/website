@@ -9,11 +9,9 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_matches_matchesstatusselect.selectstatus") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_matches_matchesstatusselect.selectstatus") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
@@ -22,9 +20,7 @@
             :key="mode.status"
             @click="setStatus(mode.status)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>

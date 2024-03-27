@@ -29,9 +29,7 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Select a country:</v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>Select a country:</v-list-item-title>
               </v-list>
               <v-divider></v-divider>
               <v-list dense class="countries-list">
@@ -40,18 +38,16 @@
                   :key="item.countryCode"
                   @click="selectCountry(item.countryCode)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <span class="country-flag__container">
-                        <country-flag
-                          class="country-flag"
-                          :country="item.countryCode"
-                          size="normal"
-                        />
-                      </span>
-                      {{ item.country }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>
+                    <span class="country-flag__container">
+                      <country-flag
+                        class="country-flag"
+                        :country="item.countryCode"
+                        size="normal"
+                      />
+                    </span>
+                    {{ item.country }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -73,9 +69,7 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Previous seasons:</v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>Previous seasons:</v-list-item-title>
               </v-list>
               <v-list dense>
                 <v-list-item
@@ -83,9 +77,7 @@
                   :key="item.id"
                   @click="selectSeason(item)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>Season {{ item.id }}</v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>

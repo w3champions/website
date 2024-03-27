@@ -43,11 +43,9 @@
                           :key="item.id"
                           @click="selectSeason(item)"
                         >
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              {{ $t("views_rankings.season") }} {{ item.id }}
-                            </v-list-item-title>
-                          </v-list-item-content>
+                          <v-list-item-title>
+                            {{ $t("views_rankings.season") }} {{ item.id }}
+                          </v-list-item-title>
                         </v-list-item>
                       </v-list>
                     </v-card>

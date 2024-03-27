@@ -9,16 +9,12 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("common.selectmap") }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t("common.selectmap") }}</v-list-item-title>
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
           <v-list-item v-for="m in maps" :key="m.key" @click="selectMap(m.key)">
-            <v-list-item-content>
-              <v-list-item-title>{{ m.mapName }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ m.mapName }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>

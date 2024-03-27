@@ -11,7 +11,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn text tile v-on="on">
-        <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
+        <v-icon class="mr-2" icon="mdi-magnify" size="x-large" />
       </v-btn>
     </template>
     <v-card>
@@ -32,23 +32,20 @@
           item-value="battleTag"
         >
           <template v-slot:item="data">
-            <v-list-item-avatar>
-              <img :src="getPlayerAvatarUrl(data.item)" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ data.item.battleTag }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <div
-                  v-for="season in data.item.seasons"
-                  :key="season.id"
-                  class="mr-1 mt-1 d-inline-block"
-                >
-                  <season-badge :season="season" />
-                </div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <v-list-item :prepend-avatar="getPlayerAvatarUrl(data.item)">
+            </v-list-item>
+            <v-list-item-title>
+              {{ data.item.battleTag }}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <div
+                v-for="season in data.item.seasons"
+                :key="season.id"
+                class="mr-1 mt-1 d-inline-block"
+              >
+                <season-badge :season="season" />
+              </div>
+            </v-list-item-subtitle>
           </template>
           <template v-slot:append-item>
             <div v-intersect="endIntersect" />

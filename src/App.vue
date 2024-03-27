@@ -7,15 +7,11 @@
       v-model="isNavigationDrawerOpen"
     >
       <v-list dense>
-        <v-list-item>
-          <v-list-item-content>
-            <router-link :to="{ name: 'Home' }">
-              <brand-logo :is-dark-theme="isDarkTheme" />
-            </router-link>
-          </v-list-item-content>
-          <v-list-item-icon>
-            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">{{ mdiClose }}</v-icon>
-          </v-list-item-icon>
+        <v-list-item prepend-icon="mdi-close">
+          <router-link :to="{ name: 'Home' }">
+            <brand-logo :is-dark-theme="isDarkTheme" />
+          </router-link>
+          <!-- <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">{{ mdiClose }}</v-icon> -->
         </v-list-item>
       </v-list>
       <v-divider />
@@ -24,17 +20,13 @@
           v-for="item in items"
           :key="item.title"
           v-show="isNavItemVisible(item)"
+          :prepend-icon="item.icon"
           link
           :to="{ name: item.to }"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t(`views_app.${item.title}`) }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t(`views_app.${item.title}`) }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -62,7 +54,6 @@
           v-for="item in items"
           v-show="isNavItemVisible(item)"
           :key="item.title"
-          text
           tile
           :to="{ name: item.to }"
           :class="item.class"
@@ -70,15 +61,19 @@
           <span class="mr-2">
             {{ $t(`views_app.${item.title}`) }}
           </span>
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon
+            size="x-large"
+            :icon="item.icon"
+          >
+          </v-icon>
         </v-btn>
         <v-divider vertical />
       </span>
 
       <global-search />
 
-      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
-        <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
+      <v-btn tile @click="loginOrGoToProfile" v-if="!authCode">
+        <v-icon v-if="!authCode" class="mr-2" icon="mdi-account-circle-outline" size="x-large" />
         <sign-in-dialog
           v-model="showSignInDialog"
           @region-change="saveLoginRegion"
@@ -86,10 +81,10 @@
       </v-btn>
 
       <v-menu v-if="authCode">
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on">
+        <template #activator="{ props }">
+          <v-btn tile v-bind="props">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
-            <v-icon>{{ mdiAccountCircle }}</v-icon>
+            <v-icon icon="mdi-account-circle" size="x-large" />
           </v-btn>
         </template>
         <v-list>
@@ -103,9 +98,9 @@
       </v-menu>
 
       <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
-            <v-icon>{{ mdiInvertColors }}</v-icon>
+        <template #activator="{ props }">
+          <v-btn tile v-bind="props" class="right-menu">
+            <v-icon icon="mdi-invert-colors" size="x-large" />
           </v-btn>
         </template>
         <v-list class="theme-selector">
@@ -125,8 +120,8 @@
       </v-menu>
 
       <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" style="margin-top: 2px">
+        <template #activator="{ props }">
+          <v-btn tile v-bind="props" style="margin-top: 2px">
             <locale-icon
               :locale="savedLocale"
               :showTwoLetterCode="false"
@@ -150,7 +145,7 @@
     </v-main>
     <v-footer padless class>
       <v-row justify="center" no-gutters>
-        <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
+        <v-btn tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
     </v-footer>
   </v-app>
@@ -166,6 +161,7 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { i18n, locale } from "./plugins/i18n";
 import {
   mdiAccountCircle,
   mdiAccountCircleOutline,
@@ -199,32 +195,32 @@ export default class App extends Vue {
   public items: ItemType[] = [
     {
       title: "tournaments",
-      icon: mdiTrophy,
+      icon: "mdi-trophy",
       to: "Tournaments",
     },
     {
       title: "rankings",
-      icon: mdiViewList,
+      icon: "mdi-view-list",
       to: "Rankings",
     },
     {
       title: "matches",
-      icon: mdiControllerClassic,
+      icon: "mdi-controller-classic",
       to: "Matches",
     },
     {
       title: "statistics",
-      icon: mdiChartAreaspline,
+      icon: "mdi-chart-areaspline",
       to: "OverallStatistics",
     },
     {
       title: "admin",
-      icon: mdiAccountTie,
+      icon: "mdi-account-tie",
       to: "Admin",
     },
     {
       title: "faq",
-      icon: mdiHelpCircleOutline,
+      icon: "mdi-help-circle-outline",
       to: "FAQ",
       class: "d-none d-md-flex",
     },
@@ -329,7 +325,7 @@ export default class App extends Vue {
   set theme(val: string) {
     window.localStorage.setItem("theme", val);
     this.selectedTheme = val;
-    this.$vuetify.theme.dark = this.isDarkTheme;
+    // this.$vuetify.theme.dark = this.isDarkTheme;
     this.setThemeColors();
     this.rootStateStore.SET_DARK_MODE(this.isDarkTheme);
   }
@@ -344,7 +340,7 @@ export default class App extends Vue {
   }
 
   get languages(): Array<string> {
-    return Object.keys(this.$i18n.messages);
+    return ["en", "fr"];
   }
 
   async mounted(): Promise<void> {

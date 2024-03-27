@@ -16,9 +16,7 @@
           :key="mode.gateway"
           @click="setGateway(mode.gateway)"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ mode.name }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ mode.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

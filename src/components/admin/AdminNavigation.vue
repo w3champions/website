@@ -1,11 +1,9 @@
 <template>
   <v-navigation-drawer permanent>
     <v-list-item>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("views_admin.adminpage") }}
-        </v-list-item-title>
-      </v-list-item-content>
+      <v-list-item-title>
+        {{ $t("views_admin.adminpage") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list dense nav>
@@ -13,14 +11,9 @@
         <v-list-item
           v-if="!item.items || item.items.length === 0"
           @click="itemSelected(item, index)"
+          :prepend-icon="item.icon || mdiAccountTie"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
 
         <v-list-group
@@ -30,9 +23,7 @@
           no-action
         >
           <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </template>
 
           <v-list-item
