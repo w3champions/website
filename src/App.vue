@@ -202,15 +202,11 @@ export default defineComponent({
   },
   setup(props, context) {
     const router = useRouter();
+    const vuetify = useVuetify();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
     const isNavigationDrawerOpen = false;
-    const authCode = oauthStore.token;
-    console.log("authCode");
-    console.log(authCode);
-
-    const vuetify = useVuetify();
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -219,6 +215,10 @@ export default defineComponent({
     const orcClass = ref('orc');
     const nightelfClass = ref('nightelf');
     const undeadClass = ref('undead');
+
+    const authCode = computed(() => {
+      return oauthStore.token;
+    })
 
     function isHuman(): boolean {
       return selectedTheme.value === "human";
@@ -271,7 +271,7 @@ export default defineComponent({
     ];
 
     function loginOrGoToProfile(): void {
-      if (authCode) {
+      if (authCode.value) {
         openPlayerProfile();
       } else {
         showSignInDialog.value = true;
@@ -394,8 +394,8 @@ export default defineComponent({
       i18n.locale = savedLocale.get();
       await oauthStore.loadAuthCodeToState();
 
-      if (authCode) {
-        await oauthStore.loadBlizzardBtag(authCode);
+      if (authCode.value) {
+        await oauthStore.loadBlizzardBtag(authCode.value);
       }
     }
 
@@ -440,7 +440,7 @@ export default defineComponent({
       humanClass,
       orcClass,
       nightelfClass,
-      undeadClass
+      undeadClass,
     }
   },
 });
