@@ -1,5 +1,5 @@
 <template>
-  <v-app class="w3app" :class="[ isHuman() ? humanClass : '', isOrc() ? orcClass: '', isNightelf() ? nightelfClass : '', isUndead() ? undeadClass : '']" :dark="isDarkTheme.get()">
+  <v-app class="w3app" :class="getTheme" :dark="isDarkTheme.get()">
     <v-navigation-drawer
       temporary
       absolute
@@ -109,16 +109,16 @@
           </v-btn>
         </template>
         <v-list class="theme-selector">
-          <v-list-item @click="theme.set('human')">
+          <v-list-item @click="setTheme('human')">
             <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme.set('orc')">
+          <v-list-item @click="setTheme('orc')">
             <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme.set('nightelf')">
+          <v-list-item @click="setTheme('nightelf')">
             <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="theme.set('undead')">
+          <v-list-item @click="setTheme('undead')">
             <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -135,7 +135,7 @@
         </template>
         <v-list class="locale-selector">
           <v-list-item
-            v-for="lang in languages.get()"
+            v-for="lang in activeLanguages.get()"
             :key="lang"
             @click="savedLocale.set(lang)"
           >
@@ -157,7 +157,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { onMounted, defineComponent, computed, ComputedRef, ref, reactive } from "vue";
+import { onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
@@ -166,11 +166,11 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter, useRoute } from "vue-router/composables"
+import { useRouter } from "vue-router/composables";
 import languages from "@/locales/languages";
 import { useVuetify } from "@/plugins/vuetify";
 import { i18n } from "@/main";
-import { ACTIVE_LANGUAGES } from "./locales/languages";
+import noop from "lodash/noop";
 
 import {
   mdiAccountCircle,
@@ -200,7 +200,7 @@ export default defineComponent({
     localeIcon,
     GlobalSearch,
   },
-  setup(props, context) {
+  setup() {
     const router = useRouter();
     const vuetify = useVuetify();
     const oauthStore = useOauthStore();
@@ -211,30 +211,13 @@ export default defineComponent({
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
 
-    const humanClass = ref('human');
-    const orcClass = ref('orc');
-    const nightelfClass = ref('nightelf');
-    const undeadClass = ref('undead');
-
     const authCode = computed(() => {
       return oauthStore.token;
-    })
+    });
 
-    function isHuman(): boolean {
-      return selectedTheme.value === "human";
-    }
-
-    function isOrc(): boolean {
-      return selectedTheme.value === "orc";
-    }
-
-    function isNightelf(): boolean {
-      return selectedTheme.value === "nightelf";
-    }
-
-    function isUndead(): boolean {
-      return selectedTheme.value === "undead";
-    }
+    const getTheme = computed(() => {
+      return selectedTheme.value;
+    });
 
     const items: ItemType[] = [
       {
@@ -284,20 +267,19 @@ export default defineComponent({
 
     const loginName = computed({
       get: () => oauthStore.blizzardVerifiedBtag?.split("#")[0],
-      set: () => {},
-    })
+      set: noop,
+    });
 
     const battleTag = computed({
       get() {
         return oauthStore.blizzardVerifiedBtag;
       },
-      set() {},
-    })
+      set: noop,
+    });
 
     const isAdmin = ({
       get: () => oauthStore.isAdmin,
-      set: () => {},
-    })
+    });
 
     function openPlayerProfile(): void {
       router.push({
@@ -311,29 +293,23 @@ export default defineComponent({
         i18n.locale = newVal;
         rootStateStore.saveLocale(newVal);
       }
-    })
+    });
 
-    const languages = ({
-      get: () => ACTIVE_LANGUAGES,
-      set: () => {},
-    })
+    const activeLanguages = ({
+      get: () => Object.keys(languages),
+    });
 
-    const theme = ({
-      get: () => {
-        return window.localStorage.getItem("theme");
-      },
-      set: (val: string) => {
-        window.localStorage.setItem("theme", val);
-        selectedTheme.value = val;
-        vuetify.theme.dark = isDarkTheme.get();
-        setThemeColors();
-        rootStateStore.SET_DARK_MODE(isDarkTheme.get());
-      },
-    })
+    function setTheme(val: string) {
+      window.localStorage.setItem("theme", val);
+      selectedTheme.value = val;
+      vuetify.theme.dark = isDarkTheme.get();
+      setThemeColors();
+      rootStateStore.SET_DARK_MODE(isDarkTheme.get());
+    }
 
     const themeColors = ({
       get: () => {
-        switch (theme.get()) {
+        switch (getTheme.value) {
           case "nightelf":
             return {
               primary: "#ffd428",
@@ -356,16 +332,14 @@ export default defineComponent({
             };
         }
       },
-      set: () => {},
-    })
+    });
 
     const isDarkTheme = ({
       get: () => {
-        const isDark = theme.get() === "nightelf" || theme.get() === "undead";
+        const isDark = getTheme.value === "nightelf" || getTheme.value === "undead";
         return isDark;
       },
-      set: () => {},
-    })
+    });
 
     // Check if given ItemType element is visible for the current user
     function isNavItemVisible(item: ItemType): boolean {
@@ -403,10 +377,10 @@ export default defineComponent({
       await init();
       const t = window.localStorage.getItem("theme");
       if (t && t.length > 0) {
-        theme.set(t);
+        setTheme(t);
       }
       setThemeColors();
-    })
+    });
 
     return {
       mdiClose,
@@ -419,7 +393,6 @@ export default defineComponent({
       items,
       showSignInDialog,
       rootStateStore,
-      theme,
       authCode,
       loginOrGoToProfile,
       logout,
@@ -432,16 +405,10 @@ export default defineComponent({
       saveLoginRegion,
       isDarkTheme,
       init,
-      languages,
-      isHuman,
-      isOrc,
-      isNightelf,
-      isUndead,
-      humanClass,
-      orcClass,
-      nightelfClass,
-      undeadClass,
-    }
+      activeLanguages,
+      getTheme,
+      setTheme,
+    };
   },
 });
 </script>
