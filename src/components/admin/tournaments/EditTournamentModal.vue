@@ -35,6 +35,7 @@
             label="State"
             hide-details
             single-line
+            :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
             <v-date-picker
@@ -107,26 +108,40 @@
               />
             </v-col>
           </v-row>
-          <v-select
-            :items="gameModes"
-            :disabled="true"
-            v-model="mode"
-            item-text="name"
-            item-value="id"
-            label="Game Mode"
-            hide-details
-            single-line
-          />
-          <v-select
-            :items="formats"
-            :disabled="true"
-            v-model="format"
-            item-text="name"
-            item-value="id"
-            label="Format"
-            hide-details
-            single-line
-          />
+          <v-row>
+            <v-col cols="3">
+              <v-select
+                :items="[2, 4, 8, 16, 32, 64]"
+                v-model="maxPlayers"
+                label="Max Players"
+                outlined
+              />
+            </v-col>
+            <v-col cols="2">
+              <v-select
+                :items="gameModes"
+                :disabled="true"
+                v-model="mode"
+                item-text="name"
+                item-value="id"
+                label="Game Mode"
+                hide-details
+                single-line
+              />
+            </v-col>
+            <v-col cols="4">
+              <v-select
+                :items="formats"
+                :disabled="true"
+                v-model="format"
+                item-text="name"
+                item-value="id"
+                label="Format"
+                hide-details
+                single-line
+              />
+            </v-col>
+          </v-row>
         </v-tab-item>
       </v-tabs-items>
     </v-card-text>
@@ -178,6 +193,7 @@ export default class AddPlayerModal extends Vue {
   public vetoTimeSeconds = 45;
   public showWinnerTimeHours = 24;
   public matcherinoUrl = "";
+  public maxPlayers = 0;
 
   public tabsModel = {};
 
@@ -206,6 +222,7 @@ export default class AddPlayerModal extends Vue {
     this.vetoTimeSeconds = this.tournament.vetoTimeSeconds;
     this.showWinnerTimeHours = this.tournament.showWinnerTimeHours;
     this.matcherinoUrl = this.tournament.matcherinoUrl ?? "";
+    this.maxPlayers = this.tournament.maxPlayers;
   }
 
   get isEdit() {
@@ -227,7 +244,7 @@ export default class AddPlayerModal extends Vue {
     const fieldNames = [
       "name", "gateway", "startDateTime", "mode", "format", "mapPool", "state",
       "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
-      "showWinnerTimeHours", "matcherinoUrl",
+      "showWinnerTimeHours", "matcherinoUrl", "maxPlayers",
     ];
 
     this.startDateTime = new Date(`${this.startDate} ${this.startTime}`);

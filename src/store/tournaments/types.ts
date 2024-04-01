@@ -63,6 +63,7 @@ export interface ITournament {
   vetoTimeSeconds: number;
   showWinnerTimeHours: number;
   matcherinoUrl?: string;
+  maxPlayers: number;
 }
 
 export interface ITournamentAdmin {
