@@ -24,6 +24,10 @@
       <b>Map Pool:</b>
       {{ mapPool }}
     </div>
+    <div v-if="maxPlayers">
+      <b>Max Players:</b>
+      {{ maxPlayers }}
+    </div>
     <div v-if="matcherinoUrl">
       <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
     </div>
@@ -93,6 +97,10 @@ export default class TournamentDescription extends Vue {
 
   get matcherinoUrl() {
     return this.tournament.matcherinoUrl;
+  }
+
+  get maxPlayers() {
+    return this.tournament.maxPlayers;
   }
 
   get registeredPlayers(): string {
