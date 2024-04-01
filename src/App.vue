@@ -377,7 +377,7 @@ export default defineComponent({
       await init();
     });
 
-    onBeforeMount(async () => {
+    onBeforeMount(() => {
       const t = window.localStorage.getItem("theme");
       if (t && t.length > 0) {
         setTheme(t);
