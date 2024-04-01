@@ -157,7 +157,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, defineComponent, computed, ref } from "vue";
+import { onBeforeMount, onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import { BnetOAuthRegion } from "./store/oauth/types";
@@ -375,6 +375,9 @@ export default defineComponent({
 
     onMounted(async () => {
       await init();
+    });
+
+    onBeforeMount(async () => {
       const t = window.localStorage.getItem("theme");
       if (t && t.length > 0) {
         setTheme(t);
