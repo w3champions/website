@@ -38,23 +38,18 @@
           />
         </v-col>
       </v-row>
+      <br />
       <div v-if="playersClan.isSuccesfullyFounded">
         <table class="custom-table">
-          <tr @click="gotToChiefTain">
+          <tr @click="goToPlayer(playersClan.chiefTain)">
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.ChiefTain" />
-                  <span
-                    class="pointer"
-                    @click="goToPlayer(playersClan.chiefTain)"
-                  >
+                  <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ playersClan.chiefTain.split("#")[0] }}
                   </span>
-                  <v-tooltip
-                    top
-                    :disabled="!getLeagueOrder(playersClan.chiefTain)"
-                  >
+                  <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
                         <league-icon
@@ -72,25 +67,21 @@
           </tr>
         </table>
         <table class="custom-table">
-          <tr
-            v-for="member in shamans"
-            :key="member"
-            @click="goToPlayer(member)"
-          >
+          <tr v-for="shaman in shamans" :key="shaman" @click="goToPlayer(shaman)">
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.Shaman" />
-                  <span class="pointer" @click="goToPlayer(member)">
-                    {{ member.split("#")[0] }}
+                  <span class="pointer" @click="goToPlayer(shaman)">
+                    {{ shaman.split("#")[0] }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(member)">
+                  <v-tooltip top :disabled="!getLeagueOrder(shaman)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
                         <league-icon
                           v-on="on"
                           class="ml-4 mb-1"
-                          :league="getLeagueOrder(member)"
+                          :league="getLeagueOrder(shaman)"
                         />
                       </div>
                     </template>
@@ -100,8 +91,8 @@
                 <v-col class="text-right pa-0">
                   <member-management-menu
                     v-if="loggedInPlayerIsChiefTain"
-                    :battle-tag="member"
-                    :role="defineRole(member)"
+                    :battle-tag="shaman"
+                    :role="defineRole(shaman)"
                     :logged-in-user-role="loggedInRole"
                   />
                 </v-col>
@@ -110,11 +101,7 @@
           </tr>
         </table>
         <table class="custom-table">
-          <tr
-            v-for="member in members"
-            :key="member"
-            @click="goToPlayer(member)"
-          >
+          <tr v-for="member in members" :key="member" @click="goToPlayer(member)">
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
@@ -150,30 +137,18 @@
       </div>
       <div v-if="!playersClan.isSuccesfullyFounded">
         <v-card-title>
-          {{ $t("components_clans_clanoverview.signeecounter") }} ({{
-            playersClan.foundingFathers.length
-          }}
-          / 7):
+          {{ $t("components_clans_clanoverview.signeecounter") }} ({{playersClan.foundingFathers.length}} / 2):
         </v-card-title>
         <table class="custom-table">
-          <tr
-            v-for="member in playersClan.foundingFathers"
-            :key="member"
-            @click="goToPlayer(member)"
-          >
+          <tr v-for="member in playersClan.foundingFathers" :key="member">
             <td>
-              <span class="pointer" @click="goToPlayer(member)">
-                {{ member.split("#")[0] }}
-              </span>
+              <span class="pointer" @click="goToPlayer(member)">{{ member.split("#")[0] }}</span>
             </td>
           </tr>
         </table>
       </div>
       <pending-invites-panel v-if="loggedInPlayerIsShaman" />
-      <leave-clan-modal
-        v-if="isLoggedInPlayer"
-        :is-chieftain="loggedInPlayerIsChiefTain"
-      />
+      <leave-clan-modal v-if="isLoggedInPlayer" :is-chieftain="loggedInPlayerIsChiefTain" />
       <delete-clan-modal v-if="loggedInPlayerIsChiefTain" />
     </div>
   </v-card-text>
@@ -224,7 +199,7 @@ export default class ClanOverview extends Vue {
   @Prop() public id!: string;
   private clanStore = useClanStore();
 
-  private modeEnums = Object.freeze(EGameMode);
+  public modeEnums = Object.freeze(EGameMode);
 
   get battleTag(): string {
     return decodeURIComponent(this.id);
@@ -245,18 +220,11 @@ export default class ClanOverview extends Vue {
       .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
   }
 
-  public getStats(mode: EGameMode): {
-    wins: number;
-    losses: number;
-    gameMode: EGameMode;
-    games: number;
-    rank: number;
-    leagueOrder: number;
-  } {
-    const games = this.playersClan.ranks?.filter(
+  public getStats(mode: EGameMode): { wins: number; losses: number; gameMode: EGameMode; games: number; rank: number; leagueOrder: number } {
+    const modeRankings = this.playersClan.ranks?.filter(
       (r) => r.gameMode === mode && r.leagueName != null
     );
-    const players = games.map((l) => l.player);
+    const players = modeRankings.map((rankings) => rankings.player);
     if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
 
     const reduced = players.reduce(
@@ -312,18 +280,14 @@ export default class ClanOverview extends Vue {
     return this.clanStore.searchPlayers;
   }
 
-  public gotToChiefTain(): void {
-    this.goToPlayer(this.playersClan.chiefTain);
-  }
-
-  public defineRole(member: string): number {
+  public defineRole(member: string): EClanRole {
     if (member === this.playersClan.chiefTain) return EClanRole.ChiefTain;
     if (this.playersClan.shamans.find((s) => s === member))
       return EClanRole.Shaman;
     return EClanRole.Member;
   }
 
-  get loggedInRole(): number {
+  get loggedInRole(): EClanRole {
     return this.defineRole(this.verifiedBtag);
   }
 

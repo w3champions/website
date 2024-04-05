@@ -17,45 +17,19 @@
         <span>{{ $t("components_clans_inviteplayermodal.inviteplayer") }}</span>
       </v-card-title>
       <v-card-text>
-        <v-autocomplete
-          v-model="searchModel"
-          :append-icon="mdiMagnify"
-          label="Search"
-          single-line
-          clearable
-          :items="searchPlayers"
-          :search-input.sync="search"
-          :no-data-text="noDataText"
-          item-text="battleTag"
-          item-value="battleTag"
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          return-object
-        >
-          <template v-slot:item="data">
-            <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
-            </template>
-            <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.name)">
-                    {{ data.item.name }}
-                  </span>
-                  <span v-if="isDuplicateName(data.item.name)">
-                    {{ data.item.battleTag }}
-                  </span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </template>
-          </template>
-        </v-autocomplete>
+        <player-search
+          @searchCleared="searchCleared"
+          @playerFound="playerFound"
+          :clearSearchFromParent="clearPlayerSearchToggle"
+          classes="ml-5 mr-5"
+        ></player-search>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
           color="blue darken-1"
           text
-          :disabled="!search"
+          :disabled="!player"
           @click="invitePlayer"
         >
           {{ $t("components_clans_inviteplayermodal.inviteplayer") }}
@@ -63,13 +37,13 @@
       </v-card-actions>
 
       <v-alert
-        v-model="isValidationError"
+        v-model="clanValidationError"
         type="warning"
         dense
         class="ml-4 mr-4"
         dismissible
       >
-        {{ clanValidationError }}
+        {{ clanValidationErrorText }}
       </v-alert>
     </v-card>
   </v-dialog>
@@ -77,76 +51,49 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "@/store/player/types";
-import { Clan } from "@/store/clan/types";
-import { useOauthStore } from "@/store/oauth/store";
+import { Component } from "vue-property-decorator";
 import { useClanStore } from "@/store/clan/store";
 import { mdiMagnify, mdiPencil } from "@mdi/js";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-@Component({})
+@Component({ components: { PlayerSearch } })
 export default class InvitePlayerModal extends Vue {
-  private oauthStore = useOauthStore();
-  public searchModel = {} as PlayerProfile;
-  public search = "";
   public mdiMagnify = mdiMagnify;
   public mdiPencil = mdiPencil;
+  public player = "";
+  public clearPlayerSearchToggle = false;
 
   public dialog = false;
   private clanStore = useClanStore();
 
-  get loggedInPlayerIsChiefTain(): boolean {
-    return this.playersClan.chiefTain === this.verifiedBtag;
-  }
-
-  get verifiedBtag(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  get clanValidationError(): string {
+  get clanValidationErrorText(): string {
     return this.clanStore.clanValidationError;
   }
 
-  get isValidationError(): boolean {
+  get clanValidationError(): boolean {
     return this.clanStore.clanValidationError !== "";
   }
 
-  public isDuplicateName(name: string): boolean {
-    return this.searchPlayers.filter((r) => r.name === name).length > 1;
-  }
-
-  get noDataText(): string {
-    if (!this.search || this.search.length < 3) {
-      return "Type at least 3 letters";
-    }
-
-    return "No player found";
+  set clanValidationError(_val: boolean) {
+    this.clanStore.clanValidationError = "";
   }
 
   public async invitePlayer(): Promise<void> {
-    await this.clanStore.invitePlayer(
-      this.searchModel.battleTag
-    );
-
+    await this.clanStore.invitePlayer(this.player);
     await this.clanStore.retrievePlayersClan();
-    this.search = "";
+    this.clearPlayerSearch();
   }
 
-  @Watch("search")
-  public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2) {
-      this.clanStore.searchForPlayers(newValue.toLowerCase());
-    } else {
-      this.clanStore.SET_PLAYERS_SEARCH([]);
-    }
+  playerFound(bTag: string): void {
+    this.player = bTag;
   }
 
-  get searchPlayers(): PlayerProfile[] {
-    return this.clanStore.searchPlayers;
+  searchCleared(): void {
+    this.player = "";
   }
 
-  get playersClan(): Clan {
-    return this.clanStore.playersClan;
+  clearPlayerSearch() {
+    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
   }
 }
 </script>

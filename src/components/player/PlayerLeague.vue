@@ -68,6 +68,8 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { Gateways, Season } from "@/store/ranking/types";
+import { TranslateResult } from "vue-i18n";
 
 @Component({
   components: { RecentPerformance, LevelProgress },
@@ -82,31 +84,31 @@ export default class PlayerLeague extends Vue {
   matches: Match[] = [];
   private rootStateStore = useRootStateStore();
 
-  get playerId() {
+  get playerId(): string {
     return this.modeStat.id;
   }
 
-  get leagueMode() {
+  get leagueMode(): TranslateResult {
     return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
   }
 
-  get gameMode() {
+  get gameMode(): EGameMode {
     return this.modeStat.gameMode;
   }
 
-  get league() {
+  get league(): number {
     return this.modeStat.leagueId;
   }
 
-  get gateWay() {
+  get gateWay(): Gateways {
     return this.rootStateStore.gateway;
   }
 
-  get selectedSeason() {
+  get selectedSeason(): Season {
     return this.player.selectedSeason;
   }
 
-  get battleTag() {
+  get battleTag(): string {
     return this.player.battleTag;
   }
 
@@ -116,11 +118,13 @@ export default class PlayerLeague extends Vue {
     )[0];
   }
 
-  get seasonAndGameModeAndGateway() {
+  get seasonAndGameModeAndGateway(): string {
     return `${this.selectedSeason.id}${this.gameMode}${this.gateWay}`;
   }
 
-  public async init() {
+  public async init(): Promise<void> {
+    if (!this.showPerformance) return;
+
     const { matches } =
       await MatchService.retrievePlayerMatches(
         0,
@@ -136,13 +140,13 @@ export default class PlayerLeague extends Vue {
     this.matches = matches;
   }
 
-  public navigateToPartner() {
+  public navigateToPartner(): void {
     this.$router.push({
       path: getProfileUrl(this.atPartner.battleTag),
     });
   }
 
-  public navigateToLeague() {
+  public navigateToLeague(): void {
     this.$router.push({
       path: `/Rankings?season=${this.selectedSeason.id}&gateway=${
         this.gateWay
@@ -153,13 +157,8 @@ export default class PlayerLeague extends Vue {
   }
 
   get leagueName(): string {
-    if (!this.modeStat) {
-      return "";
-    }
-
-    if (!this.isRanked) {
-      return "unranked";
-    }
+    if (!this.modeStat) return "";
+    if (!this.isRanked) return "unranked";
 
     switch (this.modeStat.leagueOrder) {
       case 0:
@@ -185,7 +184,7 @@ export default class PlayerLeague extends Vue {
     }
   }
 
-  get isRanked() {
+  get isRanked(): boolean {
     return this.modeStat.rank > 0;
   }
 
@@ -222,7 +221,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/grandmaster.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.grandmaster:before {
@@ -234,7 +232,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/master.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.master:before {
@@ -246,8 +243,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/adept.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
-  // zoom: 0.4;
 }
 
 .LadderSummaryShowcase-card.adept:before {
@@ -259,7 +254,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/diamond.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.diamond:before {
@@ -271,7 +265,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/platinum.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.platinum:before {
@@ -283,7 +276,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/gold.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.gold:before {
@@ -295,7 +287,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/silver.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.silver:before {
@@ -307,7 +298,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/bronze.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.bronze:before {
@@ -319,7 +309,6 @@ export default class PlayerLeague extends Vue {
   background-image: url(/assets/leagueFlags/grass.png);
   background-repeat: no-repeat;
   background-size: contain;
-  margin-left: 190px;
 }
 
 .LadderSummaryShowcase-card.grass:before {
@@ -346,6 +335,7 @@ export default class PlayerLeague extends Vue {
   // left: 50%;
   transform: translateX(-50%);
   top: -50px;
+  margin-left: 163px;
 }
 
 .LadderSummaryShowcase-card {
