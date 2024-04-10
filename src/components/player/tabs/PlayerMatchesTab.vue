@@ -98,12 +98,36 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   private player = usePlayerStore();
 
   async mounted(): Promise<void> {
+    const gameMode = this.$router.currentRoute.query.gameMode;
+    if (gameMode && typeof gameMode === "string"){
+      this.player.SET_GAMEMODE(Number.parseInt(gameMode));
+    }
+    const playerRace = this.$router.currentRoute.query.playerRace;
+    if (playerRace && typeof playerRace === "string"){
+      this.player.SET_RACE(Number.parseInt(playerRace));
+    }
+    const opponentRace = this.$router.currentRoute.query.opponentRace;
+    if (opponentRace && typeof opponentRace === "string"){
+      this.player.SET_OPPONENT_RACE(Number.parseInt(opponentRace));
+    }
+    const opponentTag = this.$router.currentRoute.query.opponentTag;
+    if (opponentTag && typeof opponentTag === "string"){
+      this.foundPlayer = decodeURIComponent(opponentTag)
+      this.player.SET_OPPONENT_TAG(decodeURIComponent(opponentTag));
+      console.log("SET OPPONENT NAME: ",opponentTag)
+    }
     await this.loadActiveGameModes();
   }
 
   async playerFound(bTag: string): Promise<void> {
     this.foundPlayer = bTag;
     this.player.SET_OPPONENT_TAG(bTag);
+    this.$router.push({
+      query: {
+        ...this.$router.currentRoute.query,
+        opponentTag: bTag.toString()
+      }
+    });    
     await this.getMatches();
   }
 
@@ -182,17 +206,35 @@ export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
   }
 
   public setSelectedGameModeForSearch(gameMode: EGameMode) {
+    this.$router.push({
+      query: {
+        ...this.$router.currentRoute.query,
+        gameMode: gameMode.toString()
+      }
+    });
     this.player.SET_GAMEMODE(gameMode);
     this.getMatches();
   }
 
   public setPlayerRaceForSearch(race: ERaceEnum) {
     this.player.SET_PLAYER_RACE(race);
+    this.$router.push({
+      query: {
+        ...this.$router.currentRoute.query,
+        playerRace: race.toString()
+      }
+    });
     this.getMatches();
   }
 
   public setOpponentRaceForSearch(race: ERaceEnum) {
     this.player.SET_OPPONENT_RACE(race);
+    this.$router.push({
+      query: {
+        ...this.$router.currentRoute.query,
+        opponentRace: race.toString()
+      }
+    });
     this.getMatches();
   }
 
