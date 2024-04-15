@@ -101,6 +101,7 @@ export default class AdminTournaments extends Vue {
   }
 
   private async init(): Promise<void> {
+    await this.tournamentsManagementStore.loadEnabledFloNodes();
     await this.tournamentsManagementStore.loadUpcomingTournament();
   }
 

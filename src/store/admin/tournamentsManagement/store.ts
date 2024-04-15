@@ -1,14 +1,14 @@
-import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
+import { ITournament, ITournamentFloNode, ITournamentPlayer } from "@/store/tournaments/types";
 import { useOauthStore } from "@/store/oauth/store";
 import TournamentsService from "@/services/TournamentsService";
 import { defineStore } from "pinia";
 import { AdminTournamentsState } from "@/store/admin/tournamentsManagement/types";
 
-
 export const useTournamentsManagementStore = defineStore("tournamentsManagement", {
   state: (): AdminTournamentsState => ({
     upcomingTournament: {} as ITournament,
     isLoading: false,
+    floNodes: [] as ITournamentFloNode[],
   }),
   actions: {
     async loadUpcomingTournament(): Promise<void> {
@@ -47,11 +47,19 @@ export const useTournamentsManagementStore = defineStore("tournamentsManagement"
       this.SET_IS_LOADING(false);
       return updated;
     },
+    async loadEnabledFloNodes(): Promise<void> {
+      if (this.floNodes.length !== 0) return;
+      const floNodes = await TournamentsService.getEnabledFloNodes();
+      this.SET_FLO_NODES(floNodes);
+    },
     SET_UPCOMING_TOURNAMENT(tournament: ITournament): void {
       this.upcomingTournament = tournament;
     },
     SET_IS_LOADING(isLoading: boolean): void {
       this.isLoading = isLoading;
     },
+    SET_FLO_NODES(floNodes: ITournamentFloNode[]): void {
+      this.floNodes = floNodes;
+    }
   },
 });

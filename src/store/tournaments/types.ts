@@ -64,6 +64,8 @@ export interface ITournament {
   showWinnerTimeHours: number;
   matcherinoUrl?: string;
   maxPlayers: number;
+  floNode: ITournamentFloNode;
+  floNodeMaxPing: number;
 }
 
 export interface ITournamentAdmin {
@@ -122,4 +124,9 @@ export interface IMatchPlayer {
 export interface BracketDimensions {
   verticalSpace: number;
   marginTop: number;
+}
+
+export interface ITournamentFloNode {
+  name: string;
+  id: number;
 }

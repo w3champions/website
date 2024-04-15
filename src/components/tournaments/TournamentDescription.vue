@@ -28,6 +28,9 @@
       <b>Max Players:</b>
       {{ maxPlayers }}
     </div>
+    <div v-if="floNode">
+      <div>Players must have a ping of <b>{{ floNodeMaxPing }}</b> or less to <b>{{ floNode.name }}</b>.</div>
+    </div>
     <div v-if="matcherinoUrl">
       <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
     </div>
@@ -101,6 +104,14 @@ export default class TournamentDescription extends Vue {
 
   get maxPlayers() {
     return this.tournament.maxPlayers;
+  }
+
+  get floNode() {
+    return this.tournament.floNode;
+  }
+
+  get floNodeMaxPing() {
+    return this.tournament.floNodeMaxPing;
   }
 
   get registeredPlayers(): string {

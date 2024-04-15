@@ -1,6 +1,6 @@
 import pickBy from "lodash/pickBy";
 import isUndefined from "lodash/isUndefined";
-import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
+import { ITournament, ITournamentFloNode, ITournamentPlayer } from "@/store/tournaments/types";
 import { API_URL } from "@/main";
 
 export interface ITournamentsResponse {
@@ -140,5 +140,20 @@ export default class TournamentsService {
     const responseBody: ITournamentResponse = await response?.json();
 
     return !!responseBody.tournament;
+  }
+
+  public static async getEnabledFloNodes(): Promise<ITournamentFloNode[]> {
+    const url = `${API_URL}api/tournaments/flo-nodes`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response?.json();
+
+    return data;
   }
 }
