@@ -109,14 +109,6 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="3">
-              <v-select
-                :items="[2, 4, 8, 16, 32, 64]"
-                v-model="maxPlayers"
-                label="Max Players"
-                outlined
-              />
-            </v-col>
             <v-col cols="2">
               <v-select
                 :items="gameModes"
@@ -142,6 +134,36 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="3">
+              <v-select
+                :items="[2, 4, 8, 16, 32, 64]"
+                v-model="maxPlayers"
+                label="Max Players"
+                outlined
+              />
+            </v-col>
+            <v-col cols="3">
+              <v-select
+                :items="enabledFloNodes"
+                v-model="floNode"
+                label="Flo Node"
+                item-text="name"
+                return-object
+                outlined
+                @change="setFloNode"
+              />
+            </v-col>
+            <v-col cols="3">
+              <v-select
+                :items="[100, 200, 300, 400]"
+                v-model="floNodeMaxPing"
+                label="Flo Node Max Ping"
+                outlined
+                :disabled="floNode === null"
+              />
+            </v-col>
+          </v-row>
         </v-tab-item>
       </v-tabs-items>
     </v-card-text>
@@ -161,7 +183,7 @@
 import map from "lodash/map";
 import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
-import { ETournamentFormat, ETournamentState, ITournament } from "@/store/tournaments/types";
+import { ETournamentFormat, ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
 import { EGameMode } from "@/store/types";
 import Vue from "vue";
 import { Prop, Component } from "vue-property-decorator";
@@ -170,12 +192,15 @@ import { Gateways } from "@/store/ranking/types";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { formatISO } from "date-fns";
 import { formatTimestampString } from "@/helpers/date-functions";
+import { useTournamentsManagementStore } from "@/store/admin/tournamentsManagement/store";
 
 @Component({})
 export default class AddPlayerModal extends Vue {
   @Prop() public tournament!: ITournament;
   @Prop() public saving!: boolean;
   @Prop() public maps!: Map[];
+
+  private tournamentsManagementStore = useTournamentsManagementStore();
 
   private now = formatISO(new Date());
 
@@ -193,8 +218,9 @@ export default class AddPlayerModal extends Vue {
   public vetoTimeSeconds = 45;
   public showWinnerTimeHours = 24;
   public matcherinoUrl = "";
-  public maxPlayers = 0;
-
+  public maxPlayers: number | null = null;
+  public floNodeMaxPing: number | null = null;
+  public floNode: ITournamentFloNode | null = null;
   public tabsModel = {};
 
   mounted() {
@@ -223,6 +249,8 @@ export default class AddPlayerModal extends Vue {
     this.showWinnerTimeHours = this.tournament.showWinnerTimeHours;
     this.matcherinoUrl = this.tournament.matcherinoUrl ?? "";
     this.maxPlayers = this.tournament.maxPlayers;
+    this.floNode = this.tournament.floNode;
+    this.floNodeMaxPing = this.tournament.floNodeMaxPing;
   }
 
   get isEdit() {
@@ -244,7 +272,7 @@ export default class AddPlayerModal extends Vue {
     const fieldNames = [
       "name", "gateway", "startDateTime", "mode", "format", "mapPool", "state",
       "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
-      "showWinnerTimeHours", "matcherinoUrl", "maxPlayers",
+      "showWinnerTimeHours", "matcherinoUrl", "maxPlayers", "floNode", "floNodeMaxPing",
     ];
 
     this.startDateTime = new Date(`${this.startDate} ${this.startTime}`);
@@ -282,6 +310,15 @@ export default class AddPlayerModal extends Vue {
       id: +id,
       name,
     }));
+  }
+
+  get enabledFloNodes(): ITournamentFloNode[] {
+    return this.tournamentsManagementStore.floNodes;
+  }
+
+  public setFloNode(floNode: ITournamentFloNode) {
+    this.floNode = floNode;
+    this.floNodeMaxPing = 100;
   }
 }
 </script>
