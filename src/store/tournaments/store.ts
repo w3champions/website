@@ -7,8 +7,7 @@ import { defineStore } from "pinia";
 export const useTournamentsStore = defineStore("tournaments", {
   state: (): TournamentsState => ({
     tournaments: [],
-    maps: [],
-    activeMaps: [],
+    tournamentMaps: [],
   }),
   actions: {
     async retrieveTournaments() {
@@ -19,27 +18,17 @@ export const useTournamentsStore = defineStore("tournaments", {
       this.SET_TOURNAMENTS(response.tournaments);
     },
     async loadTournamentMaps() {
-      if (this.maps.length > 0) {
+      if (this.tournamentMaps.length > 0) {
         return;
       }
-      const response = await MapsService.getTournamentMaps(false);
-      this.SET_MAPS(response.items);
-    },
-    async loadActiveTournamentMaps() {
-      if (this.activeMaps.length > 0) {
-        return;
-      }
-      const response = await MapsService.getTournamentMaps(true);
-      this.SET_ACTIVE_MAPS(response.items);
+      const response = await MapsService.getTournamentMaps();
+      this.SET_TOURNAMENT_MAPS(response.items);
     },
     SET_TOURNAMENTS(tournaments: ITournament[]): void {
       this.tournaments = tournaments;
     },
-    SET_MAPS(maps: Map[]): void {
-      this.maps = maps;
-    },
-    SET_ACTIVE_MAPS(activeMaps: Map[]): void {
-      this.activeMaps = activeMaps;
+    SET_TOURNAMENT_MAPS(tournamentMaps: Map[]): void {
+      this.tournamentMaps = tournamentMaps;
     },
   },
 });

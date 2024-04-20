@@ -77,8 +77,8 @@ export default class MapsService {
     return await response.json();
   }
 
-  public static async getTournamentMaps(active: boolean): Promise<GetMapsResponse> {
-    const url = `${API_URL}api/maps/tournaments?active=${active}`;
+  public static async getTournamentMaps(): Promise<GetMapsResponse> {
+    const url = `${API_URL}api/maps/tournaments`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

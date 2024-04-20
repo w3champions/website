@@ -20,7 +20,7 @@
       <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="1000px">
         <edit-tournament-modal
           :saving="isLoading"
-          :maps="activeMaps"
+          :maps="tournamentMaps"
           @cancel="closeCreateTournament"
           @save="createTournament"
         />
@@ -29,7 +29,7 @@
         <edit-tournament-modal
           :tournament="tournament"
           :saving="isLoading"
-          :maps="activeMaps"
+          :maps="tournamentMaps"
           @cancel="closeEditTournament"
           @save="updateTournament"
         />
@@ -94,7 +94,7 @@ export default class AdminTournaments extends Vue {
 
   async mounted(): Promise<void> {
     this.throttledInit();
-    await this.tournamentsStore.loadActiveTournamentMaps();
+    await this.tournamentsStore.loadTournamentMaps();
     this._intervalRefreshHandle = setInterval(() => {
       this.throttledInit();
     }, 15000);
@@ -105,8 +105,8 @@ export default class AdminTournaments extends Vue {
     await this.tournamentsManagementStore.loadUpcomingTournament();
   }
 
-  get activeMaps(): Map[] {
-    return this.tournamentsStore.activeMaps;
+  get tournamentMaps(): Map[] {
+    return this.tournamentsStore.tournamentMaps;
   }
 
   get isLoading() {

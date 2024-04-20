@@ -34,7 +34,7 @@ export default class Tournament extends Vue {
   }
 
   get maps(): Map[] {
-    return this.tournamentsStore.maps;
+    return this.tournamentsStore.tournamentMaps;
   }
 }
 </script>

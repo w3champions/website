@@ -19,7 +19,7 @@ export const ETournamentFormatLabel: { [key in ETournamentFormat]: string } = {
 };
 
 export const EGameModeLabel: { [key: number]: string } = {
-  [EGameMode.GM_1ON1]: "1 vs 1",
+  [EGameMode.GM_1ON1_TOURNAMENT]: "1 vs 1",
 };
 
 export const ERaceEnumLabel: { [key: number]: string } = {
