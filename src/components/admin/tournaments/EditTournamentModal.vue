@@ -209,7 +209,7 @@ export default class AddPlayerModal extends Vue {
   public startDate = this.now.substring(0, 10);
   public startTime = this.now.substring(11, 16);
   public startDateTime = new Date();
-  public mode = EGameMode.GM_1ON1;
+  public mode = EGameMode.GM_1ON1_TOURNAMENT;
   public format = ETournamentFormat.SINGLE_ELIM;
   public mapPool: number[] = [];
   public state = ETournamentState.INIT;

@@ -34,8 +34,7 @@ export enum ESeriesState {
 
 export type TournamentsState = {
   tournaments: ITournament[];
-  maps: Map[];
-  activeMaps: Map[];
+  tournamentMaps: Map[];
 };
 
 export interface ITournamentSeed {
