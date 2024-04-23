@@ -173,20 +173,18 @@
                     <ul>
                       <li>
                         {{ $t("views_gettingstarted.manualwinbody19") }}
+                        <code>
+                          {{ $t("views_gettingstarted.manualwinbody19_1") }}
+                        </code>
                       </li>
                       <li>
                         {{ $t("views_gettingstarted.manualwinbody20") }}
                       </li>
                       <li>
                         {{ $t("views_gettingstarted.manualwinbody21") }}
-                        <ul>
-                          <li>
-                            {{ $t("views_gettingstarted.manualwinbody22") }}
-                          </li>
-                          <li>
-                            {{ $t("views_gettingstarted.manualwinbody23") }}
-                          </li>
-                        </ul>
+                      </li>
+                      <li>
+                        {{ $t("views_gettingstarted.manualwinbody22") }}
                       </li>
                     </ul>
                   </div>

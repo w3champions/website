@@ -334,27 +334,27 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   get gameLengthOpponentRaces() {
     const races = [
       {
-        opponentRace: "All",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentall"),
         raceId: ERaceEnum.TOTAL,
       },
       {
-        opponentRace: "Random",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentrandom"),
         raceId: ERaceEnum.RANDOM,
       },
       {
-        opponentRace: "Human",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponenthuman"),
         raceId: ERaceEnum.HUMAN,
       },
       {
-        opponentRace: "Orc",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentorc"),
         raceId: ERaceEnum.ORC,
       },
       {
-        opponentRace: "Night Elf",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentnightelf"),
         raceId: ERaceEnum.NIGHT_ELF,
       },
       {
-        opponentRace: "Undead",
+        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentundead"),
         raceId: ERaceEnum.UNDEAD,
       },
     ];
