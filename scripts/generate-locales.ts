@@ -41,7 +41,7 @@ async function main() {
     }
   }
 
-  fs.writeFileSync("./key.ts", keyConstant);
+  fs.writeFileSync("key.ts", keyConstant);
 
   const content = `
     /* eslint-disable */
