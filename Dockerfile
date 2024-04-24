@@ -23,12 +23,12 @@ RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
 RUN apk add --no-cache \
-python py3-pip \
+python3 py3-pip \
 curl \
 which \
 bash
 
-RUN pip install python-dateutil python-magic s3cmd
+RUN pip install python3-dateutil python3-magic s3cmd
 COPY s3config /etc/s3config
 RUN chmod +x /etc/s3config/sync_assets.sh
 
