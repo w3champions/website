@@ -28,7 +28,7 @@ curl \
 which \
 bash
 
-RUN pip install python3-dateutil python3-magic s3cmd
+RUN pip install python-dateutil python-magic s3cmd --break-system-packages
 COPY s3config /etc/s3config
 RUN chmod +x /etc/s3config/sync_assets.sh
 
