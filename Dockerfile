@@ -4,8 +4,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . .
-RUN yarn run build:prod
-RUN cp key.ts dist/key.ts
+RUN yarn run build:prodRUN cp key.ts dist/key.ts
+
 
 # production stage
 FROM nginx:stable-alpine as production-stage
