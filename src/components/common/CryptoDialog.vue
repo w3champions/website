@@ -53,18 +53,12 @@ export default class CryptoDialog extends Vue {
   @Prop() cryptoAddress!: string;
   @Prop() value!: boolean;
 
-  public keyConstant = process.env.GOOGLE_API_KEY;
-
   get show(): boolean {
     return this.value;
   }
 
   set show(value: boolean) {
     this.$emit("input", value);
-  }
-  mounted() {
-    console.log("asdf");
-    console.log(this.keyConstant);
   }
 }
 </script>
