@@ -10,16 +10,28 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
-
-@Component({})
-export default class LocaleIcon extends Vue {
-  @Prop() locale!: string;
-  @Prop({ default: true }) showTwoLetterCode!: boolean;
-
-  flag(): string {
-    return `/assets/localeFlags/${this.locale}.svg`;
-  }
-}
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: "LocaleIcon",
+  components: {},
+  props: {
+    locale: {
+      type: String,
+      required: true,
+    },
+    showTwoLetterCode: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
+  setup(props, context) {
+    function flag(): string {
+      return `/assets/localeFlags/${props.locale}.svg`;
+    }
+    return {
+      flag,
+    }
+  },
+});
 </script>
