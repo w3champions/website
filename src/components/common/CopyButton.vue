@@ -12,17 +12,31 @@
 
 <script lang="ts">
 import { mdiContentCopy } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent } from 'vue';
 
-@Component({})
-export default class CopyButton extends Vue {
-  @Prop() copyText!: string;
-  @Prop({ default: "tooltip" }) tooltipText!: string;
-  public mdiContentCopy = mdiContentCopy;
+export default defineComponent({
+  name: "CopyButton",
+  components: {},
+  props: {
+    copyText: {
+      type: String,
+      required: true,
+    },
+    tooltipText: {
+      type: String,
+      required: false,
+      default: "tooltip",
+    },
+  },
+  setup(props, context) {
+    function copy() {
+      navigator.clipboard.writeText(props.copyText);
+    }
 
-  public copy() {
-    navigator.clipboard.writeText(this.copyText);
-  }
-}
+    return {
+      mdiContentCopy,
+      copy,
+    }
+  },
+});
 </script>
