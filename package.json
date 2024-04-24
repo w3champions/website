@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite -d",
     "serve:prod": "yarn run build:prod && http-server ./dist",
     "build:prod": "yarn run generate-locales && rimraf ./dist && vite build",
     "serve:dev": "yarn run build:dev && http-server ./dist",
