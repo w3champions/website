@@ -4,7 +4,7 @@
       temporary
       absolute
       transition="slide-x-transition"
-      v-model="isNavigationDrawerOpen"
+      v-model="navigationDrawerOpen"
     >
       <v-list dense>
         <v-list-item>
@@ -14,7 +14,7 @@
             </router-link>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-icon class="ml-5" @click="isNavigationDrawerOpen = false">{{ mdiClose }}</v-icon>
+            <v-icon class="ml-5" @click="setNavigationDrawerOpen(false)">{{ mdiClose }}</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list>
@@ -42,7 +42,7 @@
     <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
       <!-- toggle button for drawer menu, only for lower than lg -->
      <v-app-bar-nav-icon
-       @click.stop="isNavigationDrawerOpen = true"
+       @click="setNavigationDrawerOpen(true)"
        class="d-lg-none"
      ></v-app-bar-nav-icon>
       <v-toolbar-title class="pa-0">
@@ -206,7 +206,7 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
-    const isNavigationDrawerOpen = false;
+    const navigationDrawerOpen = ref(false);
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -259,6 +259,10 @@ export default defineComponent({
       } else {
         showSignInDialog.value = true;
       }
+    }
+
+    function setNavigationDrawerOpen(val: boolean): void {
+      navigationDrawerOpen.value = val;
     }
 
     function logout(): void {
@@ -392,7 +396,8 @@ export default defineComponent({
       mdiInvertColors,
       oauthStore,
       savedLanguage,
-      isNavigationDrawerOpen,
+      setNavigationDrawerOpen,
+      navigationDrawerOpen,
       items,
       showSignInDialog,
       rootStateStore,
