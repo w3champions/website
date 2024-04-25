@@ -1,60 +1,64 @@
 <template>
   <v-tooltip bottom>
     <template v-slot:activator="{ on }">
-      <span v-on="on" @click="clickable && goToCountryRankings()" class="clickable">
+      <span v-on="on" @click="clickable && goToCountryRankings()" :class="{ 'clickable': clickable }">
         <country-flag
-          v-if="selectedCountryCode"
+          v-if="selectedCountryCode.get()"
           class="country-flag"
-          :country="selectedCountryCode"
+          :country="selectedCountryCode.get()"
           size="small"
         />
       </span>
     </template>
-    <span>{{ tooltip }}</span>
+    <span>{{ tooltip() }}</span>
   </v-tooltip>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent } from 'vue';
 import { CountriesByCode } from "@/store/countries";
+import { useRouter } from "vue-router/composables";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
-@Component({ components: { CountryFlag } })
-export default class CountryFlagExtended extends Vue {
-  @Prop() countryCode?: string;
-  @Prop() location?: string;
-  @Prop({ default: true }) clickable!: string;
+export default defineComponent({
+  name: "CountryFlagExtended",
+  components: {
+    CountryFlag
+  },
+  props: {
+    countryCode: { type: String, required: false, default: "" },
+    location: { type: String, required: false, default: "" },
+    clickable: { type: Boolean, required: false, default: true },
+  },
+  setup(props, context) {
+    const router = useRouter();
 
-  get selectedCountryCode(): string {
-    if (this.countryCode) {
-      return this.countryCode;
-    } else if (this.location) {
-      return this.location;
+    const selectedCountryCode = ({
+      get: (): string => props.countryCode ? props.countryCode : props.location,
+    });
+
+    function tooltip(): string {
+      if (props.countryCode) return CountriesByCode[props.countryCode];
+      if (props.location) return CountriesByCode[props.location];
+      return "";
     }
 
-    return "";
-  }
-
-  get tooltip(): string {
-    if (this.countryCode) {
-      return CountriesByCode[this.countryCode];
-    } else if (this.location) {
-      return CountriesByCode[this.location];
+    function goToCountryRankings() {
+      router.push(`/Countries?country=${selectedCountryCode.get()}`);
     }
 
-    return "";
-  }
-
-  goToCountryRankings() {
-    this.$router.push(`/Countries?country=${this.selectedCountryCode}`);
-  }
-}
+    return {
+      selectedCountryCode,
+      tooltip,
+      goToCountryRankings,
+    }
+  },
+});
 </script>
 
-<style>
+<style lang="scss" scoped>
 .clickable {
   cursor: pointer;
 }

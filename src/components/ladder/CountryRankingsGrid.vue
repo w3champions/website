@@ -514,10 +514,6 @@ td.header {
   cursor: pointer;
 }
 
-.clickable {
-  cursor: pointer;
-}
-
 .race-icon {
   padding: 0;
 }
