@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" max-width="500">
+  <v-dialog v-model="value" max-width="500" @click:outside="close">
     <v-card>
       <v-card-title class="justify-center">
         {{ cryptoName }}
