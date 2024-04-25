@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" max-width="500">
+  <v-dialog v-model="value" max-width="500">
     <v-card>
       <v-card-title class="justify-center">
         {{ cryptoName }}
@@ -29,7 +29,7 @@
 
         <v-row class="mt-2">
           <v-spacer></v-spacer>
-          <v-btn @click.stop="show = false">Close</v-btn>
+          <v-btn @click="close">Close</v-btn>
           <v-spacer></v-spacer>
         </v-row>
       </v-container>
@@ -38,27 +38,28 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import CopyButton from "@/components/common/CopyButton.vue";
+import { defineComponent } from 'vue';
+import CopyButton from './CopyButton.vue';
 
-@Component({
+export default defineComponent({
+  name: "CryptoDialog",
   components: {
-    CopyButton,
+    CopyButton
   },
-})
-export default class CryptoDialog extends Vue {
-  @Prop() crypto!: string;
-  @Prop() cryptoName!: string;
-  @Prop() cryptoAddress!: string;
-  @Prop() value!: boolean;
+  props: {
+    crypto: { type: String, required: true },
+    cryptoName: { type: String, required: true },
+    cryptoAddress: { type: String, required: true },
+    value: { type: Boolean, required: true },
+  },
+  setup(props, context) {
+    function close(): void {
+      context.emit("input", false);
+    }
 
-  get show(): boolean {
-    return this.value;
-  }
-
-  set show(value: boolean) {
-    this.$emit("input", value);
-  }
-}
+    return {
+      close,
+    }
+  },
+});
 </script>

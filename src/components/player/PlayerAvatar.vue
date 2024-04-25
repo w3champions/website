@@ -812,4 +812,8 @@ export default class PlayerAvatar extends Vue {
   padding-left: 25px;
   padding-right: 25px;
 }
+
+.clickable {
+  cursor: pointer;
+}
 </style>

@@ -8,6 +8,7 @@
     <v-card
       class="socials-subcard"
       href="https://discord.gg/uJmQxG2"
+      target="_blank"
       tile
       outlined
       style="padding-bottom: 0px"
@@ -23,6 +24,7 @@
     <v-card
       class="socials-subcard"
       href="https://twitter.com/W3ChampionsTeam"
+      target="_blank"
       tile
       outlined
     >
@@ -32,17 +34,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent } from 'vue';
 
-@Component({})
-export default class SocialBox extends Vue {
-  @Prop() title!: string;
-  @Prop() text!: string;
-}
+export default defineComponent({
+  name: "SocialBox",
+  components: {},
+  props: {},
+  setup(props, context) {},
+});
 </script>
 
-<style>
+<style lang="scss" scoped>
 .socials-subcard {
   border: none !important;
   padding: 2px;

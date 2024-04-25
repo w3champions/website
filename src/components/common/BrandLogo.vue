@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+
 export default defineComponent({
   name: "BrandLogo",
   components: {},
@@ -18,7 +19,6 @@ export default defineComponent({
     isDarkTheme: {
       type: Boolean,
       required: true,
-      default: false,
     },
   },
   setup(props, context) {
