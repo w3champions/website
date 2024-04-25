@@ -53,7 +53,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="scss" scoped>
 .socials-subcard {
   border: none !important;
   padding: 2px;
