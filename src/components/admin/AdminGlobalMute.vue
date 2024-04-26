@@ -118,16 +118,19 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
+import { useOauthStore } from "@/store/oauth/store";
 import { mdiDelete } from "@mdi/js";
+import isEmpty from "lodash/isEmpty";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminGlobalMute extends Vue {
   public mdiDelete = mdiDelete;
   private adminStore = useAdminStore();
+  private oauthStore = useOauthStore();
   public headers = [
     {
       text: "Flo Ban Id",
@@ -191,16 +194,30 @@ export default class AdminGlobalMute extends Vue {
   }
 
   public async loadMutes(): Promise<void> {
-    await this.adminStore.loadGlobalMutes();
+    if (this.isAdmin) {
+      await this.adminStore.loadGlobalMutes();
+    }
   }
 
   async mounted(): Promise<void> {
     await this.init();
   }
 
-  public async init(): Promise<void> {
+  get isAdmin(): boolean {
+    return this.oauthStore.isAdmin;
+  }
+
+  @Watch("isAdmin")
+  public async isAdminWatcher(): Promise<void> {
+    if (isEmpty(this.globallyMutedPlayers)) {
+      await this.init();
+    }
+  }
+
+  async init(): Promise<void> {
     await this.loadMutes();
   }
+
 
   searchCleared(): void {
     this.showConfirmation = false;

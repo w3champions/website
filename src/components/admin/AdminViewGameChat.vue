@@ -5,7 +5,7 @@
         <v-row>
           <v-col></v-col>
           <v-col cols="6" align="center">
-            <v-text-field v-model="textInput" solo outlined clearable label="Game ID"></v-text-field>
+            <v-text-field v-model="textInput" solo outlined clearable placeholder="Game ID" autofocus></v-text-field>
           </v-col>
           <v-col>
             <v-dialog v-model="dialog" width="1500">

@@ -118,13 +118,14 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import isEmpty from "lodash/isEmpty";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminLoungeMute extends Vue {
@@ -178,14 +179,27 @@ export default class AdminLoungeMute extends Vue {
   }
 
   public async loadMutes(): Promise<void> {
-    await this.loungeMuteStore.loadLoungeMutes();
+    if (this.isAdmin) {
+      await this.loungeMuteStore.loadLoungeMutes();
+    }
+  }
+
+  get isAdmin(): boolean {
+    return this.oauthStore.isAdmin;
+  }
+
+  @Watch("isAdmin")
+  public async isAdminWatcher(): Promise<void> {
+    if (isEmpty(this.loungeMutes)) {
+      await this.init();
+    }
   }
 
   async mounted(): Promise<void> {
     await this.init();
   }
 
-  public async init(): Promise<void> {
+  async init(): Promise<void> {
     await this.loadMutes();
   }
 

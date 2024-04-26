@@ -254,6 +254,10 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     }
   }
 
+  get authCode(): string {
+    return this.oauthStore.token;
+  }
+
   public editedItem = {
     battleTag: "",
     endDate: "",
@@ -313,7 +317,18 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
     this.dialog = false;
   }
 
+  @Watch("isAdmin")
+  public async isAdminWatcher(): Promise<void> {
+    if (isEmpty(this.bannedPlayers)) {
+      await this.init();
+    }
+  }
+
   async mounted(): Promise<void> {
+    await this.init();
+  }
+
+  async init(): Promise<void> {
     await this.loadBanList();
     await this.loadActiveGameModes();
   }

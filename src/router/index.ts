@@ -22,6 +22,25 @@ import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
 import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
 import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
+import AdminQueueData from "@/components/admin/AdminQueueData.vue";
+import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
+import Admin from "@/views/Admin.vue";
+import AdminAlts from "@/components/admin/AdminAlts.vue";
+import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
+import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
+import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
+import AdminProxies from "@/components/admin/AdminProxies.vue";
+import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
+import AdminLoadingScreenTips from "@/components/admin/AdminLoadingScreenTips.vue";
+import AdminMotd from "@/components/admin/AdminMotd.vue";
+import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
+import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
+import AdminStorageAlibaba from "@/components/admin/cloudStorage/AdminStorageAlibaba.vue";
+import AdminStorageS3 from "@/components/admin/cloudStorage/AdminStorageS3.vue";
+import AdminMaps from "@/components/admin/AdminMaps.vue";
+import AdminTournaments from "@/components/admin/AdminTournaments.vue";
+import AdminPermissions from "@/components/admin/AdminPermissions.vue";
+import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 
 Vue.use(VueRouter);
 
@@ -171,9 +190,29 @@ const routes = [
     ],
   },
   {
-    path: "/AdminOnlyView",
+    path: "/admin",
     name: "Admin",
-    component: () => import(/* webpackChunkName: "admin-view" */ "@/views/Admin.vue"),
+    component: Admin,
+    children: [
+      { path: "admin-queue-data", name: "Live Queue Data", component: AdminQueueData },
+      { path: "admin-banned-players", name: "Banned Players", component: AdminBannedPlayers },
+      { path: "admin-alts", name: "Smurf Checker", component: AdminAlts },
+      { path: "admin-global-mute", name: "Global Mute", component: AdminGlobalMute },
+      { path: "admin-lounge-mute", name: "Lounge Mute", component: AdminLoungeMute },
+      { path: "admin-view-game-chat", name: "View Game Chat", component: AdminViewGameChat },
+      { path: "admin-proxies", name: "Proxy Settings", component: AdminProxies },
+      { path: "admin-news-for-launcher", name: "News", component: AdminNewsForLauncher },
+      { path: "admin-loading-screen-tips", name: "Loading Screen Tips", component: AdminLoadingScreenTips },
+      { path: "admin-motd", name: "Message Of The Day", component: AdminMotd },
+      { path: "admin-assign-portraits", name: "Assign Portraits", component: AdminAssignPortraits },
+      { path: "admin-manage-portraits", name: "Manage Portraits", component: AdminManagePortraits },
+      { path: "admin-storage-alibaba", name: "Manage Alibaba Files", component: AdminStorageAlibaba },
+      { path: "admin-storage-s3", name: "Manage S3 Files", component: AdminStorageS3 },
+      { path: "admin-maps", name: "Manage Maps", component: AdminMaps },
+      { path: "admin-tournaments", name: "Manage Tournaments", component: AdminTournaments },
+      { path: "admin-permissions", name: "Manage Permissions", component: AdminPermissions },
+      { path: "admin-server-logs", name: "View Server Logs", component: AdminServerLogs },
+    ],
   },
   {
     path: "/tournaments",
