@@ -1,34 +1,39 @@
 <template>
-  <v-container>
-    <v-card class="pa-md-4">
-      <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
-      <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
-        <edit-map v-if="isEditOpen" :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
-      </v-dialog>
+  <div>
+    <v-card-title>
+      Manage Maps
+    </v-card-title>
+    <v-container>
+      <v-card class="pa-md-4">
+        <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+        <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
+          <edit-map v-if="isEditOpen" :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
+        </v-dialog>
 
-      <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
-        <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected"></edit-map-files>
-      </v-dialog>
+        <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
+          <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected"></edit-map-files>
+        </v-dialog>
 
-      <v-text-field label="Search" v-model="search"></v-text-field>
-      <v-data-table
-        :headers="headers"
-        :items="maps"
-        :items-per-page="10"
-        :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
-        :search="search"
-        class="elevation-1"
-      >
-        <template #[`item.path`]="{ item }">
-          {{ getMapPath(item) }}
-        </template>
-        <template #[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="editMap(item)">{{ mdiPencil }}</v-icon>
-          <v-icon small class="mr-2" @click="editMapFiles(item)">{{ mdiFile }}</v-icon>
-        </template>
-      </v-data-table>
-    </v-card>
-  </v-container>
+        <v-text-field label="Search" v-model="search"></v-text-field>
+        <v-data-table
+          :headers="headers"
+          :items="maps"
+          :items-per-page="10"
+          :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
+          :search="search"
+          class="elevation-1"
+        >
+          <template #[`item.path`]="{ item }">
+            {{ getMapPath(item) }}
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-icon small class="mr-2" @click="editMap(item)">{{ mdiPencil }}</v-icon>
+            <v-icon small class="mr-2" @click="editMapFiles(item)">{{ mdiFile }}</v-icon>
+          </template>
+        </v-data-table>
+      </v-card>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">

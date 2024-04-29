@@ -1,62 +1,67 @@
 <template>
-  <v-data-table
-    :headers="headersTips"
-    :items="tips"
-    :items-per-page="5"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="transparent">
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialogTips">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              class="mb-2 w3-race-bg--text"
-              v-bind="attrs"
-              v-on="on"
-            >
-              Add Tip
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle() }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-textarea
-                  auto-grow
-                  filled
-                  rows="1"
-                  v-model="editedTipItem.message"
-                  label="Message"
-                />
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text @click="closeTips">Cancel</v-btn>
+  <div>
+    <v-card-title>
+      Loading Screen Tips
+    </v-card-title>
+    <v-data-table
+      :headers="headersTips"
+      :items="tips"
+      :items-per-page="5"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-toolbar flat color="transparent">
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialogTips">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
-                class="w3-race-bg--text primary"
-                text
-                @click="saveTips"
+                class="mb-2 w3-race-bg--text"
+                v-bind="attrs"
+                v-on="on"
               >
-                {{ $t(`views_admin.save`) }}
+                Add Tip
               </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
-      <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
-    </template>
-  </v-data-table>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="text-h5">{{ formTitle() }}</span>
+              </v-card-title>
+
+              <v-card-text>
+                <v-container>
+                  <v-textarea
+                    auto-grow
+                    filled
+                    rows="1"
+                    v-model="editedTipItem.message"
+                    label="Message"
+                  />
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="closeTips">Cancel</v-btn>
+                <v-btn
+                  color="primary"
+                  class="w3-race-bg--text primary"
+                  text
+                  @click="saveTips"
+                >
+                  {{ $t(`views_admin.save`) }}
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template #[`item.actions`]="{ item }">
+        <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script lang="ts">

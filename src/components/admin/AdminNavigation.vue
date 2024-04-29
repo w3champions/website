@@ -13,7 +13,6 @@
         <v-list-item
           :key="index"
           v-if="!item.items || item.items.length === 0"
-          @click="itemSelected(item)"
           :to="{ name: item.title }"
         >
           <v-list-item-icon>
@@ -42,7 +41,6 @@
             class="ml-0 pl-6"
             v-for="(subItem, i) in item.items"
             :key="i"
-            @click="itemSelected(subItem)"
             :to="{ name: subItem.title }"
           >
             <v-list-item-icon>
@@ -61,7 +59,7 @@
 import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
@@ -78,10 +76,6 @@ export default class AdminNavigation extends Vue {
   private oauthStore = useOauthStore();
   public mdiAccountTie = mdiAccountTie;
 
-  itemSelected(item: NavigationItem) {
-    this.$emit("itemSelected", item);
-  }
-
   get permissions(): string[] {
     return this.oauthStore.permissions;
   }
@@ -90,17 +84,38 @@ export default class AdminNavigation extends Vue {
     return this.navItems.filter((item) => this.permissions.includes(EPermission[item.permission]));
   }
 
-  mounted() {
-    const lastPathFragment = this.$route.path.split("/").pop();
-    for (const item of this.navItems) {
-      if (item.items) {
-        for (const subItem of item.items) {
-          if (subItem.component === lastPathFragment) {
-            this.$emit("itemSelected", subItem);
-          }
-        }
+  getFirstItem(items: Array<NavigationItem>): NavigationItem {
+    for (const item of items) {
+      if (!item.items) {
+        return item;
+      }
+      const subItem = this.getFirstItem(item.items);
+      if (subItem) {
+        return subItem;
       }
     }
+    return items[0];
+  }
+
+  mounted() {
+    this.init();
+  }
+
+  init() {
+    if (this.permissions.length === 0) return;
+    const lastPathFragment = this.$route.path.split("/").pop();
+
+    // Route to the first available page if the user navigated to the admin panel.
+    if (lastPathFragment === "admin") {
+      const firstItem = this.getFirstItem(this.filteredNavItems);
+      
+      this.$router.push(`admin/${firstItem.component}`);
+    }
+  }
+
+  @Watch("permissions")
+  public permissionsWatcher(): void {
+    this.init();
   }
 
   navItems: Array<NavigationItem> = [

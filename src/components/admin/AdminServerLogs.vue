@@ -1,37 +1,42 @@
 <template>
-  <v-container v-if="logContent.length === 0" fluid>
-    <v-row>
-      <v-col>
-          <v-row no-gutters :justify="'start'">
-            <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="fetchLogContent(logfileName)">
-              {{ logfileName }}
-            </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
-  <v-container v-else fluid>
-    <v-row>
-      <v-col>
-        <v-btn color="primary" class="w3-race-bg--text mr-3" @click="logContent = []">
-          Go Back
-        </v-btn>
-        <v-btn color="primary" class="w3-race-bg--text" @click="downloadLog(selectedLog)">
-          Download
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <span class="font-weight-bold">{{ selectedLog }}</span>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div>
+    <v-card-title>
+      View Server Logs
+    </v-card-title>
+    <v-container v-if="logContent.length === 0" fluid>
+      <v-row>
+        <v-col>
+            <v-row no-gutters :justify="'start'">
+              <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="fetchLogContent(logfileName)">
+                {{ logfileName }}
+              </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container v-else fluid>
+      <v-row>
+        <v-col>
+          <v-btn color="primary" class="w3-race-bg--text mr-3" @click="logContent = []">
+            Go Back
+          </v-btn>
+          <v-btn color="primary" class="w3-race-bg--text" @click="downloadLog(selectedLog)">
+            Download
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <span class="font-weight-bold">{{ selectedLog }}</span>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">

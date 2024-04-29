@@ -1,35 +1,40 @@
 <template>
-  <v-container>
-    <v-row>
-      <!-- Autocomplete Btag search -->
-      <v-autocomplete
-        class="ml-5 mr-5"
-        v-model="searchPlayerModel"
-        :append-icon="mdiMagnify"
-        label="Search BattleTag"
-        clearable
-        placeholder=" "
-        :items="searchedPlayers"
-        :search-input.sync="search"
-        return-object
-        @click:clear="revertToDefault"
-        autofocus
-      ></v-autocomplete>
-    </v-row>
+  <div>
+    <v-card-title>
+      Smurf Checker
+    </v-card-title>
+    <v-container>
+      <v-row>
+        <!-- Autocomplete Btag search -->
+        <v-autocomplete
+          class="ml-5 mr-5"
+          v-model="searchPlayerModel"
+          :append-icon="mdiMagnify"
+          label="Search BattleTag"
+          clearable
+          placeholder=" "
+          :items="searchedPlayers"
+          :search-input.sync="search"
+          return-object
+          @click:clear="revertToDefault"
+          autofocus
+        ></v-autocomplete>
+      </v-row>
 
-    <v-card v-if="showAlts">
-      <v-card-title>Smurfs:</v-card-title>
-      <v-list>
-        <template v-for="alt in alts">
-          <v-list-item :key="alt">
-            <div @click="searchAltsFromClick(alt)" class="pointer">{{ alt }}</div>
-            <v-spacer></v-spacer>
-            <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-card>
-  </v-container>
+      <v-card v-if="showAlts">
+        <v-card-title>Smurfs:</v-card-title>
+        <v-list>
+          <template v-for="alt in alts">
+            <v-list-item :key="alt">
+              <div @click="searchAltsFromClick(alt)" class="pointer">{{ alt }}</div>
+              <v-spacer></v-spacer>
+              <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-card>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
