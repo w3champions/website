@@ -38,8 +38,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import CopyButton from './CopyButton.vue';
+import { defineComponent } from "vue";
+import CopyButton from "./CopyButton.vue";
 
 export default defineComponent({
   name: "CryptoDialog",
@@ -59,7 +59,7 @@ export default defineComponent({
 
     return {
       close,
-    }
+    };
   },
 });
 </script>

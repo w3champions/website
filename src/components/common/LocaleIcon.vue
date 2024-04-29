@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 export default defineComponent({
   name: "LocaleIcon",
   components: {},
@@ -25,13 +25,13 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(props, context) {
+  setup(props) {
     function flag(): string {
       return `/assets/localeFlags/${props.locale}.svg`;
     }
     return {
       flag,
-    }
+    };
   },
 });
 </script>

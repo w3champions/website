@@ -70,6 +70,10 @@ import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog
 
 export default {
   name: "SupportBox",
+  components: {
+    CryptoDialog,
+    AlternatePaymentsDialog,
+  },
   data() {
     return {
       cryptos: [
@@ -92,9 +96,8 @@ export default {
       alternates: ["AliPay", "WeChat"],
       cryptoDialogTracker: [false, false, false],
       alternateDialogTracker: [false, false],
-    }
+    };
   },
-  mounted() {},
   methods: {
     updateTracker: function(index: number, dialogTracker: boolean[]): void {
       for (let i = 0; i < dialogTracker.length; i++) {
@@ -103,7 +106,7 @@ export default {
       Vue.set(dialogTracker, index, true);
     }
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "AlternatePaymentsDialog",
@@ -35,14 +35,14 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(_props, context) {
     function close(): void {
       context.emit("input", false);
     }
 
     return {
       close,
-    }
+    };
   },
 });
 </script>

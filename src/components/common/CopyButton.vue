@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { mdiContentCopy } from "@mdi/js";
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CopyButton",
@@ -28,7 +28,7 @@ export default defineComponent({
       default: "tooltip",
     },
   },
-  setup(props, context) {
+  setup(props) {
     function copy() {
       navigator.clipboard.writeText(props.copyText);
     }
@@ -36,7 +36,7 @@ export default defineComponent({
     return {
       mdiContentCopy,
       copy,
-    }
+    };
   },
 });
 </script>
