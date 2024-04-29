@@ -108,7 +108,6 @@ export default class AdminNavigation extends Vue {
     // Route to the first available page if the user navigated to the admin panel.
     if (lastPathFragment === "admin") {
       const firstItem = this.getFirstItem(this.filteredNavItems);
-      
       this.$router.push(`admin/${firstItem.component}`);
     }
   }

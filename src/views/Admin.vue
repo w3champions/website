@@ -13,8 +13,6 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { NavigationItem } from "@/store/admin/types";
-
 import AdminNavigation from "@/components/admin/AdminNavigation.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import { useOauthStore } from "@/store/oauth/store";
