@@ -1,83 +1,88 @@
 <template>
-  <v-container>
-    <v-data-table
-      :headers="headers"
-      :items-per-page="10"
-      :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
-      :items="files"
-      sort-by="lastModified"
-      :sort-desc="true"
-      :search="tableSearch"
-      :loading="isLoadingFiles"
-      loading-text="Loading... Please wait"
-    >
-      <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <template>
-            <v-text-field
-              v-model="tableSearch"
-              label="Search"
-              :prepend-icon="mdiMagnify"
-            ></v-text-field>
-          </template>
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
-              >
-                Upload Image
-              </v-btn>
+  <div>
+    <v-card-title>
+      Manage Alibaba Files
+    </v-card-title>
+    <v-container>
+      <v-data-table
+        :headers="headers"
+        :items-per-page="10"
+        :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
+        :items="files"
+        sort-by="lastModified"
+        :sort-desc="true"
+        :search="tableSearch"
+        :loading="isLoadingFiles"
+        loading-text="Loading... Please wait"
+      >
+        <template v-slot:top>
+          <v-toolbar flat color="transparent">
+            <template>
+              <v-text-field
+                v-model="tableSearch"
+                label="Search"
+                :prepend-icon="mdiMagnify"
+              ></v-text-field>
             </template>
+            <v-spacer></v-spacer>
+            <v-dialog v-model="dialog" max-width="500px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="primary"
+                  class="mb-2 w3-race-bg--text"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  Upload Image
+                </v-btn>
+              </template>
 
-            <v-card>
-              <v-card-title>
-                <span class="text-h5">Upload Image</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="12" class="pb-0">
-                      <v-file-input
-                        v-model="fileToUpload"
-                        :prepend-icon="mdiCamera"
-                        accept="image/*"
-                        label="Select an image"
-                      ></v-file-input>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn text @click="close" :disabled="isUploadingFile">
-                  {{ $t(`views_admin.cancel`) }}
-                </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile" :disabled="isUploadingFile">
-                  {{ isUploadingFile ? "Uploading..." : "Upload" }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-      <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
-        <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
-      </template>
-    </v-data-table>
-    <v-snackbar v-model="isValidationMessageVisible" top :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
-      {{ validationMessage.message }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="black" text v-bind="attrs" @click="resetValidationMessage">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </v-container>
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Upload Image</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="12" class="pb-0">
+                        <v-file-input
+                          v-model="fileToUpload"
+                          :prepend-icon="mdiCamera"
+                          accept="image/*"
+                          label="Select an image"
+                        ></v-file-input>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="close" :disabled="isUploadingFile">
+                    {{ $t(`views_admin.cancel`) }}
+                  </v-btn>
+                  <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile" :disabled="isUploadingFile">
+                    {{ isUploadingFile ? "Uploading..." : "Upload" }}
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+        <template #[`item.actions`]="{ item }">
+          <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
+          <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
+        </template>
+      </v-data-table>
+      <v-snackbar v-model="isValidationMessageVisible" top :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
+        {{ validationMessage.message }}
+        <template v-slot:action="{ attrs }">
+          <v-btn color="black" text v-bind="attrs" @click="resetValidationMessage">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">

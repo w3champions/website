@@ -1,185 +1,191 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="news"
-    :items-per-page="5"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="transparent">
-        <v-toolbar-title>News for Launcher</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-dialog max-width="1185" v-model="dialogNews">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              class="mb-2 w3-race-bg--text"
-              v-bind="attrs"
-              v-on="on"
-            >
-              {{ $t("views_admin.addnews") }}
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle() }}</span>
-            </v-card-title>
+  <div>
+    <v-card-title>
+      News
+    </v-card-title>
+    <v-data-table
+      :headers="headers"
+      :items="news"
+      :items-per-page="5"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-toolbar flat color="transparent">
+          <v-toolbar-title>News for Launcher</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-dialog max-width="1185" v-model="dialogNews">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="primary"
+                class="mb-2 w3-race-bg--text"
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ $t("views_admin.addnews") }}
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="text-h5">{{ formTitle() }}</span>
+              </v-card-title>
 
-            <v-card-text>
-              <v-text-field
-                v-model="editedNewsItem.date"
-                filled
-                :label="$t(`views_admin.headline`)"
-              />
-              <div class="editor">
-                <div class="menubar">
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('bold') }"
-                    :disabled="!editor.can().chain().focus().toggleBold().run()"
-                    @click="editor.chain().focus().toggleBold().run()"
-                  >
-                    <v-icon>{{ mdiFormatBold }}</v-icon>
-                  </button>
+              <v-card-text>
+                <v-text-field
+                  v-model="editedNewsItem.date"
+                  filled
+                  :label="$t(`views_admin.headline`)"
+                />
+                <div class="editor">
+                  <div class="menubar">
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('bold') }"
+                      :disabled="!editor.can().chain().focus().toggleBold().run()"
+                      @click="editor.chain().focus().toggleBold().run()"
+                    >
+                      <v-icon>{{ mdiFormatBold }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('italic') }"
-                    :disabled="!editor.can().chain().focus().toggleItalic().run()"
-                    @click="editor.chain().focus().toggleItalic().run()"
-                  >
-                    <v-icon>{{ mdiFormatItalic }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('italic') }"
+                      :disabled="!editor.can().chain().focus().toggleItalic().run()"
+                      @click="editor.chain().focus().toggleItalic().run()"
+                    >
+                      <v-icon>{{ mdiFormatItalic }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('strike') }"
-                    :disabled="!editor.can().chain().focus().toggleStrike().run()"
-                    @click="editor.chain().focus().toggleStrike().run()"
-                  >
-                    <v-icon>{{ mdiFormatStrikethrough }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('strike') }"
+                      :disabled="!editor.can().chain().focus().toggleStrike().run()"
+                      @click="editor.chain().focus().toggleStrike().run()"
+                    >
+                      <v-icon>{{ mdiFormatStrikethrough }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('underline') }"
-                    :disabled="!editor.can().chain().focus().toggleUnderline().run()"
-                    @click="editor.chain().focus().toggleUnderline().run()"
-                  >
-                    <v-icon>{{ mdiFormatUnderline }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('underline') }"
+                      :disabled="!editor.can().chain().focus().toggleUnderline().run()"
+                      @click="editor.chain().focus().toggleUnderline().run()"
+                    >
+                      <v-icon>{{ mdiFormatUnderline }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('code') }"
-                    :disabled="!editor.can().chain().focus().toggleCode().run()"
-                    @click="editor.chain().focus().toggleCode().run()"
-                  >
-                    <v-icon>{{ mdiCodeTags }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('code') }"
+                      :disabled="!editor.can().chain().focus().toggleCode().run()"
+                      @click="editor.chain().focus().toggleCode().run()"
+                    >
+                      <v-icon>{{ mdiCodeTags }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('paragraph') }"
-                    @click="editor.chain().focus().setParagraph().run()"
-                  >
-                    <v-icon>{{ mdiFormatParagraph }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('paragraph') }"
+                      @click="editor.chain().focus().setParagraph().run()"
+                    >
+                      <v-icon>{{ mdiFormatParagraph }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-                    @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-                  >
-                    <v-icon>{{ mdiFormatHeader1 }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+                      @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+                    >
+                      <v-icon>{{ mdiFormatHeader1 }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-                    @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-                  >
-                    <v-icon>{{ mdiFormatHeader2 }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+                      @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+                    >
+                      <v-icon>{{ mdiFormatHeader2 }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-                    @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
-                  >
-                    <v-icon>{{ mdiFormatHeader3 }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+                      @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+                    >
+                      <v-icon>{{ mdiFormatHeader3 }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('bulletList') }"
-                    @click="editor.chain().focus().toggleBulletList().run()"
-                  >
-                    <v-icon>{{ mdiFormatListBulleted }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('bulletList') }"
+                      @click="editor.chain().focus().toggleBulletList().run()"
+                    >
+                      <v-icon>{{ mdiFormatListBulleted }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :class="{ 'is-active': editor.isActive('orderedList') }"
-                    @click="editor.chain().focus().toggleOrderedList().run()"
-                  >
-                    <v-icon>{{ mdiFormatListNumbered }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :class="{ 'is-active': editor.isActive('orderedList') }"
+                      @click="editor.chain().focus().toggleOrderedList().run()"
+                    >
+                      <v-icon>{{ mdiFormatListNumbered }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    @click="showImagePrompt()"
-                  >
-                    <v-icon>{{ mdiFileImage }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      @click="showImagePrompt()"
+                    >
+                      <v-icon>{{ mdiFileImage }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    @click="editor.chain().focus().setHorizontalRule().run()"
-                  >
-                    <v-icon>{{ mdiMinus }}</v-icon>
-                    hr
-                  </button>
+                    <button
+                      class="menubar__button"
+                      @click="editor.chain().focus().setHorizontalRule().run()"
+                    >
+                      <v-icon>{{ mdiMinus }}</v-icon>
+                      hr
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :disabled="!editor.can().chain().focus().undo().run()"
-                    @click="editor.chain().focus().undo().run()"
-                  >
-                    <v-icon>{{ mdiUndo }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :disabled="!editor.can().chain().focus().undo().run()"
+                      @click="editor.chain().focus().undo().run()"
+                    >
+                      <v-icon>{{ mdiUndo }}</v-icon>
+                    </button>
 
-                  <button
-                    class="menubar__button"
-                    :disabled="!editor.can().chain().focus().redo().run()"
-                    @click="editor.chain().focus().redo().run()"
-                  >
-                    <v-icon>{{ mdiRedo }}</v-icon>
-                  </button>
+                    <button
+                      class="menubar__button"
+                      :disabled="!editor.can().chain().focus().redo().run()"
+                      @click="editor.chain().focus().redo().run()"
+                    >
+                      <v-icon>{{ mdiRedo }}</v-icon>
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <editor-content class="editor__content" :editor="editor" />
-            </v-card-text>
+                <editor-content class="editor__content" :editor="editor" />
+              </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text @click="closeNews">
-                {{ $t(`views_admin.cancel`) }}
-              </v-btn>
-              <v-btn color="primary" class="w3-race-bg--text" @click="saveNews">
-                {{ $t(`views_admin.save`) }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template #[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
-      <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
-    </template>
-  </v-data-table>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="closeNews">
+                  {{ $t(`views_admin.cancel`) }}
+                </v-btn>
+                <v-btn color="primary" class="w3-race-bg--text" @click="saveNews">
+                  {{ $t(`views_admin.save`) }}
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template #[`item.actions`]="{ item }">
+        <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
+      </template>
+    </v-data-table>
+
+  </div>
 </template>
 
 <script lang="ts">

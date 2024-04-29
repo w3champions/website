@@ -5,6 +5,7 @@ export type OauthState = {
   twitch_token: TwitchToken;
   isAdmin: boolean;
   permissions: string[];
+  isLoadingBlizzardBtag: boolean;
 };
 
 export type W3cToken = {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" max-width="500">
+  <v-dialog v-model="value" max-width="500" @click:outside="close">
     <v-card>
       <v-card-title class="justify-center">
         {{ cryptoName }}
@@ -38,8 +38,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import CopyButton from './CopyButton.vue';
+import { defineComponent } from "vue";
+import CopyButton from "./CopyButton.vue";
 
 export default defineComponent({
   name: "CryptoDialog",
@@ -59,7 +59,7 @@ export default defineComponent({
 
     return {
       close,
-    }
+    };
   },
 });
 </script>

@@ -1,18 +1,23 @@
 <template>
-  <v-container>
-    <v-row>
-      <player-search
-        @searchCleared="searchCleared"
-        @playerFound="playerFound"
-        classes="ml-5 mr-5"
-      ></player-search>
-    </v-row>
+  <div>
+    <v-card-title>
+      Proxy Settings
+    </v-card-title>
+    <v-container>
+      <v-row>
+        <player-search
+          @searchCleared="searchCleared"
+          @playerFound="playerFound"
+          classes="ml-5 mr-5"
+        ></player-search>
+      </v-row>
 
-    <review-proxies
-      v-if="showProxyOptions"
-      :proxies="availableProxies"
-    ></review-proxies>
-  </v-container>
+      <review-proxies
+        v-if="showProxyOptions"
+        :proxies="availableProxies"
+      ></review-proxies>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">

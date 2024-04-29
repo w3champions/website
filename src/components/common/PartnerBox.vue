@@ -18,13 +18,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "PartnerBox",
   components: {},
   props: {},
-  setup(props, context) {
+  setup() {
     function partners() {
       return [
         {
@@ -48,7 +48,7 @@ export default defineComponent({
     return {
       partners,
       imgSource,
-    }
+    };
   },
 });
 </script>

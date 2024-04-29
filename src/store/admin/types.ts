@@ -58,7 +58,6 @@ export interface BannedPlayersResponse {
 }
 
 export interface NavigationItem {
-  key?: string;
   title: string;
   icon?: string;
   component?: string;

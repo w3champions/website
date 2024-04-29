@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { CountriesByCode } from "@/store/countries";
 import { useRouter } from "vue-router/composables";
 
@@ -32,7 +32,7 @@ export default defineComponent({
     location: { type: String, required: false, default: "" },
     clickable: { type: Boolean, required: false, default: true },
   },
-  setup(props, context) {
+  setup(props) {
     const router = useRouter();
 
     const selectedCountryCode = ({
@@ -53,7 +53,7 @@ export default defineComponent({
       selectedCountryCode,
       tooltip,
       goToCountryRankings,
-    }
+    };
   },
 });
 </script>
