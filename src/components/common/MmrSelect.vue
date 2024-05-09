@@ -26,42 +26,54 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, computed, ComputedRef, PropType } from "vue";
 import { Mmr } from "@/store/match/types";
 import { mdiChevronTripleUp } from "@mdi/js";
 
-@Component({})
-export default class MmrSelect extends Vue {
-  @Prop() mmr!: Mmr;
-  public mdiChevronTripleUp = mdiChevronTripleUp;
+export default defineComponent({
+  name: "MmrSelect",
+  components: {},
+  props: {
+    mmr: {
+      type: Object as PropType<Mmr>,
+      required: true,
+    },
+  },
+  setup: (props, context) => {
+    const previousMmr = {} as Mmr;
+    const currentMmr = { min: 0, max: 3000 } as Mmr;
+    const currentMinMax: number[] = [currentMmr.min, currentMmr.max];
 
-  previousMmr = {} as Mmr;
-  currentMmr = { min: 0, max: 3000 } as Mmr;
-  currentMinMax: number[] = [this.currentMmr.min, this.currentMmr.max];
-
-  public selectMmr(selectedMmr: number[]): void {
-    this.currentMmr.min = selectedMmr[0];
-    this.currentMmr.max = selectedMmr[1];
-  }
-
-  get selected(): string {
-    return (this.mmr.min == 0 && this.mmr.max == 3000) ? "MMR" : `${this.mmr.min} - ${this.mmr.max}`;
-  }
-
-  public onMenuToggled(opened: boolean): void {
-    // Only send a request to backend when closing menu and selecting a different mmr.
-    if (!opened && this.hasSelectedDifferentMmr()) {
-      this.previousMmr.min = this.currentMmr.min;
-      this.previousMmr.max = this.currentMmr.max;
-      this.$emit("mmrChanged", this.currentMmr);
+    function selectMmr(selectedMmr: number[]): void {
+      currentMmr.min = selectedMmr[0];
+      currentMmr.max = selectedMmr[1];
     }
-  }
 
-  public hasSelectedDifferentMmr() {
-    return this.currentMmr.min != this.previousMmr.min || this.currentMmr.max != this.previousMmr.max;
-  }
-}
+    const selected: ComputedRef<string> = computed((): string => (props.mmr.min == 0 && props.mmr.max == 3000) ? "MMR" : `${props.mmr.min} - ${props.mmr.max}`)
+
+    function onMenuToggled(opened: boolean): void {
+      // Only send a request to backend when closing menu and selecting a different mmr.
+      if (!opened && hasSelectedDifferentMmr()) {
+        previousMmr.min = currentMmr.min;
+        previousMmr.max = currentMmr.max;
+        context.emit("mmrChanged", currentMmr);
+      }
+    }
+
+    function hasSelectedDifferentMmr(): boolean {
+      return currentMmr.min != previousMmr.min || currentMmr.max != previousMmr.max;
+    }
+
+    return {
+      mdiChevronTripleUp,
+      selectMmr,
+      selected,
+      onMenuToggled,
+      currentMinMax,
+    };
+  },
+});
+
 </script>
 
 <style lang="scss" scoped>
