@@ -43,7 +43,7 @@ import Vue from "vue";
 import { QueueData } from "@/store/admin/types";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
-import { Component, Watch, Mixins, Prop } from "vue-property-decorator";
+import { Component, Watch, Prop } from "vue-property-decorator";
 import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";

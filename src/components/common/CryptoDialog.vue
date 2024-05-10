@@ -52,7 +52,7 @@ export default defineComponent({
     cryptoAddress: { type: String, required: true },
     value: { type: Boolean, required: true },
   },
-  setup(props, context) {
+  setup(_props, context) {
     function close(): void {
       context.emit("input", false);
     }

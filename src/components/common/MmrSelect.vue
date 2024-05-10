@@ -49,7 +49,7 @@ export default defineComponent({
       currentMmr.max = selectedMmr[1];
     }
 
-    const selected: ComputedRef<string> = computed((): string => (props.mmr.min == 0 && props.mmr.max == 3000) ? "MMR" : `${props.mmr.min} - ${props.mmr.max}`)
+    const selected: ComputedRef<string> = computed((): string => (props.mmr.min == 0 && props.mmr.max == 3000) ? "MMR" : `${props.mmr.min} - ${props.mmr.max}`);
 
     function onMenuToggled(opened: boolean): void {
       // Only send a request to backend when closing menu and selecting a different mmr.

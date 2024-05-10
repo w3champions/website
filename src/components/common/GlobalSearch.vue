@@ -81,7 +81,7 @@ export default defineComponent({
     const search = ref<string>("");
     const isLoading = ref<boolean>(false);
     const menuOpened = ref<boolean>(false);
-    const SEARCH_DELAY: number = 500;
+    const SEARCH_DELAY = 500;
     const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
     const globalSearchStore = useGlobalSearchStore();
 
@@ -111,11 +111,11 @@ export default defineComponent({
       searchChangeHandler();
     }
 
-    function dispatchSearch(append: boolean = false) {
+    function dispatchSearch(append = false) {
       globalSearchStore.search({ searchText: search.value, append });
     }
 
-    function searchChangeHandler(append: boolean = false) {
+    function searchChangeHandler(append = false) {
       if (search.value && search.value.length >= 3) {
         isLoading.value = true;
         debouncedSearch(append);
