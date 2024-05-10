@@ -184,7 +184,6 @@ import { defineComponent, onMounted, PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
 import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -204,7 +203,6 @@ export default defineComponent({
   name: "CountryRankingsGrid",
   components: {
     RaceIcon,
-    PlayerIcon,
     SwordIcon,
     LeagueIcon,
     PlayerRankInfo,
@@ -329,9 +327,9 @@ export default defineComponent({
 
     onMounted(() => {
       initLeagueMap();
-    })
-    
-    var rankingsRef = toRefs(props).rankings;
+    });
+
+    const rankingsRef = toRefs(props).rankings;
     watch(rankingsRef, onRankingsChanged);
 
     function onRankingsChanged(newVal: CountryRanking[], oldVal: CountryRanking[]): void {
