@@ -36,7 +36,6 @@
                         v-if="isAddDialog"
                         @playerFound="playerFound"
                         class="mx-5"
-                        :clearSearchFromParent="clearPlayerSearchToggle"
                       ></player-search>
                       <v-text-field
                         v-else
@@ -119,6 +118,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePermissionStore } from "@/store/admin/permission/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 
 @Component({ components: { PlayerSearch } })
 export default class AdminPermissions extends Vue {
@@ -131,7 +131,7 @@ export default class AdminPermissions extends Vue {
   public mdiPencil = mdiPencil;
   private oauthStore = useOauthStore();
   private permissionStore = usePermissionStore();
-  public clearPlayerSearchToggle = false;
+  private playerSearchStore = usePlayerSearchStore();
 
   public availablePermissions = [
     { name: EPermission[EPermission.Permissions], value: EPermission.Permissions },
@@ -200,10 +200,6 @@ export default class AdminPermissions extends Vue {
     this.dialog = false;
   }
 
-  clearPlayerSearch() {
-    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
-  }
-
   get isValidationError(): boolean {
     return this.permissionStore.validationError !== "";
   }
@@ -248,7 +244,7 @@ export default class AdminPermissions extends Vue {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
     });
-    this.clearPlayerSearch();
+    this.playerSearchStore.clearPlayerSearch();
     this.validationError = "";
   }
 

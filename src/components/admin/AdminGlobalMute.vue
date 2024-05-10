@@ -128,6 +128,7 @@ import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 
@@ -136,6 +137,8 @@ export default class AdminGlobalMute extends Vue {
   public mdiDelete = mdiDelete;
   private adminStore = useAdminStore();
   private oauthStore = useOauthStore();
+  private playerSearchStore = usePlayerSearchStore();
+
   public headers = [
     {
       text: "Flo Ban Id",
@@ -232,6 +235,15 @@ export default class AdminGlobalMute extends Vue {
   playerFound(bTag: string): void {
     this.showConfirmation = true;
     this.player = bTag;
+  }
+
+  @Watch("dialog")
+  onDialogToggled(): void {
+    // Only trigger on dialog close, not dialog open
+    if (!this.dialog) {
+      this.searchCleared();
+      this.playerSearchStore.clearPlayerSearch();
+    }
   }
 }
 </script>

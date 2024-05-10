@@ -1,5 +1,3 @@
-import { PlayerProfile } from "@/store/player/types";
-
 import {
   AdminState,
   BannedPlayer,
@@ -11,7 +9,6 @@ import {
   QueueData,
 } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
-import ProfileService from "@/services/ProfileService";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
@@ -22,7 +19,6 @@ export const useAdminStore = defineStore("admin", {
     bannedPlayers: [],
     queuedata: [],
     availableProxies: [],
-    searchedPlayers: [],
     proxiesSetForSearchedPlayer: {} as ProxySettings,
     searchedBattletag: "",
     modifiedProxies: {
@@ -66,14 +62,6 @@ export const useAdminStore = defineStore("admin", {
       const availableProxies =
         await AdminService.getAvailableProxies(token);
       this.SET_AVAILABLEPROXIES(availableProxies);
-    },
-    async searchBnetTag(search: { searchText: string }) {
-      const searchedPlayers = await ProfileService.searchPlayer(search.searchText);
-      this.SET_SEARCH_FOR_BNET_TAG(searchedPlayers);
-    },
-    async clearSearch() {
-      this.SET_SEARCH_FOR_BNET_TAG([]);
-      this.SET_SEARCHED_PROXIES_FOR_BATTLETAG({} as ProxySettings);
     },
     async getProxiesForPlayer(battleTag: string): Promise<ProxySettings> {
       const oauthStore = useOauthStore();
@@ -146,9 +134,6 @@ export const useAdminStore = defineStore("admin", {
     },
     SET_AVAILABLEPROXIES(availableProxies: Proxy[]): void {
       this.availableProxies = availableProxies;
-    },
-    SET_SEARCH_FOR_BNET_TAG(searchedPlayers: PlayerProfile[]): void {
-      this.searchedPlayers = searchedPlayers;
     },
     SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies: ProxySettings): void {
       this.proxiesSetForSearchedPlayer = proxies;

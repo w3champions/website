@@ -20,7 +20,6 @@
         <player-search
           @searchCleared="searchCleared"
           @playerFound="playerFound"
-          :clearSearchFromParent="clearPlayerSearchToggle"
           classes="ml-5 mr-5"
         ></player-search>
       </v-card-text>
@@ -55,13 +54,14 @@ import { Component } from "vue-property-decorator";
 import { useClanStore } from "@/store/clan/store";
 import { mdiMagnify, mdiPencil } from "@mdi/js";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 
 @Component({ components: { PlayerSearch } })
 export default class InvitePlayerModal extends Vue {
   public mdiMagnify = mdiMagnify;
   public mdiPencil = mdiPencil;
   public player = "";
-  public clearPlayerSearchToggle = false;
+  private playerSearchStore = usePlayerSearchStore();
 
   public dialog = false;
   private clanStore = useClanStore();
@@ -81,7 +81,7 @@ export default class InvitePlayerModal extends Vue {
   public async invitePlayer(): Promise<void> {
     await this.clanStore.invitePlayer(this.player);
     await this.clanStore.retrievePlayersClan();
-    this.clearPlayerSearch();
+    this.playerSearchStore.clearPlayerSearch();
   }
 
   playerFound(bTag: string): void {
@@ -90,10 +90,6 @@ export default class InvitePlayerModal extends Vue {
 
   searchCleared(): void {
     this.player = "";
-  }
-
-  clearPlayerSearch() {
-    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
   }
 }
 </script>
