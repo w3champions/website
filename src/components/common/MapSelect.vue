@@ -36,7 +36,7 @@ import { mdiMap } from "@mdi/js";
 type MapSelectMap = {
   mapName: TranslateResult;
   key: string;
-}
+};
 
 export default defineComponent({
   name: "MapSelect",
