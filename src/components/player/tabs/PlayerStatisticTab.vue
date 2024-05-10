@@ -38,7 +38,7 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
-            :items="activeGameModes"
+            :items="activeGameModes()"
             item-text="name"
             item-value="id"
             v-model="selectedGameMode"
@@ -147,8 +147,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Watch, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component, Watch } from "vue-property-decorator";
+import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/types";
 import {
@@ -177,7 +178,7 @@ import { usePlayerStore } from "@/store/player/store";
     PlayerGameLengthStats,
   },
 })
-export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
+export default class PlayerStatisticTab extends Vue {
   private player = usePlayerStore();
 
   public selectedPatch = "All";
@@ -188,6 +189,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
   public selectedMapHeroWinRate = "Overall";
   public selectedGameLengthOpponentRace = ERaceEnum.TOTAL;
   public races = races;
+  public activeGameModes = activeGameModes;
   private overallStatsStore = useOverallStatsStore();
 
   get selectedSeason() {
@@ -220,7 +222,7 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
 
   async mounted(): Promise<void> {
     this.getMaps();
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
   }
 
   // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
@@ -257,11 +259,11 @@ export default class PlayerStatisticTab extends Mixins(GameModesMixin) {
     this.player.loadPlayerMmrRpTimeline();
   }
 
-  private async setTimelineMode(mode: EGameMode) {
+  public async setTimelineMode(mode: EGameMode) {
     this.player.SET_GAMEMODE(mode);
     this.player.loadPlayerMmrRpTimeline();
   }
-  private async setTimelineRace(race: ERaceEnum) {
+  public async setTimelineRace(race: ERaceEnum) {
     this.player.SET_RACE(race);
     this.player.loadPlayerMmrRpTimeline();
   }

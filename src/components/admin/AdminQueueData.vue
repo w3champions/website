@@ -39,8 +39,9 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import { QueueData } from "@/store/admin/types";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { Component, Watch, Mixins, Prop } from "vue-property-decorator";
 import { LocaleMessage } from "vue-i18n";
@@ -49,10 +50,10 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
 @Component({ components: {} })
-export default class AdminQueueData extends Mixins(GameModesMixin) {
+export default class AdminQueueData extends Vue {
   private oauthStore = useOauthStore();
   @Prop() disabledModes?: EGameMode[];
-  _intervalRefreshHandle?: number = undefined;
+  _intervalRefreshHandle?: NodeJS.Timeout = undefined;
   private adminStore = useAdminStore();
 
   get headers(): Array<unknown> {
@@ -120,7 +121,7 @@ export default class AdminQueueData extends Mixins(GameModesMixin) {
   }
 
   private async init(): Promise<void> {
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
 
     if (this.isAdmin) {
       await this.adminStore.loadQueueData(
@@ -154,7 +155,7 @@ export default class AdminQueueData extends Mixins(GameModesMixin) {
   }
 
   get gameModes(): Array<{ name: LocaleMessage; id: number }> {
-    let modes = this.activeGameModes;
+    let modes = activeGameModes();
 
     if (this.disabledModes) {
       modes = modes?.filter((x) => !this.disabledModes?.includes(x.id));
