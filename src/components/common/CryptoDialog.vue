@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" max-width="500" @click:outside="close">
+  <v-dialog v-model="show" max-width="500" @click:outside="show = false">
     <v-card>
       <v-card-title class="justify-center">
         {{ cryptoName }}
@@ -29,7 +29,7 @@
 
         <v-row class="mt-2">
           <v-spacer></v-spacer>
-          <v-btn @click="close">Close</v-btn>
+          <v-btn @click.stop="show = false">Close</v-btn>
           <v-spacer></v-spacer>
         </v-row>
       </v-container>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, WritableComputedRef } from "vue";
 import CopyButton from "./CopyButton.vue";
 
 export default defineComponent({
@@ -52,13 +52,18 @@ export default defineComponent({
     cryptoAddress: { type: String, required: true },
     value: { type: Boolean, required: true },
   },
-  setup(_props, context) {
-    function close(): void {
-      context.emit("input", false);
-    }
+  setup(props, context) {
+    const show: WritableComputedRef<boolean> = computed({
+      get(): boolean {
+        return props.value;
+      },
+      set(val: boolean): void {
+        context.emit("input", val);
+      },
+    });
 
     return {
-      close,
+      show,
     };
   },
 });
