@@ -129,6 +129,7 @@ import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 import isEmpty from "lodash/isEmpty";
@@ -143,6 +144,7 @@ export default class AdminLoungeMute extends Vue {
   public mdiDelete = mdiDelete;
   private oauthStore = useOauthStore();
   private loungeMuteStore = useLoungeMuteStore();
+  private playerSearchStore = usePlayerSearchStore();
 
   public headers = [
     { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
@@ -221,6 +223,15 @@ export default class AdminLoungeMute extends Vue {
   playerFound(bTag: string): void {
     this.showConfirmation = true;
     this.battleTag = bTag;
+  }
+
+  @Watch("dialog")
+  onDialogToggled(): void {
+    // Only trigger on dialog close, not dialog open
+    if (!this.dialog) {
+      this.searchCleared();
+      this.playerSearchStore.clearPlayerSearch();
+    }
   }
 }
 </script>

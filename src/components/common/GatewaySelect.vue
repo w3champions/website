@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, WritableComputedRef, ComputedRef } from "vue";
+import { defineComponent, computed, WritableComputedRef } from "vue";
 import { Gateways } from "@/store/ranking/types";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiEarth } from "@mdi/js";

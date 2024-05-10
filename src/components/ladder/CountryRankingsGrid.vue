@@ -64,7 +64,7 @@
                   class="player-avatar mr-1 alignRight race-icon"
                   :title="getTitleRace(item, index).toString()"
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
-                />
+                ></div>
 
                 <player-rank-info
                   :player-id="playerId"
@@ -180,12 +180,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent, onMounted, PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
-import { Component, Prop, Watch } from "vue-property-decorator";
 import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
@@ -198,32 +196,41 @@ import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiTwitch } from "@mdi/js";
+import { i18n } from "@/main";
 
-@Component({
+
+export default defineComponent({
+  name: "CountryRankingsGrid",
   components: {
     RaceIcon,
-    PlayerIcon,
     SwordIcon,
     LeagueIcon,
     PlayerRankInfo,
     CountryFlagExtended,
     LevelProgress,
   },
-})
-export default class CountryRankingsGrid extends Vue {
-  @Prop() rankings!: CountryRanking[];
-  @Prop() ongoingMatches!: OngoingMatches;
-  @Prop() selectedCountry!: string;
-  public mdiTwitch = mdiTwitch;
+  props: {
+    rankings: {
+      type: Array<CountryRanking> as PropType<CountryRanking[]>,
+      required: true,
+    },
+    ongoingMatches: {
+      type: Object as PropType<OngoingMatches>,
+      required: true,
+    },
+    selectedCountry: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const twitchStore = useTwitchStore();
+    const rankingsStore = useRankingStore();
+    const rootStateStore = useRootStateStore();
 
-  private twitchStore = useTwitchStore();
-  private rankingsStore = useRankingStore();
-  private rootStateStore = useRootStateStore();
-
-  get headers() {
-    return [
+    const headers = [
       {
-        text: this.$t("components_ladder_rankingsgrid.rank"),
+        text: i18n.t("components_ladder_rankingsgrid.rank"),
         align: "start",
         sortable: false,
         width: "25px",
@@ -232,7 +239,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.player"),
+        text: i18n.t("components_ladder_rankingsgrid.player"),
         align: "start",
         sortable: false,
         minWidth: "170px",
@@ -241,7 +248,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.level"),
+        text: i18n.t("components_ladder_rankingsgrid.level"),
         align: "end",
         sortable: false,
         width: "100px",
@@ -250,7 +257,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.race"),
+        text: i18n.t("components_ladder_rankingsgrid.race"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -259,7 +266,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.clan"),
+        text: i18n.t("components_ladder_rankingsgrid.clan"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -270,7 +277,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.wins"),
+        text: i18n.t("components_ladder_rankingsgrid.wins"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -279,7 +286,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.losses"),
+        text: i18n.t("components_ladder_rankingsgrid.losses"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -288,7 +295,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.total"),
+        text: i18n.t("components_ladder_rankingsgrid.total"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -297,7 +304,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.winrate"),
+        text: i18n.t("components_ladder_rankingsgrid.winrate"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -306,7 +313,7 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
       {
-        text: this.$t("components_ladder_rankingsgrid.mmr"),
+        text: i18n.t("components_ladder_rankingsgrid.mmr"),
         align: "end",
         sortable: false,
         width: "25px",
@@ -315,155 +322,161 @@ export default class CountryRankingsGrid extends Vue {
         },
       },
     ];
-  }
 
-  leagueMap: Map<number, League> = new Map();
+    const leagueMap = ref<Map<number, League>>(new Map());
 
-  get groupedRankings() {
-    return this.rankings;
-  }
+    onMounted(() => {
+      initLeagueMap();
+    });
 
-  mounted() {
-    this.initLeagueMap();
-  }
+    const rankingsRef = toRefs(props).rankings;
+    watch(rankingsRef, onRankingsChanged);
 
-  @Watch("rankings")
-  public onRankingsChanged(
-    newVal: CountryRanking[],
-    oldVal: CountryRanking[]
-  ): void {
-    if (!newVal) {
-      return;
+    function onRankingsChanged(newVal: CountryRanking[], oldVal: CountryRanking[]): void {
+      if (!newVal) {
+        return;
+      }
+
+      let triggerTwitchLookup = false;
+      if (newVal.length != oldVal.length) {
+        triggerTwitchLookup = true;
+      }
+
+      if (triggerTwitchLookup) {
+        getStreamStatus();
+      }
+
+      initLeagueMap();
     }
 
-    let triggerTwitchLookup = false;
-    if (newVal.length != oldVal.length) {
-      triggerTwitchLookup = true;
-    }
-
-    if (triggerTwitchLookup) {
-      this.getStreamStatus();
-    }
-
-    this.initLeagueMap();
-  }
-
-  async getStreamStatus(): Promise<void> {
-    const twitchNames = flatMap(this.rankings, (cr) => cr.ranks).map(
-      (r) => r.playersInfo[0].twitchName
-    );
-
-    if (twitchNames.length > 0) {
-      await this.twitchStore.getStreamStatus(twitchNames);
-    }
-  }
-
-  // methods
-  initLeagueMap() {
-    const league = this.rankingsStore.ladders?.filter(
-      (l) =>
-        l.gateway === this.rootStateStore.gateway &&
-        l.gameMode === this.rankingsStore.gameMode &&
-        l.season === this.rankingsStore.selectedSeason.id
-    )[0];
-    this.leagueMap = new Map(league?.leagues.map((l) => [l.id, l]));
-  }
-
-  public getPlayerIcon(ranking: Ranking, playerIndex: number): string {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.getRaceIcon(ERaceEnum.RANDOM);
-    const playerInfo = playersInfo[playerIndex];
-    if (CountryRankingsGrid.hasSelectedIcon(playerInfo)) {
-      return getAvatarUrl(
-        playerInfo.selectedRace,
-        playerInfo.pictureId,
-        playerInfo.isClassicPicture
+    async function getStreamStatus(): Promise<void> {
+      const twitchNames = flatMap(props.rankings, (cr) => cr.ranks).map(
+        (r) => r.playersInfo[0].twitchName
       );
-    } else {
-      return this.getRaceIcon(playerInfo.calculatedRace);
-    }
-  }
 
-  public getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.$t("races.RANDOM");
-    const playerInfo = playersInfo[playerIndex];
-    if (CountryRankingsGrid.hasSelectedIcon(playerInfo) && playerInfo.selectedRace <= ERaceEnum.UNDEAD) {
-      return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
-    } else {
-      return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
-    }
-  }
-
-  private static hasSelectedIcon(playerInfo: PlayerInfo) {
-    if (
-      playerInfo.selectedRace !== undefined &&
-      playerInfo.selectedRace != null &&
-      playerInfo.pictureId !== undefined &&
-      playerInfo.pictureId != null
-    ) {
-      return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
-    }
-    return false;
-  }
-
-  getRaceIcon(race: ERaceEnum) {
-    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
-  }
-
-  isTwitchLive(ranking: Ranking): boolean {
-    const twitchName = ranking.playersInfo[0].twitchName;
-    const streamData = this.twitchStore.twitchStreamResponse.data;
-    if (twitchName && streamData) {
-      for (let i = 0; i < streamData.length; i++) {
-        const stream = streamData[i];
-        if (stream && stream.user_name.toLowerCase() == twitchName.toLowerCase()) {
-          return true;
-        }
+      if (twitchNames.length > 0) {
+        await twitchStore.getStreamStatus(twitchNames);
       }
     }
-    return false;
-  }
 
-  isCurrentlyLive(playerIds: PlayerId[]): boolean {
-    if (!this.ongoingMatches) {
+    function initLeagueMap() {
+      const league = rankingsStore.ladders?.filter(
+        (l) =>
+          l.gateway === rootStateStore.gateway &&
+          l.gameMode === rankingsStore.gameMode &&
+          l.season === rankingsStore.selectedSeason.id
+      )[0];
+      leagueMap.value = new Map(league?.leagues.map((l) => [l.id, l]));
+    }
+
+    function getPlayerIcon(ranking: Ranking, playerIndex: number): string {
+      const playersInfo = ranking.playersInfo;
+      if (!playersInfo) return getRaceIcon(ERaceEnum.RANDOM);
+      const playerInfo = playersInfo[playerIndex];
+      if (hasSelectedIcon(playerInfo)) {
+        return getAvatarUrl(
+          playerInfo.selectedRace,
+          playerInfo.pictureId,
+          playerInfo.isClassicPicture
+        );
+      } else {
+        return getRaceIcon(playerInfo.calculatedRace);
+      }
+    }
+
+    function getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+      const playersInfo = ranking.playersInfo;
+      if (!playersInfo) return i18n.t("races.RANDOM");
+      const playerInfo = playersInfo[playerIndex];
+      if (hasSelectedIcon(playerInfo) && playerInfo.selectedRace <= ERaceEnum.UNDEAD) {
+        return i18n.t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
+      } else {
+        return i18n.t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
+      }
+    }
+
+    function hasSelectedIcon(playerInfo: PlayerInfo) {
+      if (
+        playerInfo.selectedRace !== undefined &&
+        playerInfo.selectedRace != null &&
+        playerInfo.pictureId !== undefined &&
+        playerInfo.pictureId != null
+      ) {
+        return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
+      }
       return false;
     }
 
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this.ongoingMatches[firstPlayer] as {
-      players: string[];
-    };
-
-    if (foundByFirstPlayer) {
-      let allMatch = true;
-      playerIds.forEach((p) => {
-        allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
-      });
-
-      return allMatch;
+    function getRaceIcon(race: ERaceEnum) {
+      return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
     }
 
-    return false;
-  }
-
-  getLiveOpponent(playerIds: PlayerId[]): boolean | string {
-    if (!this.ongoingMatches) {
+    function isTwitchLive(ranking: Ranking): boolean {
+      const twitchName = ranking.playersInfo[0].twitchName;
+      const streamData = twitchStore.twitchStreamResponse.data;
+      if (twitchName && streamData) {
+        for (let i = 0; i < streamData.length; i++) {
+          const stream = streamData[i];
+          if (stream && stream.user_name.toLowerCase() == twitchName.toLowerCase()) {
+            return true;
+          }
+        }
+      }
       return false;
     }
 
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this.ongoingMatches[firstPlayer] as {
-      players: string[];
-      opponents: string[];
-    };
-    if (foundByFirstPlayer) {
-      return foundByFirstPlayer.opponents.join(",");
+    function isCurrentlyLive(playerIds: PlayerId[]): boolean {
+      if (!props.ongoingMatches) {
+        return false;
+      }
+
+      const firstPlayer = playerIds[0].battleTag;
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
+        players: string[];
+      };
+
+      if (foundByFirstPlayer) {
+        let allMatch = true;
+        playerIds.forEach((p) => {
+          allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
+        });
+
+        return allMatch;
+      }
+
+      return false;
     }
 
-    return "";
-  }
-}
+    function getLiveOpponent(playerIds: PlayerId[]): boolean | string {
+      if (!props.ongoingMatches) {
+        return false;
+      }
+
+      const firstPlayer = playerIds[0].battleTag;
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
+        players: string[];
+        opponents: string[];
+      };
+      if (foundByFirstPlayer) {
+        return foundByFirstPlayer.opponents.join(",");
+      }
+
+      return "";
+    }
+
+    return {
+      mdiTwitch,
+      leagueMap,
+      headers,
+      getTitleRace,
+      getPlayerIcon,
+      isTwitchLive,
+      isCurrentlyLive,
+      getLiveOpponent,
+    };
+  },
+});
+
 </script>
 
 <style lang="scss" scoped>

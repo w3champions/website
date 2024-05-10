@@ -52,7 +52,7 @@
             </v-list-item-content>
           </template>
           <template v-slot:append-item>
-            <div v-intersect="endIntersect" />
+            <div v-intersect="endIntersect"></div>
           </template>
         </v-autocomplete>
       </v-card-title>
@@ -61,112 +61,123 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref, watch } from "vue";
 import debounce from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
+import { useRouter } from "vue-router/composables";
 import { mdiMagnify } from "@mdi/js";
 
-@Component({
+export default defineComponent({
+  name: "GlobalSearch",
   components: {
     SeasonBadge,
   },
-})
-export default class GlobalSearch extends Vue {
-  public searchModel: PlayerSearchData = {} as PlayerSearchData;
-  public search = "";
-  public isLoading = false;
-  public menuOpened = false;
-  public mdiMagnify = mdiMagnify;
+  setup() {
+    const router = useRouter();
+    const searchModel = ref<PlayerSearchData>({} as PlayerSearchData);
+    const search = ref<string>("");
+    const isLoading = ref<boolean>(false);
+    const menuOpened = ref<boolean>(false);
+    const SEARCH_DELAY = 500;
+    const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
+    const globalSearchStore = useGlobalSearchStore();
 
-  private static SEARCH_DELAY = 500;
-  private debouncedSearch = debounce(this.dispatchSearch, GlobalSearch.SEARCH_DELAY);
-  private globalSearchStore = useGlobalSearchStore();
+    watch(searchModel, onSearchModelChanged);
 
-  // Handler when selecting a player from the list
-  @Watch("searchModel")
-  public onSearchModelChanged(player: PlayerSearchData) {
-    // We cleared the input, ignore
-    if (!player?.battleTag) return;
+    // Handler when selecting a player from the list
+    function onSearchModelChanged(player: PlayerSearchData) {
+      // We cleared the input, ignore
+      if (!player?.battleTag) return;
 
-    // Nativate to the selected player's profile
-    this.$router.push({
-      path: getProfileUrl(player.battleTag),
-    }).catch(() => null);
+      // Nativate to the selected player's profile
+      router.push({
+        path: getProfileUrl(player.battleTag),
+      }).catch(() => null);
 
-    // Since the global search is present on all pages, we need to manually close it
-    this.menuOpened = false;
+      // Since the global search is present on all pages, we need to manually close it
+      menuOpened.value = false;
 
-    // Reset the global search state
-    this.globalSearchStore.clearSearch();
-    this.searchModel = {} as PlayerSearchData;
-  }
-
-  @Watch("search")
-  public onSearchChanged() {
-    this.searchChangeHandler();
-  }
-
-  private dispatchSearch(append = false) {
-    this.globalSearchStore.search({ searchText: this.search, append });
-  }
-
-  private searchChangeHandler(append = false) {
-    if (this.search && this.search.length >= 3) {
-      this.isLoading = true;
-      this.debouncedSearch(append);
-    } else {
-      this.globalSearchStore.clearSearch();
-      this.isLoading = false;
-      // Prevent previous calls from executing
-      this.debouncedSearch.clear();
-    }
-  }
-
-  // Reached the end of the list, try to load more players
-  public endIntersect(_entries: unknown, _observer: unknown, isIntersecting: boolean) {
-    if (isIntersecting && !this.isLoading && this.allowAppend) {
-      this.searchChangeHandler(true);
-    }
-  }
-
-  get noDataText(): string {
-    if (!this.search || this.search.length < 3) {
-      return "Type at least 3 letters";
-    }
-    if (this.isLoading) {
-      return "Loading...";
+      // Reset the global search state
+      globalSearchStore.clearSearch();
+      searchModel.value = {} as PlayerSearchData;
     }
 
-    return "No player found";
-  }
+    watch(search, onSearchChanged);
 
-  getPlayerAvatarUrl(player: PlayerSearchData) {
-    const pfp = player.profilePicture;
+    function onSearchChanged() {
+      searchChangeHandler();
+    }
 
-    return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
-  }
+    function dispatchSearch(append = false) {
+      globalSearchStore.search({ searchText: search.value, append });
+    }
 
-  get players(): PlayerSearchData[] {
-    return this.globalSearchStore.players;
-  }
+    function searchChangeHandler(append = false) {
+      if (search.value && search.value.length >= 3) {
+        isLoading.value = true;
+        debouncedSearch(append);
+      } else {
+        globalSearchStore.clearSearch();
+        isLoading.value = false;
+        // Prevent previous calls from executing
+        debouncedSearch.clear();
+      }
+    }
 
-  get allowAppend(): boolean {
-    return this.globalSearchStore.hasMore;
-  }
+    // Reached the end of the list, try to load more players
+    function endIntersect(_entries: unknown, _observer: unknown, isIntersecting: boolean) {
+      if (isIntersecting && !isLoading.value && allowAppend()) {
+        searchChangeHandler(true);
+      }
+    }
 
-  @Watch("players")
-  public onPlayersChanged() {
-    // If the players array has changed it means the global search request finished
-    this.isLoading = false;
-  }
-}
+    const noDataText: ComputedRef<string> = computed((): string => {
+      if (!search.value || search.value.length < 3) {
+        return "Type at least 3 letters";
+      }
+      if (isLoading.value) {
+        return "Loading...";
+      }
+
+      return "No player found";
+    });
+
+    const players: ComputedRef<PlayerSearchData[]> = computed((): PlayerSearchData[] => globalSearchStore.players);
+
+    function getPlayerAvatarUrl(player: PlayerSearchData): string {
+      const pfp = player.profilePicture;
+      return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
+    }
+
+    const allowAppend = (): boolean => globalSearchStore.hasMore;
+
+    watch(players, onPlayersChanged);
+
+    function onPlayersChanged() {
+      // If the players array has changed it means the global search request finished
+      isLoading.value = false;
+    }
+
+    return {
+      menuOpened,
+      searchModel,
+      search,
+      noDataText,
+      isLoading,
+      players,
+      getPlayerAvatarUrl,
+      endIntersect,
+      mdiMagnify,
+    };
+  },
+});
+
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .global-search {
   z-index: 1000 !important;
   .autocomplete-wrapper {

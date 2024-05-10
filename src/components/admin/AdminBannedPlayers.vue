@@ -48,7 +48,6 @@
                         v-if="isAddDialog"
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
-                        :clearSearchFromParent="clearPlayerSearchToggle"
                       ></player-search>
                       <v-text-field
                         v-else
@@ -173,6 +172,7 @@ import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
@@ -185,8 +185,8 @@ export default class AdminBannedPlayers extends Vue {
   public editedIndex = -1;
   public tableSearch = "";
   public foundPlayer = "";
-  public clearPlayerSearchToggle = false;
   private adminStore = useAdminStore();
+  private playerSearchStore = usePlayerSearchStore();
   public mdiDelete = mdiDelete;
   public mdiMagnify = mdiMagnify;
   public mdiPencil = mdiPencil;
@@ -243,11 +243,6 @@ export default class AdminBannedPlayers extends Vue {
 
   get isValidationError(): boolean {
     return this.adminStore.banValidationError !== "";
-  }
-
-  get searchedPlayers() {
-    return this.adminStore.searchedPlayers
-      .map((player) => player.battleTag);
   }
 
   get author() {
@@ -314,7 +309,7 @@ export default class AdminBannedPlayers extends Vue {
       this.close();
       await this.loadBanList();
       if (this.isAddDialog) {
-        this.clearPlayerSearch();
+        this.playerSearchStore.clearPlayerSearch();
       }
     }
   }
@@ -344,11 +339,7 @@ export default class AdminBannedPlayers extends Vue {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
     });
-    this.clearPlayerSearch();
-  }
-
-  clearPlayerSearch() {
-    this.clearPlayerSearchToggle = !this.clearPlayerSearchToggle;
+    this.playerSearchStore.clearPlayerSearch();
   }
 
   @Watch("dialog")
@@ -357,6 +348,7 @@ export default class AdminBannedPlayers extends Vue {
     if (!this.dialog) {
       this.adminStore.resetBanValidationMessage();
       this.resetDialog();
+      this.playerSearchStore.clearPlayerSearch();
     }
   }
 

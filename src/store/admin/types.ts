@@ -1,7 +1,6 @@
 import { PlayerOverview } from "@/store/ranking/types";
 import { EChatScope } from "../common/types";
 import { EColors } from "../types";
-import { PlayerProfile } from "@/store/player/types";
 import { EPermission } from "./permission/types";
 
 export type AdminState = {
@@ -9,7 +8,6 @@ export type AdminState = {
   bannedPlayers: BannedPlayer[];
   queuedata: QueueData[];
   availableProxies: Proxy[];
-  searchedPlayers: PlayerProfile[];
   proxiesSetForSearchedPlayer: ProxySettings;
   searchedBattletag: string;
   modifiedProxies: ProxySettings;
