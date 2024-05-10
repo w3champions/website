@@ -37,45 +37,57 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
+import { i18n } from "@/main";
 
-@Component({})
-export default class SignInDialog extends Vue {
-  @Prop() value!: boolean;
-
-  get gateways() {
-    return [
+export default defineComponent({
+  name: "SignInDialog",
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup: (props, context) => {
+    const gateways = [
       {
         id: BnetOAuthRegion.eu,
-        name: this.$t("gatewayNames.Europe"),
+        name: i18n.t("gatewayNames.Europe"),
         uri: "https://eu.battle.net",
       },
       {
         id: BnetOAuthRegion.cn,
-        name: this.$t("gatewayNames.China"),
+        name: i18n.t("gatewayNames.China"),
         uri: "https://www.battlenet.com.cn",
       },
     ];
-  }
 
-  get show(): boolean {
-    return this.value;
-  }
-
-  set show(value: boolean) {
-    this.$emit("input", value);
-  }
-
-  signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
-    this.$emit("region-change", {
-      region: id,
-      done: () => {
-        location.href = `${uri}/oauth/authorize?region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
+    const show: WritableComputedRef<boolean> = computed({
+      get(): boolean {
+        return props.value;
+      },
+      set(val: boolean): void {
+        context.emit("input", val);
       },
     });
-  }
-}
+
+    function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
+      context.emit("region-change", {
+        region: id,
+        done: () => {
+          location.href = `${uri}/oauth/authorize?region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
+        },
+      });
+    }
+
+    return {
+      gateways,
+      signIn,
+      show,
+    };
+  },
+});
+
 </script>
