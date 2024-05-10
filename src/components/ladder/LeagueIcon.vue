@@ -11,7 +11,8 @@ export default defineComponent({
   props: {
     league: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {
