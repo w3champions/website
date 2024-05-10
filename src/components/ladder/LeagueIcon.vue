@@ -1,23 +1,26 @@
 <template>
-  <img :src="leagueIcon()" class="league-icon" />
+  <img :src="leagueIcon" class="league-icon" />
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent } from "vue";
 
-@Component({})
-export default class LeagueIcon extends Vue {
-  @Prop() league!: number;
-
-  leagueIcon() {
-    if (this.league != undefined) {
-      return `/assets/leagueIcons/${this.league}.png`;
-    }
-
-    return "";
-  }
-}
+export default defineComponent({
+  name: "LeagueIcon",
+  components: {},
+  props: {
+    league: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
+    const leagueIcon: ComputedRef<string> = computed((): string => props.league !== undefined ? `/assets/leagueIcons/${props.league}.png` : "");
+    return {
+      leagueIcon,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
