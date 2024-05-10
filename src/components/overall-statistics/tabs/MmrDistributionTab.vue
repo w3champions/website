@@ -16,7 +16,7 @@
           <v-select
             v-model="selectedGameMode"
             class="over-chart-select-box"
-            :items="activeGameModes"
+            :items="activeGameModes()"
             item-text="name"
             item-value="id"
             @change="gameModeChanged"
@@ -55,8 +55,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
+import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";
@@ -67,18 +68,21 @@ import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({
   components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
 })
-export default class PlayerActivityTab extends Mixins(GameModesMixin) {
+export default class PlayerActivityTab extends Vue {
   private oauthStore = useOauthStore();
   private overallStatsStore = useOverallStatsStore();
   public selectedSeason: Season = { id: 1 };
   public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
   public selectedGateWay: Gateways = Gateways.Europe;
   public loadingData = true;
+  public activeGameModes = activeGameModes;
   private player = usePlayerStore();
+  private rankingsStore = useRankingStore();
 
   get seasons() {
     return this.rankingsStore.seasons;
@@ -132,7 +136,7 @@ export default class PlayerActivityTab extends Mixins(GameModesMixin) {
   }
 
   private async init() {
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
     await this.rankingsStore.retrieveSeasons();
     await this.setSelectedSeason(this.seasons[0]);
   }

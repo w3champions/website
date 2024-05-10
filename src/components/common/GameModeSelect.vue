@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
-        {{ gameModeName }}
+        {{ gameModeName() }}
       </v-btn>
     </template>
     <v-card>
@@ -18,7 +18,7 @@
         <v-divider></v-divider>
         <v-list dense>
           <v-list-item
-            v-for="mode in gameModes"
+            v-for="mode in gameModes()"
             :key="mode.id"
             @click="selectGameMode(mode.id)"
           >
@@ -33,50 +33,65 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import { defineComponent, PropType } from "vue";
+import { activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { LocaleMessage } from "vue-i18n";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
 
-@Component({})
-export default class GameModeSelect extends Mixins(GameModesMixin) {
-  @Prop() gameMode?: EGameMode;
-  @Prop() disabledModes?: EGameMode[];
-  public mdiControllerClassic = mdiControllerClassic;
+export default defineComponent({
+  name: "GameModeSelect",
+  components: {},
+  props: {
+    gameMode: {
+      type: Number as PropType<EGameMode>,
+      required: false,
+    },
+    disabledModes: {
+      type: Array<EGameMode> as PropType<EGameMode[]>,
+      required: false,
+    }
+  },
+  setup: (props, context) => {
+    function gameModes(): Array<{ name: LocaleMessage; id: number }> {
+      let modes = activeGameModesWithAT();
 
-  async mounted(): Promise<void> {
-    await this.loadActiveGameModes();
-  }
+      if (props.disabledModes) {
+        modes = modes?.filter((x) => !props.disabledModes?.includes(x.id));
+      }
 
-  get gameModes(): Array<{ name: LocaleMessage; id: number }> {
-    let modes = this.activeGameModesWithAT;
-
-    if (this.disabledModes) {
-      modes = modes?.filter((x) => !this.disabledModes?.includes(x.id));
+      return modes;
     }
 
-    return modes;
-  }
+    function gameModeName(): LocaleMessage {
+      if (!props.gameMode) {
+        return "";
+      }
 
-  get gameModeName(): LocaleMessage {
-    if (!this.gameMode) {
-      return "";
+      const mode = activeGameModesWithAT()?.filter((g) => g.id == props.gameMode)[0];
+
+      if (!mode) {
+        return "Not Supported";
+      }
+
+      return mode.name;
     }
 
-    const mode = this.activeGameModesWithAT?.filter((g) => g.id == this.gameMode)[0];
-
-    if (!mode) {
-      return "Not Supported";
+    function selectGameMode(gameMode: EGameMode): void {
+      context.emit("gameModeChanged", gameMode);
     }
 
-    return mode.name;
-  }
-
-  public selectGameMode(gameMode: EGameMode): void {
-    this.$emit("gameModeChanged", gameMode);
-  }
-}
+    return {
+      mdiControllerClassic,
+      gameModes,
+      gameModeName,
+      selectGameMode,
+    };
+  },
+  mounted: async (): Promise<void> => {
+    await loadActiveGameModes();
+  },
+});
 </script>
 
 <style></style>

@@ -22,7 +22,7 @@
         <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
-            :items="activeGameModesWithAT"
+            :items="activeGameModesWithAT()"
             item-text="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
@@ -79,26 +79,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { Ranking } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
+import { useRankingStore } from "@/store/ranking/store";
 
 @Component({ components: { MatchesGrid, PlayerSearch } })
-export default class PlayerMatchesTab extends Mixins(GameModesMixin) {
+export default class PlayerMatchesTab extends Vue {
   @Prop() public id!: string;
   public isLoadingMatches = false;
   public gameModeEnums = EGameMode;
   public raceEnums = ERaceEnum;
   public filtersVisible = false;
   public foundPlayer = "";
+  public activeGameModesWithAT = activeGameModesWithAT;
   private player = usePlayerStore();
+  private rankingsStore = useRankingStore();
 
   async mounted(): Promise<void> {
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
   }
 
   async playerFound(bTag: string): Promise<void> {

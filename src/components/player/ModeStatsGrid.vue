@@ -50,8 +50,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+import { AT_modes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -61,7 +62,7 @@ import isEmpty from "lodash/isEmpty";
 @Component({
   components: { RaceIcon, LevelProgress },
 })
-export default class ModeStatsGrid extends Mixins(GameModesMixin) {
+export default class ModeStatsGrid extends Vue {
   @Prop() public stats!: ModeStat[];
 
   public gameModeEnums = EGameMode;
@@ -72,7 +73,7 @@ export default class ModeStatsGrid extends Mixins(GameModesMixin) {
     if (AT_stats.length === 0) return this.sortByName(this.stats);
 
     // Arrange AT stats in separate arrays for each AT mode.
-    const AT_arranged = this.AT_modes.map((AT_mode) => AT_stats.filter((modeStat) => AT_mode == modeStat.gameMode));
+    const AT_arranged = AT_modes().map((AT_mode) => AT_stats.filter((modeStat) => AT_mode == modeStat.gameMode));
 
     // Filter out AT modes that haven't been played, sort by ranking points and get the stat with the highest rank.
     const topAtStats = AT_arranged
@@ -93,7 +94,7 @@ export default class ModeStatsGrid extends Mixins(GameModesMixin) {
   }
 
   private isAtMode(mode: EGameMode): boolean {
-    return this.AT_modes.includes(mode);
+    return AT_modes().includes(mode);
   }
 
   private sortByName(mode: ModeStat[]): ModeStat[] {

@@ -41,8 +41,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
+import { activeMeleeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
@@ -60,18 +61,18 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
     PopularGameTimeChart,
   },
 })
-export default class HeroTab extends Mixins(GameModesMixin) {
+export default class HeroTab extends Vue {
   public selectedHeroesPlayedPick = 0;
   public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
   private overallStatsStore = useOverallStatsStore();
 
   async mounted() {
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
     await this.overallStatsStore.loadPlayedHeroes();
   }
 
   get gameModes() {
-    return this.activeMeleeGameModesWithAT.filter((x) => x.id !== EGameMode.GM_4ON4_AT);
+    return activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT);
   }
 
   get picks() {

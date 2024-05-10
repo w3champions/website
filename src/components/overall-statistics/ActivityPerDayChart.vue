@@ -2,8 +2,9 @@
   <line-chart :chart-data="gameHourChartData" />
 </template>
 <script lang="ts">
-import { Component, Prop, Mixins } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+import { activeGameModes } from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
 import { ChartData, ScriptableContext } from "chart.js";
@@ -13,7 +14,7 @@ import { parseJSON } from "date-fns";
 @Component({
   components: { LineChart },
 })
-export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
+export default class ActivityPerDayChart extends Vue {
   @Prop() public gameDays!: GameDayPerMode[];
   @Prop() public selectedGameMode!: EGameMode;
 
@@ -31,7 +32,7 @@ export default class ActivityPerDayChart extends Mixins(GameModesMixin) {
       datasets: this.gameDays
         .filter((c) => {
           // Filter out inactive gamemodes, but show total games, which is EGameMode.UNDEFINED.
-          return this.activeGameModes
+          return activeGameModes()
             .map((m) => m.id)
             .includes(c.gameMode) || c.gameMode === EGameMode.UNDEFINED;
         })

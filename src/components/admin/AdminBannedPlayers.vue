@@ -165,8 +165,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from "vue-property-decorator";
-import GameModesMixin from "@/mixins/GameModesMixin";
+import Vue from "vue";
+import { Component, Watch } from "vue-property-decorator";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -177,7 +178,7 @@ import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 
 @Component({ components: { PlayerSearch } })
-export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
+export default class AdminBannedPlayers extends Vue {
   private oauthStore = useOauthStore();
   public dialog = false;
   public dateMenu = false;
@@ -203,23 +204,23 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
   ];
 
   getGameModeName(id: EGameMode) {
-    return this.activeGameModesWithAT.find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
+    return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
   }
 
   // For a new ban, only allow active game modes to be chosen.
   // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
   get selectableGameModes() {
     const bannedModesForEditedItem = this.editedItem.gameModes;
-    const activeModeIds = this.activeGameModes.map((mode) => mode.id);
+    const activeModeIds = activeGameModes().map((mode) => mode.id);
     const bannedInactiveModesForEditedItem = bannedModesForEditedItem
       .filter((mode) => !activeModeIds.includes(mode))
       .map((id) => {
         return {
           id,
-          name: this.$t(`gameModes.${EGameMode[id]}`)
+          name: `gameModes.${EGameMode[id]}`
         };
       });
-    const activeModes = this.activeGameModes;
+    const activeModes = activeGameModes();
 
     return activeModes.concat(bannedInactiveModesForEditedItem);
   }
@@ -335,7 +336,7 @@ export default class AdminBannedPlayers extends Mixins(GameModesMixin) {
 
   async init(): Promise<void> {
     await this.loadBanList();
-    await this.loadActiveGameModes();
+    await loadActiveGameModes();
   }
 
   resetDialog(): void {
