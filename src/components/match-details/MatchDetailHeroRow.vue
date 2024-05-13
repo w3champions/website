@@ -21,23 +21,23 @@
       <match-highlights
         :left="true"
         :not-color-winner="notColorWinner"
-        :experience="getDescription(scoresOfWinner.expGained)"
-        :hero-kills="getDescription(scoresOfWinner.heroesKilled)"
-        :items-collected="getDescription(scoresOfWinner.itemsObtained)"
-        :hero-kills-opponent="getDescription(scoresOfLoser.heroesKilled)"
-        :experience-opponent="getDescription(scoresOfLoser.expGained)"
-        :items-collected-opponent="getDescription(scoresOfLoser.itemsObtained)"
+        :experience="scoresOfWinner.expGained"
+        :hero-kills="scoresOfWinner.heroesKilled"
+        :items-collected="scoresOfWinner.itemsObtained"
+        :hero-kills-opponent="scoresOfLoser.heroesKilled"
+        :experience-opponent="scoresOfLoser.expGained"
+        :items-collected-opponent="scoresOfLoser.itemsObtained"
       />
     </v-col>
     <v-col cols="2">
       <match-highlights
         :not-color-winner="notColorWinner"
-        :experience="getDescription(scoresOfLoser.expGained)"
-        :hero-kills="getDescription(scoresOfLoser.heroesKilled)"
-        :items-collected="getDescription(scoresOfLoser.itemsObtained)"
-        :hero-kills-opponent="getDescription(scoresOfWinner.heroesKilled)"
-        :experience-opponent="getDescription(scoresOfWinner.expGained)"
-        :items-collected-opponent="getDescription(scoresOfWinner.itemsObtained)"
+        :experience="scoresOfLoser.expGained"
+        :hero-kills="scoresOfLoser.heroesKilled"
+        :items-collected="scoresOfLoser.itemsObtained"
+        :hero-kills-opponent="scoresOfWinner.heroesKilled"
+        :experience-opponent="scoresOfWinner.expGained"
+        :items-collected-opponent="scoresOfWinner.itemsObtained"
       />
     </v-col>
     <v-col cols="1">
@@ -71,7 +71,8 @@ export default defineComponent({
   props: {
     notColorWinner: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
     heroesOfWinner: {
       type: Array<Hero>,
@@ -93,13 +94,6 @@ export default defineComponent({
       false: true,
       default: undefined,
     },
-  },
-  setup() {
-    const getDescription = (value?: number) => value ?? "N/A";
-
-    return {
-      getDescription,
-    };
   },
 });
 </script>
