@@ -148,27 +148,27 @@
                 <v-col>
                   {{ label }}
                 </v-col>
-                <v-col v-for="player in ffaPlayers" :key="player.battleTag">
+                <v-col v-for="player in ffaPlayers" :key="player?.battleTag">
                   <div v-if="index === 0">
-                    {{ player.battleTag.split("#")[0] }}
+                    {{ player?.battleTag.split("#")[0] }}
                   </div>
                   <div v-if="index === 1">
-                    {{ player.unitScore.unitsKilled }}
+                    {{ player?.unitScore.unitsKilled }}
                   </div>
                   <div v-if="index === 2">
-                    {{ player.unitScore.unitsProduced }}
+                    {{ player?.unitScore.unitsProduced }}
                   </div>
                   <div v-if="index === 3">
-                    {{ player.resourceScore.goldCollected }}
+                    {{ player?.resourceScore.goldCollected }}
                   </div>
                   <div v-if="index === 4">
-                    {{ player.resourceScore.lumberCollected }}
+                    {{ player?.resourceScore.lumberCollected }}
                   </div>
                   <div v-if="index === 5">
-                    {{ player.resourceScore.goldUpkeepLost }}
+                    {{ player?.resourceScore.goldUpkeepLost }}
                   </div>
                   <div v-if="index === 6">
-                    {{ player.unitScore.largestArmy }}
+                    {{ player?.unitScore.largestArmy }}
                   </div>
                 </v-col>
               </v-row>

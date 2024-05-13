@@ -90,7 +90,7 @@ export default defineComponent({
     const itemsCollectedComparison = ref<string>(comparison(props.itemsCollectedOpponent, props.itemsCollected));
     const experienceComparison = ref<string>(comparison(props.experienceOpponent, props.experience));
 
-    function comparison(opponent: number, me: number) {      
+    function comparison(opponent: number, me: number) {
       if (props.notColorWinner || hasFaultyData(opponent, me)) return "";
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
@@ -102,7 +102,7 @@ export default defineComponent({
     }
 
     const getText = (value?: number): number | string => value ?? "N/A";
-    
+
     return {
       mdiSkull,
       mdiChevronTripleUp,
