@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import { i18n } from "@/main";

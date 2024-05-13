@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType } from "vue";
 import { Hero, HeroScore } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
@@ -98,7 +98,7 @@ export default defineComponent({
     const getDescription = (value?: number) => value ?? "N/A";
 
     return {
-      getDescription
+      getDescription,
     };
   },
 });
