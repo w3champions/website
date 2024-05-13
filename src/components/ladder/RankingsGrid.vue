@@ -25,10 +25,10 @@
       <tbody>
         <tr
           :id="`listitem_${item.rankNumber}`"
-          v-for="item in rankings"
+          v-for="item in rankingsRef"
           :key="item.player.id"
           :class="{
-            searchedItem: item.player.id === selectedRankBattleTag,
+            searchedItem: item.player.id === selectedRankBattleTag(),
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
@@ -45,12 +45,8 @@
                 :style="{
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
                 }"
-              />
-              <player-rank-info
-                :player-id="playerId"
-                :clan-id="item.playersInfo[index].clanId"
-                :player-race="item.race"
-              />
+              ></div>
+              <player-rank-info :player-id="playerId" />
               <div
                 class="country-flag__container ml-1"
                 v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
@@ -135,12 +131,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { computed, defineComponent, PropType, ref, toRefs, watch, WritableComputedRef } from "vue";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
+import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import { useTwitchStore } from "@/store/twitch/store";
-import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
@@ -149,34 +143,55 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
+import { i18n } from "@/main";
+import { useRankingStore } from "@/store/ranking/store";
+import { useVuetify } from "@/plugins/vuetify";
 
-@Component({
+export default defineComponent({
+  name: "RankingsGrid",
   components: {
     RaceIcon,
-    PlayerIcon,
     SwordIcon,
     PlayerRankInfo,
     CountryFlagExtended,
     LevelProgress,
   },
-})
-export default class RankingsGrid extends Vue {
-  @Prop() rankings!: Ranking[];
-  @Prop() ongoingMatches!: OngoingMatches;
-  @Prop() selectedRank!: Ranking;
-  public mdiChevronUp = mdiChevronUp;
-  public mdiChevronDown = mdiChevronDown;
-  public mdiTwitch = mdiTwitch;
+  props: {
+    rankings: {
+      type: Array<Ranking>,
+        required: true,
+      },
+      ongoingMatches: {
+        type: Object as PropType<OngoingMatches>,
+      required: true,
+    },
+    selectedRank: {
+      type: Object as PropType<Ranking>,
+        required: true,
+      }
+    },
+    setup(props) {
+      const vuetify = useVuetify();
+      const twitchStore = useTwitchStore();
+      const rankingsStore = useRankingStore();
+      const sortColumn = ref<string>("Rank");
+      const isSortedAsc = ref<boolean>(true);
+      let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
+      const sortedRankings = ref<Ranking[]>([]);
 
-  public gameModes = EGameMode;
+      const rankingsRef: WritableComputedRef<Ranking[]> = computed({
+        get(): Ranking[] {
+          return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
+        },
+        set(val: Ranking[]): void {
+          sortedRankings.value = isSortedAsc.value ? val.toSorted(_lastSortFunction) : val.toSorted(_lastSortFunction).reverse();
+        },
+      });
 
-  private twitchStore = useTwitchStore();
-
-  get headers() {
-    return [
+    const headers = [
       {
         name: "Rank",
-        text: this.$t("components_ladder_rankingsgrid.rank"),
+        text: i18n.t("components_ladder_rankingsgrid.rank"),
         align: "start",
         sortable: false,
         width: "25px",
@@ -186,7 +201,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Player",
-        text: this.$t("components_ladder_rankingsgrid.player"),
+        text: i18n.t("components_ladder_rankingsgrid.player"),
         align: "start",
         sortable: false,
         minWidth: "170px",
@@ -196,7 +211,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Level",
-        text: this.$t("components_ladder_rankingsgrid.level"),
+        text: i18n.t("components_ladder_rankingsgrid.level"),
         align: "center",
         sortable: false,
         width: "100px",
@@ -206,7 +221,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Race",
-        text: this.$t("components_ladder_rankingsgrid.race"),
+        text: i18n.t("components_ladder_rankingsgrid.race"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -216,7 +231,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Clan",
-        text: this.$t("components_ladder_rankingsgrid.clan"),
+        text: i18n.t("components_ladder_rankingsgrid.clan"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -228,7 +243,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Wins",
-        text: this.$t("components_ladder_rankingsgrid.wins"),
+        text: i18n.t("components_ladder_rankingsgrid.wins"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -238,7 +253,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Losses",
-        text: this.$t("components_ladder_rankingsgrid.losses"),
+        text: i18n.t("components_ladder_rankingsgrid.losses"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -248,7 +263,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Total",
-        text: this.$t("components_ladder_rankingsgrid.total"),
+        text: i18n.t("components_ladder_rankingsgrid.total"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -258,7 +273,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "Winrate",
-        text: this.$t("components_ladder_rankingsgrid.winrate"),
+        text: i18n.t("components_ladder_rankingsgrid.winrate"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -268,7 +283,7 @@ export default class RankingsGrid extends Vue {
       },
       {
         name: "MMR",
-        text: this.$t("components_ladder_rankingsgrid.mmr"),
+        text: i18n.t("components_ladder_rankingsgrid.mmr"),
         align: "end",
         sortable: false,
         width: "25px",
@@ -277,215 +292,218 @@ export default class RankingsGrid extends Vue {
         },
       },
     ];
-  }
 
-  public sortColumn = "Rank";
-  public isSortedAsc = true;
-  private _lastSortFunction: (() => void) | null = null;
+    const selectedRankRef = toRefs(props).selectedRank;
+    watch(selectedRankRef, onSelectedRankChanged);
 
-  @Watch("selectedRank")
-  public onSelectedRankChanged(newVal: Ranking): void {
-    if (!newVal) {
-      return;
+    function onSelectedRankChanged(newVal: Ranking): void {
+      if (!newVal) {
+        return;
+      }
+
+      goToRank(newVal);
     }
 
-    this.goToRank(newVal);
-  }
+    const rankingsWatchRef = toRefs(props).rankings;
+    watch(rankingsWatchRef, onRankingsChanged);
 
-  @Watch("rankings")
-  public onRankingsChanged(newVal: Ranking[], oldVal: Ranking[]): void {
-    if (!newVal) {
-      return;
-    }
+    function onRankingsChanged(newVal: Ranking[], oldVal: Ranking[]): void {
+      if (!newVal) {
+        return;
+      }
 
-    let triggerTwitchLookup = Boolean(newVal.length != oldVal.length);
-    if (!triggerTwitchLookup) {
-      for (let i = 0; i < newVal.length; i++) {
-        if (newVal[i].player.name != oldVal[i].player.name) {
-          triggerTwitchLookup = true;
+      let triggerTwitchLookup = Boolean(newVal.length != oldVal.length);
+      if (!triggerTwitchLookup) {
+        for (let i = 0; i < newVal.length; i++) {
+          if (newVal[i].player.name != oldVal[i].player.name) {
+            triggerTwitchLookup = true;
+          }
         }
+      }
+
+      if (triggerTwitchLookup) {
+        getStreamStatus();
+      }
+
+      sortedRankings.value = [];
+      sortColumn.value = "Rank";
+    }
+
+    async function getStreamStatus(): Promise<void> {
+      // filter nulls and empty strings
+      const twitchNames = [...new Set(props.rankings
+        .map((r) => r.playersInfo)
+        .map((r) => r.map((i) => i.twitchName))
+        .flat())].filter((r) => (r && r.length > 0));
+
+      if (twitchNames.length > 0) {
+        await twitchStore.getStreamStatus(twitchNames);
       }
     }
 
-    if (triggerTwitchLookup) {
-      this.getStreamStatus();
+    // get properties
+    function selectedRankBattleTag(): string {
+      if (!props.selectedRank || !props.selectedRank.player) {
+        return "";
+      }
+
+      return props.selectedRank.player.id;
     }
 
-    if (newVal == this.rankings) {
-      return;
+    function goToRank(rank: Ranking): void {
+      setTimeout(() => {
+        const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+
+        if (!listItemOfPlayer) return;
+
+        vuetify.goTo(listItemOfPlayer, {
+          offset: window.innerHeight - 150,
+        });
+      }, 500);
     }
 
-    this.rankings = newVal;
-
-    if (this._lastSortFunction) {
-      this._lastSortFunction();
+    function getRaceIcon(ranking: Ranking, playerIndex: number): string {
+      const playersInfo = ranking.playersInfo;
+      if (!playersInfo) return raceIconImage(ERaceEnum.RANDOM);
+      const playerInfo = playersInfo[playerIndex];
+      if (hasSelectedIcon(playerInfo)) {
+        return getAvatarUrl(
+          playerInfo.selectedRace,
+          playerInfo.pictureId,
+          playerInfo.isClassicPicture
+        );
+      } else {
+        return getAvatarUrl(
+          playerInfo.selectedRace,
+          playerInfo.pictureId,
+          playerInfo.isClassicPicture
+        );
+        // old way to get race icon: return this.raceIcon(playerInfo.calculatedRace);
+      }
     }
-  }
 
-  public async getStreamStatus(): Promise<void> {
-    // filter nulls and empty strings
-    const twitchNames = [...new Set(this.rankings
-      .map((r) => r.playersInfo)
-      .map((r) => r.map((i) => i.twitchName))
-      .flat())].filter((r) => (r && r.length > 0));
-
-    if (twitchNames.length > 0) {
-      await this.twitchStore.getStreamStatus(twitchNames);
+    function getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+      const playersInfo = ranking.playersInfo;
+      if (!playersInfo) return "Random";
+      const playerInfo = playersInfo[playerIndex];
+      if (
+        hasSelectedIcon(playerInfo) &&
+        playerInfo.selectedRace <= ERaceEnum.UNDEAD
+      ) {
+        return i18n.t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
+      } else {
+        return i18n.t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
+      }
     }
-  }
 
-  // get properties
-  get selectedRankBattleTag(): string {
-    if (!this.selectedRank || !this.selectedRank.player) {
+    function hasSelectedIcon(playerInfo: PlayerInfo) {
+      if (
+        playerInfo.selectedRace !== undefined &&
+        playerInfo.selectedRace != null &&
+        playerInfo.pictureId !== undefined &&
+        playerInfo.pictureId != null
+      ) {
+        return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
+      }
+      return false;
+    }
+
+    function raceIconImage(race: ERaceEnum) {
+      return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
+    }
+
+    function isTwitchLive(ranking: Ranking, index: number): boolean {
+      const twitchName = ranking.playersInfo[index].twitchName;
+      const streamData = twitchStore.twitchStreamResponse.data;
+      if (twitchName && streamData) {
+        for (let i = 0; i < streamData.length; i++) {
+          const stream = streamData[i];
+          if (
+            stream &&
+            stream.user_name.toLowerCase() == twitchName.toLowerCase()
+          ) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    function isCurrentlyLive(playerIds: PlayerId[]): boolean {
+      if (!props.ongoingMatches) {
+        return false;
+      }
+
+      const firstPlayer = playerIds[0].battleTag;
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
+        players: string[];
+      };
+
+      if (foundByFirstPlayer) {
+        let allMatch = true;
+        playerIds.forEach((p) => {
+          allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
+        });
+
+        return allMatch;
+      }
+
+      return false;
+    }
+
+    function getLiveOpponent(playerIds: PlayerId[]): boolean | string {
+      if (!props.ongoingMatches) {
+        return false;
+      }
+
+      const firstPlayer = playerIds[0].battleTag;
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
+        players: string[];
+        opponents: string[];
+      };
+      if (foundByFirstPlayer) {
+        return foundByFirstPlayer.opponents.join(",");
+      }
+
       return "";
     }
 
-    return this.selectedRank.player.id;
-  }
-
-  // methods
-  public goToRank(rank: Ranking): void {
-    setTimeout(() => {
-      const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
-
-      if (!listItemOfPlayer) return;
-
-      this.$vuetify.goTo(listItemOfPlayer, {
-        offset: window.innerHeight - 150,
-      });
-    }, 500);
-  }
-
-  public getRaceIcon(ranking: Ranking, playerIndex: number): string {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return this.raceIconImage(ERaceEnum.RANDOM);
-    const playerInfo = playersInfo[playerIndex];
-    if (RankingsGrid.hasSelectedIcon(playerInfo)) {
-      return getAvatarUrl(
-        playerInfo.selectedRace,
-        playerInfo.pictureId,
-        playerInfo.isClassicPicture
-      );
-    } else {
-      return getAvatarUrl(
-        playerInfo.selectedRace,
-        playerInfo.pictureId,
-        playerInfo.isClassicPicture
-      );
-      // old way to get race icon: return this.raceIcon(playerInfo.calculatedRace);
-    }
-  }
-
-  public getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
-    const playersInfo = ranking.playersInfo;
-    if (!playersInfo) return "Random";
-    const playerInfo = playersInfo[playerIndex];
-    if (
-      RankingsGrid.hasSelectedIcon(playerInfo) &&
-      playerInfo.selectedRace <= ERaceEnum.UNDEAD
-    ) {
-      return this.$t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
-    } else {
-      return this.$t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
-    }
-  }
-
-  private static hasSelectedIcon(playerInfo: PlayerInfo) {
-    if (
-      playerInfo.selectedRace !== undefined &&
-      playerInfo.selectedRace != null &&
-      playerInfo.pictureId !== undefined &&
-      playerInfo.pictureId != null
-    ) {
-      return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
-    }
-    return false;
-  }
-
-  raceIconImage(race: ERaceEnum) {
-    return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
-  }
-
-  public isTwitchLive(ranking: Ranking, index: number): boolean {
-    const twitchName = ranking.playersInfo[index].twitchName;
-    const streamData = this.twitchStore.twitchStreamResponse.data;
-    if (twitchName && streamData) {
-      for (let i = 0; i < streamData.length; i++) {
-        const stream = streamData[i];
-        if (
-          stream &&
-          stream.user_name.toLowerCase() == twitchName.toLowerCase()
-        ) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  public isCurrentlyLive(playerIds: PlayerId[]): boolean {
-    if (!this.ongoingMatches) {
-      return false;
-    }
-
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this.ongoingMatches[firstPlayer] as {
-      players: string[];
-    };
-
-    if (foundByFirstPlayer) {
-      let allMatch = true;
-      playerIds.forEach((p) => {
-        allMatch = allMatch && foundByFirstPlayer.players.includes(p.battleTag);
-      });
-
-      return allMatch;
-    }
-
-    return false;
-  }
-
-  public getLiveOpponent(playerIds: PlayerId[]): boolean | string {
-    if (!this.ongoingMatches) {
-      return false;
-    }
-
-    const firstPlayer = playerIds[0].battleTag;
-    const foundByFirstPlayer = this.ongoingMatches[firstPlayer] as {
-      players: string[];
-      opponents: string[];
-    };
-    if (foundByFirstPlayer) {
-      return foundByFirstPlayer.opponents.join(",");
-    }
-
-    return "";
-  }
-
-  public sortRankings(
-    columnName: string,
-    sortFunction: (a: Ranking, b: Ranking) => number
-  ): void {
-    if (sortFunction) {
-      if (this.sortColumn === columnName) {
-        this.isSortedAsc = !this.isSortedAsc;
+    function sortRankings(columnName: string, sortFunction: (a: Ranking, b: Ranking) => number): void {
+      if (!sortFunction) return;
+      if (sortColumn.value === columnName) {
+        isSortedAsc.value = !isSortedAsc.value;
       } else {
-        this.isSortedAsc = true;
+        isSortedAsc.value = true;
       }
 
-      const sortFn = () => {
-        this.sortColumn = columnName;
-        this.rankings.sort(sortFunction);
-        if (this.isSortedAsc) {
-          this.rankings = this.rankings.reverse();
-        }
-      };
-      this._lastSortFunction = sortFn;
-      sortFn();
+      _lastSortFunction = sortFunction;
+      rankingsRef.value = props.rankings;
+      sortColumn.value = columnName;
     }
+
+    return {
+      mdiChevronUp,
+      mdiChevronDown,
+      mdiTwitch,
+      headers,
+      sortColumn,
+      isSortedAsc,
+      getStreamStatus,
+      selectedRankBattleTag,
+      goToRank,
+      getRaceIcon,
+      getTitleRace,
+      hasSelectedIcon,
+      raceIconImage,
+      isTwitchLive,
+      isCurrentlyLive,
+      getLiveOpponent,
+      sortRankings,
+      rankingsRef,
+    };
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

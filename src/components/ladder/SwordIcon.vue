@@ -1,18 +1,23 @@
 <template>
-  <img :src="swordIcon()" class="sword-icon" />
+  <img :src="swordIcon" class="sword-icon" />
 </template>
 
 <script lang="ts">
+import { ref, defineComponent } from "vue";
 import { getAsset } from "@/helpers/url-functions";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
 
-@Component({})
-export default class SwordIcon extends Vue {
-  swordIcon() {
-    return getAsset(`swords.svg`);
-  }
-}
+export default defineComponent({
+  name: "SwordIcon",
+  components: {},
+  props: {},
+  setup() {
+    const swordIcon = ref<string>(getAsset(`swords.svg`));
+
+    return {
+      swordIcon,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

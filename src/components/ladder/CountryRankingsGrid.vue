@@ -66,11 +66,7 @@
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
                 ></div>
 
-                <player-rank-info
-                  :player-id="playerId"
-                  :clan-id="item.playersInfo[index].clanId"
-                  :player-race="item.race"
-                />
+                <player-rank-info :player-id="playerId" />
                 <div class="twitch__container" v-if="isTwitchLive(item)">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
@@ -110,11 +106,7 @@
               </div>
               <div v-else class="teammate__container">
                 (
-                <player-rank-info
-                  :player-id="playerId"
-                  :clan-id="item.playersInfo[index].clanId"
-                  :player-race="item.race"
-                />
+                <player-rank-info :player-id="playerId" />
                 <div
                   class="country-flag__container"
                   v-if="

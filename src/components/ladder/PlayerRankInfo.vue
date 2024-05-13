@@ -5,7 +5,7 @@
         style="display: inline"
         class="pointer player-name"
         @click.left="openPlayerProfile(playerId.battleTag)"
-        @click.middle="openProfileInNewTab(playerId.battleTag)"
+        @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
         {{ playerId.name }}
@@ -20,30 +20,43 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType } from "vue";
 import { PlayerId } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { useRouter } from "vue-router/composables";
 
-@Component({})
-export default class PlayerRankInfo extends Vue {
-  @Prop() public playerId!: PlayerId;
-  @Prop() public clanId!: string;
+export default defineComponent({
+  name: "PlayerRankInfo",
+  components: {},
+  props: {
+    playerId: {
+      type: Object as PropType<PlayerId>,
+      required: true,
+    },
+  },
+  setup() {
+    const router = useRouter();
 
-  public openPlayerProfile(playerId: string) {
-    this.$router.push({
-      path: getProfileUrl(playerId),
-    });
-  }
+    function openPlayerProfile(playerId: string): void {
+      router.push({
+        path: getProfileUrl(playerId),
+      });
+    }
 
-  public openProfileInNewTab(playerId: string) {
-    const path = getProfileUrl(playerId);
-    window.open(path, "_blank");
-  }
-}
+    function openPlayerProfileInNewTab(playerId: string): void {
+      const path = getProfileUrl(playerId);
+      window.open(path, "_blank");
+    }
+
+    return {
+      openPlayerProfile,
+      openPlayerProfileInNewTab,
+    };
+  },
+});
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .player-name {
   overflow: hidden;
   white-space: nowrap;

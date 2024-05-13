@@ -1,25 +1,31 @@
 <template>
-  <v-progress-linear class="level-progress" :value="getProgressToNextLevel()" height="25">
-    <strong>{{ getLevelNumber() }}</strong>
+  <v-progress-linear class="level-progress" :value="progressToNextLevel" height="25">
+    <strong>{{ levelNumber }}</strong>
   </v-progress-linear>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { ref, defineComponent } from "vue";
 
-@Component({})
-export default class LevelProgress extends Vue {
-  @Prop() rp!: number;
+export default defineComponent({
+  name: "LevelProgress",
+  components: {},
+  props: {
+    rp: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
+    const progressToNextLevel = ref<number>((props.rp % 1) * 100);
+    const levelNumber = ref<number>(Math.floor(props.rp));
 
-  public getProgressToNextLevel() {
-    return Math.round((this.rp % 1) * 100);
-  }
-
-  public getLevelNumber() {
-    return Math.floor(this.rp);
-  }
-}
+    return {
+      progressToNextLevel,
+      levelNumber,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

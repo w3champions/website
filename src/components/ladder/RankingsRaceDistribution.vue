@@ -4,14 +4,8 @@
       <thead>
         <tr>
           <td>{{ $t("components_ladder_rankingsracedistribution.race") }}</td>
-          <td>
-            {{
-              $t("components_ladder_rankingsracedistribution.numberofplayers")
-            }}
-          </td>
-          <td>
-            {{ $t("components_ladder_rankingsracedistribution.percent") }}
-          </td>
+          <td>{{ $t("components_ladder_rankingsracedistribution.numberofplayers") }}</td>
+          <td>{{ $t("components_ladder_rankingsracedistribution.percent") }}</td>
         </tr>
       </thead>
       <tbody>
@@ -23,9 +17,7 @@
             />
             <span>{{ getRaceName(item.race) }}</span>
           </td>
-          <td>
-            {{ item.total }}
-          </td>
+          <td>{{ item.total }}</td>
           <td>{{ item.percent }}%</td>
         </tr>
       </tbody>
@@ -34,58 +26,73 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent } from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { ERaceEnum } from "@/store/types";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 
-@Component({
+type RankingsRaceDistributionData = {
+  race: number;
+  total: number;
+  percent: number;
+};
+
+export default defineComponent({
+  name: "RankingsRaceDistribution",
   components: {
     RaceIcon,
   },
-})
-export default class RankingsRaceDistribution extends Vue {
-  @Prop() rankings!: Ranking[];
+  props: {
+    rankings: {
+      type: Array<Ranking>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const raceDistributions: ComputedRef<RankingsRaceDistributionData[]> = computed((): RankingsRaceDistributionData[] => {
+      if (!props.rankings) {
+        return [];
+      }
 
-  get raceDistributions(): { race: number; total: number; percent: number }[] {
-    if (!this.rankings) {
-      return [];
-    }
+      const result: RankingsRaceDistributionData[] = [];
 
-    const result: { race: number; total: number; percent: number }[] = [];
+      const groupedByRace = groupBy(props.rankings, (x) => {
+        return x.race;
+      });
 
-    const groupedByRace = groupBy(this.rankings, (x) => {
-      return x.race;
+      for (const key in groupedByRace) {
+        if (Object.prototype.hasOwnProperty.call(groupedByRace, key)) {
+          const element = groupedByRace[key];
+
+          const raceDistribution: {
+            race: number;
+            total: number;
+            percent: number;
+          } = {
+            race: parseInt(key),
+            total: element.length,
+            percent: Math.round((element.length / props.rankings.length) * 100),
+          };
+
+          result.push(raceDistribution);
+        }
+      }
+
+      return orderBy(result, (x) => x.percent, "desc");
     });
 
-    for (const key in groupedByRace) {
-      if (Object.prototype.hasOwnProperty.call(groupedByRace, key)) {
-        const element = groupedByRace[key];
+    const getRaceName = (race: number): TranslateResult => i18n.t(`races.${ERaceEnum[race]}`);
 
-        const raceDistribution: {
-          race: number;
-          total: number;
-          percent: number;
-        } = {
-          race: parseInt(key),
-          total: element.length,
-          percent: Math.round((element.length / this.rankings.length) * 100),
-        };
-
-        result.push(raceDistribution);
-      }
-    }
-
-    return orderBy(result, (x) => x.percent, "desc");
-  }
-
-  public getRaceName(race: number) {
-    return this.$t(`races.${ERaceEnum[race]}`);
-  }
-}
+    return {
+      raceDistributions,
+      getRaceName,
+    };
+  },
+});
 </script>
 
 <style></style>
