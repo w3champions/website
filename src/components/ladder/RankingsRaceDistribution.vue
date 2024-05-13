@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, ComputedRef, defineComponent } from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
@@ -48,7 +48,7 @@ export default defineComponent({
   },
   props: {
     rankings: {
-      type: Object as PropType<Ranking[]>,
+      type: Array<Ranking>,
       required: true,
     },
   },
