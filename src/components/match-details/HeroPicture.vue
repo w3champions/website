@@ -7,38 +7,38 @@
         :style="{ 'background-image': 'url(' + heroPicture + ')' }"
       />
     </template>
-    <div>{{ getName(heroIcon) }}</div>
+    <div>{{ heroName }}</div>
   </v-tooltip>
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { TranslateResult } from "vue-i18n";
+import { i18n } from "@/main";
 
-@Component({})
-export default class HeroPicture extends Vue {
-  @Prop() heroIcon!: string;
+export default defineComponent({
+  name: "HeroPicture",
+  components: {},
+  props: {
+    heroIcon: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const heroPicture = ref<string>(getAsset(`heroes/${props.heroIcon}.png`));
+    const heroName = ref<TranslateResult>(i18n.t(`heroNames.${props.heroIcon}`));
 
-  public parsePicture(hero: string) {
-    try {
-      return getAsset(`heroes/${hero}.png`);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  get heroPicture() {
-    return this.parsePicture(this.heroIcon);
-  }
-
-  public getName(hero: string) {
-    return this.$t(`heroNames.${hero}`);
-  }
-}
+    return {
+      heroPicture,
+      heroName,
+    };
+  },
+});
 </script>
 
-<style type="text/css" scoped>
+<style lang="scss" scoped>
 .hero-icon {
   z-index: 1;
   position: relative;
