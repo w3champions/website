@@ -78,27 +78,27 @@
               :heroes-of-winner="
                 !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroes : []
               "
-              :heroes-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroes : []
+              :heroes-of-loser="
+                !!scoresOfLosers[index] ? scoresOfLosers[index]?.heroes : []
               "
               :scores-of-winner="
                 !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroScore : []
               "
-              :scores-of-looser="
-                !!scoresOfLoosers[index] ? scoresOfLoosers[index]?.heroScore : []
+              :scores-of-loser="
+                !!scoresOfLosers[index] ? scoresOfLosers[index]?.heroScore : []
               "
             />
           </div>
           <match-detail-hero-row
             v-if="matchIsFFA() && isCompleteGame"
             :not-color-winner="true"
-            :heroes-of-winner="!!ffaLooser2?.heroes ? ffaLooser2?.heroes : []"
-            :heroes-of-looser="!!ffaLooser3?.heroes ? ffaLooser3?.heroes : []"
+            :heroes-of-winner="!!ffaLoser2?.heroes ? ffaLoser2?.heroes : []"
+            :heroes-of-loser="!!ffaLoser3?.heroes ? ffaLoser3?.heroes : []"
             :scores-of-winner="
-              !!ffaLooser2?.heroScore ? ffaLooser2?.heroScore : []
+              !!ffaLoser2?.heroScore ? ffaLoser2?.heroScore : []
             "
-            :scores-of-looser="
-              !!ffaLooser3?.heroScore ? ffaLooser3?.heroScore : []
+            :scores-of-loser="
+              !!ffaLoser3?.heroScore ? ffaLoser3?.heroScore : []
             "
           />
           <v-row v-if="!isCompleteGame" class="justify-center">
@@ -116,10 +116,10 @@
                   scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :unit-score-opponent="
-                  scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
+                  scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
                 "
                 :resource-scoure-opponent="
-                  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
+                  scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :left="true"
               />
@@ -127,10 +127,10 @@
             <v-col cols="5" class="ml-7">
               <player-performance-on-match
                 :unit-score="
-                  scoresOfLoosers.map((h) => (!!h ? h.unitScore : []))
+                  scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
                 "
                 :resource-scoure="
-                  scoresOfLoosers.map((h) => (!!h ? h.resourceScore : []))
+                  scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :unit-score-opponent="
                   scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
@@ -234,7 +234,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
   }
 
   get ffaPlayers() {
-    return [this.ffaWinner, ...this.ffaLoosers];
+    return [this.ffaWinner, ...this.ffaLosers];
   }
 
   get matchDuration(): string {
@@ -328,7 +328,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
     return this.getPlayerScores(winningTeam);
   }
 
-  get scoresOfLoosers() {
+  get scoresOfLosers() {
     const losingTeam = this.match.teams[1];
     return this.getPlayerScores(losingTeam);
   }
@@ -339,25 +339,25 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
     );
   }
 
-  get ffaLoosers() {
+  get ffaLosers() {
     return this.playerScores.filter(
       (s) => s.battleTag !== this.match.teams[0].players[0].battleTag
     );
   }
 
-  get ffaLooser1() {
+  get ffaLoser1() {
     return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[1].players[0].battleTag
     );
   }
 
-  get ffaLooser2() {
+  get ffaLoser2() {
     return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[2].players[0].battleTag
     );
   }
 
-  get ffaLooser3() {
+  get ffaLoser3() {
     return this.playerScores.find(
       (s) => s.battleTag === this.match.teams[3].players[0].battleTag
     );
