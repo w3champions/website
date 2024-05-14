@@ -407,7 +407,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
 
 <style type="text/css" scoped>
 .small-title {
-  margin-top: -30px !important;
+  margin-top: -25px !important;
   margin-bottom: -25px !important;
 }
 
