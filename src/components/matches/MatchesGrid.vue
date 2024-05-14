@@ -92,25 +92,22 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages()" :total-visible="5" @input="onPageChanged"></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages" :total-visible="5" @input="onPageChanged"></v-pagination>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { StyleValue } from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onUnmounted, ref, StyleValue } from "vue";
+import { i18n } from "@/main";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
-import {
-  formatSecondsToDuration,
-  formatTimestampStringToDateTime,
-  formatTimestampStringToUnixTime
-} from "@/helpers/date-functions";
 import { TranslateResult } from "vue-i18n";
+import { useRouter } from "vue-router/composables";
+import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 
 interface MatchesGridHeader {
   name: string;
@@ -120,127 +117,122 @@ interface MatchesGridHeader {
   style: StyleValue;
 }
 
-@Component({
+export default defineComponent({
+  name: "MatchesGrid",
   components: {
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
   },
-})
+  props: {
+    value: {
+      type: Array<Match>,
+      required: true,
+    },
+    totalMatches: {
+      type: Number,
+      required: true,
+    },
+    itemsPerPage: {
+      type: Number,
+      required: true,
+    },
+    alwaysLeftName: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+    unfinished: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  setup(props, context) {
+    const router = useRouter();
+    const page = ref<number>(1);
+    const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4];
 
-export default class MatchesGrid extends Vue {
-  @Prop() public value!: Match[];
-  @Prop() public totalMatches!: number;
-  @Prop() public itemsPerPage!: number;
-  @Prop() public alwaysLeftName!: string;
-  @Prop() public unfinished!: boolean;
+    const matches: ComputedRef<Match[]> = computed((): Match[] => props.value);
 
-  public page = 1;
-  public mapNameFromMatch = mapNameFromMatch;
+    const gameModeTranslation = (gameMode: EGameMode) => i18n.t(`gameModes.${EGameMode[gameMode]}`);
 
-  destroyed() {
-    this.$emit("pageChanged", 1);
-  }
+    const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
-  gameModeTranslation(gameMode: EGameMode) {
-    return this.$t(`gameModes.${EGameMode[gameMode]}`);
-  }
-
-  isFfa(gameMode: EGameMode) {
-    const ffaModes = [
-      EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4
-    ];
-
-    return ffaModes.includes(gameMode);
-  }
-
-  get matches(): Match[] {
-    return this.value;
-  }
-
-  get currentMatchesLowRange() {
-    if (this.totalMatches === 0) return 0;
-    if (this.totalMatches <= 50) return 1;
-    return this.page * 50 - 49;
-  }
-
-  get currentMatchesHighRange() {
-    const highRange = this.page * 50;
-    return highRange > this.totalMatches ? this.totalMatches : highRange;
-  }
-
-  public onPageChanged(page: number) {
-    this.$emit("pageChanged", page);
-  }
-
-  public getWinner(match: Match) {
-    return match.teams[0];
-  }
-
-  public getTotalPages() {
-    if (!this.totalMatches) {
-      return 1;
-    }
-
-    return Math.ceil(this.totalMatches / 50);
-  }
-
-  public goToMatchDetailPage(match: Match) {
-    if (this.unfinished) {
-      return true;
-    }
-
-    this.$router.push({
-      path: `/match/${match.id}`,
+    const currentMatchesLowRange: ComputedRef<number> = computed((): number => {
+      if (props.totalMatches === 0) return 0;
+      if (props.totalMatches <= 50) return 1;
+      return page.value * 50 - 49;
     });
-  }
 
-  public getLoser(match: Match) {
-    return match.teams[1];
-  }
+    const currentMatchesHighRange: ComputedRef<number> = computed((): number => {
+      const highRange = page.value * 50;
+      return highRange > props.totalMatches ? props.totalMatches : highRange;
+    });
 
-  public getPlayerTeam(match: Match) {
-    const playerTeam = match.teams.find((team: Team) =>
-      team.players.some((player: PlayerInTeam) => player.battleTag === this.alwaysLeftName)
-    );
-
-    return playerTeam;
-  }
-
-  public getOpponentTeam(match: Match) {
-    return match.teams.find(
-      (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === this.alwaysLeftName)
-    );
-  }
-
-  public getOpponentTeams(match: Match) {
-    const playerTeam = this.getPlayerTeam(match);
-    const opponentTeams = match.teams.filter((x) => x != playerTeam);
-
-    return opponentTeams;
-  }
-
-  public getStartTime(match: Match): string {
-    return formatTimestampStringToDateTime(match.startTime);
-  }
-
-  public getDuration(match: Match): string {
-    if (this.unfinished) {
-      return this.$t("matchStatuses.onGoing").toString();
+    function onPageChanged(page: number) {
+      context.emit("pageChanged", page);
     }
-    return formatSecondsToDuration(match.durationInSeconds);
-  }
 
-  showReplayDownload(item: Match): boolean {
-    // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
-    return !this.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
-  }
+    const getTotalPages: ComputedRef<number> = computed((): number => {
+      if (!props.totalMatches) return 1;
+      return Math.ceil(props.totalMatches / 50);
+    });
 
-  get headers(): MatchesGridHeader[] {
-    return [
+    function goToMatchDetailPage(match: Match) {
+      if (props.unfinished) return;
+
+      router.push({
+        path: `/match/${match.id}`,
+      });
+    }
+
+    const getWinner = (match: Match) => match.teams[0];
+    const getLoser = (match: Match) =>match.teams[1];
+
+    function getPlayerTeam(match: Match) {
+      const playerTeam = match.teams.find((team: Team) =>
+        team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
+      );
+
+      return playerTeam;
+    }
+
+    function getOpponentTeam(match: Match) {
+      return match.teams.find(
+        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
+      );
+    }
+
+    function getOpponentTeams(match: Match) {
+      const playerTeam = getPlayerTeam(match);
+      const opponentTeams = match.teams.filter((x) => x != playerTeam);
+
+      return opponentTeams;
+    }
+
+    function getStartTime(match: Match): string {
+      return formatTimestampStringToDateTime(match.startTime);
+    }
+
+    function getDuration(match: Match): string {
+      if (props.unfinished) return i18n.t("matchStatuses.onGoing").toString();
+      return formatSecondsToDuration(match.durationInSeconds);
+    }
+
+    function showReplayDownload(item: Match): boolean {
+      // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
+      return !props.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
+    }
+
+    onUnmounted(() => {
+      context.emit("pageChanged", 1);
+    });
+
+    const headers: MatchesGridHeader[] = [
       {
         name: "Players",
-        text: this.$t("components_matches_matchesgrid.players"),
+        text: i18n.t("components_matches_matchesgrid.players"),
         sortable: false,
         value: "players",
         style: {
@@ -250,7 +242,7 @@ export default class MatchesGrid extends Vue {
       },
       {
         name: "Gamemode",
-        text: this.$t("components_matches_matchesgrid.gamemode"),
+        text: i18n.t("components_matches_matchesgrid.gamemode"),
         sortable: false,
         value: "gameMode",
         style: {
@@ -260,7 +252,7 @@ export default class MatchesGrid extends Vue {
       },
       {
         name: "Map",
-        text: this.$t("components_matches_matchesgrid.map"),
+        text: i18n.t("components_matches_matchesgrid.map"),
         sortable: false,
         value: "map",
         style: {
@@ -269,7 +261,7 @@ export default class MatchesGrid extends Vue {
       },
       {
         name: "Starttime",
-        text: this.$t("components_matches_matchesgrid.starttime"),
+        text: i18n.t("components_matches_matchesgrid.starttime"),
         sortable: false,
         value: "startTime",
         style: {
@@ -279,7 +271,7 @@ export default class MatchesGrid extends Vue {
       },
       {
         name: "Duration",
-        text: this.$t("components_matches_matchesgrid.duration"),
+        text: i18n.t("components_matches_matchesgrid.duration"),
         sortable: false,
         value: "duration",
         style: {
@@ -287,8 +279,30 @@ export default class MatchesGrid extends Vue {
         },
       },
     ];
-  }
-}
+
+    return {
+      page,
+      mapNameFromMatch,
+      headers,
+      gameModeTranslation,
+      isFfa,
+      matches,
+      currentMatchesLowRange,
+      currentMatchesHighRange,
+      onPageChanged,
+      getTotalPages,
+      goToMatchDetailPage,
+      getWinner,
+      getLoser,
+      getPlayerTeam,
+      getOpponentTeam,
+      getOpponentTeams,
+      getStartTime,
+      getDuration,
+      showReplayDownload,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
