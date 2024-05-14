@@ -7,10 +7,7 @@
             <td
               v-for="header in headers"
               :key="header.name"
-              :style="{
-                'min-width': header.minWidth,
-                'text-align': header.align,
-              }"
+              :style="header.style"
             >
               {{ header.text }}
             </td>
@@ -45,7 +42,7 @@
                 </v-row>
               </div>
               <v-row @click="goToMatchDetailPage(item)" v-if="!isFfa(item.gameMode)">
-                <v-col cols="5.5">
+                <v-col cols="5.5" class="team-match-info-container left-side">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
@@ -57,7 +54,7 @@
                   VS
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
-                <v-col cols="5.5">
+                <v-col cols="5.5" class="team-match-info-container">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
@@ -101,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { StyleValue } from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -113,6 +110,15 @@ import {
   formatTimestampStringToDateTime,
   formatTimestampStringToUnixTime
 } from "@/helpers/date-functions";
+import { TranslateResult } from "vue-i18n";
+
+interface MatchesGridHeader {
+  name: string;
+  text: TranslateResult;
+  sortable: boolean;
+  value: string;
+  style: StyleValue;
+}
 
 @Component({
   components: {
@@ -121,6 +127,7 @@ import {
     DownloadReplayIcon,
   },
 })
+
 export default class MatchesGrid extends Vue {
   @Prop() public value!: Match[];
   @Prop() public totalMatches!: number;
@@ -229,47 +236,69 @@ export default class MatchesGrid extends Vue {
     return !this.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
   }
 
-  get headers() {
+  get headers(): MatchesGridHeader[] {
     return [
       {
         name: "Players",
         text: this.$t("components_matches_matchesgrid.players"),
-        align: "center",
         sortable: false,
         value: "players",
-        minWidth: "475px",
+        style: {
+          textAlign: "center",
+          minWidth: "475px",
+        },
       },
       {
         name: "Gamemode",
         text: this.$t("components_matches_matchesgrid.gamemode"),
-        align: "start",
         sortable: false,
         value: "gameMode",
-        maxWidth: "100px",
+        style: {
+          textAlign: "start",
+          minWidth: "100px",
+        },
       },
       {
         name: "Map",
         text: this.$t("components_matches_matchesgrid.map"),
-        align: "start",
         sortable: false,
         value: "map",
+        style: {
+          textAlign: "start",
+        },
       },
       {
         name: "Starttime",
         text: this.$t("components_matches_matchesgrid.starttime"),
-        align: "start",
         sortable: false,
         value: "startTime",
-        minWidth: "170px",
+        style: {
+          textAlign: "start",
+          minWidth: "170px",
+        },
       },
       {
         name: "Duration",
         text: this.$t("components_matches_matchesgrid.duration"),
-        align: "start",
         sortable: false,
         value: "duration",
+        style: {
+          textAlign: "start",
+        },
       },
     ];
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.team-match-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+
+  &.left-side {
+    justify-content: end;
+  }
+}
+</style>
