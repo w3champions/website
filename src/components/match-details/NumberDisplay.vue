@@ -18,13 +18,14 @@
 import { PropType, defineComponent, ref } from "vue";
 import { AddValuesDelimiter } from "./PlayerPerformanceOnMatch.vue";
 import isNil from "lodash/isNil";
+import { ResourceScore, UnitScore } from "@/store/types";
 
 export default defineComponent({
   name: "NumberDisplay",
   components: {},
   props: {
     object: {
-      type: Array<Record<string, number>>,
+      type: [Array<UnitScore>, Array<ResourceScore>],
       required: true,
     },
     value: {
@@ -43,9 +44,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    function getArray() {
+    function getArray(): number[] {
       return props.object
-        .map((o) => o[props.value])
+        .map((o: any) => o[props.value])
         .filter((v) => !isNil(v));
     }
 

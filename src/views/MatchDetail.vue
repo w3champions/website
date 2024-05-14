@@ -112,30 +112,30 @@
                 :unit-score="
                   scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
                 "
-                :resource-scoure="
+                :resource-score="
                   scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :unit-score-opponent="
                   scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
                 "
-                :resource-scoure-opponent="
+                :resource-score-opponent="
                   scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :left="true"
               />
             </v-col>
             <v-col cols="5" class="ml-7">
-              <player-performance-on-match
+              <player-performance-on-match class="mt-4"
                 :unit-score="
                   scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
                 "
-                :resource-scoure="
+                :resource-score="
                   scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
                 "
                 :unit-score-opponent="
                   scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
                 "
-                :resource-scoure-opponent="
+                :resource-score-opponent="
                   scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
                 "
               />
