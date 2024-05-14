@@ -70,7 +70,7 @@
               {{ gameModeTranslation(item.gameMode) }}
             </td>
             <td>
-              <span>{{ $_mapNameFromMatch(item) }}</span>
+              <span>{{ mapNameFromMatch(item) }}</span>
             </td>
             <td>
               {{ getStartTime(item) }}
@@ -101,12 +101,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from "vue-property-decorator";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
-import MatchMixin from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import {
   formatSecondsToDuration,
   formatTimestampStringToDateTime,
@@ -120,7 +121,7 @@ import {
     DownloadReplayIcon,
   },
 })
-export default class MatchesGrid extends Mixins(MatchMixin) {
+export default class MatchesGrid extends Vue {
   @Prop() public value!: Match[];
   @Prop() public totalMatches!: number;
   @Prop() public itemsPerPage!: number;
@@ -128,6 +129,7 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   @Prop() public unfinished!: boolean;
 
   public page = 1;
+  public mapNameFromMatch = mapNameFromMatch;
 
   destroyed() {
     this.$emit("pageChanged", 1);
@@ -271,13 +273,3 @@ export default class MatchesGrid extends Mixins(MatchMixin) {
   }
 }
 </script>
-
-<style lang="scss">
-.playerCol {
-  max-width: 500px;
-}
-
-.pager__current-matches {
-  text-align: center;
-}
-</style>

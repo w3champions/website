@@ -85,7 +85,7 @@
               {{ $t("views_player.playingFFA") }}
             </div>
             <span class="live-match__map">
-              {{ $_mapNameFromMatch(ongoingMatch) }}
+              {{ mapNameFromMatch(ongoingMatch) }}
             </span>
           </div>
 
@@ -144,7 +144,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 
@@ -166,7 +167,7 @@ import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
-import MatchMixin from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
@@ -189,7 +190,7 @@ import { useRankingStore } from "@/store/ranking/store";
     HostIcon,
   },
 })
-export default class PlayerView extends Mixins(MatchMixin) {
+export default class PlayerView extends Vue {
   @Prop() public id!: string;
   @Prop() public freshLogin!: boolean;
 
@@ -197,6 +198,7 @@ export default class PlayerView extends Mixins(MatchMixin) {
   private _intervalRefreshHandle?: number = undefined;
   private player = usePlayerStore();
   private rankingsStore = useRankingStore();
+  public mapNameFromMatch = mapNameFromMatch;
 
   @Watch("battleTag")
   onBattleTagChanged() {
