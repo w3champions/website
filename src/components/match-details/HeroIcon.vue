@@ -8,27 +8,37 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType, ref } from "vue";
 import { Hero } from "@/store/types";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
 
-@Component({
-  components: { HeroPicture },
-})
-export default class HeroIcon extends Vue {
-  @Prop() hero!: Hero;
-  @Prop() firstHero!: boolean;
+export default defineComponent({
+  name: "HeroIcon",
+  components: {
+    HeroPicture,
+  },
+  props: {
+    hero: {
+      type: Object as PropType<Hero>,
+      required: true,
+    },
+    firstHero: {
+      type: Boolean,
+      false: true,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const firstHeroOrNot = ref<string>(props.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second-hero");
 
-  get firstHeroOrNot() {
-    return this.firstHero
-      ? "hero-level-flag-first-hero"
-      : "hero-level-flag-second";
-  }
-}
+    return {
+      firstHeroOrNot,
+    };
+  },
+});
 </script>
 
-<style type="text/css" scoped>
+<style lang="scss" scoped>
 .theme--light .hero-level-flag {
   background: rgba(52, 122, 154, 0.5);
 }
@@ -42,15 +52,15 @@ export default class HeroIcon extends Vue {
   clip-path: polygon(0 0, 100% 0, 100% 68%, 50% 100%, 0 68%);
 }
 
-.hero-level-flag-second {
-  font-size: 1.1em;
-  margin-left: 17%;
-  margin-right: 17%;
-}
-
 .hero-level-flag-first-hero {
   font-size: 1.5em;
   margin-left: 7%;
   margin-right: 7%;
+}
+
+.hero-level-flag-second-hero {
+  font-size: 1.1em;
+  margin-left: 17%;
+  margin-right: 17%;
 }
 </style>
