@@ -15,29 +15,48 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { PropType, defineComponent, ref } from "vue";
 import { AddValuesDelimiter } from "./PlayerPerformanceOnMatch.vue";
+import isNil from "lodash/isNil";
 
-@Component({})
-export default class NumberDisplay extends Vue {
-  @Prop() object!: Record<string, number>[];
-  @Prop() value!: string;
-  @Prop({ default: "left" }) align!: "left" | "right";
-  @Prop() delimiter: AddValuesDelimiter | undefined;
+export default defineComponent({
+  name: "NumberDisplay",
+  components: {},
+  props: {
+    object: {
+      type: Array<Record<string, number>>,
+      required: true,
+    },
+    value: {
+      type: String,
+      required: true,
+    },
+    align: {
+      type: String,
+      required: false,
+      default: "left",
+    },
+    delimiter: {
+      type: String as PropType<AddValuesDelimiter>,
+      required: false,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    function getArray() {
+      return props.object
+        .map((o) => o[props.value])
+        .filter((v) => !isNil(v));
+    }
 
-  public AddValuesDelimiter = AddValuesDelimiter;
+    const stringValues = ref<string>(getArray().join(props.delimiter ?? AddValuesDelimiter.PLUS));
+    const addValues = ref<string>(getArray().reduce((a, b) => a + b, 0).toString());
 
-  get getArray() {
-    return this.object
-      .map((o) => o[this.value])
-      .filter((v) => v !== undefined || v !== null);
-  }
-  get stringValues() {
-    return this.getArray.join(this.delimiter || AddValuesDelimiter.PLUS);
-  }
-  get addValues() {
-    return this.getArray.reduce((a, b) => a + b, 0).toString();
-  }
-}
+    return {
+      stringValues,
+      addValues,
+      AddValuesDelimiter,
+    };
+  },
+});
 </script>
