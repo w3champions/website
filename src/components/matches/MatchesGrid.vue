@@ -47,7 +47,7 @@
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
-                    left="true"
+                    :left="true"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1">

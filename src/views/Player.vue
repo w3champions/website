@@ -68,7 +68,7 @@
                   :not-clickable="isOngoingMatchFFA"
                   :team="getPlayerTeam(ongoingMatch)"
                   :unfinishedMatch="true"
-                  left="true"
+                  :left="true"
                 ></team-match-info>
               </div>
               <div class="live-match__vstext">VS</div>
