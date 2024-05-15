@@ -18,20 +18,45 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType } from "vue";
 import { Team } from "@/store/types";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 
-@Component({
-  components: { PlayerMatchInfo },
-})
-export default class TeamMatchInfo extends Vue {
-  @Prop() public team!: Team;
-  @Prop() public left!: boolean;
-  @Prop() public bigRaceIcon!: boolean;
-  @Prop() public notClickable!: boolean;
-  @Prop() public unfinishedMatch!: boolean;
-  @Prop() public isAnonymous!: boolean;
-}
+export default defineComponent({
+  name: "TeamMatchInfo",
+  components: {
+    PlayerMatchInfo,
+  },
+  props: {
+    team: {
+      type: Object as PropType<Team>,
+      required: true,
+    },
+    left: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    bigRaceIcon: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    notClickable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    unfinishedMatch: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isAnonymous: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+});
 </script>

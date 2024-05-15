@@ -170,7 +170,7 @@ export default defineComponent({
       return highRange > props.totalMatches ? props.totalMatches : highRange;
     });
 
-    function onPageChanged(page: number) {
+    function onPageChanged(page: number): void {
       context.emit("pageChanged", page);
     }
 
@@ -179,7 +179,7 @@ export default defineComponent({
       return Math.ceil(props.totalMatches / 50);
     });
 
-    function goToMatchDetailPage(match: Match) {
+    function goToMatchDetailPage(match: Match): void {
       if (props.unfinished) return;
 
       router.push({
@@ -187,24 +187,24 @@ export default defineComponent({
       });
     }
 
-    const getWinner = (match: Match) => match.teams[0];
-    const getLoser = (match: Match) =>match.teams[1];
+    const getWinner = (match: Match): Team => match.teams[0];
+    const getLoser = (match: Match): Team =>match.teams[1];
 
-    function getPlayerTeam(match: Match) {
+    function getPlayerTeam(match: Match): Team {
       const playerTeam = match.teams.find((team: Team) =>
         team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
       );
 
-      return playerTeam;
+      return playerTeam!;
     }
 
-    function getOpponentTeam(match: Match) {
+    function getOpponentTeam(match: Match): Team {
       return match.teams.find(
         (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
-      );
+      )!;
     }
 
-    function getOpponentTeams(match: Match) {
+    function getOpponentTeams(match: Match): Team[] {
       const playerTeam = getPlayerTeam(match);
       const opponentTeams = match.teams.filter((x) => x != playerTeam);
 
