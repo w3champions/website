@@ -26,29 +26,38 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType, ref } from "vue";
 import { PlayerInTeam } from "@/store/types";
 import { mdiTwitch } from "@mdi/js";
 
-@Component({})
-export default class StreamedMatchPlayerInfo extends Vue {
-  @Prop() readonly player!: PlayerInTeam;
-  @Prop({ default: false }) readonly alignRight!: boolean;
-  public mdiTwitch = mdiTwitch;
+export default defineComponent({
+  name: "StreamedMatchPlayerInfo",
+  components: {},
+  props: {
+    player: {
+      type: Object as PropType<PlayerInTeam>,
+      required: true,
+    },
+    alignRight: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
+  },
+  setup(props) {
+    const twitchLink = ref<string>(`https://twitch.tv/${props.player.twitch}`);
+    const playerProfilePage = ref<string>(`/player/${encodeURIComponent(props.player.battleTag)}`);
 
-  get twitchLink(): string {
-    return `https://twitch.tv/${this.player.twitch}`;
-  }
-
-  get playerProfilePage() {
-    const playerId = encodeURIComponent(this.player.battleTag);
-    return `/player/${playerId}`;
-  }
-}
+    return {
+      mdiTwitch,
+      twitchLink,
+      playerProfilePage,
+    };
+  },
+});
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .streamed-match-player-info {
   display: inline-flex;
 
