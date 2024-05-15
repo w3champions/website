@@ -18,74 +18,77 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import orderBy from "lodash/orderBy";
 import sumBy from "lodash/sumBy";
-import { Component } from "vue-property-decorator";
 import { EGameMode, Match, PlayerInTeam } from "@/store/types";
-import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import StreamedMatchInfo from "@/components/matches/StreamedMatchInfo.vue";
 import { useTwitchStore } from "@/store/twitch/store";
 import { useMatchStore } from "@/store/match/store";
 
-@Component({
-  components: { StreamedMatchInfo, TeamMatchInfo },
-})
-export default class TopOngoingMatchesWithStreams extends Vue {
-  private matches: Match[] = [];
-  private twitchStore = useTwitchStore();
-  private matchStore = useMatchStore();
+export default defineComponent({
+  name: "TopOngoingMatchesWithStreams",
+  components: {
+    StreamedMatchInfo,
+  },
+  props: {},
+  setup() {
+    const twitchStore = useTwitchStore();
+    const matchStore = useMatchStore();
+    const matches = ref<Match[]>([]);
 
-  async mounted() {
-    await this.matchStore.loadAllOngoingMatches(EGameMode.GM_1ON1);
+    onMounted(async () => {
+      await matchStore.loadAllOngoingMatches(EGameMode.GM_1ON1);
 
-    const matchesWithStreamers =
-      this.matchStore.allOngoingMatches.filter((match) =>
-        match.teams.some((team) => team.players.some((player) => player.twitch))
-      );
-    const streamerNames = matchesWithStreamers.flatMap((match) =>
-      match.teams.flatMap((team) => team.players.map((player) => player.twitch))
-    );
-
-    if (streamerNames.length > 0) {
-      await this.twitchStore.getStreamStatus(streamerNames);
-
-      const activeStreamers =
-        this.twitchStore.twitchStreamResponse.data.map(
-          (stream) => stream.user_name.toLowerCase()
+      const matchesWithStreamers =
+        matchStore.allOngoingMatches.filter((match) =>
+          match.teams.some((team) => team.players.some((player) => player.twitch))
         );
+      const streamerNames = matchesWithStreamers.flatMap((match) =>
+        match.teams.flatMap((team) => team.players.map((player) => player.twitch))
+      );
 
-      this.matches = matchesWithStreamers
-        .filter((match) =>
-          match.teams.some((team) =>
-            team.players.some((player) =>
-              player.twitch
-                ? activeStreamers.includes(player.twitch.toLowerCase())
-                : false
+      if (streamerNames.length > 0) {
+        await twitchStore.getStreamStatus(streamerNames);
+
+        const activeStreamers =
+          twitchStore.twitchStreamResponse.data.map(
+            (stream) => stream.user_name.toLowerCase()
+          );
+
+        matches.value = matchesWithStreamers
+          .filter((match) =>
+            match.teams.some((team) =>
+              team.players.some((player) =>
+                player.twitch
+                  ? activeStreamers.includes(player.twitch.toLowerCase())
+                  : false
+              )
             )
           )
-        )
-        .slice(0, 5);
-    }
-  }
+          .slice(0, 5);
+      }
+    });
 
-  get matchesSortedByMMR(): Match[] {
-    return orderBy(
-      this.matches,
-      (match) =>
-        sumBy(
-          match.teams.flatMap((team) =>
-            team.players.map((player) => player.oldMmr)
-          )
-        ),
-      ["desc"]
-    );
-  }
+    const matchesSortedByMMR: ComputedRef<Match[]> = computed((): Match[] => {
+      return orderBy(
+        matches.value,
+        (match) =>
+          sumBy(
+            match.teams.flatMap((team) =>
+              team.players.map((player) => player.oldMmr)
+            )
+          ),
+        ["desc"]
+      );
+    });
 
-  public getPlayer(match: Match, index: number): PlayerInTeam {
-    return match.teams[index].players[0];
-  }
-}
+    const getPlayer = (match: Match, index: number): PlayerInTeam => match.teams[index].players[0];
+
+    return {
+      matchesSortedByMMR,
+      getPlayer,
+    };
+  },
+});
 </script>
-
-<style lang="scss" scoped></style>
