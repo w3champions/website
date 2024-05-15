@@ -12,25 +12,33 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from "vue";
+import { i18n } from "@/main";
 import { API_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
-import Vue from "vue";
-import { LocaleMessage } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
+import { TranslateResult } from "vue-i18n";
 
-@Component({})
-export default class DownloadReplayIcon extends Vue {
-  @Prop({}) gameId!: string;
-  public mdiDownload = mdiDownload;
+export default defineComponent({
+  name: "DownloadReplayIcon",
+  components: {},
+  props: {
+    gameId: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const tooltip = ref<TranslateResult>(i18n.t("components_matches_replayicon.download"));
 
-  get tooltip(): LocaleMessage {
-    return `${this.$t("components_matches_replayicon.download")}`;
-  }
+    function downloadReplay(): void {
+      window.open(`${API_URL}api/replays/${props.gameId}`, "_self");
+    }
 
-  downloadReplay(): void {
-    window.open(`${API_URL}api/replays/${this.gameId}`, "_self");
-  }
-}
+    return {
+      mdiDownload,
+      tooltip,
+      downloadReplay,
+    };
+  },
+});
 </script>
-
-<style></style>

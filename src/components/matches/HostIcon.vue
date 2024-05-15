@@ -1,19 +1,14 @@
 <template>
   <v-tooltip bottom style="white-space: pre-line">
     <template v-slot:activator="{ on }">
-      <span v-on="on">
+      <div v-on="on" class="globe">
         <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
-      </span>
+      </div>
     </template>
     <span>{{ tooltip }}</span>
     <table style="width: 100%">
-      <tr
-        v-for="playerInfo in host.playerServerInfos"
-        :key="playerInfo.battleTag"
-      >
-        <td>
-          {{ stripTag(playerInfo.battleTag) }}
-        </td>
+      <tr v-for="playerInfo in host.playerServerInfos" :key="playerInfo.battleTag">
+        <td>{{ stripTag(playerInfo.battleTag) }}</td>
         <td>{{ playerInfo.averagePing }}ms</td>
       </tr>
     </table>
@@ -21,51 +16,52 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";
-import Vue from "vue";
-import { LocaleMessage } from "vue-i18n";
-import { Component, Prop } from "vue-property-decorator";
 
-@Component({})
-export default class HostIcon extends Vue {
-  @Prop({}) host!: ServerInfo;
+export default defineComponent({
+  name: "HostIcon",
+  components: {},
+  props: {
+    host: {
+      type: Object as PropType<ServerInfo>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const icon: ComputedRef<string> = computed((): string => {
+      if (!props.host) return getAsset(`icons/hosterror.png`);
+      return getAsset(`icons/${props.host.provider}.png`);
+    });
 
-  get icon(): unknown {
-    if (this.host == undefined) {
-      return getAsset(`icons/hosterror.png`);
-    }
-    return getAsset(`icons/${this.host.provider}.png`);
-  }
+    const tooltip: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+      if (!props.host) return i18n.t("components_matches_hosticon.error");
+      if (props.host.provider === "BNET") return i18n.t("components_matches_hosticon.hostedonbnet");
+      return `${i18n.t("components_matches_hosticon.hostedonflo")} / ${props.host.name}`;
+    });
 
-  get tooltip(): LocaleMessage {
-    if (this.host == undefined) {
-      return this.$t("components_matches_hosticon.error");
-    }
+    function stripTag(tag: string): string {
+      if (!tag) return "";
 
-    if (this.host.provider == "BNET") {
-      return this.$t("components_matches_hosticon.hostedonbnet");
-    } else {
-      return `${this.$t("components_matches_hosticon.hostedonflo")} / ${
-        this.host.name
-      }`;
-    }
-  }
-
-  stripTag(tag: string): string {
-    if (!tag) {
-      return "";
+      const hashIndex = tag.indexOf("#");
+      if (hashIndex != -1) return tag.substring(0, hashIndex);
+      return tag;
     }
 
-    const hashIndex = tag.indexOf("#");
-
-    if (hashIndex != -1) {
-      return tag.substring(0, hashIndex);
-    }
-
-    return tag;
-  }
-}
+    return {
+      icon,
+      tooltip,
+      stripTag,
+    };
+  },
+});
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.globe {
+  display: inline-block;
+}
+</style>

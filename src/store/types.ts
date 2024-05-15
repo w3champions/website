@@ -29,7 +29,7 @@ export type Match = {
   map: string;
   mapId?: number;
   mapName: string;
-  id: number;
+  id: string;
   durationInSeconds: number;
   number: number;
   startTime: timestampString;

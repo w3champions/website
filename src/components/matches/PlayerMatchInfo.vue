@@ -41,129 +41,111 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { PlayerInTeam } from "@/store/types";
+import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
+import { useRouter } from "vue-router/composables";
+import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
-import { RaceStat } from "@/store/player/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
-import ProfileService from "@/services/ProfileService";
-import { useRankingStore } from "@/store/ranking/store";
 
-@Component({
-  components: { PlayerIcon, CountryFlagExtended },
-})
-export default class PlayerMatchInfo extends Vue {
-  @Prop() public player!: PlayerInTeam;
 
-  @Prop() public left!: boolean;
-  @Prop() public bigRaceIcon!: boolean;
-  @Prop() public notClickable!: boolean;
-  @Prop() public unfinishedMatch!: boolean;
-  @Prop() public isAnonymous!: boolean;
+export default defineComponent({
+  name: "PlayerMatchInfo",
+  components: {
+    PlayerIcon,
+    CountryFlagExtended,
+  },
+  props: {
+    player: {
+      type: Object as PropType<PlayerInTeam>,
+      required: true,
+    },
+    left: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    bigRaceIcon: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    notClickable: {
+      type: Boolean,
+      required: true,
+    },
+    unfinishedMatch: {
+      type: Boolean,
+      required: true,
+    },
+    isAnonymous: {
+      type: Boolean,
+      required: false,
+      undefined,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
 
-  public winrate: RaceStat = {} as RaceStat;
-  private rankingsStore = useRankingStore();
+    const won: ComputedRef<string> = computed((): string => {
+      if (props.unfinishedMatch) return "";
 
-  get won() {
-    if (this.unfinishedMatch) {
+      if (Object.prototype.hasOwnProperty.call(props.player, "won")) {
+        return props.player.won ? "won" : "lost";
+      }
+
       return "";
+    });
+
+    const race = ref<ERaceEnum>(props.player.race);
+    const rndRace = ref<ERaceEnum>(props.player.rndRace);
+    const currentRating = ref<number>(Math.floor(props.player.oldMmr));
+    const textClass = ref<string>(props.left ? "player-info__right" : "player-info__left");
+    const nameWithoutBtag = ref<string>(props.player.name);
+    const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
+
+    const mmrChange: ComputedRef<number> = computed((): number => {
+      if (props.player.oldMmr && props.player.currentMmr) {
+        return Math.floor(props.player.currentMmr - props.player.oldMmr);
+      }
+
+      return 0;
+    });
+
+    function openProfileInNewTab() {
+      if (!showPlayerInfo.value) return;
+
+      const path = getProfileUrl(props.player.battleTag);
+      window.open(path, "_blank");
     }
 
-    if (Object.prototype.hasOwnProperty.call(this.player, "won")) {
-      return this.player.won ? "won" : "lost";
+    function goToPlayer() {
+      if (!showPlayerInfo.value) return;
+
+      router
+        .push({
+          path: getProfileUrl(props.player.battleTag),
+        })
+        .catch((err) => {
+          return err;
+        });
     }
-
-    return "";
-  }
-
-  get race() {
-    return this.player.race;
-  }
-
-  get rndRace() {
-    return this.player.rndRace;
-  }
-
-  get mmrChange() {
-    if (this.player.oldMmr && this.player.currentMmr) {
-      return Math.floor(this.player.currentMmr - this.player.oldMmr);
-    }
-
-    return 0;
-  }
-
-  get currentRating() {
-    return Math.floor(this.player.oldMmr);
-  }
-
-  get textClass() {
-    return this.left ? "player-info__right" : "player-info__left";
-  }
-
-  get battleTag() {
-    if (!this.player) {
-      return "";
-    }
-
-    return this.player.battleTag;
-  }
-
-  get nameWithoutBtag() {
-    return this.player.name;
-  }
-
-  get showPlayerInfo() {
-    return !this.unfinishedMatch || !this.isAnonymous;
-  }
-
-  public openProfileInNewTab() {
-    if (!this.showPlayerInfo) {
-      return;
-    }
-
-    const path = getProfileUrl(this.player.battleTag);
-    window.open(path, "_blank");
-  }
-
-  private async lazyLoadWinrate() {
-    if (!this.showPlayerInfo) {
-      return;
-    }
-
-    this.winrate =
-      await ProfileService.retrieveWinRate(
-        this.player.battleTag,
-        this.rankingsStore.selectedSeason.id
-      );
-  }
-
-  public goToPlayer() {
-    if (!this.showPlayerInfo) {
-      return;
-    }
-
-    this.$router
-      .push({
-        path: getProfileUrl(this.player.battleTag),
-      })
-      .catch((err) => {
-        return err;
-      });
-  }
-}
+    return {
+      won,
+      race,
+      rndRace,
+      currentRating,
+      textClass,
+      nameWithoutBtag,
+      mmrChange,
+      openProfileInNewTab,
+      goToPlayer,
+    };
+  },
+});
 </script>
 
-<style lang="scss">
-.btag {
-  font-size: 10px;
-}
-
-.mmr {
-  font-size: 18px !important;
-}
-
+<style lang="scss" scoped>
 .player-info {
   display: flex;
   position: relative;
@@ -176,8 +158,8 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    right: 35px;
-    top: 14px;
+    right: 38px;
+    top: 15px;
     height: 0px;
   }
 }
@@ -188,16 +170,14 @@ export default class PlayerMatchInfo extends Vue {
   z-index: 2;
 
   .flag-container {
-    left: 33px;
-    top: 14px;
+    left: 35px;
+    top: 15px;
     height: 0px;
   }
 }
 
 .flag-container {
   position: absolute;
-  top: 6px;
-  z-index: 1;
 }
 
 .name-link {

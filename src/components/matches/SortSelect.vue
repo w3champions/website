@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
         <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
-        {{ sortName }}
+        {{ currentSort.name }}
       </v-btn>
     </template>
     <v-card>
@@ -15,7 +15,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
-          <v-list-item v-for="sort in sortings" :key="sort.mode" @click="setSort(sort.mode)">
+          <v-list-item v-for="sort in sortings" :key="sort.mode" @click="currentSort = sort">
             <v-list-item-content>
               <v-list-item-title>{{ sort.name }}</v-list-item-title>
             </v-list-item-content>
@@ -27,39 +27,51 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, defineComponent, WritableComputedRef } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 
-@Component({})
-export default class MapSelect extends Vue {
-  public mdiSortAscending = mdiSortAscending;
-  private matchStore = useMatchStore();
+interface SortSelectData {
+  name: TranslateResult;
+  mode: SortMode;
+}
 
-  get sortName() {
-    const selectedSort = this.matchStore.sort;
-    return this.sortings.find((sort) => sort.mode == selectedSort)!.name;
-  }
+export default defineComponent({
+  name: "SortSelect",
+  components: {},
+  props: {},
+  setup() {
+    const matchStore = useMatchStore();
 
-  get sortings() {
-    return [
+    const currentSort: WritableComputedRef<SortSelectData> = computed({
+      get(): SortSelectData {
+        const selectedSort = matchStore.sort;
+        return sortings.find((sort) => sort.mode == selectedSort)!;
+      },
+      set(val: SortSelectData): void {
+        matchStore.setSort(val.mode);
+      },
+    });
+
+    const sortings: SortSelectData[] = [
       {
-        name: this.$t(`components_matches_sortselect.starttimedescending`),
+        name: i18n.t(`components_matches_sortselect.starttimedescending`),
         mode: SortMode.startTimeDescending,
       },
       {
-        name: this.$t(`components_matches_sortselect.mmrdescending`),
+        name: i18n.t(`components_matches_sortselect.mmrdescending`),
         mode: SortMode.mmrDescending,
       },
     ];
-  }
 
-  public setSort(sort: string): void {
-    this.matchStore.setSort(sort);
-  }
-}
+    return {
+      mdiSortAscending,
+      currentSort,
+      sortings,
+    };
+  },
+});
 </script>
-
-<style></style>

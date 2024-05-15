@@ -15,7 +15,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense>
-          <v-list-item v-for="m in maps" :key="m.key" @click="selectMap(m.key)">
+          <v-list-item v-for="(m, index) in maps" :key="index" @click="selectMap(m.key)">
             <v-list-item-content>
               <v-list-item-title>{{ m.mapName }}</v-list-item-title>
             </v-list-item-content>

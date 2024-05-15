@@ -71,7 +71,7 @@
         <v-card-text>
           <maps-per-season-chart
             style="position: relative"
-            :maps-per-season="mapsPerSeason"
+            :maps-per-season="mapsPerSeason()"
           />
         </v-card-text>
       </v-col>
@@ -184,18 +184,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import {
-  GameDay,
-  GameDayPerMode,
-  GameLength,
-  Length,
-  MapCount,
-  MatchupLength,
-  MmrRangeValues,
-  PopularHours,
-} from "@/store/overallStats/types";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { GameDay, GameDayPerMode, GameLength, MapCount, MmrRangeValues, PopularHours } from "@/store/overallStats/types";
 import { activeGameModes, activeGameModesWithAll, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import MatchupLengthBarChart from "@/components/overall-statistics/MatchupLengthBarChart.vue";
@@ -207,7 +197,8 @@ import MapsPerSeasonChart from "@/components/overall-statistics/MapsPerSeasonCha
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
 
-@Component({
+export default defineComponent({
+  name: "PlayerActivityTab",
   components: {
     MapsPerSeasonChart,
     ActivityPerDayChart,
@@ -216,222 +207,186 @@ import { useRankingStore } from "@/store/ranking/store";
     AmountPerDayChart,
     PopularGameTimeChart,
   },
-})
-export default class PlayerActivityTab extends Vue {
-  public selectedLengthMode = EGameMode.GM_1ON1;
-  public selectedPopularHourMode = EGameMode.GM_1ON1;
-  public selectedGamesPerDayMode = EGameMode.UNDEFINED;
-  public selectedSeasonForMaps = "All";
-  public selectedMatchupSeason = "all";
-  public selectedMatchupRace1 = ERaceEnum.HUMAN;
-  public selectedMatchupRace2 = ERaceEnum.HUMAN;
-  public selectedMatchupMmr = "all";
-  public overWrittenOnce = false;
-  public selectedModeForMaps = EGameMode.GM_1ON1;
-  public activeGameModes = activeGameModes;
-  public activeGameModesWithAll = activeGameModesWithAll;
-  private overallStatsStore = useOverallStatsStore();
-  private rankingsStore = useRankingStore();
+  props: {},
+  setup() {
+    const overallStatsStore = useOverallStatsStore();
+    const rankingsStore = useRankingStore();
+    const selectedLengthMode = ref<number>(EGameMode.GM_1ON1);
+    const selectedModeForMaps = ref<number>(EGameMode.GM_1ON1);
+    const selectedSeasonForMaps = ref<string>("All");
+    const selectedGamesPerDayMode = ref<EGameMode>(EGameMode.UNDEFINED);
+    const selectedPopularHourMode = ref<EGameMode>(EGameMode.GM_1ON1);
+    const selectedMatchupRace1 = ref<ERaceEnum>(ERaceEnum.HUMAN);
+    const selectedMatchupRace2 = ref<ERaceEnum>(ERaceEnum.HUMAN);
+    const selectedMatchupMmr = ref<string>("all");
+    const selectedMatchupSeason = ref<string>("all");
+    const selectedSeasonForMapsInitial: ComputedRef<string> = computed((): string => rankingsStore.seasons[0]?.id?.toString() ?? "");
+    const isAllMode: ComputedRef<boolean> = computed((): boolean => selectedGamesPerDayMode.value === EGameMode.UNDEFINED);
+    const race1String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace1.value)[0].name);
+    const race2String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace2.value)[0].name);
+    let overWrittenOnce = false;
 
-  async mounted(): Promise<void> {
-    await loadActiveGameModes();
-    await this.rankingsStore.retrieveSeasons();
-    this.setMatchupLengthSeason("all");
-  }
+     onMounted(async (): Promise<void> => {
+      await loadActiveGameModes();
+      await rankingsStore.retrieveSeasons();
+      setMatchupLengthSeason("all");
+     });
 
-  public setSelectedLengthMode(mode: EGameMode) {
-    this.selectedLengthMode = mode;
-  }
-
-  public setSelectedModeForMaps(mode: EGameMode) {
-    this.selectedModeForMaps = mode;
-  }
-
-  public setSelectedSeasonForMaps(season: string) {
-    this.selectedSeasonForMaps = season;
-  }
-
-  public setSelectedGamesPerDayMode(mode: EGameMode) {
-    this.selectedGamesPerDayMode = mode;
-  }
-
-  public setSelectedPopularHourMode(mode: EGameMode) {
-    this.selectedPopularHourMode = mode;
-  }
-
-  public setSelectedMatchupRace1(race: ERaceEnum) {
-    this.selectedMatchupRace1 = race;
-    this.overallStatsStore.loadMatchupLengthStatistics(this.selectedMatchupRace1, this.selectedMatchupRace2, this.selectedMatchupSeason);
-  }
-
-  public setSelectedMatchupRace2(race: ERaceEnum) {
-    this.selectedMatchupRace2 = race;
-    this.overallStatsStore.loadMatchupLengthStatistics(this.selectedMatchupRace1, this.selectedMatchupRace2, this.selectedMatchupSeason);
-  }
-
-  public setSelectedMatchupMmr(mmr: string) {
-    this.overallStatsStore.SET_MATCHUP_MMR_RANGE(mmr as MmrRangeValues);
-    this.selectedMatchupMmr = mmr;
-  }
-
-  public setMatchupLengthSeason(season: string) {
-    this.selectedMatchupSeason = season.toLocaleLowerCase();
-    this.overallStatsStore.loadMatchupLengthStatistics(this.selectedMatchupRace1, this.selectedMatchupRace2, this.selectedMatchupSeason);
-  }
-
-  get seasons() {
-    return [
-      "All",
-      ...this.rankingsStore.seasons.map((s) => s.id.toString()),
-    ];
-  }
-
-  get seasonsForMatchup() {
-    return this.seasons.map((e) => { return { id: e.toLowerCase(), name: e }; });
-  }
-
-  get raceOptions() {
-    return [
-      {
-        name: "Human",
-        id: ERaceEnum.HUMAN,
-      },
-      {
-        name: "Orc",
-        id: ERaceEnum.ORC,
-      },
-      {
-        name: "Night Elf",
-        id: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        name: "Undead",
-        id: ERaceEnum.UNDEAD,
-      },
-    ];
-  }
-
-  get race1String(): string {
-    return this.raceOptions.filter((r) => r.id == this.selectedMatchupRace1)[0].name;
-  }
-
-  get race2String(): string {
-    return this.raceOptions.filter((r) => r.id == this.selectedMatchupRace2)[0].name;
-  }
-
-  get matchupMmrOptions() {
-    const mmrOptions = ["all"];
-    for (let i = 400; i < 3000; i += 200) {
-      mmrOptions.push(i.toString());
+    function setSelectedLengthMode(mode: EGameMode) {
+      selectedLengthMode.value = mode;
     }
-    return mmrOptions.map((mmr) => {
-      return {
-        id: mmr,
-        name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`
-      };
+
+    function setSelectedModeForMaps(mode: EGameMode) {
+      selectedModeForMaps.value = mode;
+    }
+
+    function setSelectedSeasonForMaps(season: string) {
+      selectedSeasonForMaps.value = season;
+    }
+
+    function setSelectedGamesPerDayMode(mode: EGameMode) {
+      selectedGamesPerDayMode.value = mode;
+    }
+
+    function setSelectedPopularHourMode(mode: EGameMode) {
+      selectedPopularHourMode.value = mode;
+    }
+
+    function setSelectedMatchupRace1(race: ERaceEnum) {
+      selectedMatchupRace1.value = race;
+      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+    }
+
+    function setSelectedMatchupRace2(race: ERaceEnum) {
+      selectedMatchupRace2.value = race;
+      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+    }
+
+    function setSelectedMatchupMmr(mmr: string) {
+      overallStatsStore.SET_MATCHUP_MMR_RANGE(mmr as MmrRangeValues);
+      selectedMatchupMmr.value = mmr;
+    }
+
+    function setMatchupLengthSeason(season: string) {
+      selectedMatchupSeason.value = season.toLocaleLowerCase();
+      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+    }
+
+    const seasons: ComputedRef<string[]> = computed((): string[] => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
+
+    const seasonsForMatchup: ComputedRef<{ id: string; name: string }[]> = computed((): { id: string; name: string }[] => {
+      return seasons.value.map((e) => { return { id: e.toLowerCase(), name: e }; });
     });
-  }
 
-  get selectedGameLength(): GameLength {
-    return (
-      this.gameLength?.filter(
-        (g) => g.gameMode == this.selectedLengthMode
-      )[0] ?? { lengths: [] }
-    );
-  }
+    const raceOptions = [
+      { name: "Human", id: ERaceEnum.HUMAN },
+      { name: "Orc", id: ERaceEnum.ORC },
+      { name: "Night Elf", id: ERaceEnum.NIGHT_ELF },
+      { name: "Undead", id: ERaceEnum.UNDEAD },
+    ];
 
-  get selectedMatchupLength(): Length[] {
-    const lengths: Length[] = this.matchupLength?.lengthsByMmrRange?.all || [];
-    return lengths;
-  }
+    const matchupMmrOptions: ComputedRef<{ id: string; name: string }[]> = computed((): { id: string; name: string }[] => {
+      const mmrOptions = ["all"];
+      for (let i = 400; i < 3000; i += 200) {
+        mmrOptions.push(i.toString());
+      }
+      return mmrOptions.map((mmr) => {
+        return {
+          id: mmr,
+          name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`
+        };
+      });
+    });
 
-  get selectedSeasonForMapsInitial() {
-    return this.rankingsStore.seasons[0]?.id?.toString() ?? "";
-  }
+    const selectedGameLength: ComputedRef<GameLength> = computed((): GameLength => {
+      return (
+        gameLength.value?.filter(
+          (g) => g.gameMode == selectedLengthMode.value
+        )[0] ?? { lengths: [] }
+      );
+    });
 
-  get isAllMode() {
-    return this.selectedGamesPerDayMode === EGameMode.UNDEFINED;
-  }
+    const selectedGameHours: ComputedRef<PopularHours> = computed((): PopularHours => {
+      return popularGameHours.value.filter(
+        (g) => g.gameMode == selectedPopularHourMode.value
+      )[0];
+    });
 
-  get selectedGameHours(): PopularHours {
-    return this.popularGameHours.filter(
-      (g) => g.gameMode == this.selectedPopularHourMode
-    )[0];
-  }
+    const loadingGamesPerDayStats: ComputedRef<boolean> = computed((): boolean => overallStatsStore.loadingGamesPerDayStats);
+    const loadingPlayersPerDayStats: ComputedRef<boolean> = computed((): boolean => overallStatsStore.loadingPlayersPerDayStats);
+    const gameDays: ComputedRef<GameDayPerMode[]> = computed((): GameDayPerMode[] => overallStatsStore.gamesPerDay[0]);
+    const gameLength: ComputedRef<GameLength[]> = computed((): GameLength[] => overallStatsStore.gameLengths);
+    const popularGameHours: ComputedRef<PopularHours[]> = computed((): PopularHours[] => overallStatsStore.popularHours);
 
-  get loadingGamesPerDayStats(): boolean {
-    return this.overallStatsStore.loadingGamesPerDayStats;
-  }
+    function mapsPerSeason(): MapCount[] {
+      if (selectedSeasonForMapsInitial.value && !overWrittenOnce) {
+        selectedSeasonForMaps.value = selectedSeasonForMapsInitial.value;
+        overWrittenOnce = true;
+      }
 
-  get mapsPerSeason(): MapCount[] {
-    if (this.selectedSeasonForMapsInitial && !this.overWrittenOnce) {
-      this.selectedSeasonForMaps = this.selectedSeasonForMapsInitial;
-      this.overWrittenOnce = true;
+      const selectedSeasonMaps =
+        overallStatsStore.matchesOnMapPerSeason.filter(
+          (m) =>
+            m.season ===
+            (selectedSeasonForMaps.value === "All"
+              ? -1
+              : parseInt(selectedSeasonForMaps.value))
+        )[0];
+      if (!selectedSeasonMaps) return [];
+      return (
+        selectedSeasonMaps?.matchesOnMapPerModes?.filter(
+          (m) => m.gameMode === selectedModeForMaps.value
+        )[0]?.maps ?? []
+      );
     }
 
-    const selectedSeasonMaps =
-      this.overallStatsStore.matchesOnMapPerSeason.filter(
-        (m) =>
-          m.season ===
-          (this.selectedSeasonForMaps === "All"
-            ? -1
-            : parseInt(this.selectedSeasonForMaps))
-      )[0];
-    if (!selectedSeasonMaps) return [];
-    return (
-      selectedSeasonMaps?.matchesOnMapPerModes?.filter(
-        (m) => m.gameMode === this.selectedModeForMaps
-      )[0]?.maps ?? []
-    );
-  }
+    const playersPerDay: ComputedRef<GameDay[]> = computed((): GameDay[] => {
+      return (
+        overallStatsStore.playersPerDay
+          .toReversed()
+          ?.splice(
+            0,
+            overallStatsStore.playersPerDay.length - 1
+          ) ?? []
+      );
+    });
 
-  get loadingPlayersPerDayStats(): boolean {
-    return this.overallStatsStore.loadingPlayersPerDayStats;
-  }
-
-  get gameDays(): GameDayPerMode[] {
-    return this.overallStatsStore.gamesPerDay[0];
-  }
-
-  get gameDaysForGateways(): GameDayPerMode[][] {
-    const all = this.overallStatsStore.gamesPerDay[0];
-    const us = this.overallStatsStore.gamesPerDay[1];
-    const eu = this.overallStatsStore.gamesPerDay[2];
-    const filterForCurrentMode = (all: GameDayPerMode[]) => {
-      return all.filter((g) => g.gameMode === this.selectedGamesPerDayMode);
+    return {
+      loadingGamesPerDayStats,
+      loadingPlayersPerDayStats,
+      selectedGamesPerDayMode,
+      activeGameModesWithAll,
+      setSelectedGamesPerDayMode,
+      isAllMode,
+      gameDays,
+      playersPerDay,
+      selectedModeForMaps,
+      activeGameModes,
+      setSelectedModeForMaps,
+      selectedSeasonForMaps,
+      seasons,
+      setSelectedSeasonForMaps,
+      mapsPerSeason,
+      selectedPopularHourMode,
+      setSelectedPopularHourMode,
+      selectedGameHours,
+      selectedLengthMode,
+      setSelectedLengthMode,
+      selectedGameLength,
+      raceOptions,
+      selectedMatchupRace1,
+      setSelectedMatchupRace1,
+      selectedMatchupRace2,
+      setSelectedMatchupRace2,
+      matchupMmrOptions,
+      selectedMatchupMmr,
+      setSelectedMatchupMmr,
+      seasonsForMatchup,
+      selectedMatchupSeason,
+      setMatchupLengthSeason,
+      race1String,
+      race2String,
     };
-
-    const gameDayPerModes = filterForCurrentMode(all);
-    const gameDayPerModes1 = filterForCurrentMode(eu);
-    const gameDayPerModes2 = filterForCurrentMode(us);
-    return [gameDayPerModes, gameDayPerModes1, gameDayPerModes2];
-  }
-
-  get playersPerDay(): GameDay[] {
-    return (
-      this.overallStatsStore.playersPerDay
-        .reverse()
-        ?.splice(
-          0,
-          this.overallStatsStore.playersPerDay.length - 1
-        ) ?? []
-    );
-  }
-
-  get gameLength(): GameLength[] {
-    return this.overallStatsStore.gameLengths;
-  }
-
-  get matchupLength(): MatchupLength {
-    return this.overallStatsStore.matchupLength;
-  }
-
-  get popularGameHours(): PopularHours[] {
-    return this.overallStatsStore.popularHours;
-  }
-
-  // getGameModeName(x: IGameModeBrief): LocaleMessage {
-  //   return i18n.t(x.name);
-  // }
-}
+  },
+});
 </script>

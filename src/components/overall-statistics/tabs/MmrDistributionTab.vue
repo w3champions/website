@@ -7,7 +7,6 @@
             v-model="selectedSeason"
             :items="seasons"
             item-text="id"
-            @change="setSelectedSeason"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
             outlined
@@ -24,7 +23,7 @@
             outlined
           />
         </v-card-text>
-        <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded()">
+        <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded">
           <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
 
@@ -55,120 +54,107 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, WritableComputedRef } from "vue";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
-import { SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
+import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
-import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
-import { Watch } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
-@Component({
-  components: { MmrDistributionChart, GameModeSelect, GatewaySelect },
-})
-export default class PlayerActivityTab extends Vue {
-  private oauthStore = useOauthStore();
-  private overallStatsStore = useOverallStatsStore();
-  public selectedSeason: Season = { id: 1 };
-  public selectedGameMode: EGameMode = EGameMode.GM_1ON1;
-  public selectedGateWay: Gateways = Gateways.Europe;
-  public loadingData = true;
-  public activeGameModes = activeGameModes;
-  private player = usePlayerStore();
-  private rankingsStore = useRankingStore();
+export default defineComponent({
+  name: "MmrDistributionTab",
+  components: {
+    MmrDistributionChart,
+    GatewaySelect,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const overallStatsStore = useOverallStatsStore();
+    const player = usePlayerStore();
+    const rankingsStore = useRankingStore();
 
-  get seasons() {
-    return this.rankingsStore.seasons;
-  }
+    const selectedGameMode = ref<EGameMode>(EGameMode.GM_1ON1);
+    const selectedGateWay = ref<Gateways>(Gateways.Europe);
+    const selectedSeasonRef = ref<Season>({ id: 1 });
+    const loadingData = ref<boolean>(true);
+    const loadingMapAndRaceStats = ref<boolean>(overallStatsStore.loadingMapAndRaceStats);
 
-  get loadingMapAndRaceStats(): boolean {
-    return this.overallStatsStore.loadingMapAndRaceStats;
-  }
+    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
+    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
+    const mmrDistribution: ComputedRef<MmrDistribution> = computed((): MmrDistribution => overallStatsStore.mmrDistribution);
+    const standardDeviation: ComputedRef<string> = computed((): string => mmrDistribution.value?.standardDeviation?.toString() ?? "-");
+    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => selectedSeason.value.id <= 5);
 
-  public async setSelectedSeason(season: Season) {
-    this.loadingData = true;
-    this.selectedSeason = season;
-    if (this.verifiedBtag) {
-      await this.player.loadProfile({
-        battleTag: this.verifiedBtag,
-        freshLogin: false,
-      });
-      await this.player.loadGameModeStats({
-        battleTag: this.verifiedBtag,
-        season: season.id,
-      });
+    const selectedSeason: WritableComputedRef<Season> = computed({
+      get(): Season {
+        return selectedSeasonRef.value;
+      },
+      async set(season: Season): Promise<void> {
+        selectedSeasonRef.value = season;
+        loadingData.value = true;
+        if (verifiedBtag.value) {
+          await player.loadProfile({
+            battleTag: verifiedBtag.value,
+            freshLogin: false,
+          });
+          await player.loadGameModeStats({
+            battleTag: verifiedBtag.value,
+            season: season.id,
+          });
+        }
+        updateMMRDistribution();
+      },
+    });
+
+    async function updateMMRDistribution() {
+      const payload: SeasonGameModeGateWayForMMR = {
+        season: selectedSeasonRef.value.id,
+        gameMode: selectedGameMode.value,
+        gateWay: selectedGateWay.value,
+      };
+      await overallStatsStore.loadMmrDistribution(payload);
+      loadingData.value = false;
     }
-    this.updateMMRDistribution();
-  }
-  public async updateMMRDistribution() {
-    const payload: SeasonGameModeGateWayForMMR = {
-      season: this.selectedSeason.id,
-      gameMode: this.selectedGameMode,
-      gateWay: this.selectedGateWay,
+
+    function gameModeChanged(gameMode: EGameMode) {
+      selectedGameMode.value = gameMode;
+      updateMMRDistribution();
+    }
+
+    function gatewayChanged(gateWay: Gateways) {
+      selectedGateWay.value = gateWay;
+      updateMMRDistribution();
+    }
+
+    onMounted(() => init());
+
+    async function init() {
+      await loadActiveGameModes();
+      await rankingsStore.retrieveSeasons();
+      selectedSeason.value = seasons.value[0];
+    }
+
+    return {
+      selectedSeason,
+      seasons,
+      selectedGameMode,
+      gameModeChanged,
+      activeGameModes,
+      loadingMapAndRaceStats,
+      isGatewayNeeded,
+      gatewayChanged,
+      standardDeviation,
+      authCode,
+      loadingData,
+      mmrDistribution,
     };
-    await this.overallStatsStore.loadMmrDistribution(payload);
-    this.loadingData = false;
-  }
-
-  gameModeChanged(gameMode: EGameMode) {
-    this.selectedGameMode = gameMode;
-    this.updateMMRDistribution();
-  }
-
-  gatewayChanged(gateWay: Gateways) {
-    this.selectedGateWay = gateWay;
-    this.updateMMRDistribution();
-  }
-
-  public isGatewayNeeded() {
-    return this.selectedSeason.id <= 5;
-  }
-
-  mounted() {
-    this.init();
-  }
-
-  private async init() {
-    await loadActiveGameModes();
-    await this.rankingsStore.retrieveSeasons();
-    await this.setSelectedSeason(this.seasons[0]);
-  }
-
-  get verifiedBtag() {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  get mmrDistribution() {
-    return this.overallStatsStore.mmrDistribution;
-  }
-
-  get standardDeviation(): string {
-    return this.mmrDistribution?.standardDeviation?.toString() ?? "-";
-  }
-
-  get authCode(): string {
-    return this.oauthStore.token;
-  }
-
-  @Watch("verifiedBtag")
-  async onBattleTagChanged(newBattleTag: string) {
-    if (newBattleTag) {
-      await this.player.loadProfile({
-        battleTag: newBattleTag,
-        freshLogin: false,
-      });
-      await this.player.loadGameModeStats({
-        battleTag: newBattleTag,
-        season: this.selectedSeason.id,
-      });
-    }
-  }
-}
+  },
+});
 </script>

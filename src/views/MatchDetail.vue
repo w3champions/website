@@ -67,7 +67,7 @@
           </v-card-title>
           <v-card-title class="justify-center small-title">
             <v-card-subtitle>
-              {{ $_mapNameFromMatch(match) }} ({{ matchDuration }})
+              {{ mapNameFromMatch(match) }} ({{ matchDuration }})
               {{ playedDate }}
             </v-card-subtitle>
           </v-card-title>
@@ -182,7 +182,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+import Vue from "vue";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import _keyBy from "lodash/keyBy";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
@@ -192,7 +193,7 @@ import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vu
 import { EGameMode, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
-import MatchMixin from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
@@ -208,9 +209,10 @@ import { useMatchStore } from "@/store/match/store";
     DownloadReplayIcon,
   },
 })
-export default class MatchDetailView extends Mixins(MatchMixin) {
+export default class MatchDetailView extends Vue {
   @Prop() public matchId!: string;
   private matchStore = useMatchStore();
+  public mapNameFromMatch = mapNameFromMatch;
 
   @Watch("matchId")
   onMatchIdChanged() {
@@ -407,7 +409,7 @@ export default class MatchDetailView extends Mixins(MatchMixin) {
 
 <style type="text/css" scoped>
 .small-title {
-  margin-top: -30px !important;
+  margin-top: -25px !important;
   margin-bottom: -25px !important;
 }
 

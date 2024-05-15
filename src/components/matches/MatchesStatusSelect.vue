@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
-        {{ status }}
+        {{ currentStatus.name }}
       </v-btn>
     </template>
     <v-card>
@@ -18,12 +18,12 @@
         <v-divider></v-divider>
         <v-list dense>
           <v-list-item
-            v-for="mode in matchStatuses"
-            :key="mode.status"
-            @click="setStatus(mode.status)"
+            v-for="s in matchStatuses"
+            :key="s.status"
+            @click="currentStatus = s"
           >
             <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
+              <v-list-item-title>{{ s.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -33,40 +33,51 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
+import { computed, defineComponent, WritableComputedRef } from "vue";
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiControllerClassic } from "@mdi/js";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 
-@Component({})
-export default class MatchesStatusSelect extends Vue {
-  public mdiControllerClassic = mdiControllerClassic;
-  private matchStore = useMatchStore();
+interface MatchStatusSelectData {
+  name: TranslateResult;
+  status: MatchStatus;
+}
 
-  get status() {
-    const selectedStatus = this.matchStore.status;
-    return this.matchStatuses.filter((x) => x.status == selectedStatus)[0].name;
-  }
+export default defineComponent({
+  name: "MatchesStatusSelect",
+  components: {},
+  props: {},
+  setup() {
+    const matchStore = useMatchStore();
 
-  get matchStatuses() {
-    return [
+    const currentStatus: WritableComputedRef<MatchStatusSelectData> = computed({
+      get(): MatchStatusSelectData {
+        const selectedStatus = matchStore.status;
+        return matchStatuses.find((x) => x.status == selectedStatus)!;
+      },
+      set(val: MatchStatusSelectData): void {
+        matchStore.setStatus(val.status);
+      },
+    });
+
+    const matchStatuses: MatchStatusSelectData[] = [
       {
-        name: this.$t(`matchStatuses.onGoing`),
+        name: i18n.t(`matchStatuses.onGoing`),
         status: MatchStatus.onGoing,
       },
       {
-        name: this.$t(`matchStatuses.past`),
+        name: i18n.t(`matchStatuses.past`),
         status: MatchStatus.past,
       },
     ];
-  }
 
-  public setStatus(status: MatchStatus) {
-    this.matchStore.setStatus(status);
-  }
-}
+    return {
+      mdiControllerClassic,
+      currentStatus,
+      matchStatuses,
+    };
+  },
+});
 </script>
-
-<style></style>

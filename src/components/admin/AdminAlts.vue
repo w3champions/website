@@ -41,6 +41,7 @@
 import Vue from "vue";
 import { Component, Watch } from "vue-property-decorator";
 import { useAdminStore } from "@/store/admin/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
 
@@ -52,12 +53,13 @@ export default class AdminAlts extends Vue {
   public oldSearchTerm = "";
   public alts = [] as string[];
   private adminStore = useAdminStore();
+  private playerSearchStore = usePlayerSearchStore();
   public mdiMagnify = mdiMagnify;
 
   public revertToDefault(): void {
     this.showAlts = false;
     this.oldSearchTerm = "";
-    this.adminStore.clearSearch();
+    this.playerSearchStore.clearPlayerSearch();
     this.alts = [];
   }
 
@@ -79,7 +81,7 @@ export default class AdminAlts extends Vue {
   @Watch("search")
   public onSearchChanged(newValue: string): void {
     if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.adminStore.searchBnetTag({
+      this.playerSearchStore.searchBnetTag({
         searchText: newValue.toLowerCase(),
       });
       this.oldSearchTerm = newValue;
@@ -89,7 +91,7 @@ export default class AdminAlts extends Vue {
   }
 
   get searchedPlayers(): string[] {
-    return this.adminStore.searchedPlayers.map((player) => player.battleTag);
+    return this.playerSearchStore.searchedPlayers.map((player) => player.battleTag);
   }
 
   public goToProfile(alt: string): void {
