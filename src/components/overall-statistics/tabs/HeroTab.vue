@@ -41,42 +41,34 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-import { activeMeleeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
-import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
-import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
-import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import { EGameMode, EPick } from "@/store/types";
 import { PlayedHero } from "@/store/overallStats/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-@Component({
+
+export default defineComponent({
+  name: "HeroTab",
   components: {
     PlayedHeroesChart,
     HeroWinrate,
-    GameLengthChart,
-    AmountPerDayChart,
-    PopularGameTimeChart,
   },
-})
-export default class HeroTab extends Vue {
-  public selectedHeroesPlayedPick = 0;
-  public selectedHeroesPlayedMode = EGameMode.GM_1ON1;
-  private overallStatsStore = useOverallStatsStore();
+  props: {},
+  setup() {
+    const selectedHeroesPlayedPick = ref<number>(0);
+    const selectedHeroesPlayedMode = ref<EGameMode>(EGameMode.GM_1ON1);
+    const overallStatsStore = useOverallStatsStore();
 
-  async mounted() {
-    await loadActiveGameModes();
-    await this.overallStatsStore.loadPlayedHeroes();
-  }
+    onMounted(async () => {
+      await loadActiveGameModes();
+      await overallStatsStore.loadPlayedHeroes();
+    });
 
-  get gameModes() {
-    return activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT);
-  }
+    const gameModes: ComputedRef<IGameModeBrief[]> = computed((): IGameModeBrief[] => activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT));
 
-  get picks() {
-    return [
+    const picks = [
       {
         pickName: "overall",
         pickId: EPick.OVERALL,
@@ -94,23 +86,32 @@ export default class HeroTab extends Vue {
         pickId: EPick.THIRD,
       },
     ];
-  }
 
-  get selectedPlayedHeroes(): PlayedHero[] {
-    const heroes = this.overallStatsStore.playedHeroes;
-    if (heroes.length === 0) return [];
-    return (
-      heroes.filter((g) => g.gameMode == this.selectedHeroesPlayedMode)[0]
-        ?.orderedPicks[this.selectedHeroesPlayedPick]?.stats ?? []
-    );
-  }
+    const selectedPlayedHeroes: ComputedRef<PlayedHero[]> = computed((): PlayedHero[] => {
+      const heroes = overallStatsStore.playedHeroes;
+      if (heroes.length === 0) return [];
+      return (
+        heroes.filter((g) => g.gameMode == selectedHeroesPlayedMode.value)[0]
+          ?.orderedPicks[selectedHeroesPlayedPick.value]?.stats ?? []
+      );
+    });
 
-  public setSelectedHeroesPlayedPick(pick: number) {
-    this.selectedHeroesPlayedPick = pick;
-  }
+    function setSelectedHeroesPlayedPick(pick: number) {
+      selectedHeroesPlayedPick.value = pick;
+    }
 
-  public setSelectedHeroesPlayedMode(mode: EGameMode) {
-    this.selectedHeroesPlayedMode = mode;
-  }
-}
+    function setSelectedHeroesPlayedMode(mode: EGameMode) {
+      selectedHeroesPlayedMode.value = mode;
+    }
+    return {
+      selectedHeroesPlayedPick,
+      selectedHeroesPlayedMode,
+      gameModes,
+      picks,
+      selectedPlayedHeroes,
+      setSelectedHeroesPlayedPick,
+      setSelectedHeroesPlayedMode,
+    };
+  },
+});
 </script>

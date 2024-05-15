@@ -4,7 +4,7 @@ import { ActiveGameMode } from "@/store/ranking/types";
 import { i18n } from "@/main";
 import { LocaleMessage } from "vue-i18n";
 
-interface IGameModeBrief {
+export interface IGameModeBrief {
   name: LocaleMessage;
   id: EGameMode;
 }
