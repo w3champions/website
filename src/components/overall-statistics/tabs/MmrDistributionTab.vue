@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch, WritableComputedRef } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, WritableComputedRef } from "vue";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
@@ -67,7 +67,7 @@ import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
 export default defineComponent({
-  name: "PlayerActivityTab",
+  name: "MmrDistributionTab",
   components: {
     MmrDistributionChart,
     GatewaySelect,
@@ -139,20 +139,6 @@ export default defineComponent({
       await loadActiveGameModes();
       await rankingsStore.retrieveSeasons();
       selectedSeason.value = seasons.value[0];
-    }
-
-    watch(verifiedBtag, onBattleTagChanged);
-    async function onBattleTagChanged(newBattleTag: string) {
-      if (newBattleTag) {
-        await player.loadProfile({
-          battleTag: newBattleTag,
-          freshLogin: false,
-        });
-        await player.loadGameModeStats({
-          battleTag: newBattleTag,
-          season: selectedSeason.value.id,
-        });
-      }
     }
 
     return {
