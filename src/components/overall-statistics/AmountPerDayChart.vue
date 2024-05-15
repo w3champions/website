@@ -2,42 +2,48 @@
   <line-chart :chart-data="chartData" />
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { i18n } from "@/main";
 import { GameDay } from "@/store/overallStats/types";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
-import Vue from "vue";
 import { ChartData } from "chart.js";
 import { parseJSON } from "date-fns";
 
-@Component({
-  components: { LineChart },
-})
-export default class AmountPerDayChart extends Vue {
-  @Prop() public gameDays!: GameDay[];
+export default defineComponent({
+  name: "AmountPerDayChart",
+  components: {
+    LineChart,
+  },
+  props: {
+    gameDays: {
+      type: Array<GameDay>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const gameDayDates = ref<Date[]>(props.gameDays.map((g) => parseJSON(g.date)));
+    const gameDayCounts = ref<number[]>(props.gameDays.map((g) => g.gamesPlayed));
 
-  get gameDayDates(): Date[] {
-    return this.gameDays.map((g) => parseJSON(g.date));
-  }
+    const chartData: ComputedRef<ChartData> = computed((): ChartData => {
+      return {
+        labels: gameDayDates.value,
+        datasets: [
+          {
+            label: i18n.t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
+            data: gameDayCounts.value,
+            fill: true,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1.5,
+            tension: 0.4, // Smooth line.
+          },
+        ],
+      };
+    });
 
-  get gameDayCounts(): number[] {
-    return this.gameDays.map((g) => g.gamesPlayed);
-  }
-
-  get chartData(): ChartData {
     return {
-      labels: this.gameDayDates,
-      datasets: [
-        {
-          label: this.$t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
-          data: this.gameDayCounts,
-          fill: true,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1.5,
-          tension: 0.4, // Smooth line.
-        },
-      ],
+      chartData,
     };
-  }
-}
+  },
+});
 </script>
