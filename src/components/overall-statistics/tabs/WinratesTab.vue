@@ -240,11 +240,11 @@ export default defineComponent({
       selectedMap.value = map;
     }
 
-    function setSelectedMmr(mmr: number) {
+    function setSelectedMmr(mmr: number): void {
       selectedMmr.value = mmr;
     }
 
-    function setSelectedPatch(patch: string) {
+    function setSelectedPatch(patch: string): void {
       selectedPatch.value = patch;
     }
 
