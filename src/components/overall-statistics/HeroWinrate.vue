@@ -37,37 +37,37 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import HeroPictureSelect from "@/components/overall-statistics/HeroPictureSelect.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 
-@Component({
-  components: { HeroPictureSelect },
-})
-export default class HeroWinrate extends Vue {
-  private overallStatsStore = useOverallStatsStore();
+export default defineComponent({
+  name: "HeroWinrate",
+  components: {},
+  props: {
+    HeroPictureSelect,
+  },
+  setup() {
+    const overallStatsStore = useOverallStatsStore();
 
-  get winrateClass() {
-    if (this.winrate > 0.55) return "won";
-    if (this.winrate < 0.45) return "lost";
-    return "";
-  }
+    const winrateClass: ComputedRef<string> = computed((): string => {
+      if (winrate.value > 0.55) return "won";
+      if (winrate.value < 0.45) return "lost";
+      return "";
+    });
 
-  get winrate() {
-    return this.overallStatsStore.heroWinrate.winrate;
-  }
+    const winrate: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.winrate);
+    const wins: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.wins);
+    const losses: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.losses);
 
-  get wins() {
-    return this.overallStatsStore.heroWinrate.wins;
-  }
+    onMounted(() => overallStatsStore.loadHeroWinrates());
 
-  get losses() {
-    return this.overallStatsStore.heroWinrate.losses;
-  }
-
-  mounted() {
-    this.overallStatsStore.loadHeroWinrates();
-  }
-}
+    return {
+      winrateClass,
+      winrate,
+      wins,
+      losses,
+    };
+  },
+});
 </script>
