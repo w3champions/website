@@ -15,9 +15,7 @@
           />
         </div>
       </template>
-      <div>
-        {{ heroPickName }}
-      </div>
+      <div>{{ heroPickName }}</div>
     </v-tooltip>
     <div class="text-center hero-level-flag">
       <span>{{ (heroIndex % 3) + 1 }}</span>
@@ -40,29 +38,20 @@
                 <div v-on="on" class="ma-1">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
-                      :style="{
-                        backgroundImage:
-                          'url(' + parsePicture(heroPickSelection) + ')',
-                      }"
+                      :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
                       class="hero-icon-select"
-                      :class="
-                        isEnabledForSelect(heroPickSelection)
-                          ? ''
-                          : 'hero-icon-disabled'
-                      "
+                      :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
                       @click="
                         () => {
                           if (isEnabledForSelect(heroPickSelection))
                             pickHero(heroPickSelection);
                         }
                       "
-                    />
+                    ></div>
                   </v-responsive>
                 </div>
               </template>
-              <div>
-                {{ heroPickSelection.name }}
-              </div>
+              <div>{{ heroPickSelection.name }}</div>
             </v-tooltip>
           </v-col>
         </v-row>
@@ -72,347 +61,222 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { getAsset } from "@/helpers/url-functions";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 
-@Component({})
-export default class HeroPictureSelect extends Vue {
-  @Prop() heroIndex!: number;
 
-  public dialogOpened = false;
-  private overallStatsStore = useOverallStatsStore();
+export default defineComponent({
+  name: "HeroPictureSelect",
+  components: {},
+  props: {
+    heroIndex: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
+    const overallStatsStore = useOverallStatsStore();
+    const dialogOpened = ref<boolean>(false);
+    const heroPicks: ComputedRef<HeroPick[]> = computed((): HeroPick[] => overallStatsStore.heroPicks);
 
-  openDialog() {
-    this.dialogOpened = true;
-  }
-
-  public pickHero(hero: HeroPick) {
-    const newPick = { index: this.heroIndex, heroPick: hero };
-
-    if (hero.heroId === "none" || hero.heroId === "all") {
-      if (this.heroIndex === 0 || this.heroIndex === 3) {
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 1,
-          heroPick: hero,
-        });
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 2,
-          heroPick: hero,
-        });
-      }
-      if (this.heroIndex === 1 || this.heroIndex === 4) {
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 1,
-          heroPick: hero,
-        });
-      }
+    function openDialog() {
+      dialogOpened.value = true;
     }
 
-    if (this.heroIndex === 0 || this.heroIndex === 3) {
-      const allPickedRaces = [
-        this.heroPicks[0 + (this.heroIndex % 3)].race,
-        this.heroPicks[1 + (this.heroIndex % 3)].race,
-        this.heroPicks[2 + (this.heroIndex % 3)].race,
+    function pickHero(hero: HeroPick) {
+      const newPick = { index: props.heroIndex, heroPick: hero };
+
+      if (hero.heroId === "none" || hero.heroId === "all") {
+        if (props.heroIndex === 0 || props.heroIndex === 3) {
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 1,
+            heroPick: hero,
+          });
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 2,
+            heroPick: hero,
+          });
+        }
+        if (props.heroIndex === 1 || props.heroIndex === 4) {
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 1,
+            heroPick: hero,
+          });
+        }
+      }
+
+      if (props.heroIndex === 0 || props.heroIndex === 3) {
+        const allPickedRaces = [
+          heroPicks.value[0 + (props.heroIndex % 3)].race,
+          heroPicks.value[1 + (props.heroIndex % 3)].race,
+          heroPicks.value[2 + (props.heroIndex % 3)].race,
+        ];
+
+        if (allPickedRaces[1] !== hero.race && allPickedRaces[1] !== ERaceEnum.RANDOM) {
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 1,
+            heroPick: {
+              name: "anyhero",
+              heroId: "all",
+              race: ERaceEnum.TOTAL,
+            },
+          });
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 2,
+            heroPick: {
+              name: "anyhero",
+              heroId: "all",
+              race: ERaceEnum.TOTAL,
+            },
+          });
+        }
+
+        if (allPickedRaces[2] !== hero.race && allPickedRaces[2] !== ERaceEnum.RANDOM) {
+          overallStatsStore.SET_HERO_PICK({
+            index: props.heroIndex + 2,
+            heroPick: {
+              name: "anyhero",
+              heroId: "all",
+              race: ERaceEnum.TOTAL,
+            },
+          });
+        }
+      }
+
+      overallStatsStore.SET_HERO_PICK(newPick);
+      overallStatsStore.loadHeroWinrates();
+      dialogOpened.value = false;
+    }
+
+    function parsePicture(hero: HeroPick): string {
+      return getAsset(`heroes/${hero.heroId}.png`);
+    }
+
+    const isEnabledForChange: ComputedRef<boolean> = computed((): boolean => {
+      return previousHero.value?.heroId !== "all" && previousHero.value?.heroId !== "none";
+    });
+
+    const previousHero: ComputedRef<HeroPick | null> = computed((): HeroPick | null => {
+      if (props.heroIndex === 3 || props.heroIndex === 0) {
+        return null;
+      }
+      return heroPicks.value[props.heroIndex - 1];
+    });
+
+    const previousPreviousHero: ComputedRef<HeroPick | null> = computed((): HeroPick | null => {
+      if (
+        props.heroIndex === 4 ||
+        props.heroIndex === 1 ||
+        props.heroIndex === 3 ||
+        props.heroIndex === 0
+      ) {
+        return null;
+      }
+
+      return heroPicks.value[props.heroIndex - 2];
+    });
+
+    function isEnabledForSelect(heroPick: HeroPick): boolean {
+      if (props.heroIndex === 0 && heroPick.heroId === "none") return false;
+      if (props.heroIndex === 3 && heroPick.heroId === "none") return false;
+
+      const previousHeroRaces = [
+        possibleHeroPicks.filter((h) => h.heroId === previousHero.value?.heroId)[0]?.race ?? ERaceEnum.TOTAL,
+        possibleHeroPicks.filter((h) => h.heroId === previousPreviousHero.value?.heroId)[0]?.race ?? ERaceEnum.TOTAL,
       ];
 
-      if (
-        allPickedRaces[1] !== hero.race &&
-        allPickedRaces[1] !== ERaceEnum.RANDOM
-      ) {
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 1,
-          heroPick: {
-            name: "anyhero",
-            heroId: "all",
-            race: ERaceEnum.TOTAL,
-          },
-        });
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 2,
-          heroPick: {
-            name: "anyhero",
-            heroId: "all",
-            race: ERaceEnum.TOTAL,
-          },
-        });
+      const previousHeroPicks = [
+        possibleHeroPicks.filter((h) => h.heroId === previousHero.value?.heroId)[0]?.heroId ?? "all",
+        possibleHeroPicks.filter((h) => h.heroId === previousPreviousHero.value?.heroId)[0]?.heroId ?? "all",
+      ];
+
+      const raceWithoutRandom = previousHeroRaces.filter((r) => r !== ERaceEnum.TOTAL && r !== ERaceEnum.RANDOM)[0];
+      const picksWithoutAll = previousHeroPicks.filter((r) => r !== "all" && r !== "none");
+
+      if (heroPick.race === ERaceEnum.RANDOM) {
+        const wasHeroPicked = picksWithoutAll.filter((p) => p === heroPick.heroId)[0];
+        return !wasHeroPicked;
       }
 
-      if (
-        allPickedRaces[2] !== hero.race &&
-        allPickedRaces[2] !== ERaceEnum.RANDOM
-      ) {
-       this.overallStatsStore.SET_HERO_PICK({
-          index: this.heroIndex + 2,
-          heroPick: {
-            name: "anyhero",
-            heroId: "all",
-            race: ERaceEnum.TOTAL,
-          },
-        });
+      if (heroPick.race === ERaceEnum.TOTAL) return true;
+      if (!raceWithoutRandom) return true;
+      if (!picksWithoutAll) return true;
+      if (picksWithoutAll[0] === heroPick.heroId) return false;
+      if (picksWithoutAll[1] === heroPick.heroId) return false;
+
+      return heroPick.race === raceWithoutRandom;
+    }
+
+    const heroPicture: ComputedRef<string> = computed((): string => parsePicture(heroPicks.value[props.heroIndex]));
+
+    const heroPickName: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+      const heroName = heroPicks.value[props.heroIndex].name;
+      if (heroName === "anyhero") {
+        return i18n.t("components_overall-statistics_heropictureselect.anyhero");
       }
-    }
+      return heroName;
+    });
 
-   this.overallStatsStore.SET_HERO_PICK(newPick);
-    this.overallStatsStore.loadHeroWinrates();
-    this.dialogOpened = false;
-  }
-
-  public parsePicture(hero: HeroPick) {
-    try {
-      return getAsset(`heroes/${hero.heroId}.png`);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  get isEnabledForChange() {
-    return (
-      this.previousHero?.heroId !== "all" &&
-      this.previousHero?.heroId !== "none"
-    );
-  }
-
-  get previousHero() {
-    if (this.heroIndex === 3 || this.heroIndex === 0) {
-      return null;
-    }
-    return this.heroPicks[this.heroIndex - 1];
-  }
-
-  get previousPreviousHero() {
-    if (
-      this.heroIndex === 4 ||
-      this.heroIndex === 1 ||
-      this.heroIndex === 3 ||
-      this.heroIndex === 0
-    ) {
-      return null;
-    }
-
-    return this.heroPicks[this.heroIndex - 2];
-  }
-
-  isEnabledForSelect(heroPick: HeroPick) {
-    if (this.heroIndex === 0 && heroPick.heroId === "none") return false;
-    if (this.heroIndex === 3 && heroPick.heroId === "none") return false;
-
-    const previousHeroRaces = [
-      this.possibleHeroPicks.filter(
-        (h) => h.heroId === this.previousHero?.heroId
-      )[0]?.race ?? ERaceEnum.TOTAL,
-      this.possibleHeroPicks.filter(
-        (h) => h.heroId === this.previousPreviousHero?.heroId
-      )[0]?.race ?? ERaceEnum.TOTAL,
+    const possibleHeroPicks: HeroPick[] = [
+      { name: i18n.t(`heroNames.none`).toString(), heroId: "none", race: ERaceEnum.TOTAL },
+      { name: i18n.t(`heroNames.all`).toString(), heroId: "all", race: ERaceEnum.TOTAL },
+      { name: i18n.t(`heroNames.archmage`).toString(), heroId: "archmage", race: ERaceEnum.HUMAN },
+      { name: i18n.t(`heroNames.mountainking`).toString(), heroId: "mountainking", race: ERaceEnum.HUMAN },
+      { name: i18n.t(`heroNames.paladin`).toString(), heroId: "paladin", race: ERaceEnum.HUMAN },
+      { name: i18n.t(`heroNames.sorceror`).toString(), heroId: "sorceror", race: ERaceEnum.HUMAN },
+      { name: i18n.t(`heroNames.farseer`).toString(), heroId: "farseer", race: ERaceEnum.ORC },
+      { name: i18n.t(`heroNames.blademaster`).toString(), heroId: "blademaster", race: ERaceEnum.ORC },
+      { name: i18n.t(`heroNames.shadowhunter`).toString(), heroId: "shadowhunter", race: ERaceEnum.ORC },
+      { name: i18n.t(`heroNames.taurenchieftain`).toString(), heroId: "taurenchieftain", race: ERaceEnum.ORC },
+      { name: i18n.t(`heroNames.deathknight`).toString(), heroId: "deathknight", race: ERaceEnum.UNDEAD },
+      { name: i18n.t(`heroNames.lich`).toString(), heroId: "lich", race: ERaceEnum.UNDEAD },
+      { name: i18n.t(`heroNames.dreadlord`).toString(), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
+      { name: i18n.t(`heroNames.cryptlord`).toString(), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
+      { name: i18n.t(`heroNames.demonhunter`).toString(), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
+      { name: i18n.t(`heroNames.keeperofthegrove`).toString(), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
+      { name: i18n.t(`heroNames.warden`).toString(), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
+      { name: i18n.t(`heroNames.priestessofthemoon`).toString(), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
+      { name: i18n.t(`heroNames.avatarofflame`).toString(), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.bansheeranger`).toString(), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.beastmaster`).toString(), heroId: "beastmaster", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.pandarenbrewmaster`).toString(), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.pitlord`).toString(), heroId: "pitlord", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.seawitch`).toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.tinker`).toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
+      { name: i18n.t(`heroNames.alchemist`).toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
     ];
 
-    const previousHeroPicks = [
-      this.possibleHeroPicks.filter(
-        (h) => h.heroId === this.previousHero?.heroId
-      )[0]?.heroId ?? "all",
-      this.possibleHeroPicks.filter(
-        (h) => h.heroId === this.previousPreviousHero?.heroId
-      )[0]?.heroId ?? "all",
+    const possibleHeroPickRows: HeroPick[][] = [
+      possibleHeroPicks.slice(0, 2),
+      possibleHeroPicks.slice(2, 6),
+      possibleHeroPicks.slice(6, 10),
+      possibleHeroPicks.slice(10, 14),
+      possibleHeroPicks.slice(14, 18),
+      possibleHeroPicks.slice(18, 22),
+      possibleHeroPicks.slice(22, 26),
     ];
 
-    const raceWithoutRandom = previousHeroRaces.filter(
-      (r) => r !== ERaceEnum.TOTAL && r !== ERaceEnum.RANDOM
-    )[0];
-
-    const picksWithoutAll = previousHeroPicks.filter(
-      (r) => r !== "all" && r !== "none"
-    );
-
-    if (heroPick.race === ERaceEnum.RANDOM) {
-      const wasHeroPicked = picksWithoutAll.filter(
-        (p) => p === heroPick.heroId
-      )[0];
-      return !wasHeroPicked;
-    }
-
-    if (heroPick.race === ERaceEnum.TOTAL) return true;
-    if (!raceWithoutRandom) return true;
-    if (!picksWithoutAll) return true;
-    if (picksWithoutAll[0] === heroPick.heroId) return false;
-    if (picksWithoutAll[1] === heroPick.heroId) return false;
-
-    return heroPick.race === raceWithoutRandom;
-  }
-
-  get heroPicture() {
-    return this.parsePicture(this.heroPicks[this.heroIndex]);
-  }
-
-  get heroPicks() {
-    return this.overallStatsStore.heroPicks;
-  }
-
-  get heroPickName() {
-    const heroName = this.heroPicks[this.heroIndex].name;
-    if (heroName === "anyhero") {
-      return this.$t("components_overall-statistics_heropictureselect.anyhero");
-    }
-    return heroName;
-  }
-
-  get possibleHeroPickRows() {
-    return [
-      this.possibleHeroPicks.slice(0, 2),
-      this.possibleHeroPicks.slice(2, 6),
-      this.possibleHeroPicks.slice(6, 10),
-      this.possibleHeroPicks.slice(10, 14),
-      this.possibleHeroPicks.slice(14, 18),
-      this.possibleHeroPicks.slice(18, 22),
-      this.possibleHeroPicks.slice(22, 26),
-    ];
-  }
-
-  get possibleHeroPicks(): HeroPick[] {
-    return [
-      {
-        name: this.$t(`heroNames.none`).toString(),
-        heroId: "none",
-        race: ERaceEnum.TOTAL,
-      },
-      {
-        name: this.$t(`heroNames.all`).toString(),
-        heroId: "all",
-        race: ERaceEnum.TOTAL,
-      },
-
-      {
-        name: this.$t(`heroNames.archmage`).toString(),
-        heroId: "archmage",
-        race: ERaceEnum.HUMAN,
-      },
-      {
-        name: this.$t(`heroNames.mountainking`).toString(),
-        heroId: "mountainking",
-        race: ERaceEnum.HUMAN,
-      },
-      {
-        name: this.$t(`heroNames.paladin`).toString(),
-        heroId: "paladin",
-        race: ERaceEnum.HUMAN,
-      },
-      {
-        name: this.$t(`heroNames.sorceror`).toString(),
-        heroId: "sorceror",
-        race: ERaceEnum.HUMAN,
-      },
-
-      {
-        name: this.$t(`heroNames.farseer`).toString(),
-        heroId: "farseer",
-        race: ERaceEnum.ORC,
-      },
-      {
-        name: this.$t(`heroNames.blademaster`).toString(),
-        heroId: "blademaster",
-        race: ERaceEnum.ORC,
-      },
-      {
-        name: this.$t(`heroNames.shadowhunter`).toString(),
-        heroId: "shadowhunter",
-        race: ERaceEnum.ORC,
-      },
-      {
-        name: this.$t(`heroNames.taurenchieftain`).toString(),
-        heroId: "taurenchieftain",
-        race: ERaceEnum.ORC,
-      },
-
-      {
-        name: this.$t(`heroNames.deathknight`).toString(),
-        heroId: "deathknight",
-        race: ERaceEnum.UNDEAD,
-      },
-      {
-        name: this.$t(`heroNames.lich`).toString(),
-        heroId: "lich",
-        race: ERaceEnum.UNDEAD,
-      },
-      {
-        name: this.$t(`heroNames.dreadlord`).toString(),
-        heroId: "dreadlord",
-        race: ERaceEnum.UNDEAD,
-      },
-      {
-        name: this.$t(`heroNames.cryptlord`).toString(),
-        heroId: "cryptlord",
-        race: ERaceEnum.UNDEAD,
-      },
-
-      {
-        name: this.$t(`heroNames.demonhunter`).toString(),
-        heroId: "demonhunter",
-        race: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        name: this.$t(`heroNames.keeperofthegrove`).toString(),
-        heroId: "keeperofthegrove",
-        race: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        name: this.$t(`heroNames.warden`).toString(),
-        heroId: "warden",
-        race: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        name: this.$t(`heroNames.priestessofthemoon`).toString(),
-        heroId: "priestessofthemoon",
-        race: ERaceEnum.NIGHT_ELF,
-      },
-
-      {
-        name: this.$t(`heroNames.avatarofflame`).toString(),
-        heroId: "avatarofflame",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.bansheeranger`).toString(),
-        heroId: "bansheeranger",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.beastmaster`).toString(),
-        heroId: "beastmaster",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.pandarenbrewmaster`).toString(),
-        heroId: "pandarenbrewmaster",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.pitlord`).toString(),
-        heroId: "pitlord",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.seawitch`).toString(),
-        heroId: "seawitch",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.tinker`).toString(),
-        heroId: "tinker",
-        race: ERaceEnum.RANDOM,
-      },
-      {
-        name: this.$t(`heroNames.alchemist`).toString(),
-        heroId: "alchemist",
-        race: ERaceEnum.RANDOM,
-      },
-    ];
-  }
-}
+    return {
+      isEnabledForChange,
+      openDialog,
+      heroPicture,
+      heroPickName,
+      dialogOpened,
+      possibleHeroPickRows,
+      parsePicture,
+      isEnabledForSelect,
+      pickHero,
+    };
+  },
+});
 </script>
 
-<style type="text/css" scoped>
+<style lang="scss" scoped>
 .hero-picture-select {
   z-index: 1;
   position: relative;
