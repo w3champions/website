@@ -1,74 +1,77 @@
 <template>
   <bar-chart :chart-data="gameHourChartData" />
 </template>
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
 
-import { PopularHours } from "@/store/overallStats/types";
+<script lang="ts">
+import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { i18n } from "@/main";
+import { PopularHours, Timeslot } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import Vue from "vue";
 
-@Component({
-  components: { BarChart },
-})
-export default class PopularGameTimeChart extends Vue {
-  @Prop() public popularGameHours!: PopularHours;
+export default defineComponent({
+  name: "PopularGameTimeChart",
+  components: {
+    BarChart,
+  },
+  props: {
+    popularGameHours: {
+      type: Object as PropType<PopularHours>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const timeslots: ComputedRef<Timeslot[]> = computed((): Timeslot[] => props.popularGameHours ? props.popularGameHours?.timeslots.slice(0) : []);
 
-  getTimeslots() {
-    return this.popularGameHours ? this.popularGameHours?.timeslots.slice(0) : [];
-  }
+    const gameStartHour: ComputedRef<string[]> = computed((): string[] => {
+      return timeslots.value.map((g) =>
+        g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
+      );
+    });
 
-  get gameStartHour(): string[] {
-    return this.getTimeslots().map((g) =>
-      g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
-    );
-  }
+    const utcTimeOffset: ComputedRef<number> = computed((): number => {
+      const time = new Date();
+      const timeOffset = time.getTimezoneOffset() / 60;
+      return timeOffset;
+    });
 
-  get utcTimeOffset(): number {
-    const time = new Date();
-    const timeOffset = time.getTimezoneOffset() / 60;
+    function shiftGameCount(gamesCount: number[]): number[] {
+      const numberOfBarsToOffset = Math.abs(utcTimeOffset.value * 4);
+      const isPositiveOffset = Math.abs(utcTimeOffset.value) === utcTimeOffset.value;
 
-    return timeOffset;
-  }
-
-  private shiftGameCount(gamesCount: number[]) {
-    const numberOfBarsToOffset = Math.abs(this.utcTimeOffset * 4);
-    const isPositiveOffset = Math.abs(this.utcTimeOffset) === this.utcTimeOffset;
-
-    for (let i = 0; i < numberOfBarsToOffset; i++) {
-      if (isPositiveOffset) {
-        const firstItem = gamesCount.shift()!;
-        gamesCount.push(firstItem);
-      } else {
-        const lastItem = gamesCount.pop()!;
-        gamesCount.unshift(lastItem);
+      for (let i = 0; i < numberOfBarsToOffset; i++) {
+        if (isPositiveOffset) {
+          const firstItem = gamesCount.shift()!;
+          gamesCount.push(firstItem);
+        } else {
+          const lastItem = gamesCount.pop()!;
+          gamesCount.unshift(lastItem);
+        }
       }
+      return gamesCount;
     }
-    return gamesCount;
-  }
 
-  get gamesCount() {
-    return this.getTimeslots().map((g) => g.games);
-  }
+    const gamesCount: ComputedRef<number[]> = computed((): number[] => timeslots.value.map((g) => g.games));
 
-  get gameHourChartData(): ChartData {
+    const gameHourChartData: ComputedRef<ChartData> = computed((): ChartData => {
+      return {
+        labels: gameStartHour.value,
+        datasets: [
+          {
+            label: String(i18n.t("components_overall-statistics_populargametimechart.accgameslast2weeks")),
+            data: shiftGameCount(gamesCount.value),
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+    });
+
     return {
-      labels: this.gameStartHour,
-      datasets: [
-        {
-          label: String(
-            this.$t(
-              "components_overall-statistics_populargametimechart.accgameslast2weeks"
-            )
-          ),
-          data: this.shiftGameCount(this.gamesCount),
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
-        },
-      ],
+      gameHourChartData,
     };
-  }
-}
+  },
+});
+
 </script>

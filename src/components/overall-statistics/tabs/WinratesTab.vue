@@ -9,9 +9,7 @@
             item-text="mapName"
             item-value="mapId"
             @change="setSelectedMap"
-            :label="
-              $t(`components_overall-statistics_tabs_winratestab.selectmap`)
-            "
+            :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
             outlined
           />
           <v-select
@@ -19,10 +17,8 @@
             :items="mmrs"
             item-text="league"
             item-value="mmr"
-            @change="setSelectedMMR"
-            :label="
-              $t(`components_overall-statistics_tabs_winratestab.selectmmr`)
-            "
+            @change="setSelectedMmr"
+            :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
             outlined
           />
           <v-select
@@ -31,9 +27,7 @@
             item-value="patch"
             v-model="selectedPatch"
             @change="setSelectedPatch"
-            :label="
-              $t(`components_overall-statistics_tabs_winratestab.selectpatch`)
-            "
+            :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
             outlined
           />
         </v-card-text>
@@ -91,185 +85,183 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import {
-  Ratio,
-  StatsPerMapAndRace,
-  StatsPerWinrate,
-} from "@/store/overallStats/types";
-import { Watch } from "vue-property-decorator";
+import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-@Component({
-  components: { PlayerStatsRaceVersusRaceOnMapTableCell },
-})
-export default class WinratesTab extends Vue {
-  public raceEnums = ERaceEnum;
-  public selectedPatch = "All";
-  public selectedMmr = 0;
-  public selectedMap = this.$t("common.overall");
-  private overallStatsStore = useOverallStatsStore();
 
-  get headers() {
-    return [
+interface WinratesTabHeader {
+  text: TranslateResult;
+  align: string;
+  sortable: boolean;
+}
+
+export default defineComponent({
+  name: "WinratesTab",
+  components: {
+    PlayerStatsRaceVersusRaceOnMapTableCell,
+  },
+  props: {},
+  setup() {
+    const overallStatsStore = useOverallStatsStore();
+    const raceEnums = ERaceEnum;
+    const selectedPatch = ref<string>("All");
+    const selectedMmr = ref<number>(0);
+    const selectedMap = ref<TranslateResult>(i18n.t("common.overall"));
+    const statsPerRaceAndMap: ComputedRef<StatsPerWinrate[]> = computed((): StatsPerWinrate[] => overallStatsStore.statsPerMapAndRace);
+
+    const headers: WinratesTabHeader[] = [
       {
         text: "",
         align: "start",
         sortable: false,
-        value: "race",
       },
       {
-        text: this.$t("components_overall-statistics_tabs_winratestab.vshu"),
+        text: i18n.t("components_overall-statistics_tabs_winratestab.vshu"),
         align: "start",
         sortable: false,
       },
       {
-        text: this.$t("components_overall-statistics_tabs_winratestab.vsorc"),
+        text: i18n.t("components_overall-statistics_tabs_winratestab.vsorc"),
         align: "start",
         sortable: false,
       },
       {
-        text: this.$t("components_overall-statistics_tabs_winratestab.vsud"),
+        text: i18n.t("components_overall-statistics_tabs_winratestab.vsud"),
         align: "start",
         sortable: false,
       },
       {
-        text: this.$t("components_overall-statistics_tabs_winratestab.vsne"),
+        text: i18n.t("components_overall-statistics_tabs_winratestab.vsne"),
         align: "start",
         sortable: false,
       },
       {
-        text: this.$t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        text: i18n.t("components_overall-statistics_tabs_winratestab.vsrdm"),
         align: "start",
         sortable: false,
       },
     ];
-  }
 
-  get mmrs() {
-    const mmrsSorted = this.statsPerRaceAndMap
-      .map((r) => r.mmrRange)
-      .sort()
-      .reverse();
-    const mapped = mmrsSorted.map((m) => ({
-      league: this.$t("mmrLeagueRanges.MMR_" + m),
-      mmr: m,
-    }));
-    return mapped;
-  }
-
-  get maps() {
-    const stats = this.statsPerRaceAndMap[0];
-    if (!stats) return [];
-    return stats.patchToStatsPerModes[this.selectedPatch].map((r) => {
-      return { mapId: r.mapName, mapName: this.$t("mapNames." + r.mapName) };
+    const mmrs: ComputedRef<{ league: TranslateResult; mmr: number }[]> = computed((): { league: TranslateResult; mmr: number }[] => {
+      const mmrsSorted = statsPerRaceAndMap.value
+        .map((r) => r.mmrRange)
+        .sort()
+        .reverse();
+      const mapped = mmrsSorted.map((m) => ({
+        league: i18n.t("mmrLeagueRanges.MMR_" + m),
+        mmr: m,
+      }));
+      return mapped;
     });
-  }
 
-  get raceWinrate(): Ratio[] {
-    if (
-      !this.statsPerRaceAndMap ||
-      !this.statsPerRaceAndMap[0] ||
-      !this.statsPerRaceAndMap[0].patchToStatsPerModes[this.selectedPatch]
-    ) {
-      return [];
-    }
+    const maps: ComputedRef<{ mapId: string; mapName: TranslateResult }[]> = computed((): { mapId: string; mapName: TranslateResult }[] => {
+      const stats = statsPerRaceAndMap.value[0];
+      if (!stats) return [];
+      return stats.patchToStatsPerModes[selectedPatch.value].map((r) => {
+        return { mapId: r.mapName, mapName: i18n.t("mapNames." + r.mapName) };
+      });
+    });
 
-    const statsPerMapAndRace = this.statsPerRaceAndMap
-      .filter((r) => r.mmrRange === this.selectedMmr)[0]
-      .patchToStatsPerModes[this.selectedPatch].filter(
-        (r) => r.mapName === this.selectedMap
-      )[0];
-    if (!statsPerMapAndRace) {
-      return [];
-    }
-    return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
-  }
-
-  public setSelectedMap(map: string) {
-    this.selectedMap = map;
-  }
-
-  @Watch("statsPerRaceAndMap")
-  public onStatsPerRaceAndMapChange(
-    newVal: StatsPerMapAndRace[],
-    oldVal: StatsPerMapAndRace[]
-  ) {
-    if (oldVal.length == 0 && newVal.length > 0) {
-      if (this.selectedPatch == "") {
-        this.setSelectedPatch(this.patches[this.patches.length - 1]);
+    const raceWinrate: ComputedRef<Ratio[]> = computed((): Ratio[] => {
+      if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
+        return [];
       }
-    }
-  }
 
-  get statsPerRaceAndMap(): StatsPerWinrate[] {
-    return this.overallStatsStore.statsPerMapAndRace;
-  }
+      const statsPerMapAndRace = statsPerRaceAndMap.value
+        .filter((r) => r.mmrRange === selectedMmr.value)[0]
+        .patchToStatsPerModes[selectedPatch.value].filter(
+          (r) => r.mapName === selectedMap.value
+        )[0];
 
-  get patches() {
-    if (this.statsPerRaceAndMap[0]) {
-      const allowedPatches = ["All"];
-      const patches = Object.keys(
-        this.statsPerRaceAndMap[0].patchToStatsPerModes
-      );
-      for (const key in patches) {
-        const patch = patches[key];
-        const matches = this.getNumberOfMatches(
-          this.statsPerRaceAndMap[0].patchToStatsPerModes[patch]
+      if (!statsPerMapAndRace) return [];
+
+      return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
+    });
+
+    const patches: ComputedRef<string[]> = computed((): string[] => {
+      if (statsPerRaceAndMap.value[0]) {
+        const allowedPatches = ["All"];
+        const patches = Object.keys(
+          statsPerRaceAndMap.value[0].patchToStatsPerModes
         );
+        for (const key in patches) {
+          const patch = patches[key];
+          const numberOfMatches = getNumberOfMatches(statsPerRaceAndMap.value[0].patchToStatsPerModes[patch]);
 
-        if (matches > 10000) {
-          allowedPatches.push(patch);
-        }
-      }
-
-      return allowedPatches;
-    }
-    return [];
-  }
-
-  public getNumberOfMatches(patchStats: StatsPerMapAndRace[]) {
-    const dict: { [key: string]: number } = {};
-    let total = 0;
-
-    patchStats[0].ratio.map((r: Ratio) => {
-      r.winLosses.map((wL) => {
-        const keys = Object.keys(dict);
-        if (keys.length == 0) {
-          dict[r.race.toString() + wL.race.toString()] = wL.games;
-        }
-        let found = false;
-        for (const k in keys) {
-          const charArray = keys[k].split("");
-          const k0 = charArray[0] || "0";
-          const k1 = charArray[1] || "0";
-
-          if (
-            (k0 == r.race.toString() && k1 == wL.race.toString()) ||
-            (k1 == r.race.toString() && k0 == wL.race.toString())
-          ) {
-            found = true;
-            break;
+          if (numberOfMatches > 10000) {
+            allowedPatches.push(patch);
           }
         }
 
-        if (!found) {
-          dict[r.race.toString() + wL.race.toString()] = wL.games;
-          total += wL.games;
-        }
-      });
+        return allowedPatches;
+      }
+      return [];
     });
-    return total;
-  }
 
-  public setSelectedMMR(mmr: number) {
-    this.selectedMmr = mmr;
-  }
+    function getNumberOfMatches(patchStats: StatsPerMapAndRace[]) {
+      const dict: { [key: string]: number } = {};
+      let total = 0;
 
-  public setSelectedPatch(patch: string) {
-    this.selectedPatch = patch;
-  }
-}
+      patchStats[0].ratio.map((r: Ratio) => {
+        r.winLosses.map((wL) => {
+          const keys = Object.keys(dict);
+          if (keys.length == 0) {
+            dict[r.race.toString() + wL.race.toString()] = wL.games;
+          }
+          let found = false;
+          for (const k in keys) {
+            const charArray = keys[k].split("");
+            const k0 = charArray[0] || "0";
+            const k1 = charArray[1] || "0";
+
+            if (
+              (k0 == r.race.toString() && k1 == wL.race.toString()) ||
+              (k1 == r.race.toString() && k0 == wL.race.toString())
+            ) {
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            dict[r.race.toString() + wL.race.toString()] = wL.games;
+            total += wL.games;
+          }
+        });
+      });
+      return total;
+    }
+
+    function setSelectedMap(map: string): void {
+      selectedMap.value = map;
+    }
+
+    function setSelectedMmr(mmr: number): void {
+      selectedMmr.value = mmr;
+    }
+
+    function setSelectedPatch(patch: string): void {
+      selectedPatch.value = patch;
+    }
+
+    return {
+      raceEnums,
+      headers,
+      maps,
+      selectedMap,
+      setSelectedMap,
+      mmrs,
+      selectedMmr,
+      setSelectedMmr,
+      patches,
+      selectedPatch,
+      setSelectedPatch,
+      raceWinrate,
+    };
+  },
+});
 </script>
