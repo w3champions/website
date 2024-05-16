@@ -299,17 +299,15 @@ export default defineComponent({
     });
 
     const selectedGameLength: ComputedRef<GameLength> = computed((): GameLength => {
-      return (
-        gameLength.value?.filter(
+      return gameLength.value?.filter(
           (g) => g.gameMode == selectedLengthMode.value
-        )[0] ?? { lengths: [] }
-      );
+        )[0] ?? { lengths: [] };
     });
 
     const selectedGameHours: ComputedRef<PopularHours> = computed((): PopularHours => {
       return popularGameHours.value.filter(
         (g) => g.gameMode == selectedPopularHourMode.value
-      )[0];
+      )[0] ?? { timeslots: [] };
     });
 
     const loadingGamesPerDayStats: ComputedRef<boolean> = computed((): boolean => overallStatsStore.loadingGamesPerDayStats);
