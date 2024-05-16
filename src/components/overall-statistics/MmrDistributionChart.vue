@@ -122,7 +122,6 @@ export default defineComponent({
         .reverse();
     });
 
-    // mmrDistributionChartData(): ChartData<"bar" | "line", unknown> | null { // FIXME
     const mmrDistributionChartData: ComputedRef<ChartData> = computed((): ChartData => {
       return {
         labels: props.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
