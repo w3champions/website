@@ -3,15 +3,15 @@
     <v-data-table
       :headers="headers"
       :items="stats"
-      :items-per-page="Number.POSITIVE_INFINITY"
+      :items-per-page="-1"
       hide-default-footer
       :mobile-breakpoint="400"
       :hidden="stats.length === 0"
     >
-      <template v-slot:body="{ items }">
+      <template v-slot:body>
         <tbody>
-          <tr v-for="item in items" :key="item.map">
-            <td>{{ item.mapName ?? item.map }}</td>
+          <tr v-for="item in stats" :key="item.map">
+            <td>{{ item.map }}</td>
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
             <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
@@ -28,64 +28,82 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 
-@Component({
-  components: { PlayerStatsRaceVersusRaceOnMapTableCell },
-})
-export default class RaceToMapStat extends Vue {
-  @Prop() public stats!: WinLossesOnMap[];
+interface RaceToMapStatHeader {
+  text: TranslateResult;
+  align: string;
+  sortable: boolean;
+  width: string;
+}
 
-  public totalWins(stat: RaceStat[]) {
-    const totalWins = stat.map((s) => s.wins).reduce((a, b) => a + b, 0);
-    const totalLosses = stat.map((s) => s.losses).reduce((a, b) => a + b, 0);
-    const totalWinrate = totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
+export default defineComponent({
+  name: "RaceToMapStat",
+  components: {
+    PlayerStatsRaceVersusRaceOnMapTableCell,
+  },
+  props: {
+    stats: {
+      type: Array<WinLossesOnMap>,
+      required: true,
+    },
+  },
+  setup() {
+    function totalWins(stat: RaceStat[]) {
+      const totalWins = stat.map((s) => s.wins).reduce((a, b) => a + b, 0);
+      const totalLosses = stat.map((s) => s.losses).reduce((a, b) => a + b, 0);
+      const totalWinrate = totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
-    return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
-  }
+      return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
+    }
 
-  get headers() {
-    return [
+    const headers: RaceToMapStatHeader[] = [
       {
-        text: this.$t("components_overall-statistics_racetomapstat.map"),
+        text: i18n.t("components_overall-statistics_racetomapstat.map"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: this.$t("components_overall-statistics_racetomapstat.vshu"),
+        text: i18n.t("components_overall-statistics_racetomapstat.vshu"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: this.$t("components_overall-statistics_racetomapstat.vsorc"),
+        text: i18n.t("components_overall-statistics_racetomapstat.vsorc"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: this.$t("components_overall-statistics_racetomapstat.vsne"),
+        text: i18n.t("components_overall-statistics_racetomapstat.vsne"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: this.$t("components_overall-statistics_racetomapstat.vsud"),
+        text: i18n.t("components_overall-statistics_racetomapstat.vsud"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: this.$t("components_overall-statistics_racetomapstat.total"),
+        text: i18n.t("components_overall-statistics_racetomapstat.total"),
         align: "start",
         sortable: false,
         width: "25px",
       },
     ];
-  }
-}
+
+    return {
+      headers,
+      totalWins,
+    };
+  },
+});
 </script>
