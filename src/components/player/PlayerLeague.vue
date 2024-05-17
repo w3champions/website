@@ -58,8 +58,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType, ref, watch } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { EGameMode, ERaceEnum, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
@@ -68,151 +69,156 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { Gateways, Season } from "@/store/ranking/types";
-import { TranslateResult } from "vue-i18n";
+import { Gateways, PlayerId, Season } from "@/store/ranking/types";
+import { useRouter } from "vue-router/composables";
 
-@Component({
-  components: { RecentPerformance, LevelProgress },
-})
-export default class PlayerLeague extends Vue {
-  @Prop() modeStat!: ModeStat;
-  @Prop() showAtPartner!: boolean;
-  @Prop() smallMode!: boolean;
-  @Prop({ default: true }) showPerformance!: boolean;
-  private player = usePlayerStore();
+export default defineComponent({
+  name: "PlayerLeague",
+  components: {
+    RecentPerformance,
+    LevelProgress,
+  },
+  props: {
+    modeStat: {
+      type: Object as PropType<ModeStat>,
+      required: true,
+    },
+    showAtPartner: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    smallMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showPerformance: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
+    const playerStore = usePlayerStore();
+    const rootStateStore = useRootStateStore();
+    const matches = ref<Match[]>([]);
 
-  matches: Match[] = [];
-  private rootStateStore = useRootStateStore();
+    const playerId: ComputedRef<string> = computed((): string => props.modeStat.id);
+    const leagueMode: ComputedRef<TranslateResult> = computed((): TranslateResult => i18n.t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
+    const gameMode: ComputedRef<EGameMode> = computed((): EGameMode => props.modeStat.gameMode);
+    const league: ComputedRef<number> = computed((): number => props.modeStat.leagueId);
+    const gateWay: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
+    const battleTag: ComputedRef<string> = computed((): string => playerStore.battleTag);
+    const seasonAndGameModeAndGateway: ComputedRef<string> = computed((): string => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`);
+    const isRanked: ComputedRef<boolean> = computed((): boolean => props.modeStat.rank > 0);
 
-  get playerId(): string {
-    return this.modeStat.id;
-  }
+    const atPartner: ComputedRef<PlayerId> = computed((): PlayerId => {
+      return props.modeStat.playerIds.filter(
+        (id) => battleTag.value !== id.battleTag
+      )[0];
+    });
 
-  get leagueMode(): TranslateResult {
-    return this.$t(`gameModes.${EGameMode[this.modeStat.gameMode]}`);
-  }
+    async function init(): Promise<void> {
+      if (!props.showPerformance) return;
 
-  get gameMode(): EGameMode {
-    return this.modeStat.gameMode;
-  }
-
-  get league(): number {
-    return this.modeStat.leagueId;
-  }
-
-  get gateWay(): Gateways {
-    return this.rootStateStore.gateway;
-  }
-
-  get selectedSeason(): Season {
-    return this.player.selectedSeason;
-  }
-
-  get battleTag(): string {
-    return this.player.battleTag;
-  }
-
-  get atPartner() {
-    return this.modeStat.playerIds.filter(
-      (id) => this.battleTag !== id.battleTag
-    )[0];
-  }
-
-  get seasonAndGameModeAndGateway(): string {
-    return `${this.selectedSeason.id}${this.gameMode}${this.gateWay}`;
-  }
-
-  public async init(): Promise<void> {
-    if (!this.showPerformance) return;
-
-    const { matches } =
-      await MatchService.retrievePlayerMatches(
+      const playerMatches = await MatchService.retrievePlayerMatches(
         0,
-        this.battleTag,
+        battleTag.value,
         "",
-        this.gameMode,
+        gameMode.value,
         ERaceEnum.TOTAL,
         ERaceEnum.TOTAL,
-        this.gateWay,
-        this.selectedSeason.id
+        gateWay.value,
+        selectedSeason.value.id
       );
 
-    this.matches = matches;
-  }
-
-  public navigateToPartner(): void {
-    this.$router.push({
-      path: getProfileUrl(this.atPartner.battleTag),
-    });
-  }
-
-  public navigateToLeague(): void {
-    this.$router.push({
-      path: `/Rankings?season=${this.selectedSeason.id}&gateway=${
-        this.gateWay
-      }&gamemode=${this.gameMode}&league=${
-        this.league
-      }&playerId=${encodeURIComponent(this.playerId)}`,
-    });
-  }
-
-  get leagueName(): string {
-    if (!this.modeStat) return "";
-    if (!this.isRanked) return "unranked";
-
-    switch (this.modeStat.leagueOrder) {
-      case 0:
-        return "grandmaster";
-      case 1:
-        return "master";
-      case 2:
-        return "adept";
-      case 3:
-        return "diamond";
-      case 4:
-        return "platinum";
-      case 5:
-        return "gold";
-      case 6:
-        return "silver";
-      case 7:
-        return "bronze";
-      case 8:
-        return "grass";
-      default:
-        return "";
+      matches.value = playerMatches.matches;
     }
-  }
 
-  get isRanked(): boolean {
-    return this.modeStat.rank > 0;
-  }
+    function navigateToPartner(): void {
+      router.push({
+        path: getProfileUrl(atPartner.value.battleTag),
+      });
+    }
 
-  get lastTenMatchesPerformance(): string[] {
-    return this.matches
-      .slice(0, 10)
-      .map((match) =>
-        match.teams.find((team) =>
-          team.players.find((player) => player.battleTag === this.battleTag)
+    function navigateToLeague(): void {
+      router.push({
+        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${
+          gateWay.value
+        }&gamemode=${gameMode.value}&league=${
+          league.value
+        }&playerId=${encodeURIComponent(playerId.value)}`,
+      });
+    }
+
+    const leagueName: ComputedRef<string> = computed((): string => {
+      if (!props.modeStat) return "";
+      if (!isRanked.value) return "unranked";
+
+      switch (props.modeStat.leagueOrder) {
+        case 0:
+          return "grandmaster";
+        case 1:
+          return "master";
+        case 2:
+          return "adept";
+        case 3:
+          return "diamond";
+        case 4:
+          return "platinum";
+        case 5:
+          return "gold";
+        case 6:
+          return "silver";
+        case 7:
+          return "bronze";
+        case 8:
+          return "grass";
+        default:
+          return "";
+      }
+    });
+
+    const lastTenMatchesPerformance: ComputedRef<string[]> = computed((): string[] => {
+      return matches.value
+        .slice(0, 10)
+        .map((match) =>
+          match.teams.find((team) =>
+            team.players.find((player) => player.battleTag === battleTag.value)
+          )
         )
-      )
-      .filter(Boolean)
-      .map((team) => (team?.won ? "W" : "L"));
-  }
+        .filter(Boolean)
+        .map((team) => (team?.won ? "W" : "L"));
+    });
 
-  get isRecentPerformanceVisible(): boolean {
-    return (
-      this.showPerformance &&
-      this.gameMode !== EGameMode.GM_2ON2_AT &&
-      this.lastTenMatchesPerformance.length > 0
-    );
-  }
+    const isRecentPerformanceVisible: ComputedRef<boolean> = computed((): boolean => {
+      return (
+        props.showPerformance &&
+        gameMode.value !== EGameMode.GM_2ON2_AT &&
+        lastTenMatchesPerformance.value.length > 0
+      );
+    });
 
-  @Watch("seasonAndGameModeAndGateway", { immediate: true })
-  onSeasonOrGameModeOrGatewayChange() {
-    this.init();
-  }
-}
+    watch(seasonAndGameModeAndGateway, onSeasonOrGameModeOrGatewayChange, { immediate: true });
+    function onSeasonOrGameModeOrGatewayChange() {
+      init();
+    }
+
+    return {
+      isRanked,
+      navigateToLeague,
+      leagueMode,
+      leagueName,
+      navigateToPartner,
+      atPartner,
+      isRecentPerformanceVisible,
+      lastTenMatchesPerformance,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
