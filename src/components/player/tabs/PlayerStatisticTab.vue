@@ -113,7 +113,6 @@
       <v-col cols="md-10">
         <player-hero-win-rate
           v-if="selectedSeason.id !== 0"
-          :key="updatePlayerHeroStatsKey"
           :selectedMap="selectedMapHeroWinRate"
           :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
         />
@@ -147,223 +146,189 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref, watch } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
-import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum } from "@/store/types";
-import {
-  PlayerMmrRpTimeline,
-  PlayerStatsHeroOnMapVersusRace,
-  PlayerStatsRaceOnMapVersusRace,
-  RaceWinsOnMap,
-} from "@/store/player/types";
+import { PlayerMmrRpTimeline, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
 import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineChart.vue";
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
 import PlayerGameLengthStats from "@/components/player/PlayerGameLengthStats.vue";
 import { races } from "@/helpers/profile";
-import { TranslateResult } from "vue-i18n";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
+import { Season } from "@/store/ranking/types";
 
-@Component({
+export default defineComponent({
+  name: "PlayerStatisticTab",
   components: {
     PlayerStatsRaceVersusRaceOnMap,
     PlayerMmrRpTimelineChart,
     PlayerHeroStatistics,
     PlayerHeroWinRate,
-    MatchesGrid,
     PlayerGameLengthStats,
   },
-})
-export default class PlayerStatisticTab extends Vue {
-  private player = usePlayerStore();
+  props: {},
+  setup() {
+    const playerStore = usePlayerStore();
+    const overallStatsStore = useOverallStatsStore();
 
-  public selectedPatch = "All";
-  public selectedGameMode = this.player.gameMode;
-  public selectedRace = this.player.race;
-  public updatePlayerHeroStatsKey = 0;
-  public selectedMap = "Overall";
-  public selectedMapHeroWinRate = "Overall";
-  public selectedGameLengthOpponentRace = ERaceEnum.TOTAL;
-  public races = races;
-  public activeGameModes = activeGameModes;
-  private overallStatsStore = useOverallStatsStore();
+    const selectedMap = ref<string>("Overall");
+    const selectedMapHeroWinRate = ref<string>("Overall");
+    const selectedGameLengthOpponentRace = ref<ERaceEnum>(ERaceEnum.TOTAL);
+    const selectedPatch = ref<string>("All");
+    const selectedGameMode = ref<EGameMode>(playerStore.gameMode);
+    const selectedRace = ref<ERaceEnum>(playerStore.race);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
+    const playerStatsRaceVersusRaceOnMap: ComputedRef<PlayerStatsRaceOnMapVersusRace> = computed((): PlayerStatsRaceOnMapVersusRace => playerStore.playerStatsRaceVersusRaceOnMap);
+    const playerStatsHeroVersusRaceOnMap: ComputedRef<PlayerStatsHeroOnMapVersusRace> = computed((): PlayerStatsHeroOnMapVersusRace => playerStore.playerStatsHeroVersusRaceOnMap ?? []);
+    const loadingMmrRpTimeline: ComputedRef<boolean> = computed((): boolean => playerStore.loadingMmrRpTimeline);
+    const playerMmrRpTimeline: ComputedRef<PlayerMmrRpTimeline | undefined> = computed((): PlayerMmrRpTimeline | undefined => playerStore.mmrRpTimeline);
+    const isPlayerMmrRpTimelineEmpty: ComputedRef<boolean> = computed((): boolean => playerStore.mmrRpTimeline == undefined);
+    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
 
-  get selectedSeason() {
-    return this.player.selectedSeason;
-  }
+    const translateRaceName = (race: any): TranslateResult => i18n.t(`races.${race.raceName}`);
 
-  get playerStatsRaceVersusRaceOnMap(): PlayerStatsRaceOnMapVersusRace {
-    return this.player.playerStatsRaceVersusRaceOnMap;
-  }
-
-  get playerStatsHeroVersusRaceOnMap(): PlayerStatsHeroOnMapVersusRace {
-    return this.player.playerStatsHeroVersusRaceOnMap ?? [];
-  }
-
-  get loadingMmrRpTimeline(): boolean {
-    return this.player.loadingMmrRpTimeline;
-  }
-
-  get playerMmrRpTimeline(): PlayerMmrRpTimeline | undefined {
-    return this.player.mmrRpTimeline;
-  }
-
-  get isPlayerMmrRpTimelineEmpty(): boolean {
-    return this.player.mmrRpTimeline == undefined;
-  }
-
-  get isPlayerInitialized(): boolean {
-    return this.player.isInitialized;
-  }
-
-  async mounted(): Promise<void> {
-    this.getMaps();
-    await loadActiveGameModes();
-  }
-
-  // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
-  activated(): void {
-    if (this.isPlayerInitialized) {
-      this.initMmrRpTimeline();
+    function getMaps(): void {
+      overallStatsStore.loadMapsPerSeason();
     }
-  }
 
-  // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
-  // is called before mounted of player, which this depends on. For this case isPlayerInitialized
-  // is being watched to init the mmrRpTimeline once player.vue init() has finished.
-  @Watch("isPlayerInitialized")
-  onPlayerInitialized(): void {
-    this.initMmrRpTimeline();
-    this.player.loadPlayerGameLengths();
-  }
+    function setSelectedPatch(patch: string) {
+      selectedPatch.value = patch;
+    }
 
-  private async initMmrRpTimeline() {
-    const raceStats = this.player.raceStats;
-    let maxRace = ERaceEnum.HUMAN;
-    let maxGames = 0;
-    raceStats.forEach((r) => {
-      if (r.games > maxGames) {
-        maxGames = r.wins;
-        maxRace = r.race;
+    onMounted(async (): Promise<void> => {
+      getMaps();
+      await loadActiveGameModes();
+    });
+
+    // Use onActivated instead of onMounted to trigger when navigating directly from one profile to another.
+    onActivated((): void => {
+      if (isPlayerInitialized.value) {
+        initMmrRpTimeline();
       }
     });
-    await this.player.SET_GAMEMODE(EGameMode.GM_1ON1);
-    await this.player.SET_RACE(maxRace);
-    this.selectedGameMode = EGameMode.GM_1ON1;
-    this.selectedRace = maxRace;
 
-    this.player.loadPlayerMmrRpTimeline();
-  }
-
-  public async setTimelineMode(mode: EGameMode) {
-    this.player.SET_GAMEMODE(mode);
-    this.player.loadPlayerMmrRpTimeline();
-  }
-  public async setTimelineRace(race: ERaceEnum) {
-    this.player.SET_RACE(race);
-    this.player.loadPlayerMmrRpTimeline();
-  }
-
-  get patches() {
-    if (
-      !this.playerStatsRaceVersusRaceOnMap ||
-      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
-    ) {
-      return [];
-    }
-    const patches = ["All"];
-
-    Object.keys(this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch).map(
-      (p) => patches.push(p)
-    );
-
-    return patches;
-  }
-
-  public setSelectedPatch(patch: string) {
-    this.selectedPatch = patch;
-  }
-
-  get raceWithoutRandom(): RaceWinsOnMap[] {
-    if (
-      !this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch ||
-      !(
-        this.selectedPatch in
-        this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch
-      )
-    ) {
-      return [];
+    // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
+    // is called before mounted of player, which this depends on. For this case isPlayerInitialized
+    // is being watched to init the mmrRpTimeline once player.vue init() has finished.
+    watch(isPlayerInitialized, onPlayerInitialized);
+    function onPlayerInitialized(): void {
+      initMmrRpTimeline();
+      playerStore.loadPlayerGameLengths();
     }
 
-    return this.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch[
-      this.selectedPatch
-    ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
-  }
+    async function initMmrRpTimeline() {
+      const raceStats = playerStore.raceStats;
+      let maxRace = ERaceEnum.HUMAN;
+      let maxGames = 0;
+      raceStats.forEach((r) => {
+        if (r.games > maxGames) {
+          maxGames = r.wins;
+          maxRace = r.race;
+        }
+      });
+      await playerStore.SET_GAMEMODE(EGameMode.GM_1ON1);
+      await playerStore.SET_RACE(maxRace);
+      selectedGameMode.value = EGameMode.GM_1ON1;
+      selectedRace.value = maxRace;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public translateRaceName(race: any): TranslateResult {
-    return this.$t(`races.${race.raceName}`);
-  }
+      playerStore.loadPlayerMmrRpTimeline();
+    }
 
-  public getMaps(): void {
-    this.overallStatsStore.loadMapsPerSeason();
-  }
+    async function setTimelineMode(mode: EGameMode) {
+      playerStore.SET_GAMEMODE(mode);
+      playerStore.loadPlayerMmrRpTimeline();
+    }
 
-  get maps() {
-    const maps = [{
-      mapName: "Overall",
-      mapId: "Overall",
-    }];
-    const mapsList: string[] = [];
-    this.player.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
-      heroItemList.stats.map((stats) => {
-        stats.winLossesOnMap.map((winLossOnMap) => {
-          const map = winLossOnMap.map;
-          if (!mapsList.includes(map)) {
-            mapsList.push(map);
-          }
+    async function setTimelineRace(race: ERaceEnum) {
+      playerStore.SET_RACE(race);
+      playerStore.loadPlayerMmrRpTimeline();
+    }
+
+    const patches: ComputedRef<string[]> = computed((): string[] => {
+      if (!playerStatsRaceVersusRaceOnMap.value || !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch) {
+        return [];
+      }
+      const patches = ["All"];
+
+      Object.keys(playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch).map(
+        (p) => patches.push(p)
+      );
+
+      return patches;
+    });
+
+    const raceWithoutRandom: ComputedRef<RaceWinsOnMap[]> = computed((): RaceWinsOnMap[] => {
+      if (
+        !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch ||
+        !(
+          selectedPatch.value in
+          playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
+        )
+      ) {
+        return [];
+      }
+
+      return playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch[
+        selectedPatch.value
+      ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
+    });
+
+    const maps: ComputedRef<{ mapName: string; mapId: string }[]> = computed((): { mapName: string; mapId: string }[] => {
+      const maps = [{ mapName: "Overall", mapId: "Overall" }];
+      const mapsList: string[] = [];
+      playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
+        heroItemList.stats.map((stats) => {
+          stats.winLossesOnMap.map((winLossOnMap) => {
+            const map = winLossOnMap.map;
+            if (!mapsList.includes(map)) {
+              mapsList.push(map);
+            }
+          });
         });
       });
+      mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
+      return maps;
     });
-    mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
-    return maps;
-  }
 
-  get gameLengthOpponentRaces() {
-    const races = [
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentall"),
-        raceId: ERaceEnum.TOTAL,
-      },
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentrandom"),
-        raceId: ERaceEnum.RANDOM,
-      },
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponenthuman"),
-        raceId: ERaceEnum.HUMAN,
-      },
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentorc"),
-        raceId: ERaceEnum.ORC,
-      },
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentnightelf"),
-        raceId: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        opponentRace: this.$t("components_player_tabs_playerstatistictab.opponentundead"),
-        raceId: ERaceEnum.UNDEAD,
-      },
+    const gameLengthOpponentRaces = [
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentall"), raceId: ERaceEnum.TOTAL },
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentrandom"), raceId: ERaceEnum.RANDOM },
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponenthuman"), raceId: ERaceEnum.HUMAN },
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentorc"), raceId: ERaceEnum.ORC },
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentnightelf"), raceId: ERaceEnum.NIGHT_ELF },
+      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentundead"), raceId: ERaceEnum.UNDEAD },
     ];
-    return races;
-  }
 
-}
+    return {
+      activeGameModes,
+      races,
+      selectedSeason,
+      patches,
+      selectedPatch,
+      setSelectedPatch,
+      raceWithoutRandom,
+      selectedGameMode,
+      setTimelineMode,
+      translateRaceName,
+      selectedRace,
+      setTimelineRace,
+      loadingMmrRpTimeline,
+      isPlayerMmrRpTimelineEmpty,
+      playerMmrRpTimeline,
+      selectedMap,
+      maps,
+      playerStatsHeroVersusRaceOnMap,
+      selectedMapHeroWinRate,
+      selectedGameLengthOpponentRace,
+      gameLengthOpponentRaces,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

@@ -76,8 +76,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
@@ -88,144 +89,143 @@ import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { ModeStat, RaceStat } from "@/store/player/types";
+import { Season } from "@/store/ranking/types";
 
-@Component({
-  components: { RaceIcon, ModeStatsGrid, PlayerAvatar, PlayerLeague },
-})
-export default class PlayerProfileTab extends Vue {
-  private oauthStore = useOauthStore();
-  @Prop() public id!: string;
-  private player = usePlayerStore();
-  private rootStateStore = useRootStateStore();
+interface PlayerProfileTabRaceHeader {
+  text: TranslateResult;
+  align: string;
+  sortable: boolean;
+  value: string;
+}
 
-  get raceHeaders() {
-    return [
+export default defineComponent({
+  name: "PlayerProfileTab",
+  components: {
+    RaceIcon,
+    ModeStatsGrid,
+    PlayerAvatar,
+    PlayerLeague,
+  },
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const oauthStore = useOauthStore();
+    const playerStore = usePlayerStore();
+    const rootStateStore = useRootStateStore();
+
+    const battleTag = ref<string>(decodeURIComponent(props.id));
+    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
+    const isBetaSeason: ComputedRef<boolean> = computed((): boolean => selectedSeason.value?.id === 0);
+    const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);
+    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
+    const raceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => playerStore.raceStats);
+
+    const isLoggedInPlayer: ComputedRef<boolean> = computed((): boolean => {
+      if (verifiedBtag.value === "") return false;
+      return battleTag.value.startsWith(verifiedBtag.value);
+    });
+
+    const selectedRaceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => {
+      if (!raceStats.value) return [];
+
+      return raceStats.value.filter((r) =>
+        r.gateWay === rootStateStore.gateway &&
+        r.season === selectedSeason.value?.id
+      );
+    });
+
+    const topGameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
+      if (!gameModeStats.value) return [];
+
+      const oneVOnes = gameModeStats.value.filter(
+        (g) => g.gameMode === EGameMode.GM_1ON1
+      );
+
+      const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
+
+      let bestOneVOne = sortBy(rankedOneVOnes, [
+        "leagueOrder",
+        "division",
+        "rank",
+      ])[0];
+
+      if (!bestOneVOne) {
+        bestOneVOne = oneVOnes[0];
+      }
+
+      const twoV2s = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
+      const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
+
+      let besttwoV2s = sortBy(rankedtwoV2s, [
+        "leagueOrder",
+        "division",
+        "rank",
+      ])[0];
+
+      if (!besttwoV2s) {
+        besttwoV2s = twoV2s[0];
+      }
+
+      const otherModes = gameModeStats.value.filter((g) =>
+        g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
+      );
+
+      const otherModesRanked = otherModes.filter((g) => g.rank != 0);
+      const bestOtherModes = sortBy(otherModesRanked, [
+        "leagueOrder",
+        "division",
+        "rank",
+      ]);
+
+      const allModes = [];
+      if (bestOneVOne) allModes.push(bestOneVOne);
+      if (besttwoV2s) allModes.push(besttwoV2s);
+      allModes.push(...bestOtherModes);
+
+      const bestAllModesSorted = sortBy(allModes, [
+        "leagueOrder",
+        "division",
+        "rank",
+      ]);
+
+      return take(
+        bestAllModesSorted.filter((x) => x.rank != 0),
+        3
+      );
+    });
+
+    const raceHeaders: PlayerProfileTabRaceHeader[] = [
       {
-        text: this.$t("components_player_tabs_playerprofiletab.race"),
+        text: i18n.t("components_player_tabs_playerprofiletab.race"),
         align: "start",
         sortable: false,
         value: "race",
       },
       {
-        text: this.$t("components_player_tabs_playerprofiletab.winloss"),
+        text: i18n.t("components_player_tabs_playerprofiletab.winloss"),
         align: "start",
         sortable: false,
         value: "wins",
       },
     ];
-  }
 
-  get isBetaSeason() {
-    return this.selectedSeason?.id === 0;
-  }
-
-  get battleTag() {
-    return decodeURIComponent(this.id);
-  }
-
-  get loadingProfile(): boolean {
-    return this.player.loadingProfile;
-  }
-
-  get isLoggedInPlayer(): boolean {
-    if (this.verifiedBtag === "") return false;
-    return this.battleTag.startsWith(this.verifiedBtag);
-  }
-
-  get verifiedBtag(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  get gameModeStats() {
-    return this.player.gameModeStats;
-  }
-
-  get selectedRaceStats() {
-    if (!this.raceStats) {
-      return [];
-    }
-
-    return this.raceStats.filter(
-      (r) =>
-        r.gateWay === this.rootStateStore.gateway &&
-        r.season === this.selectedSeason?.id
-    );
-  }
-
-  get selectedSeason() {
-    return this.player.selectedSeason;
-  }
-
-  get raceStats() {
-    return this.player.raceStats;
-  }
-
-  get topGameModeStats() {
-    if (!this.gameModeStats) {
-      return [];
-    }
-
-    const oneVOnes = this.gameModeStats.filter(
-      (g) => g.gameMode === EGameMode.GM_1ON1
-    );
-
-    const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
-
-    let bestOneVOne = sortBy(rankedOneVOnes, [
-      "leagueOrder",
-      "division",
-      "rank",
-    ])[0];
-
-    if (!bestOneVOne) {
-      bestOneVOne = oneVOnes[0];
-    }
-
-    const twoV2s = this.gameModeStats.filter(
-      (g) => g.gameMode === EGameMode.GM_2ON2_AT
-    );
-
-    const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
-
-    let besttwoV2s = sortBy(rankedtwoV2s, [
-      "leagueOrder",
-      "division",
-      "rank",
-    ])[0];
-
-    if (!besttwoV2s) {
-      besttwoV2s = twoV2s[0];
-    }
-
-    const otherModes = this.gameModeStats.filter(
-      (g) =>
-        g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
-    );
-
-    const otherModesRanked = otherModes.filter((g) => g.rank != 0);
-    const bestOtherModes = sortBy(otherModesRanked, [
-      "leagueOrder",
-      "division",
-      "rank",
-    ]);
-
-    const allModes = [];
-    if (bestOneVOne) allModes.push(bestOneVOne);
-    if (besttwoV2s) allModes.push(besttwoV2s);
-    allModes.push(...bestOtherModes);
-
-    const bestAllModesSorted = sortBy(allModes, [
-      "leagueOrder",
-      "division",
-      "rank",
-    ]);
-
-    return take(
-      bestAllModesSorted.filter((x) => x.rank != 0),
-      3
-    );
-  }
-}
+    return {
+      loadingProfile,
+      isLoggedInPlayer,
+      isBetaSeason,
+      topGameModeStats,
+      raceHeaders,
+      selectedRaceStats,
+      gameModeStats,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

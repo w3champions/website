@@ -4,16 +4,9 @@
       {{ $t("components_player_tabs_playerarrangedteamtab.title") }}
     </v-card-title>
     <br />
-
     <v-card-text>
       <v-row>
-        <v-col
-          class="mb-10"
-          cols="12"
-          md="3"
-          v-for="atPartner in gameModeStatsAt"
-          :key="atPartner.id"
-        >
+        <v-col class="mb-10" cols="12" md="3" v-for="atPartner in gameModeStatsAt" :key="atPartner.id">
           <player-league :mode-stat="atPartner" :show-at-partner="true" />
         </v-col>
       </v-row>
@@ -31,37 +24,42 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent } from "vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { EGameMode } from "@/store/types";
 import { usePlayerStore } from "@/store/player/store";
+import { ModeStat } from "@/store/player/types";
 
-@Component({
-  components: { PlayerLeague },
-})
-export default class PlayerArrangedTeamsTab extends Vue {
-  private player = usePlayerStore();
+export default defineComponent({
+  name: "PlayerArrangedTeamsTab",
+  components: {
+    PlayerLeague,
+  },
+  props: {},
+  setup() {
+    const playerStore = usePlayerStore();
+    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
 
-  get gameModeStats() {
-    return this.player.gameModeStats;
-  }
+    const gameModeStatsAt: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
+      const atStats = gameModeStats.value.filter(
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
+      );
 
-  get gameModeStatsAt() {
-    const atStats = this.gameModeStats.filter(
-      (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
-    );
+      const atStatsUnranked = gameModeStats.value.filter(
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0
+      );
 
-    const atStatsUnranked = this.gameModeStats.filter(
-      (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0
-    );
+      return [
+        ...atStats.sort(
+          (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank)
+        ),
+        ...atStatsUnranked,
+      ];
+    });
 
-    return [
-      ...atStats.sort(
-        (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank)
-      ),
-      ...atStatsUnranked,
-    ];
-  }
-}
+    return {
+      gameModeStatsAt,
+    };
+  },
+});
 </script>

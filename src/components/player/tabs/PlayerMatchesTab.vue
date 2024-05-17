@@ -79,162 +79,97 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { i18n } from "@/main";
 import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { Ranking } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
-@Component({ components: { MatchesGrid, PlayerSearch } })
-export default class PlayerMatchesTab extends Vue {
-  @Prop() public id!: string;
-  public isLoadingMatches = false;
-  public gameModeEnums = EGameMode;
-  public raceEnums = ERaceEnum;
-  public filtersVisible = false;
-  public foundPlayer = "";
-  public activeGameModesWithAT = activeGameModesWithAT;
-  private player = usePlayerStore();
-  private rankingsStore = useRankingStore();
+export default defineComponent({
+  name: "PlayerMatchesTab",
+  components: {
+    MatchesGrid,
+    PlayerSearch,
+  },
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const playerStore = usePlayerStore();
+    const rankingsStore = useRankingStore();
+    const isLoadingMatches = ref<boolean>(false);
+    const filtersVisible = ref<boolean>(false);
+    const foundPlayer = ref<string>("");
 
-  async mounted(): Promise<void> {
-    await loadActiveGameModes();
-  }
+    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
+    const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
+    const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
+    const filterButtonText: ComputedRef<string> = computed((): string => filtersVisible.value ? "Hide Additional Filters" : "Show Additional Filters");
 
-  async playerFound(bTag: string): Promise<void> {
-    this.foundPlayer = bTag;
-    this.player.SET_OPPONENT_TAG(bTag);
-    await this.getMatches();
-  }
+    onMounted(async (): Promise<void> => {
+      await loadActiveGameModes();
+      await rankingsStore.retrieveSeasons();
+      rankingsStore.setSeason(rankingsStore.seasons[0]);
+      await getMatches();
+    });
 
-  async searchCleared(): Promise<void> {
-    this.foundPlayer = "";
-    this.player.SET_OPPONENT_TAG("");
-    this.rankingsStore.clearSearch();
-    await this.getMatches();
-  }
+    async function playerFound(bTag: string): Promise<void> {
+      foundPlayer.value = bTag;
+      playerStore.SET_OPPONENT_TAG(bTag);
+      await getMatches();
+    }
 
-  get battleTag() {
-    return decodeURIComponent(this.id);
-  }
+    async function searchCleared(): Promise<void> {
+      foundPlayer.value = "";
+      playerStore.SET_OPPONENT_TAG("");
+      rankingsStore.clearSearch();
+      await getMatches();
+    }
 
-  public async activated() {
-    await this.rankingsStore.retrieveSeasons();
-    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
-    setTimeout(async () => await this.getMatches(), 500);
-  }
-
-  get races() {
-    return [
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`),
-        raceId: ERaceEnum.TOTAL,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
-        raceId: ERaceEnum.HUMAN,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
-        raceId: ERaceEnum.ORC,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
-        raceId: ERaceEnum.NIGHT_ELF,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
-        raceId: ERaceEnum.UNDEAD,
-      },
-      {
-        raceName: this.$t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
-        raceId: ERaceEnum.RANDOM,
-      },
+    const races = [
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`), raceId: ERaceEnum.TOTAL },
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`), raceId: ERaceEnum.HUMAN },
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.ORC]}`), raceId: ERaceEnum.ORC },
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`), raceId: ERaceEnum.NIGHT_ELF },
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`), raceId: ERaceEnum.UNDEAD },
+      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`), raceId: ERaceEnum.RANDOM },
     ];
-  }
 
-  get totalMatches(): number {
-    return this.player.totalMatches;
-  }
+    const winRateVsOpponent: ComputedRef<string> = computed((): string => {
+      if (opponentWins.value == 0) return "0";
+      return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
+    });
 
-  get matches(): Match[] {
-    return this.player.matches;
-  }
-
-  get winRateVsOpponent() {
-    if (this.opponentWins == 0) {
-      return 0;
+    function setSelectedGameModeForSearch(gameMode: EGameMode): void {
+      playerStore.SET_GAMEMODE(gameMode);
+      getMatches();
     }
 
-    return ((this.opponentWins / this.matches.length) * 100).toFixed(1);
-  }
-
-  get filterButtonText() {
-    if (this.filtersVisible) {
-      return "Hide Additional Filters";
-    } else {
-      return "Show Additional Filters";
-    }
-  }
-
-  get searchRanks(): Ranking[] {
-    return this.rankingsStore.searchRanks;
-  }
-
-  public setSelectedGameModeForSearch(gameMode: EGameMode) {
-    this.player.SET_GAMEMODE(gameMode);
-    this.getMatches();
-  }
-
-  public setPlayerRaceForSearch(race: ERaceEnum) {
-    this.player.SET_PLAYER_RACE(race);
-    this.getMatches();
-  }
-
-  public setOpponentRaceForSearch(race: ERaceEnum) {
-    this.player.SET_OPPONENT_RACE(race);
-    this.getMatches();
-  }
-
-  get totalMatchesAgainstOpponent() {
-    const opponentTag = this.player.opponentTag;
-    if (!opponentTag || !this.matches) {
-      return 0;
+    function setPlayerRaceForSearch(race: ERaceEnum): void {
+      playerStore.SET_PLAYER_RACE(race);
+      getMatches();
     }
 
-    const totalMatchesAgainstOpponent = this.matches.filter((match: Match) =>
-      match.teams.some((team: Team) => {
-        const playerTeamMatch = team.players.some(
-          (player: PlayerInTeam) => player.battleTag === this.battleTag
-        );
+    function setOpponentRaceForSearch(race: ERaceEnum): void {
+      playerStore.SET_OPPONENT_RACE(race);
+      getMatches();
+    }
 
-        const otherTeams = match.teams.filter((x) => x != team);
+    const totalMatchesAgainstOpponent: ComputedRef<number> = computed((): number => {
+      const opponentTag = playerStore.opponentTag;
 
-        const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
-          return otherTeam.players.some(
-            (player: PlayerInTeam) =>
-              player.battleTag === this.player.opponentTag
-          );
-        });
+      if (!opponentTag || !matches.value) return 0;
 
-        return playerTeamMatch && opponentIsOnTheOtherTeam;
-      })
-    ).length;
-
-    return totalMatchesAgainstOpponent;
-  }
-
-  get opponentWins(): number {
-    if (this.player.opponentTag.length) {
-      return this.matches.filter((match: Match) =>
+      const totalMatchesAgainstOpponent = matches.value.filter((match: Match) =>
         match.teams.some((team: Team) => {
-          const playerHasWin = team.players.some(
-            (player: PlayerInTeam) =>
-              player.battleTag === this.battleTag && player.won
+          const playerTeamMatch = team.players.some(
+            (player: PlayerInTeam) => player.battleTag === battleTag.value
           );
 
           const otherTeams = match.teams.filter((x) => x != team);
@@ -242,30 +177,76 @@ export default class PlayerMatchesTab extends Vue {
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
               (player: PlayerInTeam) =>
-                player.battleTag === this.player.opponentTag
+                player.battleTag === playerStore.opponentTag
             );
           });
 
-          return playerHasWin && opponentIsOnTheOtherTeam;
+          return playerTeamMatch && opponentIsOnTheOtherTeam;
         })
       ).length;
+
+      return totalMatchesAgainstOpponent;
+    });
+
+    const opponentWins: ComputedRef<number> = computed((): number => {
+      if (playerStore.opponentTag.length) {
+        return matches.value.filter((match: Match) =>
+          match.teams.some((team: Team) => {
+            const playerHasWin = team.players.some(
+              (player: PlayerInTeam) =>
+                player.battleTag === battleTag.value && player.won
+            );
+
+            const otherTeams = match.teams.filter((x) => x != team);
+
+            const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
+              return otherTeam.players.some(
+                (player: PlayerInTeam) =>
+                  player.battleTag === playerStore.opponentTag
+              );
+            });
+
+            return playerHasWin && opponentIsOnTheOtherTeam;
+          })
+        ).length;
+      }
+
+      return 0;
+    });
+
+    async function getMatches(page?: number): Promise<void> {
+      if (isLoadingMatches.value || !playerStore.selectedSeason.id) {
+        return;
+      }
+
+      isLoadingMatches.value = true;
+      await playerStore.loadMatches(page);
+      isLoadingMatches.value = false;
     }
 
-    return 0;
-  }
-
-  public async getMatches(page?: number) {
-    if (this.isLoadingMatches || !this.player.selectedSeason.id) {
-      return;
+    async function onPageChanged(page: number): Promise<void> {
+      await getMatches(page);
     }
 
-    this.isLoadingMatches = true;
-    await this.player.loadMatches(page);
-    this.isLoadingMatches = false;
-  }
-
-  onPageChanged(page: number) {
-    this.getMatches(page);
-  }
-}
+    return {
+      activeGameModesWithAT,
+      playerFound,
+      searchCleared,
+      filtersVisible,
+      filterButtonText,
+      setSelectedGameModeForSearch,
+      races,
+      setPlayerRaceForSearch,
+      setOpponentRaceForSearch,
+      foundPlayer,
+      opponentWins,
+      totalMatchesAgainstOpponent,
+      winRateVsOpponent,
+      matches,
+      totalMatches,
+      battleTag,
+      onPageChanged,
+    };
+  },
+});
 </script>
