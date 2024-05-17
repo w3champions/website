@@ -350,7 +350,7 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
-import { AkaSettings, SpecialPicture } from "@/store/personalSettings/types";
+import { AkaSettings, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
@@ -522,7 +522,7 @@ export default class PlayerAvatar extends Vue {
   public selectedCountry = "";
   public selectedCountryCode = "";
 
-  public userProfile = {
+  public userProfile: ProfilePlayerSocials = {
     twitch: this.twitch,
     youtube: this.youtube,
     twitter: this.twitter,

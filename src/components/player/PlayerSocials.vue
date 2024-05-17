@@ -95,16 +95,25 @@
   </v-row>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { PlayerProfile } from "@/store/player/types";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType } from "vue";
 import { mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
+import { ProfilePlayerSocials } from "@/store/personalSettings/types";
 
-@Component
-export default class PlayerSocials extends Vue {
-  public mdiTwitch = mdiTwitch;
-  public mdiTwitter = mdiTwitter;
-  public mdiYoutube = mdiYoutube;
-  @Prop() public userProfile!: PlayerProfile;
-}
+export default defineComponent({
+  name: "PlayerSocials",
+  components: {},
+  props: {
+    userProfile: {
+      type: Object as PropType<ProfilePlayerSocials>,
+      required: true,
+    },
+  },
+  setup() {
+    return {
+      mdiTwitch,
+      mdiTwitter,
+      mdiYoutube,
+    };
+  },
+});
 </script>
