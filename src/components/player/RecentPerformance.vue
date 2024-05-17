@@ -4,11 +4,7 @@
       {{ $t("components_player_recentperformance.recentperformance") }}
     </h5>
     <ul class="recent-performance__results">
-      <li
-        v-for="(resultSymbol, index) in lastTenMatchesPerformance"
-        :key="resultSymbol + index"
-      >
-        <!-- prettier-ignore -->
+      <li v-for="(resultSymbol, index) in lastTenMatchesPerformance" :key="resultSymbol + index">
         <span :class="resultSymbol === 'W' ? 'won' : 'lost'">{{ resultSymbol }}</span>
         <span v-if="index < lastTenMatchesPerformance.length - 1">-</span>
       </li>
@@ -17,19 +13,25 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent } from "vue";
 
-@Component({})
-export default class RecentPerformance extends Vue {
-  /**
-   * @example ['W', 'W', 'W', 'L', 'L', 'W', 'L','W','L','L']
-   */
-  @Prop() lastTenMatchesPerformance!: string[];
-}
+export default defineComponent({
+  name: "RecentPerformance",
+  components: {},
+  props: {
+    lastTenMatchesPerformance: {
+      type: Array<string>,
+      required: true,
+    },
+  },
+  setup() {
+     // example: ['W', 'W', 'W', 'L', 'L', 'W', 'L', 'W', 'L', 'L']
+    return {};
+  },
+});
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .recent-performance {
   margin-top: 0.4em;
 
