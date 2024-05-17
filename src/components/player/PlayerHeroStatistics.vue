@@ -58,7 +58,7 @@ export default defineComponent({
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);
-      return `<img class="player-hero-statistics-table__hero-image" src="${src}" height="40" width="40" />`;
+      return `<img class="mt-1" src="${src}" height="40" width="40" />`;
     }
 
     watch(isPlayerInitialized, onPlayerInitialized);

@@ -10,7 +10,7 @@
           </tr>
         </thead>
         <tbody class="player-hero-statistics-table__body">
-          <tr v-for="item in heroStatsCurrentPage" :key="item.id">
+          <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
             <td v-html="item.image"></td>
             <td v-html="item.name"></td>
             <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
@@ -36,37 +36,29 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
 import { PlayerHeroStatistic } from "@/store/player/types";
-import { Component, Prop, Watch } from "vue-property-decorator";
 import { mdiMenuLeft } from "@mdi/js";
 import { mdiMenuRight } from "@mdi/js";
 
-@Component
-export default class PlayerHeroStatisticsTable extends Vue {
-  @Prop() private heroStatistics!: PlayerHeroStatistic[];
-  private page = 1;
-  private paginationSize = 10;
-  public mdiMenuLeft = mdiMenuLeft;
-  public mdiMenuRight = mdiMenuRight;
+export default defineComponent({
+  name: "PlayerHeroStatisticsTable",
+  components: {},
+  props: {
+    heroStatistics: {
+      type: Array<PlayerHeroStatistic>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const page = ref<number>(1);
+    const paginationSize = 10;
 
-  get pageOffset(): number {
-    return this.paginationSize * this.page;
-  }
+    const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
+    const pageLength: ComputedRef<number> = computed((): number => Math.ceil(props.heroStatistics.length / paginationSize));
+    const heroStatsCurrentPage: ComputedRef<PlayerHeroStatistic[]> = computed((): PlayerHeroStatistic[] => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
 
-  get pageLength(): number {
-    return Math.ceil(this.heroStatistics.length / this.paginationSize);
-  }
-  get heroStatsCurrentPage(): PlayerHeroStatistic[] {
-    return this.heroStatistics.slice((this.pageOffset - this.paginationSize), this.pageOffset);
-  }
-
-  get headersWithoutImageAndName() {
-    return this.headers.slice(2);
-  }
-
-  get headers() {
-    return [
+    const headers = [
       { text: "", value: "image" },
       { text: "Hero", value: "name" },
       { text: "Total", value: "total" },
@@ -76,25 +68,18 @@ export default class PlayerHeroStatisticsTable extends Vue {
       { text: "vs. Night Elf", value: "ne" },
       { text: "vs. Random", value: "rand" },
     ];
-  }
 
-  @Watch("this.heroStatistics")
-  heroStatsChange(): void {
-    this.heroStatistics = this.heroStatistics.sort((a: PlayerHeroStatistic, b: PlayerHeroStatistic): number => {
-      if (Number(a.total) > Number(b.total)) {
-        return 1;
-      }
-      if (Number(b.total) > Number(a.total)) {
-        return -1;
-      }
-      return 0;
-    });
-  }
-}
+    const headersWithoutImageAndName = headers.slice(2);
+
+    return {
+      mdiMenuLeft,
+      mdiMenuRight,
+      headers,
+      heroStatsCurrentPage,
+      headersWithoutImageAndName,
+      page,
+      pageLength,
+    };
+  },
+});
 </script>
-
-<style>
-.player-hero-statistics-table__hero-image {
-  margin-top: 5px;
-}
-</style>
