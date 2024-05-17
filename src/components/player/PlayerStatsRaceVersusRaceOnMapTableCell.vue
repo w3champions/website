@@ -6,66 +6,80 @@
       </td>
     </template>
     <div>
-      {{ winAndLossText }}
+      {{ stats.wins }} - {{ stats.losses }}
     </div>
   </v-tooltip>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, PropType, defineComponent } from "vue";
 import isNil from "lodash/isNil";
-import { Component, Prop } from "vue-property-decorator";
 import { RaceWinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 
-@Component({
+export default defineComponent({
+  name: "PlayerStatsRaceVersusRaceOnMapTableCell",
   components: {},
-})
-export default class PlayerStatsRaceVersusRaceOnMapTableCell extends Vue {
-  @Prop() public stats!: RaceWinLoss;
-  @Prop() public compareRace!: ERaceEnum;
-  @Prop() public winThreshold!: number;
-  @Prop() public lossThreshold!: number;
+  props: {
+    stats: {
+      type: Object as PropType<RaceWinLoss>,
+      required: true,
+    },
+    compareRace: {
+      type: Number as PropType<ERaceEnum>,
+      required: true,
+    },
+    winThreshold: {
+      type: Number,
+      required: true,
+    },
+    lossThreshold: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
+    const toWinText: ComputedRef<string> = computed((): string => {
+      if (isComparingSameRace.value || props.stats.games == 0) {
+        return "-";
+      }
 
-  get toWinText() {
-    if (this.isComparingSameRace || this.stats.games == 0) {
-      return "-";
-    }
+      return `${(props.stats.winrate * 100).toFixed(1)}%`;
+    });
 
-    return `${(this.stats.winrate * 100).toFixed(1)}%`;
-  }
+    const toWinClass: ComputedRef<string[]> = computed((): string[] => {
+      const classes: string[] = [];
 
-  get toWinClass() {
-    const classes: string[] = [];
+      if (props.stats.games == 0 || isComparingSameRace.value) {
+        classes.push("stats-empty");
+        return classes;
+      }
 
-    if (this.stats.games == 0 || this.isComparingSameRace) {
-      classes.push("stats-empty");
+      if (props.stats.winrate > (props.winThreshold || 0.6)) {
+        classes.push("won");
+      }
+      if (props.stats.winrate < (props.lossThreshold || 0.4)) {
+        classes.push("lost");
+      }
+
       return classes;
-    }
+    });
 
-    if (this.stats.winrate > (this.winThreshold || 0.6)) {
-      classes.push("won");
-    }
-    if (this.stats.winrate < (this.lossThreshold || 0.4)) {
-      classes.push("lost");
-    }
+    const isComparingSameRace: ComputedRef<boolean> = computed((): boolean => {
+      // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
+      if (isNil(props.compareRace) || !props.stats) {
+        return false;
+      }
 
-    return classes;
-  }
+      return props.stats.race === props.compareRace;
+    });
 
-  get winAndLossText() {
-    return `(${this.stats.wins}/${this.stats.losses})`;
-  }
-
-  get isComparingSameRace() {
-    // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
-    if (isNil(this.compareRace) || !this.stats) {
-      return false;
-    }
-
-    return this.stats.race === this.compareRace;
-  }
-}
+    return {
+      toWinClass,
+      toWinText,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
