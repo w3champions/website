@@ -17,7 +17,7 @@
                   :key="season.id"
                   class="ml-1 d-inline-block"
                 >
-                  <SeasonBadge :season="season" :on-click="selectSeason" />
+                  <season-badge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
               <v-col :cols="12" :sm="'auto'">

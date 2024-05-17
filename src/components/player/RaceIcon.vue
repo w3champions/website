@@ -25,7 +25,8 @@ export default defineComponent({
   props: {
     race: {
       type: Number as PropType<ERaceEnum>,
-      required: true,
+      required: false,
+      default: null,
     },
   },
   setup(props) {
