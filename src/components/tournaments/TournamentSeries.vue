@@ -22,61 +22,61 @@
 </template>
 
 <script lang="ts">
-import { ITournamentSeries, ESeriesState, EMatchState } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
+import { ITournamentSeries, ESeriesState, EMatchState, ISeriesPlayer } from "@/store/tournaments/types";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
 
-@Component({
+export default defineComponent({
+  name: "TournamentSeries",
   components: {
     TournamentSeriesPlayer,
   },
-})
-export default class TournamentSeries extends Vue {
-  @Prop() public seriesIndex!: number;
-  @Prop() public series!: ITournamentSeries;
-  @Prop() public playerHeight!: number;
-  @Prop() public verticalSpace!: number;
-  @Prop() public roundWidth!: number;
+  props: {
+    series: { type: Object as PropType<ITournamentSeries>, required: true },
+    seriesIndex: { type: Number, required: true },
+    playerHeight: { type: Number, required: true },
+    verticalSpace: { type: Number, required: true },
+    roundWidth: { type: Number, required: true },
+  },
+  setup(props) {
+    const topPlayer: ComputedRef<ISeriesPlayer | undefined> = computed((): ISeriesPlayer | undefined => props.series.players?.find((p) => p.team === 0));
+    const bottomPlayer: ComputedRef<ISeriesPlayer | undefined> = computed((): ISeriesPlayer | undefined => props.series.players?.find((p) => p.team === 1));
+    const seriesFinished: ComputedRef<boolean> = computed((): boolean => [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(props.series.state));
+    const seriesCanceled: ComputedRef<boolean> = computed((): boolean => props.series.state === ESeriesState.CANCELED);
 
-  get topPlayer() {
-    return this.series.players?.find((p) => p.team === 0);
-  }
+    const seriesSpecial: ComputedRef<boolean | undefined> = computed((): boolean | undefined => {
+      return [ESeriesState.BYE, ESeriesState.CANCELED].includes(props.series.state) ||
+        props.series.matches?.some((match) => match.state === EMatchState.CANCELED);
+    });
 
-  get bottomPlayer() {
-    return this.series.players?.find((p) => p.team === 1);
-  }
+    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+      const marginTop = props.seriesIndex === 0 ? 0 : props.verticalSpace;
+      return {
+        "margin-top": `${marginTop}px`,
+        height: `${2 * props.playerHeight}px`,
+      };
+    });
 
-  get seriesFinished() {
-    return [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(this.series.state);
-  }
+    const playerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        height: `${props.playerHeight}px`,
+      };
+    });
 
-  get seriesCanceled() {
-    return this.series.state === ESeriesState.CANCELED;
-  }
-
-  get seriesSpecial() {
-    return [ESeriesState.BYE, ESeriesState.CANCELED].includes(this.series.state) ||
-      this.series.matches?.some((match) => match.state === EMatchState.CANCELED);
-  }
-
-  get style() {
-    const marginTop = this.seriesIndex === 0 ? 0 : this.verticalSpace;
     return {
-      "margin-top": `${marginTop}px`,
-      height: `${2 * this.playerHeight}px`,
+      topPlayer,
+      bottomPlayer,
+      seriesFinished,
+      seriesCanceled,
+      seriesSpecial,
+      style,
+      playerStyle,
     };
-  }
-
-  get playerStyle() {
-    return {
-      height: `${this.playerHeight}px`,
-    };
-  }
-}
+  },
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .bracket-series {
   background-color: #fafafa;
   width: 100%;

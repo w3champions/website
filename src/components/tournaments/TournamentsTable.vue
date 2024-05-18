@@ -4,7 +4,7 @@
     :items="tournaments"
     :disable-pagination="true"
     :items-per-page="-1"
-    :item-class="itemClass"
+    :item-style="itemStyle"
     class="elevation-1"
     @click:row="onRowClick"
     :hide-default-footer="true"
@@ -25,18 +25,41 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, StyleValue } from "vue";
 import { ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import { TournamentStateLabel } from "@/helpers/tournaments";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
-@Component
-export default class TournamentsTable extends Vue {
-  @Prop() tournaments!: ITournament[];
+interface TournamentsTableHeader {
+  text: string;
+  align: string;
+  value: string;
+}
 
-  get headers() {
-    return [
+export default defineComponent({
+  name: "TournamentsTable",
+  components: {},
+  props: {
+    tournaments: {
+      type: Array<ITournament>,
+      required: true,
+    },
+  },
+  setup(_props, context) {
+    const formatDate = (tournament: ITournament): string => formatDateToDateWeekday(tournament.startDateTime);
+    const getStateDescription = (tournament: ITournament): string => TournamentStateLabel[tournament.state];
+
+    function onRowClick(item: ITournament) {
+      context.emit("click:row", item);
+    }
+
+    const itemStyle = (): StyleValue => {
+      return {
+        cursor: "pointer",
+      };
+    };
+
+    const headers: TournamentsTableHeader[] = [
       {
         text: "Tournament Name",
         align: "start",
@@ -54,34 +77,28 @@ export default class TournamentsTable extends Vue {
       },
       {
         text: "Player Count",
+        align: "start",
         value: "playerCount",
       },
       {
         text: "Winner",
+        align: "start",
         value: "winner",
       },
     ];
-  }
 
-  public onRowClick(item: ITournament) {
-    this.$emit("click:row", item);
-  }
-
-  public formatDate(tournament: ITournament): string {
-    return formatDateToDateWeekday(tournament.startDateTime);
-  }
-
-  public getStateDescription(tournament: ITournament) {
-    return TournamentStateLabel[tournament.state];
-  }
-
-  public itemClass() {
-    return "tournament-row";
-  }
-}
+    return {
+      formatDate,
+      getStateDescription,
+      onRowClick,
+      itemStyle,
+      headers,
+    };
+  },
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .tournament-row {
   cursor: pointer;
 }

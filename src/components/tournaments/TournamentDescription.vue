@@ -45,81 +45,66 @@
 </template>
 
 <script lang="ts">
-import { ETournamentState, ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { i18n } from "@/main";
+import { ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { ERaceEnum } from "@/store/types";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
-@Component
-export default class TournamentDescription extends Vue {
-  @Prop() public tournament!: ITournament;
-  @Prop() public maps!: Map[];
+export default defineComponent({
+  name: "TournamentDescription",
+  components: {},
+  props: {
+    tournament: {
+      type: Object as PropType<ITournament>,
+      required: true,
+    },
+    maps: {
+      type: Array<Map>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const gateway: ComputedRef<string> = computed((): string => EGatewayLabel[props.tournament.gateway]);
+    const formattedDate: ComputedRef<string> = computed((): string => formatDateToDateWeekday(props.tournament.startDateTime));
+    const gameMode: ComputedRef<string> = computed((): string => EGameModeLabel[props.tournament.mode]);
+    const format: ComputedRef<string> = computed((): string => ETournamentFormatLabel[props.tournament.format]);
+    const playerCount: ComputedRef<number> = computed((): number => props.tournament.players.length);
+    const mapPool: ComputedRef<string> = computed((): string => props.tournament.mapPool.map((mapId) => props.maps.find((map) => map.id === mapId)?.name).sort().join(", "));
+    const statusInit: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.INIT);
+    const statusRegistration: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.REGISTRATION);
+    const statusMatchGeneration: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.MATCH_GENERATION);
+    const statusCanceled: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.CANCELED);
+    const matcherinoUrl: ComputedRef<string | undefined> = computed((): string | undefined => props.tournament.matcherinoUrl);
+    const maxPlayers: ComputedRef<number> = computed((): number => props.tournament.maxPlayers);
+    const floNode: ComputedRef<ITournamentFloNode> = computed((): ITournamentFloNode => props.tournament.floNode);
+    const floNodeMaxPing: ComputedRef<number> = computed((): number => props.tournament.floNodeMaxPing);
 
-  get gateway() {
-    return EGatewayLabel[this.tournament.gateway];
-  }
+    const registeredPlayers: ComputedRef<string> = computed((): string => {
+      return props.tournament.players.map((player) => (
+        `${player.battleTag}(${i18n.t(`racesShort.${ERaceEnum[player.race]}`)})`
+      )).join(", ");
+    });
 
-  get formattedDate(): string {
-    return formatDateToDateWeekday(this.tournament.startDateTime);
-  }
-
-  get gameMode() {
-    return EGameModeLabel[this.tournament.mode];
-  }
-
-  get format() {
-    return ETournamentFormatLabel[this.tournament.format];
-  }
-
-  get playerCount() {
-    return this.tournament.players.length;
-  }
-
-  get mapPool() {
-    return this.tournament.mapPool.map((mapId) => this.maps.find((map) => map.id === mapId)?.name).sort().join(", ");
-  }
-
-  get statusInit() {
-    return this.tournament.state === ETournamentState.INIT;
-  }
-
-  get statusRegistration() {
-    return this.tournament.state === ETournamentState.REGISTRATION;
-  }
-
-  get statusMatchGeneration() {
-    return this.tournament.state === ETournamentState.MATCH_GENERATION;
-  }
-
-  get statusCanceled() {
-    return this.tournament.state === ETournamentState.CANCELED;
-  }
-
-  get matcherinoUrl() {
-    return this.tournament.matcherinoUrl;
-  }
-
-  get maxPlayers() {
-    return this.tournament.maxPlayers;
-  }
-
-  get floNode() {
-    return this.tournament.floNode;
-  }
-
-  get floNodeMaxPing() {
-    return this.tournament.floNodeMaxPing;
-  }
-
-  get registeredPlayers(): string {
-    return this.tournament.players.map((player) => (
-      `${player.battleTag}(${this.$t(`racesShort.${ERaceEnum[player.race]}`)})`
-    )).join(", ");
-  }
-}
+    return {
+      gateway,
+      formattedDate,
+      gameMode,
+      format,
+      playerCount,
+      mapPool,
+      statusInit,
+      statusRegistration,
+      statusMatchGeneration,
+      statusCanceled,
+      matcherinoUrl,
+      maxPlayers,
+      floNode,
+      floNodeMaxPing,
+      registeredPlayers,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

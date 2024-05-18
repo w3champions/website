@@ -11,30 +11,36 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, PropType, defineComponent, onMounted } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
-@Component({
+export default defineComponent({
+  name: "Tournament",
   components: {
     TournamentDescription,
     TournamentBracket,
   },
-})
-export default class Tournament extends Vue {
-  @Prop() public tournament!: ITournament;
-  private tournamentsStore = useTournamentsStore();
+  props: {
+    tournament: {
+      type: Object as PropType<ITournament>,
+      required: true,
+    },
+  },
+  setup() {
+    const tournamentsStore = useTournamentsStore();
+    const maps: ComputedRef<Map[]> = computed((): Map[] => tournamentsStore.tournamentMaps);
 
-  async mounted(): Promise<void> {
-    await this.tournamentsStore.loadTournamentMaps();
-  }
+    onMounted(async (): Promise<void> => {
+      await tournamentsStore.loadTournamentMaps();
+    });
 
-  get maps(): Map[] {
-    return this.tournamentsStore.tournamentMaps;
-  }
-}
+    return {
+      maps,
+    };
+  },
+});
 </script>

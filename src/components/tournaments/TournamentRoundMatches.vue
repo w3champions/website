@@ -19,49 +19,55 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
 import { ITournamentRound, ITournamentSeries } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import TournamentSeries from "./TournamentSeries.vue";
 
-@Component({
+export default defineComponent({
+  name: "TournamentRoundMatches",
   components: {
     TournamentSeries,
   },
-})
-export default class TournamentRoundMatches extends Vue {
-  @Prop() public round!: ITournamentRound;
-  @Prop() public roundWidth!: number;
-  @Prop() public roundNameHeight!: number;
-  @Prop() public playerHeight!: number;
-  @Prop() public verticalSpace!: number;
-  @Prop() public marginTop!: number;
+  props: {
+    round: { type: Object as PropType<ITournamentRound>, required: true },
+    roundWidth: { type: Number, required: true },
+    roundNameHeight: { type: Number, required: true },
+    playerHeight: { type: Number, required: true },
+    verticalSpace: { type: Number, required: true },
+    marginTop: { type: Number, required: true },
+  },
+  setup(props) {
+    const series: ComputedRef<ITournamentSeries[]> = computed((): ITournamentSeries[] => props.round.series);
 
-  get series(): ITournamentSeries[] {
-    return this.round.series;
-  }
+    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        width: `${props.roundWidth}px`,
+      };
+    });
 
-  get style() {
+    const matchesStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        "margin-top": `${props.marginTop + props.playerHeight}px`,
+      };
+    });
+
+    const roundNameStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        height: `${props.roundNameHeight}px`,
+      };
+    });
+
     return {
-      width: `${this.roundWidth}px`,
+      series,
+      style,
+      matchesStyle,
+      roundNameStyle,
     };
-  }
-
-  get matchesStyle() {
-    return {
-      "margin-top": `${this.marginTop + this.playerHeight}px`,
-    };
-  }
-
-  get roundNameStyle() {
-    return {
-      height: `${this.roundNameHeight}px`,
-    };
-  }
-}
+  },
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .bracket-rounds-column {
   width: 100%;
 }

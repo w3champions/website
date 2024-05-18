@@ -20,28 +20,33 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, StyleValue } from "vue";
 import TournamentRoundConnector from "./TournamentRoundConnector.vue";
 
-@Component({
+export default defineComponent({
+  name: "TournamentRoundConnectors",
   components: {
     TournamentRoundConnector,
   },
-})
-export default class TournamentRoundConnectors extends Vue {
-  @Prop() public seriesCount!: number;
-  @Prop() public connectorWidth!: number;
-  @Prop() public playerHeight!: number;
-  @Prop() public roundNameHeight!: number;
-  @Prop() public verticalSpace!: number;
-  @Prop() public marginTop!: number;
+  props: {
+    seriesCount: { type: Number, required: true },
+    connectorWidth: { type: Number, required: true },
+    playerHeight: { type: Number, required: true },
+    roundNameHeight: { type: Number, required: true },
+    verticalSpace: { type: Number, required: true },
+    marginTop: { type: Number, required: true },
+  },
+  setup(props) {
+    const containerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        width: `${props.connectorWidth}px`,
+        "margin-top": `${props.playerHeight + props.roundNameHeight + props.marginTop}px`,
+      };
+    });
 
-  get containerStyle() {
     return {
-      width: `${this.connectorWidth}px`,
-      "margin-top": `${this.playerHeight + this.roundNameHeight + this.marginTop}px`,
+      containerStyle,
     };
-  }
-}
+  },
+});
 </script>

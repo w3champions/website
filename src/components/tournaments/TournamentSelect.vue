@@ -33,27 +33,35 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, PropType, defineComponent } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { mdiTrophy } from "@mdi/js";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 
-@Component({})
-export default class TournamentSelect extends Vue {
-  @Prop() tournaments!: ITournament[];
-  @Prop() selectedTournament!: ITournament;
-  public mdiTrophy = mdiTrophy;
+export default defineComponent({
+  name: "TournamentSelect",
+  components: {},
+  props: {
+    tournaments: {
+      type: Array<ITournament>,
+      required: true,
+    },
+    selectedTournament: {
+      type: Object as PropType<ITournament>,
+      required: true,
+    }
+  },
+  setup(props, context) {
+    const selectedTournamentText: ComputedRef<string> = computed((): string => props.selectedTournament ? props.selectedTournament.name : "Select tournament");
 
-  get selectedTournamentText() {
-    return this.selectedTournament
-      ? this.selectedTournament.name
-      : "Select tournament";
-  }
+    function selectTournament(tournament: ITournament) {
+      context.emit("tournamentSelected", tournament);
+    }
 
-  public selectTournament(tournament: ITournament) {
-    this.$emit("tournamentSelected", tournament);
-  }
-}
+    return {
+      mdiTrophy,
+      selectedTournamentText,
+      selectTournament,
+    };
+  },
+});
 </script>
-
-<style></style>
