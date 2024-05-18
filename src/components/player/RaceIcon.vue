@@ -13,25 +13,31 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { ERaceEnum } from "@/store/types";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType, ref } from "vue";
+import { i18n } from "@/main";
+import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
+import { ERaceEnum } from "@/store/types";
+import isNil from "lodash/isNil";
 
-@Component({})
-export default class RaceIcon extends Vue {
-  public raceEnums = ERaceEnum;
-  @Prop() race!: ERaceEnum;
+export default defineComponent({
+  name: "RaceIcon",
+  components: {},
+  props: {
+    race: {
+      type: Number as PropType<ERaceEnum>,
+      required: false,
+      default: null,
+    },
+  },
+  setup(props) {
+    const renderIcon = ref<string>(ERaceEnum[props.race] ? getAsset(`raceIcons/${ERaceEnum[props.race]}.png`) : "");
+    const enumToString = ref<TranslateResult>(isNil(props.race) ? "" : i18n.t(`races.${ERaceEnum[props.race]}`));
 
-  get enumToString() {
-    return this.$t(`races.${ERaceEnum[this.race]}`);
-  }
-
-  get renderIcon() {
-    if (ERaceEnum[this.race]) {
-      return getAsset(`raceIcons/${ERaceEnum[this.race]}.png`);
-    }
-    return "";
-  }
-}
+    return {
+      renderIcon,
+      enumToString,
+    };
+  },
+});
 </script>

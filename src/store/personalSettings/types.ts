@@ -54,3 +54,14 @@ export type PersonalSetting = {
   id: string;
   aliasSettings: AkaSettings;
 };
+
+export type ProfilePlayerSocials = {
+  twitch: string;
+  youtube: string;
+  twitter: string;
+  trovo: string;
+  douyu: string;
+  aliasSettings: AkaSettings;
+  about: string;
+  homePage: string;
+};

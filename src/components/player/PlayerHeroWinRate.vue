@@ -2,7 +2,7 @@
   <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
     <v-tab v-for="race of races" :key="race.raceId" :href="`#tab-${race.raceId}`">
-      <span v-if="race.raceId === raceEnums.TOTAL">
+      <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
       </span>
       <race-icon v-else :race="race.raceId" />
@@ -54,59 +54,43 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import RaceIcon from "@/components/player/RaceIcon.vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
+import { i18n } from "@/main";
 import { getAsset } from "@/helpers/url-functions";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
 import { races, defaultStatsTab } from "@/helpers/profile";
 import { usePlayerStore } from "@/store/player/store";
 import { mdiMenuLeft, mdiMenuRight } from "@mdi/js";
 
-@Component({
-  components: { RaceIcon },
-})
-export default class PlayerHeroWinRate extends Vue {
-  public selectedTab = "tab-16";
-  public raceEnums = ERaceEnum;
-  public page = 1;
-  public paginationSize = 10;
-  public races = races;
-  @Prop() playerStatsHeroVersusRaceOnMap!: PlayerStatsHeroOnMapVersusRace;
-  @Prop() selectedMap!: string;
-  private player = usePlayerStore();
-  public mdiMenuLeft = mdiMenuLeft;
-  public mdiMenuRight = mdiMenuRight;
+export default defineComponent({
+  name: "PlayerHeroWinRate",
+  components: {
+    RaceIcon,
+  },
+  props: {
+    playerStatsHeroVersusRaceOnMap: {
+      type: Object as PropType<PlayerStatsHeroOnMapVersusRace>,
+      required: true,
+    },
+    selectedMap: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const playerStore = usePlayerStore();
+    const paginationSize = 10;
+    const page = ref<number>(1);
+    const selectedTab = ref<string>("tab-16");
+    const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
+    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
+    const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
+    const pageLength: ComputedRef<number> = computed((): number => Math.ceil(heroWinRates().length / paginationSize));
+    const heroStatsCurrentPage: ComputedRef<PlayerHeroWinRateForStatisticsTab[]> = computed((): PlayerHeroWinRateForStatisticsTab[] => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
 
-  @Watch("isPlayerInitialized")
-  onPlayerInitialized(): void {
-    this.setSelectedTab();
-  }
-
-  setSelectedTab(): void {
-    this.selectedTab = defaultStatsTab(this.player.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
-  }
-
-  // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
-  activated(): void {
-    if (this.isPlayerInitialized) this.setSelectedTab();
-  }
-
-  get selectedRace() {
-    return Number(this.selectedTab.split("-")[1]);
-  }
-
-  get isPlayerInitialized(): boolean {
-    return this.player.isInitialized;
-  }
-
-  get headersWithoutImageAndName() {
-    return this.headers.slice(2);
-  }
-
-  get headers() {
-    return [
+    const headers = [
       { text: "", value: "image" },
       { text: "Hero", value: "name" },
       { text: "Total", value: ERaceEnum.TOTAL },
@@ -116,98 +100,111 @@ export default class PlayerHeroWinRate extends Vue {
       { text: "vs. Night Elf", value: ERaceEnum.NIGHT_ELF },
       { text: "vs. Random", value: ERaceEnum.RANDOM },
     ];
-  }
 
-  get pageOffset(): number {
-    return this.paginationSize * this.page;
-  }
+    const headersWithoutImageAndName = headers.slice(2);
 
-  get pageLength(): number {
-    return Math.ceil(this.heroWinRates.length / this.paginationSize);
-  }
-
-  get heroStatsCurrentPage(): PlayerHeroWinRateForStatisticsTab[] {
-    return this.heroWinRates.slice((this.pageOffset - this.paginationSize), this.pageOffset);
-  }
-
-  get heroWinRates(): PlayerHeroWinRateForStatisticsTab[] {
-    const heroStatsItemList = this.playerStatsHeroVersusRaceOnMap.heroStatsItemList;
-    if (!heroStatsItemList) {
-      return [];
+    watch(isPlayerInitialized, onPlayerInitialized);
+    function onPlayerInitialized(): void {
+      setSelectedTab();
     }
-    let hasData = false;
-    heroStatsItemList.map((item) => {
-      const filteredByMap = item.stats
-        .filter((byRace) => byRace.race == this.selectedRace)[0]
-        .winLossesOnMap.filter((byMap) => byMap.map == this.selectedMap)[0];
-      hasData = hasData || Boolean(filteredByMap);
+
+    function setSelectedTab(): void {
+      selectedTab.value = defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
+    }
+
+    // Use onActivated instead of onMounted to trigger when navigating directly from one profile to another.
+    onActivated((): void => {
+      if (isPlayerInitialized.value) setSelectedTab();
     });
-    if (!hasData) {
-      return [];
+
+    function getImageForTable(heroId: string): string {
+      const src: string = getAsset(`heroes/${heroId}.png`);
+      return `<img class="mt-1" src="${src}" height="40" width="40" />`;
     }
-    const resp: PlayerHeroWinRateForStatisticsTab[] = [];
-    heroStatsItemList.map((item) => {
-      let total = 0;
-      let wins = 0;
-      const playerWinRate = {
-        hero: item.heroId,
-        name: this.$t(`heroNames.${item.heroId}`).toString(),
-        image: this.getImageForTable(item.heroId),
-        numbers_by_race: {
-          [ERaceEnum.UNDEAD]: { number: 0, total: 0 },
-          [ERaceEnum.ORC]: { number: 0, total: 0 },
-          [ERaceEnum.NIGHT_ELF]: { number: 0, total: 0 },
-          [ERaceEnum.HUMAN]: { number: 0, total: 0 },
-          [ERaceEnum.RANDOM]: { number: 0, total: 0 },
-          [ERaceEnum.TOTAL]: { number: 0, total: 0 },
-          [ERaceEnum.STARTER]: { number: 0, total: 0 },
-        },
-        [ERaceEnum.TOTAL]: "",
-        [ERaceEnum.UNDEAD]: "",
-        [ERaceEnum.ORC]: "",
-        [ERaceEnum.HUMAN]: "",
-        [ERaceEnum.NIGHT_ELF]: "",
-        [ERaceEnum.RANDOM]: "",
-        [ERaceEnum.STARTER]: "",
-      };
-      const filtered = item.stats
-        .filter((byRace) => byRace.race == this.selectedRace)[0]
-        .winLossesOnMap
-        .filter((byMap) => byMap.map == this.selectedMap)[0];
-      if (!filtered) {
-        return;
+
+    function heroWinRates(): PlayerHeroWinRateForStatisticsTab[] {
+      const heroStatsItemList = props.playerStatsHeroVersusRaceOnMap.heroStatsItemList;
+      if (!heroStatsItemList) {
+        return [];
       }
-      filtered
-        .winLosses
-        .map((winLoss) => {
-          playerWinRate.numbers_by_race[winLoss.race] = {
-            number: winLoss.wins,
-            total: winLoss.games,
-          };
-          playerWinRate[winLoss.race] = "-";
-          if (winLoss.games > 0) {
-            playerWinRate[winLoss.race] = `${(winLoss.winrate * 100).toFixed(2)}%`;
-          }
-          total += winLoss.games;
-          wins += winLoss.wins;
-        });
-      playerWinRate[ERaceEnum.TOTAL] = `${((wins / total) * 100).toFixed(2)}%`;
-      playerWinRate.numbers_by_race[ERaceEnum.TOTAL] = {
-        number: wins,
-        total: total,
-      };
-      resp.push(playerWinRate);
-    }) || [];
-    return resp;
-  }
+      let hasData = false;
+      heroStatsItemList.map((item) => {
+        const filteredByMap = item.stats
+          .filter((byRace) => byRace.race == selectedRace.value)[0]
+          .winLossesOnMap.filter((byMap) => byMap.map == props.selectedMap)[0];
+        hasData = hasData || Boolean(filteredByMap);
+      });
+      if (!hasData) {
+        return [];
+      }
+      const resp: PlayerHeroWinRateForStatisticsTab[] = [];
+      heroStatsItemList.map((item) => {
+        let total = 0;
+        let wins = 0;
+        const playerWinRate = {
+          hero: item.heroId,
+          name: i18n.t(`heroNames.${item.heroId}`).toString(),
+          image: getImageForTable(item.heroId),
+          numbers_by_race: {
+            [ERaceEnum.UNDEAD]: { number: 0, total: 0 },
+            [ERaceEnum.ORC]: { number: 0, total: 0 },
+            [ERaceEnum.NIGHT_ELF]: { number: 0, total: 0 },
+            [ERaceEnum.HUMAN]: { number: 0, total: 0 },
+            [ERaceEnum.RANDOM]: { number: 0, total: 0 },
+            [ERaceEnum.TOTAL]: { number: 0, total: 0 },
+            [ERaceEnum.STARTER]: { number: 0, total: 0 },
+          },
+          [ERaceEnum.TOTAL]: "",
+          [ERaceEnum.UNDEAD]: "",
+          [ERaceEnum.ORC]: "",
+          [ERaceEnum.HUMAN]: "",
+          [ERaceEnum.NIGHT_ELF]: "",
+          [ERaceEnum.RANDOM]: "",
+          [ERaceEnum.STARTER]: "",
+        };
+        const filtered = item.stats
+          .filter((byRace) => byRace.race == selectedRace.value)[0]
+          .winLossesOnMap
+          .filter((byMap) => byMap.map == props.selectedMap)[0];
+        if (!filtered) {
+          return;
+        }
+        filtered
+          .winLosses
+          .map((winLoss) => {
+            playerWinRate.numbers_by_race[winLoss.race] = {
+              number: winLoss.wins,
+              total: winLoss.games,
+            };
+            playerWinRate[winLoss.race] = "-";
+            if (winLoss.games > 0) {
+              playerWinRate[winLoss.race] = `${(winLoss.winrate * 100).toFixed(2)}%`;
+            }
+            total += winLoss.games;
+            wins += winLoss.wins;
+          });
+        playerWinRate[ERaceEnum.TOTAL] = `${((wins / total) * 100).toFixed(2)}%`;
+        playerWinRate.numbers_by_race[ERaceEnum.TOTAL] = {
+          number: wins,
+          total: total,
+        };
+        resp.push(playerWinRate);
+      }) || [];
+      return resp;
+    }
 
-  getImageForTable(heroId: string) {
-    const src: string = getAsset(`heroes/${heroId}.png`);
-    return `<img class="mt-1" src="${src}" height="40" width="40" />`;
-  }
-
-  getHeroCell(name: string, heroId: string) {
-    return `<span>${this.getImageForTable(heroId)}${name}</span>`;
-  }
-}
+    return {
+      mdiMenuLeft,
+      mdiMenuRight,
+      ERaceEnum,
+      races,
+      selectedTab,
+      heroStatsCurrentPage,
+      headers,
+      headersWithoutImageAndName,
+      page,
+      pageLength,
+    };
+  },
+});
 </script>
