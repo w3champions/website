@@ -45,52 +45,62 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { i18n } from "@/main";
 import { LocaleMessage } from "vue-i18n";
-import { Component } from "vue-property-decorator";
 import { useClanStore } from "@/store/clan/store";
 
-@Component({})
-export default class ClanCreationPanel extends Vue {
-  public clanNameToCreate = "";
-  public clanAbbreviationToCreate = "";
-  private clanStore = useClanStore();
+export default defineComponent({
+  name: "ClanCreationPanel",
+  components: {},
+  props: {},
+  setup() {
+    const clanStore = useClanStore();
+    const clanNameToCreate = ref<string>("");
+    const clanAbbreviationToCreate = ref<string>("");
 
-  public mustBeBetween(min: number, max: number, space: string) {
-    return (v: string): LocaleMessage => {
-      if (!v)
-        return this.$t("components_clans_clancreationpanel.fieldismandatory");
-      if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
-        return this.$t("components_clans_clancreationpanel.minmaxchars", {
-          min,
-          max,
-        });
-      return "";
+    const clanValidationError: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
+    const isValidationError: ComputedRef<boolean> = computed((): boolean => clanStore.clanValidationError !== "");
+
+    function mustBeBetween(min: number, max: number, space: string): (v: string) => LocaleMessage {
+      return (v: string): LocaleMessage => {
+        if (!v)
+          return i18n.t("components_clans_clancreationpanel.fieldismandatory");
+        if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
+          return i18n.t("components_clans_clancreationpanel.minmaxchars", {
+            min,
+            max,
+          });
+        return "";
+      };
+    }
+
+    function changeInsertedClanName(newName: string): void {
+      clanNameToCreate.value = newName;
+    }
+
+    function changeInsertedClanAbbreviation(newName: string): void {
+      clanAbbreviationToCreate.value = newName;
+    }
+
+    async function createClan(): Promise<void> {
+      await clanStore.createClan({
+        clanName: clanNameToCreate.value.trim(),
+        abbreviation: clanAbbreviationToCreate.value,
+      });
+      await clanStore.retrievePlayersClan();
+    }
+
+    return {
+      clanNameToCreate,
+      clanAbbreviationToCreate,
+      clanValidationError,
+      isValidationError,
+      mustBeBetween,
+      changeInsertedClanName,
+      changeInsertedClanAbbreviation,
+      createClan,
     };
-  }
-
-  public changeInsertedClanName(newName: string): void {
-    this.clanNameToCreate = newName;
-  }
-
-  public changeInsertedClanAbbreviation(newName: string): void {
-    this.clanAbbreviationToCreate = newName;
-  }
-
-  get clanValidationError(): string {
-    return this.clanStore.clanValidationError;
-  }
-
-  get isValidationError(): boolean {
-    return this.clanStore.clanValidationError !== "";
-  }
-
-  public async createClan(): Promise<void> {
-    await this.clanStore.createClan({
-      clanName: this.clanNameToCreate.trim(),
-      abbreviation: this.clanAbbreviationToCreate,
-    });
-    await this.clanStore.retrievePlayersClan();
-  }
-}
+  },
+});
 </script>
