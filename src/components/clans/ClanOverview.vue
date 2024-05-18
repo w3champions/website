@@ -23,11 +23,11 @@
       <v-row v-if="clanIsFunded">
         <v-col
           v-for="mode in [
-            modeEnums.GM_1ON1,
-            modeEnums.GM_2ON2,
-            modeEnums.GM_2ON2_AT,
-            modeEnums.GM_4ON4,
-            modeEnums.GM_FFA,
+            EGameMode.GM_1ON1,
+            EGameMode.GM_2ON2,
+            EGameMode.GM_2ON2_AT,
+            EGameMode.GM_4ON4,
+            EGameMode.GM_FFA,
           ]"
           :key="mode"
         >
@@ -155,8 +155,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, onActivated } from "vue";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
@@ -167,21 +166,21 @@ import { Clan, EClanRole } from "@/store/clan/types";
 import DeleteClanModal from "@/components/clans/DeleteClanModal.vue";
 import { EGameMode } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ClanRoleIcon from "@/components/clans/ClanRoleIcon.vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { ModeStat, PlayerProfile } from "@/store/player/types";
+import { ModeStat } from "@/store/player/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useClanStore } from "@/store/clan/store";
+import { useRouter } from "vue-router/composables";
 
-@Component({
+export default defineComponent({
+  name: "ClanOverview",
   components: {
     PlayerLeague,
     ClanRoleIcon,
-    PlayerAvatar,
     LeagueIcon,
     DeleteClanModal,
     MemberManagementMenu,
@@ -191,164 +190,136 @@ import { useClanStore } from "@/store/clan/store";
     InvitePlayerModal,
     ClanCreationPanel,
   },
-})
-export default class ClanOverview extends Vue {
-  private oauthStore = useOauthStore();
-  private rankingsStore = useRankingStore();
-  private player = usePlayerStore();
-  @Prop() public id!: string;
-  private clanStore = useClanStore();
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const oauthStore = useOauthStore();
+    const rankingsStore = useRankingStore();
+    const clanStore = useClanStore();
+    const playerStore = usePlayerStore();
+    const router = useRouter();
 
-  public modeEnums = Object.freeze(EGameMode);
+    const playersClan: ComputedRef<Clan> = computed((): Clan => clanStore.playersClan);
+    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
+    const currentSeason: ComputedRef<number> = computed((): number => rankingsStore.seasons[0].id);
+    const clanIsFunded: ComputedRef<boolean> = computed((): boolean => playersClan.value.isSuccesfullyFounded);
+    const roleEnums: ComputedRef<typeof EClanRole> = computed((): typeof EClanRole => EClanRole);
+    const hasPendingInvite: ComputedRef<boolean> = computed((): boolean => !!clanStore.selectedMemberShip?.pendingInviteFromClan);
+    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const selectedPlayer: ComputedRef<string> = computed((): string => playerStore.battleTag);
+    const hasNoClan: ComputedRef<boolean> = computed((): boolean => !playersClan?.value.clanId);
+    const isLoggedInPlayer: ComputedRef<boolean> = computed((): boolean => verifiedBtag.value === selectedPlayer.value);
+    const shamans: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.shamans);
+    const members: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.members);
+    const loggedInRole: ComputedRef<EClanRole> = computed((): EClanRole => defineRole(verifiedBtag.value));
+    const loggedInPlayerIsChiefTain: ComputedRef<boolean> = computed((): boolean => playersClan.value.chiefTain === verifiedBtag.value);
 
-  get battleTag(): string {
-    return decodeURIComponent(this.id);
-  }
-
-  get currentSeason(): number {
-    return this.rankingsStore.seasons[0].id;
-  }
-
-  public getLeagueOrder(battleTag: string): number {
-    return this.playersClan.ranks
-      ?.filter(
-        (r) =>
-          r.season === this.currentSeason &&
-          r.gameMode === EGameMode.GM_1ON1 &&
-          r.id.includes(battleTag)
-      )
-      .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
-  }
-
-  public getStats(mode: EGameMode): { wins: number; losses: number; gameMode: EGameMode; games: number; rank: number; leagueOrder: number } {
-    const modeRankings = this.playersClan.ranks?.filter(
-      (r) => r.gameMode === mode && r.leagueName != null
-    );
-    const players = modeRankings.map((rankings) => rankings.player);
-    if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
-
-    const reduced = players.reduce(
-      (a, b) => ({
-        wins: a.wins + b.wins,
-        losses: a.losses + b.losses,
-        gameMode: mode,
-        games: a.games + b.games,
-        rank: 0,
-        leagueOrder: 0,
-      }),
-      {
-        wins: 0,
-        losses: 0,
-        gameMode: mode,
-        games: 0,
-        rank: 0,
-        leagueOrder: 0,
-      }
-    );
-
-    const allRanks = this.playersClan.ranks.filter(
-      (r) => r.rankNumber != 0 && r.gameMode === mode
-    );
-    const order = allRanks.reduce(
-      (a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }),
-      { leagueOrder: 0 }
-    );
-    reduced.leagueOrder = Math.round(order.leagueOrder / allRanks.length);
-    reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
-
-    return reduced;
-  }
-
-  get clanIsFunded(): boolean {
-    return this.playersClan.isSuccesfullyFounded;
-  }
-
-  get roleEnums(): typeof EClanRole {
-    return EClanRole;
-  }
-
-  get clanValidationError(): string {
-    return this.clanStore.clanValidationError;
-  }
-
-  get hasPendingInvite(): boolean {
-    return !!this.clanStore.selectedMemberShip
-      ?.pendingInviteFromClan;
-  }
-
-  get searchPlayers(): PlayerProfile[] {
-    return this.clanStore.searchPlayers;
-  }
-
-  public defineRole(member: string): EClanRole {
-    if (member === this.playersClan.chiefTain) return EClanRole.ChiefTain;
-    if (this.playersClan.shamans.find((s) => s === member))
-      return EClanRole.Shaman;
-    return EClanRole.Member;
-  }
-
-  get loggedInRole(): EClanRole {
-    return this.defineRole(this.verifiedBtag);
-  }
-
-  get loggedInPlayerIsChiefTain(): boolean {
-    return this.playersClan.chiefTain === this.verifiedBtag;
-  }
-
-  get loggedInPlayerIsShaman(): boolean {
-    return !!(
-      this.playersClan.shamans.find((s) => s === this.verifiedBtag) ||
-      this.loggedInPlayerIsChiefTain
-    );
-  }
-
-  public goToPlayer(battleTag: string): void {
-    this.$router.push({ path: getProfileUrl(battleTag) });
-  }
-
-  get verifiedBtag(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  get hasNoClan(): boolean {
-    return !this.playersClan?.clanId;
-  }
-
-  get isLoggedInPlayer(): boolean {
-    return this.verifiedBtag === this.selectedPlayer;
-  }
-
-  get selectedPlayer(): string {
-    return this.player.battleTag;
-  }
-
-  get playersClan(): Clan {
-    return this.clanStore.playersClan;
-  }
-
-  get shamans(): string[] {
-    return this.clanStore.playersClan.shamans;
-  }
-
-  get members(): string[] {
-    return this.clanStore.playersClan.members;
-  }
-
-  async mounted(): Promise<void> {
-    await this.rankingsStore.retrieveSeasons();
-
-    await this.player.loadProfile({
-      battleTag: this.battleTag,
-      freshLogin: false,
+    const loggedInPlayerIsShaman: ComputedRef<boolean> = computed((): boolean => {
+      return !!(
+        playersClan.value.shamans.find((s) => s === verifiedBtag.value) ||
+        loggedInPlayerIsChiefTain.value
+      );
     });
-  }
 
-  // Load clans on activate instead of mount,
-  // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
-  async activated(): Promise<void> {
-    this.player.SET_BATTLE_TAG(this.battleTag);
-    await this.clanStore.retrievePlayersMembership();
-    await this.clanStore.retrievePlayersClan();
-  }
-}
+    function getLeagueOrder(battleTag: string): number {
+      return playersClan.value.ranks
+        ?.filter(
+          (r) =>
+            r.season === currentSeason.value &&
+            r.gameMode === EGameMode.GM_1ON1 &&
+            r.id.includes(battleTag)
+        )
+        .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
+    }
+
+    function goToPlayer(battleTag: string): void {
+      router.push({ path: getProfileUrl(battleTag) });
+    }
+
+    function defineRole(member: string): EClanRole {
+      if (member === playersClan.value.chiefTain) return EClanRole.ChiefTain;
+      if (playersClan.value.shamans.find((s) => s === member)) return EClanRole.Shaman;
+      return EClanRole.Member;
+    }
+
+    onMounted(async (): Promise<void> => {
+      await rankingsStore.retrieveSeasons();
+
+      await playerStore.loadProfile({
+        battleTag: battleTag.value,
+        freshLogin: false,
+      });
+    });
+
+    // Load clans on activate instead of mount,
+    // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
+    onActivated(async (): Promise<void> => {
+      playerStore.SET_BATTLE_TAG(battleTag.value);
+      await clanStore.retrievePlayersMembership();
+      await clanStore.retrievePlayersClan();
+    });
+
+    function getStats(mode: EGameMode): ModeStat {
+      const modeRankings = playersClan.value.ranks?.filter(
+        (r) => r.gameMode === mode && r.leagueName != null
+      );
+      const players = modeRankings.map((rankings) => rankings.player);
+      if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
+
+      const reduced = players.reduce(
+        (a, b) => ({
+          wins: a.wins + b.wins,
+          losses: a.losses + b.losses,
+          gameMode: mode,
+          games: a.games + b.games,
+          rank: 0,
+          leagueOrder: 0,
+        }),
+        {
+          wins: 0,
+          losses: 0,
+          gameMode: mode,
+          games: 0,
+          rank: 0,
+          leagueOrder: 0,
+        }
+      );
+
+      const allRanks = playersClan.value.ranks.filter(
+        (r) => r.rankNumber != 0 && r.gameMode === mode
+      );
+      const order = allRanks.reduce(
+        (a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }),
+        { leagueOrder: 0 }
+      );
+      reduced.leagueOrder = Math.round(order.leagueOrder / allRanks.length);
+      reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
+
+      return reduced as ModeStat;
+    }
+
+    return {
+      EGameMode,
+      hasNoClan,
+      isLoggedInPlayer,
+      hasPendingInvite,
+      playersClan,
+      loggedInPlayerIsShaman,
+      clanIsFunded,
+      getStats,
+      goToPlayer,
+      roleEnums,
+      getLeagueOrder,
+      shamans,
+      loggedInPlayerIsChiefTain,
+      defineRole,
+      loggedInRole,
+      members,
+    };
+  },
+});
 </script>

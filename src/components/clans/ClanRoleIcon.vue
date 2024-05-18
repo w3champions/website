@@ -1,20 +1,28 @@
 <template>
-  <img :src="icon()" class="league-icon" alt="league" />
+  <img :src="icon" class="league-icon" alt="league" />
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { defineComponent, PropType, ref } from "vue";
 import { EClanRole } from "@/store/clan/types";
 
-@Component({})
-export default class ClanRoleIcon extends Vue {
-  @Prop() role!: EClanRole;
+export default defineComponent({
+  name: "ClanRoleIcon",
+  components: {},
+  props: {
+    role: {
+      type: Number as PropType<EClanRole>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const icon = ref<string>(`/assets/clanRoleIcon/${EClanRole[props.role]}.jpg`);
 
-  icon(): string {
-    return `/assets/clanRoleIcon/${EClanRole[this.role]}.jpg`;
-  }
-}
+    return {
+      icon,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

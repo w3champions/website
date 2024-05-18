@@ -4,7 +4,7 @@
     <br />
     <v-row class="justify-center">
       <v-col class="text-end">
-        <v-dialog v-model="invitePlayerDialog" persistent max-width="600px">
+        <v-dialog v-model="invitePlayerDialog" max-width="600px">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="isChieftain" v-on="on" outlined color="error">
               {{ $t("components_clans_leaveclanmodal.leaveclan") }}
@@ -21,7 +21,7 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="closeDialog">
+              <v-btn color="blue darken-1" text @click="invitePlayerDialog = false">
                 {{ $t("components_clans_leaveclanmodal.close") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="leaveClan">
@@ -36,29 +36,36 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
 
-@Component({})
-export default class LeaveClanModal extends Vue {
-  public invitePlayerDialog = false;
-  @Prop() isChieftain!: boolean;
-  private clanStore = useClanStore();
+export default defineComponent({
+  name: "LeaveClanModal",
+  components: {},
+  props: {
+    isChieftain: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup() {
+    const clanStore = useClanStore();
+    const invitePlayerDialog = ref<boolean>(false);
 
-  public closeDialog(): void {
-    this.invitePlayerDialog = false;
-  }
+    const clanName: ComputedRef<string> = computed((): string => clanStore.playersClan.clanName);
 
-  get clanName(): string {
-    return this.clanStore.playersClan.clanName;
-  }
+    async function leaveClan(): Promise<void> {
+      await clanStore.leaveClan();
+      invitePlayerDialog.value = false;
+      await clanStore.retrievePlayersClan();
+      await clanStore.retrievePlayersMembership();
+    }
 
-  public async leaveClan(): Promise<void> {
-    await this.clanStore.leaveClan();
-    this.invitePlayerDialog = false;
-    await this.clanStore.retrievePlayersClan();
-    await this.clanStore.retrievePlayersMembership();
-  }
-}
+    return {
+      invitePlayerDialog,
+      clanName,
+      leaveClan,
+    };
+  },
+});
 </script>

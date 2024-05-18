@@ -26,28 +26,34 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent } from "vue";
 import { useClanStore } from "@/store/clan/store";
 
-@Component({})
-export default class AcceptInvitePanel extends Vue {
-  private clanStore = useClanStore();
+export default defineComponent({
+  name: "AcceptInvitePanel",
+  components: {},
+  props: {},
+  setup() {
+    const clanStore = useClanStore();
+    const clanName: ComputedRef<string> = computed((): string => clanStore.selectedMemberShip.clanName);
 
-  get clanName(): string {
-    return this.clanStore.selectedMemberShip.clanName;
-  }
+    async function joinClan(): Promise<void> {
+      await clanStore.acceptInvite();
+      await clanStore.retrievePlayersClan();
+      await clanStore.retrievePlayersMembership();
+    }
 
-  public async joinClan(): Promise<void> {
-    await this.clanStore.acceptInvite();
-    await this.clanStore.retrievePlayersClan();
-    await this.clanStore.retrievePlayersMembership();
-  }
+    async function rejectClan(): Promise<void> {
+      await clanStore.rejectInvite();
+      await clanStore.retrievePlayersClan();
+      await clanStore.retrievePlayersMembership();
+    }
 
-  public async rejectClan(): Promise<void> {
-    await this.clanStore.rejectInvite();
-    await this.clanStore.retrievePlayersClan();
-    await this.clanStore.retrievePlayersMembership();
-  }
-}
+    return {
+      clanName,
+      joinClan,
+      rejectClan,
+    };
+  },
+});
 </script>

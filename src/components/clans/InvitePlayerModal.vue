@@ -49,47 +49,60 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref, WritableComputedRef } from "vue";
 import { useClanStore } from "@/store/clan/store";
-import { mdiMagnify, mdiPencil } from "@mdi/js";
-import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { mdiMagnify, mdiPencil } from "@mdi/js";
 
-@Component({ components: { PlayerSearch } })
-export default class InvitePlayerModal extends Vue {
-  public mdiMagnify = mdiMagnify;
-  public mdiPencil = mdiPencil;
-  public player = "";
-  private playerSearchStore = usePlayerSearchStore();
+export default defineComponent({
+  name: "InvitePlayerModal",
+  components: {
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const playerSearchStore = usePlayerSearchStore();
+    const clanStore = useClanStore();
+    const dialog = ref<boolean>(false);
+    const player = ref<string>("");
 
-  public dialog = false;
-  private clanStore = useClanStore();
+    const clanValidationErrorText: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
 
-  get clanValidationErrorText(): string {
-    return this.clanStore.clanValidationError;
-  }
+    const clanValidationError: WritableComputedRef<boolean> = computed({
+      get(): boolean {
+        return clanStore.clanValidationError !== "";
+      },
+      set(): void {
+        clanStore.clanValidationError = "";
+      },
+    });
 
-  get clanValidationError(): boolean {
-    return this.clanStore.clanValidationError !== "";
-  }
+    async function invitePlayer(): Promise<void> {
+      await clanStore.invitePlayer(player.value);
+      await clanStore.retrievePlayersClan();
+      playerSearchStore.clearPlayerSearch();
+    }
 
-  set clanValidationError(_val: boolean) {
-    this.clanStore.clanValidationError = "";
-  }
+    function playerFound(bTag: string): void {
+      player.value = bTag;
+    }
 
-  public async invitePlayer(): Promise<void> {
-    await this.clanStore.invitePlayer(this.player);
-    await this.clanStore.retrievePlayersClan();
-    this.playerSearchStore.clearPlayerSearch();
-  }
+    function searchCleared(): void {
+      player.value = "";
+    }
 
-  playerFound(bTag: string): void {
-    this.player = bTag;
-  }
-
-  searchCleared(): void {
-    this.player = "";
-  }
-}
+    return {
+      mdiMagnify,
+      mdiPencil,
+      dialog,
+      player,
+      clanValidationErrorText,
+      clanValidationError,
+      invitePlayer,
+      playerFound,
+      searchCleared,
+    };
+  },
+});
 </script>

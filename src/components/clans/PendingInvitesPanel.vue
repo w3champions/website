@@ -28,52 +28,44 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
-import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
-import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { PlayerProfile } from "@/store/player/types";
 import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiDelete } from "@mdi/js";
+import { useRouter } from "vue-router/composables";
 
-@Component({
-  components: { LeagueIcon, InvitePlayerModal, ClanCreationPanel },
-})
-export default class PendingInvitesPanel extends Vue {
-  public search = "";
-  public mdiDelete = mdiDelete;
-  private clanStore = useClanStore();
+export default defineComponent({
+  name: "PendingInvitesPanel",
+  components: {},
+  props: {},
+  setup() {
+    const router = useRouter();
+    const clanStore = useClanStore();
 
-  public async revokeInvite(member: string): Promise<void> {
-    await this.clanStore.revokeInvite(member);
-    await this.clanStore.retrievePlayersClan();
-  }
+    const playersClan: ComputedRef<Clan> = computed((): Clan => clanStore.playersClan);
+    const hasNoPendingInvites: ComputedRef<boolean> = computed((): boolean => playersClan.value?.pendingInvites?.length === 0);
 
-  get clanValidationError(): string {
-    return this.clanStore.clanValidationError;
-  }
+    async function revokeInvite(member: string): Promise<void> {
+      await clanStore.revokeInvite(member);
+      await clanStore.retrievePlayersClan();
+    }
 
-  get hasNoPendingInvites(): boolean {
-    return this.playersClan?.pendingInvites?.length === 0;
-  }
+    function goToPlayer(battleTag: string): void {
+      router.push({ path: getProfileUrl(battleTag) });
+    }
 
-  get searchPlayers(): PlayerProfile[] {
-    return this.clanStore.searchPlayers;
-  }
+    onMounted(async (): Promise<void> => {
+      await clanStore.retrievePlayersClan();
+    });
 
-  public goToPlayer(battleTag: string): void {
-    this.$router.push({ path: getProfileUrl(battleTag) });
-  }
-
-  get playersClan(): Clan {
-    return this.clanStore.playersClan;
-  }
-
-  async mounted(): Promise<void> {
-    await this.clanStore.retrievePlayersClan();
-  }
-}
+    return {
+      mdiDelete,
+      playersClan,
+      hasNoPendingInvites,
+      goToPlayer,
+      revokeInvite,
+    };
+  },
+});
 </script>

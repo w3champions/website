@@ -2,7 +2,7 @@
   <v-card-text>
     <v-row class="justify-center">
       <v-col class="text-end">
-        <v-dialog v-model="dialog" persistent max-width="400px">
+        <v-dialog v-model="dialog" max-width="400px">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" outlined color="error">
               {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
@@ -17,10 +17,10 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="closeDialog">
+              <v-btn color="blue darken-1" text @click="dialog = false">
                 {{ $t("components_clans_deleteclanmodal.close") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="leaveClan">
+              <v-btn color="blue darken-1" text @click="deleteClan">
                 {{ $t("components_clans_deleteclanmodal.delete") }}
                 {{ clanName }}
               </v-btn>
@@ -32,28 +32,30 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
 
-@Component({})
-export default class DeleteClanModal extends Vue {
-  public dialog = false;
-  private clanStore = useClanStore();
+export default defineComponent({
+  name: "DeleteClanModal",
+  components: {},
+  props: {},
+  setup() {
+    const clanStore = useClanStore();
+    const dialog = ref<boolean>(false);
+    const clanName: ComputedRef<string> = computed((): string => clanStore.playersClan.clanName);
 
-  public closeDialog(): void {
-    this.dialog = false;
-  }
+    async function deleteClan(): Promise<void> {
+      await clanStore.deleteClan();
+      dialog.value = false;
+      await clanStore.retrievePlayersClan();
+      await clanStore.retrievePlayersMembership();
+    }
 
-  get clanName(): string {
-    return this.clanStore.playersClan.clanName;
-  }
-
-  public async leaveClan(): Promise<void> {
-    await this.clanStore.deleteClan();
-    this.dialog = false;
-    await this.clanStore.retrievePlayersClan();
-    await this.clanStore.retrievePlayersMembership();
-  }
-}
+    return {
+      dialog,
+      clanName,
+      deleteClan,
+    };
+  },
+});
 </script>
