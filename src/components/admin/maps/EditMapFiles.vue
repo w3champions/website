@@ -43,66 +43,78 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
-@Component({})
-export default class EditMapFiles extends Vue {
-  @Prop() public map!: Map;
+export default defineComponent({
+  name: "EditMapFiles",
+  components: {},
+  props: {
+    map: {
+      type: Object as PropType<Map>,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const mapsManagementStore = useMapsManagementStore();
+    const fileName = ref<string>("");
+    const file = ref<File>({} as any);
+    const mapFiles: ComputedRef<MapFileData[]> = computed((): MapFileData[] => mapsManagementStore.mapFiles);
 
-  public fileName = "";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public file: File = {} as any;
-  private mapsManagementStore = useMapsManagementStore();
+    function selectMapFile(file: MapFileData) {
+      if (confirm(`Are you sure you want to select file with path ${file.filePath}?`)) {
+        context.emit("selected", { map: props.map, file });
+      }
+    }
 
-  public get headers() {
-    return [
+    function cancel() {
+      context.emit("cancel");
+    }
+
+    async function addMapFile() {
+      try {
+        const formData = new FormData();
+        formData.append("mapId", props.map.id.toString());
+        formData.append("mapFile", file.value, file.value.name);
+        formData.append("fileName", fileName.value);
+        await mapsManagementStore.createMapFile(formData);
+        await mapsManagementStore.loadMapFiles(props.map.id);
+
+        fileName.value = "";
+        file.value = {} as any;
+      } catch {
+        alert("Error trying to create map file");
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      await mapsManagementStore.loadMapFiles(props.map.id);
+    });
+
+    const headers = [
       {
         text: "File path",
         align: "start",
         value: "filePath",
       },
-      { text: "Actions", value: "actions", sortable: false },
+      {
+        text: "Actions",
+        value: "actions",
+        sortable: false,
+      },
     ];
-  }
 
-  public get mapFiles() {
-    return this.mapsManagementStore.mapFiles;
-  }
+    return {
+      headers,
+      mapFiles,
+      selectMapFile,
+      file,
+      fileName,
+      addMapFile,
+      cancel,
+    };
+  },
+});
 
-  public selectMapFile(file: MapFileData) {
-    if (confirm(`Are you sure you want to select file with path ${file.filePath}?`)) {
-      this.$emit("selected", { map: this.map, file });
-    }
-  }
-
-  public cancel() {
-    this.$emit("cancel");
-  }
-
-  public async addMapFile() {
-    try {
-      const formData = new FormData();
-      formData.append("mapId", this.map.id.toString());
-      formData.append("mapFile", this.file, this.file.name);
-      formData.append("fileName", this.fileName);
-      await this.mapsManagementStore.createMapFile(formData);
-      await this.mapsManagementStore.loadMapFiles(this.map.id);
-
-      this.fileName = "";
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.file = {} as any;
-    } catch {
-      alert("Error trying to create map file");
-    }
-  }
-
-  async mounted(): Promise<void> {
-    await this.mapsManagementStore.loadMapFiles(this.map.id);
-  }
-}
 </script>
-
-<style></style>
