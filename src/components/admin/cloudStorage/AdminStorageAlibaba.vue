@@ -86,84 +86,98 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
-@Component({})
-export default class AdminStorageAlibaba extends Vue {
-  private cloudStorageStore = useCloudStorageStore();
-  public dialog = false;
-  public mdiDelete = mdiDelete;
-  public mdiDownload = mdiDownload;
-  public mdiCamera = mdiCamera;
-  public mdiMagnify = mdiMagnify;
-  public fileToUpload = null;
-  public isValidationMessageVisible = false;
-  public tableSearch = "";
-  public isLoadingFiles = true;
-  public isUploadingFile = false;
+export default defineComponent({
+  name: "AdminStorageAlibaba",
+  components: {},
+  props: {},
+  setup() {
+    const cloudStorageStore = useCloudStorageStore();
+    const dialog = ref<boolean>(false);
+    const fileToUpload = ref<File | null>(null);
+    const isValidationMessageVisible = ref<boolean>(false);
+    const tableSearch = ref<string>("");
+    const isLoadingFiles = ref<boolean>(true);
+    const isUploadingFile = ref<boolean>(false);
 
-  public headers = [
-    { text: "Name", align: "start", sortable: true, value: "name" },
-    { text: "Size (KB)", sortable: true, value: "size", filterable: false },
-    { text: "Last Modified", sortable: true, value: "lastModified" },
-    { text: "Actions", sortable: false, value: "actions" },
-  ];
+    const files: ComputedRef<CloudFile[]> = computed((): CloudFile[] => cloudStorageStore.files);
+    const validationMessage: ComputedRef<CloudValidationMessage> = computed((): CloudValidationMessage => cloudStorageStore.validationMessage);
 
-  get files(): CloudFile[] {
-    return this.cloudStorageStore.files;
-  }
+    function resetValidationMessage() {
+      isValidationMessageVisible.value = false;
+      cloudStorageStore.validationMessage = { message: "", isSuccess: true };
+    }
 
-  async deleteFile(file: CloudFile): Promise<void> {
-    const confirmation = confirm(`Are you sure you want to delete ${file.name}?`);
-    if (!confirmation) return;
-    await this.cloudStorageStore.deleteFile(file.name, CloudStorageProvider.ALIBABA);
-    this.isValidationMessageVisible = true;
-    await this.loadFiles();
-  }
+    async function deleteFile(file: CloudFile): Promise<void> {
+      const confirmation = confirm(`Are you sure you want to delete ${file.name}?`);
+      if (!confirmation) return;
+      await cloudStorageStore.deleteFile(file.name, CloudStorageProvider.ALIBABA);
+      isValidationMessageVisible.value = true;
+      await loadFiles();
+    }
 
-  downloadFile(file: CloudFile): void {
-    this.cloudStorageStore.downloadFile(file.name, CloudStorageProvider.ALIBABA);
-  }
+    function downloadFile(file: CloudFile): void {
+      cloudStorageStore.downloadFile(file.name, CloudStorageProvider.ALIBABA);
+    }
 
-  async uploadFile(): Promise<void> {
-    if (!this.fileToUpload) return;
-    this.isUploadingFile = true;
-    await this.cloudStorageStore.uploadFile(this.fileToUpload, CloudStorageProvider.ALIBABA);
-    this.isValidationMessageVisible = true;
-    this.close();
-    this.isUploadingFile = false;
-    this.fileToUpload = null;
-    await this.loadFiles();
-  }
+    async function uploadFile(): Promise<void> {
+      if (!fileToUpload.value) return;
+      isUploadingFile.value = true;
+      await cloudStorageStore.uploadFile(fileToUpload.value, CloudStorageProvider.ALIBABA);
+      isValidationMessageVisible.value = true;
+      close();
+      isUploadingFile.value = false;
+      fileToUpload.value = null;
+      await loadFiles();
+    }
 
-  public close(): void {
-    this.dialog = false;
-  }
+    function close(): void {
+      dialog.value = false;
+    }
 
-  get validationMessage(): CloudValidationMessage {
-    return this.cloudStorageStore.validationMessage;
-  }
+    async function loadFiles(): Promise<void> {
+      await cloudStorageStore.fetchFiles(CloudStorageProvider.ALIBABA);
+      isLoadingFiles.value = false;
+    }
 
-  resetValidationMessage() {
-    this.isValidationMessageVisible = false;
-    this.cloudStorageStore.validationMessage = { message: "", isSuccess: true };
-  }
+    onMounted(async (): Promise<void> => {
+      cloudStorageStore.resetFiles();
+      resetValidationMessage();
+      await loadFiles();
+    });
 
-  public async loadFiles(): Promise<void> {
-    await this.cloudStorageStore.fetchFiles(CloudStorageProvider.ALIBABA);
-    this.isLoadingFiles = false;
-  }
+    const headers = [
+      { text: "Name", align: "start", sortable: true, value: "name" },
+      { text: "Size (KB)", sortable: true, value: "size", filterable: false },
+      { text: "Last Modified", sortable: true, value: "lastModified" },
+      { text: "Actions", sortable: false, value: "actions" },
+    ];
 
-  async mounted(): Promise<void> {
-    this.cloudStorageStore.resetFiles();
-    this.resetValidationMessage();
-    await this.loadFiles();
-  }
-}
+    return {
+      mdiDelete,
+      mdiDownload,
+      mdiCamera,
+      mdiMagnify,
+      headers,
+      files,
+      tableSearch,
+      isLoadingFiles,
+      dialog,
+      fileToUpload,
+      close,
+      isUploadingFile,
+      uploadFile,
+      downloadFile,
+      deleteFile,
+      isValidationMessageVisible,
+      validationMessage,
+      resetValidationMessage,
+    };
+  },
+});
+
 </script>
-
-<style lang="scss"></style>

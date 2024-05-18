@@ -7,7 +7,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="map.name" label="Name" autofocus></v-text-field>
+            <v-text-field v-model="mapRef.name" label="Name" autofocus></v-text-field>
           </v-col>
 
           <v-tooltip left v-if="isAddDialog">
@@ -20,11 +20,11 @@
           </v-tooltip>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="map.category" label="Category"></v-text-field>
+            <v-text-field v-model="mapRef.category" label="Category"></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="map.maxTeams" label="Max Teams"></v-text-field>
+            <v-text-field v-model="mapRef.maxTeams" label="Max Teams"></v-text-field>
           </v-col>
         </v-row>
       </v-container>
@@ -43,31 +43,46 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType, ref } from "vue";
 import { Map } from "@/store/admin/mapsManagement/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
 
-@Component({})
-export default class EditMap extends Vue {
-  @Prop() public map!: Map;
-  @Prop() public isAddDialog!: boolean;
-  public mapId = null;
+export default defineComponent({
+  name: "EditMap",
+  components: {},
+  props: {
+    map: {
+      type: Object as PropType<Map>,
+      required: true,
+    },
+    isAddDialog: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const mapId = ref<number | null>(null);
+    const title = ref<string>(props.isAddDialog ? "Create map" : "Edit map");
+    const mapRef = ref<Map>(props.map);
 
-  public get title() {
-    return this.isAddDialog ? "Create map" : "Edit map";
-  }
-
-  public cancel() {
-    this.$emit("cancel");
-  }
-
-  public save() {
-    if (this.isAddDialog && this.mapId !== null) {
-      this.map.id = this.mapId;
+    function cancel() {
+      context.emit("cancel");
     }
-    this.$emit("save", this.map);
-  }
-}
-</script>
 
-<style></style>
+    function save() {
+      // const editedMap = Object.create(props.map);
+      if (props.isAddDialog && mapId.value !== null) {
+        mapRef.value.id = mapId.value;
+      }
+      context.emit("save", mapRef.value);
+    }
+
+    return {
+      mapId,
+      title,
+      cancel,
+      save,
+      mapRef,
+    };
+  },
+});
+</script>
