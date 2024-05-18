@@ -21,91 +21,87 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
 import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
-import { Component, Prop } from "vue-property-decorator";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/types";
 
-@Component({
+export default defineComponent({
+  name: "TournamentSeriesPlayer",
   components: {
     CountryFlagExtended,
   },
-})
-export default class TournamentSeriesPlayer extends Vue {
-  @Prop() public side!: "top" | "bottom";
-  @Prop() public player!: ISeriesPlayer;
-  @Prop() public playerHeight!: number;
-  @Prop() public roundWidth!: number;
-  @Prop() public seriesFinished!: boolean;
-  @Prop() public seriesSpecial!: boolean;
-  @Prop() public seriesCanceled!: boolean;
+  props: {
+    player: { type: Object as PropType<ISeriesPlayer | undefined>, required: true },
+    side: { type: String as PropType<"top" | "bottom">, required: true },
+    playerHeight: { type: Number, required: true },
+    roundWidth: { type: Number, required: true },
+    seriesFinished: { type: Boolean, required: false, default: undefined },
+    seriesSpecial: { type: Boolean, required: false, default: undefined },
+    seriesCanceled: { type: Boolean, required: false, default: undefined },
+  },
+  setup(props) {
+    const won: ComputedRef<boolean> = computed((): boolean => props.player?.won ?? false);
+    const name: ComputedRef<string> = computed((): string => getName(props.player?.battleTag ?? ""));
+    const countryCode: ComputedRef<string | undefined> = computed((): string | undefined => props.player?.countryCode);
 
-  get won() {
-    return this.player?.won ?? false;
-  }
+    const score: ComputedRef<string> = computed((): string => {
+      if (!props.seriesFinished) return "";
+      if (isNil(props.player)) return "";
 
-  get name() {
-    return this.getName(this.player?.battleTag ?? "");
-  }
+      let score = "";
+      if (!isNil(props.player.score)) {
+        score = props.player.score.toString();
+      }
+      if (!isNil(props.player) && !props.seriesCanceled) {
+        score = props.player.won ? "1" : "0";
+      }
+      if (props.seriesSpecial) {
+        score += "*";
+      }
 
-  get countryCode() {
-    return this.player?.countryCode;
-  }
+      return score;
+    });
 
-  get score() {
-    if (!this.seriesFinished) {
-      return "";
-    }
-    if (isNil(this.player)) {
-      return "";
-    }
+    const raceClass: ComputedRef<string> = computed((): string => {
+      if (isNil(props.player)) return "";
 
-    let score = "";
-    if (!isNil(this.player.score)) {
-      score = this.player.score.toString();
-    }
-    if (!isNil(this.player) && !this.seriesCanceled) {
-      score = this.player.won ? "1" : "0";
-    }
-    if (this.seriesSpecial) {
-      score += "*";
-    }
+      const race = props.player.race;
+      return ERaceEnum[race].toLowerCase();
+    });
 
-    return score;
-  }
+    const getName = (battleTag: string): string => battleTag.split("#")[0];
 
-  get raceClass() {
-    if (isNil(this.player)) {
-      return "";
-    }
-    const race = this.player.race;
-    return ERaceEnum[race].toLowerCase();
-  }
+    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+      let height = props.playerHeight;
+      if (props.side === "bottom") {
+        // Subtract 2px to account for the 1px outer border and 1px divider border
+        height -= 2;
+      }
+      return {
+        height: `${height}px`,
+      };
+    });
 
-  private getName(battleTag: string) {
-    return battleTag.split("#")[0];
-  }
+    const slotStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        // subtract box and border width
+        "max-width": `${props.roundWidth - 27 - 2}px`,
+      };
+    });
 
-  get style() {
-    let height = this.playerHeight;
-    if (this.side === "bottom") {
-      // Subtract 2px to account for the 1px outer border and 1px divider border
-      height -= 2;
-    }
     return {
-      height: `${height}px`,
+      won,
+      name,
+      countryCode,
+      score,
+      raceClass,
+      style,
+      slotStyle,
     };
-  }
-
-  get slotStyle() {
-    return {
-      // subtract box and border width
-      "max-width": `${this.roundWidth - 27 - 2}px`,
-    };
-  }
-}
+  },
+});
 </script>
 
 <style lang="scss">
