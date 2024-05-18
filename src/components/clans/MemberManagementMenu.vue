@@ -22,76 +22,97 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType } from "vue";
 import { EClanRole } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiPencil } from "@mdi/js";
 
-@Component({})
-export default class MemberManagementMenu extends Vue {
-  @Prop() battleTag!: string;
-  @Prop() role!: EClanRole;
-  @Prop() loggedInUserRole!: EClanRole;
-  public mdiPencil = mdiPencil;
-  private clanStore = useClanStore();
+type MemberManagementMenuAction = {
+  name: string;
+  action: () => Promise<void>;
+};
 
-  public async kickPlayer(): Promise<void> {
-      await this.clanStore.kickPlayer(this.battleTag);
-  }
+export default defineComponent({
+  name: "MemberManagementMenu",
+  components: {},
+  props: {
+    battleTag: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: Number as PropType<EClanRole>,
+      required: true,
+    },
+    loggedInUserRole: {
+      type: Number as PropType<EClanRole>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const clanStore = useClanStore();
 
-  public async promoteToShaman(): Promise<void> {
-    await this.clanStore.addShaman(this.battleTag);
-  }
-
-  public async demoteShaman(): Promise<void> {
-    await this.clanStore.removeShaman(this.battleTag);
-  }
-
-  public async makeChiefTain(): Promise<void> {
-    await this.clanStore.switchChieftain(this.battleTag);
-  }
-
-  get actions(): Array<{ name: string; action: () => Promise<void> }> {
-    switch (this.role) {
-      case EClanRole.Member:
-        switch (this.loggedInUserRole) {
-          case EClanRole.Shaman:
-            return [
-              { name: "Kick Player", action: this.kickPlayer }
-            ];
-          case EClanRole.ChiefTain:
-            return [
-              { name: "Promote To Shaman", action: this.promoteToShaman },
-              { name: "Kick Player", action: this.kickPlayer }
-            ];
-          default:
-            return [];
-        }
-      case EClanRole.Shaman:
-        switch (this.loggedInUserRole) {
-          case EClanRole.Shaman:
-            return [];
-          case EClanRole.ChiefTain:
-            return [
-              { name: "Demote To Member", action: this.demoteShaman },
-              { name: "Kick Player", action: this.kickPlayer },
-              { name: "Make Chieftain", action: this.makeChiefTain }
-            ];
-          default:
-            return [];
-        }
-      default:
-        return [];
+    async function kickPlayer(): Promise<void> {
+        await clanStore.kickPlayer(props.battleTag);
     }
-  }
 
-  public async invoke(f: () => Promise<never>): Promise<void> {
-    await f();
-    await this.clanStore.retrievePlayersClan();
-    await this.clanStore.retrievePlayersMembership();
-  }
-}
+    async function promoteToShaman(): Promise<void> {
+      await clanStore.addShaman(props.battleTag);
+    }
+
+    async function demoteShaman(): Promise<void> {
+      await clanStore.removeShaman(props.battleTag);
+    }
+
+    async function makeChiefTain(): Promise<void> {
+      await clanStore.switchChieftain(props.battleTag);
+    }
+
+    async function invoke(f: () => Promise<void>): Promise<void> {
+      await f();
+      await clanStore.retrievePlayersClan();
+      await clanStore.retrievePlayersMembership();
+    }
+
+    const actions: ComputedRef<Array<MemberManagementMenuAction>> = computed(():  Array<MemberManagementMenuAction> => {
+      switch (props.role) {
+        case EClanRole.Member:
+          switch (props.loggedInUserRole) {
+            case EClanRole.Shaman:
+              return [
+                { name: "Kick Player", action: kickPlayer }
+              ];
+            case EClanRole.ChiefTain:
+              return [
+                { name: "Promote To Shaman", action: promoteToShaman },
+                { name: "Kick Player", action: kickPlayer }
+              ];
+            default:
+              return [];
+          }
+        case EClanRole.Shaman:
+          switch (props.loggedInUserRole) {
+            case EClanRole.Shaman:
+              return [];
+            case EClanRole.ChiefTain:
+              return [
+                { name: "Demote To Member", action: demoteShaman },
+                { name: "Kick Player", action: kickPlayer },
+                { name: "Make Chieftain", action: makeChiefTain }
+              ];
+            default:
+              return [];
+          }
+        default:
+          return [];
+      }
+    });
+
+    return {
+      mdiPencil,
+      actions,
+      invoke,
+    };
+  },
+});
 </script>
-
-<style></style>
