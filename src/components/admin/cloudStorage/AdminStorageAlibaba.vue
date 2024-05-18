@@ -98,7 +98,7 @@ export default defineComponent({
   setup() {
     const cloudStorageStore = useCloudStorageStore();
     const dialog = ref<boolean>(false);
-    const fileToUpload = ref(null);
+    const fileToUpload = ref<File | null>(null);
     const isValidationMessageVisible = ref<boolean>(false);
     const tableSearch = ref<string>("");
     const isLoadingFiles = ref<boolean>(true);
