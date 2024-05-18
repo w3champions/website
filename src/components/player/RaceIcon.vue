@@ -18,6 +18,7 @@ import { i18n } from "@/main";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ERaceEnum } from "@/store/types";
+import isNil from "lodash/isNil";
 
 export default defineComponent({
   name: "RaceIcon",
@@ -31,7 +32,7 @@ export default defineComponent({
   },
   setup(props) {
     const renderIcon = ref<string>(ERaceEnum[props.race] ? getAsset(`raceIcons/${ERaceEnum[props.race]}.png`) : "");
-    const enumToString = ref<TranslateResult>(i18n.t(`races.${ERaceEnum[props.race]}`));
+    const enumToString = ref<TranslateResult>(isNil(props.race) ? "" : i18n.t(`races.${ERaceEnum[props.race]}`));
 
     return {
       renderIcon,

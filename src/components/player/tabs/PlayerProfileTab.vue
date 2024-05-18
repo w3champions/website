@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, ComputedRef, defineComponent } from "vue";
 import { i18n } from "@/main";
 import { TranslateResult } from "vue-i18n";
 import sortBy from "lodash/sortBy";
@@ -118,7 +118,7 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
 
-    const battleTag = ref<string>(decodeURIComponent(props.id));
+    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
     const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
     const isBetaSeason: ComputedRef<boolean> = computed((): boolean => selectedSeason.value?.id === 0);
     const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);

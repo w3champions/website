@@ -7,11 +7,9 @@
             <v-card-text
               v-on="on"
               style="cursor: pointer"
-              @click.stop="openDialog"
+              @click.stop="iconsDialogOpened = true"
               class="player-avatar text-center"
-              :style="{
-                'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')',
-              }"
+              :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
             />
           </template>
           <span>{{ avatarDescription }}</span>
@@ -38,7 +36,7 @@
     </v-row>
     <player-socials :userProfile="userProfile" />
 
-    <v-dialog v-model="dialogOpened" max-width="1150px" class="scroll-v-dialog">
+    <v-dialog v-model="iconsDialogOpened" max-width="1150px" class="scroll-v-dialog">
       <v-card>
         <v-checkbox
           style="margin-left: 25px"
@@ -62,10 +60,8 @@
                 <v-card-text
                   v-on="on"
                   class="player-avatar-choosing"
-                  @click="isLoggedInPlayer ? savePicture(starterAvatarCategory, number) : null"
-                  :style="{
-                    'background-image': 'url(' + picture(starterAvatarCategory, number) + ')',
-                  }"
+                  @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
+                  :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
                 />
               </template>
               <span>Starter</span>
@@ -93,9 +89,7 @@
                   v-on="on"
                   :class="getCorrectClasses(race, number)"
                   @click="isLoggedInPlayer ? savePicture(race, number) : null"
-                  :style="{
-                    'background-image': 'url(' + picture(race, number) + ')',
-                  }"
+                  :style="{'background-image': 'url(' + picture(race, number) + ')'}"
                 />
               </template>
               <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
@@ -104,17 +98,9 @@
         </v-row>
 
         <!-- Special Icons -->
-        <v-row
-          v-if="specialPictures.length > 0"
-          class="pb-3"
-          align="center"
-          justify="center">
+        <v-row v-if="specialPictures.length > 0" class="pb-3" align="center" justify="center">
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
-          <v-col
-            cols="auto"
-            v-for="specialPicture in specialPictures"
-            :key="specialPicture.pictureId"
-          >
+          <v-col cols="auto" v-for="specialPicture in specialPictures" :key="specialPicture.pictureId">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
@@ -123,12 +109,10 @@
                   v-bind:class="{ pointer: isLoggedInPlayer }"
                   @click="
                     isLoggedInPlayer
-                      ? savePicture(specialAvatarCategory, specialPicture.pictureId, specialPicture.description)
+                      ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
                       : null
                   "
-                  :style="{
-                    'background-image': 'url(' + picture(specialAvatarCategory, specialPicture.pictureId) + ')',
-                  }"
+                  :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
                 />
               </template>
               <span>{{ specialPicture.description }}</span>
@@ -183,14 +167,10 @@
     <template>
       <v-row v-if="isLoggedInPlayer">
         <v-col>
-          <v-dialog
-            v-model="userProfile.editDialogOpened"
-            persistent
-            max-width="600px"
-          >
+          <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
             <template v-slot:activator="{ on }">
               <v-btn
-                @click="userProfile.editDialogOpened = true"
+                @click="personalSettingsDialogOpened = true"
                 small
                 class="ma-0"
                 outlined
@@ -346,382 +326,305 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { i18n } from "@/main";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
-import { AkaSettings, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
+import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
-import { usePlayerStore } from "@/store/player/store";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
+import { useRouter } from "vue-router/composables";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
-type CountryType = { country: string; countryCode: string };
+type CountryType = {
+  country: string;
+  countryCode: string;
+};
 
-@Component({ components: { CountryFlag, PlayerSocials } })
-export default class PlayerAvatar extends Vue {
-  public mdiAccountCheck = mdiAccountCheck;
-  public mdiFlag = mdiFlag;
-  public mdiHome = mdiHome;
-  public mdiPencil = mdiPencil;
-  public mdiTwitch = mdiTwitch;
-  public mdiTwitter = mdiTwitter;
-  public mdiYoutube = mdiYoutube;
-  @Prop() isLoggedInPlayer!: boolean;
+export default defineComponent({
+  name: "PlayerAvatar",
+  components: {
+    CountryFlag,
+    PlayerSocials,
+  },
+  props: {
+    isLoggedInPlayer: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
+    const personalSettingsStore = usePersonalSettingsStore();
+    const races = [ERaceEnum.HUMAN, ERaceEnum.ORC, ERaceEnum.NIGHT_ELF, ERaceEnum.UNDEAD, ERaceEnum.RANDOM, ERaceEnum.TOTAL];
+    const countries = ref<CountryType[]>([]);
+    const iconsDialogOpened = ref<boolean>(false);
+    const personalSettingsDialogOpened = ref<boolean>(false);
+    const useClassicIcons = ref<boolean>(false);
 
-  public useClassicIcons = false;
+    const enumToString = (race: ERaceEnum) => i18n.t(`races.${ERaceEnum[race]}`);
 
-  public dialogOpened = false;
-  public races = [
-    ERaceEnum.HUMAN,
-    ERaceEnum.ORC,
-    ERaceEnum.NIGHT_ELF,
-    ERaceEnum.UNDEAD,
-    ERaceEnum.RANDOM,
-    ERaceEnum.TOTAL,
-  ];
-  private player = usePlayerStore();
-  private personalSettingsStore = usePersonalSettingsStore();
+    const personalSetting: ComputedRef<PersonalSetting> = computed((): PersonalSetting => personalSettingsStore.personalSettings);
 
-  enumToString(race: ERaceEnum) {
-    return this.$t(`races.${ERaceEnum[race]}`);
-  }
+    const starterPicNumbers = Array.from({ length: 5 }, (_, i) => i + 1);
+    const racePicNumbers = Array.from({ length: 18 }, (_, i) => i + 1);
 
-  get totalRace(): ERaceEnum.TOTAL {
-    return ERaceEnum.TOTAL;
-  }
-
-  public countries: CountryType[] = [];
-
-  public starterPicNumbers = Array.from({ length: 5 }, (_, i) => i + 1);
-  public racePicNumbers = Array.from({ length: 18 }, (_, i) => i + 1);
-
-  get playerGames() {
-    return this.personalSetting.winLosses?.reduce((sum, stat) => {
-      return sum + stat.games;
-    }, 0);
-  }
-
-  get homePage(): string {
-    return this.personalSetting.homePage || "-";
-  }
-
-  get countryCode(): string {
-    return this.personalSetting.countryCode || "";
-  }
-
-  get twitch(): string {
-    return this.personalSetting.twitch || "";
-  }
-
-  get youtube(): string {
-    return this.personalSetting.youTube || "";
-  }
-
-  get twitter(): string {
-    return this.personalSetting.twitter || "";
-  }
-
-  get trovo(): string {
-    return this.personalSetting.trovo || "";
-  }
-
-  get douyu(): string {
-    return this.personalSetting.douyu || "";
-  }
-
-  get aliasSettings(): AkaSettings {
-    return (
-      this.personalSetting.aliasSettings || {
-        showAka: true,
-        showW3info: true,
-        showLiquipedia: true,
-      }
-    );
-  }
-
-  get hasAnAlias(): boolean {
-    // If a player opts out of all Alias options, the backend sends data indistinguishable from a player without an alias
-    const playerAkaData = this.player.playerProfile.playerAkaData;
-
-    if (playerAkaData == null) return false;
-
-    if (
-      playerAkaData.id != 0 ||
-      playerAkaData.name != null ||
-      playerAkaData.liquipedia != null
-    ) {
-      return true; // player has an alias in W3info db, and has NOT opted out of at least one alias option
-    }
-
-    return false; // might be opted out - might not have an alias
-  }
-
-  get w3infoId(): string | number {
-    return this.player.playerProfile.playerAkaData.id ?? "";
-  }
-
-  get liquipediaString(): string {
-    return this.player.playerProfile.playerAkaData.liquipedia ?? "";
-  }
-
-  get aliasOrW3infoId(): string {
-    const name = this.player.playerProfile.playerAkaData.name;
-
-    if (name != null) {
-      return name;
-    }
-
-    return "";
-  }
-
-  get homePageLinks(): Array<string> {
-    if (!this.homePage || !this.homePage.includes("http")) {
-      return [];
-    }
-
-    return this.homePage
-      .split(" ")
-      .filter((url) => !!url)
-      .map((url) => url.trim());
-  }
-
-  get specialPictures(): Array<SpecialPicture> {
-    return this.personalSetting.specialPictures || [];
-  }
-
-  get savedMessageValue(): string {
-    return this.personalSetting.profileMessage;
-  }
-
-  get personalSetting() {
-    return this.personalSettingsStore.personalSettings;
-  }
-
-  get starterAvatarCategory() {
-    return EAvatarCategory.STARTER;
-  }
-
-  get specialAvatarCategory() {
-    return EAvatarCategory.SPECIAL;
-  }
-
-  get totalAvatarCategory() {
-    return EAvatarCategory.TOTAL;
-  }
-
-  public rules = {
-    maxLength: (len: number) => (v: string) => (v || "").length < len || `Can not exceed ${len} characters`,
-  };
-
-  public selectedCountry = "";
-  public selectedCountryCode = "";
-
-  public userProfile: ProfilePlayerSocials = {
-    twitch: this.twitch,
-    youtube: this.youtube,
-    twitter: this.twitter,
-    trovo: this.trovo,
-    douyu: this.douyu,
-    aliasSettings: this.aliasSettings,
-    about: this.savedMessageValue,
-    homePage: this.homePage,
-    editDialogOpened: false,
-  };
-
-  countryFilter(item: CountryType, queryText: string) {
-    const textOne = item.country.toLowerCase();
-    const searchText = queryText.toLowerCase();
-    return textOne.includes(searchText);
-  }
-
-  async resetUserProfile() {
-    this.userProfile = {
-      editDialogOpened: false,
-      twitch: this.twitch,
-      homePage: this.homePage,
-      about: this.savedMessageValue,
-      youtube: this.youtube,
-      twitter: this.twitter,
-      trovo: this.trovo,
-      douyu: this.douyu,
-      aliasSettings: this.aliasSettings,
-    };
-  }
-
-  async saveUserProfile() {
-    const personalSetting = this.personalSetting;
-    personalSetting.profileMessage = this.userProfile.about;
-    personalSetting.homePage = this.userProfile.homePage;
-    personalSetting.twitch = this.userProfile.twitch;
-    personalSetting.youTube = this.userProfile.youtube;
-    personalSetting.twitter = this.userProfile.twitter;
-    personalSetting.trovo = this.userProfile.trovo;
-    personalSetting.douyu = this.userProfile.douyu;
-    personalSetting.aliasSettings = this.userProfile.aliasSettings;
-
-    this.countries.map((c) => {
-      if (c.country == this.selectedCountry) {
-        this.selectedCountry = c.country;
-        this.selectedCountryCode = c.countryCode;
-      }
+    const playerGames: ComputedRef<number> = computed((): number => {
+      return personalSetting.value.winLosses?.reduce((sum, stat) => {
+        return sum + stat.games;
+      }, 0);
     });
 
-    if (!this.selectedCountry) {
-      this.selectedCountryCode = "";
-    }
+    const homePage: ComputedRef<string> = computed((): string => personalSetting.value.homePage || "-");
+    const countryCode: ComputedRef<string> = computed((): string => personalSetting.value.countryCode || "");
+    const twitch: ComputedRef<string> = computed((): string => personalSetting.value.twitch || "");
+    const youtube: ComputedRef<string> = computed((): string => personalSetting.value.youTube || "");
+    const twitter: ComputedRef<string> = computed((): string => personalSetting.value.twitter || "");
+    const trovo: ComputedRef<string> = computed((): string => personalSetting.value.trovo || "");
+    const douyu: ComputedRef<string> = computed((): string => personalSetting.value.douyu || "");
 
-    personalSetting.country = this.selectedCountry || "";
-    personalSetting.countryCode = this.selectedCountryCode || "";
-
-    await this.personalSettingsStore.saveUserProfile(personalSetting);
-    this.userProfile.editDialogOpened = false;
-  }
-
-  getCorrectClasses(category: EAvatarCategory, iconId: number) {
-    const classes = ["player-avatar-choosing"];
-    if (this.isLoggedInPlayer && this.enabledIfEnoughWins(category, iconId)) classes.push("pointer");
-
-    if (!this.enabledIfEnoughWins(category, iconId)) classes.push("player-avatar-choosing-disabled");
-
-    return classes;
-  }
-
-  get avatarIcon(): number {
-    return this.personalSetting?.profilePicture?.pictureId ?? 0;
-  }
-
-  get avatarCategory(): EAvatarCategory {
-    return this.personalSetting?.profilePicture?.race ?? EAvatarCategory.TOTAL;
-  }
-
-  get avatarDescription(): string {
-    if (this.avatarCategory != EAvatarCategory.SPECIAL) {
-      return "";
-    }
-
-    const specialPicture = this.specialPictures.find((x) => x.pictureId == this.avatarIcon);
-
-    return specialPicture?.description ?? "";
-  }
-
-  enabledIfEnoughWins(category: EAvatarCategory, iconId: number) {
-    if (category == EAvatarCategory.SPECIAL || category == EAvatarCategory.STARTER) {
-      return true;
-    }
-
-    if (category == EAvatarCategory.TOTAL) {
-      return this.personalSetting.pickablePictures?.filter((r) => r.avatarType == ERaceEnum.TOTAL)[0].max >= iconId;
-    }
-
-    const raceCategory = category as unknown as ERaceEnum;
-
-    return this.personalSetting.pickablePictures?.filter((r) => r.avatarType == raceCategory)[0].max >= iconId;
-  }
-
-  winsOfRace(race: ERaceEnum): number {
-    if (race == ERaceEnum.TOTAL) {
-      return this.totalWins();
-    }
-    return this.personalSetting.winLosses?.filter((w) => w.race == race)[0]?.wins ?? 0;
-  }
-
-  winsOf(wins: number, iconId: number, race: ERaceEnum): string {
-    return `${wins}/${this.winsTransformed(iconId, race)}`;
-  }
-
-  totalWins() {
-    return this.personalSetting.winLosses?.map((x) => x.wins).reduce((partial, y) => partial + y, 0) ?? 0;
-  }
-
-  winsTransformed(iconId: number, race: ERaceEnum): number {
-    if (race == ERaceEnum.TOTAL) {
-      return this.personalSetting.totalPictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
-    }
-    return this.personalSetting.racePictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
-  }
-
-  picture(category: EAvatarCategory, picId: number) {
-    return getAvatarUrl(category, picId, this.useClassicIcons);
-  }
-
-  openDialog() {
-    this.dialogOpened = true;
-  }
-
-  async savePicture(
-    avatarCategory: EAvatarCategory,
-    picture: number,
-    description?: string
-  ) {
-    if (!this.enabledIfEnoughWins(avatarCategory, picture)) return;
-    await this.personalSettingsStore.saveAvatar({
-      race: avatarCategory,
-      pictureId: picture,
-      isClassic: this.useClassicIcons,
-      description,
+    const aliasSettings: ComputedRef<AkaSettings> = computed((): AkaSettings => {
+      return (
+        personalSetting.value.aliasSettings || {
+          showAka: true,
+          showW3info: true,
+          showLiquipedia: true,
+        }
+      );
     });
 
-    this.dialogOpened = false;
-  }
+    const homePageLinks: ComputedRef<string[]> = computed((): string[] => {
+      if (!homePage.value || !homePage.value.includes("http")) {
+        return [];
+      }
 
-  goToCountryRankings() {
-    this.$router.push(`/Countries?country=${this.selectedCountryCode}`);
-  }
+      return homePage.value
+        .split(" ")
+        .filter((url) => !!url)
+        .map((url) => url.trim());
+    });
 
-  mounted() {
-    this.init();
-  }
+    const specialPictures: ComputedRef<SpecialPicture[]> = computed((): SpecialPicture[] => personalSetting.value.specialPictures || []);
+    const savedMessageValue: ComputedRef<string> = computed((): string => personalSetting.value.profileMessage);
+    const avatarIcon: ComputedRef<number> = computed((): number => personalSetting.value?.profilePicture?.pictureId ?? 0);
+    const avatarCategory: ComputedRef<EAvatarCategory> = computed((): EAvatarCategory => personalSetting.value?.profilePicture?.race ?? EAvatarCategory.TOTAL);
 
-  async init() {
-    await this.personalSettingsStore.loadPersonalSetting();
-    this.userProfile = {
-      twitch: this.twitch,
-      homePage: this.homePage,
-      about: this.savedMessageValue,
-      youtube: this.youtube,
-      twitter: this.twitter,
-      trovo: this.trovo,
-      douyu: this.douyu,
-      aliasSettings: this.aliasSettings,
-      editDialogOpened: false,
+    const rules = {
+      maxLength: (len: number) => (v: string) => (v || "").length < len || `Can not exceed ${len} characters`,
     };
 
-    this.useClassicIcons =
-      this.personalSetting?.profilePicture?.isClassic ?? false;
+    const selectedCountry = ref<string>("");
+    const selectedCountryCode = ref<string>("");
 
-    // populate countries dropdown for combobox
-    enumKeys(ECountries).map((key) => {
-      const country = {
-        country: key,
-        countryCode: ECountries[key],
+    const userProfile: ComputedRef<ProfilePlayerSocials> = computed((): ProfilePlayerSocials => {
+      return {
+        twitch: twitch.value,
+        youtube: youtube.value,
+        twitter: twitter.value,
+        trovo: trovo.value,
+        douyu: douyu.value,
+        aliasSettings: aliasSettings.value,
+        about: savedMessageValue.value,
+        homePage: homePage.value,
       };
-
-      if (this.countryCode && this.countryCode == country.countryCode) {
-        this.selectedCountry = country.country;
-        this.selectedCountryCode = country.countryCode;
-      }
-
-      this.countries.push(country);
     });
 
-    if (!this.selectedCountryCode && this.personalSetting?.location) {
-      this.selectedCountryCode = this.personalSetting.location;
+    function countryFilter(item: CountryType, queryText: string): boolean {
+      const textOne = item.country.toLowerCase();
+      const searchText = queryText.toLowerCase();
+      return textOne.includes(searchText);
+    }
 
-      enumKeys(ECountries).map((key) => {
-        const element = ECountries[key] as string;
-        if (element == this.selectedCountryCode) {
-          this.selectedCountry = key;
+    async function resetUserProfile(): Promise<void> {
+      // userProfile.value = {
+      //   twitch: twitch.value,
+      //   youtube: youtube.value,
+      //   twitter: twitter.value,
+      //   trovo: trovo.value,
+      //   douyu: douyu.value,
+      //   aliasSettings: aliasSettings.value,
+      //   about: savedMessageValue.value,
+      //   homePage: homePage.value,
+      // };
+      personalSettingsDialogOpened.value = false;
+    }
+
+    async function saveUserProfile(): Promise<void> {
+      const personalSettings = personalSetting.value;
+      personalSettings.twitch = userProfile.value.twitch;
+      personalSettings.youTube = userProfile.value.youtube;
+      personalSettings.twitter = userProfile.value.twitter;
+      personalSettings.trovo = userProfile.value.trovo;
+      personalSettings.douyu = userProfile.value.douyu;
+      personalSettings.aliasSettings = userProfile.value.aliasSettings;
+      personalSettings.profileMessage = userProfile.value.about;
+      personalSettings.homePage = userProfile.value.homePage;
+
+      countries.value.map((c) => {
+        if (c.country == selectedCountry.value) {
+          selectedCountry.value = c.country;
+          selectedCountryCode.value = c.countryCode;
         }
       });
+
+      if (!selectedCountry.value) {
+        selectedCountryCode.value = "";
+      }
+
+      personalSettings.country = selectedCountry.value || "";
+      personalSettings.countryCode = selectedCountryCode.value || "";
+
+      await personalSettingsStore.saveUserProfile(personalSettings);
+      personalSettingsDialogOpened.value = false;
     }
-  }
-}
+
+    function getCorrectClasses(category: EAvatarCategory, iconId: number): string[] {
+      const classes = ["player-avatar-choosing"];
+      if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("pointer");
+
+      if (!enabledIfEnoughWins(category, iconId)) classes.push("player-avatar-choosing-disabled");
+
+      return classes;
+    }
+
+    const avatarDescription: ComputedRef<string> = computed((): string => {
+      if (avatarCategory.value != EAvatarCategory.SPECIAL) return "";
+      const specialPicture = specialPictures.value.find((x) => x.pictureId == avatarIcon.value);
+      return specialPicture?.description ?? "";
+    });
+
+    function enabledIfEnoughWins(category: EAvatarCategory, iconId: number): boolean {
+      if (category == EAvatarCategory.SPECIAL || category == EAvatarCategory.STARTER) return true;
+
+      if (category == EAvatarCategory.TOTAL) {
+        return personalSetting.value.pickablePictures?.filter((r) => r.avatarType == ERaceEnum.TOTAL)[0].max >= iconId;
+      }
+
+      const raceCategory = category as unknown as ERaceEnum;
+
+      return personalSetting.value.pickablePictures?.filter((r) => r.avatarType == raceCategory)[0].max >= iconId;
+    }
+
+    function winsOfRace(race: ERaceEnum): number {
+      if (race == ERaceEnum.TOTAL) return totalWins();
+      return personalSetting.value.winLosses?.filter((w) => w.race == race)[0]?.wins ?? 0;
+    }
+
+    const winsOf = (wins: number, iconId: number, race: ERaceEnum): string => `${wins}/${winsTransformed(iconId, race)}`;
+
+    function totalWins(): number {
+      return personalSetting.value.winLosses?.map((x) => x.wins).reduce((partial, y) => partial + y, 0) ?? 0;
+    }
+
+    function winsTransformed(iconId: number, race: ERaceEnum): number {
+      if (race == ERaceEnum.TOTAL) {
+        return personalSetting.value.totalPictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
+      }
+      return personalSetting.value.racePictureRange?.filter((p) => p.pictureId == iconId)[0]?.neededWins;
+    }
+
+    const picture = (category: EAvatarCategory, picId: number) => getAvatarUrl(category, picId, useClassicIcons.value);
+
+    async function savePicture(avatarCategory: EAvatarCategory, picture: number, description?: string): Promise<void> {
+      if (!enabledIfEnoughWins(avatarCategory, picture)) return;
+      await personalSettingsStore.saveAvatar({
+        race: avatarCategory,
+        pictureId: picture,
+        isClassic: useClassicIcons.value,
+        description,
+      });
+
+      iconsDialogOpened.value = false;
+    }
+
+    function goToCountryRankings(): void {
+      router.push(`/Countries?country=${selectedCountryCode.value}`);
+    }
+
+    onMounted((): void => {
+      init();
+    });
+
+    async function init() {
+      await personalSettingsStore.loadPersonalSetting();
+
+      useClassicIcons.value = personalSetting.value?.profilePicture?.isClassic ?? false;
+
+      // populate countries dropdown for combobox
+      enumKeys(ECountries).map((key) => {
+        const country = {
+          country: key,
+          countryCode: ECountries[key],
+        };
+
+        if (countryCode.value && countryCode.value == country.countryCode) {
+          selectedCountry.value = country.country;
+          selectedCountryCode.value = country.countryCode;
+        }
+
+        countries.value.push(country);
+      });
+
+      if (!selectedCountryCode.value && personalSetting.value?.location) {
+        selectedCountryCode.value = personalSetting.value.location;
+
+        enumKeys(ECountries).map((key) => {
+          const element = ECountries[key] as string;
+          if (element == selectedCountryCode.value) {
+            selectedCountry.value = key;
+          }
+        });
+      }
+    }
+
+    return {
+      mdiAccountCheck,
+      mdiFlag,
+      mdiHome,
+      mdiPencil,
+      mdiTwitch,
+      mdiTwitter,
+      mdiYoutube,
+      races,
+      avatarDescription,
+      iconsDialogOpened,
+      personalSettingsDialogOpened,
+      picture,
+      avatarCategory,
+      avatarIcon,
+      goToCountryRankings,
+      selectedCountryCode,
+      selectedCountry,
+      userProfile,
+      useClassicIcons,
+      starterPicNumbers,
+      savePicture,
+      EAvatarCategory,
+      enumToString,
+      racePicNumbers,
+      getCorrectClasses,
+      winsOf,
+      winsOfRace,
+      specialPictures,
+      playerGames,
+      totalWins,
+      homePageLinks,
+      homePage,
+      savedMessageValue,
+      countryCode,
+      countries,
+      countryFilter,
+      rules,
+      resetUserProfile,
+      saveUserProfile,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

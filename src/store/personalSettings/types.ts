@@ -64,5 +64,4 @@ export type ProfilePlayerSocials = {
   aliasSettings: AkaSettings;
   about: string;
   homePage: string;
-  editDialogOpened: boolean;
 };
