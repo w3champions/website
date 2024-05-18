@@ -27,15 +27,18 @@ export default defineComponent({
     },
     compareRace: {
       type: Number as PropType<ERaceEnum>,
-      required: true,
+      required: false,
+      default: undefined,
     },
     winThreshold: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
     lossThreshold: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {
