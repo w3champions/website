@@ -12,28 +12,35 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
 
-@Component
-export default class TournamentRoundConnectors extends Vue {
-  @Prop() public index!: number;
-  @Prop() public side!: "top" | "bottom";
-  @Prop() public playerHeight!: number;
-  @Prop() public verticalSpace!: number;
-  @Prop() public marginTop!: number;
+export default defineComponent({
+  name: "TournamentRoundConnectors",
+  components: {},
+  props: {
+    index: { type: Number, required: true },
+    side: { type: String as PropType<"top" | "bottom">, required: true },
+    playerHeight: { type: Number, required: true },
+    verticalSpace: { type: Number, required: true },
+    marginTop: { type: Number, required: false, default: 0 },
+  },
+  setup(props) {
+    const containerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+      let marginTop = props.playerHeight;
+      if (props.index > 0 && props.side !== "bottom") {
+        marginTop += props.playerHeight + props.verticalSpace;
+      }
+      return {
+        "margin-top": `${marginTop}px`,
+        height: `${props.playerHeight / 2 + props.verticalSpace / 2}px`,
+      };
+    });
 
-  get containerStyle() {
-    let marginTop = this.playerHeight;
-    if (this.index > 0 && this.side !== "bottom") {
-      marginTop += this.playerHeight + this.verticalSpace;
-    }
     return {
-      "margin-top": `${marginTop}px`,
-      height: `${this.playerHeight / 2 + this.verticalSpace / 2}px`,
+      containerStyle,
     };
-  }
-}
+  },
+});
 </script>
 
 <style lang="scss">
