@@ -28,77 +28,85 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
 import assign from "lodash/assign";
 import fromPairs from "lodash/fromPairs";
 import pick from "lodash/pick";
 import times from "lodash/times";
 import { ETournamentState, ITournament, ITournamentRound, BracketDimensions } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import TournamentRoundMatches from "./TournamentRoundMatches.vue";
 import TournamentRoundConnectors from "./TournamentRoundConnectors.vue";
 
-@Component({
+export default defineComponent({
+  name: "TournamentBracket",
   components: {
     TournamentRoundMatches,
     TournamentRoundConnectors,
   },
-})
-export default class TournamentBracket extends Vue {
-  @Prop() public tournament!: ITournament;
-  @Prop({ default: 156 }) public roundWidth!: number;
-  @Prop({ default: 36 }) public connectorWidth!: number;
-  @Prop({ default: 26 }) public verticalSpace!: number;
-  @Prop({ default: 25 }) public playerHeight!: number;
-  @Prop({ default: 32 }) public roundNameHeight!: number;
-  @Prop({ default: 14 }) public fontSize!: number;
+  props: {
+    tournament: { type: Object as PropType<ITournament>, required: true },
+    roundWidth: { type: Number, required: false, default: 156 },
+    connectorWidth: { type: Number, required: false, default: 36 },
+    verticalSpace: { type: Number, required: false, default: 26 },
+    playerHeight: { type: Number, required: false, default: 25 },
+    roundNameHeight: { type: Number, required: false, default: 32 },
+    fontSize: { type: Number, required: false, default: 14 },
+  },
+  setup(props) {
+    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+      return {
+        "font-size": `${props.fontSize}px`,
+      };
+    });
 
-  get showBracket() {
-    return [
-      ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
-    ].includes(this.tournament.state);
-  }
+    const showBracket: ComputedRef<boolean> = computed((): boolean => {
+      return [
+        ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
+      ].includes(props.tournament.state);
+    });
 
-  get rounds(): ITournamentRound[] {
-    const playerExtraData = fromPairs(
-      this.tournament.players.map((p) => [
-        p.battleTag,
-        pick(p, [ "countryCode", "race" ]),
-      ])
-    );
-    for (const round of this.tournament.rounds) {
-      for (const series of round.series) {
-        if (!series.players) {
-          continue;
-        }
-        for (const player of series.players) {
-          assign(player, playerExtraData[player.battleTag]);
+    const rounds: ComputedRef<ITournamentRound[]> = computed((): ITournamentRound[] => {
+      const playerExtraData = fromPairs(
+        props.tournament.players.map((p) => [
+          p.battleTag,
+          pick(p, [ "countryCode", "race" ]),
+        ])
+      );
+      for (const round of props.tournament.rounds) {
+        for (const series of round.series) {
+          if (!series.players) {
+            continue;
+          }
+          for (const player of series.players) {
+            assign(player, playerExtraData[player.battleTag]);
+          }
         }
       }
-    }
-    return this.tournament.rounds;
-  }
-
-  get roundDimensions() {
-    const playerHeight = this.playerHeight;
-    let verticalSpace = this.verticalSpace;
-    let marginTop = 0;
-    const dimensions: BracketDimensions[] = [];
-    times(this.rounds.length, () => {
-      dimensions.push({
-        verticalSpace,
-        marginTop,
-      });
-      marginTop += verticalSpace / 2 + playerHeight;
-      verticalSpace = 2 * (verticalSpace + playerHeight);
+      return props.tournament.rounds;
     });
-    return dimensions;
-  }
 
-  get style() {
+    const roundDimensions: ComputedRef<BracketDimensions[]> = computed((): BracketDimensions[] => {
+      const playerHeight = props.playerHeight;
+      let verticalSpace = props.verticalSpace;
+      let marginTop = 0;
+      const dimensions: BracketDimensions[] = [];
+      times(rounds.value.length, () => {
+        dimensions.push({
+          verticalSpace,
+          marginTop,
+        });
+        marginTop += verticalSpace / 2 + playerHeight;
+        verticalSpace = 2 * (verticalSpace + playerHeight);
+      });
+      return dimensions;
+    });
+
     return {
-      "font-size": `${this.fontSize}px`,
+      showBracket,
+      rounds,
+      roundDimensions,
+      style,
     };
-  }
-}
+  },
+});
 </script>
