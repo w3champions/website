@@ -14,7 +14,7 @@
         <v-container>
           <v-row class="justify-center align-center ma-1 mt-0">
             <v-col class="ml-0 pl-0">
-              <v-card-title class="justify-left pl=0 ml-0">Portraits for {{ bTag }}</v-card-title>
+              <v-card-title class="justify-left pl=0 ml-0">Portraits for {{ foundPlayer }}</v-card-title>
             </v-col>
             <v-col>
               <v-row v-if="assignmentsChanged" class="justify-end">
@@ -44,7 +44,7 @@
                               The following portraits will be
                               <strong>ADDED</strong>
                               for
-                              <strong>{{ bTag }}:</strong>
+                              <strong>{{ foundPlayer }}:</strong>
                             </v-card-subtitle>
                             <v-card-actions>
                               <v-row no-gutters>
@@ -73,7 +73,7 @@
                               The following portraits will be
                               <strong>REMOVED</strong>
                               for
-                              <strong>{{ bTag }}:</strong>
+                              <strong>{{ foundPlayer }}:</strong>
                             </v-card-subtitle>
                             <v-card-actions>
                               <v-row no-gutters>
@@ -161,9 +161,8 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { ChangePortraitsCommand } from "@/store/admin/types";
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
@@ -172,158 +171,173 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiClose } from "@mdi/js";
 
-@Component({ components: { AssignPortrait, PortraitGroupDropdown, AvailablePortraitsGallery, PlayerSearch } })
-export default class AdminAssignPortraits extends Vue {
-  private oauthStore = useOauthStore();
-  playerPortraits = [] as number[];
-  showPlayersPortraits = false;
-  assignedPortraitsModel = [] as number[];
-  allSpecialPortraits = [] as number[];
-  assignDialogOpen = false;
-  confirmAddedPortraits = [] as number[];
-  confirmRemovedPortraits = [] as number[];
-  mouseoverText = "";
-  foundPlayer = "";
-  public mdiClose = mdiClose;
-  private playerManagement = usePlayerManagementStore();
+type AdminAssignPortraitsRules = {
+  required: (value: string) => string | boolean;
+  min: (text: string) => string | boolean;
+};
 
-  get rules(): { required: (value: string) => string | boolean; min: (text: string) => string | boolean } {
-    return {
-      required: (value: string) => !!value || "Required",
-      min: (text: string) => text.length >= 3 || "Min 3 characters",
-    };
-  }
+export default defineComponent({
+  name: "AdminAssignPortraits",
+  components: {
+    AssignPortrait,
+    PortraitGroupDropdown,
+    AvailablePortraitsGallery,
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const playerManagement = usePlayerManagementStore();
 
-  get bTag(): string {
-    return this.foundPlayer;
-  }
+    const showPlayersPortraits = ref<boolean>(false);
+    const assignedPortraitsModel = ref<number[]>([]);
+    const allSpecialPortraits = ref<number[]>([]);
+    const assignDialogOpen = ref<boolean>(false);
+    const confirmAddedPortraits = ref<number[]>([]);
+    const confirmRemovedPortraits = ref<number[]>([]);
+    const mouseoverText = ref<string>("");
+    const foundPlayer = ref<string>("");
 
-  get searchedPlayerPortraits(): number[] {
-    return this.playerManagement.searchedPlayerSpecialPortraits;
-  }
+    const searchedPlayerPortraits: ComputedRef<number[]> = computed((): number[] => playerManagement.searchedPlayerSpecialPortraits);
+    const hasSpecialPortraits: ComputedRef<boolean> = computed((): boolean => searchedPlayerPortraits.value != null && searchedPlayerPortraits.value.length > 0);
+    const hasSpecialPortraitsAssigned: ComputedRef<boolean> = computed((): boolean => assignedPortraitsModel.value.length > 0);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-  get hasSpecialPortraits(): boolean {
-    return this.searchedPlayerPortraits != null && this.searchedPlayerPortraits.length > 0;
-  }
-
-  get hasSpecialPortraitsAssigned(): boolean {
-    return this.assignedPortraitsModel.length > 0;
-  }
-
-  get assignmentsChanged(): boolean {
-    const assignedSorted = this.assignedPortraitsModel.slice().sort();
-    const searchedSorted = this.searchedPlayerPortraits.slice().sort();
-    if (
-      assignedSorted.length === searchedSorted.length &&
-      assignedSorted.every((value, index) => {
-        return value === searchedSorted[index];
-      })
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  async confirmDialog(): Promise<void> {
-    if (this.confirmAddedPortraits.length > 0) {
-      const battleTags = [] as string[];
-      battleTags.push(this.foundPlayer);
-
-      const command = {
-        battleTags: battleTags,
-        portraitIds: this.confirmAddedPortraits,
-        mouseover: this.mouseoverText || "",
-      } as ChangePortraitsCommand;
-
-      await this.playerManagement.addPortraits(command);
-    }
-    if (this.confirmRemovedPortraits.length > 0) {
-      const battleTags = [] as string[];
-      battleTags.push(this.foundPlayer);
-
-      const command = {
-        battleTags: battleTags,
-        portraitIds: this.confirmRemovedPortraits,
-      } as ChangePortraitsCommand;
-
-      await this.playerManagement.removePortraits(command);
-    }
-    await this.init();
-    this.assignDialogOpen = false;
-  }
-
-  removeAssignedPortrait(portraitId: number): void {
-    this.assignedPortraitsModel = this.assignedPortraitsModel.filter((x) => x != portraitId);
-    this.assignedPortraitsModel.sort((a, b) => a - b);
-  }
-
-  assignThisPortrait(portraitId: number): void {
-    if (!this.assignedPortraitsModel.includes(portraitId)) {
-      this.assignedPortraitsModel.push(portraitId);
-    }
-    this.assignedPortraitsModel.sort((a, b) => a - b);
-    this.assignedPortraitsModel = Object.create(this.assignedPortraitsModel); // force change detection
-  }
-
-  assignGroupPortraits(portraits: number[]): void {
-    portraits.forEach((x) => {
-      if (this.allSpecialPortraits.includes(x) && !this.assignedPortraitsModel.includes(x)) {
-        this.assignedPortraitsModel.push(x);
-      }
+    const rules: ComputedRef<AdminAssignPortraitsRules> = computed((): AdminAssignPortraitsRules => {
+      return {
+        required: (value: string) => !!value || "Required",
+        min: (text: string) => text.length >= 3 || "Min 3 characters",
+      };
     });
-    this.assignedPortraitsModel.sort((a, b) => a - b);
-    this.assignedPortraitsModel = Object.create(this.assignedPortraitsModel); // force change detection
-  }
 
-  @Watch("assignDialogOpen")
-  public async updateConfirmedAssignments(): Promise<void> {
-    this.confirmAddedPortraits = this.assignedPortraitsModel.filter((x) => !this.searchedPlayerPortraits.includes(x));
-    this.confirmRemovedPortraits = this.searchedPlayerPortraits.filter((x) => !this.assignedPortraitsModel.includes(x));
-  }
+    const assignmentsChanged: ComputedRef<boolean> = computed((): boolean => {
+      const assignedSorted = assignedPortraitsModel.value.slice().sort();
+      const searchedSorted = searchedPlayerPortraits.value.slice().sort();
+      if (
+        assignedSorted.length === searchedSorted.length &&
+        assignedSorted.every((value, index) => {
+          return value === searchedSorted[index];
+        })
+      ) {
+        return false;
+      }
+      return true;
+    });
 
-  async playerFound(bTag: string): Promise<void> {
-    await this.playerManagement.loadSpecialPortraitsForPlayer(bTag);
-    const playerPortraits = this.playerManagement.searchedPlayerSpecialPortraits;
-    this.assignedPortraitsModel = Object.create(playerPortraits);
+    async function confirmDialog(): Promise<void> {
+      if (confirmAddedPortraits.value.length > 0) {
+        const battleTags = [] as string[];
+        battleTags.push(foundPlayer.value);
 
-    if (playerPortraits) {
-      this.showPlayersPortraits = true;
+        const command = {
+          battleTags: battleTags,
+          portraitIds: confirmAddedPortraits.value,
+          mouseover: mouseoverText.value || "",
+        } as ChangePortraitsCommand;
+
+        await playerManagement.addPortraits(command);
+      }
+      if (confirmRemovedPortraits.value.length > 0) {
+        const battleTags = [] as string[];
+        battleTags.push(foundPlayer.value);
+
+        const command = {
+          battleTags: battleTags,
+          portraitIds: confirmRemovedPortraits.value,
+        } as ChangePortraitsCommand;
+
+        await playerManagement.removePortraits(command);
+      }
+      await init();
+      assignDialogOpen.value = false;
     }
-    this.foundPlayer = bTag;
-  }
 
-  searchCleared() {
-    this.showPlayersPortraits = false;
-    this.foundPlayer = "";
-  }
-
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
-  }
-
-  private async init(): Promise<void> {
-    await this.playerManagement.loadAllSpecialPortraits();
-    const managedPlayer = this.playerManagement.managedBattleTag;
-    if (managedPlayer) {
-      await this.playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
+    function removeAssignedPortrait(portraitId: number): void {
+      assignedPortraitsModel.value = assignedPortraitsModel.value.filter((x) => x != portraitId);
+      assignedPortraitsModel.value.sort((a, b) => a - b);
     }
-    this.assignedPortraitsModel = Object.create(this.searchedPlayerPortraits);
-    this.allSpecialPortraits = Object.create(
-      this.playerManagement.allSpecialPortraits
-        .map((x) => parseInt(x.id))
-        .sort((a, b) => b - a)
-    );
-  }
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
+    function assignThisPortrait(portraitId: number): void {
+      if (!assignedPortraitsModel.value.includes(portraitId)) {
+        assignedPortraitsModel.value.push(portraitId);
+      }
+      assignedPortraitsModel.value.sort((a, b) => a - b);
+      assignedPortraitsModel.value = Object.create(assignedPortraitsModel.value); // force change detection
+    }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+    function assignGroupPortraits(portraits: number[]): void {
+      portraits.forEach((x) => {
+        if (allSpecialPortraits.value.includes(x) && !assignedPortraitsModel.value.includes(x)) {
+          assignedPortraitsModel.value.push(x);
+        }
+      });
+      assignedPortraitsModel.value.sort((a, b) => a - b);
+      assignedPortraitsModel.value = Object.create(assignedPortraitsModel.value); // force change detection
+    }
+
+    watch(assignDialogOpen, updateConfirmedAssignments);
+    async function updateConfirmedAssignments(): Promise<void> {
+      confirmAddedPortraits.value = assignedPortraitsModel.value.filter((x) => !searchedPlayerPortraits.value.includes(x));
+      confirmRemovedPortraits.value = searchedPlayerPortraits.value.filter((x) => !assignedPortraitsModel.value.includes(x));
+    }
+
+    async function playerFound(bTag: string): Promise<void> {
+      await playerManagement.loadSpecialPortraitsForPlayer(bTag);
+      const playerPortraits = playerManagement.searchedPlayerSpecialPortraits;
+      assignedPortraitsModel.value = Object.create(playerPortraits);
+
+      if (playerPortraits) {
+        showPlayersPortraits.value = true;
+      }
+      foundPlayer.value = bTag;
+    }
+
+    function searchCleared() {
+      showPlayersPortraits.value = false;
+      foundPlayer.value = "";
+    }
+
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      await playerManagement.loadAllSpecialPortraits();
+      const managedPlayer = playerManagement.managedBattleTag;
+      if (managedPlayer) {
+        await playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
+      }
+      assignedPortraitsModel.value = Object.create(searchedPlayerPortraits.value);
+      allSpecialPortraits.value = Object.create(
+        playerManagement.allSpecialPortraits
+          .map((x) => parseInt(x.id))
+          .sort((a, b) => b - a)
+      );
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    return {
+      mdiClose,
+      searchCleared,
+      playerFound,
+      showPlayersPortraits,
+      assignmentsChanged,
+      assignDialogOpen,
+      confirmAddedPortraits,
+      foundPlayer,
+      mouseoverText,
+      rules,
+      confirmRemovedPortraits,
+      confirmDialog,
+      assignGroupPortraits,
+      hasSpecialPortraitsAssigned,
+      assignedPortraitsModel,
+      removeAssignedPortrait,
+      hasSpecialPortraits,
+      searchedPlayerPortraits,
+      assignThisPortrait,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
