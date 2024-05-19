@@ -1,6 +1,6 @@
 <template>
   <v-container class="ma-0 pa-0">
-    <div v-if="isPrivate()">
+    <div v-if="isPrivate">
       <span class="font-weight-bold" :class="getTeamColor(team)">{{ sentBy }} (to {{ sentTo }}):</span>
       <span class="black--text">{{ content }}</span>
     </div>
@@ -14,53 +14,58 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, PropType, defineComponent } from "vue";
 import { EChatScope } from "@/store/common/types";
-import Vue from "vue";
 
-@Component({})
-export default class ReplayChatMessage extends Vue {
-  @Prop() sentBy!: string;
-  @Prop() team!: number;
-  @Prop() content!: string;
-  @Prop() scope!: EChatScope;
-  @Prop({ default: null }) sentTo?: string;
+export default defineComponent({
+  name: "ReplayChatMessage",
+  components: {},
+  props: {
+    sentBy: { type: String, required: true },
+    team: { type: Number, required: true },
+    content: { type: String, required: true },
+    scope: { type: Number as PropType<EChatScope>, required: true },
+    sentTo: { type: String, required: false, default: undefined },
+  },
+  setup(props) {
+    const isPrivate: ComputedRef<boolean> = computed((): boolean => props.scope == EChatScope.PLAYER ? true : false);
 
-  getTeamColor(team: number): string {
-    if (this.scope == EChatScope.OBSERVERS) return "black--text";
+    function getTeamColor(team: number): string {
+      if (props.scope == EChatScope.OBSERVERS) return "black--text";
 
-    switch (team) {
-      case 0:
-        return "red--text";
-      case 1:
-        return "blue--text";
-      case 2:
-        return "green--text";
-      case 3:
-        return "purple--text";
-      default:
-        return "black--text";
+      switch (team) {
+        case 0:
+          return "red--text";
+        case 1:
+          return "blue--text";
+        case 2:
+          return "green--text";
+        case 3:
+          return "purple--text";
+        default:
+          return "black--text";
+      }
     }
-  }
 
-  scopeToString(scope: EChatScope): string {
-    switch (scope) {
-      case EChatScope.ALL:
-        return "All";
-      case EChatScope.ALLIES:
-        return "Allies";
-      case EChatScope.OBSERVERS:
-        return "Observers";
-      default:
-        return "";
+    function scopeToString(scope: EChatScope): string {
+      switch (scope) {
+        case EChatScope.ALL:
+          return "All";
+        case EChatScope.ALLIES:
+          return "Allies";
+        case EChatScope.OBSERVERS:
+          return "Observers";
+        default:
+          return "";
+      }
     }
-  }
 
-  isPrivate() {
-    if (this.scope == EChatScope.PLAYER) return true;
-    return false;
-  }
-}
+
+    return {
+      isPrivate,
+      getTeamColor,
+      scopeToString,
+    };
+  },
+});
 </script>
-
-<style scoped></style>

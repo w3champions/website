@@ -31,145 +31,144 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
-@Component({ components: {} })
-export default class nodeOverridesCard extends Vue {
-  private oauthStore = useOauthStore();
-  @Prop({ default: false }) public automaticNodes?: boolean;
-  @Prop() public passedOverrides!: string[];
-
-  public chipGroupIndex = [] as number[];
-  public isLoaded = false;
-  public isProxyListChanged = false;
-  public modifiedOverrides = [] as string[];
-  private adminStore = useAdminStore();
-
-  // todo:
-  // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
-  // todo: 1.1. think this happens when you select the username too quickly before loading the reviewProxies component - need a break in it.
-  // todo: 2. link "confirm" button on modal to PUT request
-  // todo: 3. format PUT request to endpoint using setOverrides
-
-  public isProxyListModified(): boolean {
-    if (this.passedOverrides.length !== this.modifiedOverrides.length)
-      return true;
-
-    const uniqueValues = new Set([
-      ...this.modifiedOverrides,
-      ...this.passedOverrides,
-    ]);
-
-    for (const v of uniqueValues) {
-      const modifiedOverridesCount = this.modifiedOverrides.filter(
-        (e) => e === v
-      ).length;
-      const passedOverridesCount = this.passedOverrides.filter(
-        (e) => e === v
-      ).length;
-      if (modifiedOverridesCount !== passedOverridesCount) return true;
+export default defineComponent({
+  name: "nodeOverridesCard",
+  components: {},
+  props: {
+    automaticNodes: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    passedOverrides: {
+      type: Array<string>,
+      required: false,
+      default: [],
     }
+  },
+  setup(props) {
+    const oauthStore = useOauthStore();
+    const adminStore = useAdminStore();
 
-    return false;
-  }
+    const chipGroupIndex = ref<number[]>([]);
+    const isLoaded = ref<boolean>(false);
+    const isProxyListChanged = ref<boolean>(false);
+    const modifiedOverrides = ref<string[]>([]);
 
-  public setProxyModified(val: boolean): void {
-    this.adminStore.SET_PROXY_MODIFIED(val);
-  }
+    const searchedPlayersSetProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.proxiesSetForSearchedPlayer);
+    const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
+    const isAutomaticNode: ComputedRef<boolean> = computed((): boolean => props.automaticNodes ? true : false);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-  public updateProxies(node: string): void {
-    if (this.modifiedOverrides.includes(node)) {
-      const index = this.modifiedOverrides.indexOf(node);
-      if (index > -1) {
-        this.modifiedOverrides.splice(index, 1);
-        this.updateProxyState(this.modifiedOverrides);
+      // todo:
+    // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
+    // todo: 1.1. think this happens when you select the username too quickly before loading the reviewProxies component - need a break in it.
+    // todo: 2. link "confirm" button on modal to PUT request
+    // todo: 3. format PUT request to endpoint using setOverrides
+
+    const isProxyListModified: ComputedRef<boolean> = computed((): boolean => {
+      if (props.passedOverrides.length !== modifiedOverrides.value.length)
+        return true;
+
+      const uniqueValues = new Set([
+        ...modifiedOverrides.value,
+        ...props.passedOverrides,
+      ]);
+
+      for (const v of uniqueValues) {
+        const modifiedOverridesCount = modifiedOverrides.value.filter(
+          (e) => e === v
+        ).length;
+        const passedOverridesCount = props.passedOverrides.filter(
+          (e) => e === v
+        ).length;
+        if (modifiedOverridesCount !== passedOverridesCount) return true;
       }
-    } else {
-      this.modifiedOverrides.push(node);
-      this.updateProxyState(this.modifiedOverrides);
-    }
-  }
 
-  public updateProxyState(newOverrides: string[]): void {
-    this.adminStore.updateModifiedProxies({
-      overrides: newOverrides,
-      isAutomatic: this.isAutomaticNode,
+      return false;
     });
-    this.adminStore.SET_PROXY_MODIFIED(this.isProxyListModified());
-  }
 
-  public showAsChecked(index: number): boolean {
-    if (this.chipGroupIndex[index]) {
-      return true;
+    function setProxyModified(val: boolean): void {
+      adminStore.SET_PROXY_MODIFIED(val);
     }
-    return false;
-  }
 
-  public sanitizeString(string: string): string {
-    let str = string;
-    str = str.replace(/-/g, `_`);
-    return str;
-  }
-
-  get searchedPlayersSetProxies(): ProxySettings {
-    return this.adminStore.proxiesSetForSearchedPlayer;
-  }
-
-  get isAutomaticNode(): boolean {
-    if (this.automaticNodes) {
-      return true;
+    function updateProxies(node: string): void {
+      if (modifiedOverrides.value.includes(node)) {
+        const index = modifiedOverrides.value.indexOf(node);
+        if (index > -1) {
+          modifiedOverrides.value.splice(index, 1);
+          updateProxyState(modifiedOverrides.value);
+        }
+      } else {
+        modifiedOverrides.value.push(node);
+        updateProxyState(modifiedOverrides.value);
+      }
     }
-    return false;
-  }
 
-  get availableProxies(): Proxy[] {
-    return this.adminStore.availableProxies;
-  }
+    function updateProxyState(newOverrides: string[]): void {
+      adminStore.updateModifiedProxies({
+        overrides: newOverrides,
+        isAutomatic: isAutomaticNode.value,
+      });
+      adminStore.SET_PROXY_MODIFIED(isProxyListModified.value);
+    }
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
+    function showAsChecked(index: number): boolean {
+      return chipGroupIndex.value[index] ? true : false;
+    }
 
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
-  }
+    function sanitizeString(string: string): string {
+      let str = string;
+      str = str.replace(/-/g, `_`);
+      return str;
+    }
 
-  public async initiateChipGroupIndex(): Promise<void> {
-    // sets the initial index array for the V-Chip-Group component to use
-    for (let i = 0; i < this.availableProxies.length; i++) {
-      for (let j = 0; j < this.passedOverrides.length; j++) {
-        if (this.passedOverrides[j] === this.availableProxies[i].id) {
-          this.chipGroupIndex.push(i);
+    watch(isAdmin, init);
+
+    async function initiateChipGroupIndex(): Promise<void> {
+      // sets the initial index array for the V-Chip-Group component to use
+      for (let i = 0; i < availableProxies.value.length; i++) {
+        for (let j = 0; j < props.passedOverrides.length; j++) {
+          if (props.passedOverrides[j] === availableProxies.value[i].id) {
+            chipGroupIndex.value.push(i);
+          }
         }
       }
     }
-  }
 
-  private async init() {
-    if (this.isAdmin) {
-      await this.adminStore.loadAvailableProxies(
-        this.oauthStore.token
-      );
-      this.modifiedOverrides = JSON.parse(JSON.stringify(this.passedOverrides));
-      await this.initiateChipGroupIndex();
-      this.updateProxyState(this.passedOverrides);
-      setTimeout(this.setLoaded, 100);
+    async function init() {
+      if (!isAdmin.value) return;
+
+      await adminStore.loadAvailableProxies(oauthStore.token);
+      modifiedOverrides.value = JSON.parse(JSON.stringify(props.passedOverrides));
+      await initiateChipGroupIndex();
+      updateProxyState(props.passedOverrides);
+      setTimeout(setLoaded, 100);
     }
-  }
 
-  public mounted(): void {
-    this.init();
-  }
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
-  public setLoaded(): void {
-    this.isLoaded = true;
-  }
-}
+    function setLoaded(): void {
+      isLoaded.value = true;
+    }
+
+    return {
+      isAutomaticNode,
+      isLoaded,
+      chipGroupIndex,
+      availableProxies,
+      updateProxies,
+      showAsChecked,
+      sanitizeString,
+    };
+  },
+});
+
 </script>
-
-<style lang="scss"></style>

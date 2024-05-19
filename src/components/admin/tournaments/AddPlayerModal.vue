@@ -37,34 +37,51 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
 import map from "lodash/map";
 import { ITournament } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
 import { ERaceEnumLabel } from "@/helpers/tournaments";
 
-@Component({})
-export default class AddPlayerModal extends Vue {
-  @Prop() public tournament!: ITournament;
-  @Prop() public saving!: boolean;
+export default defineComponent({
+  name: "AddPlayerModal",
+  components: {},
+  props: {
+    tournament: {
+      type: Object as PropType<ITournament>,
+      required: true,
+    },
+    saving: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const battleTag = ref<string>("");
+    const race = ref<string>(ERaceEnum.RANDOM.toString());
 
-  public battleTag = "";
-  public race: string = ERaceEnum.RANDOM.toString();
+    const races: ComputedRef<{ raceId: string; raceName: string }[]> = computed((): { raceId: string; raceName: string }[] => {
+      return map(ERaceEnumLabel, (raceName, raceId) => ({
+        raceId,
+        raceName,
+      }));
+    });
 
-  get races() {
-    return map(ERaceEnumLabel, (raceName, raceId) => ({
-      raceId,
-      raceName,
-    }));
-  }
+    function cancel() {
+      context.emit("cancel");
+    }
 
-  public cancel() {
-    this.$emit("cancel");
-  }
+    function save() {
+      context.emit("save", battleTag.value, +race.value);
+    }
 
-  public save() {
-    this.$emit("save", this.battleTag, +this.race);
-  }
-}
+    return {
+      battleTag,
+      race,
+      races,
+      cancel,
+      save,
+    };
+  },
+});
 </script>

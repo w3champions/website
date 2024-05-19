@@ -23,65 +23,62 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
-@Component({ components: {} })
-export default class PortraitGroupCombobox extends Vue {
-  @Prop({}) public portraitId!: number;
+export default defineComponent({
+  name: "PortraitGroupCombobox",
+  components: {},
+  props: {
+    portraitId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const playerManagement = usePlayerManagementStore();
+    const chips = ref<string[]>([]);
+    const items = ref<string[]>([]);
+    const initItems: ComputedRef<string[]> = computed((): string[] => playerManagement.portraitDefinitionGroups.map((x) => x.group));
 
-  chips = [] as string[];
-  items = [] as string[];
-  private playerManagement = usePlayerManagementStore();
+    const getChips: ComputedRef<string[]> = computed((): string[] => {
+      return playerManagement.portraitDefinitionGroups
+        .filter((x) => x.portraitIds.includes(props.portraitId))
+        .map((x) => x.group);
+    });
 
-  @Watch("portraitId")
-  async onPortraitIdChanged(): Promise<void> {
-    await this.playerManagement.loadPortraitDefinitionGroups();
-    this.chips = this.getChips();
-  }
-
-  @Watch("chips", { deep: true })
-  onItemsChanged(): void {
-    this.$emit("groups-changed", this.chips);
-  }
-
-  remove(item: string) {
-    this.chips.splice(this.chips.indexOf(item), 1);
-    this.chips = [...this.chips];
-  }
-
-  get portraitDefGroups() {
-    return this.playerManagement.portraitDefinitionGroups;
-  }
-
-  async init(): Promise<void> {
-    const portraitDefGroups = this.playerManagement.portraitDefinitionGroups;
-    if (!portraitDefGroups || portraitDefGroups.length < 1) {
-      await this.playerManagement.loadPortraitDefinitionGroups();
+    watch(chips, onItemsChanged, { deep: true });
+    function onItemsChanged(): void {
+      context.emit("groups-changed", chips.value);
     }
-    const allSpecialPortraits = this.playerManagement.allSpecialPortraits;
-    if (!allSpecialPortraits || allSpecialPortraits.length < 1) {
-      await this.playerManagement.loadAllSpecialPortraits();
+
+    function remove(item: string) {
+      chips.value.splice(chips.value.indexOf(item), 1);
+      chips.value = [...chips.value];
     }
-    this.items = this.initItems();
-    this.chips = this.getChips();
-  }
 
-  initItems(): string[] {
-    return this.playerManagement.portraitDefinitionGroups.map((x) => x.group);
-  }
+    async function init(): Promise<void> {
+      const portraitDefGroups = playerManagement.portraitDefinitionGroups;
+      if (!portraitDefGroups || portraitDefGroups.length < 1) {
+        await playerManagement.loadPortraitDefinitionGroups();
+      }
+      const allSpecialPortraits = playerManagement.allSpecialPortraits;
+      if (!allSpecialPortraits || allSpecialPortraits.length < 1) {
+        await playerManagement.loadAllSpecialPortraits();
+      }
+      items.value = initItems.value;
+      chips.value = getChips.value;
+    }
 
-  getChips(): string[] {
-    return this.playerManagement.portraitDefinitionGroups
-      .filter((x) => x.portraitIds.includes(this.portraitId))
-      .map((x) => x.group);
-  }
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+    return {
+      chips,
+      items,
+      remove,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

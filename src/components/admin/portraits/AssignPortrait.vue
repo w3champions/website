@@ -13,38 +13,56 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from "vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { EAvatarCategory } from "@/store/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import { mdiCloseCircleOutline } from "@mdi/js";
 
-@Component({ components: {} })
-export default class AssignPortrait extends Vue {
-  public mdiCloseCircleOutline = mdiCloseCircleOutline;
-  @Prop({}) public portraitId!: number;
-  @Prop({ default: false }) public isAssigned!: boolean;
-  @Prop({ default: true }) public selectable!: boolean;
+export default defineComponent({
+  name: "AssignPortrait",
+  components: {},
+  props: {
+    portraitId: {
+      type: Number,
+      required: true,
+    },
+    isAssigned: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    selectable: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
+  setup(props, context) {
+    const urlById = ref<string>(getAvatarUrl(EAvatarCategory.SPECIAL, props.portraitId, false));
 
-  get urlById() {
-    return getAvatarUrl(EAvatarCategory.SPECIAL, this.portraitId, false);
-  }
-
-  removeAssignedPortrait(): void {
-    if (this.selectable) {
-      this.$emit("portrait-deselected", this.portraitId);
+    function removeAssignedPortrait(): void {
+      if (props.selectable) {
+        context.emit("portrait-deselected", props.portraitId);
+      }
     }
-  }
 
-  assignPortrait(): void {
-    if (!this.isAssigned && this.selectable) {
-      this.$parent?.$emit("portrait-selected", this.portraitId);
+    function assignPortrait(): void {
+      if (!props.isAssigned && props.selectable) {
+        context.emit("portrait-selected", props.portraitId);
+      }
     }
-  }
-}
+
+    return {
+      mdiCloseCircleOutline,
+      urlById,
+      removeAssignedPortrait,
+      assignPortrait,
+    };
+  },
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .cancel-button {
   left: 27%;
 }

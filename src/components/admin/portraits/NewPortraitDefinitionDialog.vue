@@ -26,7 +26,7 @@
                   <v-container class="ml-3 mr-3">
                     <v-text-field
                       v-model="portraitId"
-                      :rules="[rules.required, rules.min, rules.taken, rules.number, rules.notZero]"
+                      :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                       label="Portrait Id"
                     ></v-text-field>
                   </v-container>
@@ -54,73 +54,84 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiClose } from "@mdi/js";
 
-type RULES = {
-  required: (value: string) => boolean | string;
-  min: (text: string) => boolean | string;
-  taken: (id: string) => boolean | string;
-  number: (value: number) => boolean | string;
-  notZero: (value: number) => boolean | string;
-};
+export default defineComponent({
+  name: "NewPortraitDefinitionDialog",
+  components: {
+    PortraitGroupCombobox,
+  },
+  props: {},
+  setup() {
+    const playerManagement = usePlayerManagementStore();
+    const portraitId = ref<number>(0);
+    const dialogOpen = ref<boolean>(false);
+    const valid = ref<boolean>(false);
+    const groups = ref<string[]>([]);
 
-@Component({ components: { PortraitGroupCombobox } })
-export default class NewPortraitDefinitionDialog extends Vue {
-  portraitId = 0;
-  dialogOpen = false;
-  valid = false;
-  groups = [] as string[];
-  public mdiClose = mdiClose;
-  private playerManagement = usePlayerManagementStore();
+    const allSpecialPortraits: ComputedRef<PortraitDefinition[]> = computed((): PortraitDefinition[] => playerManagement.allSpecialPortraits);
 
-  get allSpecialPortraits(): PortraitDefinition[] {
-    return this.playerManagement.allSpecialPortraits;
-  }
+    // Input validation rules
+    const ruleRequired = computed(() => !!portraitId.value || "Required");
+    const ruleMin = computed(() => portraitId.value.toString().length >= 1 || "Min 1 characters");
+    const ruleTaken = computed(() => !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString()) || "Portrait already exists");
+    const ruleNumber = computed(() => {
+      const pattern = /^[0-9]*$/;
+      return pattern.test(portraitId.value.toString()) || "Must be a number";
+    });
+    const ruleNotZero = computed(() => !portraitId.value.toString().startsWith("0") || "Leading zero not allowed");
 
-  get rules(): RULES {
+    const checkRules = computed(() => {
+      return (
+        !!portraitId.value &&
+        portraitId.value.toString().length >= 1 &&
+        !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString()) &&
+        /^[0-9]*$/.test(portraitId.value.toString()) &&
+        !portraitId.value.toString().startsWith("0")
+      );
+    });
+
+    const newPortraitDefinition: ComputedRef<PortraitDefinitionDTO> = computed((): PortraitDefinitionDTO => {
+      return {
+        ids: [portraitId.value],
+        groups: groups.value,
+      } as PortraitDefinitionDTO;
+    });
+
+    function confirmDialog(): void {
+      if (!checkRules.value) return;
+      dialogOpen.value = false;
+      playerManagement.addNewPortraitDefinition(newPortraitDefinition.value);
+    }
+
+    async function init(): Promise<void> {
+      const allSpecialPortraits = playerManagement.allSpecialPortraits;
+      if (!(allSpecialPortraits.length > 0)) {
+        await playerManagement.loadAllSpecialPortraits();
+      }
+      dialogOpen.value = false;
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
     return {
-      required: (value: string) => !!value || "Required",
-      min: (text: string) => text.length >= 1 || "Min 1 characters",
-      taken: (id: string) => !this.allSpecialPortraits.map((x) => x.id).includes(id) || "Portrait already exists",
-      number: (value: number) => {
-        const pattern = /^[0-9]*$/;
-        return pattern.test(value.toString()) || "Must be a number";
-      },
-      notZero: (value: number) => !value.toString().startsWith("0") || "Leading zero not allowed",
+      mdiClose,
+      dialogOpen,
+      valid,
+      portraitId,
+      confirmDialog,
+      ruleRequired,
+      ruleMin,
+      ruleTaken,
+      ruleNumber,
+      ruleNotZero,
     };
-  }
-
-  newPortraitDefinition(): PortraitDefinitionDTO {
-    return {
-      ids: [this.portraitId],
-      groups: this.groups,
-    } as PortraitDefinitionDTO;
-  }
-
-  confirmDialog(): void {
-    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
-      this.dialogOpen = false;
-      this.playerManagement.addNewPortraitDefinition(this.newPortraitDefinition());
-    }
-  }
-
-  async init(): Promise<void> {
-    const allSpecialPortraits = this.playerManagement.allSpecialPortraits;
-    if (!(allSpecialPortraits.length > 0)) {
-      await this.playerManagement.loadAllSpecialPortraits();
-    }
-    this.dialogOpen = false;
-  }
-
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+  },
+});
 </script>
-
-<style lang="scss"></style>

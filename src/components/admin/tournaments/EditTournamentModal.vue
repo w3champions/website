@@ -180,13 +180,11 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
 import map from "lodash/map";
-import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
 import { ETournamentFormat, ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
 import { EGameMode } from "@/store/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
 import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
 import { Gateways } from "@/store/ranking/types";
 import { Map } from "@/store/admin/mapsManagement/types";
@@ -194,131 +192,167 @@ import { formatISO } from "date-fns";
 import { formatTimestampString } from "@/helpers/date-functions";
 import { useTournamentsManagementStore } from "@/store/admin/tournamentsManagement/store";
 
-@Component({})
-export default class AddPlayerModal extends Vue {
-  @Prop() public tournament!: ITournament;
-  @Prop() public saving!: boolean;
-  @Prop() public maps!: Map[];
+export default defineComponent({
+  name: "EditTournamentModal",
+  components: {},
+  props: {
+    tournament: {
+      type: Object as PropType<ITournament>,
+      required: false,
+      default: undefined,
+    },
+    saving: {
+      type: Boolean,
+      required: true,
+    },
+    maps: {
+      type: Array<Map>,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const tournamentsManagementStore = useTournamentsManagementStore();
+    const now = formatISO(new Date());
+    const name = ref<string>("Standard One vs One Tournament");
+    const gateway = ref<Gateways>(Gateways.Europe);
+    const startDate = ref<string>(now.substring(0, 10));
+    const startTime = ref<string>(now.substring(11, 16));
+    const startDateTime = ref<Date>(new Date());
+    const mode = ref<EGameMode>(EGameMode.GM_1ON1_TOURNAMENT);
+    const format = ref<ETournamentFormat>(ETournamentFormat.SINGLE_ELIM);
+    const mapPool = ref<number[]>([]);
+    const state = ref<ETournamentState>(ETournamentState.INIT);
+    const registrationTimeMinutes = ref<number>(5);
+    const readyTimeSeconds = ref<number>(180);
+    const vetoTimeSeconds = ref<number>(45);
+    const showWinnerTimeHours = ref<number>(24);
+    const matcherinoUrl = ref<string>("");
+    const maxPlayers = ref<number | null>(null);
+    const floNodeMaxPing = ref<number | null>(null);
+    const floNode = ref<ITournamentFloNode | null>(null);
+    const tabsModel = ref({});
 
-  private tournamentsManagementStore = useTournamentsManagementStore();
+    const isEdit: ComputedRef<boolean> = computed((): boolean => !!props.tournament);
+    const mapOptions: ComputedRef<Map[]> = computed((): Map[] => props.maps);
+    const gateways: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(EGatewayLabel));
+    const gameModes: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(EGameModeLabel));
+    const formats: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
+    const enabledFloNodes: ComputedRef<ITournamentFloNode[]> = computed((): ITournamentFloNode[] => tournamentsManagementStore.floNodes);
 
-  private now = formatISO(new Date());
+    const states: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => {
+      const validStates = pickBy(ETournamentState, (_value, key) => {
+        return !isNaN(key as any);
+      }) as { [key: number]: string };
+      return getSelectOptions(validStates);
+    });
 
-  public name = "Standard One vs One Tournament";
-  public gateway = Gateways.Europe;
-  public startDate = this.now.substring(0, 10);
-  public startTime = this.now.substring(11, 16);
-  public startDateTime = new Date();
-  public mode = EGameMode.GM_1ON1_TOURNAMENT;
-  public format = ETournamentFormat.SINGLE_ELIM;
-  public mapPool: number[] = [];
-  public state = ETournamentState.INIT;
-  public registrationTimeMinutes = 5;
-  public readyTimeSeconds = 180;
-  public vetoTimeSeconds = 45;
-  public showWinnerTimeHours = 24;
-  public matcherinoUrl = "";
-  public maxPlayers: number | null = null;
-  public floNodeMaxPing: number | null = null;
-  public floNode: ITournamentFloNode | null = null;
-  public tabsModel = {};
+    const formValid: ComputedRef<boolean> = computed((): boolean => {
+      if (mapPool.value.length < 3) {
+        return false;
+      }
+      return true;
+    });
 
-  mounted() {
-    this.init();
-  }
-
-  private init() {
-    if (!this.tournament) {
-      this.mapPool = this.maps.slice(0, 5).map((m) => m.id);
-      return;
+    function cancel(): void {
+      context.emit("cancel");
     }
 
-    const startDateTime = formatTimestampString(this.tournament.startDateTime, "yyyy-MM-dd HH:mm");
+    function save(): void {
+      startDateTime.value = new Date(`${startDate.value} ${startTime.value}`);
 
-    this.name = this.tournament.name;
-    this.gateway = this.tournament.gateway;
-    this.startDate = startDateTime.toString().substring(0, 10);
-    this.startTime = startDateTime.toString().substring(11, 16);
-    this.mode = this.tournament.mode;
-    this.format = this.tournament.format;
-    this.mapPool = this.tournament.mapPool;
-    this.state = this.tournament.state;
-    this.registrationTimeMinutes = this.tournament.registrationTimeMinutes;
-    this.readyTimeSeconds = this.tournament.readyTimeSeconds;
-    this.vetoTimeSeconds = this.tournament.vetoTimeSeconds;
-    this.showWinnerTimeHours = this.tournament.showWinnerTimeHours;
-    this.matcherinoUrl = this.tournament.matcherinoUrl ?? "";
-    this.maxPlayers = this.tournament.maxPlayers;
-    this.floNode = this.tournament.floNode;
-    this.floNodeMaxPing = this.tournament.floNodeMaxPing;
-  }
+      const tournamentData = {
+        name: name.value,
+        gateway: gateway.value,
+        startDateTime: startDateTime.value,
+        mode: mode.value,
+        format: format.value,
+        mapPool: mapPool.value,
+        state: state.value,
+        registrationTimeMinutes: registrationTimeMinutes.value,
+        readyTimeSeconds: readyTimeSeconds.value,
+        vetoTimeSeconds: vetoTimeSeconds.value,
+        showWinnerTimeHours: showWinnerTimeHours.value,
+        matcherinoUrl: matcherinoUrl.value,
+        maxPlayers: maxPlayers.value,
+        floNode: floNode.value,
+        floNodeMaxPing: floNodeMaxPing.value
+      };
 
-  get isEdit() {
-    return !!this.tournament;
-  }
-
-  get formValid() {
-    if (this.mapPool.length < 3) {
-      return false;
+      context.emit("save", tournamentData);
     }
-    return true;
-  }
 
-  public cancel() {
-    this.$emit("cancel");
-  }
+    function getSelectOptions(labelMap: { [key: number]: string }) {
+      return map(labelMap, (name, id) => ({
+        id: +id,
+        name,
+      }));
+    }
 
-  public save() {
-    const fieldNames = [
-      "name", "gateway", "startDateTime", "mode", "format", "mapPool", "state",
-      "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
-      "showWinnerTimeHours", "matcherinoUrl", "maxPlayers", "floNode", "floNodeMaxPing",
-    ];
+    function setFloNode(node: ITournamentFloNode) {
+      floNode.value = node;
+      floNodeMaxPing.value = 100;
+    }
 
-    this.startDateTime = new Date(`${this.startDate} ${this.startTime}`);
+    onMounted((): void => {
+      init();
+    });
 
-    const tournamentData = pick(this, fieldNames);
-    this.$emit("save", tournamentData);
-  }
+    function init(): void {
+      if (!props.tournament) {
+        mapPool.value = props.maps.slice(0, 5).map((m) => m.id);
+        return;
+      }
 
-  get gateways() {
-    return this.getSelectOptions(EGatewayLabel);
-  }
+      const startDateTime = formatTimestampString(props.tournament.startDateTime, "yyyy-MM-dd HH:mm");
 
-  get states() {
-    const validStates = pickBy(ETournamentState, (_value, key) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return !isNaN(key as any);
-    }) as { [key: number]: string };
-    return this.getSelectOptions(validStates);
-  }
+      name.value = props.tournament.name;
+      gateway.value = props.tournament.gateway;
+      startDate.value = startDateTime.substring(0, 10);
+      startTime.value = startDateTime.substring(11, 16);
+      mode.value = props.tournament.mode;
+      format.value = props.tournament.format;
+      mapPool.value = props.tournament.mapPool;
+      state.value = props.tournament.state;
+      registrationTimeMinutes.value = props.tournament.registrationTimeMinutes;
+      readyTimeSeconds.value = props.tournament.readyTimeSeconds;
+      vetoTimeSeconds.value = props.tournament.vetoTimeSeconds;
+      showWinnerTimeHours.value = props.tournament.showWinnerTimeHours;
+      matcherinoUrl.value = props.tournament.matcherinoUrl ?? "";
+      maxPlayers.value = props.tournament.maxPlayers;
+      floNode.value = props.tournament.floNode;
+      floNodeMaxPing.value = props.tournament.floNodeMaxPing;
+    }
 
-  get gameModes() {
-    return this.getSelectOptions(EGameModeLabel);
-  }
-
-  get formats() {
-    return this.getSelectOptions(ETournamentFormatLabel).slice(0, 1);
-  }
-
-  get mapOptions() {
-    return this.maps;
-  }
-
-  private getSelectOptions(labelMap: { [key: number]: string }) {
-    return map(labelMap, (name, id) => ({
-      id: +id,
+    return {
+      isEdit,
+      tabsModel,
+      gateways,
+      gateway,
       name,
-    }));
-  }
-
-  get enabledFloNodes(): ITournamentFloNode[] {
-    return this.tournamentsManagementStore.floNodes;
-  }
-
-  public setFloNode(floNode: ITournamentFloNode) {
-    this.floNode = floNode;
-    this.floNodeMaxPing = 100;
-  }
-}
+      startDate,
+      startTime,
+      mapOptions,
+      states,
+      state,
+      mapPool,
+      registrationTimeMinutes,
+      readyTimeSeconds,
+      vetoTimeSeconds,
+      showWinnerTimeHours,
+      matcherinoUrl,
+      gameModes,
+      mode,
+      formats,
+      format,
+      maxPlayers,
+      enabledFloNodes,
+      floNode,
+      setFloNode,
+      floNodeMaxPing,
+      cancel,
+      save,
+      formValid,
+    };
+  },
+});
 </script>
