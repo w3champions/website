@@ -70,8 +70,8 @@ export default defineComponent({
       return team;
     }
 
-    function getPrivateRecipientName(message: ReplayMessage): string | null {
-      if (message.scope.id == null) return null;
+    function getPrivateRecipientName(message: ReplayMessage): string | undefined {
+      if (message.scope.id == null) return undefined;
       const name = log.value.players.find((x) => x.id == message.scope.id)?.name;
       if (name == undefined) return "UNKNOWN";
       return name;
