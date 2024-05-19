@@ -31,27 +31,41 @@
 </template>
 
 <script lang="ts">
-import { ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
+import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 
-@Component({})
-export default class RemovePlayerModal extends Vue {
-  @Prop() public tournament!: ITournament;
-  @Prop() public saving!: boolean;
+export default defineComponent({
+  name: "RemovePlayerModal",
+  components: {},
+  props: {
+    tournament: {
+      type: Object as PropType<ITournament>,
+      required: true,
+    },
+    saving: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props, context) {
+    const battleTag = ref<string>("");
 
-  public battleTag = "";
+    const players: ComputedRef<ITournamentPlayer[]> = computed((): ITournamentPlayer[] => props.tournament.players);
 
-  get players() {
-    return this.tournament.players;
-  }
+    function cancel() {
+      context.emit("cancel");
+    }
 
-  public cancel() {
-    this.$emit("cancel");
-  }
+    function save() {
+      context.emit("save", battleTag.value);
+    }
 
-  public save() {
-    this.$emit("save", this.battleTag);
-  }
-}
+    return {
+      battleTag,
+      players,
+      cancel,
+      save,
+    };
+  },
+});
 </script>
