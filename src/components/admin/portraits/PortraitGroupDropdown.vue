@@ -34,44 +34,55 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, onMounted, ref } from "vue";
 import { PortraitDefinitionGroup } from "@/store/admin/types";
 import AssignPortrait from "./AssignPortrait.vue";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiChevronDown } from "@mdi/js";
 
-@Component({ components: { AssignPortrait } })
-export default class PortraitGroupDropdown extends Vue {
-  selectedGroups = [] as string[];
-  portraitDefGroups = [] as PortraitDefinitionGroup[];
-  groupNames = [] as string[];
-  private playerManagement = usePlayerManagementStore();
-  public mdiChevronDown = mdiChevronDown;
+export default defineComponent({
+  name: "PortraitGroupDropdown",
+  components: {
+    AssignPortrait,
+  },
+  props: {},
+  setup(_props, context) {
+    const playerManagement = usePlayerManagementStore();
+    const portraitDefGroups = ref<PortraitDefinitionGroup[]>([]);
+    const groupNames = ref<string[]>([]);
 
-  addPortraitGroup(group: string): void {
-    const portraitsToAdd = this.portraitDefGroups.find((x) => x.group == group)?.portraitIds;
-    if (portraitsToAdd) {
-      this.$emit("add-group-of-portraits", portraitsToAdd);
+    function addPortraitGroup(group: string): void {
+      const portraitsToAdd = portraitDefGroups.value.find((x) => x.group == group)?.portraitIds;
+      if (portraitsToAdd) {
+        context.emit("add-group-of-portraits", portraitsToAdd);
+      }
     }
-  }
 
-  hoveredGroupPortraits(defGroup: string): number[] {
-    return this.portraitDefGroups.find((x) => x.group == defGroup)?.portraitIds || [];
-  }
+    function hoveredGroupPortraits(defGroup: string): number[] {
+      return portraitDefGroups.value.find((x) => x.group == defGroup)?.portraitIds || [];
+    }
 
-  async init(): Promise<void> {
-    await this.playerManagement.loadPortraitDefinitionGroups();
-    this.portraitDefGroups = this.playerManagement.portraitDefinitionGroups;
-    this.groupNames = this.portraitDefGroups
-      .filter((x) => x.group) // no scuffed group names like "" or null
-      .map((x) => x.group);
-  }
+    async function init(): Promise<void> {
+      await playerManagement.loadPortraitDefinitionGroups();
+      portraitDefGroups.value = playerManagement.portraitDefinitionGroups;
+      groupNames.value = portraitDefGroups.value
+        .filter((x) => x.group) // no scuffed group names like "" or null
+        .map((x) => x.group);
+    }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    return {
+      mdiChevronDown,
+      groupNames,
+      addPortraitGroup,
+      hoveredGroupPortraits,
+    };
+  },
+});
+
 </script>
 
 <style lang="scss">
