@@ -82,8 +82,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { defineComponent, ref } from "vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
@@ -91,50 +90,60 @@ import PortraitGroupCombobox from "./portraits/PortraitGroupCombobox.vue";
 import { PortraitDefinitionDTO } from "@/store/admin/types";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
-@Component({
+export default defineComponent({
+  name: "AdminManagePortraits",
   components: {
     AvailablePortraitsGallery,
     NewPortraitDefinitionDialog,
     AssignPortrait,
     PortraitGroupCombobox,
   },
-})
-export default class AdminManagePortraits extends Vue {
-  editPortraitId = 0;
-  editDialogOpen = false;
-  confirmDeleteDialogOpen = false;
-  groupsModel = [] as string[];
-  private playerManagement = usePlayerManagementStore();
+  props: {},
+  setup() {
+    const playerManagement = usePlayerManagementStore();
+    const editPortraitId = ref<number>(0);
+    const editDialogOpen = ref<boolean>(false);
+    const confirmDeleteDialogOpen = ref<boolean>(false);
+    const groupsModel = ref<string[]>([]);
 
-  selectPortrait(portraitId: number): void {
-    this.editPortraitId = portraitId;
-    this.editDialogOpen = true;
-  }
+    function selectPortrait(portraitId: number): void {
+      editPortraitId.value = portraitId;
+      editDialogOpen.value = true;
+    }
 
-  exitDialog(): void {
-    this.editPortraitId = 0;
-    this.editDialogOpen = false;
-  }
+    function exitDialog(): void {
+      editPortraitId.value = 0;
+      editDialogOpen.value = false;
+    }
 
-  updateGroupModel(groups: string[]): void {
-    this.groupsModel = groups;
-  }
+    function updateGroupModel(groups: string[]): void {
+      groupsModel.value = groups;
+    }
 
-  async changeGroups(): Promise<void> {
-    await this.playerManagement.updatePortraitDefinition({
-      ids: [this.editPortraitId],
-      groups: this.groupsModel,
-    } as PortraitDefinitionDTO);
-    this.editDialogOpen = false;
-  }
+    async function changeGroups(): Promise<void> {
+      await playerManagement.updatePortraitDefinition({
+        ids: [editPortraitId.value],
+        groups: groupsModel.value,
+      } as PortraitDefinitionDTO);
+      editDialogOpen.value = false;
+    }
 
-  async confirmDelete(): Promise<void> {
-    await this.playerManagement.removePortraitDefinition({
-      ids: [this.editPortraitId],
-    } as PortraitDefinitionDTO);
-    this.confirmDeleteDialogOpen = false;
-  }
-}
+    async function confirmDelete(): Promise<void> {
+      await playerManagement.removePortraitDefinition({
+        ids: [editPortraitId.value],
+      } as PortraitDefinitionDTO);
+      confirmDeleteDialogOpen.value = false;
+    }
+
+    return {
+      editDialogOpen,
+      editPortraitId,
+      updateGroupModel,
+      changeGroups,
+      confirmDeleteDialogOpen,
+      confirmDelete,
+      selectPortrait,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
