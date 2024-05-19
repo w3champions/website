@@ -31,49 +31,64 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchDetailView from "@/views/MatchDetail.vue";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 
-@Component({ components: { ReplayChatMessage, DownloadReplayIcon, MatchDetailView } })
-export default class AdminReplayChatLog extends Vue {
-  @Prop() matchId!: string;
-  log = {} as ReplayChatLog;
-  openGameDetail = false;
-  private replayManagementStore = useReplayManagementStore();
+export default defineComponent({
+  name: "AdminReplayChatLog",
+  components: {
+    ReplayChatMessage,
+    DownloadReplayIcon,
+    MatchDetailView,
+  },
+  props: {
+    matchId: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const replayManagementStore = useReplayManagementStore();
+    const log = ref<ReplayChatLog>({} as ReplayChatLog);
+    const openGameDetail = ref<boolean>(false);
 
-  get messages(): ReplayMessage[] {
-    return this.log.messages;
-  }
+    const messages: ComputedRef<ReplayMessage[]> = computed((): ReplayMessage[] => log.value.messages);
 
-  getSenderName(message: ReplayMessage): string {
-    const name = this.log.players.find((x) => x.id == message.fromPlayer)?.name;
-    if (name == undefined) return "UNKNOWN";
-    return name;
-  }
+    function getSenderName(message: ReplayMessage): string {
+      const name = log.value.players.find((x) => x.id == message.fromPlayer)?.name;
+      if (name == undefined) return "UNKNOWN";
+      return name;
+    }
 
-  getTeam(message: ReplayMessage): number {
-    const team = this.log.players.find((x) => x.id == message.fromPlayer)?.team;
-    if (team == undefined) return -1;
-    return team;
-  }
+    function getTeam(message: ReplayMessage): number {
+      const team = log.value.players.find((x) => x.id == message.fromPlayer)?.team;
+      if (team == undefined) return -1;
+      return team;
+    }
 
-  getPrivateRecipientName(message: ReplayMessage): string | null {
-    if (message.scope.id == null) return null;
-    const name = this.log.players.find((x) => x.id == message.scope.id)?.name;
-    if (name == undefined) return "UNKNOWN";
-    return name;
-  }
+    function getPrivateRecipientName(message: ReplayMessage): string | null {
+      if (message.scope.id == null) return null;
+      const name = log.value.players.find((x) => x.id == message.scope.id)?.name;
+      if (name == undefined) return "UNKNOWN";
+      return name;
+    }
 
-  async mounted(): Promise<void> {
-    await this.replayManagementStore.loadChatLog(this.matchId);
-    this.log = this.replayManagementStore.chatLog;
-  }
-}
+    onMounted(async (): Promise<void> => {
+      await replayManagementStore.loadChatLog(props.matchId);
+      log.value = replayManagementStore.chatLog;
+    });
+
+    return {
+      openGameDetail,
+      messages,
+      getSenderName,
+      getTeam,
+      getPrivateRecipientName,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
