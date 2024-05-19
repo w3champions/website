@@ -14,39 +14,44 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 
-@Component({})
-export default class AdminCheckJwtLifetime extends Vue {
-  private adminStore = useAdminStore();
-  private _intervalRefreshHandle?: number = undefined;
-  private checkJwtLifetimeInterval = 1000 * 60 * 5; // Check if jwt has expired every 5 minutes.
+export default defineComponent({
+  name: "AdminCheckJwtLifetime",
+  components: {},
+  props: {},
+  setup() {
+    const adminStore = useAdminStore();
+    const checkJwtLifetimeInterval = 1000 * 60 * 5; // Check if jwt has expired every 5 minutes.
+    let _intervalRefreshHandle: NodeJS.Timeout;
 
-  get showJwtExpiredDialog(): boolean {
-    if (this.adminStore.showJwtExpiredDialog) {
-      clearInterval(this._intervalRefreshHandle);
+    const showJwtExpiredDialog: ComputedRef<boolean> = computed((): boolean => {
+      if (adminStore.showJwtExpiredDialog) {
+        clearInterval(_intervalRefreshHandle);
+      }
+      return adminStore.showJwtExpiredDialog;
+    });
+
+    function hideDialog() {
+      adminStore.hideJwtExpiredDialog();
     }
-    return this.adminStore.showJwtExpiredDialog;
-  }
 
-  public hideDialog() {
-    this.adminStore.hideJwtExpiredDialog();
-  }
+     onMounted(async (): Promise<void> => {
+      _intervalRefreshHandle = setInterval(async () => {
+        await adminStore.checkJwtLifetime();
+      }, checkJwtLifetimeInterval);
+      await adminStore.checkJwtLifetime();
+     });
 
-  async mounted(): Promise<void> {
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.adminStore.checkJwtLifetime();
-    }, this.checkJwtLifetimeInterval);
-    await this.adminStore.checkJwtLifetime();
-  }
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
 
-  destroyed(): void {
-    clearInterval(this._intervalRefreshHandle);
-  }
-}
+    return {
+      showJwtExpiredDialog,
+      hideDialog,
+    };
+  },
+});
 </script>
-
-<style lang="scss">
-</style>
