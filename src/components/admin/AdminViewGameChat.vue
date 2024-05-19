@@ -9,7 +9,7 @@
           <v-row>
             <v-col></v-col>
             <v-col cols="6" align="center">
-              <v-text-field v-model="textInput" solo outlined clearable placeholder="Game ID" autofocus></v-text-field>
+              <v-text-field v-model="matchId" solo outlined clearable placeholder="Game ID" autofocus></v-text-field>
             </v-col>
             <v-col>
               <v-dialog v-model="dialog" width="1500">
@@ -24,7 +24,7 @@
 
                     <v-card-actions>
                       <v-spacer />
-                      <v-btn x-large color="primary w3-race-bg--text" @click="acceptButton">Accept</v-btn>
+                      <v-btn x-large color="primary w3-race-bg--text" @click="accept">Accept</v-btn>
                       <v-btn x-large color="error w3-race-bg--text" @click="dialog = false">Cancel</v-btn>
                       <v-spacer />
                     </v-card-actions>
@@ -45,33 +45,41 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { defineComponent, ref } from "vue";
 import MatchDetailView from "@/views/MatchDetail.vue";
 import AdminReplayChatLog from "@/components/admin/replays/AdminReplayChatLog.vue";
 import { ReplayChatLog } from "@/store/admin/types";
 
-@Component({ components: { AdminReplayChatLog, MatchDetailView } })
-export default class AdminViewGameChat extends Vue {
-  textInput = "";
-  loaded = false;
-  dialog = false;
-  acceptedGame = false;
-  logs = {} as ReplayChatLog;
+export default defineComponent({
+  name: "AdminViewGameChat",
+  components: {
+    AdminReplayChatLog,
+    MatchDetailView,
+  },
+  props: {},
+  setup() {
+    const matchId = ref<string>("");
+    const loaded = false;
+    const dialog = ref<boolean>(false);
+    const acceptedGame = ref<boolean>(false);
+    const logs = {} as ReplayChatLog;
 
-  async openConfirmation(): Promise<void> {
-    this.dialog = true;
-  }
+    async function openConfirmation(): Promise<void> {
+      dialog.value = true;
+    }
 
-  get matchId(): string {
-    return this.textInput;
-  }
+    function accept(): void {
+      dialog.value = false;
+      acceptedGame.value = true;
+    }
 
-  acceptButton(): void {
-    this.dialog = false;
-    this.acceptedGame = true;
-  }
-}
+    return {
+      matchId,
+      dialog,
+      openConfirmation,
+      accept,
+      acceptedGame,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

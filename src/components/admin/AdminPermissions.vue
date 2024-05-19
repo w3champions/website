@@ -26,7 +26,7 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="text-h5">{{ formTitle() }}</span>
+                  <span class="text-h5">{{ formTitle }}</span>
                 </v-card-title>
 
                 <v-card-text>
@@ -111,8 +111,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, nextTick, ref, watch, WritableComputedRef } from "vue";
 import { IPermission, EPermission } from "@/store/admin/permission/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -120,154 +119,157 @@ import { usePermissionStore } from "@/store/admin/permission/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 
-@Component({ components: { PlayerSearch } })
-export default class AdminPermissions extends Vue {
-  public dialog = false;
-  public editedIndex = -1;
-  public battleTag = "";
-  public description = "";
-  public roles = [] as EPermission[];
-  public mdiDelete = mdiDelete;
-  public mdiPencil = mdiPencil;
-  private oauthStore = useOauthStore();
-  private permissionStore = usePermissionStore();
-  private playerSearchStore = usePlayerSearchStore();
+export default defineComponent({
+  name: "AdminPermissions",
+  components: {
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const permissionStore = usePermissionStore();
+    const playerSearchStore = usePlayerSearchStore();
+    const dialog = ref<boolean>(false);
+    const editedIndex = ref<number>(-1);
+    const battleTag = ref<string>("");
+    const editedItem = ref<IPermission>({} as IPermission);
 
-  public availablePermissions = [
-    { name: EPermission[EPermission.Permissions], value: EPermission.Permissions },
-    { name: EPermission[EPermission.Moderation], value: EPermission.Moderation },
-    { name: EPermission[EPermission.Queue], value: EPermission.Queue },
-    { name: EPermission[EPermission.Logs], value: EPermission.Logs },
-    { name: EPermission[EPermission.Maps], value: EPermission.Maps },
-    { name: EPermission[EPermission.Tournaments], value: EPermission.Tournaments },
-    { name: EPermission[EPermission.Content], value: EPermission.Content },
-    { name: EPermission[EPermission.Proxies], value: EPermission.Proxies },
-  ];
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const permissions: ComputedRef<IPermission[]> = computed((): IPermission[] => permissionStore.permissions);
+    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const isAddDialog: ComputedRef<boolean> = computed((): boolean => editedIndex.value === -1);
+    const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Admin" : "Edit Admin");
+    const isValidationError: ComputedRef<boolean> = computed((): boolean => permissionStore.validationError !== "");
 
-  public headers = [
-    { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
-    { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
-    { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
-    { text: "Author", sortable: true, filterable: false, value: "author" },
-    { text: "Actions", sortable: false, value: "actions" },
-  ];
-
-  public editedItem = {
-    id: "",
-    battleTag: "",
-    description: "",
-    permissions: [] as EPermission[],
-    author: "",
-  };
-
-  public defaultItem = {
-    id: "",
-    battleTag: "",
-    description: "",
-    permissions: [] as EPermission[],
-    author: "",
-  };
-
-  get permissions(): IPermission[] {
-    return this.permissionStore.permissions;
-  }
-
-  async addAdmin(item: IPermission): Promise<void> {
-    await this.permissionStore.addAdmin(item);
-  }
-
-  get validationError(): string {
-    return this.permissionStore.validationError;
-  }
-
-  set validationError(error: string) {
-    this.permissionStore.validationError = error;
-  }
-
-  openEditDialog(item: IPermission): void {
-    this.editedIndex = this.permissions.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-    this.dialog = true;
-  }
-
-  async deleteItem(item: IPermission): Promise<void> {
-    confirm("Are you sure you want to delete this item?") &&
-    await this.permissionStore.deleteAdmin(item.id);
-    await this.loadPermissions();
-  }
-
-  public close(): void {
-    this.dialog = false;
-  }
-
-  get isValidationError(): boolean {
-    return this.permissionStore.validationError !== "";
-  }
-
-  async save(): Promise<void> {
-    this.editedItem.author = this.author;
-    if (this.isAddDialog) {
-      this.editedItem.battleTag = this.battleTag;
-      await this.permissionStore.addAdmin(this.editedItem);
-    } else {
-      await this.permissionStore.editPermission(this.editedItem);
-    }
-
-    if (!this.isValidationError) {
-      this.close();
-      await this.loadPermissions();
-    }
-  }
-
-  public async loadPermissions(): Promise<void> {
-    await this.permissionStore.loadPermissions();
-  }
-
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-
-  public async init(): Promise<void> {
-    await this.loadPermissions();
-  }
-
-  get author() {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  get isAddDialog() {
-    return this.editedIndex === -1;
-  }
-
-  resetDialog(): void {
-    this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
+    const validationError: WritableComputedRef<string> = computed({
+      get(): string {
+        return permissionStore.validationError;
+      },
+      set(error: string): void {
+        permissionStore.validationError = error;
+      },
     });
-    this.playerSearchStore.clearPlayerSearch();
-    this.validationError = "";
-  }
 
-  @Watch("dialog")
-  onDialogToggled(): void {
-    // Only trigger on dialog close, not dialog open
-    if (!this.dialog) {
-      this.resetDialog();
+    const availablePermissions = [
+      { name: EPermission[EPermission.Permissions], value: EPermission.Permissions },
+      { name: EPermission[EPermission.Moderation], value: EPermission.Moderation },
+      { name: EPermission[EPermission.Queue], value: EPermission.Queue },
+      { name: EPermission[EPermission.Logs], value: EPermission.Logs },
+      { name: EPermission[EPermission.Maps], value: EPermission.Maps },
+      { name: EPermission[EPermission.Tournaments], value: EPermission.Tournaments },
+      { name: EPermission[EPermission.Content], value: EPermission.Content },
+      { name: EPermission[EPermission.Proxies], value: EPermission.Proxies },
+    ];
+
+    const defaultItem: IPermission = {
+      id: "",
+      battleTag: "",
+      description: "",
+      permissions: [] as EPermission[],
+      author: "",
+    };
+
+    function openEditDialog(item: IPermission): void {
+      editedIndex.value = permissions.value.indexOf(item);
+      editedItem.value = Object.assign({}, item);
+      dialog.value = true;
     }
-  }
 
-  playerFound(bTag: string): void {
-    this.battleTag = bTag;
-  }
+    async function deleteItem(item: IPermission): Promise<void> {
+      confirm("Are you sure you want to delete this item?") &&
+      await permissionStore.deleteAdmin(item.id);
+      await loadPermissions();
+    }
 
-  getPermissionName(id: EPermission) {
-    return EPermission[id];
-  }
+    function close(): void {
+      dialog.value = false;
+    }
 
-  formTitle(): string {
-    return this.isAddDialog ? "New Admin" : "Edit Admin";
-  }
-}
+
+    async function save(): Promise<void> {
+      editedItem.value.author = author.value;
+      if (isAddDialog.value) {
+        editedItem.value.battleTag = battleTag.value;
+        await permissionStore.addAdmin(editedItem.value);
+      } else {
+        await permissionStore.editPermission(editedItem.value);
+      }
+
+      if (!isValidationError.value) {
+        close();
+        await loadPermissions();
+      }
+    }
+
+    async function loadPermissions(): Promise<void> {
+      await permissionStore.loadPermissions();
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (isAdmin.value) {
+        await loadPermissions();
+        editedItem.value = Object.assign({}, defaultItem);
+      }
+    }
+
+    function resetDialog(): void {
+      nextTick(() => {
+        editedItem.value = Object.assign({}, defaultItem);
+        editedIndex.value = -1;
+      });
+      playerSearchStore.clearPlayerSearch();
+      validationError.value = "";
+    }
+
+    watch(dialog, onDialogToggled);
+    function onDialogToggled(): void {
+      // Only trigger on dialog close, not dialog open
+      if (!dialog.value) {
+        resetDialog();
+      }
+    }
+
+    function playerFound(bTag: string): void {
+      battleTag.value = bTag;
+    }
+
+    function getPermissionName(id: EPermission) {
+      return EPermission[id];
+    }
+
+    const headers = [
+      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
+      { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
+      { text: "Author", sortable: true, filterable: false, value: "author" },
+      { text: "Actions", sortable: false, value: "actions" },
+    ];
+
+    return {
+      mdiDelete,
+      mdiPencil,
+      headers,
+      permissions,
+      dialog,
+      formTitle,
+      isAddDialog,
+      playerFound,
+      editedItem,
+      availablePermissions,
+      isValidationError,
+      validationError,
+      save,
+      close,
+      getPermissionName,
+      openEditDialog,
+      deleteItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

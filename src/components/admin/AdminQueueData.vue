@@ -39,25 +39,80 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { QueueData } from "@/store/admin/types";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, watch } from "vue";
+import { QueueData, QueuedPlayer } from "@/store/admin/types";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
-import { Component, Watch, Prop } from "vue-property-decorator";
 import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
-@Component({ components: {} })
-export default class AdminQueueData extends Vue {
-  private oauthStore = useOauthStore();
-  @Prop() disabledModes?: EGameMode[];
-  _intervalRefreshHandle?: NodeJS.Timeout = undefined;
-  private adminStore = useAdminStore();
+export default defineComponent({
+  name: "AdminQueueData",
+  components: {},
+  props: {
+    disabledModes: {
+      type: Array<EGameMode>,
+      required: false,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const oauthStore = useOauthStore();
+    const adminStore = useAdminStore();
+    let _intervalRefreshHandle: NodeJS.Timeout;
 
-  get headers(): Array<unknown> {
-    return [
+    const queueData: ComputedRef<QueueData[]> = computed((): QueueData[] => adminStore.queuedata);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const gameModes: ComputedRef<Array<{ name: LocaleMessage; id: number }>> = computed((): Array<{ name: LocaleMessage; id: number }> => {
+      let modes = activeGameModes();
+
+      if (props.disabledModes) {
+        modes = modes?.filter((x) => !props.disabledModes?.includes(x.id));
+      }
+
+      return modes;
+    });
+
+    async function refresh(): Promise<void> {
+      await adminStore.loadQueueData(oauthStore.token);
+    }
+
+    function getPlayerDataInGamemode(modeId: number): QueuedPlayer[] | null {
+      for (let i = 0; i < queueData.value.length; i++) {
+        if (queueData.value[i].gameMode == modeId) {
+          return queueData.value[i].snapshot;
+        }
+      }
+
+      return null;
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+
+      _intervalRefreshHandle = setInterval(async () => {
+        await refresh();
+      }, AppConstants.queueDataRefreshInterval);
+    });
+
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      await loadActiveGameModes();
+
+      if (isAdmin.value) {
+        await adminStore.loadQueueData(oauthStore.token);
+      }
+    }
+
+
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
+
+    const headers = [
       {
         text: "Battletag",
         value: "battleTag",
@@ -113,69 +168,12 @@ export default class AdminQueueData extends Vue {
         sortable: true,
       },
     ];
-  }
 
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
-  }
-
-  private async init(): Promise<void> {
-    await loadActiveGameModes();
-
-    if (this.isAdmin) {
-      await this.adminStore.loadQueueData(
-        this.oauthStore.token
-      );
-    }
-  }
-
-  private async refresh(): Promise<void> {
-    await this.adminStore.loadQueueData(
-      this.oauthStore.token
-    );
-  }
-
-  get queueData(): QueueData[] {
-    return this.adminStore.queuedata;
-  }
-
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  getPlayerDataInGamemode(modeId: number): unknown {
-    for (let i = 0; i < this.queueData.length; i++) {
-      if (this.queueData[i].gameMode == modeId) {
-        return this.queueData[i].snapshot;
-      }
-    }
-
-    return null;
-  }
-
-  get gameModes(): Array<{ name: LocaleMessage; id: number }> {
-    let modes = activeGameModes();
-
-    if (this.disabledModes) {
-      modes = modes?.filter((x) => !this.disabledModes?.includes(x.id));
-    }
-
-    return modes;
-  }
-
-  async mounted(): Promise<void> {
-    await this.init();
-
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.refresh();
-    }, AppConstants.queueDataRefreshInterval);
-  }
-
-  destroyed(): void {
-    clearInterval(this._intervalRefreshHandle);
-  }
-}
+    return {
+      gameModes,
+      getPlayerDataInGamemode,
+      headers,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
