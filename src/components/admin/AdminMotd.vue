@@ -12,7 +12,7 @@
           <v-card-title class="justify-center">Current Message of the Day:</v-card-title>
           <v-card-text class="text-center text-body-1">
             <v-divider class="mb-4"></v-divider>
-            {{ motd() }}
+            {{ motd }}
             <v-divider class="mt-4"></v-divider>
           </v-card-text>
           <v-card-actions class="ma-3 pa-3">
@@ -28,44 +28,50 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
-@Component({ components: {} })
-export default class AdminMotd extends Vue {
-  public loading = true;
-  public loaded = false;
-  public newMotd = "";
-  private infoMessagesStore = useInfoMessagesStore();
+export default defineComponent({
+  name: "AdminMotd",
+  components: {},
+  props: {},
+  setup() {
+    const infoMessagesStore = useInfoMessagesStore();
 
-  get rules(): unknown {
-    return [(value: string) => value.length <= 400 || "Max 400 characters"];
-  }
+    const loading = ref<boolean>(true);
+    const loaded = ref<boolean>(false);
+    const newMotd = ref<string>("");
 
-  motd(): string {
-    return this.infoMessagesStore.messageOfTheDay.motd;
-  }
+    const rules: ComputedRef<unknown> = computed((): unknown => [(value: string) => value.length <= 400 || "Max 400 characters"]);
+    const motd: ComputedRef<string> = computed((): string => infoMessagesStore.messageOfTheDay.motd);
 
-  async confirmNewMotd(): Promise<void> {
-    await this.setMotd(this.newMotd);
-    await this.infoMessagesStore.loadMotd();
-  }
-
-  async setMotd(value: string): Promise<boolean> {
-    return await this.infoMessagesStore.setMotd({ motd: value } as MessageOfTheDay);
-  }
-
-  async mounted() {
-    this.loaded = await this.infoMessagesStore.loadMotd();
-    if (this.motd() === "" || this.motd() === undefined) {
-      this.loaded = false;
+    async function confirmNewMotd(): Promise<void> {
+      await setMotd(newMotd.value);
+      await infoMessagesStore.loadMotd();
     }
-    this.loading = false;
-    this.newMotd = this.motd();
-  }
-}
-</script>
 
-<style lang="scss"></style>
+    async function setMotd(value: string): Promise<boolean> {
+      return await infoMessagesStore.setMotd({ motd: value } as MessageOfTheDay);
+    }
+
+    onMounted(async (): Promise<void> => {
+      loaded.value = await infoMessagesStore.loadMotd();
+      if (motd.value === "" || motd.value === undefined) {
+        loaded.value = false;
+      }
+      loading.value = false;
+      newMotd.value = motd.value;
+    });
+
+    return {
+      loaded,
+      loading,
+      motd,
+      rules,
+      newMotd,
+      confirmNewMotd,
+    };
+  },
+});
+</script>
