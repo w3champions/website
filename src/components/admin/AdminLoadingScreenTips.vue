@@ -4,15 +4,15 @@
       Loading Screen Tips
     </v-card-title>
     <v-data-table
-      :headers="headersTips"
+      :headers="headers"
       :items="tips"
-      :items-per-page="5"
+      :items-per-page="10"
       class="elevation-1"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialogTips">
+          <v-dialog v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -25,7 +25,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle() }}</span>
+                <span class="text-h5">{{ formTitle }}</span>
               </v-card-title>
 
               <v-card-text>
@@ -65,121 +65,96 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
 
-@Component({ components: {} })
-export default class AdminLoadingScreenTips extends Vue {
-  public mdiDelete = mdiDelete;
-  public mdiPencil = mdiPencil;
-  private oauthStore = useOauthStore();
-  private infoMessagesStore = useInfoMessagesStore();
-  public headersTips = [
-    { text: "Author", align: "start", value: "author" },
-    { text: "Creation Date", align: "start", value: "creationDate" },
-    { text: "Text", value: "message", align: "start" },
-    { text: "Actions", value: "actions", sortable: false },
-  ];
+export default defineComponent({
+  name: "AdminLoadingScreenTips",
+  components: {},
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const infoMessagesStore = useInfoMessagesStore();
+    const dialog = ref<boolean>(false);
+    const editedIndex = ref<number>(-1);
+    const editedTipItem = ref<LoadingScreenTip>({} as LoadingScreenTip);
 
-  get tips(): LoadingScreenTip[] {
-    return this.infoMessagesStore.tips;
-  }
+    const tips: ComputedRef<LoadingScreenTip[]> = computed((): LoadingScreenTip[] => infoMessagesStore.tips);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const formTitle: ComputedRef<string> = computed((): string => editedIndex.value === -1 ? "New Item" : "Edit Item");
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
-  }
-
-  private async init(): Promise<void> {
-    if (this.isAdmin) {
-      await this.infoMessagesStore.loadTips();
-    }
-  }
-
-  public dialog = false;
-  public dialogNews = false;
-  public dialogTips = false;
-  public dateMenu = false;
-  public editedIndex = -1;
-  public date = "";
-
-  public editedTipItem = {
-    message: "",
-    author: "",
-    creationDate: "",
-    bsonId: "",
-  };
-  public editedNewsItem = {
-    bsonId: "",
-    message: "",
-    date: "",
-  };
-  public editedItem = {
-    battleTag: "",
-    endDate: "",
-    isOnlyChatBan: false,
-    banReason: "",
-  };
-  public defaultItem = {
-    battleTag: "",
-    endDate: "",
-    isOnlyChatBan: false,
-    banReason: "",
-  };
-
-  editTipItem(item: LoadingScreenTip): void {
-    this.editedTipItem = item;
-    this.dialogTips = true;
-  }
-
-  async deleteTipItem(item: LoadingScreenTip): Promise<void> {
-    confirm("Are you sure you want to delete this item?") &&
-      (await this.infoMessagesStore.deleteTip(item));
-    this.dialogTips = false;
-  }
-
-  formTitle(): unknown {
-    return this.editedIndex === -1 ? "New Item" : "Edit Item";
-  }
-
-  async saveTips(): Promise<void> {
-    this.editedTipItem.author = this.oauthStore.blizzardVerifiedBtag;
-    this.editedTipItem.creationDate = format(new Date(), "MMMM do yyyy, h:mm:ss a");
-
-    if (await this.infoMessagesStore.editTip(this.editedTipItem)) {
-      this.dialogTips = false;
-      this.editedTipItem = {
-        message: "",
-        author: "",
-        creationDate: "",
-        bsonId: "",
-      };
-    }
-  }
-
-  closeTips(): void {
-    this.dialogTips = false;
-    this.editedTipItem = {
+    const defaultTipItem: LoadingScreenTip = {
       message: "",
       author: "",
       creationDate: "",
       bsonId: "",
     };
-  }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (isAdmin.value) {
+        await infoMessagesStore.loadTips();
+        editedTipItem.value = Object.assign({}, defaultTipItem);
+      }
+    }
+
+    function editTipItem(item: LoadingScreenTip): void {
+      editedTipItem.value = item;
+      dialog.value = true;
+    }
+
+    async function deleteTipItem(item: LoadingScreenTip): Promise<void> {
+      confirm("Are you sure you want to delete this item?") &&
+        (await infoMessagesStore.deleteTip(item));
+      dialog.value = false;
+    }
+
+
+
+    async function saveTips(): Promise<void> {
+      editedTipItem.value.author = oauthStore.blizzardVerifiedBtag;
+      editedTipItem.value.creationDate = format(new Date(), "MMMM do yyyy, h:mm:ss a");
+
+      if (await infoMessagesStore.editTip(editedTipItem.value)) {
+        dialog.value = false;
+        editedTipItem.value = Object.assign({}, defaultTipItem);
+      }
+    }
+
+    function closeTips(): void {
+      dialog.value = false;
+      editedTipItem.value = Object.assign({}, defaultTipItem);
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    const headers = [
+      { text: "Author", align: "start", value: "author" },
+      { text: "Creation Date", align: "start", value: "creationDate" },
+      { text: "Text", value: "message", align: "start" },
+      { text: "Actions", value: "actions", sortable: false },
+    ];
+
+    return {
+      mdiDelete,
+      mdiPencil,
+      headers,
+      tips,
+      dialog,
+      formTitle,
+      editedTipItem,
+      closeTips,
+      saveTips,
+      editTipItem,
+      deleteTipItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
