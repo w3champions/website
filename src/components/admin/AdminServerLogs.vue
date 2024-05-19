@@ -40,46 +40,62 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch, WritableComputedRef } from "vue";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
+import { useOauthStore } from "@/store/oauth/store";
 
-@Component({ components: {} })
-export default class AdminServerLogs extends Vue {
-  private serverLogsStore = useServerLogsStore();
-  public selectedLog = "";
+export default defineComponent({
+  name: "AdminServerLogs",
+  components: {},
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const serverLogsStore = useServerLogsStore();
+    const selectedLog = ref<string>("");
 
-  get logfileNames(): string[] {
-    return this.serverLogsStore.logfileNames;
-  }
+    const logfileNames: ComputedRef<string[]> = computed((): string[] => serverLogsStore.logfileNames);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-  get logContent(): string[] {
-    return this.serverLogsStore.logContent;
-  }
+    const logContent: WritableComputedRef<string[]> = computed({
+      get(): string[] {
+        return serverLogsStore.logContent;
+      },
+      set(content: string[]): void {
+        serverLogsStore.logContent = content;
+      },
+    });
 
-  set logContent(content: string[]) {
-    this.serverLogsStore.logContent = content;
-  }
+    async function fetchLogContent(logfileName: string): Promise<void> {
+      selectedLog.value = logfileName;
+      window.scrollTo(0,0);
+      await serverLogsStore.fetchLogContent(logfileName);
+    }
 
-  public async fetchLogContent(logfileName: string): Promise<void> {
-    this.selectedLog = logfileName;
-    window.scrollTo(0,0);
-    await this.serverLogsStore.fetchLogContent(logfileName);
-  }
+    function downloadLog(logfileName: string): void {
+      serverLogsStore.downloadLog(logfileName);
+    }
 
-  public downloadLog(logfileName: string): void {
-    this.serverLogsStore.downloadLog(logfileName);
-  }
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
+    watch(isAdmin, init);
 
-  public async init(): Promise<void> {
-    await this.serverLogsStore.fetchLogfileNames();
-  }
+    async function init(): Promise<void> {
+      if (isAdmin.value) {
+        await serverLogsStore.fetchLogfileNames();
+      }
+    }
 
-}
+    return {
+      logContent,
+      logfileNames,
+      fetchLogContent,
+      downloadLog,
+      selectedLog,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
