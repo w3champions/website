@@ -11,25 +11,27 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent } from "vue";
 import AdminNavigation from "@/components/admin/AdminNavigation.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import { useOauthStore } from "@/store/oauth/store";
 
-@Component({
+export default defineComponent({
+  name: "Admin",
   components: {
     AdminNavigation,
     AdminCheckJwtLifetime,
   },
-})
-export default class Admin extends Vue {
-  private oauthStore = useOauthStore();
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-}
+    return {
+      isAdmin,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
