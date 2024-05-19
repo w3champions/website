@@ -13,7 +13,7 @@
         <v-toolbar flat color="transparent">
           <v-toolbar-title>News for Launcher</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog max-width="1185" v-model="dialogNews">
+          <v-dialog max-width="1185" v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -26,7 +26,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle() }}</span>
+                <span class="text-h5">{{ formTitle }}</span>
               </v-card-title>
 
               <v-card-text>
@@ -189,8 +189,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
@@ -233,133 +232,150 @@ import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
 import { OrderedList } from "@tiptap/extension-ordered-list";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
 
-@Component({ components: { EditorContent } })
-export default class AdminNewsForLauncher extends Vue {
-  private oauthStore = useOauthStore();
-  private infoMessagesStore = useInfoMessagesStore();
-  public mdiDelete = mdiDelete;
-  public mdiPencil = mdiPencil;
-  public mdiFormatItalic = mdiFormatItalic;
-  public mdiFormatStrikethrough = mdiFormatStrikethrough;
-  public mdiFormatUnderline = mdiFormatUnderline;
-  public mdiFormatBold = mdiFormatBold;
-  public mdiCodeTags = mdiCodeTags;
-  public mdiFormatParagraph = mdiFormatParagraph;
-  public mdiFormatHeader1 = mdiFormatHeader1;
-  public mdiFormatHeader2 = mdiFormatHeader2;
-  public mdiFormatHeader3 = mdiFormatHeader3;
-  public mdiFormatListBulleted = mdiFormatListBulleted;
-  public mdiFormatListNumbered = mdiFormatListNumbered;
-  public mdiFormatQuoteClose = mdiFormatQuoteClose;
-  public mdiFileImage = mdiFileImage;
-  public mdiUndo = mdiUndo;
-  public mdiRedo = mdiRedo;
-  public mdiMinus = mdiMinus;
+export default defineComponent({
+  name: "AdminNewsForLauncher",
+  components: {
+    EditorContent,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const infoMessagesStore = useInfoMessagesStore();
 
-  public headers = [
-    { text: "Text", value: "message", align: "start" },
-    { text: "Headline", align: "start", value: "date" },
-    { text: "Actions", value: "actions", sortable: false },
-  ];
+    const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const formTitle: ComputedRef<string> = computed((): string => editedIndex === -1 ? "New Item" : "Edit Item");
 
-  get news(): NewsMessage[] {
-    return this.infoMessagesStore.news;
-  }
+    const dialog = ref<boolean>(false);
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
+    // FIXME: If you edit an item, then click on "Add News", the edited item's text show up in the dialog.
 
-  @Watch("isAdmin")
-  onBattleTagChanged(): void {
-    this.init();
-  }
+    const editedIndex = -1; // FIXME: editedIndex is never changed, so the title is always "New item".
+    const dateMenu = false;
+    const date = "";
 
-  private async init() {
-    if (this.isAdmin) {
-      await this.infoMessagesStore.loadNews();
+    const editedNewsItem = ref<NewsMessage>({} as NewsMessage);
+
+    const editor = new Editor({
+      extensions: [
+        Document,
+        Paragraph,
+        Text,
+        BulletList,
+        ListItem,
+        Heading.configure({ levels: [1, 2, 3] }),
+        HorizontalRule,
+        OrderedList,
+        Link,
+        Image,
+        Bold,
+        Code,
+        Italic,
+        Strike,
+        Underline,
+        History,
+        Dropcursor,
+      ],
+      content: "",
+    });
+
+    watch(isAdmin, init);
+
+    async function init() {
+      if (isAdmin.value) {
+        await infoMessagesStore.loadNews();
+        editedNewsItem.value = createDefaultNewsMessage();
+      }
     }
-  }
 
-  public dialogNews = false;
-  public dateMenu = false;
-  public editedIndex = -1;
-  public date = "";
-
-  public editedNewsItem = {
-    bsonId: "",
-    message: "",
-    date: "",
-  };
-
-  public editor = new Editor({
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      BulletList,
-      ListItem,
-      Heading.configure({ levels: [1, 2, 3] }),
-      HorizontalRule,
-      OrderedList,
-      Link,
-      Image,
-      Bold,
-      Code,
-      Italic,
-      Strike,
-      Underline,
-      History,
-      Dropcursor,
-    ],
-    content: "",
-  });
-
-  editNewsItem(item: NewsMessage): void {
-    this.editedNewsItem = item;
-    this.editor.chain().focus().setContent(item.message).run();
-    this.dialogNews = true;
-  }
-
-  async deleteNewsItem(item: NewsMessage): Promise<void> {
-    confirm("Are you sure you want to delete this item?") &&
-    (await this.infoMessagesStore.deleteNews(item));
-    this.dialogNews = false;
-  }
-
-  formTitle(): string {
-    return this.editedIndex === -1 ? "New Item" : "Edit Item";
-  }
-
-  async saveNews() {
-    this.editedNewsItem.message = this.editor.getHTML();
-    await this.infoMessagesStore.editNews(this.editedNewsItem);
-    this.dialogNews = false;
-    this.editor.chain().focus().clearContent().run();
-    this.editedNewsItem = { bsonId: "", date: "", message: "" };
-  }
-
-  closeNews(): void {
-    this.dialogNews = false;
-    this.editedNewsItem = { bsonId: "", date: "", message: "" };
-  }
-
-  showImagePrompt() {
-    // TODO Use a dialog instead of a browser prompt.
-    const url = window.prompt("Enter the url of your image here");
-    if (url) {
-      this.editor.chain().focus().setImage({ src: url, alt: "" }).run();
+    function editNewsItem(item: NewsMessage): void {
+      editedNewsItem.value = item;
+      editor.chain().focus().setContent(item.message).run();
+      dialog.value = true;
     }
-  }
 
-  async mounted() {
-    await this.init();
-  }
+    async function deleteNewsItem(item: NewsMessage): Promise<void> {
+      confirm("Are you sure you want to delete this item?") &&
+      (await infoMessagesStore.deleteNews(item));
+      dialog.value = false;
+    }
 
-  beforeUnmount() {
-    this.editor.destroy();
-  }
-}
+    async function saveNews() {
+      editedNewsItem.value.message = editor.getHTML();
+      await infoMessagesStore.editNews(editedNewsItem.value);
+      dialog.value = false;
+      editor.chain().focus().clearContent().run();
+      editedNewsItem.value = createDefaultNewsMessage();
+    }
+
+    function closeNews(): void {
+      dialog.value = false;
+      editedNewsItem.value = createDefaultNewsMessage();
+    }
+
+    function createDefaultNewsMessage(): NewsMessage {
+      const newsMessage: NewsMessage = {
+        message: "",
+        date: "",
+        bsonId: "",
+      };
+
+      return newsMessage;
+    }
+
+    function showImagePrompt() {
+      // TODO Use a dialog instead of a browser prompt.
+      const url = window.prompt("Enter the url of your image here");
+      if (url) {
+        editor.chain().focus().setImage({ src: url, alt: "" }).run();
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    onUnmounted((): void => {
+      editor.destroy();
+    });
+
+    const headers = [
+      { text: "Text", value: "message", align: "start" },
+      { text: "Headline", align: "start", value: "date" },
+      { text: "Actions", value: "actions", sortable: false },
+    ];
+
+    return {
+      mdiDelete,
+      mdiPencil,
+      mdiFormatItalic,
+      mdiFormatStrikethrough,
+      mdiFormatUnderline,
+      mdiFormatBold,
+      mdiCodeTags,
+      mdiFormatParagraph,
+      mdiFormatHeader1,
+      mdiFormatHeader2,
+      mdiFormatHeader3,
+      mdiFormatListBulleted,
+      mdiFormatListNumbered,
+      mdiFormatQuoteClose,
+      mdiFileImage,
+      mdiUndo,
+      mdiRedo,
+      mdiMinus,
+      headers,
+      news,
+      dialog,
+      formTitle,
+      editedNewsItem,
+      editor,
+      showImagePrompt,
+      closeNews,
+      saveNews,
+      editNewsItem,
+      deleteNewsItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
