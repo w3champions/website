@@ -39,7 +39,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="getProxyModified()">
+    <v-row v-if="isProxyModified">
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" width="600">
         <template v-slot:activator="{ on }">
@@ -117,108 +117,91 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
 import { ProxySettings } from "@/store/admin/types";
 import { useAdminStore } from "@/store/admin/store";
 
-//! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
-//! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
-//! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
+export default defineComponent({
+  name: "reviewProxies",
+  components: {
+    nodeOverridesCard
+  },
+  props: {
+    proxies: {
+      type: Object as PropType<ProxySettings>,
+      required: true,
+    },
+  },
+  setup(props) {
+    //! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
+    //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
+    //! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
 
-@Component({ components: { nodeOverridesCard } })
-export default class reviewProxies extends Vue {
-  @Prop() public proxies!: ProxySettings;
+    // Kovax comment:
+    // props.proxies is not ProxySettings. It is an Proxy[]. But the prop is not used anyway, because it is only referenced in the
+    // availableProxies getter, and it is not used.
 
-  public searchedPlayerTag = ``;
-  public initProxySettings = {
-    nodeOverrides: [],
-    automaticNodeOverrides: [],
-  } as ProxySettings;
-  public originalProxySettings = {
-    nodeOverrides: [],
-    automaticNodeOverrides: [],
-  } as ProxySettings;
-  public dialog = false;
-  private adminStore = useAdminStore();
+    const adminStore = useAdminStore();
+    const searchedPlayerTag = ref<string>("");
+    const initProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
+    const originalProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
+    const dialog = ref<boolean>(false);
 
-  get availableProxies(): ProxySettings {
-    return this.proxies;
-  }
+    const availableProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => props.proxies);
+    const modifiedProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.modifiedProxies);
+    const isProxyModified: ComputedRef<boolean> = computed((): boolean => adminStore.proxyModified);
 
-  get modifiedProxies(): ProxySettings {
-    return this.adminStore.modifiedProxies;
-  }
-
-  public putNewProxies(): void {
-    if (this.getProxyModified()) {
-      this.adminStore.putNewProxies(
-        this.adminStore.modifiedProxies
-      );
-    }
-  }
-
-  public sanitizeString(string: string): string {
-    let str = string;
-    str = str.replace(/-/g, `_`);
-    return str;
-  }
-
-  public newNodeOverrides(auto: boolean): string[] {
-    if (auto) {
-      return this.adminStore.modifiedProxies
-        .automaticNodeOverrides;
+    function putNewProxies(): void {
+      if (isProxyModified.value) {
+        adminStore.putNewProxies(adminStore.modifiedProxies);
+      }
     }
 
-    return this.adminStore.modifiedProxies.nodeOverrides;
-  }
-
-  public getProxyModified(): boolean {
-    return this.adminStore.proxyModified;
-  }
-
-  public checkOverridesAreSame(
-    initOverrides: string[],
-    modifiedOverrides: string[]
-  ): boolean {
-    const uniqueValues = new Set([...initOverrides, ...modifiedOverrides]);
-
-    for (const v of uniqueValues) {
-      const initOverridesCount = initOverrides.filter((e) => e === v).length;
-      const modifiedOverridesCount = modifiedOverrides.filter(
-        (e) => e === v
-      ).length;
-      if (initOverridesCount !== modifiedOverridesCount) return false;
+    function sanitizeString(string: string): string {
+      let str = string;
+      str = str.replace(/-/g, `_`);
+      return str;
     }
 
-    return true;
-  }
+    function newNodeOverrides(auto: boolean): string[] {
+      return auto ? adminStore.modifiedProxies.automaticNodeOverrides : adminStore.modifiedProxies.nodeOverrides;
+    }
 
-  private async init(): Promise<void> {
-    this.searchedPlayerTag = this.adminStore.searchedBattletag;
-    this.initProxySettings =
-      await this.adminStore.getProxiesForPlayer(
-        this.searchedPlayerTag
-      );
-    await this.adminStore.updateModifiedProxies({
-      overrides: this.initProxySettings.nodeOverrides,
-      isAutomatic: false,
+    function checkOverridesAreSame(initOverrides: string[], modifiedOverrides: string[]): boolean {
+      const uniqueValues = new Set([...initOverrides, ...modifiedOverrides]);
+
+      for (const v of uniqueValues) {
+        const initOverridesCount = initOverrides.filter((e) => e === v).length;
+        const modifiedOverridesCount = modifiedOverrides.filter((e) => e === v).length;
+        if (initOverridesCount !== modifiedOverridesCount) return false;
+      }
+
+      return true;
+    }
+
+    async function init(): Promise<void> {
+      searchedPlayerTag.value = adminStore.searchedBattletag;
+      initProxySettings.value = await adminStore.getProxiesForPlayer(searchedPlayerTag.value);
+      adminStore.updateModifiedProxies({ overrides: initProxySettings.value.nodeOverrides, isAutomatic: false });
+      adminStore.updateModifiedProxies({ overrides: initProxySettings.value.automaticNodeOverrides, isAutomatic: true });
+      originalProxySettings.value = JSON.parse(JSON.stringify(initProxySettings.value));
+      adminStore.SET_PROXY_MODIFIED(false);
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
     });
-    await this.adminStore.updateModifiedProxies({
-      overrides: this.initProxySettings.automaticNodeOverrides,
-      isAutomatic: true,
-    });
-    this.originalProxySettings = JSON.parse(
-      JSON.stringify(this.initProxySettings)
-    );
-    this.adminStore.SET_PROXY_MODIFIED(false);
-  }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-}
+    return {
+      searchedPlayerTag,
+      initProxySettings,
+      isProxyModified,
+      newNodeOverrides,
+      sanitizeString,
+      dialog,
+      putNewProxies,
+    };
+  },
+});
 </script>
-
-<style></style>
