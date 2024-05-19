@@ -65,9 +65,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import throttle from "lodash/throttle";
-import { Component } from "vue-property-decorator";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
 import Tournament from "../tournaments/Tournament.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
@@ -78,138 +77,153 @@ import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 import { useTournamentsManagementStore } from "@/store/admin/tournamentsManagement/store";
 
-@Component({
+export default defineComponent({
+  name: "AdminTournaments",
   components: {
     Tournament,
     AddPlayerModal,
     RemovePlayerModal,
     EditTournamentModal,
   },
-})
-export default class AdminTournaments extends Vue {
-  public isAddPlayerOpen = false;
-  public isRemovePlayerOpen = false;
-  public isCreateTournamentOpen = false;
-  public isEditTournamentOpen = false;
+  props: {},
+  setup() {
+    const tournamentsStore = useTournamentsStore();
+    const tournamentsManagementStore = useTournamentsManagementStore();
 
-  private throttledInit = throttle(this.init, 2000, { leading: true });
-  private tournamentsStore = useTournamentsStore();
-  private tournamentsManagementStore = useTournamentsManagementStore();
-  _intervalRefreshHandle?: number = undefined;
+    const throttledInit = throttle(init, 2000, { leading: true });
+    let _intervalRefreshHandle: NodeJS.Timeout;
 
-  async mounted(): Promise<void> {
-    this.throttledInit();
-    await this.tournamentsStore.loadTournamentMaps();
-    this._intervalRefreshHandle = setInterval(() => {
-      this.throttledInit();
-    }, 15000);
-  }
+    const isAddPlayerOpen = ref<boolean>(false);
+    const isRemovePlayerOpen = ref<boolean>(false);
+    const isCreateTournamentOpen = ref<boolean>(false);
+    const isEditTournamentOpen = ref<boolean>(false);
 
-  private async init(): Promise<void> {
-    await this.tournamentsManagementStore.loadEnabledFloNodes();
-    await this.tournamentsManagementStore.loadUpcomingTournament();
-  }
+    const tournamentMaps: ComputedRef<Map[]> = computed((): Map[] => tournamentsStore.tournamentMaps);
+    const isLoading: ComputedRef<boolean> = computed((): boolean => tournamentsManagementStore.isLoading);
+    const tournament: ComputedRef<ITournament> = computed((): ITournament => tournamentsManagementStore.upcomingTournament);
 
-  get tournamentMaps(): Map[] {
-    return this.tournamentsStore.tournamentMaps;
-  }
+    const registrationOpen: ComputedRef<boolean> = computed((): boolean => {
+      return tournament.value.state === ETournamentState.INIT || tournament.value.state === ETournamentState.REGISTRATION;
+    });
 
-  get isLoading() {
-    return this.tournamentsManagementStore.isLoading;
-  }
+    async function init(): Promise<void> {
+      await tournamentsManagementStore.loadEnabledFloNodes();
+      await tournamentsManagementStore.loadUpcomingTournament();
+    }
 
-  get tournament(): ITournament {
-    return this.tournamentsManagementStore.upcomingTournament;
-  }
+    function openAddPlayer(): void {
+      isAddPlayerOpen.value = true;
+    }
 
-  public openAddPlayer() {
-    this.isAddPlayerOpen = true;
-  }
+    function closeAddPlayer(): void {
+      isAddPlayerOpen.value = false;
+    }
 
-  public closeAddPlayer() {
-    this.isAddPlayerOpen = false;
-  }
+    async function addPlayer(battleTag: string, race: ERaceEnum): Promise<void> {
+      try {
+        const player = {
+          battleTag,
+          race,
+        } as ITournamentPlayer;
+        const added = await tournamentsManagementStore.registerPlayer(player);
 
-  public async addPlayer(battleTag: string, race: ERaceEnum) {
-    try {
-      const player = {
-        battleTag,
-        race,
-      } as ITournamentPlayer;
-      const added = await this.tournamentsManagementStore.registerPlayer(player);
-
-      if (added) {
-        this.isAddPlayerOpen = false;
+        if (added) {
+          isAddPlayerOpen.value = false;
+        }
+      } catch {
+        alert("Error while adding player");
       }
-    } catch {
-      alert("Error while adding player");
+      throttledInit();
     }
-    this.throttledInit();
-  }
 
-  public openRemovePlayer() {
-    this.isRemovePlayerOpen = true;
-  }
+    function openRemovePlayer(): void {
+      isRemovePlayerOpen.value = true;
+    }
 
-  public closeRemovePlayer() {
-    this.isRemovePlayerOpen = false;
-  }
+    function closeRemovePlayer(): void {
+      isRemovePlayerOpen.value = false;
+    }
 
-  public async removePlayer(battleTag: string) {
-    try {
-      const removed = await this.tournamentsManagementStore.unregisterPlayer(battleTag);
+    async function removePlayer(battleTag: string): Promise<void> {
+      try {
+        const removed = await tournamentsManagementStore.unregisterPlayer(battleTag);
 
-      if (removed) {
-        this.isRemovePlayerOpen = false;
+        if (removed) {
+          isRemovePlayerOpen.value = false;
+        }
+      } catch {
+        alert("Error while removing player");
       }
-    } catch {
-      alert("Error while removing player");
+      throttledInit();
     }
-    this.throttledInit();
-  }
 
-  get registrationOpen() {
-    return this.tournament.state === ETournamentState.INIT ||
-           this.tournament.state === ETournamentState.REGISTRATION;
-  }
-
-  public openCreateTournament() {
-    this.isCreateTournamentOpen = true;
-  }
-
-  public closeCreateTournament() {
-    this.isCreateTournamentOpen = false;
-  }
-
-  public async createTournament(tournamentData: ITournament) {
-    const created = await this.tournamentsManagementStore.createTournament(tournamentData);
-    if (created) {
-      this.closeCreateTournament();
-      this.throttledInit();
+    function openCreateTournament(): void {
+      isCreateTournamentOpen.value = true;
     }
-  }
 
-  public openEditTournament() {
-    this.isEditTournamentOpen = true;
-  }
-
-  public closeEditTournament() {
-    this.isEditTournamentOpen = false;
-  }
-
-  public async updateTournament(tournamentData: ITournament) {
-    tournamentData.id = this.tournament.id;
-    const updated = await this.tournamentsManagementStore.updateTournament(tournamentData);
-    if (updated) {
-      this.closeEditTournament();
-      this.throttledInit();
+    function closeCreateTournament(): void {
+      isCreateTournamentOpen.value = false;
     }
-  }
 
-  destroyed(): void {
-    clearInterval(this._intervalRefreshHandle);
-  }
-}
+    async function createTournament(tournamentData: ITournament): Promise<void> {
+      const created = await tournamentsManagementStore.createTournament(tournamentData);
+      if (created) {
+        closeCreateTournament();
+        throttledInit();
+      }
+    }
+
+    function openEditTournament(): void {
+      isEditTournamentOpen.value = true;
+    }
+
+    function closeEditTournament(): void {
+      isEditTournamentOpen.value = false;
+    }
+
+    async function updateTournament(tournamentData: ITournament): Promise<void> {
+      tournamentData.id = tournament.value.id;
+      const updated = await tournamentsManagementStore.updateTournament(tournamentData);
+      if (updated) {
+        closeEditTournament();
+        throttledInit();
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      throttledInit();
+      await tournamentsStore.loadTournamentMaps();
+      _intervalRefreshHandle = setInterval(() => {
+        throttledInit();
+      }, 15000);
+    });
+
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
+
+    return {
+      isAddPlayerOpen,
+      tournament,
+      isLoading,
+      closeAddPlayer,
+      addPlayer,
+      isRemovePlayerOpen,
+      closeRemovePlayer,
+      removePlayer,
+      isCreateTournamentOpen,
+      tournamentMaps,
+      closeCreateTournament,
+      createTournament,
+      isEditTournamentOpen,
+      closeEditTournament,
+      updateTournament,
+      registrationOpen,
+      openAddPlayer,
+      openRemovePlayer,
+      openEditTournament,
+      openCreateTournament,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
