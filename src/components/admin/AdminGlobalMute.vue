@@ -122,8 +122,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
@@ -132,120 +131,123 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 
-@Component({ components: { PlayerSearch } })
-export default class AdminGlobalMute extends Vue {
-  public mdiDelete = mdiDelete;
-  private adminStore = useAdminStore();
-  private oauthStore = useOauthStore();
-  private playerSearchStore = usePlayerSearchStore();
+export default defineComponent({
+  name: "AdminGlobalMute",
+  components: {
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const adminStore = useAdminStore();
+    const oauthStore = useOauthStore();
+    const playerSearchStore = usePlayerSearchStore();
 
-  public headers = [
-    {
-      text: "Flo Ban Id",
-      align: "start",
-      sortable: true,
-      value: "id",
-    },
-    {
-      text: "BattleTag",
-      align: "start",
-      sortable: true,
-      value: "battleTag",
-    },
-    {
-      text: "Ban Expiry Date",
-      sortable: true,
-      value: "expiresAt",
-    },
-    {
-      text: "Actions",
-      sortable: false,
-      value: "actions",
-    },
-  ];
+    const banExpiry = ref<string>("");
+    const dateMenu = ref<boolean>(false);
+    const dialog = ref<boolean>(false);
+    const showConfirmation = ref<boolean>(false);
+    const player = ref<string>("");
 
-  get globallyMutedPlayers(): GloballyMutedPlayer[] {
-    return this.adminStore.globallyMutedPlayers;
-  }
+    const globallyMutedPlayers: ComputedRef<GloballyMutedPlayer[]> = computed((): GloballyMutedPlayer[] => adminStore.globallyMutedPlayers);
+    const banDateSet: ComputedRef<boolean> = computed((): boolean => banExpiry.value != "");
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-  async deleteItem(item: GloballyMutedPlayer): Promise<void> {
-    confirm("Are you sure you want to delete this item?") &&
-    await this.adminStore.deleteGlobalMute(item);
-    this.loadMutes();
-  }
-
-  get banDateSet(): boolean {
-    return this.banExpiry != "";
-  }
-
-  public banExpiry = "";
-  public dateMenu = false;
-  public dialog = false;
-  public showConfirmation = false;
-  public player = "";
-
-  public close(): void {
-    this.dialog = false;
-    this.showConfirmation = false;
-  }
-
-  public async save(): Promise<void> {
-    this.close();
-
-    const mute = {
-      battleTag: this.player,
-      expiresAt: this.banExpiry,
-    } as GlobalMute;
-
-    await this.adminStore.addGlobalMute(mute);
-    this.loadMutes();
-  }
-
-  public async loadMutes(): Promise<void> {
-    if (this.isAdmin) {
-      await this.adminStore.loadGlobalMutes();
+    async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
+      confirm("Are you sure you want to delete this item?") &&
+      await adminStore.deleteGlobalMute(item);
+      loadMutes();
     }
-  }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
-
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  @Watch("isAdmin")
-  public async isAdminWatcher(): Promise<void> {
-    if (isEmpty(this.globallyMutedPlayers)) {
-      await this.init();
+    function close(): void {
+      dialog.value = false;
+      showConfirmation.value = false;
     }
-  }
 
-  async init(): Promise<void> {
-    await this.loadMutes();
-  }
-
-
-  searchCleared(): void {
-    this.showConfirmation = false;
-    this.banExpiry = "";
-  }
-
-  playerFound(bTag: string): void {
-    this.showConfirmation = true;
-    this.player = bTag;
-  }
-
-  @Watch("dialog")
-  onDialogToggled(): void {
-    // Only trigger on dialog close, not dialog open
-    if (!this.dialog) {
-      this.searchCleared();
-      this.playerSearchStore.clearPlayerSearch();
+    async function save(): Promise<void> {
+      close();
+      const mute = { battleTag: player.value, expiresAt: banExpiry.value } as GlobalMute;
+      await adminStore.addGlobalMute(mute);
+      loadMutes();
     }
-  }
-}
+
+    async function loadMutes(): Promise<void> {
+      if (isAdmin.value) {
+        await adminStore.loadGlobalMutes();
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      await loadMutes();
+    });
+
+
+    watch(isAdmin, isAdminWatcher);
+    async function isAdminWatcher(): Promise<void> {
+      if (isEmpty(globallyMutedPlayers.value)) {
+        await loadMutes();
+      }
+    }
+
+    function searchCleared(): void {
+      showConfirmation.value = false;
+      banExpiry.value = "";
+    }
+
+    function playerFound(bTag: string): void {
+      showConfirmation.value = true;
+      player.value = bTag;
+    }
+
+    watch(dialog, onDialogToggled);
+    function onDialogToggled(): void {
+      // Only trigger on dialog close, not dialog open
+      if (!dialog.value) {
+        searchCleared();
+        playerSearchStore.clearPlayerSearch();
+      }
+    }
+
+    const headers = [
+      {
+        text: "Flo Ban Id",
+        align: "start",
+        sortable: true,
+        value: "id",
+      },
+      {
+        text: "BattleTag",
+        align: "start",
+        sortable: true,
+        value: "battleTag",
+      },
+      {
+        text: "Ban Expiry Date",
+        sortable: true,
+        value: "expiresAt",
+      },
+      {
+        text: "Actions",
+        sortable: false,
+        value: "actions",
+      },
+    ];
+
+    return {
+      mdiDelete,
+      headers,
+      globallyMutedPlayers,
+      dialog,
+      searchCleared,
+      playerFound,
+      showConfirmation,
+      dateMenu,
+      banExpiry,
+      player,
+      banDateSet,
+      save,
+      close,
+      deleteItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

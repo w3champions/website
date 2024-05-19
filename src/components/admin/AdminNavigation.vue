@@ -56,11 +56,12 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted, watch } from "vue";
 import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-
+import { EPermission } from "@/store/admin/permission/types";
+import { useOauthStore } from "@/store/oauth/store";
+import { useRouter, useRoute } from "vue-router/composables";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
@@ -68,236 +69,234 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument
 } from "@mdi/js";
-import { EPermission } from "@/store/admin/permission/types";
-import { useOauthStore } from "@/store/oauth/store";
 
-@Component({ components: {} })
-export default class AdminNavigation extends Vue {
-  private oauthStore = useOauthStore();
-  public mdiAccountTie = mdiAccountTie;
+export default defineComponent({
+  name: "AdminNavigation",
+  components: {},
+  props: {},
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const oauthStore = useOauthStore();
 
-  get permissions(): string[] {
-    return this.oauthStore.permissions;
-  }
+    const permissions: ComputedRef<string[]> = computed((): string[] => oauthStore.permissions);
+    const filteredNavItems: ComputedRef<NavigationItem[]> = computed((): NavigationItem[] => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
 
-  get filteredNavItems(): NavigationItem[] {
-    return this.navItems.filter((item) => this.permissions.includes(EPermission[item.permission]));
-  }
-
-  getFirstItem(items: Array<NavigationItem>): NavigationItem {
-    for (const item of items) {
-      if (!item.items) {
-        return item;
+    function getFirstItem(items: Array<NavigationItem>): NavigationItem {
+      for (const item of items) {
+        if (!item.items) {
+          return item;
+        }
+        const subItem = getFirstItem(item.items);
+        if (subItem) {
+          return subItem;
+        }
       }
-      const subItem = this.getFirstItem(item.items);
-      if (subItem) {
-        return subItem;
+      return items[0];
+    }
+
+    onMounted((): void => {
+      init();
+    });
+
+    function init() {
+      if (permissions.value.length === 0) return;
+      const lastPathFragment = route.path.split("/").pop();
+
+      // Route to the first available page if the user navigated to the admin panel.
+      if (lastPathFragment === "admin") {
+        const firstItem = getFirstItem(filteredNavItems.value);
+        router.push(`admin/${firstItem.component}`);
       }
     }
-    return items[0];
-  }
 
-  mounted() {
-    this.init();
-  }
+    watch(permissions, init);
 
-  init() {
-    if (this.permissions.length === 0) return;
-    const lastPathFragment = this.$route.path.split("/").pop();
+    const navItems: Array<NavigationItem> = [
+      {
+        title: "Data Science",
+        icon: mdiChartLine,
+        permission: EPermission.Queue,
+        items: [
+          {
+            title: "Live Queue Data",
+            icon: mdiTable,
+            permission: EPermission.Queue,
+            component: "admin-queue-data",
+          },
+        ],
+      },
+      {
+        title: "Moderation",
+        icon: mdiAccountGroup,
+        permission: EPermission.Moderation,
+        items: [
+          {
+            title: "Banned Players",
+            icon: mdiAccountRemove,
+            permission: EPermission.Moderation,
+            component: "admin-banned-players",
+          },
+          {
+            title: "Smurf Checker",
+            icon: mdiAccountQuestion,
+            permission: EPermission.Moderation,
+            component: "admin-alts",
+          },
+          {
+            title: "Global Mute",
+            icon: mdiChatRemove,
+            permission: EPermission.Moderation,
+            component: "admin-global-mute",
+          },
+          {
+            title: "Lounge Mute",
+            icon: mdiChatRemoveOutline,
+            permission: EPermission.Moderation,
+            component: "admin-lounge-mute",
+          },
+          {
+            title: "View Game Chat",
+            icon: mdiFormatAlignLeft,
+            permission: EPermission.Moderation,
+            component: "admin-view-game-chat",
+          },
+        ],
+      },
+      {
+        title: "Player Settings",
+        icon: mdiCog,
+        permission: EPermission.Proxies,
+        items: [
+          {
+            title: "Proxy Settings",
+            icon: mdiAccountNetwork,
+            permission: EPermission.Proxies,
+            component: "admin-proxies",
+          },
+        ],
+      },
+      {
+        title: "Launcher",
+        icon: mdiRocket,
+        permission: EPermission.Content,
+        items: [
+          {
+            title: "News",
+            icon: mdiRss,
+            permission: EPermission.Content,
+            component: "admin-news-for-launcher",
+          },
+        ],
+      },
+      {
+        title: "In-Game Settings",
+        icon: mdiMonitorDashboard,
+        permission: EPermission.Content,
+        items: [
+          {
+            title: "Loading Screen Tips",
+            icon: mdiTooltipTextOutline,
+            permission: EPermission.Content,
+            component: "admin-loading-screen-tips",
+          },
+          {
+            title: "Message Of The Day",
+            icon: mdiMessageAlert,
+            permission: EPermission.Content,
+            component: "admin-motd",
+          },
+        ],
+      },
+      {
+        title: "Rewards",
+        icon: mdiGift,
+        permission: EPermission.Content,
+        items: [
+          {
+            title: "Assign Portraits",
+            icon: mdiAccountBoxOutline,
+            permission: EPermission.Content,
+            component: "admin-assign-portraits",
+          },
+          {
+            title: "Manage Portraits",
+            icon: mdiBriefcase,
+            permission: EPermission.Content,
+            component: "admin-manage-portraits",
+          },
+          {
+            title: "Manage Alibaba Files",
+            icon: mdiFileDocumentOutline,
+            permission: EPermission.Content,
+            component: "admin-storage-alibaba",
+          },
+          {
+            title: "Manage S3 Files",
+            icon: mdiFileDocument,
+            permission: EPermission.Content,
+            component: "admin-storage-s3",
+          },
+        ],
+      },
+      {
+        title: "Maps",
+        icon: mdiMapSearch,
+        permission: EPermission.Maps,
+        items: [
+          {
+            title: "Manage Maps",
+            icon: mdiMapPlus,
+            permission: EPermission.Maps,
+            component: "admin-maps",
+          },
+        ],
+      },
+      {
+        title: "Tournaments",
+        icon: mdiSwordCross,
+        permission: EPermission.Tournaments,
+        items: [
+          {
+            title: "Manage Tournaments",
+            icon: mdiSwordCross,
+            permission: EPermission.Tournaments,
+            component: "admin-tournaments",
+          },
+        ],
+      },
+      {
+        title: "Permissions",
+        icon: mdiAccountKey,
+        permission: EPermission.Permissions,
+        items: [
+          {
+            title: "Manage Permissions",
+            icon: mdiAccountKey,
+            permission: EPermission.Permissions,
+            component: "admin-permissions",
+          },
+        ],
+      },
+      {
+        title: "Server Logs",
+        icon: mdiFileDocumentOutline,
+        permission: EPermission.Logs,
+        items: [
+          {
+            title: "View Server Logs",
+            icon: mdiFileDocumentOutline,
+            permission: EPermission.Logs,
+            component: "admin-server-logs",
+          },
+        ],
+      },
+    ];
 
-    // Route to the first available page if the user navigated to the admin panel.
-    if (lastPathFragment === "admin") {
-      const firstItem = this.getFirstItem(this.filteredNavItems);
-      this.$router.push(`admin/${firstItem.component}`);
-    }
-  }
-
-  @Watch("permissions")
-  public permissionsWatcher(): void {
-    this.init();
-  }
-
-  navItems: Array<NavigationItem> = [
-    {
-      title: "Data Science",
-      icon: mdiChartLine,
-      permission: EPermission.Queue,
-      items: [
-        {
-          title: "Live Queue Data",
-          icon: mdiTable,
-          permission: EPermission.Queue,
-          component: "admin-queue-data",
-        },
-      ],
-    },
-    {
-      title: "Moderation",
-      icon: mdiAccountGroup,
-      permission: EPermission.Moderation,
-      items: [
-        {
-          title: "Banned Players",
-          icon: mdiAccountRemove,
-          permission: EPermission.Moderation,
-          component: "admin-banned-players",
-        },
-        {
-          title: "Smurf Checker",
-          icon: mdiAccountQuestion,
-          permission: EPermission.Moderation,
-          component: "admin-alts",
-        },
-        {
-          title: "Global Mute",
-          icon: mdiChatRemove,
-          permission: EPermission.Moderation,
-          component: "admin-global-mute",
-        },
-        {
-          title: "Lounge Mute",
-          icon: mdiChatRemoveOutline,
-          permission: EPermission.Moderation,
-          component: "admin-lounge-mute",
-        },
-        {
-          title: "View Game Chat",
-          icon: mdiFormatAlignLeft,
-          permission: EPermission.Moderation,
-          component: "admin-view-game-chat",
-        },
-      ],
-    },
-    {
-      title: "Player Settings",
-      icon: mdiCog,
-      permission: EPermission.Proxies,
-      items: [
-        {
-          title: "Proxy Settings",
-          icon: mdiAccountNetwork,
-          permission: EPermission.Proxies,
-          component: "admin-proxies",
-        },
-      ],
-    },
-    {
-      title: "Launcher",
-      icon: mdiRocket,
-      permission: EPermission.Content,
-      items: [
-        {
-          title: "News",
-          icon: mdiRss,
-          permission: EPermission.Content,
-          component: "admin-news-for-launcher",
-        },
-      ],
-    },
-    {
-      title: "In-Game Settings",
-      icon: mdiMonitorDashboard,
-      permission: EPermission.Content,
-      items: [
-        {
-          title: "Loading Screen Tips",
-          icon: mdiTooltipTextOutline,
-          permission: EPermission.Content,
-          component: "admin-loading-screen-tips",
-        },
-        {
-          title: "Message Of The Day",
-          icon: mdiMessageAlert,
-          permission: EPermission.Content,
-          component: "admin-motd",
-        },
-      ],
-    },
-    {
-      title: "Rewards",
-      icon: mdiGift,
-      permission: EPermission.Content,
-      items: [
-        {
-          title: "Assign Portraits",
-          icon: mdiAccountBoxOutline,
-          permission: EPermission.Content,
-          component: "admin-assign-portraits",
-        },
-        {
-          title: "Manage Portraits",
-          icon: mdiBriefcase,
-          permission: EPermission.Content,
-          component: "admin-manage-portraits",
-        },
-        {
-          title: "Manage Alibaba Files",
-          icon: mdiFileDocumentOutline,
-          permission: EPermission.Content,
-          component: "admin-storage-alibaba",
-        },
-        {
-          title: "Manage S3 Files",
-          icon: mdiFileDocument,
-          permission: EPermission.Content,
-          component: "admin-storage-s3",
-        },
-      ],
-    },
-    {
-      title: "Maps",
-      icon: mdiMapSearch,
-      permission: EPermission.Maps,
-      items: [
-        {
-          title: "Manage Maps",
-          icon: mdiMapPlus,
-          permission: EPermission.Maps,
-          component: "admin-maps",
-        },
-      ],
-    },
-    {
-      title: "Tournaments",
-      icon: mdiSwordCross,
-      permission: EPermission.Tournaments,
-      items: [
-        {
-          title: "Manage Tournaments",
-          icon: mdiSwordCross,
-          permission: EPermission.Tournaments,
-          component: "admin-tournaments",
-        },
-      ],
-    },
-    {
-      title: "Permissions",
-      icon: mdiAccountKey,
-      permission: EPermission.Permissions,
-      items: [
-        {
-          title: "Manage Permissions",
-          icon: mdiAccountKey,
-          permission: EPermission.Permissions,
-          component: "admin-permissions",
-        },
-      ],
-    },
-    {
-      title: "Server Logs",
-      icon: mdiFileDocumentOutline,
-      permission: EPermission.Logs,
-      items: [
-        {
-          title: "View Server Logs",
-          icon: mdiFileDocumentOutline,
-          permission: EPermission.Logs,
-          component: "admin-server-logs",
-        },
-      ],
-    },
-  ];
-}
+    return {
+      mdiAccountTie,
+      filteredNavItems,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

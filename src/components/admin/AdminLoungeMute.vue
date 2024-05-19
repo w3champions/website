@@ -123,8 +123,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -134,106 +133,116 @@ import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 import isEmpty from "lodash/isEmpty";
 
-@Component({ components: { PlayerSearch } })
-export default class AdminLoungeMute extends Vue {
-  public dateMenu = false;
-  public dialog = false;
-  public showConfirmation = false;
-  public battleTag = "";
-  public endDate = "";
-  public mdiDelete = mdiDelete;
-  private oauthStore = useOauthStore();
-  private loungeMuteStore = useLoungeMuteStore();
-  private playerSearchStore = usePlayerSearchStore();
+export default defineComponent({
+  name: "AdminLoungeMute",
+  components: {
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const loungeMuteStore = useLoungeMuteStore();
+    const playerSearchStore = usePlayerSearchStore();
 
-  public headers = [
-    { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
-    { text: "Mute End Date", sortable: true, value: "endDate" },
-    { text: "Mute Insert Date", sortable: true, value: "insertDate" },
-    { text: "Author", sortable: true, value: "author" },
-    { text: "Actions", sortable: false, value: "actions" },
-  ];
+    const dateMenu = ref<boolean>(false);
+    const dialog = ref<boolean>(false);
+    const showConfirmation = ref<boolean>(false);
+    const battleTag = ref<string>("");
+    const endDate = ref<string>("");
 
-  get loungeMutes(): LoungeMuteResponse[] {
-    return this.loungeMuteStore.loungeMutedPlayers;
-  }
+    const loungeMutes: ComputedRef<LoungeMuteResponse[]> = computed((): LoungeMuteResponse[] => loungeMuteStore.loungeMutedPlayers);
+    const isMuteEndDateSet: ComputedRef<boolean> = computed((): boolean => endDate.value != "");
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
 
-  async deleteItem(item: LoungeMute): Promise<void> {
-    confirm("Are you sure you want to delete this item?") &&
-    await this.loungeMuteStore.deleteLoungeMute(item.battleTag);
-    this.loadMutes();
-  }
-
-  get isMuteEndDateSet(): boolean {
-    return this.endDate != "";
-  }
-
-  public close(): void {
-    this.dialog = false;
-    this.showConfirmation = false;
-  }
-
-  public async save(): Promise<void> {
-    this.close();
-
-    const mute = {
-      battleTag: this.battleTag,
-      author: this.author,
-      endDate: dateToCurrentTimeDate(this.endDate),
-    } as LoungeMute;
-
-    await this.loungeMuteStore.addLoungeMute(mute);
-    this.loadMutes();
-  }
-
-  public async loadMutes(): Promise<void> {
-    if (this.isAdmin) {
-      await this.loungeMuteStore.loadLoungeMutes();
+    async function deleteItem(item: LoungeMute): Promise<void> {
+      confirm("Are you sure you want to delete this item?") &&
+      await loungeMuteStore.deleteLoungeMute(item.battleTag);
+      loadMutes();
     }
-  }
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  @Watch("isAdmin")
-  public async isAdminWatcher(): Promise<void> {
-    if (isEmpty(this.loungeMutes)) {
-      await this.init();
+    function close(): void {
+      dialog.value = false;
+      showConfirmation.value = false;
     }
-  }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
+    async function save(): Promise<void> {
+      close();
 
-  async init(): Promise<void> {
-    await this.loadMutes();
-  }
+      const mute = {
+        battleTag: battleTag.value,
+        author: author.value,
+        endDate: dateToCurrentTimeDate(endDate.value),
+      } as LoungeMute;
 
-  get author() {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  searchCleared(): void {
-    this.showConfirmation = false;
-    this.endDate = "";
-  }
-
-  playerFound(bTag: string): void {
-    this.showConfirmation = true;
-    this.battleTag = bTag;
-  }
-
-  @Watch("dialog")
-  onDialogToggled(): void {
-    // Only trigger on dialog close, not dialog open
-    if (!this.dialog) {
-      this.searchCleared();
-      this.playerSearchStore.clearPlayerSearch();
+      await loungeMuteStore.addLoungeMute(mute);
+      loadMutes();
     }
-  }
-}
+
+    async function loadMutes(): Promise<void> {
+      if (isAdmin.value) {
+        await loungeMuteStore.loadLoungeMutes();
+      }
+    }
+
+    watch(isAdmin, isAdminWatcher);
+    async function isAdminWatcher(): Promise<void> {
+      if (isEmpty(loungeMutes.value)) {
+        await init();
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
+
+    async function init(): Promise<void> {
+      await loadMutes();
+    }
+
+    function searchCleared(): void {
+      showConfirmation.value = false;
+      endDate.value = "";
+    }
+
+    function playerFound(bTag: string): void {
+      showConfirmation.value = true;
+      battleTag.value = bTag;
+    }
+
+    watch(dialog, onDialogToggled);
+    function onDialogToggled(): void {
+      // Only trigger on dialog close, not dialog open
+      if (!dialog.value) {
+        searchCleared();
+        playerSearchStore.clearPlayerSearch();
+      }
+    }
+
+    const headers = [
+      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "Mute End Date", sortable: true, value: "endDate" },
+      { text: "Mute Insert Date", sortable: true, value: "insertDate" },
+      { text: "Author", sortable: true, value: "author" },
+      { text: "Actions", sortable: false, value: "actions" },
+    ];
+
+    return {
+      mdiDelete,
+      headers,
+      loungeMutes,
+      dialog,
+      searchCleared,
+      playerFound,
+      showConfirmation,
+      dateMenu,
+      endDate,
+      battleTag,
+      isMuteEndDateSet,
+      save,
+      close,
+      deleteItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>

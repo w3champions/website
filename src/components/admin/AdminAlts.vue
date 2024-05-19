@@ -26,7 +26,7 @@
         <v-list>
           <template v-for="alt in alts">
             <v-list-item :key="alt">
-              <div @click="searchAltsFromClick(alt)" class="pointer">{{ alt }}</div>
+              <div @click="searchAltsFromClick(alt)" style="cursor: pointer">{{ alt }}</div>
               <v-spacer></v-spacer>
               <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
             </v-list-item>
@@ -38,77 +38,84 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, ref, watch } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { useRouter } from "vue-router/composables";
 
-@Component({})
-export default class AdminAlts extends Vue {
-  public searchPlayerModel = "";
-  public search = "";
-  public showAlts = false;
-  public oldSearchTerm = "";
-  public alts = [] as string[];
-  private adminStore = useAdminStore();
-  private playerSearchStore = usePlayerSearchStore();
-  public mdiMagnify = mdiMagnify;
+export default defineComponent({
+  name: "AdminAlts",
+  components: {},
+  props: {},
+  setup() {
+    const router = useRouter();
+    const adminStore = useAdminStore();
+    const playerSearchStore = usePlayerSearchStore();
 
-  public revertToDefault(): void {
-    this.showAlts = false;
-    this.oldSearchTerm = "";
-    this.playerSearchStore.clearPlayerSearch();
-    this.alts = [];
-  }
+    const searchPlayerModel = ref<string>("");
+    const search = ref<string>("");
+    const showAlts = ref<boolean>(false);
+    const oldSearchTerm = ref<string>("");
+    const alts = ref<string[]>([]);
 
-  @Watch("searchPlayerModel")
-  public async onSearchStringChanged(bTag: string): Promise<void> {
-    if (!bTag) return;
+    const searchedPlayers: ComputedRef<string[]> = computed((): string[] => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
 
-    if (bTag) {
-      this.alts = await this.adminStore.getAltsForPlayer(bTag);
+    function goToProfile(alt: string): void {
+      router.push({
+        path: getProfileUrl(alt),
+      }).catch(() => null);
+    }
 
-      if ((this.alts != null || undefined) && this.alts.length > 0) {
-        this.showAlts = true;
+    function searchAltsFromClick(bTag: string) {
+      searchPlayerModel.value = bTag;
+      search.value = bTag;
+    }
+
+    function revertToDefault(): void {
+      showAlts.value = false;
+      oldSearchTerm.value = "";
+      playerSearchStore.clearPlayerSearch();
+      alts.value = [];
+    }
+
+    watch(searchPlayerModel, onSearchStringChanged);
+    async function onSearchStringChanged(bTag: string): Promise<void> {
+      if (!bTag) return;
+
+      alts.value = await adminStore.getAltsForPlayer(bTag);
+
+      if ((alts.value != null || undefined) && alts.value.length > 0) {
+        showAlts.value = true;
       } else {
-        this.revertToDefault();
+        revertToDefault();
       }
     }
-  }
 
-  @Watch("search")
-  public onSearchChanged(newValue: string): void {
-    if (newValue && newValue.length > 2 && newValue !== this.oldSearchTerm) {
-      this.playerSearchStore.searchBnetTag({
-        searchText: newValue.toLowerCase(),
-      });
-      this.oldSearchTerm = newValue;
-    } else {
-      this.revertToDefault();
+    watch(search, onSearchChanged);
+    function onSearchChanged(newValue: string): void {
+      if (newValue && newValue.length > 2 && newValue !== oldSearchTerm.value) {
+        playerSearchStore.searchBnetTag({
+          searchText: newValue.toLowerCase(),
+        });
+        oldSearchTerm.value = newValue;
+      } else {
+        revertToDefault();
+      }
     }
-  }
 
-  get searchedPlayers(): string[] {
-    return this.playerSearchStore.searchedPlayers.map((player) => player.battleTag);
-  }
-
-  public goToProfile(alt: string): void {
-    this.$router.push({
-      path: getProfileUrl(alt),
-    }).catch(() => null);
-  }
-
-  public searchAltsFromClick(bTag: string) {
-    this.searchPlayerModel = bTag;
-    this.search = bTag;
-  }
-}
+    return {
+      mdiMagnify,
+      searchPlayerModel,
+      searchedPlayers,
+      search,
+      revertToDefault,
+      showAlts,
+      alts,
+      searchAltsFromClick,
+      goToProfile,
+    };
+  },
+});
 </script>
-
-<style lang="scss">
-.pointer {
-  cursor: pointer;
-}
-</style>

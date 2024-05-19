@@ -37,7 +37,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle() }}</span>
+                <span class="text-h5">{{ formTitle }}</span>
               </v-card-title>
 
               <v-card-text>
@@ -164,9 +164,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Watch } from "vue-property-decorator";
-import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { computed, ComputedRef, defineComponent, onMounted, nextTick, ref, watch } from "vue";
+import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -176,195 +175,199 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import { i18n } from "@/main";
+import { LocaleMessage } from "vue-i18n";
 
-@Component({ components: { PlayerSearch } })
-export default class AdminBannedPlayers extends Vue {
-  private oauthStore = useOauthStore();
-  public dialog = false;
-  public dateMenu = false;
-  public editedIndex = -1;
-  public tableSearch = "";
-  public foundPlayer = "";
-  private adminStore = useAdminStore();
-  private playerSearchStore = usePlayerSearchStore();
-  public mdiDelete = mdiDelete;
-  public mdiMagnify = mdiMagnify;
-  public mdiPencil = mdiPencil;
-  public isEmpty = isEmpty;
+type AdminBannedPlayersHeader = {
+  text: string;
+  value: string;
+  sortable: boolean;
+  width?: string;
+  filterable: boolean;
+};
 
-  public headers = [
-    { text: "BattleTag", align: "start", value: "battleTag", width: "10vw" },
-    { text: "Ban End Date", value: "endDate", width: "10vw", filterable: false },
-    { text: "Ban Insert Date", value: "banInsertDate", width: "10vw", sortBy: "asc", filterable: false },
-    { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
-    { text: "IP ban", value: "isIpBan", width: "5vw", filterable: false },
-    { text: "Author", value: "author", width: "10vw", filterable: false },
-    { text: "Ban reason", value: "banReason", filterable: false },
-    { text: "Actions", value: "actions", sortable: false, filterable: false },
-  ];
+export default defineComponent({
+  name: "AdminBannedPlayers",
+  components: {
+    PlayerSearch,
+  },
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const adminStore = useAdminStore();
+    const playerSearchStore = usePlayerSearchStore();
 
-  getGameModeName(id: EGameMode) {
-    return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? this.$t(`gameModes.${EGameMode[id]}`);
-  }
+    const dialog = ref<boolean>(false);
+    const dateMenu = ref<boolean>(false);
+    const editedIndex = ref<number>(-1);
+    const tableSearch = ref<string>("");
+    const foundPlayer = ref<string>("");
 
-  // For a new ban, only allow active game modes to be chosen.
-  // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
-  get selectableGameModes() {
-    const bannedModesForEditedItem = this.editedItem.gameModes;
-    const activeModeIds = activeGameModes().map((mode) => mode.id);
-    const bannedInactiveModesForEditedItem = bannedModesForEditedItem
-      .filter((mode) => !activeModeIds.includes(mode))
-      .map((id) => {
-        return {
-          id,
-          name: `gameModes.${EGameMode[id]}`
-        };
-      });
-    const activeModes = activeGameModes();
+    const bannedPlayers: ComputedRef<BannedPlayer[]> = computed((): BannedPlayer[] => adminStore.bannedPlayers);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const isAddDialog: ComputedRef<boolean> = computed((): boolean => editedIndex.value === -1);
+    const banValidationError: ComputedRef<string> = computed((): string => adminStore.banValidationError);
+    const isValidationError: ComputedRef<boolean> = computed((): boolean => adminStore.banValidationError !== "");
+    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Item" : "Edit Item");
+    const editedItem = ref<BannedPlayer>({} as BannedPlayer);
 
-    return activeModes.concat(bannedInactiveModesForEditedItem);
-  }
+    const defaultItem = {
+      battleTag: "",
+      endDate: "",
+      gameModes: [] as EGameMode[],
+      isIpBan: false,
+      banReason: "",
+      banInsertDate: "",
+      author: "",
+    };
 
-  get bannedPlayers(): BannedPlayer[] {
-    return this.adminStore.bannedPlayers;
-  }
+    // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
+    const endDateIsSet: ComputedRef<boolean> = computed((): boolean => editedItem.value.endDate.length == 10);
 
-  get isAdmin(): boolean {
-    return this.oauthStore.isAdmin;
-  }
-
-  get isAddDialog() {
-    return this.editedIndex === -1;
-  }
-
-  get banValidationError(): string {
-    return this.adminStore.banValidationError;
-  }
-
-  get isValidationError(): boolean {
-    return this.adminStore.banValidationError !== "";
-  }
-
-  get author() {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  public async loadBanList() {
-    if (this.isAdmin) {
-      await this.adminStore.loadBannedPlayers();
-    }
-  }
-
-  get authCode(): string {
-    return this.oauthStore.token;
-  }
-
-  public editedItem = {
-    battleTag: "",
-    endDate: "",
-    gameModes: [] as EGameMode[],
-    isIpBan: false,
-    banReason: "",
-    banInsertDate: "",
-    author: "",
-  };
-
-  public defaultItem = {
-    battleTag: "",
-    endDate: "",
-    gameModes: [] as EGameMode[],
-    isIpBan: false,
-    banReason: "",
-    banInsertDate: "",
-    author: "",
-  };
-
-  editItem(item: BannedPlayer): void {
-    this.editedIndex = this.bannedPlayers.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-    this.dialog = true;
-  }
-
-  async deleteItem(item: BannedPlayer): Promise<void> {
-    confirm("Are you sure you want to delete this item?") && await this.adminStore.deleteBan(item);
-    await this.loadBanList();
-  }
-
-  formTitle(): string {
-    return this.isAddDialog ? "New Item" : "Edit Item";
-  }
-
-  async save(): Promise<void> {
-    this.editedItem.author = this.author;
-    if (this.endDateIsSet) {
-      this.editedItem.endDate = dateToCurrentTimeDate(this.editedItem.endDate);
-    }
-    if (this.isAddDialog) {
-      this.editedItem.battleTag = this.foundPlayer;
+    function getGameModeName(id: EGameMode): LocaleMessage {
+      return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? i18n.t(`gameModes.${EGameMode[id]}`);
     }
 
-    await this.adminStore.postBan(this.editedItem);
+    // For a new ban, only allow active game modes to be chosen.
+    // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
+    const selectableGameModes: ComputedRef<IGameModeBrief[]> = computed((): IGameModeBrief[] => {
+      const bannedModesForEditedItem = editedItem.value.gameModes;
+      const activeModeIds = activeGameModes().map((mode) => mode.id);
+      const bannedInactiveModesForEditedItem = bannedModesForEditedItem
+        .filter((mode) => !activeModeIds.includes(mode))
+        .map((id) => {
+          return {
+            id,
+            name: `gameModes.${EGameMode[id]}`
+          };
+        });
+      const activeModes = activeGameModes();
 
-    if (!this.isValidationError) {
-      this.close();
-      await this.loadBanList();
-      if (this.isAddDialog) {
-        this.playerSearchStore.clearPlayerSearch();
+      return activeModes.concat(bannedInactiveModesForEditedItem);
+    });
+
+
+    async function loadBanList() {
+      if (isAdmin.value) {
+        await adminStore.loadBannedPlayers();
       }
     }
-  }
 
-  close(): void {
-    this.dialog = false;
-  }
-
-  @Watch("isAdmin")
-  public async isAdminWatcher(): Promise<void> {
-    if (isEmpty(this.bannedPlayers)) {
-      await this.init();
+    function editItem(item: BannedPlayer): void {
+      editedIndex.value = bannedPlayers.value.indexOf(item);
+      editedItem.value = Object.assign({}, item);
+      dialog.value = true;
     }
-  }
 
-  async mounted(): Promise<void> {
-    await this.init();
-  }
+    async function deleteItem(item: BannedPlayer): Promise<void> {
+      confirm("Are you sure you want to delete this item?") && await adminStore.deleteBan(item);
+      await loadBanList();
+    }
 
-  async init(): Promise<void> {
-    await this.loadBanList();
-    await loadActiveGameModes();
-  }
 
-  resetDialog(): void {
-    this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
+    async function save(): Promise<void> {
+      editedItem.value.author = author.value;
+      if (endDateIsSet.value) {
+        editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
+      }
+      if (isAddDialog.value) {
+        editedItem.value.battleTag = foundPlayer.value;
+      }
+
+      await adminStore.postBan(editedItem.value);
+
+      if (!isValidationError.value) {
+        close();
+        await loadBanList();
+        if (isAddDialog.value) {
+          playerSearchStore.clearPlayerSearch();
+        }
+      }
+    }
+
+    function close(): void {
+      dialog.value = false;
+    }
+
+    watch(isAdmin, isAdminWatcher);
+    async function isAdminWatcher(): Promise<void> {
+      if (isEmpty(bannedPlayers.value)) {
+        await init();
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
     });
-    this.playerSearchStore.clearPlayerSearch();
-  }
 
-  @Watch("dialog")
-  onDialogToggled(): void {
-    // Only trigger on dialog close, not dialog open
-    if (!this.dialog) {
-      this.adminStore.resetBanValidationMessage();
-      this.resetDialog();
-      this.playerSearchStore.clearPlayerSearch();
+    async function init(): Promise<void> {
+      await loadBanList();
+      await loadActiveGameModes();
+      editedItem.value = Object.assign({}, defaultItem);
     }
-  }
 
-  playerFound(bTag: string): void {
-    this.foundPlayer = bTag;
-  }
+    function resetDialog(): void {
+      nextTick(() => {
+        editedItem.value = Object.assign({}, defaultItem);
+        editedIndex.value = -1;
+      });
+      playerSearchStore.clearPlayerSearch();
+    }
 
-  searchCleared(): void {
-    this.foundPlayer = "";
-  }
+    watch(dialog, onDialogToggled);
+    function onDialogToggled(): void {
+      // Only trigger on dialog close, not dialog open
+      if (!dialog.value) {
+        adminStore.resetBanValidationMessage();
+        resetDialog();
+        playerSearchStore.clearPlayerSearch();
+      }
+    }
 
-  // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
-  get endDateIsSet(): boolean {
-    return this.editedItem.endDate.length == 10;
-  }
-}
+    function playerFound(bTag: string): void {
+      foundPlayer.value = bTag;
+    }
+
+    function searchCleared(): void {
+      foundPlayer.value = "";
+    }
+
+    const headers: AdminBannedPlayersHeader[] = [
+      { text: "BattleTag", value: "battleTag", sortable: true, width: "10vw", filterable: true },
+      { text: "Ban End Date", value: "endDate", sortable: true, width: "10vw", filterable: false },
+      { text: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw", filterable: false },
+      { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
+      { text: "IP ban", value: "isIpBan", sortable: true, width: "5vw", filterable: false },
+      { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
+      { text: "Ban reason", value: "banReason", sortable: true, filterable: false },
+      { text: "Actions", value: "actions", sortable: false, filterable: false },
+    ];
+
+    return {
+      mdiDelete,
+      mdiMagnify,
+      mdiPencil,
+      headers,
+      bannedPlayers,
+      tableSearch,
+      dialog,
+      formTitle,
+      isAddDialog,
+      playerFound,
+      searchCleared,
+      editedItem,
+      dateMenu,
+      selectableGameModes,
+      isValidationError,
+      banValidationError,
+      close,
+      isEmpty,
+      getGameModeName,
+      save,
+      editItem,
+      deleteItem,
+    };
+  },
+});
 </script>
-
-<style lang="scss"></style>
