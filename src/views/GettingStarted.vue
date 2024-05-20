@@ -314,44 +314,38 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { defineComponent, ref } from "vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
 
-@Component({})
-export default class GettingStartedView extends Vue {
-  tabsModel = null;
-  public mdiDownload = mdiDownload;
-  public launcher_e_url = "";
+export default defineComponent({
+  name: "GettingStartedView",
+  components: {},
+  props: {},
+  setup() {
+    const tabsModel = ref(null);
+    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
+    const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
+    const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
+    const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
+    const launcherUrlWin = ref<string>(LAUNCHER_UPDATE_URL + "launcher/win");
+    const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
 
-  get alertMessage() {
-    return "Those steps are only needed, if you have problems with the normal w3champions App. In that case, please reach out on discord!";
-  }
-
-  get webUiLink() {
-    return LAUNCHER_UPDATE_URL + "webui";
-  }
-
-  get mapsLink() {
-    return LAUNCHER_UPDATE_URL + "maps";
-  }
-
-  get launcherUrlMac() {
-    return LAUNCHER_UPDATE_URL + "launcher/mac";
-  }
-
-  get launcherUrlWin() {
-    return LAUNCHER_UPDATE_URL + "launcher/win";
-  }
-
-  get launcherEUrl() {
-    return LAUNCHER_UPDATE_URL + "launcher-e";
-  }
-}
+    return {
+      mdiDownload,
+      tabsModel,
+      alertMessage,
+      webUiLink,
+      mapsLink,
+      launcherUrlMac,
+      launcherUrlWin,
+      launcherEUrl,
+    };
+  },
+});
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .important {
   color: red;
   font-weight: bold;

@@ -17,43 +17,50 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import difference from "lodash/difference";
 import { isFuture } from "date-fns";
 import TournamentsTable from "@/components/tournaments/TournamentsTable.vue";
 import { ITournament } from "@/store/tournaments/types";
-import { Component } from "vue-property-decorator";
 import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
+import { useRouter } from "vue-router/composables";
 
-@Component({ components: { TournamentsTable } })
-export default class TournamentsView extends Vue {
-  private tournamentsStore = useTournamentsStore();
+export default defineComponent({
+  name: "TournamentsView",
+  components: {
+    TournamentsTable,
+  },
+  props: {},
+  setup() {
+    const router = useRouter();
+    const tournamentsStore = useTournamentsStore();
 
-  async mounted() {
-    await this.tournamentsStore.retrieveTournaments();
-  }
+    const tournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => tournamentsStore.tournaments);
+    const pastTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => difference(tournaments.value, upcomingTournaments.value));
 
-  get tournaments() {
-    return this.tournamentsStore.tournaments;
-  }
-
-  get upcomingTournaments() {
-    return this.tournaments.filter((tournament) => (
-      [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state)
-      && isFuture(tournament.startDateTime)
-    ));
-  }
-
-  get pastTournaments() {
-    return difference(this.tournaments, this.upcomingTournaments);
-  }
-
-  public onRowClick(item: ITournament) {
-    this.$router.push({
-      path: getTournamentUrl(item.id),
+    const upcomingTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => {
+      return tournaments.value.filter((tournament) => (
+        [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state)
+        && isFuture(tournament.startDateTime)
+      ));
     });
-  }
-}
+
+    function onRowClick(item: ITournament) {
+      router.push({
+        path: getTournamentUrl(item.id),
+      });
+    }
+    onMounted(async (): Promise<void> => {
+      await tournamentsStore.retrieveTournaments();
+    });
+
+    return {
+      upcomingTournaments,
+      tournaments,
+      onRowClick,
+    };
+  },
+});
 </script>

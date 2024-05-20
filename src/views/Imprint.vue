@@ -79,16 +79,20 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { defineComponent } from "vue";
 
-@Component({})
-export default class ImprintView extends Vue {}
+export default defineComponent({
+  name: "ImprintView",
+  components: {},
+  props: {},
+  setup() {
+    return {};
+  },
+});
 </script>
 
-<style type="text/css" scoped>
-.v-card__title,
-.v-card__text {
+<style lang="scss" scoped>
+.v-card__title, .v-card__text {
   filter: blur(0) !important;
 }
 </style>

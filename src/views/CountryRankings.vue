@@ -4,7 +4,7 @@
       <v-card-title class="search-bar">
         <gateway-select
           @gatewayChanged="onGatewayChanged"
-          v-if="isGatewayNeeded()"
+          v-if="isGatewayNeeded"
         />
         <game-mode-select
           :gameMode="selectedGameMode"
@@ -112,18 +112,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import {
-  CountryRanking,
-  Gateways,
-  League,
-  Ranking,
-  Season,
-} from "@/store/ranking/types";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { CountryRanking, CountryType, Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
-import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
@@ -133,201 +125,203 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight } from "@mdi/js";
+import { useRouter } from "vue-router/composables";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
 
-@Component({
+export default defineComponent({
+  name: "CountryRankingsView",
   components: {
-    LeagueIcon,
     GatewaySelect,
     GameModeSelect,
     CountryRankingsGrid,
     CountryFlag,
   },
-})
-export default class CountryRankingsView extends Vue {
-  initialized = false;
-  ongoingMatchesMap: OngoingMatches = {};
-  races = ERaceEnum;
-  countries: { country: string; countryCode: string }[] = Countries;
-  private rankingsStore = useRankingStore();
-  public mdiChevronRight = mdiChevronRight;
+  props: {
+    season: {
+      type: Number,
+      required: true,
+    },
+    gateway: {
+      type: Number as PropType<Gateways>,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
+    const rankingsStore = useRankingStore();
+    const matchStore = useMatchStore();
+    const rootStateStore = useRootStateStore();
+    let _intervalRefreshHandle: NodeJS.Timeout;
 
-  @Prop() season!: number;
-  @Prop() gateway!: Gateways;
-  @Prop() country!: string;
-  private matchStore = useMatchStore();
-  private rootStateStore = useRootStateStore();
+    const initialized = ref<boolean>(false);
+    const ongoingMatchesMap = ref<OngoingMatches>({});
+    const countries = ref<CountryType[]>(Countries);
+    const countryRef: ComputedRef<string> = computed((): string => props.country);
 
-  @Watch("country")
-  onCountryChanged(newValue: string) {
-    this.setCountry(newValue);
-  }
+    const selectedGameMode: ComputedRef<EGameMode> = computed((): EGameMode => rankingsStore.gameMode);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
+    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
+    const rankings: ComputedRef<CountryRanking[]> = computed((): CountryRanking[] => rankingsStore.countryRankings);
+    const selectedCountryCode: ComputedRef<string> = computed((): string => rankingsStore.selectedCountry);
+    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
+    const selectedGateway: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
 
-  private _intervalRefreshHandle?: number = undefined;
+    const selectedCountry: ComputedRef<CountryType> = computed((): CountryType => {
+      return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;
+    });
 
-  get selectedCountryCode() {
-    return this.rankingsStore.selectedCountry;
-  }
+    const currentCountryCode: ComputedRef<string> = computed((): string => {
+      // country code of the data being displayed
+      return (
+        rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
+        rankings.value[0]?.ranks[0].playersInfo[0].location
+      );
+    });
 
-  get selectedCountry() {
-    return (
-      this.countries.find((c) => c.countryCode === this.selectedCountryCode) ??
-      {}
-    );
-  }
+    const isLoading: ComputedRef<boolean> = computed((): boolean => {
+      return (
+        (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value) ||
+        (!initialized.value && rankings.value.length === 0)
+      );
+    });
 
-  get currentCountryCode() {
-    // country code of the data being displayed
-    return (
-      this.rankings[0]?.ranks[0].playersInfo[0].countryCode ||
-      this.rankings[0]?.ranks[0].playersInfo[0].location
-    );
-  }
-
-  get isLoading() {
-    return (
-      (this.rankingsStore.countryRankingsLoading &&
-        this.selectedCountryCode !== this.currentCountryCode) ||
-      (!this.initialized && this.rankings.length === 0)
-    );
-  }
-
-  get selectedGameMode() {
-    return this.rankingsStore.gameMode;
-  }
-
-  get selectedSeason() {
-    return this.rankingsStore.selectedSeason;
-  }
-
-  get seasons() {
-    return this.rankingsStore.seasons;
-  }
-
-  get rankings(): CountryRanking[] {
-    return this.rankingsStore.countryRankings;
-  }
-
-  get ladders(): League[] {
-    const league = this.rankingsStore.ladders?.filter(
-      (l) =>
-        l.gateway === this.rootStateStore.gateway &&
+    const ladders: ComputedRef<League[]> = computed((): League[] => {
+      const league = rankingsStore.ladders?.filter((l) =>
+        l.gateway === rootStateStore.gateway &&
         EGameMode.GM_1ON1 &&
-        l.season === this.rankingsStore.selectedSeason.id
-    )[0];
-    return league?.leagues;
-  }
+        l.season === rankingsStore.selectedSeason.id
+      )[0];
+      return league?.leagues;
+    });
 
-  public async onGatewayChanged() {
-    this.rankingsStore.SET_PAGE(0);
-    this.refreshRankings();
-  }
-
-  public isGatewayNeeded() {
-    return this.rankingsStore.selectedSeason.id <= 5;
-  }
-
-  public async onGameModeChanged(gameMode: EGameMode) {
-    await this.rankingsStore.setGameMode(gameMode);
-    this.refreshRankings();
-  }
-
-  selectCountry(countryCode: string) {
-    this.$router.push(`/Countries?country=${countryCode}`);
-  }
-
-  async mounted() {
-    window.scrollTo(0, 0);
-    await this.rankingsStore.retrieveSeasons();
-
-    this.season
-      ? this.rankingsStore.setSeason({ id: this.season })
-      : this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
-
-    if (this.gateway) {
-      this.rootStateStore.SET_GATEWAY(this.gateway);
+    watch(countryRef, onCountryChanged);
+    function onCountryChanged(newValue: string) {
+      setCountry(newValue);
     }
 
-    const country =
-      this.country || this.selectedCountryCode || this.countries[0].countryCode;
+    async function onGatewayChanged(): Promise<void> {
+      rankingsStore.SET_PAGE(0);
+      refreshRankings();
+    }
 
-    await this.getLadders();
-    await this.rankingsStore.setCountry(country);
-    this.initialized = true;
 
-    await this.loadOngoingMatches();
+    async function onGameModeChanged(gameMode: EGameMode): Promise<void> {
+      await rankingsStore.setGameMode(gameMode);
+      refreshRankings();
+    }
 
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.refreshRankings();
-    }, AppConstants.ongoingMatchesRefreshInterval);
-  }
+    function selectCountry(countryCode: string): void {
+      router.push(`/Countries?country=${countryCode}`);
+    }
 
-  destroyed() {
-    clearInterval(this._intervalRefreshHandle);
-  }
+    onMounted(async (): Promise<void> => {
+      window.scrollTo(0, 0);
+      await rankingsStore.retrieveSeasons();
 
-  get selectedGateway() {
-    return this.rootStateStore.gateway;
-  }
+      props.season
+        ? rankingsStore.setSeason({ id: props.season })
+        : rankingsStore.setSeason(rankingsStore.seasons[0]);
 
-  public async refreshRankings() {
-    await this.loadOngoingMatches();
+      if (props.gateway) {
+        rootStateStore.SET_GATEWAY(props.gateway);
+      }
 
-    await this.getLadders();
-    await this.getRankings();
-  }
+      const country = props.country || selectedCountryCode.value || countries.value[0].countryCode;
 
-  public async getRankings() {
-    await this.rankingsStore.getCountryRankings();
-  }
+      await getLadders();
+      await rankingsStore.setCountry(country);
+      initialized.value = true;
 
-  public async getLadders() {
-    await this.rankingsStore.retrieveLeagueConstellation();
-  }
+      await loadOngoingMatches();
 
-  public async loadOngoingMatches() {
-    await this.matchStore.loadAllOngoingMatches();
+      _intervalRefreshHandle = setInterval(async () => {
+        await refreshRankings();
+      }, AppConstants.ongoingMatchesRefreshInterval);
+    });
 
-    this.ongoingMatchesMap = {};
-    this.matchStore.allOngoingMatches.forEach((x) => {
-      x.teams.forEach((t) => {
-        t.players.forEach((p) => {
-          const playerTag = p.battleTag;
-          const opponentTeams = x.teams.filter((et) => et != t);
-          const opponents = opponentTeams.flatMap((ot) => {
-            return ot.players.map((y) => y.battleTag);
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
+
+
+    async function refreshRankings(): Promise<void> {
+      await loadOngoingMatches();
+      await getLadders();
+      await getRankings();
+    }
+
+    async function getRankings(): Promise<void> {
+      await rankingsStore.getCountryRankings();
+    }
+
+    async function getLadders(): Promise<void> {
+      await rankingsStore.retrieveLeagueConstellation();
+    }
+
+    async function loadOngoingMatches(): Promise<void> {
+      await matchStore.loadAllOngoingMatches();
+
+      ongoingMatchesMap.value = {};
+      matchStore.allOngoingMatches.forEach((x) => {
+        x.teams.forEach((t) => {
+          t.players.forEach((p) => {
+            const playerTag = p.battleTag;
+            const opponentTeams = x.teams.filter((et) => et != t);
+            const opponents = opponentTeams.flatMap((ot) => {
+              return ot.players.map((y) => y.battleTag);
+            });
+
+            ongoingMatchesMap.value[playerTag] = {
+              players: t.players.map((y) => y.battleTag),
+              opponents: opponents,
+            };
           });
-
-          this.ongoingMatchesMap[playerTag] = {
-            players: t.players.map((y) => y.battleTag),
-            opponents: opponents,
-          };
         });
       });
-    });
-  }
+    }
 
-  async selectSeason(season: Season) {
-    this.rankingsStore.setSeason(season);
-    this.refreshRankings();
-  }
+    async function selectSeason(season: Season): Promise<void> {
+      rankingsStore.setSeason(season);
+      refreshRankings();
+    }
 
-  async setCountry(countryCode: string) {
-    await this.rankingsStore.setCountry(countryCode);
-  }
+    async function setCountry(countryCode: string): Promise<void> {
+      await rankingsStore.setCountry(countryCode);
+    }
 
-  public playerIsRanked(rank: Ranking): boolean {
-    return rank.player.games > 0;
-  }
+    function playerIsRanked(rank: Ranking): boolean {
+      return rank.player.games > 0;
+    }
 
-  public routeToProfilePage(playerId: string) {
-    this.$router.push({
-      path: getProfileUrl(playerId),
-    });
-  }
-}
+    function routeToProfilePage(playerId: string): void {
+      router.push({ path: getProfileUrl(playerId) });
+    }
+
+    return {
+      mdiChevronRight,
+      ERaceEnum,
+      onGatewayChanged,
+      isGatewayNeeded,
+      selectedGameMode,
+      onGameModeChanged,
+      selectedCountry,
+      countries,
+      selectCountry,
+      selectedSeason,
+      seasons,
+      selectSeason,
+      isLoading,
+      rankings,
+      ongoingMatchesMap,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .countries-list {

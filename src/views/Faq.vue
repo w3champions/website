@@ -19,32 +19,39 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { defineComponent, onMounted, ref } from "vue";
 import { API_URL } from "@/main";
 
 interface Faq {
-  qestion: string;
+  question: string;
   answer: string;
 }
 
-@Component({})
-export default class FaqView extends Vue {
-  public faqs = [] as Faq[];
+export default defineComponent({
+  name: "FaqView",
+  components: {},
+  props: {},
+  setup() {
+    const faqs = ref<Faq[]>([]);
 
-  async mounted() {
-    if (API_URL.includes("test")) {
-      await this.setNewsContent("test");
-    } else {
-      await this.setNewsContent("prod");
+    onMounted(async (): Promise<void> => {
+      if (API_URL.includes("test")) {
+        await setNewsContent("test");
+      } else {
+        await setNewsContent("prod");
+      }
+    });
+
+    async function setNewsContent(stage: string) {
+      const mdNewsResponse = await fetch(
+        `https://raw.githubusercontent.com/w3champions/w3champions-news/master/${stage}/faqs.json`
+      );
+      faqs.value = await mdNewsResponse.json();
     }
-  }
 
-  private async setNewsContent(stage: string) {
-    const mdNewsResponse = await fetch(
-      `https://raw.githubusercontent.com/w3champions/w3champions-news/master/${stage}/faqs.json`
-    );
-    this.faqs = await mdNewsResponse.json();
-  }
-}
+    return {
+      faqs,
+    };
+  },
+});
 </script>

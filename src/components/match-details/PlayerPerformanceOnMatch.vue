@@ -87,19 +87,23 @@ export default defineComponent({
   props: {
     unitScore: {
       type: Array<UnitScore>,
-      required: true,
+      required: false,
+      default: [],
     },
     resourceScore: {
       type: Array<ResourceScore>,
-      required: true,
+      required: false,
+      default: [],
     },
     unitScoreOpponent: {
       type: Array<UnitScore>,
-      required: true,
+      required: false,
+      default: [],
     },
     resourceScoreOpponent: {
       type: Array<ResourceScore>,
-      required: true,
+      required: false,
+      default: [],
     },
     left: {
       type: Boolean,

@@ -337,14 +337,10 @@ import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
+import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
-
-type CountryType = {
-  country: string;
-  countryCode: string;
-};
 
 export default defineComponent({
   name: "PlayerAvatar",

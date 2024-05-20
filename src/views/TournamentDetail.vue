@@ -9,27 +9,33 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { ITournament } from "@/store/tournaments/types";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import Tournament from "@/components/tournaments/Tournament.vue";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
-@Component({
+export default defineComponent({
+  name: "TournamentDetail",
   components: {
     Tournament,
   },
-})
-export default class TournamentDetail extends Vue {
-  @Prop() public tournamentId!: string;
-  private tournamentsStore = useTournamentsStore();
+  props: {
+    tournamentId: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const tournamentsStore = useTournamentsStore();
+    const tournament: ComputedRef<ITournament | undefined> = computed((): ITournament | undefined => tournamentsStore.tournaments.find((t) => t.id === props.tournamentId));
 
-  async mounted() {
-    await this.tournamentsStore.retrieveTournaments();
-  }
+    onMounted(async (): Promise<void> => {
+      await tournamentsStore.retrieveTournaments();
+    });
 
-  get tournament(): ITournament | undefined {
-    return this.tournamentsStore.tournaments.find((t) => t.id === this.tournamentId);
-  }
-}
+    return {
+      tournament,
+    };
+  },
+});
 </script>

@@ -46,9 +46,8 @@
 </template>
 
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
@@ -60,7 +59,8 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
-@Component({
+export default defineComponent({
+  name: "OverallStatisticsView",
   components: {
     MmrDistributionChart,
     HeroWinrate,
@@ -69,39 +69,38 @@ import { useRankingStore } from "@/store/ranking/store";
     AmountPerDayChart,
     GameLengthChart,
   },
-})
-export default class OverallStatisticsView extends Vue {
-  private oauthStore = useOauthStore();
-  private overallStatsStore = useOverallStatsStore();
-  private player = usePlayerStore();
-  private rankingsStore = useRankingStore();
+  props: {},
+  setup() {
+    const oauthStore = useOauthStore();
+    const overallStatsStore = useOverallStatsStore();
+    const playerStore = usePlayerStore();
+    const rankingsStore = useRankingStore();
 
-  get seasons(): Season[] {
-    return this.rankingsStore.seasons;
-  }
+    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
+    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
 
-  get verifiedBtag(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
-
-  mounted(): void {
-    this.init();
-  }
-
-  private async init() {
-    await this.overallStatsStore.loadGamesPerDayStatistics();
-    await this.overallStatsStore.loadMapsPerSeason();
-    await this.overallStatsStore.loadPlayersPerDayStatistics();
-    await this.overallStatsStore.loadGameLengthStatistics();
-    await this.overallStatsStore.loadPopularGameHours();
-    await this.overallStatsStore.loadMapAndRaceStatistics();
-    await this.overallStatsStore.loadMatchupLengthStatistics(1, 1, "all");
-    if (this.verifiedBtag) {
-      await this.player.loadProfile({
-        battleTag: this.verifiedBtag,
-        freshLogin: false,
-      });
+    async function init() {
+      await overallStatsStore.loadGamesPerDayStatistics();
+      await overallStatsStore.loadMapsPerSeason();
+      await overallStatsStore.loadPlayersPerDayStatistics();
+      await overallStatsStore.loadGameLengthStatistics();
+      await overallStatsStore.loadPopularGameHours();
+      await overallStatsStore.loadMapAndRaceStatistics();
+      await overallStatsStore.loadMatchupLengthStatistics(1, 1, "all");
+      if (verifiedBtag.value) {
+        await playerStore.loadProfile({
+          battleTag: verifiedBtag.value,
+          freshLogin: false,
+        });
+      }
     }
-  }
-}
+
+    onMounted((): void => {
+      init();
+    });
+
+    return {
+    };
+  },
+});
 </script>

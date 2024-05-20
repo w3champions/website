@@ -108,3 +108,8 @@ export enum Gateways {
   Europe = 20,
   Asia = 30,
 }
+
+export interface CountryType {
+  country: string;
+  countryCode: string;
+}
