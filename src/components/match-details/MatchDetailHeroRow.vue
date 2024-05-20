@@ -77,12 +77,12 @@ export default defineComponent({
     heroesOfWinner: {
       type: Array<Hero>,
       false: true,
-      default: undefined,
+      default: [],
     },
     heroesOfLoser: {
       type: Array<Hero>,
       false: true,
-      default: undefined,
+      default: [],
     },
     scoresOfWinner: {
       type: Object as PropType<HeroScore>,

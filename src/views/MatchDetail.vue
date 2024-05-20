@@ -18,7 +18,7 @@
                   style="padding-right: 0px"
                 ></host-icon>
               </v-col>
-              <v-col cols="4" v-if="!matchIsFFA()">
+              <v-col cols="4" v-if="!matchIsFFA">
                 <team-match-info
                   :big-race-icon="true"
                   :left="true"
@@ -26,12 +26,12 @@
                 />
               </v-col>
               <v-col cols="1" class="text-center" >
-                <span v-if="!matchIsFFA()">{{ $t(`views_matchdetail.vs`) }}</span>
+                <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
-              <v-col v-if="!matchIsFFA()" cols="4">
+              <v-col v-if="!matchIsFFA" cols="4">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
-              <v-col v-if="matchIsFFA()" cols="6">
+              <v-col v-if="matchIsFFA" cols="6">
                 <team-match-info
                   class="ma-1"
                   :big-race-icon="true"
@@ -75,73 +75,45 @@
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
               v-bind:key="index"
-              :heroes-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroes : []
-              "
-              :heroes-of-loser="
-                !!scoresOfLosers[index] ? scoresOfLosers[index]?.heroes : []
-              "
-              :scores-of-winner="
-                !!scoresOfWinners[index] ? scoresOfWinners[index]?.heroScore : []
-              "
-              :scores-of-loser="
-                !!scoresOfLosers[index] ? scoresOfLosers[index]?.heroScore : []
-              "
+              :heroes-of-winner="scoresOfWinners[index]?.heroes"
+              :heroes-of-loser="scoresOfLosers[index]?.heroes"
+              :scores-of-winner="scoresOfWinners[index]?.heroScore"
+              :scores-of-loser="scoresOfLosers[index]?.heroScore"
             />
           </div>
           <match-detail-hero-row
-            v-if="matchIsFFA() && isCompleteGame"
+            v-if="matchIsFFA && isCompleteGame"
             :not-color-winner="true"
-            :heroes-of-winner="!!ffaLoser2?.heroes ? ffaLoser2?.heroes : []"
-            :heroes-of-loser="!!ffaLoser3?.heroes ? ffaLoser3?.heroes : []"
-            :scores-of-winner="
-              !!ffaLoser2?.heroScore ? ffaLoser2?.heroScore : []
-            "
-            :scores-of-loser="
-              !!ffaLoser3?.heroScore ? ffaLoser3?.heroScore : []
-            "
+            :heroes-of-winner="ffaLoser2?.heroes"
+            :heroes-of-loser="ffaLoser3?.heroes"
+            :scores-of-winner="ffaLoser2?.heroScore"
+            :scores-of-loser="ffaLoser3?.heroScore"
           />
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
-          <v-row  v-if="isCompleteGame && !matchIsFFA()" class="justify-center">
+          <v-row  v-if="isCompleteGame && !matchIsFFA" class="justify-center">
             <v-col cols="5" class="mr-7">
               <player-performance-on-match class="mt-4"
-                :unit-score="
-                  scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-score="
-                  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
-                "
-                :unit-score-opponent="
-                  scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-score-opponent="
-                  scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
-                "
+                :unit-score="scoresOfWinners.map((h) => h.unitScore)"
+                :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
+                :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
+                :resource-score-opponent="scoresOfLosers.map((h) => h.resourceScore)"
                 :left="true"
               />
             </v-col>
             <v-col cols="5" class="ml-7">
               <player-performance-on-match class="mt-4"
-                :unit-score="
-                  scoresOfLosers.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-score="
-                  scoresOfLosers.map((h) => (!!h ? h.resourceScore : []))
-                "
-                :unit-score-opponent="
-                  scoresOfWinners.map((h) => (!!h ? h.unitScore : []))
-                "
-                :resource-score-opponent="
-                  scoresOfWinners.map((h) => (!!h ? h.resourceScore : []))
-                "
+                :unit-score="scoresOfLosers.map((h) => h.unitScore)"
+                :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
+                :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
+                :resource-score-opponent="scoresOfWinners.map((h) => h.resourceScore)"
               />
             </v-col>
           </v-row>
-          <v-row class="mb-3" v-if="isCompleteGame && matchIsFFA()">
+          <v-row class="mb-3" v-if="isCompleteGame && matchIsFFA">
             <v-col cols="2" />
             <v-col>
               <v-row dense v-for="(label, index) in rowLabels" :key="label">
@@ -182,23 +154,23 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import _keyBy from "lodash/keyBy";
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
-import { EGameMode, PlayerScore, Team } from "@/store/types";
+import { EGameMode, Match, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
+import _keyBy from "lodash/keyBy";
 
-@Component({
+export default defineComponent({
+  name: "MatchDetailView",
   components: {
     MatchDetailHeroRow,
     PlayerPerformanceOnMatch,
@@ -208,23 +180,161 @@ import { useMatchStore } from "@/store/match/store";
     HostIcon,
     DownloadReplayIcon,
   },
-})
-export default class MatchDetailView extends Vue {
-  @Prop() public matchId!: string;
-  private matchStore = useMatchStore();
-  public mapNameFromMatch = mapNameFromMatch;
+  props: {
+    matchId: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const matchStore = useMatchStore();
 
-  @Watch("matchId")
-  onMatchIdChanged() {
-    this.init();
-  }
+    // const matchIdRef = ref<string>(props.matchId);
 
-  mounted() {
-    this.init();
-  }
+    const match: ComputedRef<Match> = computed((): Match => matchStore.matchDetail.match);
+    const matchDuration: ComputedRef<string> = computed((): string => formatSecondsToDuration(match.value.durationInSeconds));
+    const playedDate: ComputedRef<string> = computed((): string => formatTimestampStringToDate(match.value.startTime));
+    const ffaPlayers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => [ffaWinner.value, ...ffaLosers.value]);
+    const gateWay: ComputedRef<string> = computed((): string => Gateways[matchStore.matchDetail.match.gateWay]);
+    const season: ComputedRef<number> = computed((): number => matchStore.matchDetail.match.season ?? 1);
+    const isCompleteGame: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => matchStore.matchDetail.playerScores);
+    const loading: ComputedRef<boolean> = computed((): boolean => matchStore.loadingMatchDetail);
 
-  get rowLabels() {
-    return [
+    const matchIsFFA: ComputedRef<boolean> = computed((): boolean => {
+      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
+      return ffaModes.includes(matchStore.matchDetail.match.gameMode);
+    });
+
+    const isJubileeGame: ComputedRef<boolean> = computed((): boolean => {
+      if (!match.value?.number) return false;
+      return match.value.number !== 0 && match.value?.number % 1000000 === 0;
+    });
+
+    const playerScores: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+      const { playerScores, match } = matchStore.matchDetail;
+      if (matchIsFFA.value) {
+        const ffaMappedPlayerScores = playerScores.map((playerScore) => {
+          const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
+          return {
+            ...playerScore,
+            battleTag,
+          };
+        });
+        matchStore.setPlayerScores(ffaMappedPlayerScores);
+        return ffaMappedPlayerScores ?? [];
+      }
+      return playerScores ?? [];
+    });
+
+    const scoresOfWinners: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+      const winningTeam = match.value.teams[0];
+      return getPlayerScores(winningTeam);
+    });
+
+    const scoresOfLosers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+      const losingTeam = match.value.teams[1];
+      return getPlayerScores(losingTeam);
+    });
+
+    const ffaWinner: ComputedRef<PlayerScore> = computed((): PlayerScore => {
+      return playerScores.value.find(
+        (s) => s.battleTag === match.value.teams[0].players[0].battleTag
+      )!;
+    });
+
+    const ffaLosers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+      return playerScores.value.filter(
+        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
+      );
+    });
+
+    const ffaLoser1: ComputedRef<PlayerScore> = computed((): PlayerScore => {
+      return playerScores.value.find(
+        (s) => s.battleTag === match.value.teams[1].players[0].battleTag
+      )!;
+    });
+
+    const ffaLoser2: ComputedRef<PlayerScore> = computed((): PlayerScore => {
+      return playerScores.value.find(
+        (s) => s.battleTag === match.value.teams[2].players[0].battleTag
+      )!;
+    });
+
+    const ffaLoser3: ComputedRef<PlayerScore> = computed((): PlayerScore => {
+      return playerScores.value.find(
+        (s) => s.battleTag === match.value.teams[3].players[0].battleTag
+      )!;
+    });
+
+    const gameNumber: ComputedRef<string> = computed((): string => {
+      const number = match.value.number / 1000000;
+      switch (number) {
+        case 1:
+          return "one";
+        case 2:
+          return "two";
+        case 3:
+          return "three";
+        case 4:
+          return "four";
+        case 5:
+          return "five";
+        case 6:
+          return "six";
+        case 7:
+          return "seven";
+        case 8:
+          return "eight";
+        case 9:
+          return "nine";
+        default:
+          return "bazillion";
+      }
+    });
+
+    function getPlayerScores(team: Team): PlayerScore[] {
+      const scores: PlayerScore[] = playerScores.value
+        .filter((s) =>
+          team.players.some(
+            (player) =>
+              player.battleTag.startsWith(s.battleTag) ||
+              s.battleTag
+                .toLowerCase()
+                .includes(player.battleTag.toLowerCase().split("#", 1)[0])
+          )
+        )
+        .map((s) => {
+          // Use the battleTag from the Player record
+          // since it is sometimes incorrect on the PlayerScore record
+          const matchedPlayer = team.players.find((p) =>
+            s.battleTag
+              .toLowerCase()
+              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+          );
+          return {
+            ...s,
+            battleTag: matchedPlayer?.battleTag ?? "",
+          };
+        });
+
+      const playerScoreDictionary = _keyBy(scores, "battleTag");
+
+      return team.players.map(
+        (player) => playerScoreDictionary[player.battleTag]
+      );
+    }
+
+    // watch(matchIdRef, init);
+
+    onMounted((): void => {
+      init();
+    });
+
+    async function init(): Promise<void> {
+      await matchStore.loadMatchDetail(props.matchId);
+    }
+
+    const rowLabels = [
       "",
       "Units killed",
       "Units produced",
@@ -233,181 +343,31 @@ export default class MatchDetailView extends Vue {
       "Upkeep lost",
       "Largest army",
     ];
-  }
 
-  get ffaPlayers() {
-    return [this.ffaWinner, ...this.ffaLosers];
-  }
-
-  get matchDuration(): string {
-    return formatSecondsToDuration(this.match.durationInSeconds);
-  }
-
-  get playedDate(): string {
-    return formatTimestampStringToDate(this.match.startTime);
-  }
-
-  get match() {
-    return this.matchStore.matchDetail.match;
-  }
-
-  get isJubileeGame() {
-    if (!this.match?.number) {
-      return false;
-    }
-
-    return this.match.number !== 0 && this.match?.number % 1000000 === 0;
-  }
-
-  get gameNumber() {
-    const number = this.match.number / 1000000;
-    switch (number) {
-      case 1:
-        return "one";
-      case 2:
-        return "two";
-      case 3:
-        return "three";
-      case 4:
-        return "four";
-      case 5:
-        return "five";
-      case 6:
-        return "six";
-      case 7:
-        return "seven";
-      case 8:
-        return "eight";
-      case 9:
-        return "nine";
-      default:
-        return "bazillion";
-    }
-  }
-
-  get gateWay() {
-    return Gateways[this.matchStore.matchDetail.match.gateWay];
-  }
-
-  get season() {
-    return this.matchStore.matchDetail.match.season ?? 1;
-  }
-
-  matchIsFFA() {
-    const ffaModes = [
-      EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
-    ];
-
-    return ffaModes.includes(this.matchStore.matchDetail.match.gameMode);
-
-  }
-
-  get isCompleteGame() {
-    return this.matchStore.matchDetail.playerScores;
-  }
-
-  get playerScores() {
-    const {
-      playerScores,
+    return {
+      mapNameFromMatch,
+      isJubileeGame,
+      loading,
+      gateWay,
+      season,
       match,
-    } = this.matchStore.matchDetail;
-    if (this.matchIsFFA()) {
-      const ffaMappedPlayerScores = playerScores.map((playerScore) => {
-        const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
-        return {
-          ...playerScore,
-          battleTag,
-        };
-      });
-      this.matchStore.setPlayerScores(ffaMappedPlayerScores);
-      return ffaMappedPlayerScores ?? [];
-    }
-    return playerScores ?? [];
-  }
-
-  get scoresOfWinners() {
-    const winningTeam = this.match.teams[0];
-    return this.getPlayerScores(winningTeam);
-  }
-
-  get scoresOfLosers() {
-    const losingTeam = this.match.teams[1];
-    return this.getPlayerScores(losingTeam);
-  }
-
-  get ffaWinner() {
-    return this.playerScores.find(
-      (s) => s.battleTag === this.match.teams[0].players[0].battleTag
-    );
-  }
-
-  get ffaLosers() {
-    return this.playerScores.filter(
-      (s) => s.battleTag !== this.match.teams[0].players[0].battleTag
-    );
-  }
-
-  get ffaLoser1() {
-    return this.playerScores.find(
-      (s) => s.battleTag === this.match.teams[1].players[0].battleTag
-    );
-  }
-
-  get ffaLoser2() {
-    return this.playerScores.find(
-      (s) => s.battleTag === this.match.teams[2].players[0].battleTag
-    );
-  }
-
-  get ffaLoser3() {
-    return this.playerScores.find(
-      (s) => s.battleTag === this.match.teams[3].players[0].battleTag
-    );
-  }
-
-  get loading() {
-    return this.matchStore.loadingMatchDetail;
-  }
-
-  private async init() {
-    await this.matchStore.loadMatchDetail(this.matchId);
-  }
-
-  private getPlayerScores(team: Team): PlayerScore[] {
-    const scores: PlayerScore[] = this.playerScores
-      .filter((s) =>
-        team.players.some(
-          (player) =>
-            player.battleTag.startsWith(s.battleTag) ||
-            s.battleTag
-              .toLowerCase()
-              .includes(player.battleTag.toLowerCase().split("#", 1)[0])
-        )
-      )
-      .map((s) => {
-        // Use the battleTag from the Player record
-        // since it is sometimes incorrect on the PlayerScore record
-        const matchedPlayer = team.players.find((p) =>
-          s.battleTag
-            .toLowerCase()
-            .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-        );
-        return {
-          ...s,
-          battleTag: matchedPlayer?.battleTag ?? "",
-        };
-      });
-
-    const playerScoreDictionary = _keyBy(scores, "battleTag");
-
-    return team.players.map(
-      (player) => playerScoreDictionary[player.battleTag]
-    );
-  }
-}
+      matchIsFFA,
+      gameNumber,
+      matchDuration,
+      playedDate,
+      isCompleteGame,
+      scoresOfWinners,
+      scoresOfLosers,
+      ffaLoser2,
+      ffaLoser3,
+      rowLabels,
+      ffaPlayers,
+    };
+  },
+});
 </script>
 
-<style type="text/css" scoped>
+<style lang="scss" scoped>
 .small-title {
   margin-top: -25px !important;
   margin-bottom: -25px !important;
