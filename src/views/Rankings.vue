@@ -4,7 +4,7 @@
       <v-card-title class="search-bar">
         <gateway-select
           @gatewayChanged="onGatewayChanged"
-          v-if="isGatewayNeeded()"
+          v-if="isGatewayNeeded"
         />
         <game-mode-select
           :gameMode="selectedGameMode"
@@ -13,7 +13,7 @@
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" class="transparent">
-              <league-icon :league="selectedLeageueOrder" />
+              <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{
                 selectedLeague.division !== 0 ? selectedLeague.division : null
@@ -83,11 +83,11 @@
                   </span>
                   <span
                     v-if="
-                      data.item.player.gameMode === gameModes.GM_1ON1 &&
+                      data.item.player.gameMode === EGameMode.GM_1ON1 &&
                       data.item.player.race
                     "
                   >
-                    ({{ $t(`racesShort.${races[data.item.player.race]}`) }})
+                    ({{ $t(`racesShort.${ERaceEnum[data.item.player.race]}`) }})
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="playerIsRanked(data.item)">
@@ -176,8 +176,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -191,8 +190,10 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
+import { useRouter } from "vue-router/composables";
 
-@Component({
+export default defineComponent({
+  name: "RankingsView",
   components: {
     LeagueIcon,
     GatewaySelect,
@@ -200,274 +201,272 @@ import { mdiChevronRight, mdiMagnify } from "@mdi/js";
     RankingsGrid,
     RankingsRaceDistribution,
   },
-})
-export default class RankingsView extends Vue {
-  public search = "";
-  public searchModel = {} as Ranking;
-  public isLoading = false;
-  public ongoingMatchesMap: OngoingMatches = {};
-  public gameModes = EGameMode;
-  public races = ERaceEnum;
-  private searchTimer: ReturnType<typeof setTimeout> = 0;
-  public mdiMagnify = mdiMagnify;
-  public mdiChevronRight = mdiChevronRight;
+  props: {
+    season: {
+      type: Number,
+      required: true,
+    },
+    league: {
+      type: Number,
+      required: true,
+    },
+    gateway: {
+      type: Number as PropType<Gateways>,
+      required: true,
+    },
+    gamemode: {
+      type: Number as PropType<EGameMode>,
+      required: true,
+    },
+  },
+  setup(props) {
+    // @Prop({ default: "" })
+    const router = useRouter();
+    const rankingsStore = useRankingStore();
+    const matchStore = useMatchStore();
+    const rootStateStore = useRootStateStore();
+    let _intervalRefreshHandle: NodeJS.Timeout;
+    let searchTimer: NodeJS.Timeout;
 
-  @Prop() public season!: number;
-  @Prop() public league!: number;
-  @Prop() public gateway!: Gateways;
-  @Prop() public gamemode!: EGameMode;
-  @Prop({ default: "" })
-  public playerId!: string;
+    const search = ref<string>("");
+    const searchModel = ref<Ranking>({} as Ranking);
+    const isLoading = ref<boolean>(false);
+    const ongoingMatchesMap = ref<OngoingMatches>({});
+    const playerId = ref<string>("");
 
-  private _intervalRefreshHandle?: number = undefined;
-  private rankingsStore = useRankingStore();
-  private matchStore = useMatchStore();
-  private rootStateStore = useRootStateStore();
+    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
+    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
+    const selectedGameMode: ComputedRef<EGameMode> = computed((): EGameMode => rankingsStore.gameMode);
+    const selectedLeagueName: ComputedRef<string> = computed((): string => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
+    const rankings: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.rankings);
+    const searchRanks: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.searchRanks);
+    const showRaceDistribution: ComputedRef<boolean> = computed((): boolean => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const selectedGateway: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
 
-  @Watch("searchModel")
-  public onSearchModelChanged(rank: Ranking) {
-    if (!rank) return;
+    const ladders: ComputedRef<League[]> = computed((): League[] => {
+      const league = rankingsStore.ladders?.filter(
+        (l) =>
+          l.gateway === rootStateStore.gateway &&
+          l.gameMode === rankingsStore.gameMode &&
+          l.season === rankingsStore.selectedSeason.id
+      )[0];
+      return league?.leagues;
+    });
 
-    if (!this.playerIsRanked(rank)) {
-      this.routeToProfilePage(rank.player.playerIds[0].battleTag);
+    const selectedLeague: ComputedRef<League> = computed((): League => {
+      if (!ladders.value) return {} as League;
+      return ladders.value.filter((l) => l.id == rankingsStore.league)[0] || {};
+    });
+
+    const selectedLeagueOrder: ComputedRef<number> = computed((): number => {
+      const season = rankingsStore.selectedSeason;
+      if (season?.id < 5 && selectedLeague.value?.order > 1) {
+        return selectedLeague.value.order + 1;
+      }
+      return !selectedLeague.value?.order ? 0 : selectedLeague.value?.order;
+    });
+
+    async function refreshRankings() {
+      await loadOngoingMatches();
+      await getRankings();
+      await getLadders();
     }
 
-    this.setLeague(rank.league);
-  }
-
-  @Watch("searchRanks")
-  public onSearchRanksChanged() {
-    this.isLoading = false;
-  }
-
-  @Watch("search")
-  public onSearchChanged(newValue: string) {
-    const searchDebounced = (timeout = 500) => {
-      clearTimeout(this.searchTimer);
-      this.isLoading = true;
-      this.searchTimer = setTimeout(() => {
-        this.rankingsStore.search({
-          searchText: newValue.toLowerCase(),
-          gameMode: this.selectedGameMode,
-        });
-      }, timeout);
-    };
-
-    if (newValue && newValue.length > 2) {
-      searchDebounced();
-    } else {
-      this.rankingsStore.clearSearch();
-      this.isLoading = false;
-    }
-  }
-
-  public isDuplicateName(name: string) {
-    return this.searchRanks.filter((r) => r.player.name === name).length > 1;
-  }
-
-  public isGatewayNeeded() {
-    return this.rankingsStore.selectedSeason.id <= 5;
-  }
-
-  get selectedSeason() {
-    return this.rankingsStore.selectedSeason;
-  }
-
-  get seasons() {
-    return this.rankingsStore.seasons;
-  }
-
-  get selectedGameMode() {
-    return this.rankingsStore.gameMode;
-  }
-
-  get selectedLeague(): League {
-    if (!this.ladders) return {} as League;
-
-    return (
-      this.ladders.filter(
-        (l) => l.id == this.rankingsStore.league
-      )[0] || {}
-    );
-  }
-
-  get selectedLeagueName(): string {
-    return !this.selectedLeague?.name ? "" : this.selectedLeague?.name;
-  }
-
-  get selectedLeageueOrder(): number {
-    const season = this.rankingsStore.selectedSeason;
-    if (season?.id < 5 && this.selectedLeague?.order > 1) {
-      return this.selectedLeague.order + 1;
-    }
-    return !this.selectedLeague?.order ? 0 : this.selectedLeague?.order;
-  }
-
-  listLeagueIcon(item: League): number {
-    const season = this.rankingsStore.selectedSeason;
-    if (season?.id < 5 && item.order > 1) {
-      return item.order + 1;
-    }
-    return item.order;
-  }
-
-  get noDataText(): string {
-    if (!this.search || this.search.length < 3) {
-      return "Type at least 3 letters";
-    }
-    if (this.isLoading) {
-      return "Loading...";
+    async function getRankings() {
+      await rankingsStore.retrieveRankings();
     }
 
-    return "No player found";
-  }
-
-  get rankings(): Ranking[] {
-    return this.rankingsStore.rankings;
-  }
-
-  get ladders(): League[] {
-    const league = this.rankingsStore.ladders?.filter(
-      (l) =>
-        l.gateway === this.rootStateStore.gateway &&
-        l.gameMode === this.rankingsStore.gameMode &&
-        l.season === this.rankingsStore.selectedSeason.id
-    )[0];
-    return league?.leagues;
-  }
-
-  get searchRanks(): Ranking[] {
-    return this.rankingsStore.searchRanks;
-  }
-
-  get showRaceDistribution() {
-    return (
-      this.rankingsStore.gameMode == EGameMode.GM_1ON1 &&
-      this.rankingsStore.selectedSeason?.id > 1
-    );
-  }
-
-  public async onGatewayChanged() {
-    this.rankingsStore.SET_PAGE(0);
-
-    if (this.ladders && this.ladders[0]) {
-      await this.setLeague(this.ladders[0].id);
-    }
-  }
-
-  public async onGameModeChanged(gameMode: EGameMode) {
-    await this.rankingsStore.setGameMode(gameMode);
-    if (this.ladders && this.ladders[0]) {
-      await this.setLeague(this.ladders[0].id);
-    }
-  }
-
-  async mounted() {
-    this.search = "";
-
-    await this.rankingsStore.retrieveSeasons();
-
-    this.season
-      ? this.rankingsStore.setSeason({ id: this.season })
-      : this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
-
-    if (this.league) {
-      this.rankingsStore.setLeague(this.league);
-    }
-    if (this.gamemode) {
-      await this.rankingsStore.setGameMode(this.gamemode);
-    }
-    if (this.gateway) {
-      this.rootStateStore.setGateway(this.gateway);
+    async function getLadders() {
+      await rankingsStore.retrieveLeagueConstellation();
     }
 
-    await this.loadOngoingMatches();
-    await this.getLadders();
+    watch(searchModel, onSearchModelChanged);
+    function onSearchModelChanged(rank: Ranking): void {
+      if (!rank) return;
 
-    if (this.ladders && !this.selectedLeague?.id) {
-      this.rankingsStore.setLeague(this.ladders[0].id);
+      if (!playerIsRanked(rank)) {
+        routeToProfilePage(rank.player.playerIds[0].battleTag);
+      }
+
+      setLeague(rank.league);
     }
 
-    await this.getRankings();
-
-    if (this.playerId) {
-      const selectedPlayer = this.rankings.find(
-        (r) => r.player.id === this.playerId
-      );
-      this.searchModel = selectedPlayer ?? ({} as Ranking);
+    watch(searchRanks, onSearchRanksChanged);
+    function onSearchRanksChanged() {
+      isLoading.value = false;
     }
 
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.refreshRankings();
-    }, AppConstants.ongoingMatchesRefreshInterval);
-  }
+    watch(search, onSearchChanged);
+    function onSearchChanged(newValue: string) {
+      const searchDebounced = (timeout = 500) => {
+        clearTimeout(searchTimer);
+        isLoading.value = true;
+        searchTimer = setTimeout(() => {
+          rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
+        }, timeout);
+      };
 
-  destroyed(): void {
-    clearInterval(this._intervalRefreshHandle);
-  }
+      if (newValue && newValue.length > 2) {
+        searchDebounced();
+      } else {
+        rankingsStore.clearSearch();
+        isLoading.value = false;
+      }
+    }
 
-  get selectedGateway() {
-    return this.rootStateStore.gateway;
-  }
+    function isDuplicateName(name: string): boolean {
+      return searchRanks.value.filter((r) => r.player.name === name).length > 1;
+    }
 
-  public async refreshRankings() {
-    await this.loadOngoingMatches();
+    function listLeagueIcon(item: League): number {
+      const season = rankingsStore.selectedSeason;
+      if (season?.id < 5 && item.order > 1) {
+        return item.order + 1;
+      }
+      return item.order;
+    }
 
-    await this.getRankings();
-    await this.getLadders();
-  }
+    const noDataText: ComputedRef<string> = computed((): string => {
+      if (!search.value || search.value.length < 3) {
+        return "Type at least 3 letters";
+      }
+      if (isLoading.value) {
+        return "Loading...";
+      }
 
-  public async getRankings() {
-    await this.rankingsStore.retrieveRankings();
-  }
+      return "No player found";
+    });
 
-  public async getLadders() {
-    await this.rankingsStore.retrieveLeagueConstellation();
-  }
+    async function onGatewayChanged() {
+      rankingsStore.SET_PAGE(0);
 
-  public async loadOngoingMatches() {
-    await this.matchStore.loadAllOngoingMatches();
+      if (ladders.value && ladders.value[0]) {
+        await setLeague(ladders.value[0].id);
+      }
+    }
 
-    this.ongoingMatchesMap = {};
-    this.matchStore.allOngoingMatches.forEach((x) => {
-      x.teams.forEach((t) => {
-        t.players.forEach((p) => {
-          const playerTag = p.battleTag;
-          const opponentTeams = x.teams.filter((et) => et != t);
-          const opponents = opponentTeams.flatMap((ot) => {
-            return ot.players.map((y) => y.battleTag);
+    async function onGameModeChanged(gameMode: EGameMode) {
+      await rankingsStore.setGameMode(gameMode);
+      if (ladders.value && ladders.value[0]) {
+        await setLeague(ladders.value[0].id);
+      }
+    }
+
+    onMounted(async (): Promise<void> => {
+      // search.value = "";
+
+      await rankingsStore.retrieveSeasons();
+
+      props.season
+        ? rankingsStore.setSeason({ id: props.season })
+        : rankingsStore.setSeason(rankingsStore.seasons[0]);
+
+      if (props.league) {
+        rankingsStore.setLeague(props.league);
+      }
+      if (props.gamemode) {
+        await rankingsStore.setGameMode(props.gamemode);
+      }
+      if (props.gateway) {
+        rootStateStore.setGateway(props.gateway);
+      }
+
+      await loadOngoingMatches();
+      await getLadders();
+
+      if (ladders.value && !selectedLeague.value?.id) {
+        rankingsStore.setLeague(ladders.value[0].id);
+      }
+
+      await getRankings();
+
+      if (playerId.value) {
+        const selectedPlayer = rankings.value.find((r) => r.player.id === playerId.value);
+        searchModel.value = selectedPlayer ?? ({} as Ranking);
+      }
+
+      _intervalRefreshHandle = setInterval(async () => {
+        await refreshRankings();
+      }, AppConstants.ongoingMatchesRefreshInterval);
+    });
+
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
+
+    async function loadOngoingMatches() {
+      await matchStore.loadAllOngoingMatches();
+
+      ongoingMatchesMap.value = {};
+      matchStore.allOngoingMatches.forEach((x) => {
+        x.teams.forEach((t) => {
+          t.players.forEach((p) => {
+            const playerTag = p.battleTag;
+            const opponentTeams = x.teams.filter((et) => et != t);
+            const opponents = opponentTeams.flatMap((ot) => {
+              return ot.players.map((y) => y.battleTag);
+            });
+
+            ongoingMatchesMap.value[playerTag] = {
+              players: t.players.map((y) => y.battleTag),
+              opponents: opponents,
+            };
           });
-
-          this.ongoingMatchesMap[playerTag] = {
-            players: t.players.map((y) => y.battleTag),
-            opponents: opponents,
-          };
         });
       });
-    });
-  }
+    }
 
-  public async selectSeason(season: Season) {
-    this.rankingsStore.setSeason(season);
-    await this.getLadders();
-    await this.setLeague(0);
-  }
+    async function selectSeason(season: Season) {
+      rankingsStore.setSeason(season);
+      await getLadders();
+      await setLeague(0);
+    }
 
-  public async setLeague(league: number) {
-    this.rankingsStore.setLeague(league);
-    await this.getRankings();
-  }
+    async function setLeague(league: number) {
+      rankingsStore.setLeague(league);
+      await getRankings();
+    }
 
-  public playerIsRanked(rank: Ranking): boolean {
-    return rank.player.games > 0;
-  }
+    function playerIsRanked(rank: Ranking): boolean {
+      return rank.player.games > 0;
+    }
 
-  public routeToProfilePage(playerId: string) {
-    this.$router.push({
-      path: getProfileUrl(playerId),
-    });
-  }
-}
+    function routeToProfilePage(playerId: string) {
+      router.push({ path: getProfileUrl(playerId) });
+    }
+
+    return {
+      mdiChevronRight,
+      mdiMagnify,
+      EGameMode,
+      ERaceEnum,
+      onGatewayChanged,
+      isGatewayNeeded,
+      selectedGameMode,
+      onGameModeChanged,
+      selectedLeagueOrder,
+      selectedLeagueName,
+      selectedLeague,
+      setLeague,
+      listLeagueIcon,
+      ladders,
+      searchModel,
+      searchRanks,
+      isLoading,
+      search,
+      noDataText,
+      isDuplicateName,
+      playerIsRanked,
+      selectedSeason,
+      selectSeason,
+      seasons,
+      rankings,
+      ongoingMatchesMap,
+      showRaceDistribution,
+    };
+  },
+});
 </script>
 <style lang="scss" scoped>
 .leagues-list {
