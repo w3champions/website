@@ -48,11 +48,9 @@
     "pinia": "^2.0.32",
     "vue": "^2.7.14",
     "vue-chartjs": "^5.2.0",
-    "vue-class-component": "^7.2.6",
     "vue-cookies-ts": "^1.5.19",
     "vue-country-flag": "^2.3.2",
     "vue-i18n": "^8.28.2",
-    "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.6.5",
     "vuetify": "^2.6.13"
   },
