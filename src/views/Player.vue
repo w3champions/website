@@ -145,24 +145,13 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
-import { ModeStat, PlayerProfile, RaceStat } from "@/store/player/types";
+import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
-import MatchesGrid from "../components/matches/MatchesGrid.vue";
-import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
-import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
-import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
-import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
-import ClanOverview from "@/components/clans/ClanOverview.vue";
-import RaceIcon from "@/components/player/RaceIcon.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
-import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
-import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
-import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
-import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
@@ -172,17 +161,6 @@ export default defineComponent({
   name: "PlayerView",
   components: {
     SeasonBadge,
-    PlayerStatisticTab,
-    PlayerArrangedTeamsTab,
-    PlayerProfileTab,
-    PlayerMatchesTab,
-    RaceIcon,
-    ClanOverview,
-    PlayerAvatar,
-    PlayerLeague,
-    PlayerStatsRaceVersusRaceOnMap,
-    MatchesGrid,
-    ModeStatsGrid,
     GatewaySelect,
     TeamMatchInfo,
     HostIcon,
@@ -204,17 +182,11 @@ export default defineComponent({
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
 
-    const raceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => playerStore.raceStats);
-    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
     const seasons: ComputedRef<Season[]> = computed((): Season[] => playerStore.playerProfile.participatedInSeasons);
     const profile: ComputedRef<PlayerProfile> = computed((): PlayerProfile => playerStore.playerProfile);
-    const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);
     const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
     const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
-    const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
-    const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
     const ongoingMatch: ComputedRef<Match> = computed((): Match => playerStore.ongoingMatch);
-    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => playerStore.selectedSeason.id <= 5);
 
     const isOngoingMatchFFA: ComputedRef<boolean> = computed((): boolean => {
       const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];

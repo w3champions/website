@@ -41,7 +41,6 @@ export default defineComponent({
     const showProxyOptions = ref<boolean>(false);
     const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const proxiesOnSearchedTag: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.proxiesSetForSearchedPlayer);
 
     async function playerFound(bTag: string): Promise<void> {
       const proxies = await adminStore.getProxiesForPlayer(bTag);

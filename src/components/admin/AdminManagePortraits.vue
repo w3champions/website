@@ -111,11 +111,6 @@ export default defineComponent({
       editDialogOpen.value = true;
     }
 
-    function exitDialog(): void {
-      editPortraitId.value = 0;
-      editDialogOpen.value = false;
-    }
-
     function updateGroupModel(groups: string[]): void {
       groupsModel.value = groups;
     }

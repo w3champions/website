@@ -113,14 +113,13 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { CountryRanking, CountryType, Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
+import { CountryRanking, CountryType, Gateways, Season } from "@/store/ranking/types";
+import { EGameMode, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
 import AppConstants from "../constants";
-import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -170,7 +169,6 @@ export default defineComponent({
     const rankings: ComputedRef<CountryRanking[]> = computed((): CountryRanking[] => rankingsStore.countryRankings);
     const selectedCountryCode: ComputedRef<string> = computed((): string => rankingsStore.selectedCountry);
     const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
-    const selectedGateway: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
 
     const selectedCountry: ComputedRef<CountryType> = computed((): CountryType => {
       return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;
@@ -189,15 +187,6 @@ export default defineComponent({
         (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value) ||
         (!initialized.value && rankings.value.length === 0)
       );
-    });
-
-    const ladders: ComputedRef<League[]> = computed((): League[] => {
-      const league = rankingsStore.ladders?.filter((l) =>
-        l.gateway === rootStateStore.gateway &&
-        EGameMode.GM_1ON1 &&
-        l.season === rankingsStore.selectedSeason.id
-      )[0];
-      return league?.leagues;
     });
 
     watch(countryRef, onCountryChanged);
@@ -295,17 +284,8 @@ export default defineComponent({
       await rankingsStore.setCountry(countryCode);
     }
 
-    function playerIsRanked(rank: Ranking): boolean {
-      return rank.player.games > 0;
-    }
-
-    function routeToProfilePage(playerId: string): void {
-      router.push({ path: getProfileUrl(playerId) });
-    }
-
     return {
       mdiChevronRight,
-      // ERaceEnum,
       onGatewayChanged,
       isGatewayNeeded,
       selectedGameMode,
@@ -323,6 +303,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
 .countries-list {
   max-height: 650px;
