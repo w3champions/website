@@ -13,7 +13,7 @@
         <v-toolbar flat color="transparent">
           <v-toolbar-title>News for Launcher</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog max-width="1185" v-model="dialog">
+          <v-dialog max-width="1185" v-model="dialog" @click:outside="closeNews">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -242,17 +242,13 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const infoMessagesStore = useInfoMessagesStore();
 
+    const editedIndex = ref<number>(-1);
+
     const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const formTitle: ComputedRef<string> = computed((): string => editedIndex === -1 ? "New Item" : "Edit Item");
+    const formTitle: ComputedRef<string> = computed((): string => editedIndex.value === -1 ? "New Item" : "Edit Item");
 
     const dialog = ref<boolean>(false);
-
-    // FIXME: If you edit an item, then click on "Add News", the edited item's text show up in the dialog.
-
-    const editedIndex = -1; // FIXME: editedIndex is never changed, so the title is always "New item".
-    const dateMenu = false;
-    const date = "";
 
     const editedNewsItem = ref<NewsMessage>({} as NewsMessage);
 
@@ -290,6 +286,7 @@ export default defineComponent({
 
     function editNewsItem(item: NewsMessage): void {
       editedNewsItem.value = item;
+      editedIndex.value = news.value.indexOf(item);
       editor.chain().focus().setContent(item.message).run();
       dialog.value = true;
     }
@@ -311,6 +308,8 @@ export default defineComponent({
     function closeNews(): void {
       dialog.value = false;
       editedNewsItem.value = createDefaultNewsMessage();
+      editor.chain().focus().setContent("").run();
+      editedIndex.value = -1;
     }
 
     function createDefaultNewsMessage(): NewsMessage {

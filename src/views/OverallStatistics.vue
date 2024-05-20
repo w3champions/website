@@ -47,36 +47,19 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted } from "vue";
-import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";
-import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
-import PopularGameTimeChart from "@/components/overall-statistics/PopularGameTimeChart.vue";
-import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
-import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
-import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
-import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
-import { useRankingStore } from "@/store/ranking/store";
 
 export default defineComponent({
   name: "OverallStatisticsView",
-  components: {
-    MmrDistributionChart,
-    HeroWinrate,
-    PlayedHeroesChart,
-    PopularGameTimeChart,
-    AmountPerDayChart,
-    GameLengthChart,
-  },
+  components: {},
   props: {},
   setup() {
     const oauthStore = useOauthStore();
     const overallStatsStore = useOverallStatsStore();
     const playerStore = usePlayerStore();
-    const rankingsStore = useRankingStore();
 
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
     const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
 
     async function init() {

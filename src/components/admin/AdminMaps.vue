@@ -61,7 +61,6 @@ export default defineComponent({
     const isAddDialog = ref<boolean>(false);
 
     const maps: ComputedRef<Map[]> = computed((): Map[] => mapsManagementStore.maps);
-    const totalMaps: ComputedRef<number> = computed((): number => mapsManagementStore.totalMaps);
 
     function getMapPath(map: Map): string {
       const path = map?.gameMap?.path;

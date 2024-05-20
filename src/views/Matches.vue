@@ -163,10 +163,6 @@ export default defineComponent({
       clearInterval(_intervalRefreshHandle);
     });
 
-    function gatewayChanged(): void {
-      getMatches(1);
-    }
-
     function gameModeChanged(gameMode: EGameMode): void {
       matchStore.setGameMode(gameMode);
     }
