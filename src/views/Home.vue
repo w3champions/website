@@ -142,8 +142,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { marked } from "marked";
 import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
@@ -156,8 +155,10 @@ import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useRankingStore } from "@/store/ranking/store";
+import { useRouter } from "vue-router/composables";
 
-@Component({
+export default defineComponent({
+  name: "HomeView",
   components: {
     TopOngoingMatchesWithStreams,
     SocialBox,
@@ -165,58 +166,61 @@ import { useRankingStore } from "@/store/ranking/store";
     PartnerBox,
     CopyButton,
   },
-})
-export default class HomeView extends Vue {
-  public model = 0;
-  private infoMessagesStore = useInfoMessagesStore();
-  private rankingsStore = useRankingStore();
-  // activeGameModes: ActiveGameMode[] = [];
+  props: {},
+  setup() {
+    const router = useRouter();
+    const infoMessagesStore = useInfoMessagesStore();
+    const rankingsStore = useRankingStore();
+    const model = ref<number>(0);
 
-  get topFive(): Ranking[] {
-    return this.rankingsStore.topFive;
-  }
+    const topFive: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.topFive);
+    const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
 
-  get news(): NewsMessage[] {
-    return this.infoMessagesStore.news;
-  }
-
-  async mounted(): Promise<void> {
-    await this.rankingsStore.retrieveSeasons();
-    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
-    await this.rankingsStore.getTopFive();
-    await this.infoMessagesStore.loadNews();
-    await this.rankingsStore.retrieveActiveGameModes();
-    // this.activeGameModes = this.rankingsStore.activeModes;
-  }
-
-  public convertMarkdownToHTML(input: string): string | Promise<string> {
-    return marked(input);
-  }
-
-  public goToSetupPage(): void {
-    this.$router.push({
-      path: "/getting-started/",
+    // Only display 1v1, 2v2 and 4v4 instead of all game modes.
+    const activeGameModes: ComputedRef<ActiveGameMode[]> = computed((): ActiveGameMode[] => {
+      return rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4);
     });
-  }
 
-  public goToProfile(rank: Ranking): void {
-    this.$router.push({
-      path: getProfileUrl(rank.player.playerIds[0].battleTag),
+    onMounted(async (): Promise<void> => {
+      await rankingsStore.retrieveSeasons();
+      rankingsStore.setSeason(rankingsStore.seasons[0]);
+      await rankingsStore.getTopFive();
+      await infoMessagesStore.loadNews();
+      await rankingsStore.retrieveActiveGameModes();
+      // this.activeGameModes = this.rankingsStore.activeModes;
     });
-  }
 
-  public mapNamesAsString(gameMode: EGameMode) {
-    return this.activeGameModes
-             .filter((mode) => mode.id === gameMode)
-             .flatMap((mode) => mode.maps)
-             .map((map) => map.name).join("\n");
-  }
+    function convertMarkdownToHTML(input: string): string | Promise<string> {
+      return marked(input);
+    }
 
-  // Temp fix to only display 1v1, 2v2 and 4v4 instead of all game modes, because it needs some better design on the frontend.
-  get activeGameModes(): ActiveGameMode[] {
-    return this.rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4);
-  }
-}
+    function goToSetupPage(): void {
+      router.push({ path: "/getting-started/" });
+    }
+
+    function goToProfile(rank: Ranking): void {
+      router.push({ path: getProfileUrl(rank.player.playerIds[0].battleTag) });
+    }
+
+    function mapNamesAsString(gameMode: EGameMode): string {
+      return activeGameModes.value
+        .filter((mode) => mode.id === gameMode)
+        .flatMap((mode) => mode.maps)
+        .map((map) => map.name).join("\n");
+    }
+
+    return {
+      goToSetupPage,
+      model,
+      news,
+      convertMarkdownToHTML,
+      activeGameModes,
+      mapNamesAsString,
+      topFive,
+      goToProfile,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
