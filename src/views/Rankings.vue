@@ -157,21 +157,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-row>
-      <v-col cols="12" md="3" v-if="false">
-        <v-card tile>
-          <v-card-title>{{ $t("views_rankings.stats") }}</v-card-title>
-          <v-list class="transparent">
-            <v-list-item v-for="(stat, index) in stats" :key="index">
-              <v-list-item-title>{{ stat.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-right">
-                {{ stat.value }}
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
@@ -242,7 +227,6 @@ export default defineComponent({
     const rankings: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.rankings);
     const searchRanks: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.searchRanks);
     const showRaceDistribution: ComputedRef<boolean> = computed((): boolean => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
-    const selectedGateway: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
 
     const ladders: ComputedRef<League[]> = computed((): League[] => {
       const league = rankingsStore.ladders?.filter(

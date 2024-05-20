@@ -156,8 +156,6 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-import MatchHighlights from "@/components/match-details/MatchHighlights.vue";
-import HeroIcon from "@/components/match-details/HeroIcon.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import { EGameMode, Match, PlayerScore, Team } from "@/store/types";
@@ -174,8 +172,6 @@ export default defineComponent({
   components: {
     MatchDetailHeroRow,
     PlayerPerformanceOnMatch,
-    HeroIcon,
-    MatchHighlights,
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
