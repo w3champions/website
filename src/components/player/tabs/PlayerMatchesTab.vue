@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref } from "vue";
 import { i18n } from "@/main";
 import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -114,6 +114,9 @@ export default defineComponent({
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
+    });
+
+    onActivated(async (): Promise<void> => {
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
       await getMatches();
