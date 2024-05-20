@@ -30,7 +30,8 @@ export default defineComponent({
   props: {
     team: {
       type: Object as PropType<Team>,
-      required: true,
+      required: false,
+      default: undefined,
     },
     left: {
       type: Boolean,

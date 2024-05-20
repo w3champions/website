@@ -144,11 +144,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { PlayerProfile } from "@/store/player/types";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { ModeStat, PlayerProfile, RaceStat } from "@/store/player/types";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
-
 import MatchesGrid from "../components/matches/MatchesGrid.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
@@ -161,7 +159,6 @@ import AppConstants from "../constants";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
-
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
@@ -171,7 +168,8 @@ import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 
-@Component({
+export default defineComponent({
+  name: "PlayerView",
   components: {
     SeasonBadge,
     PlayerStatisticTab,
@@ -189,214 +187,183 @@ import { useRankingStore } from "@/store/ranking/store";
     TeamMatchInfo,
     HostIcon,
   },
-})
-export default class PlayerView extends Vue {
-  @Prop() public id!: string;
-  @Prop() public freshLogin!: boolean;
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+    freshLogin: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const playerStore = usePlayerStore();
+    const rankingsStore = useRankingStore();
+    let _intervalRefreshHandle: NodeJS.Timeout;
+    const tabsModel = ref<number>(0);
 
-  public tabsModel = {};
-  private _intervalRefreshHandle?: number = undefined;
-  private player = usePlayerStore();
-  private rankingsStore = useRankingStore();
-  public mapNameFromMatch = mapNameFromMatch;
+    const raceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => playerStore.raceStats);
+    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
+    const seasons: ComputedRef<Season[]> = computed((): Season[] => playerStore.playerProfile.participatedInSeasons);
+    const profile: ComputedRef<PlayerProfile> = computed((): PlayerProfile => playerStore.playerProfile);
+    const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
+    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
+    const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
+    const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
+    const ongoingMatch: ComputedRef<Match> = computed((): Match => playerStore.ongoingMatch);
+    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => playerStore.selectedSeason.id <= 5);
 
-  @Watch("battleTag")
-  onBattleTagChanged() {
-    this.init();
-  }
+    const isOngoingMatchFFA: ComputedRef<boolean> = computed((): boolean => {
+      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
+      return ongoingMatch.value && ffaModes.includes(ongoingMatch.value.gameMode);
+    });
 
-  get raceStats() {
-    return this.player.raceStats;
-  }
+    const aliasName: ComputedRef<string | false> = computed((): string | false => {
+      if (playerStore.playerProfile.playerAkaData != null) {
+        return playerStore.playerProfile.playerAkaData.name ?? false;
+      }
+      return false;
+    });
 
-  get gameModeStats() {
-    return this.player.gameModeStats;
-  }
+    const seasonsWithoutCurrentOne: ComputedRef<Season[]> = computed((): Season[] => {
+      if (!seasons.value) return [];
+      return seasons.value
+        .filter((s) => s.id !== rankingsStore.seasons[0]?.id)
+        .reverse();
+    });
 
-  public selectSeason(season: Season) {
-    this.player.SET_SELECTED_SEASON(season);
-    this.player.loadGameModeStats({});
-    this.player.loadRaceStats();
-    this.player.loadMatches(1);
-    this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
-    this.player.loadPlayerMmrRpTimeline();
-    this.player.loadPlayerGameLengths();
-  }
+    const ongoingMatchGameModeClass: ComputedRef<string> = computed((): string => {
+      if (!ongoingMatch.value.id) return "";
 
-  get seasons() {
-    return this.player.playerProfile.participatedInSeasons;
-  }
+      switch (ongoingMatch.value.gameMode) {
+        case EGameMode.GM_1ON1: {
+          return "one-v-one";
+        }
+        case EGameMode.GM_2ON2_AT:
+        case EGameMode.GM_2ON2: {
+          return "two-v-two-at";
+        }
+        case EGameMode.GM_4ON4: {
+          return "four-v-four";
+        }
+        case EGameMode.GM_FFA:
+        case EGameMode.GM_SC_FFA_4: {
+          return "ffa";
+        }
+      }
 
-  get aliasName(): string | false {
-    if (this.player.playerProfile.playerAkaData != null) {
-      return (
-        this.player.playerProfile.playerAkaData.name ??
-        false
+      return "";
+    });
+
+    function getDuration(match: Match): number {
+      const today = new Date();
+      const diffMs =
+        today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
+      const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+
+      return diffMins;
+    }
+
+    function getPlayerTeam(match: Match): Team | undefined {
+      if (!match.teams) {
+        return {} as Team;
+      }
+
+      return match.teams.find((team: Team) =>
+        team.players.some(
+          (player: PlayerInTeam) => player.battleTag === battleTag.value
+        )
       );
     }
-    return false;
-  }
 
-  get seasonsWithoutCurrentOne() {
-    return (
-      this.seasons
-        ?.filter(
-          (s) => s.id !== this.rankingsStore.seasons[0]?.id
-        )
-        .reverse() ?? []
-    );
-  }
-
-  get profile(): PlayerProfile {
-    return this.player.playerProfile;
-  }
-
-  get loadingProfile(): boolean {
-    return this.player.loadingProfile;
-  }
-
-  get selectedSeason() {
-    return this.player.selectedSeason;
-  }
-
-  get battleTag(): string {
-    return decodeURIComponent(this.id);
-  }
-
-  get totalMatches(): number {
-    return this.player.totalMatches;
-  }
-
-  get matches(): Match[] {
-    return this.player.matches;
-  }
-
-  get ongoingMatch() {
-    return this.player.ongoingMatch;
-  }
-
-  get isOngoingMatchFFA() {
-    const ffaModes = [
-      EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4
-    ];
-
-    return this.ongoingMatch && ffaModes.includes(this.ongoingMatch.gameMode);
-  }
-
-  get ongoingMatchGameModeClass() {
-    if (!this.ongoingMatch.id) {
-      return "";
-    }
-
-    switch (this.ongoingMatch.gameMode) {
-      case EGameMode.GM_1ON1: {
-        return "one-v-one";
+    function getOpponentTeam(match: Match): Team | undefined {
+      if (!match.teams) {
+        return {} as Team;
       }
-      case EGameMode.GM_2ON2_AT:
-      case EGameMode.GM_2ON2: {
-        return "two-v-two-at";
-      }
-      case EGameMode.GM_4ON4: {
-        return "four-v-four";
-      }
-      case EGameMode.GM_FFA:
-      case EGameMode.GM_SC_FFA_4: {
-        return "ffa";
-      }
+
+      return match.teams.find((team: Team) =>
+          !team.players.some(
+            (player: PlayerInTeam) => player.battleTag === battleTag.value
+          )
+      );
     }
 
-    return "";
-  }
-
-  public getDuration(match: Match) {
-    const today = new Date();
-    const diffMs =
-      today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
-    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-
-    return diffMins;
-  }
-
-  public getPlayerTeam(match: Match) {
-    if (!match.teams) {
-      return {} as Match;
+    function selectSeason(season: Season): void {
+      playerStore.SET_SELECTED_SEASON(season);
+      playerStore.loadGameModeStats({});
+      playerStore.loadRaceStats();
+      playerStore.loadMatches(1);
+      playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value);
+      playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
+      playerStore.loadPlayerMmrRpTimeline();
+      playerStore.loadPlayerGameLengths();
     }
 
-    return match.teams.find((team: Team) =>
-      team.players.some(
-        (player: PlayerInTeam) => player.battleTag === this.battleTag
-      )
-    );
-  }
-
-  public getOpponentTeam(match: Match) {
-    if (!match.teams) {
-      return {} as Match;
+    function gatewayChanged() {
+      playerStore.reloadPlayer();
     }
 
-    return match.teams.find(
-      (team: Team) =>
-        !team.players.some(
-          (player: PlayerInTeam) => player.battleTag === this.battleTag
-        )
-    );
-  }
-
-  public gatewayChanged() {
-    this.player.reloadPlayer();
-  }
-
-  public isGatewayNeeded() {
-    const seasonId = this.player.selectedSeason.id;
-    if (seasonId > 5) {
-      //this.rootStateStore.gateway = Gateways.Europe;
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  async mounted() {
-    await this.init();
-  }
-
-  private async init() {
-
-    // This is needed because the view is not destroyed when going from a profile directly to another profile, leading to multiple interval timers.
-    if (this._intervalRefreshHandle) {
-      this.stopLoadingMatches();
+    function stopLoadingMatches() {
+      playerStore.SET_ONGOING_MATCH({} as Match);
+      clearInterval(_intervalRefreshHandle);
     }
 
-    this.player.SET_BATTLE_TAG(this.battleTag);
-
-    await this.player.loadProfile({
-      battleTag: this.battleTag,
-      freshLogin: this.freshLogin,
+    onMounted(async (): Promise<void> => {
+      await init();
     });
-    await this.player.loadGameModeStats({});
-    await this.player.loadRaceStats();
-    await this.player.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag);
-    await this.player.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
-    await this.player.loadOngoingPlayerMatch(this.battleTag);
-    await this.player.loadPlayerGameLengths();
 
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.player.loadOngoingPlayerMatch(this.battleTag);
-    }, AppConstants.ongoingMatchesRefreshInterval);
-    this.player.SET_INITIALIZED();
-    window.scrollTo(0, 0);
-  }
+    onUnmounted((): void => {
+      stopLoadingMatches();
+    });
 
-  destroyed() {
-    this.stopLoadingMatches();
-  }
+    watch(battleTag, init);
 
-  stopLoadingMatches() {
-    this.player.SET_ONGOING_MATCH({} as Match);
-    clearInterval(this._intervalRefreshHandle);
-  }
-}
+    async function init() {
+      // This is needed because the view is not destroyed when going from a profile directly to another profile, leading to multiple interval timers.
+      if (_intervalRefreshHandle) {
+        stopLoadingMatches();
+      }
+
+      playerStore.SET_BATTLE_TAG(battleTag.value);
+
+      await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
+      await playerStore.loadGameModeStats({});
+      await playerStore.loadRaceStats();
+      await playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value);
+      await playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
+      await playerStore.loadOngoingPlayerMatch(battleTag.value);
+      await playerStore.loadPlayerGameLengths();
+
+      _intervalRefreshHandle = setInterval(async () => {
+        await playerStore.loadOngoingPlayerMatch(battleTag.value);
+      }, AppConstants.ongoingMatchesRefreshInterval);
+      playerStore.SET_INITIALIZED();
+      window.scrollTo(0, 0);
+    }
+
+    return {
+      mapNameFromMatch,
+      profile,
+      aliasName,
+      seasonsWithoutCurrentOne,
+      selectSeason,
+      gatewayChanged,
+      seasons,
+      selectedSeason,
+      ongoingMatch,
+      ongoingMatchGameModeClass,
+      getDuration,
+      isOngoingMatchFFA,
+      getPlayerTeam,
+      getOpponentTeam,
+      tabsModel,
+      battleTag,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
