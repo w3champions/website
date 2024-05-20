@@ -305,7 +305,7 @@ export default defineComponent({
 
     return {
       mdiChevronRight,
-      ERaceEnum,
+      // ERaceEnum,
       onGatewayChanged,
       isGatewayNeeded,
       selectedGameMode,
