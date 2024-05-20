@@ -38,13 +38,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted } from "vue";
 import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
-
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -56,8 +53,10 @@ import AppConstants from "@/constants";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
+import { MapInfo } from "@/store/common/types";
 
-@Component({
+export default defineComponent({
+  name: "MatchesView",
   components: {
     MatchesGrid,
     MatchesStatusSelect,
@@ -66,139 +65,134 @@ import { useMatchStore } from "@/store/match/store";
     MmrSelect,
     SortSelect,
   },
-})
-export default class MatchesView extends Vue {
-  private overallStatsStore = useOverallStatsStore();
-  private rankingsStore = useRankingStore();
-  private matchStore = useMatchStore();
+  props: {},
+  setup() {
+    const overallStatsStore = useOverallStatsStore();
+    const rankingsStore = useRankingStore();
+    const matchStore = useMatchStore();
+    let _intervalRefreshHandle: NodeJS.Timeout;
 
-  onPageChanged(page: number): void {
-    this.getMatches(page);
-  }
+    const matches: ComputedRef<Match[]> = computed((): Match[] => matchStore.matches);
+    const totalMatches: ComputedRef<number> = computed((): number => matchStore.totalMatches);
+    const currentSeason: ComputedRef<Season> = computed((): Season => rankingsStore.seasons[0]);
+    const unfinished: ComputedRef<boolean> = computed((): boolean => matchStore.status === MatchStatus.onGoing);
+    const gameMode: ComputedRef<EGameMode> = computed((): EGameMode => matchStore.gameMode);
+    const map: ComputedRef<string> = computed((): string => matchStore.map);
+    const mmr: ComputedRef<Mmr> = computed((): Mmr => matchStore.mmr);
 
-  get disabledGameModes(): Array<EGameMode> {
-    if (this.matchStore.status == MatchStatus.onGoing) {
-      return [
-        EGameMode.GM_2ON2_AT,
-        EGameMode.GM_4ON4_AT,
-        EGameMode.GM_LEGION_4v4_X20_AT,
-        EGameMode.GM_DOTA_5ON5_AT,
-      ];
-    }
+    const maps: ComputedRef<Array<MapInfo>> = computed((): Array<MapInfo> => {
+      if (!currentSeason.value) {
+        return [];
+      }
 
-    return [];
-  }
+      const maps = mapsByGameMode.value[gameMode.value] || [];
+      return Array.from(maps);
+    });
 
-  get totalMatches(): number {
-    return this.matchStore.totalMatches;
-  }
+    const disabledGameModes: ComputedRef<Array<EGameMode>> = computed((): Array<EGameMode> => {
+      if (matchStore.status === MatchStatus.onGoing) {
+        return [
+          EGameMode.GM_2ON2_AT,
+          EGameMode.GM_4ON4_AT,
+          EGameMode.GM_LEGION_4v4_X20_AT,
+          EGameMode.GM_DOTA_5ON5_AT,
+        ];
+      }
 
-  get matches(): Match[] {
-    return this.matchStore.matches;
-  }
-
-  get currentSeason(): Season {
-    return this.rankingsStore.seasons[0];
-  }
-
-  get maps() {
-    if (!this.currentSeason) {
       return [];
+    });
+
+    const mapsByGameMode: ComputedRef<Record<EGameMode, Set<MapInfo>>> = computed((): Record<EGameMode, Set<MapInfo>> => {
+      const filterSeasons =
+        matchStore.status === MatchStatus.onGoing
+          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
+            matchesOnMapPerSeason.season === currentSeason.value.id
+          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
+            matchesOnMapPerSeason.season >= 0;
+
+      return overallStatsStore.matchesOnMapPerSeason
+        .filter(filterSeasons)
+        .reduce<Record<EGameMode, Set<MapInfo>>>(
+        (mapsByMode, matchesOnMapPerSeason) => {
+          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+            // just get the map name and ignore the count
+            const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
+
+            if (!mapsByMode[modes.gameMode]) {
+              mapsByMode[modes.gameMode] = new Set(mapsInfos);
+            } else {
+              // combine this seasons mode maps with other seasons modes maps without dupes
+              mapsByMode[modes.gameMode] = new Set([
+                ...mapsByMode[modes.gameMode],
+                ...mapsInfos,
+              ]);
+            }
+          }
+          return mapsByMode;
+        }, {} as Record<EGameMode, Set<MapInfo>>
+      );
+    });
+
+    async function getMatches(page?: number): Promise<void> {
+      await matchStore.loadMatches(page);
     }
 
-    const maps = this.mapsByGameMode[this.gameMode] || [];
-    return Array.from(maps);
-  }
+    function getMaps(): void {
+      overallStatsStore.loadMapsPerSeason();
+    }
 
-  get mapsByGameMode() {
-    const filterSeasons =
-      this.matchStore.status == MatchStatus.onGoing
-        ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-          matchesOnMapPerSeason.season === this.currentSeason.id
-        : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-          matchesOnMapPerSeason.season >= 0;
+    function onPageChanged(page: number): void {
+      getMatches(page);
+    }
 
-    return this.overallStatsStore.matchesOnMapPerSeason
-      .filter(filterSeasons)
-      .reduce<Record<EGameMode, Set<unknown>>>(
-      (mapsByMode, matchesOnMapPerSeason) => {
-        for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-          // just get the map name and ignore the count
-          const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
+    function refreshMatches(): void {
+      _intervalRefreshHandle = setInterval(async () => {
+        await getMatches();
+      }, AppConstants.ongoingMatchesRefreshInterval);
+    }
 
-          if (!mapsByMode[modes.gameMode]) {
-            mapsByMode[modes.gameMode] = new Set(mapsInfos);
-          } else {
-            // combine this seasons mode maps with other seasons modes maps without dupes
-            mapsByMode[modes.gameMode] = new Set([
-              ...mapsByMode[modes.gameMode],
-              ...mapsInfos,
-            ]);
-          }
-        }
-        return mapsByMode;
-      }, {} as Record<EGameMode, Set<unknown>>
-    );
-  }
+    onMounted(async (): Promise<void> => {
+      await rankingsStore.retrieveSeasons();
+      rankingsStore.setSeason(rankingsStore.seasons[0]);
+      getMatches(1);
+      getMaps();
+      refreshMatches();
+    });
 
-  get unfinished(): boolean {
-    return this.matchStore.status == MatchStatus.onGoing;
-  }
+    onUnmounted((): void => {
+      clearInterval(_intervalRefreshHandle);
+    });
 
-  get gameMode(): EGameMode {
-    return this.matchStore.gameMode;
-  }
+    function gatewayChanged(): void {
+      getMatches(1);
+    }
 
-  get map(): string {
-    return this.matchStore.map;
-  }
+    function gameModeChanged(gameMode: EGameMode): void {
+      matchStore.setGameMode(gameMode);
+    }
 
-  get mmr(): Mmr {
-    return this.matchStore.mmr;
-  }
+    function mapChanged(map: string): void {
+      matchStore.setMap(map);
+    }
 
-  public async getMatches(page?: number): Promise<void> {
-    await this.matchStore.loadMatches(page);
-  }
+    function mmrChanged(mmr: Mmr): void {
+      matchStore.setMmr(mmr);
+    }
 
-  public getMaps(): void {
-    this.overallStatsStore.loadMapsPerSeason();
-  }
-
-  _intervalRefreshHandle?: number = undefined;
-
-  private refreshMatches(): void {
-    this._intervalRefreshHandle = setInterval(async () => {
-      await this.getMatches();
-    }, AppConstants.ongoingMatchesRefreshInterval);
-  }
-
-  async mounted() {
-    await this.rankingsStore.retrieveSeasons();
-    this.rankingsStore.setSeason(this.rankingsStore.seasons[0]);
-    this.getMatches(1);
-    this.getMaps();
-    this.refreshMatches();
-  }
-
-  destroyed(): void {
-    clearInterval(this._intervalRefreshHandle);
-  }
-
-  gatewayChanged(): void {
-    this.getMatches(1);
-  }
-
-  gameModeChanged(gameMode: EGameMode): void {
-    this.matchStore.setGameMode(gameMode);
-  }
-
-  mapChanged(map: string): void {
-    this.matchStore.setMap(map);
-  }
-
-  mmrChanged(mmr: Mmr): void {
-    this.matchStore.setMmr(mmr);
-  }
-}
+    return {
+      disabledGameModes,
+      gameMode,
+      gameModeChanged,
+      mapChanged,
+      maps,
+      map,
+      mmrChanged,
+      mmr,
+      unfinished,
+      matches,
+      totalMatches,
+      onPageChanged,
+    };
+  },
+});
 </script>
