@@ -13,42 +13,50 @@
   </v-container>
 </template>
 <script lang="ts">
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRouter } from "vue-router/composables";
 
-@Component({})
-export default class LoginView extends Vue {
-  private oauthStore = useOauthStore();
-  @Prop() public code!: string;
+export default defineComponent({
+  name: "LoginView",
+  components: {},
+  props: {
+    code: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
+    const oauthStore = useOauthStore();
 
-  mounted() {
-    this.init();
-  }
+    const account: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
 
-  get account(): string {
-    return this.oauthStore.blizzardVerifiedBtag;
-  }
+    function openPlayerProfile() {
+      router.push({
+        path: getProfileUrl(account.value) + `?freshLogin=true`,
+      });
+    }
 
-  get authCode(): string {
-    return this.oauthStore.token;
-  }
+    async function init(): Promise<void> {
+      await oauthStore.authorizeWithCode(props.code);
+      await oauthStore.loadBlizzardBtag(authCode.value);
+      openPlayerProfile();
+    }
 
-  private async init() {
-    await this.oauthStore.authorizeWithCode(this.code);
-    await this.oauthStore.loadBlizzardBtag(this.authCode);
-    this.openPlayerProfile();
-  }
-
-  public openPlayerProfile() {
-    this.$router.push({
-      path: getProfileUrl(this.account) + `?freshLogin=true`,
+    onMounted((): void => {
+      init();
     });
-  }
-}
+
+    return {
+    };
+  },
+});
 </script>
-<style type="text/css" scoped>
+
+<style lang="scss" scoped>
 .inner-text {
   margin: 20px;
   text-align: center;
