@@ -28,8 +28,6 @@ export const useOauthStore = defineStore("oauth", {
         }
         await AuthorizationService.saveAuthToken(bearer);
       }
-
-      AuthorizationService.deleteAuthCookie();
     },
     async authorizeWithTwitch() {
       const token = await AuthorizationService.authorizeWithTwitch();
