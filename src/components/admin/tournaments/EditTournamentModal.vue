@@ -241,7 +241,7 @@ export default defineComponent({
 
     const states: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => {
       const validStates = pickBy(ETournamentState, (_value, key) => {
-        return !isNaN(key as any);
+        return !isNaN(Number(key));
       }) as { [key: number]: string };
       return getSelectOptions(validStates);
     });
