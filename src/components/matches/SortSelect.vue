@@ -31,7 +31,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 
 interface SortSelectData {
@@ -44,6 +44,7 @@ export default defineComponent({
   components: {},
   props: {},
   setup() {
+    const { t } = useI18n();
     const matchStore = useMatchStore();
 
     const currentSort: WritableComputedRef<SortSelectData> = computed({
@@ -58,11 +59,11 @@ export default defineComponent({
 
     const sortings: SortSelectData[] = [
       {
-        name: i18n.t(`components_matches_sortselect.starttimedescending`),
+        name: t(`components_matches_sortselect.starttimedescending`),
         mode: SortMode.startTimeDescending,
       },
       {
-        name: i18n.t(`components_matches_sortselect.mmrdescending`),
+        name: t(`components_matches_sortselect.mmrdescending`),
         mode: SortMode.mmrDescending,
       },
     ];

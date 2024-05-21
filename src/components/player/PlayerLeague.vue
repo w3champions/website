@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType, ref, watch } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { EGameMode, ERaceEnum, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
@@ -70,7 +70,7 @@ import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { Gateways, PlayerId, Season } from "@/store/ranking/types";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "PlayerLeague",
@@ -100,13 +100,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const router = useRouter();
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
     const matches = ref<Match[]>([]);
 
     const playerId: ComputedRef<string> = computed((): string => props.modeStat.id);
-    const leagueMode: ComputedRef<TranslateResult> = computed((): TranslateResult => i18n.t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
+    const leagueMode: ComputedRef<TranslateResult> = computed((): TranslateResult => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
     const gameMode: ComputedRef<EGameMode> = computed((): EGameMode => props.modeStat.gameMode);
     const league: ComputedRef<number> = computed((): number => props.modeStat.leagueId);
     const gateWay: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);

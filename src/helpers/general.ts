@@ -1,6 +1,6 @@
 import { Race } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 
 // got it from here: https://www.petermorlion.com/iterating-a-typescript-enum/
@@ -31,5 +31,6 @@ export const racesWithTotal: Race[] = [
 ];
 
 export const translateRaceName = (race: Race | number): TranslateResult => {
-  return typeof race === "number" ? i18n.t(`races.${ERaceEnum[race]}`) : i18n.t(`races.${ERaceEnum[race.raceId]}`);
+  const { t } = useI18n();
+  return typeof race === "number" ? t(`races.${ERaceEnum[race]}`) : t(`races.${ERaceEnum[race.raceId]}`);
 };

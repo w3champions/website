@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { activeGameModes } from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
@@ -27,6 +27,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const allSet = ref<GameDayPerMode>(props.gameDays.filter((g) => g.gameMode == EGameMode.GM_1ON1)[0]);
     const gameDayDates: ComputedRef<Date[]> = computed((): Date[] => allSet.value.gameDays.map((g) => parseJSON(g.date)));
 
@@ -49,7 +50,7 @@ export default defineComponent({
           })
           .map((c) => {
             return {
-              label: i18n.t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
+              label: t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
               data: c.gameDays
                 .map((g) => {
                   return {

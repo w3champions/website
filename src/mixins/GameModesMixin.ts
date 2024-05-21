@@ -1,7 +1,7 @@
 import { EGameMode, EGameModeType } from "@/store/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { ActiveGameMode } from "@/store/ranking/types";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { LocaleMessage } from "vue-i18n";
 
 export interface IGameModeBrief {
@@ -26,9 +26,10 @@ export function activeGameModes(): IGameModeBrief[] {
 }
 
 export function activeGameModesWithAll(): IGameModeBrief[] {
+  const { t } = useI18n();
   return [
     {
-      name: i18n.t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
+      name: t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
       id: EGameMode.UNDEFINED,
     },
     ...activeGameModes(),
@@ -52,6 +53,7 @@ export function AT_modes(): EGameMode[] {
 }
 
 function getGameModes(type: EGameModeType | null, withAt: boolean): IGameModeBrief[] {
+  const { t } = useI18n();
   const rankingsStore = useRankingStore();
   return rankingsStore.activeModes
     .reduce((result: ActiveGameMode[], mode: ActiveGameMode) => {
@@ -68,7 +70,7 @@ function getGameModes(type: EGameModeType | null, withAt: boolean): IGameModeBri
     .filter((mode) => type === null || mode.type === type)
     .map((mode) => {
       const id = mode.id;
-      const name = i18n.t(`gameModes.${EGameMode[id]}`) || mode.name;
+      const name = t(`gameModes.${EGameMode[id]}`) || mode.name;
       return {
         id,
         name,

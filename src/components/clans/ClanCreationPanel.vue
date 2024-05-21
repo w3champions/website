@@ -46,8 +46,8 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { i18n } from "@/main";
-import { LocaleMessage } from "vue-i18n";
+import { useI18n } from "vue-i18n";
+import { TranslateResult } from "vue-i18n";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -55,6 +55,7 @@ export default defineComponent({
   components: {},
   props: {},
   setup() {
+    const { t } = useI18n();
     const clanStore = useClanStore();
     const clanNameToCreate = ref<string>("");
     const clanAbbreviationToCreate = ref<string>("");
@@ -62,12 +63,12 @@ export default defineComponent({
     const clanValidationError: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
     const isValidationError: ComputedRef<boolean> = computed((): boolean => clanStore.clanValidationError !== "");
 
-    function mustBeBetween(min: number, max: number, space: string): (v: string) => LocaleMessage {
-      return (v: string): LocaleMessage => {
+    function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
+      return (v: string): TranslateResult => {
         if (!v)
-          return i18n.t("components_clans_clancreationpanel.fieldismandatory");
+          return t("components_clans_clancreationpanel.fieldismandatory");
         if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
-          return i18n.t("components_clans_clancreationpanel.minmaxchars", {
+          return t("components_clans_clancreationpanel.minmaxchars", {
             min,
             max,
           });

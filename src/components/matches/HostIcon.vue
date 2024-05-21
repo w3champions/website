@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, PropType, defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";
@@ -32,15 +32,16 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const icon: ComputedRef<string> = computed((): string => {
       if (!props.host) return getAsset(`icons/hosterror.png`);
       return getAsset(`icons/${props.host.provider}.png`);
     });
 
     const tooltip: ComputedRef<TranslateResult> = computed((): TranslateResult => {
-      if (!props.host) return i18n.t("components_matches_hosticon.error");
-      if (props.host.provider === "BNET") return i18n.t("components_matches_hosticon.hostedonbnet");
-      return `${i18n.t("components_matches_hosticon.hostedonflo")} / ${props.host.name}`;
+      if (!props.host) return t("components_matches_hosticon.error");
+      if (props.host.provider === "BNET") return t("components_matches_hosticon.hostedonbnet");
+      return `${t("components_matches_hosticon.hostedonflo")} / ${props.host.name}`;
     });
 
     function stripTag(tag: string): string {

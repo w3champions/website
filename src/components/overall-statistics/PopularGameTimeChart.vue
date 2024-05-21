@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { PopularHours, Timeslot } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
@@ -21,6 +21,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const timeslots: ComputedRef<Timeslot[]> = computed((): Timeslot[] => props.popularGameHours ? props.popularGameHours?.timeslots.slice(0) : []);
 
     const gameStartHour: ComputedRef<string[]> = computed((): string[] => {
@@ -58,7 +59,7 @@ export default defineComponent({
         labels: gameStartHour.value,
         datasets: [
           {
-            label: String(i18n.t("components_overall-statistics_populargametimechart.accgameslast2weeks")),
+            label: String(t("components_overall-statistics_populargametimechart.accgameslast2weeks")),
             data: shiftGameCount(gamesCount.value),
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderColor: "rgba(54, 162, 235, 1)",

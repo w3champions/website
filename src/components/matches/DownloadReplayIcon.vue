@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { API_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
 import { TranslateResult } from "vue-i18n";
@@ -28,7 +28,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const tooltip = ref<TranslateResult>(i18n.t("components_matches_replayicon.download"));
+    const { t } = useI18n();
+    const tooltip = ref<TranslateResult>(t("components_matches_replayicon.download"));
 
     function downloadReplay(): void {
       window.open(`${API_URL}api/replays/${props.gameId}`, "_self");

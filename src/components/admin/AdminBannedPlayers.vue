@@ -175,8 +175,8 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import { i18n } from "@/main";
-import { LocaleMessage } from "vue-i18n";
+import { useI18n } from "vue-i18n";
+import { LocaleMessages } from "vue-i18n";
 
 type AdminBannedPlayersHeader = {
   text: string;
@@ -193,6 +193,7 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const { t } = useI18n();
     const oauthStore = useOauthStore();
     const adminStore = useAdminStore();
     const playerSearchStore = usePlayerSearchStore();
@@ -226,7 +227,7 @@ export default defineComponent({
     const endDateIsSet: ComputedRef<boolean> = computed((): boolean => editedItem.value.endDate.length == 10);
 
     function getGameModeName(id: EGameMode): LocaleMessage {
-      return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? i18n.t(`gameModes.${EGameMode[id]}`);
+      return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
     }
 
     // For a new ban, only allow active game modes to be chosen.

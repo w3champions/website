@@ -166,9 +166,9 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { useVuetify } from "@/plugins/vuetify";
+// import { useVuetify } from "@/plugins/vuetify";
 import { i18n } from "@/main";
 import noop from "lodash/noop";
 
@@ -202,7 +202,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const vuetify = useVuetify();
+    // const vuetify = useVuetify();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
@@ -306,7 +306,7 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.dark = isDarkTheme.get();
+      // vuetify.theme.dark = isDarkTheme.get();
       setThemeColors();
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }
@@ -354,10 +354,10 @@ export default defineComponent({
     }
 
     function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
+      // vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
       Object.assign(
         {},
-        vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
+        // vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
         themeColors.get()
       );
     }

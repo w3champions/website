@@ -1,19 +1,14 @@
 import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
-import VueI18n from "vue-i18n";
+import { createI18n } from 'vue-i18n';
 import languages from "@/locales/languages";
-import VueCookies from "vue-cookies-ts";
-import { createPinia, PiniaVuePlugin } from "pinia";
+import { createPinia } from "pinia";
 
-Vue.use(VueCookies);
-Vue.use(VueI18n);
 // Only accessible after this initialisation!
 const pinia = createPinia();
-Vue.use(PiniaVuePlugin);
-
-Vue.config.productionTip = false;
 
 declare global {
   interface Window {
@@ -42,16 +37,20 @@ export const LAUNCHER_UPDATE_URL = _launcherUrl;
 export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 export const BNET_API_CLIENT_ID = _bnetApiClientId;
 
-export const i18n = new VueI18n({
+export const i18n = createI18n({
   locale: "en",
+  allowComposition: true,
   fallbackLocale: "en",
   messages: languages,
 });
 
-new Vue({
-  i18n,
-  router,
-  vuetify,
-  pinia,
-  render: (h) => h(App),
-}).$mount("#app");
+export const { t, tc, locale } = i18n.global;
+
+const app = createApp(App);
+
+app.use(router)
+  .use(pinia)
+  .use(vuetify)
+  .use(i18n);
+
+app.mount("#app");

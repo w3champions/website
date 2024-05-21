@@ -24,8 +24,8 @@
       <v-card v-if="showAlts">
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
-          <template v-for="alt in alts">
-            <v-list-item :key="alt">
+          <template>
+            <v-list-item v-for="alt in alts" :key="alt">
               <div @click="searchAltsFromClick(alt)" style="cursor: pointer">{{ alt }}</div>
               <v-spacer></v-spacer>
               <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
@@ -43,7 +43,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AdminAlts",

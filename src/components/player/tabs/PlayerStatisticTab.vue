@@ -147,7 +147,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref, watch } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
 import { PlayerMmrRpTimeline, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
@@ -172,6 +172,7 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const { t } = useI18n();
     const playerStore = usePlayerStore();
     const overallStatsStore = useOverallStatsStore();
 
@@ -293,12 +294,12 @@ export default defineComponent({
     });
 
     const gameLengthOpponentRaces = [
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentall"), raceId: ERaceEnum.TOTAL },
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentrandom"), raceId: ERaceEnum.RANDOM },
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponenthuman"), raceId: ERaceEnum.HUMAN },
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentorc"), raceId: ERaceEnum.ORC },
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentnightelf"), raceId: ERaceEnum.NIGHT_ELF },
-      { opponentRace: i18n.t("components_player_tabs_playerstatistictab.opponentundead"), raceId: ERaceEnum.UNDEAD },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponentall"), raceId: ERaceEnum.TOTAL },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponentrandom"), raceId: ERaceEnum.RANDOM },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponenthuman"), raceId: ERaceEnum.HUMAN },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponentorc"), raceId: ERaceEnum.ORC },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponentnightelf"), raceId: ERaceEnum.NIGHT_ELF },
+      { opponentRace: t("components_player_tabs_playerstatistictab.opponentundead"), raceId: ERaceEnum.UNDEAD },
     ];
 
     return {

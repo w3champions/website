@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ERaceEnum } from "@/store/types";
@@ -31,8 +31,9 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const renderIcon = ref<string>(ERaceEnum[props.race] ? getAsset(`raceIcons/${ERaceEnum[props.race]}.png`) : "");
-    const enumToString = ref<TranslateResult>(isNil(props.race) ? "" : i18n.t(`races.${ERaceEnum[props.race]}`));
+    const enumToString = ref<TranslateResult>(isNil(props.race) ? "" : t(`races.${ERaceEnum[props.race]}`));
 
     return {
       renderIcon,

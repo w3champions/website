@@ -1,6 +1,5 @@
 import { W3cToken, TwitchToken, BnetOAuthRegion } from "@/store/oauth/types";
 import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
-import Vue from "vue";
 
 const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
@@ -49,30 +48,30 @@ export default class AuthorizationService {
   }
 
   public static async loadAuthCookie(): Promise<string> {
-    const cookie = Vue.cookies.get(w3CAuth);
+    const cookie = "";
     return (cookie as string) ?? "";
   }
 
   public static async loadAuthRegionCookie(): Promise<BnetOAuthRegion> {
-    const cookie = Vue.cookies.get(w3CAuthRegion);
+    const cookie = "";
     return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
   }
 
   public static async saveAuthRegion(region: BnetOAuthRegion) {
-    Vue.cookies.set(w3CAuthRegion, region, {
-      expires: Infinity,
-    });
+    // Vue.cookies.set(w3CAuthRegion, region, {
+    //   expires: Infinity,
+    // });
   }
 
   public static async saveAuthToken(token: W3cToken) {
-    Vue.cookies.set(w3CAuth, token.jwt, {
-      expires: Infinity,
-    });
+    // Vue.cookies.set(w3CAuth, token.jwt, {
+    //   expires: Infinity,
+    // });
   }
 
   public static deleteAuthCookie(): void {
-    Vue.cookies.remove(w3CAuth);
-    Vue.cookies.remove(w3CAuthRegion);
+    // Vue.cookies.remove(w3CAuth);
+    // Vue.cookies.remove(w3CAuthRegion);
   }
 
   public static async getProfile(bearer: string): Promise<W3cToken | null> {

@@ -327,7 +327,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
@@ -336,7 +336,7 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.
@@ -355,6 +355,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const router = useRouter();
     const personalSettingsStore = usePersonalSettingsStore();
     const races = [ERaceEnum.HUMAN, ERaceEnum.ORC, ERaceEnum.NIGHT_ELF, ERaceEnum.UNDEAD, ERaceEnum.RANDOM, ERaceEnum.TOTAL];
@@ -363,7 +364,7 @@ export default defineComponent({
     const personalSettingsDialogOpened = ref<boolean>(false);
     const useClassicIcons = ref<boolean>(false);
 
-    const enumToString = (race: ERaceEnum) => i18n.t(`races.${ERaceEnum[race]}`);
+    const enumToString = (race: ERaceEnum) => t(`races.${ERaceEnum[race]}`);
 
     const personalSetting: ComputedRef<PersonalSetting> = computed((): PersonalSetting => personalSettingsStore.personalSettings);
 

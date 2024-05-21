@@ -1,5 +1,5 @@
 <script lang="ts">
-import Vue, { CreateElement, RenderContext, VNode } from "vue";
+import { VNode } from "vue";
 import { ERaceEnum } from "@/store/types";
 
 interface IProps {
@@ -9,7 +9,7 @@ interface IProps {
   rndRace: ERaceEnum;
 }
 
-export default Vue.component<IProps>("PlayerIcon", {
+export default {
   functional: true,
   props: {
     race: {
@@ -29,20 +29,7 @@ export default Vue.component<IProps>("PlayerIcon", {
       required: false,
     },
   },
-  render(h: CreateElement, { props, data }: RenderContext<IProps>): VNode {
-    const rndRaceClass = props.rndRace ? `_${ERaceEnum[props.rndRace]}` : "";
-
-    const classes = [
-      data.class,
-      data.staticClass,
-      `race-icon-${ERaceEnum[props.race]}${rndRaceClass}`,
-      props.big ? "race-icon-big" : "race-icon",
-      props.left ? "alignLeft" : "alignRight",
-    ];
-
-    return h("span", { class: classes.join(" ") });
-  },
-});
+};
 </script>
 
 <style lang="scss">

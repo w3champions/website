@@ -99,14 +99,14 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onUnmounted, ref, StyleValue } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { TranslateResult } from "vue-i18n";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 
 interface MatchesGridHeader {
@@ -149,13 +149,14 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const { t } = useI18n();
     const router = useRouter();
     const page = ref<number>(1);
     const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4];
 
     const matches: ComputedRef<Match[]> = computed((): Match[] => props.value);
 
-    const gameModeTranslation = (gameMode: EGameMode) => i18n.t(`gameModes.${EGameMode[gameMode]}`);
+    const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
 
     const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
@@ -216,7 +217,7 @@ export default defineComponent({
     }
 
     function getDuration(match: Match): string {
-      if (props.unfinished) return i18n.t("matchStatuses.onGoing").toString();
+      if (props.unfinished) return t("matchStatuses.onGoing").toString();
       return formatSecondsToDuration(match.durationInSeconds);
     }
 
@@ -232,7 +233,7 @@ export default defineComponent({
     const headers: MatchesGridHeader[] = [
       {
         name: "Players",
-        text: i18n.t("components_matches_matchesgrid.players"),
+        text: t("components_matches_matchesgrid.players"),
         sortable: false,
         value: "players",
         style: {
@@ -242,7 +243,7 @@ export default defineComponent({
       },
       {
         name: "Gamemode",
-        text: i18n.t("components_matches_matchesgrid.gamemode"),
+        text: t("components_matches_matchesgrid.gamemode"),
         sortable: false,
         value: "gameMode",
         style: {
@@ -252,7 +253,7 @@ export default defineComponent({
       },
       {
         name: "Map",
-        text: i18n.t("components_matches_matchesgrid.map"),
+        text: t("components_matches_matchesgrid.map"),
         sortable: false,
         value: "map",
         style: {
@@ -261,7 +262,7 @@ export default defineComponent({
       },
       {
         name: "Starttime",
-        text: i18n.t("components_matches_matchesgrid.starttime"),
+        text: t("components_matches_matchesgrid.starttime"),
         sortable: false,
         value: "startTime",
         style: {
@@ -271,7 +272,7 @@ export default defineComponent({
       },
       {
         name: "Duration",
-        text: i18n.t("components_matches_matchesgrid.duration"),
+        text: t("components_matches_matchesgrid.duration"),
         sortable: false,
         value: "duration",
         style: {

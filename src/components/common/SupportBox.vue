@@ -64,7 +64,6 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import CryptoDialog from "@/components/common/CryptoDialog.vue";
 import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 
@@ -100,10 +99,7 @@ export default {
   },
   methods: {
     updateTracker: function(index: number, dialogTracker: boolean[]): void {
-      for (let i = 0; i < dialogTracker.length; i++) {
-        Vue.set(dialogTracker, i, false);
-      }
-      Vue.set(dialogTracker, index, true);
+      console.log("hi");
     }
   },
 };

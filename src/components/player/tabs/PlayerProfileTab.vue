@@ -91,6 +91,7 @@ import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { ModeStat, RaceStat } from "@/store/player/types";
 import { Season } from "@/store/ranking/types";
+import { useI18n } from "vue-i18n";
 
 interface PlayerProfileTabRaceHeader {
   text: TranslateResult;
@@ -114,6 +115,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const oauthStore = useOauthStore();
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
@@ -202,13 +204,13 @@ export default defineComponent({
 
     const raceHeaders: PlayerProfileTabRaceHeader[] = [
       {
-        text: i18n.t("components_player_tabs_playerprofiletab.race"),
+        text: t("components_player_tabs_playerprofiletab.race"),
         align: "start",
         sortable: false,
         value: "race",
       },
       {
-        text: i18n.t("components_player_tabs_playerprofiletab.winloss"),
+        text: t("components_player_tabs_playerprofiletab.winloss"),
         align: "start",
         sortable: false,
         value: "wins",
