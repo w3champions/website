@@ -114,13 +114,13 @@ const routes = [
     component: Player,
     props: (route: {
       query: {
-        freshLogin: boolean;
+        freshLogin?: "true";
       };
       params: {
         id: string;
       };
     }) => ({
-      freshLogin: route.query.freshLogin,
+      freshLogin: route.query.freshLogin === "true",
       id: route.params.id,
     }),
     name: "Player",

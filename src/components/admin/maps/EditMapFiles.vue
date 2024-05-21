@@ -59,7 +59,7 @@ export default defineComponent({
   setup(props, context) {
     const mapsManagementStore = useMapsManagementStore();
     const fileName = ref<string>("");
-    const file = ref<File>({} as any);
+    const file = ref<File>({} as File);
     const mapFiles: ComputedRef<MapFileData[]> = computed((): MapFileData[] => mapsManagementStore.mapFiles);
 
     function selectMapFile(file: MapFileData) {
@@ -82,7 +82,7 @@ export default defineComponent({
         await mapsManagementStore.loadMapFiles(props.map.id);
 
         fileName.value = "";
-        file.value = {} as any;
+        file.value = {} as File;
       } catch {
         alert("Error trying to create map file");
       }

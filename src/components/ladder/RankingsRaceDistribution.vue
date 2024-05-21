@@ -15,7 +15,7 @@
               style="display: inline; padding-right: 10px"
               :race="item.race"
             />
-            <span>{{ getRaceName(item.race) }}</span>
+            <span>{{ translateRaceName(item.race) }}</span>
           </td>
           <td>{{ item.total }}</td>
           <td>{{ item.percent }}%</td>
@@ -31,9 +31,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-import { ERaceEnum } from "@/store/types";
-import { i18n } from "@/main";
-import { TranslateResult } from "vue-i18n";
+import { translateRaceName } from "@/helpers/general";
 
 type RankingsRaceDistributionData = {
   race: number;
@@ -85,11 +83,9 @@ export default defineComponent({
       return orderBy(result, (x) => x.percent, "desc");
     });
 
-    const getRaceName = (race: number): TranslateResult => i18n.t(`races.${ERaceEnum[race]}`);
-
     return {
       raceDistributions,
-      getRaceName,
+      translateRaceName,
     };
   },
 });

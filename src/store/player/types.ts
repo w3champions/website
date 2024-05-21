@@ -198,3 +198,8 @@ export type PlayerHeroWinRateForStatisticsTab = {
   [ERaceEnum.RANDOM]: string;
   [ERaceEnum.STARTER]: string;
 };
+
+export type Race = {
+  raceId: ERaceEnum;
+  raceName: string;
+};

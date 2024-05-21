@@ -173,7 +173,7 @@ export default defineComponent({
     freshLogin: {
       type: Boolean,
       required: false,
-      default: undefined,
+      default: false,
     },
   },
   setup(props) {
