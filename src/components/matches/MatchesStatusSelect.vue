@@ -37,7 +37,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiControllerClassic } from "@mdi/js";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 
 interface MatchStatusSelectData {
@@ -50,6 +50,7 @@ export default defineComponent({
   components: {},
   props: {},
   setup() {
+    const { t } = useI18n();
     const matchStore = useMatchStore();
 
     const currentStatus: WritableComputedRef<MatchStatusSelectData> = computed({
@@ -64,11 +65,11 @@ export default defineComponent({
 
     const matchStatuses: MatchStatusSelectData[] = [
       {
-        name: i18n.t(`matchStatuses.onGoing`),
+        name: t(`matchStatuses.onGoing`),
         status: MatchStatus.onGoing,
       },
       {
-        name: i18n.t(`matchStatuses.past`),
+        name: t(`matchStatuses.past`),
         status: MatchStatus.past,
       },
     ];

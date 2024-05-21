@@ -169,7 +169,7 @@ import { useRootStateStore } from "@/store/rootState/store";
 import { useRouter } from "vue-router/composables";
 import languages from "@/locales/languages";
 import { useVuetify } from "@/plugins/vuetify";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import noop from "lodash/noop";
 
 import {
@@ -201,6 +201,7 @@ export default defineComponent({
     GlobalSearch,
   },
   setup() {
+    const { locale } = useI18n();
     const router = useRouter();
     const vuetify = useVuetify();
     const oauthStore = useOauthStore();
@@ -294,7 +295,7 @@ export default defineComponent({
     const savedLocale = ({
       get: () => rootStateStore.locale,
       set: (newVal: string) => {
-        i18n.locale = newVal;
+        locale.value = newVal;
         rootStateStore.saveLocale(newVal);
       }
     });
@@ -369,7 +370,7 @@ export default defineComponent({
 
     async function init() {
       rootStateStore.loadLocale();
-      i18n.locale = savedLocale.get();
+      locale.value = savedLocale.get();
       await oauthStore.loadAuthCodeToState();
 
       if (authCode.value) {

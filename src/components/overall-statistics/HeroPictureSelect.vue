@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
@@ -80,7 +80,9 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const overallStatsStore = useOverallStatsStore();
+
     const dialogOpened = ref<boolean>(false);
     const heroPicks: ComputedRef<HeroPick[]> = computed((): HeroPick[] => overallStatsStore.heroPicks);
 
@@ -217,38 +219,38 @@ export default defineComponent({
     const heroPickName: ComputedRef<TranslateResult> = computed((): TranslateResult => {
       const heroName = heroPicks.value[props.heroIndex].name;
       if (heroName === "anyhero") {
-        return i18n.t("components_overall-statistics_heropictureselect.anyhero");
+        return t("components_overall-statistics_heropictureselect.anyhero");
       }
       return heroName;
     });
 
     const possibleHeroPicks: HeroPick[] = [
-      { name: i18n.t(`heroNames.none`).toString(), heroId: "none", race: ERaceEnum.TOTAL },
-      { name: i18n.t(`heroNames.all`).toString(), heroId: "all", race: ERaceEnum.TOTAL },
-      { name: i18n.t(`heroNames.archmage`).toString(), heroId: "archmage", race: ERaceEnum.HUMAN },
-      { name: i18n.t(`heroNames.mountainking`).toString(), heroId: "mountainking", race: ERaceEnum.HUMAN },
-      { name: i18n.t(`heroNames.paladin`).toString(), heroId: "paladin", race: ERaceEnum.HUMAN },
-      { name: i18n.t(`heroNames.sorceror`).toString(), heroId: "sorceror", race: ERaceEnum.HUMAN },
-      { name: i18n.t(`heroNames.farseer`).toString(), heroId: "farseer", race: ERaceEnum.ORC },
-      { name: i18n.t(`heroNames.blademaster`).toString(), heroId: "blademaster", race: ERaceEnum.ORC },
-      { name: i18n.t(`heroNames.shadowhunter`).toString(), heroId: "shadowhunter", race: ERaceEnum.ORC },
-      { name: i18n.t(`heroNames.taurenchieftain`).toString(), heroId: "taurenchieftain", race: ERaceEnum.ORC },
-      { name: i18n.t(`heroNames.deathknight`).toString(), heroId: "deathknight", race: ERaceEnum.UNDEAD },
-      { name: i18n.t(`heroNames.lich`).toString(), heroId: "lich", race: ERaceEnum.UNDEAD },
-      { name: i18n.t(`heroNames.dreadlord`).toString(), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
-      { name: i18n.t(`heroNames.cryptlord`).toString(), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
-      { name: i18n.t(`heroNames.demonhunter`).toString(), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
-      { name: i18n.t(`heroNames.keeperofthegrove`).toString(), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
-      { name: i18n.t(`heroNames.warden`).toString(), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
-      { name: i18n.t(`heroNames.priestessofthemoon`).toString(), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
-      { name: i18n.t(`heroNames.avatarofflame`).toString(), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.bansheeranger`).toString(), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.beastmaster`).toString(), heroId: "beastmaster", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.pandarenbrewmaster`).toString(), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.pitlord`).toString(), heroId: "pitlord", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.seawitch`).toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.tinker`).toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
-      { name: i18n.t(`heroNames.alchemist`).toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.none`).toString(), heroId: "none", race: ERaceEnum.TOTAL },
+      { name: t(`heroNames.all`).toString(), heroId: "all", race: ERaceEnum.TOTAL },
+      { name: t(`heroNames.archmage`).toString(), heroId: "archmage", race: ERaceEnum.HUMAN },
+      { name: t(`heroNames.mountainking`).toString(), heroId: "mountainking", race: ERaceEnum.HUMAN },
+      { name: t(`heroNames.paladin`).toString(), heroId: "paladin", race: ERaceEnum.HUMAN },
+      { name: t(`heroNames.sorceror`).toString(), heroId: "sorceror", race: ERaceEnum.HUMAN },
+      { name: t(`heroNames.farseer`).toString(), heroId: "farseer", race: ERaceEnum.ORC },
+      { name: t(`heroNames.blademaster`).toString(), heroId: "blademaster", race: ERaceEnum.ORC },
+      { name: t(`heroNames.shadowhunter`).toString(), heroId: "shadowhunter", race: ERaceEnum.ORC },
+      { name: t(`heroNames.taurenchieftain`).toString(), heroId: "taurenchieftain", race: ERaceEnum.ORC },
+      { name: t(`heroNames.deathknight`).toString(), heroId: "deathknight", race: ERaceEnum.UNDEAD },
+      { name: t(`heroNames.lich`).toString(), heroId: "lich", race: ERaceEnum.UNDEAD },
+      { name: t(`heroNames.dreadlord`).toString(), heroId: "dreadlord", race: ERaceEnum.UNDEAD },
+      { name: t(`heroNames.cryptlord`).toString(), heroId: "cryptlord", race: ERaceEnum.UNDEAD },
+      { name: t(`heroNames.demonhunter`).toString(), heroId: "demonhunter", race: ERaceEnum.NIGHT_ELF },
+      { name: t(`heroNames.keeperofthegrove`).toString(), heroId: "keeperofthegrove", race: ERaceEnum.NIGHT_ELF },
+      { name: t(`heroNames.warden`).toString(), heroId: "warden", race: ERaceEnum.NIGHT_ELF },
+      { name: t(`heroNames.priestessofthemoon`).toString(), heroId: "priestessofthemoon", race: ERaceEnum.NIGHT_ELF },
+      { name: t(`heroNames.avatarofflame`).toString(), heroId: "avatarofflame", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.bansheeranger`).toString(), heroId: "bansheeranger", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.beastmaster`).toString(), heroId: "beastmaster", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.pandarenbrewmaster`).toString(), heroId: "pandarenbrewmaster", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.pitlord`).toString(), heroId: "pitlord", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.seawitch`).toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.tinker`).toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
+      { name: t(`heroNames.alchemist`).toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
     ];
 
     const possibleHeroPickRows: HeroPick[][] = [

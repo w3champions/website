@@ -10,7 +10,7 @@ import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { Length } from "@/store/overallStats/types";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { ChartData } from "chart.js";
 
 export default defineComponent({
@@ -20,6 +20,7 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const { t } = useI18n();
     const statsStore = useOverallStatsStore();
 
     const lengths: ComputedRef<Length[]> = computed((): Length[] => {
@@ -41,7 +42,7 @@ export default defineComponent({
         labels: intervals.value,
         datasets: [
           {
-            label: String(i18n.t("components_overall-statistics_gamelengthchart.amountofgames")),
+            label: String(t("components_overall-statistics_gamelengthchart.amountofgames")),
             data: games.value,
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderColor: "rgba(54, 162, 235, 1)",

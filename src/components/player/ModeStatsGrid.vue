@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { AT_modes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
@@ -80,6 +80,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const isAtMode = (mode: EGameMode): boolean => AT_modes().includes(mode);
 
     const gameModeStatsCombined: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
@@ -123,33 +125,33 @@ export default defineComponent({
         return "";
       }
 
-      return `${i18n.t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
+      return `${t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
     }
 
     const headers: ModeStatsGridHeader[] = [
       {
-        text: i18n.t("components_player_modestatsgrid.mode"),
+        text: t("components_player_modestatsgrid.mode"),
         align: "center",
         sortable: false,
-        tooltip: i18n.t("components_player_modestatsgrid.mode"),
+        tooltip: t("components_player_modestatsgrid.mode"),
       },
       {
-        text: i18n.t("components_player_modestatsgrid.winloss"),
+        text: t("components_player_modestatsgrid.winloss"),
         align: "center",
         sortable: false,
-        tooltip: i18n.t("components_player_modestatsgrid.winloss"),
+        tooltip: t("components_player_modestatsgrid.winloss"),
       },
       {
-        text: i18n.t("components_player_modestatsgrid.mmr"),
+        text: t("components_player_modestatsgrid.mmr"),
         align: "center",
         sortable: false,
-        tooltip: i18n.t("components_player_modestatsgrid.mmr"),
+        tooltip: t("components_player_modestatsgrid.mmr"),
       },
       {
-        text: i18n.t("components_player_modestatsgrid.level"),
+        text: t("components_player_modestatsgrid.level"),
         align: "center",
         sortable: false,
-        tooltip: i18n.t("components_player_modestatsgrid.leveldesc"),
+        tooltip: t("components_player_modestatsgrid.leveldesc"),
       },
     ];
 

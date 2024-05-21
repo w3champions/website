@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
@@ -81,6 +81,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const playerStore = usePlayerStore();
     const paginationSize = 10;
     const page = ref<number>(1);
@@ -144,7 +145,7 @@ export default defineComponent({
         let wins = 0;
         const playerWinRate = {
           hero: item.heroId,
-          name: i18n.t(`heroNames.${item.heroId}`).toString(),
+          name: t(`heroNames.${item.heroId}`).toString(),
           image: getImageForTable(item.heroId),
           numbers_by_race: {
             [ERaceEnum.UNDEAD]: { number: 0, total: 0 },

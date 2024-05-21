@@ -15,7 +15,7 @@
 import { defineComponent, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "HeroPicture",
@@ -27,8 +27,10 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const heroPicture = ref<string>(getAsset(`heroes/${props.heroIcon}.png`));
-    const heroName = ref<TranslateResult>(i18n.t(`heroNames.${props.heroIcon}`));
+    const heroName = ref<TranslateResult>(t(`heroNames.${props.heroIcon}`));
 
     return {
       heroPicture,

@@ -80,7 +80,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
@@ -101,6 +101,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
     const isLoadingMatches = ref<boolean>(false);
@@ -136,12 +137,12 @@ export default defineComponent({
     }
 
     const races = [
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`), raceId: ERaceEnum.TOTAL },
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`), raceId: ERaceEnum.HUMAN },
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.ORC]}`), raceId: ERaceEnum.ORC },
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`), raceId: ERaceEnum.NIGHT_ELF },
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`), raceId: ERaceEnum.UNDEAD },
-      { raceName: i18n.t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`), raceId: ERaceEnum.RANDOM },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`), raceId: ERaceEnum.TOTAL },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`), raceId: ERaceEnum.HUMAN },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.ORC]}`), raceId: ERaceEnum.ORC },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`), raceId: ERaceEnum.NIGHT_ELF },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`), raceId: ERaceEnum.UNDEAD },
+      { raceName: t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`), raceId: ERaceEnum.RANDOM },
     ];
 
     const winRateVsOpponent: ComputedRef<string> = computed((): string => {

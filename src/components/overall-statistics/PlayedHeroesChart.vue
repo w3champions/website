@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import map from "lodash/map";
 import round from "lodash/round";
 import sumBy from "lodash/sumBy";
@@ -44,6 +44,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const orderedHeroes: ComputedRef<PlayedHeroExtra[]> = computed((): PlayedHeroExtra[] => {
       const playedHeroesExtra = props.playedHeroes
         .map((hero) => {
@@ -63,7 +65,7 @@ export default defineComponent({
         const groupTotalCount = sumBy(heroes, "count");
         const newHeroesData: PlayedHeroExtra[] = map(heroes, (hero) => ({
           ...hero,
-          icon: i18n.t("heroNames." + hero.icon).toString(),
+          icon: t("heroNames." + hero.icon).toString(),
           count: round(hero.count / groupTotalCount * 100, 1),
         }));
 

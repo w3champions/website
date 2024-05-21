@@ -143,7 +143,7 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { useRankingStore } from "@/store/ranking/store";
 import { useVuetify } from "@/plugins/vuetify";
 
@@ -171,6 +171,7 @@ export default defineComponent({
       }
     },
     setup(props) {
+      const { t } = useI18n();
       const vuetify = useVuetify();
       const twitchStore = useTwitchStore();
       const rankingsStore = useRankingStore();
@@ -191,7 +192,7 @@ export default defineComponent({
     const headers = [
       {
         name: "Rank",
-        text: i18n.t("components_ladder_rankingsgrid.rank"),
+        text: t("components_ladder_rankingsgrid.rank"),
         align: "start",
         sortable: false,
         width: "25px",
@@ -201,7 +202,7 @@ export default defineComponent({
       },
       {
         name: "Player",
-        text: i18n.t("components_ladder_rankingsgrid.player"),
+        text: t("components_ladder_rankingsgrid.player"),
         align: "start",
         sortable: false,
         minWidth: "170px",
@@ -211,7 +212,7 @@ export default defineComponent({
       },
       {
         name: "Level",
-        text: i18n.t("components_ladder_rankingsgrid.level"),
+        text: t("components_ladder_rankingsgrid.level"),
         align: "center",
         sortable: false,
         width: "100px",
@@ -221,7 +222,7 @@ export default defineComponent({
       },
       {
         name: "Race",
-        text: i18n.t("components_ladder_rankingsgrid.race"),
+        text: t("components_ladder_rankingsgrid.race"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -231,7 +232,7 @@ export default defineComponent({
       },
       {
         name: "Clan",
-        text: i18n.t("components_ladder_rankingsgrid.clan"),
+        text: t("components_ladder_rankingsgrid.clan"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -243,7 +244,7 @@ export default defineComponent({
       },
       {
         name: "Wins",
-        text: i18n.t("components_ladder_rankingsgrid.wins"),
+        text: t("components_ladder_rankingsgrid.wins"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -253,7 +254,7 @@ export default defineComponent({
       },
       {
         name: "Losses",
-        text: i18n.t("components_ladder_rankingsgrid.losses"),
+        text: t("components_ladder_rankingsgrid.losses"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -263,7 +264,7 @@ export default defineComponent({
       },
       {
         name: "Total",
-        text: i18n.t("components_ladder_rankingsgrid.total"),
+        text: t("components_ladder_rankingsgrid.total"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -273,7 +274,7 @@ export default defineComponent({
       },
       {
         name: "Winrate",
-        text: i18n.t("components_ladder_rankingsgrid.winrate"),
+        text: t("components_ladder_rankingsgrid.winrate"),
         align: "end",
         sortable: false,
         width: "50px",
@@ -283,7 +284,7 @@ export default defineComponent({
       },
       {
         name: "MMR",
-        text: i18n.t("components_ladder_rankingsgrid.mmr"),
+        text: t("components_ladder_rankingsgrid.mmr"),
         align: "end",
         sortable: false,
         width: "25px",
@@ -390,9 +391,9 @@ export default defineComponent({
         hasSelectedIcon(playerInfo) &&
         playerInfo.selectedRace <= ERaceEnum.UNDEAD
       ) {
-        return i18n.t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
+        return t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
       } else {
-        return i18n.t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
+        return t(`races.${ERaceEnum[playerInfo.calculatedRace]}`);
       }
     }
 

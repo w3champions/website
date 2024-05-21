@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";
@@ -53,6 +53,7 @@ export default defineComponent({
     },
   },
   setup: (props, context) => {
+    const { t } = useI18n();
     const selected: ComputedRef<string | TranslateResult> = computed((): string | TranslateResult => {
       const match = maps.value.find((m) => m.key === props.map);
       return match ? match.mapName : "Overall";
@@ -72,7 +73,7 @@ export default defineComponent({
           }
           return 0;
         });
-      return [{ mapName: i18n.t("mapNames.Overall"), key: "Overall" }, ...maps];
+      return [{ mapName: t("mapNames.Overall"), key: "Overall" }, ...maps];
     });
 
     function selectMap(map: string): void {
