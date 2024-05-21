@@ -1,7 +1,7 @@
 import { EGameMode, EGameModeType } from "@/store/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { ActiveGameMode } from "@/store/ranking/types";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { LocaleMessage } from "vue-i18n";
 
 export interface IGameModeBrief {
@@ -28,7 +28,7 @@ export function activeGameModes(): IGameModeBrief[] {
 export function activeGameModesWithAll(): IGameModeBrief[] {
   return [
     {
-      name: i18n.t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
+      name: useI18n().t(`gameModes.${EGameMode[EGameMode.UNDEFINED]}`),
       id: EGameMode.UNDEFINED,
     },
     ...activeGameModes(),
@@ -68,7 +68,7 @@ function getGameModes(type: EGameModeType | null, withAt: boolean): IGameModeBri
     .filter((mode) => type === null || mode.type === type)
     .map((mode) => {
       const id = mode.id;
-      const name = i18n.t(`gameModes.${EGameMode[id]}`) || mode.name;
+      const name = useI18n().t(`gameModes.${EGameMode[id]}`) || mode.name;
       return {
         id,
         name,

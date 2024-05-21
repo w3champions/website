@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { GameLength, Length } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData } from "chart.js";
@@ -22,6 +22,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const trimmedStats: ComputedRef<Length[]> = computed((): Length[] => {
       const stats = props.gameLength.lengths.slice(4); // Do not display games lasting less than 2 minutes.
       stats.pop(); // Do not display the last entry, because all games longer than the last timeslot are accumulated here.
@@ -36,7 +38,7 @@ export default defineComponent({
         labels: passedTime.value,
         datasets: [
           {
-            label: i18n.t("components_overall-statistics_gamelengthchart.amountofgames").toString(),
+            label: t("components_overall-statistics_gamelengthchart.amountofgames").toString(),
             data: gamesCount.value,
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderColor: "rgba(54, 162, 235, 1)",

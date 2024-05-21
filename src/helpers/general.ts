@@ -1,7 +1,6 @@
 import { Race } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
-import { i18n } from "@/main";
-import { TranslateResult } from "vue-i18n";
+import { useI18n } from "vue-i18n-bridge";
 
 // got it from here: https://www.petermorlion.com/iterating-a-typescript-enum/
 export const enumKeys = <
@@ -13,13 +12,15 @@ export const enumKeys = <
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 };
 
-export const races: Race[] = [
-  { raceId: ERaceEnum.HUMAN, raceName: ERaceEnum[ERaceEnum.HUMAN] },
-  { raceId: ERaceEnum.ORC, raceName: ERaceEnum[ERaceEnum.ORC] },
-  { raceId: ERaceEnum.NIGHT_ELF, raceName: ERaceEnum[ERaceEnum.NIGHT_ELF] },
-  { raceId: ERaceEnum.UNDEAD, raceName: ERaceEnum[ERaceEnum.UNDEAD] },
-  { raceId: ERaceEnum.RANDOM, raceName: ERaceEnum[ERaceEnum.RANDOM] },
-];
+export const races = (): Race[] => {
+  return [
+    { raceId: ERaceEnum.HUMAN, raceName: useI18n().t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`) },
+    { raceId: ERaceEnum.ORC, raceName: useI18n().t(`races.${ERaceEnum[ERaceEnum.ORC]}`) },
+    { raceId: ERaceEnum.NIGHT_ELF, raceName: useI18n().t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`) },
+    { raceId: ERaceEnum.UNDEAD, raceName: useI18n().t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`) },
+    { raceId: ERaceEnum.RANDOM, raceName: useI18n().t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`) },
+  ];
+};
 
 export const racesWithTotal: Race[] = [
   { raceId: ERaceEnum.HUMAN, raceName: ERaceEnum[ERaceEnum.HUMAN] },
@@ -29,7 +30,3 @@ export const racesWithTotal: Race[] = [
   { raceId: ERaceEnum.RANDOM, raceName: ERaceEnum[ERaceEnum.RANDOM] },
   { raceId: ERaceEnum.TOTAL, raceName: ERaceEnum[ERaceEnum.TOTAL] },
 ];
-
-export const translateRaceName = (race: Race | number): TranslateResult => {
-  return typeof race === "number" ? i18n.t(`races.${ERaceEnum[race]}`) : i18n.t(`races.${ERaceEnum[race.raceId]}`);
-};

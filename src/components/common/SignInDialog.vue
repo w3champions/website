@@ -40,7 +40,7 @@
 import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "SignInDialog",
@@ -51,15 +51,16 @@ export default defineComponent({
     },
   },
   setup: (props, context) => {
+    const { t } = useI18n();
     const gateways = [
       {
         id: BnetOAuthRegion.eu,
-        name: i18n.t("gatewayNames.Europe"),
+        name: t("gatewayNames.Europe"),
         uri: "https://eu.battle.net",
       },
       {
         id: BnetOAuthRegion.cn,
-        name: i18n.t("gatewayNames.China"),
+        name: t("gatewayNames.China"),
         uri: "https://www.battlenet.com.cn",
       },
     ];

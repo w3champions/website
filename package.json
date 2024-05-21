@@ -51,6 +51,7 @@
     "vue-cookies-ts": "^1.5.19",
     "vue-country-flag": "^2.3.2",
     "vue-i18n": "^8.28.2",
+    "vue-i18n-bridge": "9.13.1",
     "vue-router": "^3.6.5",
     "vuetify": "^2.6.13"
   },

@@ -13,9 +13,9 @@
         <v-row>
           <v-col cols="12" sm="6" md="12">
             <v-select
-              :items="races"
+              :items="races()"
               v-model="race"
-              :item-text="translateRaceName"
+              item-text="raceName"
               item-value="raceId"
               label="Race"
             />
@@ -41,7 +41,6 @@ import { defineComponent, PropType, ref } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/types";
 import { races } from "@/helpers/general";
-import { translateRaceName } from "@/helpers/general";
 
 export default defineComponent({
   name: "AddPlayerModal",
@@ -74,7 +73,6 @@ export default defineComponent({
       races,
       cancel,
       save,
-      translateRaceName,
     };
   },
 });

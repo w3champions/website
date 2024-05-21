@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
@@ -53,6 +53,8 @@ export default defineComponent({
     },
   },
   setup() {
+    const { t } = useI18n();
+
     function totalWins(stat: RaceStat[]) {
       const totalWins = stat.map((s) => s.wins).reduce((a, b) => a + b, 0);
       const totalLosses = stat.map((s) => s.losses).reduce((a, b) => a + b, 0);
@@ -63,37 +65,37 @@ export default defineComponent({
 
     const headers: RaceToMapStatHeader[] = [
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.map"),
+        text: t("components_overall-statistics_racetomapstat.map"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.vshu"),
+        text: t("components_overall-statistics_racetomapstat.vshu"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.vsorc"),
+        text: t("components_overall-statistics_racetomapstat.vsorc"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.vsne"),
+        text: t("components_overall-statistics_racetomapstat.vsne"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.vsud"),
+        text: t("components_overall-statistics_racetomapstat.vsud"),
         align: "start",
         sortable: false,
         width: "25px",
       },
       {
-        text: i18n.t("components_overall-statistics_racetomapstat.total"),
+        text: t("components_overall-statistics_racetomapstat.total"),
         align: "start",
         sortable: false,
         width: "25px",

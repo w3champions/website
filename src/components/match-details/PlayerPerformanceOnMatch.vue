@@ -72,7 +72,7 @@ import { computed, ComputedRef, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 import { TranslateResult } from "vue-i18n";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",
@@ -112,6 +112,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const alignText = ref<string>(props.left ? "right" : "left");
 
     const goldComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
@@ -176,8 +178,8 @@ export default defineComponent({
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
       return opponent > me
-        ? i18n.t("components_match-details_playerperformanceonmatch.lost")
-        : i18n.t("components_match-details_playerperformanceonmatch.won");
+        ? t("components_match-details_playerperformanceonmatch.lost")
+        : t("components_match-details_playerperformanceonmatch.won");
     }
 
     return {

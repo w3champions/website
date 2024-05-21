@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { ERaceEnum } from "@/store/types";
@@ -31,6 +31,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const playerStore = usePlayerStore();
 
     const averageAgainstRace: ComputedRef<string> = computed((): string => {
@@ -77,7 +78,7 @@ export default defineComponent({
         labels: intervals.value,
         datasets: [
           {
-            label: String(i18n.t("components_overall-statistics_gamelengthchart.amountofgames")),
+            label: String(t("components_overall-statistics_gamelengthchart.amountofgames")),
             data: games.value,
             backgroundColor: "rgba(54, 162, 235, 0.2)",
             borderColor: "rgba(54, 162, 235, 1)",

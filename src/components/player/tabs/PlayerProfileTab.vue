@@ -77,7 +77,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
@@ -114,6 +114,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const oauthStore = useOauthStore();
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
@@ -202,13 +203,13 @@ export default defineComponent({
 
     const raceHeaders: PlayerProfileTabRaceHeader[] = [
       {
-        text: i18n.t("components_player_tabs_playerprofiletab.race"),
+        text: t("components_player_tabs_playerprofiletab.race"),
         align: "start",
         sortable: false,
         value: "race",
       },
       {
-        text: i18n.t("components_player_tabs_playerprofiletab.winloss"),
+        text: t("components_player_tabs_playerprofiletab.winloss"),
         align: "start",
         sortable: false,
         value: "wins",

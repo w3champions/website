@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
@@ -51,6 +51,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const playerStore = usePlayerStore();
     const selectedTab = ref<string>("tab-16");
 
@@ -83,7 +84,7 @@ export default defineComponent({
       for (const playerHeroStats of heroStatsItemList) {
         const rowObject = {
           id: playerHeroStats.heroId,
-          name: i18n.t(`heroNames.${playerHeroStats.heroId}`).toString(),
+          name: t(`heroNames.${playerHeroStats.heroId}`).toString(),
           image: getImageForTable(playerHeroStats.heroId),
           hu: 0,
           orc: 0,

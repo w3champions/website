@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
@@ -106,11 +106,12 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const { t } = useI18n();
     const overallStatsStore = useOverallStatsStore();
     const raceEnums = ERaceEnum;
     const selectedPatch = ref<string>("All");
     const selectedMmr = ref<number>(0);
-    const selectedMap = ref<TranslateResult>(i18n.t("common.overall"));
+    const selectedMap = ref<TranslateResult>(t("common.overall"));
     const statsPerRaceAndMap: ComputedRef<StatsPerWinrate[]> = computed((): StatsPerWinrate[] => overallStatsStore.statsPerMapAndRace);
 
     const headers: WinratesTabHeader[] = [
@@ -120,27 +121,27 @@ export default defineComponent({
         sortable: false,
       },
       {
-        text: i18n.t("components_overall-statistics_tabs_winratestab.vshu"),
+        text: t("components_overall-statistics_tabs_winratestab.vshu"),
         align: "start",
         sortable: false,
       },
       {
-        text: i18n.t("components_overall-statistics_tabs_winratestab.vsorc"),
+        text: t("components_overall-statistics_tabs_winratestab.vsorc"),
         align: "start",
         sortable: false,
       },
       {
-        text: i18n.t("components_overall-statistics_tabs_winratestab.vsud"),
+        text: t("components_overall-statistics_tabs_winratestab.vsud"),
         align: "start",
         sortable: false,
       },
       {
-        text: i18n.t("components_overall-statistics_tabs_winratestab.vsne"),
+        text: t("components_overall-statistics_tabs_winratestab.vsne"),
         align: "start",
         sortable: false,
       },
       {
-        text: i18n.t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        text: t("components_overall-statistics_tabs_winratestab.vsrdm"),
         align: "start",
         sortable: false,
       },
@@ -152,7 +153,7 @@ export default defineComponent({
         .sort()
         .reverse();
       const mapped = mmrsSorted.map((m) => ({
-        league: i18n.t("mmrLeagueRanges.MMR_" + m),
+        league: t("mmrLeagueRanges.MMR_" + m),
         mmr: m,
       }));
       return mapped;
@@ -162,7 +163,7 @@ export default defineComponent({
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
       return stats.patchToStatsPerModes[selectedPatch.value].map((r) => {
-        return { mapId: r.mapName, mapName: i18n.t("mapNames." + r.mapName) };
+        return { mapId: r.mapName, mapName: t("mapNames." + r.mapName) };
       });
     });
 

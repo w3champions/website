@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { i18n } from "@/main";
+import { useI18n } from "vue-i18n-bridge";
 import { GameDay } from "@/store/overallStats/types";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import { ChartData } from "chart.js";
@@ -21,6 +21,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const gameDayDates = ref<Date[]>(props.gameDays.map((g) => parseJSON(g.date)));
     const gameDayCounts = ref<number[]>(props.gameDays.map((g) => g.gamesPlayed));
 
@@ -29,7 +31,7 @@ export default defineComponent({
         labels: gameDayDates.value,
         datasets: [
           {
-            label: i18n.t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
+            label: t("components_overall-statistics_tabs_playeractivitytab.playersperday").toString(),
             data: gameDayCounts.value,
             fill: true,
             backgroundColor: "rgba(54, 162, 235, 0.2)",

@@ -15,7 +15,7 @@
               style="display: inline; padding-right: 10px"
               :race="item.race"
             />
-            <span>{{ translateRaceName(item.race) }}</span>
+            <span>{{ $t(`races.${ERaceEnum[item.race]}`) }}</span>
           </td>
           <td>{{ item.total }}</td>
           <td>{{ item.percent }}%</td>
@@ -31,7 +31,7 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-import { translateRaceName } from "@/helpers/general";
+import { ERaceEnum } from "@/store/types";
 
 type RankingsRaceDistributionData = {
   race: number;
@@ -85,7 +85,7 @@ export default defineComponent({
 
     return {
       raceDistributions,
-      translateRaceName,
+      ERaceEnum,
     };
   },
 });
