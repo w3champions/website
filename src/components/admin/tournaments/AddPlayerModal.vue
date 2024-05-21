@@ -15,7 +15,7 @@
             <v-select
               :items="races"
               v-model="race"
-              item-text="raceName"
+              :item-text="translateRaceName"
               item-value="raceId"
               label="Race"
             />
@@ -37,11 +37,11 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
-import map from "lodash/map";
+import { defineComponent, PropType, ref } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { ERaceEnum } from "@/store/types";
-import { ERaceEnumLabel } from "@/helpers/tournaments";
+import { races } from "@/helpers/general";
+import { translateRaceName } from "@/helpers/general";
 
 export default defineComponent({
   name: "AddPlayerModal",
@@ -56,16 +56,9 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(_props, context) {
     const battleTag = ref<string>("");
     const race = ref<string>(ERaceEnum.RANDOM.toString());
-
-    const races: ComputedRef<{ raceId: string; raceName: string }[]> = computed((): { raceId: string; raceName: string }[] => {
-      return map(ERaceEnumLabel, (raceName, raceId) => ({
-        raceId,
-        raceName,
-      }));
-    });
 
     function cancel() {
       context.emit("cancel");
@@ -81,6 +74,7 @@ export default defineComponent({
       races,
       cancel,
       save,
+      translateRaceName,
     };
   },
 });

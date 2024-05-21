@@ -1,14 +1,14 @@
 <template>
   <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
-    <v-tab v-for="race of races" :key="race.raceId" :href="`#tab-${race.raceId}`">
+    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
       <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
       </span>
       <race-icon v-else :race="race.raceId" />
     </v-tab>
 
-    <v-tab-item v-for="race of races" :key="race.raceId" :value="'tab-' + race.raceId">
+    <v-tab-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
@@ -28,7 +28,8 @@ import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
 import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
-import { races, defaultStatsTab } from "@/helpers/profile";
+import { defaultStatsTab } from "@/helpers/profile";
+import { racesWithTotal } from "@/helpers/general";
 import isEmpty from "lodash/isEmpty";
 import { usePlayerStore } from "@/store/player/store";
 
@@ -187,7 +188,7 @@ export default defineComponent({
 
     return {
       selectedTab,
-      races,
+      racesWithTotal,
       ERaceEnum,
       heroUsages,
     };

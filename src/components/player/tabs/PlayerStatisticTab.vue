@@ -148,7 +148,6 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref, watch } from "vue";
 import { i18n } from "@/main";
-import { TranslateResult } from "vue-i18n";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
 import { PlayerMmrRpTimeline, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
@@ -157,7 +156,7 @@ import PlayerMmrRpTimelineChart from "@/components/player/PlayerMmrRpTimelineCha
 import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
 import PlayerGameLengthStats from "@/components/player/PlayerGameLengthStats.vue";
-import { races } from "@/helpers/profile";
+import { races, translateRaceName } from "@/helpers/general";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { Season } from "@/store/ranking/types";
@@ -189,8 +188,6 @@ export default defineComponent({
     const playerMmrRpTimeline: ComputedRef<PlayerMmrRpTimeline | undefined> = computed((): PlayerMmrRpTimeline | undefined => playerStore.mmrRpTimeline);
     const isPlayerMmrRpTimelineEmpty: ComputedRef<boolean> = computed((): boolean => playerStore.mmrRpTimeline == undefined);
     const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
-
-    const translateRaceName = (race: any): TranslateResult => i18n.t(`races.${race.raceName}`);
 
     function getMaps(): void {
       overallStatsStore.loadMapsPerSeason();
