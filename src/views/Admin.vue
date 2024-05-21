@@ -17,7 +17,7 @@ import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue"
 import { useOauthStore } from "@/store/oauth/store";
 
 export default defineComponent({
-  name: "Admin",
+  name: "AdminView",
   components: {
     AdminNavigation,
     AdminCheckJwtLifetime,
