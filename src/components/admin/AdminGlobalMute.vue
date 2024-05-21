@@ -129,7 +129,6 @@ import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
-import isEmpty from "lodash/isEmpty";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -176,17 +175,16 @@ export default defineComponent({
       }
     }
 
-    onMounted(async (): Promise<void> => {
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
       await loadMutes();
-    });
-
-
-    watch(isAdmin, isAdminWatcher);
-    async function isAdminWatcher(): Promise<void> {
-      if (isEmpty(globallyMutedPlayers.value)) {
-        await loadMutes();
-      }
     }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
     function searchCleared(): void {
       showConfirmation.value = false;

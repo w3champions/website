@@ -89,6 +89,14 @@ export default defineComponent({
       return null;
     }
 
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+      await loadActiveGameModes();
+      await adminStore.loadQueueData(oauthStore.token);
+    }
+
     onMounted(async (): Promise<void> => {
       await init();
 
@@ -96,17 +104,6 @@ export default defineComponent({
         await refresh();
       }, AppConstants.queueDataRefreshInterval);
     });
-
-    watch(isAdmin, init);
-
-    async function init(): Promise<void> {
-      await loadActiveGameModes();
-
-      if (isAdmin.value) {
-        await adminStore.loadQueueData(oauthStore.token);
-      }
-    }
-
 
     onUnmounted((): void => {
       clearInterval(_intervalRefreshHandle);

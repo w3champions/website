@@ -63,9 +63,8 @@ export default defineComponent({
     watch(isAdmin, init);
 
     async function init(): Promise<void> {
-      if (isAdmin.value) {
-        await adminStore.loadAvailableProxies(oauthStore.token);
-      }
+      if (!isAdmin.value) return;
+      await adminStore.loadAvailableProxies(oauthStore.token);
     }
 
     onMounted(async (): Promise<void> => {

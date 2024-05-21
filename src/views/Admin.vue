@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid v-show="isAdmin" style="height: 100%">
+  <v-container fluid v-if="isAdmin" style="height: 100%">
     <admin-check-jwt-lifetime />
     <div class="admin-page-wrapper">
       <admin-navigation></admin-navigation>
@@ -17,7 +17,7 @@ import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue"
 import { useOauthStore } from "@/store/oauth/store";
 
 export default defineComponent({
-  name: "Admin",
+  name: "AdminView",
   components: {
     AdminNavigation,
     AdminCheckJwtLifetime,

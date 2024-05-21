@@ -189,9 +189,8 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
-import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import {
   mdiCodeTags,
@@ -239,13 +238,11 @@ export default defineComponent({
   },
   props: {},
   setup() {
-    const oauthStore = useOauthStore();
     const infoMessagesStore = useInfoMessagesStore();
 
     const editedIndex = ref<number>(-1);
 
     const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
     const formTitle: ComputedRef<string> = computed((): string => editedIndex.value === -1 ? "New Item" : "Edit Item");
 
     const dialog = ref<boolean>(false);
@@ -275,13 +272,9 @@ export default defineComponent({
       content: "",
     });
 
-    watch(isAdmin, init);
-
     async function init() {
-      if (isAdmin.value) {
-        await infoMessagesStore.loadNews();
-        editedNewsItem.value = createDefaultNewsMessage();
-      }
+      await infoMessagesStore.loadNews();
+      editedNewsItem.value = createDefaultNewsMessage();
     }
 
     function editNewsItem(item: NewsMessage): void {

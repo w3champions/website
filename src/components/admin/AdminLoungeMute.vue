@@ -131,7 +131,6 @@ import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import isEmpty from "lodash/isEmpty";
 
 export default defineComponent({
   name: "AdminLoungeMute",
@@ -185,20 +184,17 @@ export default defineComponent({
       }
     }
 
-    watch(isAdmin, isAdminWatcher);
-    async function isAdminWatcher(): Promise<void> {
-      if (isEmpty(loungeMutes.value)) {
-        await init();
-      }
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+      await loadMutes();
     }
 
     onMounted(async (): Promise<void> => {
       await init();
     });
 
-    async function init(): Promise<void> {
-      await loadMutes();
-    }
 
     function searchCleared(): void {
       showConfirmation.value = false;

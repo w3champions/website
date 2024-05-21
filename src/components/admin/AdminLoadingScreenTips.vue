@@ -94,15 +94,6 @@ export default defineComponent({
       bsonId: "",
     };
 
-    watch(isAdmin, init);
-
-    async function init(): Promise<void> {
-      if (isAdmin.value) {
-        await infoMessagesStore.loadTips();
-        editedTipItem.value = Object.assign({}, defaultTipItem);
-      }
-    }
-
     function editTipItem(item: LoadingScreenTip): void {
       editedTipItem.value = item;
       dialog.value = true;
@@ -128,6 +119,14 @@ export default defineComponent({
 
     function closeTips(): void {
       dialog.value = false;
+      editedTipItem.value = Object.assign({}, defaultTipItem);
+    }
+
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+      await infoMessagesStore.loadTips();
       editedTipItem.value = Object.assign({}, defaultTipItem);
     }
 

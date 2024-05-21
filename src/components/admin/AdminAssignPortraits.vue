@@ -300,6 +300,7 @@ export default defineComponent({
     watch(isAdmin, init);
 
     async function init(): Promise<void> {
+      if (!isAdmin.value) return;
       await playerManagement.loadAllSpecialPortraits();
       const managedPlayer = playerManagement.managedBattleTag;
       if (managedPlayer) {

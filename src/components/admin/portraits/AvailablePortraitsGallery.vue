@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import AssignPortrait from "./AssignPortrait.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import { useOauthStore } from "@/store/oauth/store";
 
 export default defineComponent({
   name: "AvailablePortraitsGallery",
@@ -27,22 +28,22 @@ export default defineComponent({
     },
   },
   setup() {
+    const oauthStore = useOauthStore();
     const playerManagement = usePlayerManagementStore();
     const allSpecialPortraits = ref<number[]>([]);
 
-    async function init(): Promise<void> {
-      const specials = playerManagement.allSpecialPortraits;
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-      if (specials && specials.length > 0) {
-        allSpecialPortraits.value = Object.create(specials.map((x) => parseInt(x.id)).sort((a, b) => b - a));
-      } else {
-        await playerManagement.loadAllSpecialPortraits();
-        allSpecialPortraits.value = Object.create(
-          playerManagement.allSpecialPortraits
-            .map((x) => parseInt(x.id))
-            .sort((a, b) => b - a)
-        );
-      }
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+
+      await playerManagement.loadAllSpecialPortraits();
+      allSpecialPortraits.value = Object.create(playerManagement.allSpecialPortraits
+        .map((x) => parseInt(x.id))
+        .sort((a, b) => b - a)
+      );
     }
 
     onMounted(async (): Promise<void> => {

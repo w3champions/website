@@ -48,7 +48,6 @@
 import { defineComponent, ref } from "vue";
 import MatchDetailView from "@/views/MatchDetail.vue";
 import AdminReplayChatLog from "@/components/admin/replays/AdminReplayChatLog.vue";
-import { ReplayChatLog } from "@/store/admin/types";
 
 export default defineComponent({
   name: "AdminViewGameChat",
@@ -59,10 +58,8 @@ export default defineComponent({
   props: {},
   setup() {
     const matchId = ref<string>("");
-    const loaded = false;
     const dialog = ref<boolean>(false);
     const acceptedGame = ref<boolean>(false);
-    const logs = {} as ReplayChatLog;
 
     async function openConfirmation(): Promise<void> {
       dialog.value = true;
