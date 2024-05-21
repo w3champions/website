@@ -37,11 +37,12 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { useOauthStore } from "@/store/oauth/store";
 import { mdiFile, mdiPencil } from "@mdi/js";
 
 export default defineComponent({
@@ -52,6 +53,7 @@ export default defineComponent({
   },
   props: {},
   setup() {
+    const oauthStore = useOauthStore();
     const mapsManagementStore = useMapsManagementStore();
 
     const search = ref<string>("");
@@ -61,6 +63,7 @@ export default defineComponent({
     const isAddDialog = ref<boolean>(false);
 
     const maps: ComputedRef<Map[]> = computed((): Map[] => mapsManagementStore.maps);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
     function getMapPath(map: Map): string {
       const path = map?.gameMap?.path;
@@ -135,13 +138,16 @@ export default defineComponent({
       return map;
     }
 
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+      await mapsManagementStore.loadMaps();
+    }
+
     onMounted(async (): Promise<void> => {
       await init();
     });
-
-    async function init(): Promise<void> {
-      await mapsManagementStore.loadMaps();
-    }
 
     const headers = [
       {

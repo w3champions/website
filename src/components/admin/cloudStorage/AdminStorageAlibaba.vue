@@ -86,8 +86,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
+import { useOauthStore } from "@/store/oauth/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
@@ -96,6 +97,7 @@ export default defineComponent({
   components: {},
   props: {},
   setup() {
+    const oauthStore = useOauthStore();
     const cloudStorageStore = useCloudStorageStore();
     const dialog = ref<boolean>(false);
     const fileToUpload = ref<File | null>(null);
@@ -106,6 +108,7 @@ export default defineComponent({
 
     const files: ComputedRef<CloudFile[]> = computed((): CloudFile[] => cloudStorageStore.files);
     const validationMessage: ComputedRef<CloudValidationMessage> = computed((): CloudValidationMessage => cloudStorageStore.validationMessage);
+    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
     function resetValidationMessage() {
       isValidationMessageVisible.value = false;
@@ -144,10 +147,17 @@ export default defineComponent({
       isLoadingFiles.value = false;
     }
 
-    onMounted(async (): Promise<void> => {
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
       cloudStorageStore.resetFiles();
       resetValidationMessage();
       await loadFiles();
+    }
+
+    onMounted(async (): Promise<void> => {
+      await init();
     });
 
     const headers = [

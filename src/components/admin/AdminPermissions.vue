@@ -205,18 +205,17 @@ export default defineComponent({
       await permissionStore.loadPermissions();
     }
 
-    onMounted(async (): Promise<void> => {
-      await init();
-    });
-
     watch(isAdmin, init);
 
     async function init(): Promise<void> {
-      if (isAdmin.value) {
-        await loadPermissions();
-        editedItem.value = Object.assign({}, defaultItem);
-      }
+      if (!isAdmin.value) return;
+      await loadPermissions();
+      editedItem.value = Object.assign({}, defaultItem);
     }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
     function resetDialog(): void {
       nextTick(() => {

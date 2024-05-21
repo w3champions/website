@@ -249,9 +249,7 @@ export default defineComponent({
 
 
     async function loadBanList() {
-      if (isAdmin.value) {
-        await adminStore.loadBannedPlayers();
-      }
+      await adminStore.loadBannedPlayers();
     }
 
     function editItem(item: BannedPlayer): void {
@@ -290,22 +288,18 @@ export default defineComponent({
       dialog.value = false;
     }
 
-    watch(isAdmin, isAdminWatcher);
-    async function isAdminWatcher(): Promise<void> {
-      if (isEmpty(bannedPlayers.value)) {
-        await init();
-      }
+    watch(isAdmin, init);
+
+    async function init(): Promise<void> {
+      if (!isAdmin.value) return;
+      await loadBanList();
+      await loadActiveGameModes();
+      editedItem.value = Object.assign({}, defaultItem);
     }
 
     onMounted(async (): Promise<void> => {
       await init();
     });
-
-    async function init(): Promise<void> {
-      await loadBanList();
-      await loadActiveGameModes();
-      editedItem.value = Object.assign({}, defaultItem);
-    }
 
     function resetDialog(): void {
       nextTick(() => {

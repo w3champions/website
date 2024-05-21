@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, ref } from "vue";
 import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
@@ -107,18 +107,6 @@ export default defineComponent({
       dialogOpen.value = false;
       playerManagement.addNewPortraitDefinition(newPortraitDefinition.value);
     }
-
-    async function init(): Promise<void> {
-      const allSpecialPortraits = playerManagement.allSpecialPortraits;
-      if (!(allSpecialPortraits.length > 0)) {
-        await playerManagement.loadAllSpecialPortraits();
-      }
-      dialogOpen.value = false;
-    }
-
-    onMounted(async (): Promise<void> => {
-      await init();
-    });
 
     return {
       mdiClose,

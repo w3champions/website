@@ -75,17 +75,16 @@ export default defineComponent({
       serverLogsStore.downloadLog(logfileName);
     }
 
-    onMounted(async (): Promise<void> => {
-      await init();
-    });
-
     watch(isAdmin, init);
 
     async function init(): Promise<void> {
-      if (isAdmin.value) {
-        await serverLogsStore.fetchLogfileNames();
-      }
+      if (!isAdmin.value) return;
+      await serverLogsStore.fetchLogfileNames();
     }
+
+    onMounted(async (): Promise<void> => {
+      await init();
+    });
 
     return {
       logContent,
