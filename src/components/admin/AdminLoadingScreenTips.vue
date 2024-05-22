@@ -135,9 +135,9 @@ export default defineComponent({
     });
 
     const headers = [
-      { text: "Author", align: "start", value: "author" },
-      { text: "Creation Date", align: "start", value: "creationDate" },
-      { text: "Text", value: "message", align: "start" },
+      { text: "Author", value: "author" },
+      { text: "Creation Date", value: "creationDate" },
+      { text: "Text", value: "message" },
       { text: "Actions", value: "actions", sortable: false },
     ];
 

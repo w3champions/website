@@ -332,8 +332,8 @@ export default defineComponent({
     });
 
     const headers = [
-      { text: "Text", value: "message", align: "start" },
-      { text: "Headline", align: "start", value: "date" },
+      { text: "Text", value: "message" },
+      { text: "Headline", value: "date" },
       { text: "Actions", value: "actions", sortable: false },
     ];
 

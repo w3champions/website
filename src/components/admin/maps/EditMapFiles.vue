@@ -93,16 +93,8 @@ export default defineComponent({
     });
 
     const headers = [
-      {
-        text: "File path",
-        align: "start",
-        value: "filePath",
-      },
-      {
-        text: "Actions",
-        value: "actions",
-        sortable: false,
-      },
+      { text: "File path", value: "filePath" },
+      { text: "Actions", value: "actions", sortable: false },
     ];
 
     return {

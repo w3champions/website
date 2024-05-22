@@ -208,13 +208,11 @@ export default defineComponent({
     const headers = [
       {
         text: "Flo Ban Id",
-        align: "start",
         sortable: true,
         value: "id",
       },
       {
         text: "BattleTag",
-        align: "start",
         sortable: true,
         value: "battleTag",
       },

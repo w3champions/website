@@ -161,7 +161,7 @@ export default defineComponent({
     });
 
     const headers = [
-      { text: "Name", align: "start", sortable: true, value: "name" },
+      { text: "Name", sortable: true, value: "name" },
       { text: "Size (KB)", sortable: true, value: "size", filterable: false },
       { text: "Last Modified", sortable: true, value: "lastModified" },
       { text: "Actions", sortable: false, value: "actions" },

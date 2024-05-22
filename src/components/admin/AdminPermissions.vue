@@ -243,7 +243,7 @@ export default defineComponent({
     }
 
     const headers = [
-      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "BattleTag", sortable: true, value: "battleTag" },
       { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
       { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
       { text: "Author", sortable: true, filterable: false, value: "author" },

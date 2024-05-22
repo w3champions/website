@@ -152,17 +152,14 @@ export default defineComponent({
     const headers = [
       {
         text: "Map name",
-        align: "start",
         value: "name",
       },
       {
         text: "ID",
-        align: "start",
         value: "id",
       },
       {
         text: "Category",
-        align: "start",
         value: "category",
       },
       {
