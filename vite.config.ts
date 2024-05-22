@@ -33,7 +33,7 @@ export default defineConfig({
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
-        extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue", ".png"],
+        extensions: [".mjs", ".js", ".ts", ".vue", ".jsx", ".tsx", ".json"],
     },
     css: {
         // https://vitejs.dev/config/#css-preprocessoroptions

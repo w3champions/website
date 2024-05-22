@@ -29,16 +29,16 @@
 
     <!-- CRYPTOCURRENCIES -->
     <v-card
-      v-for="(crypto, index) in cryptos"
+      v-for="(crypto) in cryptos"
       v-bind:key="crypto.coin"
       class="support-subcard"
       tile
       outlined
-      @click.stop="updateTracker(index, cryptoDialogTracker)"
+      @click.stop="crypto.dialog = true"
     >
       <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name"></v-img>
       <crypto-dialog
-        v-model="cryptoDialogTracker[index]"
+        v-model="crypto.dialog"
         :crypto="crypto.coin"
         :cryptoName="crypto.name"
         :cryptoAddress="crypto.address"
@@ -47,66 +47,51 @@
 
     <!-- Alternates -->
     <v-card
-      v-for="(name, index) in alternates"
-      v-bind:key="index"
+      v-for="(alternate) in alternates"
+      v-bind:key="alternate.name"
       class="support-subcard"
       tile
       outlined
-      @click.stop="updateTracker(index, alternateDialogTracker)"
+      @click.stop="alternate.dialog = true"
     >
       <alternate-payments-dialog
-        v-model="alternateDialogTracker[index]"
-        :name="name"
+        v-model="alternate.dialog"
+        :name="alternate.name"
       ></alternate-payments-dialog>
-      <v-img :src="`/assets/socials/${name}_button.png`" :alt="name"></v-img>
+      <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name"></v-img>
     </v-card>
   </v-card>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent, ref } from "vue";
 import CryptoDialog from "@/components/common/CryptoDialog.vue";
 import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 
-export default {
+export default defineComponent({
   name: "SupportBox",
   components: {
     CryptoDialog,
     AlternatePaymentsDialog,
   },
-  data() {
+  props: {},
+  setup() {
+    const cryptos = ref<{coin: string; name: string; address: string; dialog: boolean}[]>([
+      { coin: `BTC`, name: "Bitcoin", address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`, dialog: false },
+      { coin: `ETH`, name: "Ethereum", address: `0x284a0e918e126dF38cFc0207c00D5564CAFbe658`, dialog: false },
+      { coin: `LTC`, name: "Litecoin", address: `ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0`, dialog: false },
+    ]);
+    const alternates = ref<{ name: string; dialog: boolean }[]>([
+      { name: "AliPay", dialog: false },
+      { name: "WeChat", dialog: false },
+    ]);
+
     return {
-      cryptos: [
-        {
-          coin: `BTC`,
-          name: "Bitcoin",
-          address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`,
-        },
-        {
-          coin: `ETH`,
-          name: "Ethereum",
-          address: `0x284a0e918e126dF38cFc0207c00D5564CAFbe658`,
-        },
-        {
-          coin: `LTC`,
-          name: "Litecoin",
-          address: `ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0`,
-        },
-      ],
-      alternates: ["AliPay", "WeChat"],
-      cryptoDialogTracker: [false, false, false],
-      alternateDialogTracker: [false, false],
+      cryptos,
+      alternates,
     };
   },
-  methods: {
-    updateTracker: function(index: number, dialogTracker: boolean[]): void {
-      for (let i = 0; i < dialogTracker.length; i++) {
-        Vue.set(dialogTracker, i, false);
-      }
-      Vue.set(dialogTracker, index, true);
-    }
-  },
-};
+});
 </script>
 
 <style lang="scss" scoped>
