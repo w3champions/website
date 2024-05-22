@@ -2,27 +2,27 @@
   <div v-if="showBracket" class="black--text">
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" v-bind:style="style">
-      <template v-for="(round, roundIndex) in rounds">
-        <tournament-round-matches
-          :key="`matches-${roundIndex}`"
-          :round="round"
-          :roundWidth="roundWidth"
-          :playerHeight="playerHeight"
-          :roundNameHeight="roundNameHeight"
-          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
-          :marginTop="roundDimensions[roundIndex].marginTop"
-        />
-        <tournament-round-connectors
-          v-if="roundIndex + 1 < rounds.length"
-          :key="`connectors-${roundIndex}`"
-          :seriesCount="round.series.length"
-          :connectorWidth="connectorWidth"
-          :playerHeight="playerHeight"
-          :roundNameHeight="roundNameHeight"
-          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
-          :marginTop="roundDimensions[roundIndex].marginTop"
-        />
-      </template>
+      <div v-for="(round, roundIndex) in rounds" :key="`matches-${roundIndex}`" class="d-flex">
+        <template>
+          <tournament-round-matches
+            :round="round"
+            :roundWidth="roundWidth"
+            :playerHeight="playerHeight"
+            :roundNameHeight="roundNameHeight"
+            :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+            :marginTop="roundDimensions[roundIndex].marginTop"
+          />
+          <tournament-round-connectors
+            v-if="roundIndex + 1 < rounds.length"
+            :seriesCount="round.series.length"
+            :connectorWidth="connectorWidth"
+            :playerHeight="playerHeight"
+            :roundNameHeight="roundNameHeight"
+            :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+            :marginTop="roundDimensions[roundIndex].marginTop"
+          />
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -110,3 +110,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.xoxo {
+  display: flex;
+}
+</style>
