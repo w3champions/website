@@ -202,7 +202,7 @@ export default defineComponent({
   },
   props: {
     rankings: {
-      type: Array<CountryRanking> as PropType<CountryRanking[]>,
+      type: Array<CountryRanking>,
       required: true,
     },
     ongoingMatches: {
