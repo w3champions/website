@@ -145,7 +145,7 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
-import { useVuetify } from "@/plugins/vuetify";
+import { useGoTo } from "vuetify";
 
 export default defineComponent({
   name: "RankingsGrid",
@@ -172,7 +172,7 @@ export default defineComponent({
     },
     setup(props) {
       const { t } = useI18n();
-      const vuetify = useVuetify();
+      const goTo = useGoTo();
       const twitchStore = useTwitchStore();
       const rankingsStore = useRankingStore();
       const sortColumn = ref<string>("Rank");
@@ -357,7 +357,7 @@ export default defineComponent({
 
         if (!listItemOfPlayer) return;
 
-        vuetify.goTo(listItemOfPlayer, {
+        goTo(listItemOfPlayer, {
           offset: window.innerHeight - 150,
         });
       }, 500);

@@ -168,7 +168,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { useVuetify } from "@/plugins/vuetify";
+import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
 
@@ -203,7 +203,7 @@ export default defineComponent({
   setup() {
     const { locale } = useI18n();
     const router = useRouter();
-    const vuetify = useVuetify();
+    const theme = useTheme();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
@@ -307,7 +307,7 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.dark = isDarkTheme.get();
+      theme.global.name.value = "isDarkTheme.get()";
       setThemeColors();
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }
@@ -355,12 +355,12 @@ export default defineComponent({
     }
 
     function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
-      Object.assign(
-        {},
-        vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
-        themeColors.get()
-      );
+      theme.global.name.value = "dark";
+      // Object.assign(
+      //   {},
+      //   theme.global.name.value.themes[isDarkTheme.get() ? "dark" : "light"],
+      //   themeColors.get()
+      // );
     }
 
     async function saveLoginRegion({ region, done }: {region: BnetOAuthRegion; done: () => void}) {
