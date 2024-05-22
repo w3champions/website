@@ -14,7 +14,7 @@
           clearable
           placeholder=" "
           :items="searchedPlayers"
-          :search-input.sync="search"
+          :search.sync="search"
           return-object
           @click:clear="revertToDefault"
           autofocus

@@ -35,7 +35,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
+    <v-app-bar :class="{ darkmode: isDarkTheme.get() }">
       <!-- toggle button for drawer menu, only for lower than lg -->
      <v-app-bar-nav-icon
        @click="setNavigationDrawerOpen(true)"
