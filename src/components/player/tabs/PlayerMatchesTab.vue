@@ -13,7 +13,7 @@
           ></player-search>
         </v-col>
         <v-col>
-          <v-btn outlined @click="filtersVisible = !filtersVisible">
+          <v-btn variant="outlined" @click="filtersVisible = !filtersVisible">
             {{ filterButtonText }}
           </v-btn>
         </v-col>
@@ -23,33 +23,33 @@
           <v-select
             class="over-chart-select-box"
             :items="activeGameModesWithAT()"
-            item-text="name"
+            item-title="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
             label="Mode"
-            outlined
+            variant="outlined"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="player-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
             @change="setPlayerRaceForSearch"
             label="Player Race"
-            outlined
+            variant="outlined"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="opponent-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
             @change="setOpponentRaceForSearch"
             label="Opponent Race"
-            outlined
+            variant="outlined"
           />
         </v-col>
       </v-row>

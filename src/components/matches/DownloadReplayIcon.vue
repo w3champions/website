@@ -1,8 +1,8 @@
 <template>
-  <v-tooltip top style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
-      <span v-on="on">
-        <v-btn class="ma-2" icon @click="downloadReplay" outlined>
+  <v-tooltip location="top" style="white-space: pre-line">
+    <template v-slot:activator="{ props }">
+      <span v-bind="props">
+        <v-btn class="ma-2" icon @click="downloadReplay" variant="outlined">
           <v-icon :max-height="18" :max-width="18">{{ mdiDownload }}</v-icon>
         </v-btn>
       </span>

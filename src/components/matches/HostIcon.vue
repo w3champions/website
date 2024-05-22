@@ -1,7 +1,7 @@
 <template>
-  <v-tooltip bottom style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
-      <div v-on="on" class="globe">
+  <v-tooltip location="bottom" style="white-space: pre-line">
+    <template v-slot:activator="{ props }">
+      <div v-bind="props" class="globe">
         <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
       </div>
     </template>

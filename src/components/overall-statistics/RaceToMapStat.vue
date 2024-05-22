@@ -36,7 +36,6 @@ import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerS
 
 interface RaceToMapStatHeader {
   text: TranslateResult;
-  align: string;
   sortable: boolean;
   width: string;
 }
@@ -66,37 +65,31 @@ export default defineComponent({
     const headers: RaceToMapStatHeader[] = [
       {
         text: t("components_overall-statistics_racetomapstat.map"),
-        align: "start",
         sortable: false,
         width: "25px",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vshu"),
-        align: "start",
         sortable: false,
         width: "25px",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsorc"),
-        align: "start",
         sortable: false,
         width: "25px",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsne"),
-        align: "start",
         sortable: false,
         width: "25px",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsud"),
-        align: "start",
         sortable: false,
         width: "25px",
       },
       {
         text: t("components_overall-statistics_racetomapstat.total"),
-        align: "start",
         sortable: false,
         width: "25px",
       },

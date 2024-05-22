@@ -94,7 +94,6 @@ import { Season } from "@/store/ranking/types";
 
 interface PlayerProfileTabRaceHeader {
   text: TranslateResult;
-  align: string;
   sortable: boolean;
   value: string;
 }
@@ -204,13 +203,11 @@ export default defineComponent({
     const raceHeaders: PlayerProfileTabRaceHeader[] = [
       {
         text: t("components_player_tabs_playerprofiletab.race"),
-        align: "start",
         sortable: false,
         value: "race",
       },
       {
         text: t("components_player_tabs_playerprofiletab.winloss"),
-        align: "start",
         sortable: false,
         value: "wins",
       },

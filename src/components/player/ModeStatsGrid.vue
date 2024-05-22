@@ -6,9 +6,9 @@
     mobile-breakpoint="400"
   >
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
-      <v-tooltip top v-bind:key="h.text">
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{ header.text }}</span>
+      <v-tooltip location="top" v-bind:key="h.text">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">{{ header.text }}</span>
         </template>
         <span style="white-space: pre-line">{{ header.tooltip }}</span>
       </v-tooltip>

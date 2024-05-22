@@ -15,12 +15,12 @@
         <v-card-text>
           <v-select
             :items="patches"
-            item-text="patchVersion"
+            item-title="patchVersion"
             item-value="patch"
             v-model="selectedPatch"
             @change="setSelectedPatch"
             label="Select Patch"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -39,21 +39,21 @@
         <v-card-text>
           <v-select
             :items="activeGameModes()"
-            item-text="name"
+            item-title="name"
             item-value="id"
             v-model="selectedGameMode"
             @change="setTimelineMode"
             label="Select Mode"
-            outlined
+            variant="outlined"
           />
           <v-select
             :items="races()"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
             v-model="selectedRace"
             @change="setTimelineRace"
             label="Select Race"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -79,10 +79,10 @@
           <v-select
             v-model="selectedMap"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
             label="Map"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -103,10 +103,10 @@
           <v-select
             v-model="selectedMapHeroWinRate"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
             label="Map"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -127,10 +127,10 @@
           <v-select
             v-model="selectedGameLengthOpponentRace"
             :items="gameLengthOpponentRaces"
-            item-text="opponentRace"
+            item-title="opponentRace"
             item-value="raceId"
             label="Opponent Race"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>

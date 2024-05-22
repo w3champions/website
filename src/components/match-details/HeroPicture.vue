@@ -1,8 +1,8 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
       <v-card-text
-        v-on="on"
+        v-bind="props"
         class="hero-icon"
         :style="{ 'background-image': 'url(' + heroPicture + ')' }"
       />
