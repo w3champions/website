@@ -54,7 +54,6 @@ import { usePlayerStore } from "@/store/player/store";
 export default defineComponent({
   name: "OverallStatisticsView",
   components: {},
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const overallStatsStore = useOverallStatsStore();

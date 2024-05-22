@@ -32,7 +32,6 @@ import { formatDateToDateWeekday } from "@/helpers/date-functions";
 
 interface TournamentsTableHeader {
   text: string;
-  align: string;
   value: string;
 }
 
@@ -62,27 +61,22 @@ export default defineComponent({
     const headers: TournamentsTableHeader[] = [
       {
         text: "Tournament Name",
-        align: "start",
         value: "name",
       },
       {
         text: "Date / Time",
-        align: "start",
         value: "startDateTime",
       },
       {
         text: "Status",
-        align: "start",
         value: "state",
       },
       {
         text: "Player Count",
-        align: "start",
         value: "playerCount",
       },
       {
         text: "Winner",
-        align: "start",
         value: "winner",
       },
     ];

@@ -20,7 +20,6 @@ import { useAdminStore } from "@/store/admin/store";
 export default defineComponent({
   name: "AdminCheckJwtLifetime",
   components: {},
-  props: {},
   setup() {
     const adminStore = useAdminStore();
     const checkJwtLifetimeInterval = 1000 * 60 * 5; // Check if jwt has expired every 5 minutes.

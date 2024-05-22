@@ -31,7 +31,6 @@ export default defineComponent({
   components: {
     StreamedMatchInfo,
   },
-  props: {},
   setup() {
     const twitchStore = useTwitchStore();
     const matchStore = useMatchStore();

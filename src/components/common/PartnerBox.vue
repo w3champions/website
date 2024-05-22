@@ -23,7 +23,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "PartnerBox",
   components: {},
-  props: {},
   setup() {
     function partners() {
       return [

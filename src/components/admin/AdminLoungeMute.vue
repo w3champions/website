@@ -137,7 +137,6 @@ export default defineComponent({
   components: {
     PlayerSearch,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const loungeMuteStore = useLoungeMuteStore();
@@ -216,7 +215,7 @@ export default defineComponent({
     }
 
     const headers = [
-      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "BattleTag", sortable: true, value: "battleTag" },
       { text: "Mute End Date", sortable: true, value: "endDate" },
       { text: "Mute Insert Date", sortable: true, value: "insertDate" },
       { text: "Author", sortable: true, value: "author" },

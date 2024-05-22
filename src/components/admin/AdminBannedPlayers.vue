@@ -190,7 +190,6 @@ export default defineComponent({
   components: {
     PlayerSearch,
   },
-  props: {},
   setup() {
     const { t } = useI18n();
     const oauthStore = useOauthStore();

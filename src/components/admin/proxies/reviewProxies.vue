@@ -67,8 +67,8 @@
                 </v-card-subtitle>
                 <v-spacer></v-spacer>
 
-                <template v-for="node in newNodeOverrides(false)">
-                  <v-container class="py-0 my-0 justify-center" :key="node">
+                <template>
+                  <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(false)" :key="node">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>
@@ -83,8 +83,8 @@
                 </v-card-subtitle>
                 <v-spacer></v-spacer>
 
-                <template v-for="node in newNodeOverrides(true)">
-                  <v-container class="py-0 my-0 justify-center" :key="node">
+                <template>
+                  <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(true)" :key="node">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>

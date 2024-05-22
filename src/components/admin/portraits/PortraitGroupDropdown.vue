@@ -45,7 +45,6 @@ export default defineComponent({
   components: {
     AssignPortrait,
   },
-  props: {},
   setup(_props, context) {
     const playerManagement = usePlayerManagementStore();
     const portraitDefGroups = ref<PortraitDefinitionGroup[]>([]);

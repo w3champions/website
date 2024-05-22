@@ -74,7 +74,6 @@ export default defineComponent({
     CryptoDialog,
     AlternatePaymentsDialog,
   },
-  props: {},
   setup() {
     const cryptos = ref<{coin: string; name: string; address: string; dialog: boolean}[]>([
       { coin: `BTC`, name: "Bitcoin", address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`, dialog: false },

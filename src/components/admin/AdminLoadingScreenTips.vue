@@ -75,7 +75,6 @@ import { mdiDelete, mdiPencil } from "@mdi/js";
 export default defineComponent({
   name: "AdminLoadingScreenTips",
   components: {},
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const infoMessagesStore = useInfoMessagesStore();
@@ -135,9 +134,9 @@ export default defineComponent({
     });
 
     const headers = [
-      { text: "Author", align: "start", value: "author" },
-      { text: "Creation Date", align: "start", value: "creationDate" },
-      { text: "Text", value: "message", align: "start" },
+      { text: "Author", value: "author" },
+      { text: "Creation Date", value: "creationDate" },
+      { text: "Text", value: "message" },
       { text: "Actions", value: "actions", sortable: false },
     ];
 

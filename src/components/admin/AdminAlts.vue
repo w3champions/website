@@ -24,8 +24,8 @@
       <v-card v-if="showAlts">
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
-          <template v-for="alt in alts">
-            <v-list-item :key="alt">
+          <template>
+            <v-list-item v-for="alt in alts" :key="alt">
               <div @click="searchAltsFromClick(alt)" style="cursor: pointer">{{ alt }}</div>
               <v-spacer></v-spacer>
               <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
@@ -48,7 +48,6 @@ import { useRouter } from "vue-router/composables";
 export default defineComponent({
   name: "AdminAlts",
   components: {},
-  props: {},
   setup() {
     const router = useRouter();
     const adminStore = useAdminStore();

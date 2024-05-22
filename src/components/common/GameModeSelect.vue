@@ -48,7 +48,7 @@ export default defineComponent({
       required: false,
     },
     disabledModes: {
-      type: Array<EGameMode> as PropType<EGameMode[]>,
+      type: Array<EGameMode>,
       required: false,
     }
   },

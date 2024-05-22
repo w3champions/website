@@ -38,7 +38,6 @@ import { useClanStore } from "@/store/clan/store";
 export default defineComponent({
   name: "DeleteClanModal",
   components: {},
-  props: {},
   setup() {
     const clanStore = useClanStore();
     const dialog = ref<boolean>(false);

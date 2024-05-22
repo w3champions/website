@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType } from "vue";
 import { ERaceEnum } from "@/store/types";
 
 export default defineComponent({
@@ -28,7 +28,8 @@ export default defineComponent({
       type: Number as PropType<ERaceEnum>,
       required: false,
       default: undefined,
-    },},
+    },
+  },
   setup(props) {
     const rndRaceClass = props.rndRace ? `_${ERaceEnum[props.rndRace]}` : "";
 

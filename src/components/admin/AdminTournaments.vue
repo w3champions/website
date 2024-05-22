@@ -85,7 +85,6 @@ export default defineComponent({
     RemovePlayerModal,
     EditTournamentModal,
   },
-  props: {},
   setup() {
     const tournamentsStore = useTournamentsStore();
     const tournamentsManagementStore = useTournamentsManagementStore();

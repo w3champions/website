@@ -60,7 +60,6 @@ export default defineComponent({
   components: {
     PlayerSearch,
   },
-  props: {},
   setup() {
     const playerSearchStore = usePlayerSearchStore();
     const clanStore = useClanStore();
