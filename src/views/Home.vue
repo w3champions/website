@@ -166,7 +166,6 @@ export default defineComponent({
     PartnerBox,
     CopyButton,
   },
-  props: {},
   setup() {
     const router = useRouter();
     const infoMessagesStore = useInfoMessagesStore();

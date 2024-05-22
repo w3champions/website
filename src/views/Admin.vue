@@ -22,7 +22,6 @@ export default defineComponent({
     AdminNavigation,
     AdminCheckJwtLifetime,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);

@@ -103,7 +103,6 @@ export default defineComponent({
   components: {
     PlayerStatsRaceVersusRaceOnMapTableCell,
   },
-  props: {},
   setup() {
     const { t } = useI18n();
     const overallStatsStore = useOverallStatsStore();

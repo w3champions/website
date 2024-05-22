@@ -72,7 +72,6 @@ export default defineComponent({
     MmrDistributionChart,
     GatewaySelect,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const overallStatsStore = useOverallStatsStore();

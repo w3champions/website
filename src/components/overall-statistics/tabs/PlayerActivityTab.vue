@@ -207,7 +207,6 @@ export default defineComponent({
     AmountPerDayChart,
     PopularGameTimeChart,
   },
-  props: {},
   setup() {
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();

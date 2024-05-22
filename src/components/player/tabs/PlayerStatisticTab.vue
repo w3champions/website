@@ -170,7 +170,6 @@ export default defineComponent({
     PlayerHeroWinRate,
     PlayerGameLengthStats,
   },
-  props: {},
   setup() {
     const { t } = useI18n();
     const playerStore = usePlayerStore();

@@ -34,7 +34,6 @@ export default defineComponent({
     reviewProxies,
     PlayerSearch,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const adminStore = useAdminStore();

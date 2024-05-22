@@ -42,7 +42,6 @@ interface SortSelectData {
 export default defineComponent({
   name: "SortSelect",
   components: {},
-  props: {},
   setup() {
     const { t } = useI18n();
     const matchStore = useMatchStore();

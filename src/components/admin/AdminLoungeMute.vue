@@ -137,7 +137,6 @@ export default defineComponent({
   components: {
     PlayerSearch,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const loungeMuteStore = useLoungeMuteStore();

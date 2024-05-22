@@ -321,7 +321,6 @@ import { mdiDownload } from "@mdi/js";
 export default defineComponent({
   name: "GettingStartedView",
   components: {},
-  props: {},
   setup() {
     const tabsModel = ref(null);
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");

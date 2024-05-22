@@ -75,7 +75,6 @@ import { mdiDelete, mdiPencil } from "@mdi/js";
 export default defineComponent({
   name: "AdminLoadingScreenTips",
   components: {},
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const infoMessagesStore = useInfoMessagesStore();

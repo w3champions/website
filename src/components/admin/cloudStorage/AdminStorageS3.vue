@@ -95,7 +95,6 @@ import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store
 export default defineComponent({
   name: "AdminStorageS3",
   components: {},
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const cloudStorageStore = useCloudStorageStore();

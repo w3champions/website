@@ -73,7 +73,6 @@ import {
 export default defineComponent({
   name: "AdminNavigation",
   components: {},
-  props: {},
   setup() {
     const router = useRouter();
     const route = useRoute();

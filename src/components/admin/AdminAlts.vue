@@ -48,7 +48,6 @@ import { useRouter } from "vue-router/composables";
 export default defineComponent({
   name: "AdminAlts",
   components: {},
-  props: {},
   setup() {
     const router = useRouter();
     const adminStore = useAdminStore();

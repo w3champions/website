@@ -39,7 +39,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "SocialBox",
   components: {},
-  props: {},
 });
 </script>
 

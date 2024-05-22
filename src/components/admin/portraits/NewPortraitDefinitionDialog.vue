@@ -65,7 +65,6 @@ export default defineComponent({
   components: {
     PortraitGroupCombobox,
   },
-  props: {},
   setup() {
     const playerManagement = usePlayerManagementStore();
     const portraitId = ref<number>(0);
