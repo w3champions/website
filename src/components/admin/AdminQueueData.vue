@@ -79,14 +79,14 @@ export default defineComponent({
       await adminStore.loadQueueData(oauthStore.token);
     }
 
-    function getPlayerDataInGamemode(modeId: number): QueuedPlayer[] | null {
+    function getPlayerDataInGamemode(modeId: number): QueuedPlayer[] | undefined {
       for (let i = 0; i < queueData.value.length; i++) {
         if (queueData.value[i].gameMode == modeId) {
           return queueData.value[i].snapshot;
         }
       }
 
-      return null;
+      return undefined;
     }
 
     watch(isAdmin, init);
