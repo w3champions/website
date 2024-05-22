@@ -46,8 +46,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { LocaleMessage } from "vue-i18n";
+import { TranslateResult, useI18n } from "vue-i18n-bridge";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -63,8 +62,8 @@ export default defineComponent({
     const clanValidationError: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
     const isValidationError: ComputedRef<boolean> = computed((): boolean => clanStore.clanValidationError !== "");
 
-    function mustBeBetween(min: number, max: number, space: string): (v: string) => LocaleMessage {
-      return (v: string): LocaleMessage => {
+    function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
+      return (v: string): TranslateResult => {
         if (!v)
           return t("components_clans_clancreationpanel.fieldismandatory");
         if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))

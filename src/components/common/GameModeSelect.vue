@@ -35,9 +35,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
-import { LocaleMessage } from "vue-i18n";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
+import { TranslateResult } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "GameModeSelect",
@@ -53,7 +53,7 @@ export default defineComponent({
     }
   },
   setup: (props, context) => {
-    function gameModes(): Array<{ name: LocaleMessage; id: number }> {
+    function gameModes(): Array<{ name: TranslateResult; id: number }> {
       let modes = activeGameModesWithAT();
 
       if (props.disabledModes) {
@@ -63,7 +63,7 @@ export default defineComponent({
       return modes;
     }
 
-    function gameModeName(): LocaleMessage {
+    function gameModeName(): TranslateResult {
       if (!props.gameMode) {
         return "";
       }
