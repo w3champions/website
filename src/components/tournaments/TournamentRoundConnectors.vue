@@ -1,21 +1,21 @@
 <template>
   <div v-bind:style="containerStyle">
-    <template v-for="index in (seriesCount / 2)">
-      <tournament-round-connector
-        v-bind:key="`top-${index}`"
-        :index="index - 1"
-        :side="'top'"
-        :playerHeight="playerHeight"
-        :verticalSpace="verticalSpace"
-      />
-      <tournament-round-connector
-        v-bind:key="`bottom-${index}`"
-        :index="index - 1"
-        :side="'bottom'"
-        :playerHeight="playerHeight"
-        :verticalSpace="verticalSpace"
-      />
-    </template>
+    <div v-for="index in (seriesCount / 2)" v-bind:key="`top-${index}`">
+      <template>
+        <tournament-round-connector
+          :index="index - 1"
+          :side="'top'"
+          :playerHeight="playerHeight"
+          :verticalSpace="verticalSpace"
+        />
+        <tournament-round-connector
+          :index="index - 1"
+          :side="'bottom'"
+          :playerHeight="playerHeight"
+          :verticalSpace="verticalSpace"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
