@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";

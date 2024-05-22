@@ -9,167 +9,164 @@
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tabsModel">
-        <v-tab-item :transition="false">
-          <v-select
-            :items="gateways"
-            v-model="gateway"
-            item-text="name"
-            item-value="id"
-            label="Gateway"
-            hide-details
-            single-line
-          />
-          <v-text-field
-            v-model="name"
-            label="Name"
-            hide-details
-            single-line
-          />
-          <v-select
-            v-if="isEdit"
-            :items="states"
-            v-model="state"
-            item-text="name"
-            item-value="id"
-            label="State"
-            hide-details
-            single-line
-            :menu-props="{ maxHeight: '400' }"
-          />
-          <div class="mt-5 d-flex justify-center">
-            <v-date-picker
-              v-model="startDate"
-              landscape
-            ></v-date-picker>
-            <v-time-picker
-              v-model="startTime"
-              landscape
-              format="24hr"
-            ></v-time-picker>
-          </div>
-          <div class="mt-4">
-            Map Pool
-          </div>
-          <v-row class="mt-0 mb-0">
-            <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
-              <v-checkbox
-                :multiple="true"
-                v-model="mapPool"
-                :label="map.name"
-                :value="map.id"
-                :dense="true"
-                hide-details
-              />
-            </v-col>
-          </v-row>
-        </v-tab-item>
-        <v-tab-item :transition="false">
-          <v-row class="mt-0">
-            <v-col cols="4">
-              <v-text-field
-                v-model="registrationTimeMinutes"
-                label="Registration Time (mins)"
-                hide-details
-                type="number"
-              />
-            </v-col>
-            <v-col cols="4">
-              <v-text-field
-                v-model="readyTimeSeconds"
-                label="Ready Time (s)"
-                hide-details
-                type="number"
-              />
-            </v-col>
-            <v-col cols="4">
-              <v-text-field
-                v-model="vetoTimeSeconds"
-                label="Veto Time (s)"
-                hide-details
-                type="number"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="4">
-              <v-text-field
-                v-model="showWinnerTimeHours"
-                label="Show Winner Time (hrs)"
-                hide-details
-                type="number"
-              />
-            </v-col>
-            <v-col cols="8">
-              <v-text-field
-                v-model="matcherinoUrl"
-                label="Matcherino URL"
-                hide-details
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="2">
-              <v-select
-                :items="gameModes"
-                :disabled="true"
-                v-model="mode"
-                item-text="name"
-                item-value="id"
-                label="Game Mode"
-                hide-details
-                single-line
-              />
-            </v-col>
-            <v-col cols="4">
-              <v-select
-                :items="formats"
-                :disabled="true"
-                v-model="format"
-                item-text="name"
-                item-value="id"
-                label="Format"
-                hide-details
-                single-line
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="3">
-              <v-select
-                :items="[2, 4, 8, 16, 32, 64]"
-                v-model="maxPlayers"
-                label="Max Players"
-                outlined
-              />
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                :items="enabledFloNodes"
-                v-model="floNode"
-                label="Flo Node"
-                item-text="name"
-                return-object
-                outlined
-                @change="setFloNode"
-              />
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                :items="[100, 200, 300, 400]"
-                v-model="floNodeMaxPing"
-                label="Flo Node Max Ping"
-                outlined
-                :disabled="floNode === null"
-              />
-            </v-col>
-          </v-row>
-        </v-tab-item>
-      </v-tabs-items>
+      <v-window-item :transition="false">
+        <v-select
+          :items="gateways"
+          v-model="gateway"
+          item-title="name"
+          item-value="id"
+          label="Gateway"
+          hide-details
+          single-line
+        />
+        <v-text-field
+          v-model="name"
+          label="Name"
+          hide-details
+          single-line
+        />
+        <v-select
+          v-if="isEdit"
+          :items="states"
+          v-model="state"
+          item-title="name"
+          item-value="id"
+          label="State"
+          hide-details
+          single-line
+          :menu-props="{ maxHeight: '400' }"
+        />
+        <div class="mt-5 d-flex justify-center">
+          <v-date-picker
+            v-model="startDate"
+            landscape
+          ></v-date-picker>
+          <v-time-picker
+            v-model="startTime"
+            landscape
+            format="24hr"
+          ></v-time-picker>
+        </div>
+        <div class="mt-4">
+          Map Pool
+        </div>
+        <v-row class="mt-0 mb-0">
+          <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
+            <v-checkbox
+              :multiple="true"
+              v-model="mapPool"
+              :label="map.name"
+              :value="map.id"
+              hide-details
+            />
+          </v-col>
+        </v-row>
+      </v-window-item>
+      <v-window-item :transition="false">
+        <v-row class="mt-0">
+          <v-col cols="4">
+            <v-text-field
+              v-model="registrationTimeMinutes"
+              label="Registration Time (mins)"
+              hide-details
+              type="number"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="readyTimeSeconds"
+              label="Ready Time (s)"
+              hide-details
+              type="number"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="vetoTimeSeconds"
+              label="Veto Time (s)"
+              hide-details
+              type="number"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              v-model="showWinnerTimeHours"
+              label="Show Winner Time (hrs)"
+              hide-details
+              type="number"
+            />
+          </v-col>
+          <v-col cols="8">
+            <v-text-field
+              v-model="matcherinoUrl"
+              label="Matcherino URL"
+              hide-details
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="2">
+            <v-select
+              :items="gameModes"
+              :disabled="true"
+              v-model="mode"
+              item-title="name"
+              item-value="id"
+              label="Game Mode"
+              hide-details
+              single-line
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-select
+              :items="formats"
+              :disabled="true"
+              v-model="format"
+              item-title="name"
+              item-value="id"
+              label="Format"
+              hide-details
+              single-line
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="3">
+            <v-select
+              :items="[2, 4, 8, 16, 32, 64]"
+              v-model="maxPlayers"
+              label="Max Players"
+              variant="outlined"
+            />
+          </v-col>
+          <v-col cols="3">
+            <v-select
+              :items="enabledFloNodes"
+              v-model="floNode"
+              label="Flo Node"
+              item-title="name"
+              return-object
+              variant="outlined"
+              @update:model-value="setFloNode"
+            />
+          </v-col>
+          <v-col cols="3">
+            <v-select
+              :items="[100, 200, 300, 400]"
+              v-model="floNodeMaxPing"
+              label="Flo Node Max Ping"
+              variant="outlined"
+              :disabled="floNode === null"
+            />
+          </v-col>
+        </v-row>
+      </v-window-item>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
       <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || !formValid">

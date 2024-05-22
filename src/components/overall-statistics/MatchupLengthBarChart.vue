@@ -10,7 +10,7 @@ import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { Length } from "@/store/overallStats/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ChartData } from "chart.js";
 
 export default defineComponent({
@@ -18,7 +18,6 @@ export default defineComponent({
   components: {
     BarChart,
   },
-  props: {},
   setup() {
     const { t } = useI18n();
     const statsStore = useOverallStatsStore();

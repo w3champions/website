@@ -18,7 +18,7 @@
         </v-btn>
       </v-col>
       <v-col cols="3" class="text-center">
-        <v-btn outlined @click="rejectClan">
+        <v-btn variant="outlined" @click="rejectClan">
           {{ $t("components_clans_acceptinvitepanel.reject") }}
         </v-btn>
       </v-col>
@@ -32,7 +32,6 @@ import { useClanStore } from "@/store/clan/store";
 export default defineComponent({
   name: "AcceptInvitePanel",
   components: {},
-  props: {},
   setup() {
     const clanStore = useClanStore();
     const clanName: ComputedRef<string> = computed((): string => clanStore.selectedMemberShip.clanName);

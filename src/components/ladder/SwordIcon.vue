@@ -9,7 +9,6 @@ import { getAsset } from "@/helpers/url-functions";
 export default defineComponent({
   name: "SwordIcon",
   components: {},
-  props: {},
   setup() {
     const swordIcon = ref<string>(getAsset(`swords.svg`));
 

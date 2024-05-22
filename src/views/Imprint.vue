@@ -84,7 +84,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "ImprintView",
   components: {},
-  props: {},
   setup() {
     return {};
   },

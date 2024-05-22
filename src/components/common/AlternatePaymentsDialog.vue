@@ -32,7 +32,8 @@ export default defineComponent({
     },
     value: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
   },
   setup(props, context) {

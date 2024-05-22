@@ -2,13 +2,13 @@
   <v-container class="ma-0 pa-0">
     <div v-if="isPrivate">
       <span class="font-weight-bold" :class="getTeamColor(team)">{{ sentBy }} (to {{ sentTo }}):</span>
-      <span class="black--text">{{ content }}</span>
+      <span class="text-black">{{ content }}</span>
     </div>
     <div v-else>
       <span class="font-weight-bold" :class="getTeamColor(team)">
         {{ sentBy }} ({{ scopeToString(scope) }}):
       </span>
-      <span class="black--text">{{ content }}</span>
+      <span class="text-black">{{ content }}</span>
     </div>
   </v-container>
 </template>
@@ -31,19 +31,19 @@ export default defineComponent({
     const isPrivate: ComputedRef<boolean> = computed((): boolean => props.scope == EChatScope.PLAYER ? true : false);
 
     function getTeamColor(team: number): string {
-      if (props.scope == EChatScope.OBSERVERS) return "black--text";
+      if (props.scope == EChatScope.OBSERVERS) return "text-black";
 
       switch (team) {
         case 0:
-          return "red--text";
+          return "text-red";
         case 1:
-          return "blue--text";
+          return "text-blue";
         case 2:
-          return "green--text";
+          return "text-green";
         case 3:
-          return "purple--text";
+          return "text-purple";
         default:
-          return "black--text";
+          return "text-black";
       }
     }
 

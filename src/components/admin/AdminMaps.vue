@@ -27,8 +27,8 @@
             {{ getMapPath(item) }}
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
-            <v-icon small class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
           </template>
         </v-data-table>
       </v-card>
@@ -51,7 +51,6 @@ export default defineComponent({
     EditMap,
     EditMapFiles,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const mapsManagementStore = useMapsManagementStore();
@@ -152,17 +151,14 @@ export default defineComponent({
     const headers = [
       {
         text: "Map name",
-        align: "start",
         value: "name",
       },
       {
         text: "ID",
-        align: "start",
         value: "id",
       },
       {
         text: "Category",
-        align: "start",
         value: "category",
       },
       {

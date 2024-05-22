@@ -25,14 +25,13 @@ import { ITournament } from "@/store/tournaments/types";
 import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TournamentsView",
   components: {
     TournamentsTable,
   },
-  props: {},
   setup() {
     const router = useRouter();
     const tournamentsStore = useTournamentsStore();

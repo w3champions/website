@@ -2,7 +2,6 @@
   <v-combobox
     v-model="chips"
     :items="items"
-    small-chips
     clearable
     label="Assign Groups (optional) - Select existing or enter a new group"
     multiple
@@ -11,8 +10,8 @@
       <v-chip
         v-bind="attrs"
         :color="'blue lighten-3'"
-        :input-value="selected"
-        close
+        :model-value="selected"
+        closable
         @click="select"
         @click:close="remove(item)"
       >

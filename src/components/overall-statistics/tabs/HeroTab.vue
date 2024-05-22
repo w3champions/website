@@ -55,7 +55,6 @@ export default defineComponent({
     PlayedHeroesChart,
     HeroWinrate,
   },
-  props: {},
   setup() {
     const selectedHeroesPlayedPick = ref<number>(0);
     const selectedHeroesPlayedMode = ref<EGameMode>(EGameMode.GM_1ON1);

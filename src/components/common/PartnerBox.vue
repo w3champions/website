@@ -10,7 +10,7 @@
       tile
       :href="partner.link"
       target="_blank"
-      outlined
+      border
     >
       <v-img :src="imgSource(partner.img)" :alt="partner.img"></v-img>
     </v-card>
@@ -23,7 +23,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "PartnerBox",
   components: {},
-  props: {},
   setup() {
     function partners() {
       return [

@@ -11,7 +11,7 @@
       <v-chip-group
         v-model="chipGroupIndex"
         class="ma-2"
-        active-class="info--text"
+        selected-class="info--text"
         column
         multiple
       >
@@ -19,9 +19,9 @@
           v-for="(proxy, index) in availableProxies"
           :key="index"
           @click="updateProxies(proxy.id)"
-          :input-value="showAsChecked(index)"
+          :model-value="showAsChecked(index)"
           label
-          small
+          size="small"
         >
           {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
         </v-chip>

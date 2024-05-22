@@ -47,7 +47,6 @@ import { useOauthStore } from "@/store/oauth/store";
 export default defineComponent({
   name: "AdminServerLogs",
   components: {},
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const serverLogsStore = useServerLogsStore();

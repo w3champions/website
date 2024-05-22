@@ -50,7 +50,7 @@ export default defineComponent({
     crypto: { type: String, required: true },
     cryptoName: { type: String, required: true },
     cryptoAddress: { type: String, required: true },
-    value: { type: Boolean, required: true },
+    value: { type: Boolean, required: false, default: false },
   },
   setup(props, context) {
     const show: WritableComputedRef<boolean> = computed({

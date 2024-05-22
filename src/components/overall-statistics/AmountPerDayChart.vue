@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { GameDay } from "@/store/overallStats/types";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
 import { ChartData } from "chart.js";

@@ -35,7 +35,6 @@ export default defineComponent({
   components: {
     PlayerLeague,
   },
-  props: {},
   setup() {
     const playerStore = usePlayerStore();
     const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);

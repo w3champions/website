@@ -1,7 +1,7 @@
 <template>
-  <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+  <v-menu :close-on-content-click="false" @update:model-value="onMenuToggled">
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" class="bg-transparent">
         <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
       </v-btn>

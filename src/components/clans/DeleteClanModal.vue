@@ -3,8 +3,8 @@
     <v-row class="justify-center">
       <v-col class="text-end">
         <v-dialog v-model="dialog" max-width="400px">
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" outlined color="error">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" variant="outlined" color="error">
               {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
             </v-btn>
           </template>
@@ -17,10 +17,10 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="dialog = false">
+              <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
                 {{ $t("components_clans_deleteclanmodal.close") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="deleteClan">
+              <v-btn color="blue-darken-1" variant="text" @click="deleteClan">
                 {{ $t("components_clans_deleteclanmodal.delete") }}
                 {{ clanName }}
               </v-btn>
@@ -38,7 +38,6 @@ import { useClanStore } from "@/store/clan/store";
 export default defineComponent({
   name: "DeleteClanModal",
   components: {},
-  props: {},
   setup() {
     const clanStore = useClanStore();
     const dialog = ref<boolean>(false);

@@ -59,25 +59,25 @@
                 />
               </div>
               <div class="twitch__container" v-if="isTwitchLive(item, index)">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <v-btn
                         icon
-                        v-on="on"
+                        v-bind="props"
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"
-                          color="purple accent-4"
+                          color="purple-accent-4"
                         >
                           {{ mdiTwitch }}
                         </v-icon>
                         <v-icon
                           v-if="isCurrentlyLive(item.player.playerIds)"
                           class="blinker"
-                          color="red accent-4"
+                          color="red-accent-4"
                         >
                           {{ mdiTwitch }}
                         </v-icon>
@@ -98,9 +98,9 @@
                 style="position: relative"
                 v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
               >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <span style="display: inline" class="pointer" v-bind="props">
                       <sword-icon class="swords blinker" />
                     </span>
                   </template>
@@ -143,9 +143,9 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
-import { useVuetify } from "@/plugins/vuetify";
+import { useGoTo } from "vuetify";
 
 export default defineComponent({
   name: "RankingsGrid",
@@ -172,7 +172,7 @@ export default defineComponent({
     },
     setup(props) {
       const { t } = useI18n();
-      const vuetify = useVuetify();
+      const goTo = useGoTo();
       const twitchStore = useTwitchStore();
       const rankingsStore = useRankingStore();
       const sortColumn = ref<string>("Rank");
@@ -357,7 +357,7 @@ export default defineComponent({
 
         if (!listItemOfPlayer) return;
 
-        vuetify.goTo(listItemOfPlayer, {
+        goTo(listItemOfPlayer, {
           offset: window.innerHeight - 150,
         });
       }, 500);
