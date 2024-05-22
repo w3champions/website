@@ -48,7 +48,6 @@ import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 
-
 export default defineComponent({
   name: "PlayerMatchInfo",
   components: {

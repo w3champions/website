@@ -1,46 +1,46 @@
+<template>
+  <span :class="classes"></span>
+</template>
+
 <script lang="ts">
-import Vue, { CreateElement, RenderContext, VNode } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import { ERaceEnum } from "@/store/types";
 
-interface IProps {
-  race: ERaceEnum;
-  left: boolean;
-  big: boolean;
-  rndRace: ERaceEnum;
-}
-
-export default Vue.component<IProps>("PlayerIcon", {
-  functional: true,
+export default defineComponent({
+  name: "PlayerIcon",
+  components: {},
   props: {
     race: {
-      type: Number,
+      type: Number as PropType<ERaceEnum>,
       required: true,
     },
     left: {
       type: Boolean,
+      required: false,
       default: false,
     },
     big: {
       type: Boolean,
+      required: false,
       default: false,
     },
     rndRace: {
-      type: Number,
+      type: Number as PropType<ERaceEnum>,
       required: false,
-    },
-  },
-  render(h: CreateElement, { props, data }: RenderContext<IProps>): VNode {
+      default: undefined,
+    },},
+  setup(props) {
     const rndRaceClass = props.rndRace ? `_${ERaceEnum[props.rndRace]}` : "";
 
     const classes = [
-      data.class,
-      data.staticClass,
       `race-icon-${ERaceEnum[props.race]}${rndRaceClass}`,
       props.big ? "race-icon-big" : "race-icon",
       props.left ? "alignLeft" : "alignRight",
     ];
 
-    return h("span", { class: classes.join(" ") });
+    return {
+      classes,
+    };
   },
 });
 </script>

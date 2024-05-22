@@ -29,10 +29,13 @@
 import { defineComponent, PropType, ref } from "vue";
 import { PlayerInTeam } from "@/store/types";
 import { mdiTwitch } from "@mdi/js";
+import PlayerIcon from "./PlayerIcon.vue";
 
 export default defineComponent({
   name: "StreamedMatchPlayerInfo",
-  components: {},
+  components: {
+    PlayerIcon,
+  },
   props: {
     player: {
       type: Object as PropType<PlayerInTeam>,
