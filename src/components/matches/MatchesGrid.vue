@@ -106,7 +106,7 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { TranslateResult } from "vue-i18n";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 
 interface MatchesGridHeader {

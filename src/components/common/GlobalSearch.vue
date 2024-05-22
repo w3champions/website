@@ -67,7 +67,7 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { mdiMagnify } from "@mdi/js";
 
 export default defineComponent({
