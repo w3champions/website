@@ -7,9 +7,9 @@
     </v-row>
 
     <v-row>
-      <v-subheader class="ma-0 pa-0">
+      <v-list-subheader class="ma-0 pa-0">
         Do not modify the automated nodes unless you know what you're doing.
-      </v-subheader>
+      </v-list-subheader>
     </v-row>
 
     <v-row>nodeOverrides: {{ initProxySettings.nodeOverrides }}</v-row>
@@ -42,8 +42,8 @@
     <v-row v-if="isProxyModified">
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" width="600">
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" v-on="on">Update Proxies</v-btn>
+        <template v-slot:activator="{ props }">
+          <v-btn color="primary" v-bind="props">Update Proxies</v-btn>
         </template>
 
         <v-card>

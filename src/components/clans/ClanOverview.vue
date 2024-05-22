@@ -49,11 +49,11 @@
                   <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ playersClan.chiefTain.split("#")[0] }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)">
+                    <template v-slot:activator="{ props }">
+                      <div v-bind="props" style="display: inline">
                         <league-icon
-                          v-on="on"
+                          v-bind="props"
                           class="ml-4 mb-1"
                           :league="getLeagueOrder(playersClan.chiefTain)"
                         />
@@ -75,11 +75,11 @@
                   <span class="pointer" @click="goToPlayer(shaman)">
                     {{ shaman.split("#")[0] }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)">
+                    <template v-slot:activator="{ props }">
+                      <div v-bind="props" style="display: inline">
                         <league-icon
-                          v-on="on"
+                          v-bind="props"
                           class="ml-4 mb-1"
                           :league="getLeagueOrder(shaman)"
                         />
@@ -109,11 +109,11 @@
                   <span class="pointer" @click="goToPlayer(member)">
                     {{ member.split("#")[0] }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)">
+                    <template v-slot:activator="{ props }">
+                      <div v-bind="props" style="display: inline">
                         <league-icon
-                          v-on="on"
+                          v-bind="props"
                           class="ml-4 mb-1"
                           :league="getLeagueOrder(member)"
                         />

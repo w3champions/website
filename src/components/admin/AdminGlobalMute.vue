@@ -8,19 +8,17 @@
         :headers="headers"
         :items-per-page="-1"
         :items="globallyMutedPlayers"
-        sort-by="id"
-        :sort-desc="true"
+        :sort-by="sortBy"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -46,19 +44,18 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template #activator="{ props }">
                           <v-text-field
                             v-model="banExpiry"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               banExpiry = '';
                               dateMenu = false;
@@ -114,7 +111,7 @@
         </template>
 
         <template #[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -129,6 +126,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
+import { VDataTable } from "vuetify/components";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -145,6 +143,7 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
+    const sortBy = ref<VDataTable["sortBy"]>([{ key: "id", order:"desc" }]);
 
     const globallyMutedPlayers: ComputedRef<GloballyMutedPlayer[]> = computed((): GloballyMutedPlayer[] => adminStore.globallyMutedPlayers);
     const banDateSet: ComputedRef<boolean> = computed((): boolean => banExpiry.value != "");
@@ -207,13 +206,11 @@ export default defineComponent({
     const headers = [
       {
         text: "Flo Ban Id",
-        align: "start",
         sortable: true,
         value: "id",
       },
       {
         text: "BattleTag",
-        align: "start",
         sortable: true,
         value: "battleTag",
       },
@@ -244,6 +241,7 @@ export default defineComponent({
       save,
       close,
       deleteItem,
+      sortBy,
     };
   },
 });

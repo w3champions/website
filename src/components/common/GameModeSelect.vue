@@ -1,7 +1,7 @@
 <template>
-  <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+  <v-menu>
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" class="bg-transparent">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName() }}
       </v-btn>
@@ -9,22 +9,18 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_common_gamemodeselect.selectgamemode") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_common_gamemodeselect.selectgamemode") }}
+          </v-list-item-title>
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list density="compact">
           <v-list-item
             v-for="mode in gameModes()"
             :key="mode.id"
             @click="selectGameMode(mode.id)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>

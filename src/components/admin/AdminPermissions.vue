@@ -13,12 +13,11 @@
           <v-toolbar flat color="transparent">
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                 >
                   Add Admin
                 </v-btn>
@@ -61,13 +60,12 @@
                               v-model="editedItem.permissions"
                               :label="permission.name"
                               :value="permission.value"
-                              :dense=true
                             ></v-checkbox>
                           </v-col>
                         </template>
                       </v-col>
                     </v-row>
-                    <v-alert v-model="isValidationError" type="warning" dense class="ml-4 mr-4">
+                    <v-alert v-model="isValidationError" type="warning" density="compact" class="ml-4 mr-4">
                       {{ validationError }}
                     </v-alert>
                     <v-row>
@@ -102,8 +100,8 @@
         </td>
       </template>
         <template #[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -242,7 +240,7 @@ export default defineComponent({
     }
 
     const headers = [
-      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "BattleTag", sortable: true, value: "battleTag" },
       { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
       { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
       { text: "Author", sortable: true, filterable: false, value: "author" },

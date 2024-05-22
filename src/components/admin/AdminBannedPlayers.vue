@@ -199,6 +199,8 @@ export default defineComponent({
     const editedIndex = ref<number>(-1);
     const tableSearch = ref<string>("");
     const foundPlayer = ref<string>("");
+    const editedItem = ref<BannedPlayer>({} as BannedPlayer);
+    const sortBy = ref<VDataTable["sortBy"]>([{ key: "banInsertDate", order:"desc" }]);
 
     const bannedPlayers: ComputedRef<BannedPlayer[]> = computed((): BannedPlayer[] => adminStore.bannedPlayers);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
@@ -207,8 +209,6 @@ export default defineComponent({
     const isValidationError: ComputedRef<boolean> = computed((): boolean => adminStore.banValidationError !== "");
     const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
     const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Item" : "Edit Item");
-    const editedItem = ref<BannedPlayer>({} as BannedPlayer);
-    const sortBy = ref<VDataTable["sortBy"]>([{ key: "banInsertDate", order:"desc" }]);
 
     const defaultItem = {
       battleTag: "",

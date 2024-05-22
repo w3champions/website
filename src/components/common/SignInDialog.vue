@@ -10,7 +10,7 @@
           justify="center"
           align="center"
         >
-          <v-btn @click="signIn(gateway)" block x-large>
+          <v-btn @click="signIn(gateway)" block size="x-large">
             <v-col cols="2" align-self="center">
               <v-img
                 min-width="32"

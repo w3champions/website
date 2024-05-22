@@ -12,10 +12,10 @@
               v-for="(mode, index) in gameModes"
               :key="index"
             >
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 {{ mode.name }}
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
                 <template>
                   <div v-if="getPlayerDataInGamemode(mode.id) != null">
                     <v-data-table
@@ -28,7 +28,7 @@
                   </div>
                   <div v-else>No Data found.</div>
                 </template>
-              </v-expansion-panel-content>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </template>
         </v-expansion-panels>
@@ -79,14 +79,14 @@ export default defineComponent({
       await adminStore.loadQueueData(oauthStore.token);
     }
 
-    function getPlayerDataInGamemode(modeId: number): QueuedPlayer[] | null {
+    function getPlayerDataInGamemode(modeId: number): QueuedPlayer[] | undefined {
       for (let i = 0; i < queueData.value.length; i++) {
         if (queueData.value[i].gameMode == modeId) {
           return queueData.value[i].snapshot;
         }
       }
 
-      return null;
+      return undefined;
     }
 
     watch(isAdmin, init);
@@ -113,55 +113,46 @@ export default defineComponent({
       {
         text: "Battletag",
         value: "battleTag",
-        align: "start",
         sortable: false,
       },
       {
         text: "MMR",
         value: "mmr",
-        align: "start",
         sortable: true,
       },
       {
         text: "RD",
         value: "rd",
-        align: "start",
         sortable: true,
       },
       {
         text: "Quantile",
         value: "quantile",
-        align: "start",
         sortable: true,
       },
       {
         text: "Activity Quantile",
         value: "activityQuantile",
-        align: "start",
         sortable: true,
       },
       {
         text: "Queue Time",
         value: "queueTime",
-        align: "start",
         sortable: true,
       },
       {
         text: "Flo Connected",
         value: "isFloConnected",
-        align: "start",
         sortable: true,
       },
       {
         text: "Location",
         value: "location",
-        align: "start",
         sortable: false,
       },
       {
         text: "Server Option",
         value: "serverOption",
-        align: "start",
         sortable: true,
       },
     ];

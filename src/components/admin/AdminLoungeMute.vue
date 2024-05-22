@@ -8,19 +8,17 @@
         :headers="headers"
         :items-per-page="-1"
         :items="loungeMutes"
-        sort-by="insertDate"
-        :sort-desc="true"
+        :sort-by="sortBy"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -46,19 +44,18 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template #activator="{ props }">
                           <v-text-field
                             v-model="endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker v-model="endDate" no-title scrollable max="2099-01-01">
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               endDate = '';
                               dateMenu = false;
@@ -114,7 +111,7 @@
         </template>
 
         <template #[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -131,6 +128,7 @@ import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import { VDataTable } from "vuetify/components";
 
 export default defineComponent({
   name: "AdminLoungeMute",
@@ -147,6 +145,7 @@ export default defineComponent({
     const showConfirmation = ref<boolean>(false);
     const battleTag = ref<string>("");
     const endDate = ref<string>("");
+    const sortBy = ref<VDataTable["sortBy"]>([{ key: "insertDate", order:"desc" }]);
 
     const loungeMutes: ComputedRef<LoungeMuteResponse[]> = computed((): LoungeMuteResponse[] => loungeMuteStore.loungeMutedPlayers);
     const isMuteEndDateSet: ComputedRef<boolean> = computed((): boolean => endDate.value != "");
@@ -215,7 +214,7 @@ export default defineComponent({
     }
 
     const headers = [
-      { text: "BattleTag", align: "start", sortable: true, value: "battleTag" },
+      { text: "BattleTag", sortable: true, value: "battleTag" },
       { text: "Mute End Date", sortable: true, value: "endDate" },
       { text: "Mute Insert Date", sortable: true, value: "insertDate" },
       { text: "Author", sortable: true, value: "author" },
@@ -237,6 +236,7 @@ export default defineComponent({
       save,
       close,
       deleteItem,
+      sortBy,
     };
   },
 });
