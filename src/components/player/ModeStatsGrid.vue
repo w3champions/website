@@ -62,6 +62,7 @@ import isEmpty from "lodash/isEmpty";
 
 interface ModeStatsGridHeader {
   text: TranslateResult;
+  align: string;
   sortable: boolean;
   tooltip: TranslateResult;
 }
@@ -130,21 +131,25 @@ export default defineComponent({
     const headers: ModeStatsGridHeader[] = [
       {
         text: t("components_player_modestatsgrid.mode"),
+        align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mode"),
       },
       {
         text: t("components_player_modestatsgrid.winloss"),
+        align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.winloss"),
       },
       {
         text: t("components_player_modestatsgrid.mmr"),
+        align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mmr"),
       },
       {
         text: t("components_player_modestatsgrid.level"),
+        align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.leveldesc"),
       },
