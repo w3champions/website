@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { PopularHours, Timeslot } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";

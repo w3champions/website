@@ -46,7 +46,7 @@ import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
-import { TranslateResult } from "vue-i18n-bridge";
+import { TranslateResult } from "vue-i18n";
 
 export default defineComponent({
   name: "AdminQueueData",

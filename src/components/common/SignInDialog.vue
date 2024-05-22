@@ -40,7 +40,7 @@
 import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "SignInDialog",

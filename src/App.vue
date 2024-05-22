@@ -169,7 +169,7 @@ import { useRootStateStore } from "@/store/rootState/store";
 import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
 import { useVuetify } from "@/plugins/vuetify";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
 
 import {

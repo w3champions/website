@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { ERaceEnum } from "@/store/types";

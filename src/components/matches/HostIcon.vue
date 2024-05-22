@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, PropType, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";

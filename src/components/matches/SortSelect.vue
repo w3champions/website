@@ -31,7 +31,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 
 interface SortSelectData {

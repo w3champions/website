@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onUnmounted, ref, StyleValue } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";

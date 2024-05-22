@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import VueI18n from "vue-i18n";
-import { createI18n, castToVueI18n } from "vue-i18n-bridge";
+import { createI18n } from "vue-i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies";
 import { createPinia, PiniaVuePlugin } from "pinia";
@@ -52,12 +52,13 @@ export const BNET_API_CLIENT_ID = _bnetApiClientId;
 // Also check out this link for more info on how to use with the composition api: https://vue-i18n.intlify.dev/guide/advanced/composition
 
 // `createI18n` options is almost same vue-i18n-next (vue-i18n@v9.x) API
-const i18n = castToVueI18n(createI18n({
+const i18n = createI18n({
   legacy: false,
+  allowComposition: true,
   locale: "en",
   fallbackLocale: "en",
   messages: languages,
-}, VueI18n));
+});
 
 Vue.use(i18n);
 

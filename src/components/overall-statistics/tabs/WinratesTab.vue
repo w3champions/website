@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
