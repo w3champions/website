@@ -59,11 +59,11 @@ export default class AuthorizationService {
   }
 
   public static async saveAuthRegion(region: BnetOAuthRegion) {
-    Vue.$cookies.set(w3CAuthRegion, region, 60 * 60 * 24 * 365); // expires in 1 year
+    Vue.$cookies.set(w3CAuthRegion, region, Infinity); // Cookie never expires
   }
 
   public static async saveAuthToken(token: W3cToken) {
-    Vue.$cookies.set(w3CAuth, token.jwt, 60 * 60 * 24 * 365); // expires in 1 year
+    Vue.$cookies.set(w3CAuth, token.jwt, Infinity); // Cookie never expires
   }
 
   public static deleteAuthCookie(): void {
