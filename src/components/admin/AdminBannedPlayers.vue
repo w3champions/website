@@ -175,8 +175,7 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import { useI18n } from "vue-i18n-bridge";
-import { LocaleMessage } from "vue-i18n";
+import { TranslateResult, useI18n } from "vue-i18n-bridge";
 
 type AdminBannedPlayersHeader = {
   text: string;
@@ -226,7 +225,7 @@ export default defineComponent({
     // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
     const endDateIsSet: ComputedRef<boolean> = computed((): boolean => editedItem.value.endDate.length == 10);
 
-    function getGameModeName(id: EGameMode): LocaleMessage {
+    function getGameModeName(id: EGameMode): TranslateResult {
       return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
     }
 

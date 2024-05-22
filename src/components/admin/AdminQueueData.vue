@@ -43,10 +43,10 @@ import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, watch }
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
-import { LocaleMessage } from "vue-i18n";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
+import { TranslateResult } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -65,7 +65,7 @@ export default defineComponent({
 
     const queueData: ComputedRef<QueueData[]> = computed((): QueueData[] => adminStore.queuedata);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const gameModes: ComputedRef<Array<{ name: LocaleMessage; id: number }>> = computed((): Array<{ name: LocaleMessage; id: number }> => {
+    const gameModes: ComputedRef<Array<{ name: TranslateResult; id: number }>> = computed((): Array<{ name: TranslateResult; id: number }> => {
       let modes = activeGameModes();
 
       if (props.disabledModes) {
