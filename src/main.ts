@@ -1,21 +1,14 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
-import VueI18n from "vue-i18n";
 import { createI18n } from "vue-i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies";
-import { createPinia, PiniaVuePlugin } from "pinia";
-
-Vue.use(VueCookies);
-Vue.use(VueI18n, { bridge: true });
+import { createPinia } from "pinia";
 
 // Only accessible after this initialisation!
 const pinia = createPinia();
-Vue.use(PiniaVuePlugin);
-
-Vue.config.productionTip = false;
 
 declare global {
   interface Window {
@@ -60,12 +53,12 @@ const i18n = createI18n({
   messages: languages,
 });
 
-Vue.use(i18n);
+const app = createApp(App);
 
-new Vue({
-  i18n,
-  router,
-  vuetify,
-  pinia,
-  render: (h) => h(App),
-}).$mount("#app");
+app.use(router)
+  .use(pinia)
+  .use(vuetify)
+  .use(i18n)
+  .use(VueCookies);
+
+app.mount("#app");
