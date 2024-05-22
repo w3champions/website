@@ -98,7 +98,6 @@ export default defineComponent({
     AssignPortrait,
     PortraitGroupCombobox,
   },
-  props: {},
   setup() {
     const playerManagement = usePlayerManagementStore();
     const editPortraitId = ref<number>(0);

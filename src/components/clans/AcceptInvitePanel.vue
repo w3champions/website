@@ -32,7 +32,6 @@ import { useClanStore } from "@/store/clan/store";
 export default defineComponent({
   name: "AcceptInvitePanel",
   components: {},
-  props: {},
   setup() {
     const clanStore = useClanStore();
     const clanName: ComputedRef<string> = computed((): string => clanStore.selectedMemberShip.clanName);

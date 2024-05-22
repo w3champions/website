@@ -18,7 +18,6 @@ export default defineComponent({
   components: {
     BarChart,
   },
-  props: {},
   setup() {
     const { t } = useI18n();
     const statsStore = useOverallStatsStore();

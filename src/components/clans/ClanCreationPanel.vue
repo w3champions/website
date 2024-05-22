@@ -52,7 +52,6 @@ import { useClanStore } from "@/store/clan/store";
 export default defineComponent({
   name: "ClanCreationPanel",
   components: {},
-  props: {},
   setup() {
     const { t } = useI18n();
     const clanStore = useClanStore();

@@ -236,7 +236,6 @@ export default defineComponent({
   components: {
     EditorContent,
   },
-  props: {},
   setup() {
     const infoMessagesStore = useInfoMessagesStore();
 

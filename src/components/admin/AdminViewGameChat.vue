@@ -55,7 +55,6 @@ export default defineComponent({
     AdminReplayChatLog,
     MatchDetailView,
   },
-  props: {},
   setup() {
     const matchId = ref<string>("");
     const dialog = ref<boolean>(false);

@@ -65,7 +65,6 @@ export default defineComponent({
     MmrSelect,
     SortSelect,
   },
-  props: {},
   setup() {
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();

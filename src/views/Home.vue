@@ -22,8 +22,6 @@
             <v-carousel
               v-model="model"
               :show-arrows="false"
-              :dark="$vuetify.theme.dark"
-              :light="!$vuetify.theme.dark"
               height="350px"
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
@@ -166,7 +164,6 @@ export default defineComponent({
     PartnerBox,
     CopyButton,
   },
-  props: {},
   setup() {
     const router = useRouter();
     const infoMessagesStore = useInfoMessagesStore();

@@ -35,7 +35,6 @@ import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 export default defineComponent({
   name: "AdminMotd",
   components: {},
-  props: {},
   setup() {
     const infoMessagesStore = useInfoMessagesStore();
 

@@ -32,7 +32,6 @@ export default defineComponent({
   components: {
     TournamentsTable,
   },
-  props: {},
   setup() {
     const router = useRouter();
     const tournamentsStore = useTournamentsStore();

@@ -51,7 +51,6 @@ export default defineComponent({
     EditMap,
     EditMapFiles,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const mapsManagementStore = useMapsManagementStore();

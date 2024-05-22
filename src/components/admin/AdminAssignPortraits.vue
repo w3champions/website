@@ -184,7 +184,6 @@ export default defineComponent({
     AvailablePortraitsGallery,
     PlayerSearch,
   },
-  props: {},
   setup() {
     const oauthStore = useOauthStore();
     const playerManagement = usePlayerManagementStore();

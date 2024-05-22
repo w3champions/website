@@ -30,7 +30,6 @@ interface Faq {
 export default defineComponent({
   name: "FaqView",
   components: {},
-  props: {},
   setup() {
     const faqs = ref<Faq[]>([]);
 

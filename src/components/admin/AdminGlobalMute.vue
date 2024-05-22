@@ -135,7 +135,6 @@ export default defineComponent({
   components: {
     PlayerSearch,
   },
-  props: {},
   setup() {
     const adminStore = useAdminStore();
     const oauthStore = useOauthStore();

@@ -48,7 +48,6 @@ interface MatchStatusSelectData {
 export default defineComponent({
   name: "MatchesStatusSelect",
   components: {},
-  props: {},
   setup() {
     const { t } = useI18n();
     const matchStore = useMatchStore();
