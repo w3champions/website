@@ -264,9 +264,7 @@ export default defineComponent({
     }
 
     function logout(): void {
-      cookies.remove("W3ChampionsJWT");
-      cookies.remove("W3ChampionsAuthRegion");
-      oauthStore.logout();
+      oauthStore.logout(cookies);
     }
 
     const loginName = computed({
@@ -370,11 +368,11 @@ export default defineComponent({
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
-      await oauthStore.loadAuthCodeToState($cookies);
+      const bearer: string = cookies?.get("W3ChampionsJWT") ?? "";
+      await oauthStore.loadAuthCodeToState(bearer);
 
       if (authCode.value) {
-        await oauthStore.loadBlizzardBtag(authCode.value);
-        cookies.set("W3ChampionsJWT", authCode.value, Infinity); // Cookie never expires
+        await oauthStore.loadBlizzardBtag(authCode.value, cookies);
       }
     }
 

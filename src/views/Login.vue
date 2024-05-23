@@ -46,8 +46,7 @@ export default defineComponent({
     async function init(): Promise<void> {
       const region: BnetOAuthRegion = cookies.get("W3ChampionsAuthRegion") ?? "";
       await oauthStore.authorizeWithCode(props.code, region);
-      await oauthStore.loadBlizzardBtag(authCode.value);
-      cookies.set("W3ChampionsJWT", authCode.value, Infinity); // Cookie never expires
+      await oauthStore.loadBlizzardBtag(authCode.value, cookies);
       openPlayerProfile();
     }
 

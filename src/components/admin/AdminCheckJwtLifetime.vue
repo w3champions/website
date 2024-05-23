@@ -16,8 +16,7 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, onUnmounted } from "vue";
 import { useAdminStore } from "@/store/admin/store";
-import { inject } from "vue";
-import { VueCookies } from "vue-cookies";
+import { useCookies } from "@/mixins/useCookies";
 
 export default defineComponent({
   name: "AdminCheckJwtLifetime",
@@ -26,7 +25,7 @@ export default defineComponent({
     const adminStore = useAdminStore();
     const checkJwtLifetimeInterval = 1000 * 60 * 5; // Check if jwt has expired every 5 minutes.
     let _intervalRefreshHandle: NodeJS.Timeout;
-    const $cookies = inject<VueCookies>("$cookies");
+    const cookies = useCookies();
 
     const showJwtExpiredDialog: ComputedRef<boolean> = computed((): boolean => {
       if (adminStore.showJwtExpiredDialog) {
@@ -41,9 +40,9 @@ export default defineComponent({
 
      onMounted(async (): Promise<void> => {
       _intervalRefreshHandle = setInterval(async () => {
-        await adminStore.checkJwtLifetime($cookies);
+        await adminStore.checkJwtLifetime(cookies);
       }, checkJwtLifetimeInterval);
-      await adminStore.checkJwtLifetime($cookies);
+      await adminStore.checkJwtLifetime(cookies);
      });
 
     onUnmounted((): void => {

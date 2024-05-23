@@ -112,7 +112,7 @@ export const useAdminStore = defineStore("admin", {
       const oauthStore = useOauthStore();
       await AdminService.putGlobalMute(oauthStore.token, mute);
     },
-    async checkJwtLifetime(cookies: VueCookies | undefined): Promise<void> {
+    async checkJwtLifetime(cookies: VueCookies): Promise<void> {
       const oauthStore = useOauthStore();
       if (!oauthStore.token) return;
       const isExpired = !(await AdminService.checkJwtLifetime(oauthStore.token));
