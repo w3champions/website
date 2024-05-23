@@ -17,8 +17,7 @@ export const useOauthStore = defineStore("oauth", {
     isLoadingBlizzardBtag: false,
   }),
   actions: {
-    async authorizeWithCode(code: string, cookies: VueCookies | undefined) {
-      const region = cookies?.get(w3CAuthRegion) ?? "";
+    async authorizeWithCode(code: string, region: BnetOAuthRegion) {
       const bearer = await AuthorizationService.authorize(code, region);
 
       this.SET_BEARER(bearer.jwt);
@@ -30,7 +29,6 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        cookies?.set(w3CAuth, bearer.jwt, Infinity); // Cookie never expires
       }
     },
     async authorizeWithTwitch() {
@@ -41,8 +39,8 @@ export const useOauthStore = defineStore("oauth", {
       const bearer = cookies?.get(w3CAuth) ?? "";
       this.SET_BEARER(bearer);
     },
-    async loadBlizzardBtag(bearerToken: string, cookies: VueCookies | undefined) {
-      if (this.isLoadingBlizzardBtag) return;
+    async loadBlizzardBtag(bearerToken: string): Promise<string> {
+      if (this.isLoadingBlizzardBtag) return "";
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
       const profile = await AuthorizationService.getProfile(bearerToken);
 
@@ -52,18 +50,14 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        cookies?.set(w3CAuth, profile.jwt, Infinity); // Cookie never expires
+        return profile.jwt;
       } else {
-        this.logout(cookies);
+        this.logout();
       }
       this.SET_IS_LOADING_BLIZZARD_BTAG(false);
+      return "";
     },
-    async saveLoginRegion(region: BnetOAuthRegion, cookies: VueCookies | undefined) {
-      cookies?.set(w3CAuthRegion, region, Infinity); // Cookie never expires
-    },
-    logout(cookies: VueCookies | undefined) {
-      cookies?.remove(w3CAuth);
-      cookies?.remove(w3CAuthRegion);
+    logout() {
       this.SET_PROFILE_NAME("");
       this.SET_IS_ADMIN(false);
       this.SET_BEARER("");

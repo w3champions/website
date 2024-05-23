@@ -17,8 +17,8 @@ import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter } from "vue-router";
-import { inject } from "vue";
-import { VueCookies } from "vue-cookies";
+import { useCookies } from "@/mixins/useCookies";
+import { BnetOAuthRegion } from "@/store/oauth/types";
 
 export default defineComponent({
   name: "LoginView",
@@ -32,7 +32,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const oauthStore = useOauthStore();
-    const $cookies = inject<VueCookies>("$cookies");
+    const cookies = useCookies();
 
     const account: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
     const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
@@ -44,8 +44,10 @@ export default defineComponent({
     }
 
     async function init(): Promise<void> {
-      await oauthStore.authorizeWithCode(props.code, $cookies);
-      await oauthStore.loadBlizzardBtag(authCode.value, $cookies);
+      const region: BnetOAuthRegion = cookies.get("W3ChampionsAuthRegion") ?? "";
+      await oauthStore.authorizeWithCode(props.code, region);
+      await oauthStore.loadBlizzardBtag(authCode.value);
+      cookies.set("W3ChampionsJWT", authCode.value, Infinity); // Cookie never expires
       openPlayerProfile();
     }
 

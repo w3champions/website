@@ -166,8 +166,7 @@ import languages from "@/locales/languages";
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
-import { inject } from "vue";
-import { VueCookies } from "vue-cookies";
+import { useCookies } from "@/mixins/useCookies";
 
 import {
   mdiAccountCircle,
@@ -203,9 +202,9 @@ export default defineComponent({
     const theme = useTheme();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
+    const cookies = useCookies();
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
-    const $cookies = inject<VueCookies>("$cookies");
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -265,7 +264,9 @@ export default defineComponent({
     }
 
     function logout(): void {
-      oauthStore.logout($cookies);
+      cookies.remove("W3ChampionsJWT");
+      cookies.remove("W3ChampionsAuthRegion");
+      oauthStore.logout();
     }
 
     const loginName = computed({
@@ -362,7 +363,7 @@ export default defineComponent({
     }
 
     async function saveLoginRegion({ region, done }: {region: BnetOAuthRegion; done: () => void}) {
-      await oauthStore.saveLoginRegion(region, $cookies);
+      cookies.set("W3ChampionsAuthRegion", region, Infinity); // Cookie never expires
       done();
     }
 
@@ -373,6 +374,7 @@ export default defineComponent({
 
       if (authCode.value) {
         await oauthStore.loadBlizzardBtag(authCode.value);
+        cookies.set("W3ChampionsJWT", authCode.value, Infinity); // Cookie never expires
       }
     }
 
