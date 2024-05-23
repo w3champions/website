@@ -166,6 +166,8 @@ import languages from "@/locales/languages";
 import { useTheme } from "vuetify";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
+import { inject } from "vue";
+import { VueCookies } from "vue-cookies";
 
 import {
   mdiAccountCircle,
@@ -203,6 +205,7 @@ export default defineComponent({
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
+    const $cookies = inject<VueCookies>("$cookies");
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -262,7 +265,7 @@ export default defineComponent({
     }
 
     function logout(): void {
-      oauthStore.logout();
+      oauthStore.logout($cookies);
     }
 
     const loginName = computed({
@@ -359,14 +362,14 @@ export default defineComponent({
     }
 
     async function saveLoginRegion({ region, done }: {region: BnetOAuthRegion; done: () => void}) {
-      await oauthStore.saveLoginRegion(region);
+      await oauthStore.saveLoginRegion(region, $cookies);
       done();
     }
 
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
-      await oauthStore.loadAuthCodeToState();
+      await oauthStore.loadAuthCodeToState($cookies);
 
       if (authCode.value) {
         await oauthStore.loadBlizzardBtag(authCode.value);

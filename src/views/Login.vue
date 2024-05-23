@@ -17,6 +17,8 @@ import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter } from "vue-router";
+import { inject } from "vue";
+import { VueCookies } from "vue-cookies";
 
 export default defineComponent({
   name: "LoginView",
@@ -30,6 +32,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const oauthStore = useOauthStore();
+    const $cookies = inject<VueCookies>("$cookies");
 
     const account: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
     const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
@@ -41,8 +44,8 @@ export default defineComponent({
     }
 
     async function init(): Promise<void> {
-      await oauthStore.authorizeWithCode(props.code);
-      await oauthStore.loadBlizzardBtag(authCode.value);
+      await oauthStore.authorizeWithCode(props.code, $cookies);
+      await oauthStore.loadBlizzardBtag(authCode.value, $cookies);
       openPlayerProfile();
     }
 

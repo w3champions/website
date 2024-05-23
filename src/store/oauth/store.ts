@@ -1,6 +1,10 @@
 import { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 import { defineStore } from "pinia";
 import AuthorizationService from "@/services/AuthorizationService";
+import { VueCookies } from "vue-cookies";
+
+const w3CAuth = "W3ChampionsJWT";
+const w3CAuthRegion = "W3ChampionsAuthRegion";
 
 export const useOauthStore = defineStore("oauth", {
   state: (): OauthState => ({
@@ -13,8 +17,8 @@ export const useOauthStore = defineStore("oauth", {
     isLoadingBlizzardBtag: false,
   }),
   actions: {
-    async authorizeWithCode(code: string) {
-      const region = await AuthorizationService.loadAuthRegionCookie();
+    async authorizeWithCode(code: string, cookies: VueCookies | undefined) {
+      const region = cookies?.get(w3CAuthRegion) ?? "";
       const bearer = await AuthorizationService.authorize(code, region);
 
       this.SET_BEARER(bearer.jwt);
@@ -26,18 +30,18 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        await AuthorizationService.saveAuthToken(bearer);
+        cookies?.set(w3CAuth, bearer.jwt, Infinity); // Cookie never expires
       }
     },
     async authorizeWithTwitch() {
       const token = await AuthorizationService.authorizeWithTwitch();
       this.SET_TWITCH_TOKEN(token);
     },
-    async loadAuthCodeToState() {
-      const bearer = await AuthorizationService.loadAuthCookie();
+    async loadAuthCodeToState(cookies: VueCookies | undefined) {
+      const bearer = cookies?.get(w3CAuth) ?? "";
       this.SET_BEARER(bearer);
     },
-    async loadBlizzardBtag(bearerToken: string) {
+    async loadBlizzardBtag(bearerToken: string, cookies: VueCookies | undefined) {
       if (this.isLoadingBlizzardBtag) return;
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
       const profile = await AuthorizationService.getProfile(bearerToken);
@@ -48,17 +52,18 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        await AuthorizationService.saveAuthToken(profile);
+        cookies?.set(w3CAuth, profile.jwt, Infinity); // Cookie never expires
       } else {
-        this.logout();
+        this.logout(cookies);
       }
       this.SET_IS_LOADING_BLIZZARD_BTAG(false);
     },
-    async saveLoginRegion(region: BnetOAuthRegion) {
-      await AuthorizationService.saveAuthRegion(region);
+    async saveLoginRegion(region: BnetOAuthRegion, cookies: VueCookies | undefined) {
+      cookies?.set(w3CAuthRegion, region, Infinity); // Cookie never expires
     },
-    logout() {
-      AuthorizationService.deleteAuthCookie();
+    logout(cookies: VueCookies | undefined) {
+      cookies?.remove(w3CAuth);
+      cookies?.remove(w3CAuthRegion);
       this.SET_PROFILE_NAME("");
       this.SET_IS_ADMIN(false);
       this.SET_BEARER("");

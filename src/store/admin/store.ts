@@ -12,6 +12,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
+import { VueCookies } from "vue-cookies";
 
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
@@ -111,12 +112,12 @@ export const useAdminStore = defineStore("admin", {
       const oauthStore = useOauthStore();
       await AdminService.putGlobalMute(oauthStore.token, mute);
     },
-    async checkJwtLifetime(): Promise<void> {
+    async checkJwtLifetime(cookies: VueCookies | undefined): Promise<void> {
       const oauthStore = useOauthStore();
       if (!oauthStore.token) return;
       const isExpired = !(await AdminService.checkJwtLifetime(oauthStore.token));
       if (isExpired) {
-        oauthStore.logout();
+        oauthStore.logout(cookies);
         this.SET_SHOW_JWT_EXPIRED_DIALOG(true);
       }
     },
