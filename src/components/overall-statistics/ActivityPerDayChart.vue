@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { activeGameModes } from "@/mixins/GameModesMixin";
 import { GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";

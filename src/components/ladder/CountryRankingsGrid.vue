@@ -68,25 +68,25 @@
 
                 <player-rank-info :player-id="playerId" />
                 <div class="twitch__container" v-if="isTwitchLive(item)">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
+                  <v-tooltip location="bottom">
+                    <template v-slot:activator="{ props }">
                       <span style="display: inline" class="pointer" v-on="on">
                         <v-btn
                           icon
-                          v-on="on"
+                          v-bind="props"
                           :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
                           target="_blank"
                         >
                           <v-icon
                             v-if="!isCurrentlyLive(item.player.playerIds)"
-                            color="purple accent-4"
+                            color="purple-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>
                           <v-icon
                             v-if="isCurrentlyLive(item.player.playerIds)"
                             class="blinker"
-                            color="red accent-4"
+                            color="red-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>
@@ -128,9 +128,9 @@
               style="position: relative"
               v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
             >
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <span style="display: inline" class="pointer" v-on="on">
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <span style="display: inline" class="pointer" v-bind="props">
                     <sword-icon class="swords blinker" />
                   </span>
                 </template>
@@ -188,7 +188,7 @@ import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "CountryRankingsGrid",

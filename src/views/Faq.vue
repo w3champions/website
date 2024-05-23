@@ -5,12 +5,12 @@
       <v-card-text>
         <v-expansion-panels tile>
           <v-expansion-panel tile v-for="(faq, i) in faqs" :key="i">
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               <div v-html="faq.question"></div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <div v-html="faq.answer"></div>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-card-text>

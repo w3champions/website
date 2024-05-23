@@ -10,7 +10,7 @@
           justify="center"
           align="center"
         >
-          <v-btn @click="signIn(gateway)" block x-large>
+          <v-btn @click="signIn(gateway)" block size="x-large">
             <v-col cols="2" align-self="center">
               <v-img
                 min-width="32"
@@ -40,14 +40,15 @@
 import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "SignInDialog",
   props: {
     value: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
   },
   setup: (props, context) => {

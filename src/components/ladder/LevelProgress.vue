@@ -1,5 +1,5 @@
 <template>
-  <v-progress-linear class="level-progress" :value="progressToNextLevel" height="25">
+  <v-progress-linear class="level-progress" :model-value="progressToNextLevel" height="25">
     <strong>{{ levelNumber }}</strong>
   </v-progress-linear>
 </template>

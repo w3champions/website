@@ -92,21 +92,21 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages" :total-visible="5" @input="onPageChanged"></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages" :total-visible="5" @update:model-value="onPageChanged"></v-pagination>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onUnmounted, ref, StyleValue } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { TranslateResult } from "vue-i18n";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 
 interface MatchesGridHeader {
@@ -127,7 +127,8 @@ export default defineComponent({
   props: {
     value: {
       type: Array<Match>,
-      required: true,
+      required: false,
+      default: [],
     },
     totalMatches: {
       type: Number,

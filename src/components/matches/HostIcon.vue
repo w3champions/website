@@ -1,7 +1,7 @@
 <template>
-  <v-tooltip bottom style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
-      <div v-on="on" class="globe">
+  <v-tooltip location="bottom" style="white-space: pre-line">
+    <template v-slot:activator="{ props }">
+      <div v-bind="props" class="globe">
         <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
       </div>
     </template>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, PropType, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";

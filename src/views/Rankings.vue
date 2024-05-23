@@ -11,8 +11,8 @@
           @gameModeChanged="onGameModeChanged"
         ></game-mode-select>
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" class="transparent">
+          <template v-slot:activator="{ props }">
+            <v-btn tile v-bind="props" class="bg-transparent">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{
@@ -23,26 +23,26 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
+
                   <v-list-item-title>
                     {{ $t("views_rankings.selectleague") }}
                   </v-list-item-title>
-                </v-list-item-content>
+
               </v-list>
               <v-divider></v-divider>
-              <v-list dense class="leagues-list">
+              <v-list density="compact" class="leagues-list">
                 <v-list-item
                   v-for="item in ladders"
                   :key="item.id"
                   @click="setLeague(item.id)"
                 >
-                  <v-list-item-content>
+
                     <v-list-item-title>
                       <league-icon :league="listLeagueIcon(item)" />
                       {{ item.name }}
                       {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
-                  </v-list-item-content>
+
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -57,19 +57,19 @@
           clearable
           :items="searchRanks"
           :loading="isLoading"
-          :search-input.sync="search"
+          :search.sync="search"
           :no-data-text="noDataText"
-          item-text="player.name"
+          item-title="player.name"
           item-value="player.id"
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
           <template v-slot:item="data">
             <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+              {{ data.item }}
             </template>
             <template v-else>
-              <v-list-item-content>
+
                 <v-list-item-title>
                   <span v-if="!isDuplicateName(data.item.player.name)">
                     {{ data.item.player.name }}
@@ -100,14 +100,14 @@
                 <v-list-item-subtitle v-else>
                   {{ $t(`views_rankings.unranked`) }}
                 </v-list-item-subtitle>
-              </v-list-item-content>
+
             </template>
           </template>
         </v-autocomplete>
       </v-card-title>
       <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-          <v-btn tile v-on="on" class="ma-4 transparent">
+        <template v-slot:activator="{ props }">
+          <v-btn tile v-bind="props" class="ma-4 bg-transparent">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
@@ -117,23 +117,23 @@
         <v-card>
           <v-card-text>
             <v-list>
-              <v-list-item-content>
+
                 <v-list-item-title>
                   {{ $t("views_rankings.prevseasons") }}
                 </v-list-item-title>
-              </v-list-item-content>
+
             </v-list>
-            <v-list dense>
+            <v-list density="compact">
               <v-list-item
                 v-for="item in seasons"
                 :key="item.id"
                 @click="selectSeason(item)"
               >
-                <v-list-item-content>
+
                   <v-list-item-title>
                     {{ $t("views_rankings.season") }} {{ item.id }}
                   </v-list-item-title>
-                </v-list-item-content>
+
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -175,7 +175,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "RankingsView",

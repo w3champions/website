@@ -36,9 +36,9 @@
     <v-alert
       v-model="isValidationError"
       type="warning"
-      dense
+      density="compact"
       class="ml-4 mr-4"
-      dismissible
+      closable
     >
       {{ clanValidationError }}
     </v-alert>
@@ -46,7 +46,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { TranslateResult, useI18n } from "vue-i18n";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({

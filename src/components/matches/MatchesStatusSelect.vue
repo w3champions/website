@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" class="bg-transparent">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
         {{ currentStatus.name }}
       </v-btn>
@@ -9,22 +9,22 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
+
             <v-list-item-title>
               {{ $t("components_matches_matchesstatusselect.selectstatus") }}
             </v-list-item-title>
-          </v-list-item-content>
+
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list density="compact">
           <v-list-item
             v-for="s in matchStatuses"
             :key="s.status"
             @click="currentStatus = s"
           >
-            <v-list-item-content>
+
               <v-list-item-title>{{ s.name }}</v-list-item-title>
-            </v-list-item-content>
+
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -37,7 +37,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiControllerClassic } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 
 interface MatchStatusSelectData {

@@ -1,8 +1,8 @@
 <template>
   <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
-    <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <div v-on="on">
+    <v-tooltip location="top">
+      <template v-slot:activator="{ props }">
+        <div v-bind="props">
           <v-card-text
             class="hero-picture-select"
             :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
@@ -33,9 +33,9 @@
             v-for="heroPickSelection in heroPickPerRace"
             :key="heroPickSelection.heroId"
           >
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <div v-on="on" class="ma-1">
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
+                <div v-bind="props" class="ma-1">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";

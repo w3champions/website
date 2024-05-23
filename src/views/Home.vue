@@ -155,7 +155,7 @@ import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useRankingStore } from "@/store/ranking/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "HomeView",

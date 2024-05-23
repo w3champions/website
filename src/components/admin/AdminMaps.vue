@@ -27,8 +27,8 @@
             {{ getMapPath(item) }}
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
-            <v-icon small class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
           </template>
         </v-data-table>
       </v-card>

@@ -15,7 +15,7 @@
             <v-select
               :items="races()"
               v-model="race"
-              item-text="raceName"
+              item-title="raceName"
               item-value="raceId"
               label="Race"
             />
@@ -26,7 +26,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
       <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || battleTag.length === 0">

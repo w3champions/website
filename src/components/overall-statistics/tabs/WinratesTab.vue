@@ -6,29 +6,29 @@
           <v-select
             v-model="selectedMap"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
-            @change="setSelectedMap"
+            @update:model-value="setSelectedMap"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
-            outlined
+            variant="outlined"
           />
           <v-select
             v-model="selectedMmr"
             :items="mmrs"
-            item-text="league"
+            item-title="league"
             item-value="mmr"
-            @change="setSelectedMmr"
+            @update:model-value="setSelectedMmr"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
-            outlined
+            variant="outlined"
           />
           <v-select
             :items="patches"
-            item-text="patchVersion"
+            item-title="patchVersion"
             item-value="patch"
             v-model="selectedPatch"
-            @change="setSelectedPatch"
+            @update:model-value="setSelectedPatch"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";

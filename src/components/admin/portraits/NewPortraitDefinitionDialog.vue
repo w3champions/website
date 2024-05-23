@@ -2,9 +2,9 @@
   <v-row>
     <v-col>
       <v-dialog v-model="dialogOpen" max-width="700">
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ props }">
           <v-row class="justify-center ma-0 pa-0">
-            <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now)</v-btn>
+            <v-btn class="bg-primary w3-race-bg--text" v-bind="props">Create New PortraitDefinition (For Now)</v-btn>
           </v-row>
         </template>
 
@@ -41,7 +41,7 @@
               <v-row class="mb-5">
                 <v-container>
                   <v-row class="justify-center">
-                    <v-btn class="primary w3-race-bg--text" @click="confirmDialog" :disabled="!valid">Confirm</v-btn>
+                    <v-btn class="bg-primary w3-race-bg--text" @click="confirmDialog" :disabled="!valid">Confirm</v-btn>
                   </v-row>
                 </v-container>
               </v-row>

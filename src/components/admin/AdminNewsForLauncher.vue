@@ -14,12 +14,12 @@
           <v-toolbar-title>News for Launcher</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-dialog max-width="1185" v-model="dialog" @click:outside="closeNews">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+
+                v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
               </v-btn>
@@ -32,7 +32,7 @@
               <v-card-text>
                 <v-text-field
                   v-model="editedNewsItem.date"
-                  filled
+                  variant="filled"
                   :label="$t(`views_admin.headline`)"
                 />
                 <div class="editor">
@@ -168,7 +168,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text @click="closeNews">
+                <v-btn variant="text" @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
                 <v-btn color="primary" class="w3-race-bg--text" @click="saveNews">
@@ -180,8 +180,8 @@
         </v-toolbar>
       </template>
       <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
 
@@ -212,7 +212,7 @@ import {
   mdiRedo,
   mdiUndo,
 } from "@mdi/js";
-import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Editor, EditorContent } from "@tiptap/vue-3";
 import { Document } from "@tiptap/extension-document";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Text } from "@tiptap/extension-text";

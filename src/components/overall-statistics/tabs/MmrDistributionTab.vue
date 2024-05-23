@@ -6,21 +6,21 @@
           <v-select
             v-model="selectedSeason"
             :items="seasons"
-            item-text="id"
+            item-title="id"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
-            outlined
+            variant="outlined"
           />
 
           <v-select
             v-model="selectedGameMode"
             class="over-chart-select-box"
             :items="activeGameModes()"
-            item-text="name"
+            item-title="name"
             item-value="id"
-            @change="gameModeChanged"
+            @update:model-value="gameModeChanged"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded">

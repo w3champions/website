@@ -35,7 +35,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
     </v-card-actions>

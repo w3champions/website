@@ -1,7 +1,7 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <td v-on="on" class="number-text" :class="toWinClass">
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
+      <td v-bind="props" class="number-text" :class="toWinClass">
         {{ toWinText }}
       </td>
     </template>

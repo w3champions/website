@@ -15,12 +15,12 @@
           <v-toolbar flat color="transparent">
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -46,19 +46,19 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template #activator="{ props }">
                           <v-text-field
                             v-model="banExpiry"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               banExpiry = '';
                               dateMenu = false;
@@ -114,7 +114,7 @@
         </template>
 
         <template #[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>

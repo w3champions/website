@@ -9,8 +9,7 @@
         :items-per-page="10"
         :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
         :items="files"
-        sort-by="lastModified"
-        :sort-desc="true"
+        :sort-by="sortBy"
         :search="tableSearch"
         :loading="isLoadingFiles"
         loading-text="Loading... Please wait"
@@ -26,12 +25,12 @@
             </template>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+
+                  v-bind="props"
                 >
                   Upload Image
                 </v-btn>
@@ -57,7 +56,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn text @click="close" :disabled="isUploadingFile">
+                  <v-btn variant="text" @click="close" :disabled="isUploadingFile">
                     {{ $t(`views_admin.cancel`) }}
                   </v-btn>
                   <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile" :disabled="isUploadingFile">
@@ -69,14 +68,14 @@
           </v-toolbar>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
-          <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
+          <v-icon size="small" @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
-      <v-snackbar v-model="isValidationMessageVisible" top :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
+      <v-snackbar v-model="isValidationMessageVisible" location="top" :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
         {{ validationMessage.message }}
-        <template v-slot:action="{ attrs }">
-          <v-btn color="black" text v-bind="attrs" @click="resetValidationMessage">
+        <template v-slot:actions="{ isActive }">
+          <v-btn color="black" variant="text" v-bind="isActive" @click="resetValidationMessage">
             Close
           </v-btn>
         </template>
@@ -91,6 +90,7 @@ import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
+import { VDataTable } from "vuetify/components";
 
 export default defineComponent({
   name: "AdminStorageS3",
@@ -104,6 +104,7 @@ export default defineComponent({
     const tableSearch = ref<string>("");
     const isLoadingFiles = ref<boolean>(true);
     const isUploadingFile = ref<boolean>(false);
+    const sortBy = ref<VDataTable["sortBy"]>([{ key: "lastModified", order:"desc" }]);
 
     const files: ComputedRef<CloudFile[]> = computed((): CloudFile[] => cloudStorageStore.files);
     const validationMessage: ComputedRef<CloudValidationMessage> = computed((): CloudValidationMessage => cloudStorageStore.validationMessage);
@@ -185,6 +186,7 @@ export default defineComponent({
       isValidationMessageVisible,
       validationMessage,
       resetValidationMessage,
+      sortBy,
     };
   },
 });

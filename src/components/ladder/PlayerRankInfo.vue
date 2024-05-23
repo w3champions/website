@@ -1,12 +1,12 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
       <div
         style="display: inline"
         class="pointer player-name"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"
-        v-on="on"
+        v-bind="props"
       >
         {{ playerId.name }}
       </div>
@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from "vue";
 import { PlayerId } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "PlayerRankInfo",

@@ -10,7 +10,7 @@
       href="https://www.patreon.com/w3champions"
       target="_blank"
       tile
-      outlined
+      border
       style="padding-bottom: 0px"
     >
       <v-img src="/assets/socials/Patreon_button.png" alt="Patreon"/>
@@ -22,7 +22,7 @@
       href="https://www.paypal.me/w3champions"
       target="_blank"
       tile
-      outlined
+      border
     >
       <v-img src="/assets/socials/PayPal_button.png" alt="Paypal"/>
     </v-card>
@@ -33,7 +33,7 @@
       v-bind:key="crypto.coin"
       class="support-subcard"
       tile
-      outlined
+      border
       @click.stop="crypto.dialog = true"
     >
       <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name"></v-img>
@@ -51,7 +51,7 @@
       v-bind:key="alternate.name"
       class="support-subcard"
       tile
-      outlined
+      border
       @click.stop="alternate.dialog = true"
     >
       <alternate-payments-dialog

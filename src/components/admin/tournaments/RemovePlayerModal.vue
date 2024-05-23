@@ -10,7 +10,7 @@
             <v-select
               :items="players"
               v-model="battleTag"
-              item-text="battleTag"
+              item-title="battleTag"
               item-value="battleTag"
               label="Player"
             />
@@ -20,7 +20,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t("views_admin.cancel") }}
       </v-btn>
       <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || battleTag.length === 0">
