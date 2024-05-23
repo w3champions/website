@@ -18,7 +18,7 @@
         </v-btn>
       </v-col>
       <v-col cols="3" class="text-center">
-        <v-btn outlined @click="rejectClan">
+        <v-btn variant="outlined" @click="rejectClan">
           {{ $t("components_clans_acceptinvitepanel.reject") }}
         </v-btn>
       </v-col>

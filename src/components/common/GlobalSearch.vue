@@ -1,7 +1,7 @@
 <template>
   <v-menu
     content-class="global-search"
-    bottom
+    location="bottom"
     offset-y
     transition="slide-y-transition"
     v-model="menuOpened"
@@ -9,8 +9,8 @@
     :nudge-width="300"
     :close-on-content-click="false"
   >
-    <template v-slot:activator="{ on }">
-      <v-btn text tile v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn variant="text" tile v-bind="props">
         <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
@@ -25,18 +25,18 @@
           autofocus
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
-          :search-input.sync="search"
+          :search.sync="search"
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
-          item-text="battleTag"
+          item-title="battleTag"
           item-value="battleTag"
         >
           <template v-slot:item="data">
             <v-list-item-avatar>
               <img :src="getPlayerAvatarUrl(data.item)" />
             </v-list-item-avatar>
-            <v-list-item-content>
+
               <v-list-item-title>
                 {{ data.item.battleTag }}
               </v-list-item-title>
@@ -49,7 +49,7 @@
                   <season-badge :season="season" />
                 </div>
               </v-list-item-subtitle>
-            </v-list-item-content>
+
           </template>
           <template v-slot:append-item>
             <div v-intersect="endIntersect"></div>
@@ -67,7 +67,7 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchData } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { mdiMagnify } from "@mdi/js";
 
 export default defineComponent({

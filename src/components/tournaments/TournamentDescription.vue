@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
 import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";

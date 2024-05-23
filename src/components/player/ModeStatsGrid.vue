@@ -6,9 +6,9 @@
     mobile-breakpoint="400"
   >
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
-      <v-tooltip top v-bind:key="h.text">
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{ header.text }}</span>
+      <v-tooltip location="top" v-bind:key="h.text">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">{{ header.text }}</span>
         </template>
         <span style="white-space: pre-line">{{ header.tooltip }}</span>
       </v-tooltip>
@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { AT_modes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";

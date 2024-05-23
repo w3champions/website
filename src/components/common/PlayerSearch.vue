@@ -7,7 +7,7 @@
     clearable
     placeholder=" "
     :items="searchedPlayers"
-    :search-input.sync="search"
+    :search.sync="search"
     :no-data-text="noDataText"
     :loading="isLoading"
     :autofocus="setAutofocus ? true : false"

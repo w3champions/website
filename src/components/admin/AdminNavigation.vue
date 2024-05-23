@@ -1,14 +1,14 @@
 <template>
   <v-navigation-drawer permanent>
     <v-list-item>
-      <v-list-item-content>
+
         <v-list-item-title>
           {{ $t("views_admin.adminpage") }}
         </v-list-item-title>
-      </v-list-item-content>
+
     </v-list-item>
 
-    <v-list dense nav>
+    <v-list density="compact" nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
           :key="index"
@@ -19,9 +19,9 @@
             <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
           </v-list-item-icon>
 
-          <v-list-item-content>
+
             <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+
         </v-list-item>
 
         <v-list-group
@@ -32,9 +32,9 @@
           no-action
         >
           <template v-slot:activator>
-            <v-list-item-content>
+
               <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+
           </template>
 
           <v-list-item
@@ -61,7 +61,7 @@ import { NavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,

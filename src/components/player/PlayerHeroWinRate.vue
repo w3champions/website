@@ -13,7 +13,7 @@
         <v-row>
           <v-col cols="md-12">
             <div>
-              <v-simple-table>
+              <v-table>
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -26,9 +26,9 @@
                     <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
                       <td v-html="item.image"></td>
                       <td v-html="item.name"></td>
-                      <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-                        <template v-slot:activator="{ on }">
-                          <td v-on="on" v-html="item[header.value]"></td>
+                      <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top">
+                        <template v-slot:activator="{ props }">
+                          <td v-bind="props" v-html="item[header.value]"></td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">
                           {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
@@ -37,7 +37,7 @@
                     </tr>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
 
               <v-pagination
                 v-model="page"
@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";

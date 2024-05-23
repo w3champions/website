@@ -2,9 +2,9 @@
   <div>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiSkull }}</v-icon>
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiSkull }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.heroeskilled") }}</div>
         </v-tooltip>
@@ -15,9 +15,9 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiChevronTripleUp }}</v-icon>
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiChevronTripleUp }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.xpgained") }}</div>
         </v-tooltip>
@@ -28,9 +28,9 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiTreasureChest }}</v-icon>
+        <v-tooltip location="top">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiTreasureChest }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.itemscollected") }}</div>
         </v-tooltip>

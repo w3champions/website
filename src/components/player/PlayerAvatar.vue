@@ -2,10 +2,10 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-tooltip top v-bind:disabled="!avatarDescription">
-          <template v-slot:activator="{ on }">
+        <v-tooltip location="top" v-bind:disabled="!avatarDescription">
+          <template v-slot:activator="{ props }">
             <v-card-text
-              v-on="on"
+              v-bind="props"
               style="cursor: pointer"
               @click.stop="iconsDialogOpened = true"
               class="player-avatar text-center"
@@ -15,10 +15,10 @@
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
             <div
-              v-on="on"
+              v-bind="props"
               class="country__container clickable"
               @click="goToCountryRankings()"
             >
@@ -55,10 +55,10 @@
             v-for="number in starterPicNumbers"
             :key="number"
           >
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
+          <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
                 <v-card-text
-                  v-on="on"
+                  v-bind="props"
                   class="player-avatar-choosing"
                   @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
@@ -83,10 +83,10 @@
             {{ enumToString(race) }}
           </v-card-text>
           <v-col cols="auto" v-for="number in racePicNumbers" :key="number">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
                 <v-card-text
-                  v-on="on"
+                  v-bind="props"
                   :class="getCorrectClasses(race, number)"
                   @click="isLoggedInPlayer ? savePicture(race, number) : null"
                   :style="{'background-image': 'url(' + picture(race, number) + ')'}"
@@ -101,10 +101,10 @@
         <v-row v-if="specialPictures.length > 0" class="pb-3" align="center" justify="center">
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
           <v-col cols="auto" v-for="specialPicture in specialPictures" :key="specialPicture.pictureId">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
                 <v-card-text
-                  v-on="on"
+                  v-bind="props"
                   class="player-avatar-choosing"
                   v-bind:class="{ pointer: isLoggedInPlayer }"
                   @click="
@@ -168,16 +168,16 @@
       <v-row v-if="isLoggedInPlayer">
         <v-col>
           <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 @click="personalSettingsDialogOpened = true"
-                small
+                size="small"
                 class="ma-0"
-                outlined
-                v-on="on"
+                variant="outlined"
+                v-bind="props"
                 color="primary"
               >
-                <v-icon left>{{ mdiPencil }}</v-icon>
+                <v-icon start>{{ mdiPencil }}</v-icon>
                 {{ $t("components_player_playeravatar.edit") }}
               </v-btn>
             </template>
@@ -192,8 +192,8 @@
                   <v-row>
                     <v-text-field
                       :prepend-icon="mdiTwitch"
-                      color="purple accent-4"
-                      dense
+                      color="purple-accent-4"
+                      density="compact"
                       clearable
                       single-line
                       shaped
@@ -203,8 +203,8 @@
                     ></v-text-field>
                     <v-text-field
                       :prepend-icon="mdiYoutube"
-                      color="red darken-2"
-                      dense
+                      color="red-darken-2"
+                      density="compact"
                       clearable
                       single-line
                       shaped
@@ -214,8 +214,8 @@
                     ></v-text-field>
                     <v-text-field
                       :prepend-icon="mdiTwitter"
-                      color="blue darken-2"
-                      dense
+                      color="blue-darken-2"
+                      density="compact"
                       clearable
                       single-line
                       shaped
@@ -225,8 +225,8 @@
                     ></v-text-field>
                     <v-text-field
                       prepend-icon="$trovo"
-                      color="green darken-3"
-                      dense
+                      color="green-darken-3"
+                      density="compact"
                       clearable
                       single-line
                       shaped
@@ -236,8 +236,8 @@
                     ></v-text-field>
                     <v-text-field
                       :prepend-icon="mdiHome"
-                      color="blue darken-2"
-                      dense
+                      color="blue-darken-2"
+                      density="compact"
                       :rules="[rules.maxLength(50)]"
                       single-line
                       clearable
@@ -274,9 +274,9 @@
                         clearable
                         :item-value="countryCode"
                         :items="countries"
-                        :filter="countryFilter"
+                        :customFilter="countryFilter"
                         :label="$t('components_player_playeravatar.selectcountry')"
-                        item-text="country"
+                        item-title="country"
                         v-model="selectedCountry"
                         :return-object="false"
                       >
@@ -295,12 +295,12 @@
                   <v-row>
                     <v-col>
                       <v-textarea
-                        outlined
+                        variant="outlined"
                         name="input-7-1"
                         label="About"
                         clearable
                         :rules="[rules.maxLength(300)]"
-                        value
+                        model-value
                         v-model="userProfile.about"
                         :hint="$t('components_player_playeravatar.aboutdesc')"
                       ></v-textarea>
@@ -310,10 +310,10 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="resetUserProfile">
+                <v-btn color="blue-darken-1" variant="text" @click="resetUserProfile">
                   {{ $t("components_player_playeravatar.close") }}
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">
+                <v-btn color="blue-darken-1" variant="text" @click="saveUserProfile">
                   {{ $t("components_player_playeravatar.save") }}
                 </v-btn>
               </v-card-actions>
@@ -327,7 +327,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
@@ -336,7 +336,7 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.

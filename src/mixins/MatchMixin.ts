@@ -1,5 +1,5 @@
 import { Match } from "@/store/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export function mapNameFromMatch(match: Match) {
   if (match.mapName) {

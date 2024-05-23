@@ -6,7 +6,7 @@
           <v-card-title class="text-center">
             {{ $t("views_gettingstarted.howtoinstall") }}
           </v-card-title>
-          <v-tabs v-model="tabsModel" vertical class="ml-5">
+          <v-tabs v-model="tabsModel" direction="vertical" class="ml-5">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#launcher`">
               {{ $t("views_gettingstarted.launcher") }}
@@ -29,7 +29,7 @@
                       class="join-button mt-0 mb-4"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2 hidden-xs-only">Windows</span>
+                      <span class="mr-2 hidden-xs">Windows</span>
                     </v-btn>
                     <v-btn
                       :href="launcherUrlMac"
@@ -37,7 +37,7 @@
                       class="join-button mt-0 mb-4 ml-8"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2 hidden-xs-only">Mac</span>
+                      <span class="mr-2 hidden-xs">Mac</span>
                     </v-btn>
                   </v-card-text>
                   <br />
@@ -49,7 +49,7 @@
                       class="join-button mt-0 mb-4"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2 hidden-xs-only">Windows (legacy)</span>
+                      <span class="mr-2 hidden-xs">Windows (legacy)</span>
                     </v-btn>
                   </v-card-text>
                   <br />
@@ -87,7 +87,7 @@
               </v-tab-item>
               <v-tab-item :value="'windows-setup'">
                 <v-card-text class="px-16">
-                  <v-alert outlined type="warning" prominent border="left">
+                  <v-alert variant="outlined" type="warning" prominent border="start">
                     {{ alertMessage }}
                   </v-alert>
                   <h3 class="mt-10">
@@ -101,10 +101,10 @@
                     color="primary"
                     :href="webUiLink"
                     target="_blank"
-                    outlined
+                    variant="outlined"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
+                    <span class="mr-2 hidden-xs">
                       {{ $t("views_gettingstarted.manualwinbody2") }}
                     </span>
                   </v-btn>
@@ -124,10 +124,10 @@
                     color="primary"
                     :href="mapsLink"
                     target="_blank"
-                    outlined
+                    variant="outlined"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
+                    <span class="mr-2 hidden-xs">
                       {{ $t("views_gettingstarted.manualwinbody8") }}
                     </span>
                   </v-btn>
@@ -192,7 +192,7 @@
               </v-tab-item>
               <v-tab-item :value="'mac-setup'">
                 <v-card-text class="px-16">
-                  <v-alert outlined type="warning" prominent border="left">
+                  <v-alert variant="outlined" type="warning" prominent border="start">
                     {{ alertMessage }}
                   </v-alert>
                   <h3 class="mt-10">
@@ -206,10 +206,10 @@
                     color="primary"
                     :href="webUiLink"
                     target="_blank"
-                    outlined
+                    variant="outlined"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
+                    <span class="mr-2 hidden-xs">
                       {{ $t("views_gettingstarted.manualmacbody2") }}
                     </span>
                   </v-btn>
@@ -233,10 +233,10 @@
                     color="primary"
                     :href="mapsLink"
                     target="_blank"
-                    outlined
+                    variant="outlined"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
+                    <span class="mr-2 hidden-xs">
                       {{ $t("views_gettingstarted.manualmacbody8") }}
                     </span>
                   </v-btn>

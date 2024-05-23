@@ -24,8 +24,8 @@
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
                   <v-menu offset-x v-if="!!seasons && seasons.length > 0">
-                    <template v-slot:activator="{ on }">
-                      <v-btn tile v-on="on" class="ma-2 transparent">
+                    <template v-slot:activator="{ props }">
+                      <v-btn tile v-bind="props" class="ma-2 bg-transparent">
                         <span class="pa-0" v-if="selectedSeason">
                           {{ $t("views_rankings.season") }}
                           {{ selectedSeason.id }}
@@ -43,11 +43,11 @@
                           :key="item.id"
                           @click="selectSeason(item)"
                         >
-                          <v-list-item-content>
+
                             <v-list-item-title>
                               {{ $t("views_rankings.season") }} {{ item.id }}
                             </v-list-item-title>
-                          </v-list-item-content>
+
                         </v-list-item>
                       </v-list>
                     </v-card>
@@ -59,7 +59,7 @@
           <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
             <div class="live-match__indicator">
               Live
-              <span class="circle red blinker"></span>
+              <span class="circle bg-red blinker"></span>
               <span class="live-match__duration">{{ getDuration(ongoingMatch) }}'</span>
             </div>
             <div v-if="!isOngoingMatchFFA">

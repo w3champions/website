@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" class="bg-transparent">
         <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>
         {{ $t(gateway.name) }}
       </v-btn>
@@ -16,9 +16,9 @@
           :key="gw.id"
           @click="gateway = gw"
         >
-          <v-list-item-content>
+
             <v-list-item-title>{{ $t(gw.name) }}</v-list-item-title>
-          </v-list-item-content>
+
         </v-list-item>
       </v-list>
     </v-card>

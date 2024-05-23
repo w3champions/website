@@ -1,8 +1,8 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
       <v-card-text
-        v-on="on"
+        v-bind="props"
         class="hero-icon"
         :style="{ 'background-image': 'url(' + heroPicture + ')' }"
       />
@@ -15,7 +15,7 @@
 import { defineComponent, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "HeroPicture",

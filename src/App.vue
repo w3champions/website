@@ -6,40 +6,35 @@
       transition="slide-x-transition"
       v-model="navigationDrawerOpen"
     >
-      <v-list dense>
+      <v-list density="compact">
         <v-list-item>
-          <v-list-item-content>
-            <router-link :to="{ name: 'Home' }">
-              <brand-logo :is-dark-theme="isDarkTheme.get()" />
-            </router-link>
-          </v-list-item-content>
-          <v-list-item-icon>
-            <v-icon class="ml-5" @click="setNavigationDrawerOpen(false)">{{ mdiClose }}</v-icon>
-          </v-list-item-icon>
+          <router-link :to="{ name: 'Home' }">
+            <brand-logo :is-dark-theme="isDarkTheme.get()" />
+          </router-link>
+          <template v-slot:prepend="{ isActive }">
+            <v-icon v-if="isActive" class="ml-5" @click="setNavigationDrawerOpen(false)">{{ mdiClose }}</v-icon>
+          </template>
         </v-list-item>
       </v-list>
       <v-divider />
-      <v-list dense nav>
+      <v-list density="compact" nav>
         <v-list-item
           v-for="item in items"
           :key="item.title"
           v-show="isNavItemVisible(item)"
           link
-          :to="{ name: item.to }"
         >
-          <v-list-item-icon>
+          <template v-slot:append>
             <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t(`views_app.${item.title}`) }}
-            </v-list-item-title>
-          </v-list-item-content>
+          </template>
+          <v-list-item-title>
+            {{ $t(`views_app.${item.title}`) }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
+    <v-app-bar :class="{ darkmode: isDarkTheme.get() }">
       <!-- toggle button for drawer menu, only for lower than lg -->
      <v-app-bar-nav-icon
        @click="setNavigationDrawerOpen(true)"
@@ -62,7 +57,7 @@
           v-for="item in items"
           v-show="isNavItemVisible(item)"
           :key="item.title"
-          text
+          variant="text"
           tile
           :to="{ name: item.to }"
           :class="item.class"
@@ -77,7 +72,7 @@
 
       <global-search />
 
-      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
+      <v-btn variant="text" tile @click="loginOrGoToProfile" v-if="!authCode">
         <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
@@ -86,8 +81,8 @@
       </v-btn>
 
       <v-menu v-if="authCode">
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile v-bind="props">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
             <v-icon>{{ mdiAccountCircle }}</v-icon>
           </v-btn>
@@ -102,9 +97,9 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile v-bind="props" class="right-menu">
             <v-icon>{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
@@ -125,8 +120,8 @@
       </v-menu>
 
       <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" style="margin-top: 2px">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile v-bind="props" style="margin-top: 2px">
             <locale-icon
               :locale="savedLocale.get()"
               :showTwoLetterCode="false"
@@ -148,9 +143,9 @@
     <v-main>
       <router-view />
     </v-main>
-    <v-footer padless class>
+    <v-footer class>
       <v-row justify="center" no-gutters>
-        <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
+        <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
     </v-footer>
   </v-app>
@@ -166,10 +161,10 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { useVuetify } from "@/plugins/vuetify";
-import { useI18n } from "vue-i18n-bridge";
+import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
 
 import {
@@ -203,7 +198,7 @@ export default defineComponent({
   setup() {
     const { locale } = useI18n();
     const router = useRouter();
-    const vuetify = useVuetify();
+    const theme = useTheme();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
@@ -307,7 +302,7 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.dark = isDarkTheme.get();
+      theme.global.name.value = "isDarkTheme.get()";
       setThemeColors();
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }
@@ -355,12 +350,12 @@ export default defineComponent({
     }
 
     function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
-      Object.assign(
-        {},
-        vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
-        themeColors.get()
-      );
+      theme.global.name.value = "light";
+      // Object.assign(
+      //   {},
+      //   theme.global.name.value.themes[isDarkTheme.get() ? "dark" : "light"],
+      //   themeColors.get()
+      // );
     }
 
     async function saveLoginRegion({ region, done }: {region: BnetOAuthRegion; done: () => void}) {

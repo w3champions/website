@@ -11,8 +11,8 @@
           @gameModeChanged="onGameModeChanged"
         ></game-mode-select>
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent">
+          <template v-slot:activator="{ props }">
+            <v-btn tile v-bind="props" style="background-color: transparent">
               <div
                 class="country-flag__container"
                 v-if="selectedCountry.countryCode"
@@ -29,18 +29,18 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
+
                   <v-list-item-title>Select a country:</v-list-item-title>
-                </v-list-item-content>
+
               </v-list>
               <v-divider></v-divider>
-              <v-list dense class="countries-list">
+              <v-list density="compact" class="countries-list">
                 <v-list-item
                   v-for="item in countries"
                   :key="item.countryCode"
                   @click="selectCountry(item.countryCode)"
                 >
-                  <v-list-item-content>
+
                     <v-list-item-title>
                       <span class="country-flag__container">
                         <country-flag
@@ -51,7 +51,7 @@
                       </span>
                       {{ item.country }}
                     </v-list-item-title>
-                  </v-list-item-content>
+
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -59,10 +59,10 @@
         </v-menu>
         <v-spacer></v-spacer>
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-btn
               tile
-              v-on="on"
+              v-bind="props"
               class="ma-4"
               style="background-color: transparent"
             >
@@ -73,19 +73,19 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
+
                   <v-list-item-title>Previous seasons:</v-list-item-title>
-                </v-list-item-content>
+
               </v-list>
-              <v-list dense>
+              <v-list density="compact">
                 <v-list-item
                   v-for="item in seasons"
                   :key="item.id"
                   @click="selectSeason(item)"
                 >
-                  <v-list-item-content>
+
                     <v-list-item-title>Season {{ item.id }}</v-list-item-title>
-                  </v-list-item-content>
+
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -124,7 +124,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showBracket" class="black--text">
+  <div v-if="showBracket" class="text-black">
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" v-bind:style="style">
       <div v-for="(round, roundIndex) in rounds" :key="`matches-${roundIndex}`" class="d-flex">

@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent">
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" style="background-color: transparent">
         <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
         {{ currentSort.name }}
       </v-btn>
@@ -9,16 +9,16 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
+
             <v-list-item-title>{{ $t("components_matches_sortselect.sortmatchesby") }}</v-list-item-title>
-          </v-list-item-content>
+
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list density="compact">
           <v-list-item v-for="sort in sortings" :key="sort.mode" @click="currentSort = sort">
-            <v-list-item-content>
+
               <v-list-item-title>{{ sort.name }}</v-list-item-title>
-            </v-list-item-content>
+
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -31,7 +31,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 
 interface SortSelectData {

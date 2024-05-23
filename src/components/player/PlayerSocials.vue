@@ -1,61 +1,61 @@
 <template>
   <v-row>
     <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+      <v-tooltip location="bottom">
+        <template v-slot:activator="{ props }">
           <v-btn
             icon
-            v-on="on"
+            v-bind="props"
             :href="'https:///twitch.tv/' + userProfile.twitch"
             target="_blank"
             class="twitchIcon"
           >
-            <v-icon color="purple accent-4">{{ mdiTwitch }}</v-icon>
+            <v-icon color="purple-accent-4">{{ mdiTwitch }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.twitch }}</span>
       </v-tooltip>
     </v-col>
     <v-col cols="2" v-if="userProfile.youtube != ''" class="socialIcon">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+      <v-tooltip location="bottom">
+        <template v-slot:activator="{ props }">
           <v-btn
             icon
-            v-on="on"
+            v-bind="props"
             :href="'https:///youtube.com/' + userProfile.youtube"
             target="_blank"
           >
-            <v-icon color="red darken-2">{{ mdiYoutube }}</v-icon>
+            <v-icon color="red-darken-2">{{ mdiYoutube }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.youtube }}</span>
       </v-tooltip>
     </v-col>
     <v-col cols="2" v-if="userProfile.twitter != ''" class="socialIcon">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+      <v-tooltip location="bottom">
+        <template v-slot:activator="{ props }">
           <v-btn
             icon
-            v-on="on"
+            v-bind="props"
             :href="'https:///twitter.com/' + userProfile.twitter"
             target="_blank"
           >
-            <v-icon color="blue darken-2">{{ mdiTwitter }}</v-icon>
+            <v-icon color="blue-darken-2">{{ mdiTwitter }}</v-icon>
           </v-btn>
         </template>
         <span>{{ userProfile.twitter }}</span>
       </v-tooltip>
     </v-col>
     <v-col cols="2" v-if="!!userProfile.trovo" class="socialIcon">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+      <v-tooltip location="bottom">
+        <template v-slot:activator="{ props }">
           <v-btn
             icon
-            v-on="on"
+            v-bind="props"
             :href="'https://trovo.live/' + userProfile.trovo"
             target="_blank"
           >
-            <v-icon color="green darken-3">$trovo</v-icon>
+            <v-icon color="green-darken-3">$trovo</v-icon>
           </v-btn>
         </template>
         <span>https://trovo.live/{{ userProfile.trovo }}</span>

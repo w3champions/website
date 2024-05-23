@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import Tournaments from "@/views/Tournaments.vue";
@@ -41,8 +40,6 @@ import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
-
-Vue.use(VueRouter);
 
 const routes = [
   {
@@ -227,8 +224,8 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
+const router = createRouter({
+  history: createWebHistory(),
   routes,
 });
 

@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent">
+    <template v-slot:activator="{ props }">
+      <v-btn tile v-bind="props" style="background-color: transparent">
         <v-icon style="margin-right: 5px">{{ mdiMap }}</v-icon>
         {{ selected }}
       </v-btn>
@@ -9,16 +9,16 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
+
             <v-list-item-title>{{ $t("common.selectmap") }}</v-list-item-title>
-          </v-list-item-content>
+
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list density="compact">
           <v-list-item v-for="(m, index) in maps" :key="index" @click="selectMap(m.key)">
-            <v-list-item-content>
+
               <v-list-item-title>{{ m.mapName }}</v-list-item-title>
-            </v-list-item-content>
+
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";

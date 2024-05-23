@@ -49,26 +49,28 @@ export default class AuthorizationService {
   }
 
   public static async loadAuthCookie(): Promise<string> {
-    const cookie = Vue.$cookies.get(w3CAuth);
-    return (cookie as string) ?? "";
+    // const cookie = Vue.$cookies.get(w3CAuth);
+    // return (cookie as string) ?? "";
+    return "";
   }
 
   public static async loadAuthRegionCookie(): Promise<BnetOAuthRegion> {
-    const cookie = Vue.$cookies.get(w3CAuthRegion);
-    return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
+    // const cookie = Vue.$cookies.get(w3CAuthRegion);
+    // return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
+    return BnetOAuthRegion.eu;
   }
 
   public static async saveAuthRegion(region: BnetOAuthRegion) {
-    Vue.$cookies.set(w3CAuthRegion, region, Infinity); // Cookie never expires
+    // Vue.$cookies.set(w3CAuthRegion, region, Infinity); // Cookie never expires
   }
 
   public static async saveAuthToken(token: W3cToken) {
-    Vue.$cookies.set(w3CAuth, token.jwt, Infinity); // Cookie never expires
+    // Vue.$cookies.set(w3CAuth, token.jwt, Infinity); // Cookie never expires
   }
 
   public static deleteAuthCookie(): void {
-    Vue.$cookies.remove(w3CAuth);
-    Vue.$cookies.remove(w3CAuthRegion);
+    // Vue.$cookies.remove(w3CAuth);
+    // Vue.$cookies.remove(w3CAuthRegion);
   }
 
   public static async getProfile(bearer: string): Promise<W3cToken | null> {

@@ -25,12 +25,11 @@
           </template>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
               </v-btn>
@@ -61,13 +60,12 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template #activator="{ props }">
                           <v-text-field
                             v-model="editedItem.endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker
@@ -77,7 +75,7 @@
                         >
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               editedItem.endDate = '';
                               dateMenu = false;
@@ -97,13 +95,13 @@
                     </v-col>
 
                     <v-col class="py-0">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
+                      <v-tooltip location="top">
+                        <template v-slot:activator="{ props }">
                           <v-select
-                            v-on="on"
+                            v-bind="props"
                             v-model="editedItem.gameModes"
                             :items="selectableGameModes"
-                            item-text="name"
+                            item-title="name"
                             item-value="id"
                             :menu-props="{ maxHeight: '400' }"
                             :label="$t(`views_admin.gameMode`)"
@@ -130,7 +128,7 @@
               <v-alert
                 v-model="isValidationError"
                 type="warning"
-                dense
+                density="compact"
                 class="ml-4 mr-4"
               >
                 {{ banValidationError }}
@@ -138,7 +136,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text @click="close">
+                <v-btn variant="text" @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
                 <v-btn color="primary" class="w3-race-bg--text" @click="save">
@@ -156,8 +154,8 @@
         <td v-else>All</td>
       </template>
       <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -175,7 +173,7 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { TranslateResult, useI18n } from "vue-i18n";
 
 type AdminBannedPlayersHeader = {
   text: string;
