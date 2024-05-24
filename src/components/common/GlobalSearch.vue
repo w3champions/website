@@ -69,11 +69,15 @@ import { PlayerSearchData } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
 import { useRouter } from "vue-router/composables";
 import { mdiMagnify } from "@mdi/js";
+import { Intersect } from "vuetify/lib";
 
 export default defineComponent({
   name: "GlobalSearch",
   components: {
     SeasonBadge,
+  },
+  directives: {
+    intersect: Intersect,
   },
   setup() {
     const router = useRouter();
