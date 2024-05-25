@@ -65,7 +65,7 @@ import { computed, ComputedRef, defineComponent, ref, watch } from "vue";
 import debounce from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
-import { PlayerSearchData } from "@/store/globalSearch/types";
+import { PlayerSearchInfo } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
 import { useRouter } from "vue-router/composables";
 import { mdiMagnify } from "@mdi/js";
@@ -81,7 +81,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const searchModel = ref<PlayerSearchData>({} as PlayerSearchData);
+    const searchModel = ref<PlayerSearchInfo>({} as PlayerSearchInfo);
     const search = ref<string>("");
     const isLoading = ref<boolean>(false);
     const menuOpened = ref<boolean>(false);
@@ -92,7 +92,7 @@ export default defineComponent({
     watch(searchModel, onSearchModelChanged);
 
     // Handler when selecting a player from the list
-    function onSearchModelChanged(player: PlayerSearchData) {
+    function onSearchModelChanged(player: PlayerSearchInfo) {
       // We cleared the input, ignore
       if (!player?.battleTag) return;
 
@@ -106,7 +106,7 @@ export default defineComponent({
 
       // Reset the global search state
       globalSearchStore.clearSearch();
-      searchModel.value = {} as PlayerSearchData;
+      searchModel.value = {} as PlayerSearchInfo;
     }
 
     watch(search, onSearchChanged);
@@ -149,9 +149,9 @@ export default defineComponent({
       return "No player found";
     });
 
-    const players: ComputedRef<PlayerSearchData[]> = computed((): PlayerSearchData[] => globalSearchStore.players);
+    const players: ComputedRef<PlayerSearchInfo[]> = computed((): PlayerSearchInfo[] => globalSearchStore.players);
 
-    function getPlayerAvatarUrl(player: PlayerSearchData): string {
+    function getPlayerAvatarUrl(player: PlayerSearchInfo): string {
       const pfp = player.profilePicture;
       return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
     }

@@ -1,4 +1,4 @@
-import { GlobalSearchState, PlayerSearchData } from "./types";
+import { GlobalSearchState, PlayerSearchInfo } from "./types";
 import { defineStore } from "pinia";
 import GlobalSearchService from "@/services/GlobalSearchService";
 
@@ -11,15 +11,15 @@ export const useGlobalSearchStore = defineStore("globalSearch", {
   }),
   actions: {
     async search(search: { searchText: string; append: boolean }) {
-      const lastPlayerId = search.append && this.players.length > 0 ? this.players[this.players.length - 1].battleTag : "";
-      const players = await GlobalSearchService.search(search.searchText, lastPlayerId, PAGE_SIZE);
+      const lastRelevanceId = search.append && this.players.length > 0 ? this.players[this.players.length - 1].relevanceId : "";
+      const players = await GlobalSearchService.search(search.searchText, lastRelevanceId, PAGE_SIZE);
 
       this.SET_PLAYERS({ players, append: search.append });
     },
     clearSearch() {
       this.SET_PLAYERS({ players: [], append: false });
     },
-    SET_PLAYERS(payload: { players: PlayerSearchData[]; append: boolean }) {
+    SET_PLAYERS(payload: { players: PlayerSearchInfo[]; append: boolean }) {
       this.players = payload.append ? [...this.players, ...payload.players] : payload.players;
       this.hasMore = payload.players.length === PAGE_SIZE;
     }
