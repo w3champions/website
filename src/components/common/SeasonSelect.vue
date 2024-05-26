@@ -33,7 +33,6 @@ import { useMatchStore } from "@/store/match/store";
 
 export default defineComponent({
   name: "SeasonSelect",
-  props: {},
   setup: (_, context) => {
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();

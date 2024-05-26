@@ -1,9 +1,10 @@
-import { EGameMode, PlayerScore, Season } from "@/store/types";
+import { EGameMode, PlayerScore } from "@/store/types";
 import { MatchState, MatchStatus, Mmr } from "./types";
 import { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
 import { useRootStateStore } from "@/store/rootState/store";
+import { Season } from "@/store/ranking/types";
 
 export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
