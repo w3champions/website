@@ -1,4 +1,4 @@
-import { EGameMode, PlayerScore } from "@/store/types";
+import { EGameMode, PlayerScore, Season } from "@/store/types";
 import { MatchState, MatchStatus, Mmr } from "./types";
 import { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
@@ -18,6 +18,7 @@ export const useMatchStore = defineStore("match", {
     map: "Overall",
     mmr: { min: 0, max: 3000 } as Mmr,
     sort: "startTimeDescending",
+    selectedSeason: {} as Season,
   }),
   actions: {
     async loadMatches(page?: number) {
@@ -42,6 +43,7 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
+          this.selectedSeason.id,
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
@@ -93,6 +95,11 @@ export const useMatchStore = defineStore("match", {
       this.SET_PAGE(0);
       await this.loadMatches(undefined);
     },
+    async setSeason(season: Season) {
+      this.SET_SEASON(season);
+      this.SET_PAGE(0);
+      await this.loadMatches(undefined);
+    },
     async setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
     },
@@ -131,6 +138,9 @@ export const useMatchStore = defineStore("match", {
     },
     SET_PLAYER_SCORES(playerScores: PlayerScore[]): void {
       this.matchDetail.playerScores = playerScores;
+    },
+    SET_SEASON(season: Season):void {
+      this.selectedSeason = season;
     },
   },
 });

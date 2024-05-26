@@ -118,6 +118,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SeasonBadge: typeof import('./src/components/player/SeasonBadge.vue')['default']
+    SeasonSelect: typeof import('./src/components/common/SeasonSelect.vue')['default']
     SignInDialog: typeof import('./src/components/common/SignInDialog.vue')['default']
     SocialBox: typeof import('./src/components/common/SocialBox.vue')['default']
     SortSelect: typeof import('./src/components/matches/SortSelect.vue')['default']
