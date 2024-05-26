@@ -216,3 +216,7 @@ export enum EComputer {
   NORMAL = 1,
   INSANE = 2,
 }
+
+export type Season = {
+  id: number;
+};
