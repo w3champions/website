@@ -156,6 +156,7 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
+      matchStore.setSeason(rankingsStore.seasons[0]);
       getMatches(1);
       getMaps();
       refreshMatches();
