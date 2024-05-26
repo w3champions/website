@@ -4,6 +4,7 @@ import { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
 import { useRootStateStore } from "@/store/rootState/store";
+import { Season } from "@/store/ranking/types";
 
 export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
@@ -18,6 +19,7 @@ export const useMatchStore = defineStore("match", {
     map: "Overall",
     mmr: { min: 0, max: 3000 } as Mmr,
     sort: "startTimeDescending",
+    selectedSeason: {} as Season,
   }),
   actions: {
     async loadMatches(page?: number) {
@@ -42,6 +44,7 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
+          this.selectedSeason.id,
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
@@ -93,6 +96,11 @@ export const useMatchStore = defineStore("match", {
       this.SET_PAGE(0);
       await this.loadMatches(undefined);
     },
+    async setSeason(season: Season) {
+      this.SET_SEASON(season);
+      this.SET_PAGE(0);
+      await this.loadMatches(undefined);
+    },
     async setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
     },
@@ -131,6 +139,9 @@ export const useMatchStore = defineStore("match", {
     },
     SET_PLAYER_SCORES(playerScores: PlayerScore[]): void {
       this.matchDetail.playerScores = playerScores;
+    },
+    SET_SEASON(season: Season):void {
+      this.selectedSeason = season;
     },
   },
 });

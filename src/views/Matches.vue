@@ -23,6 +23,7 @@
               :mmr="mmr"
             ></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
+            <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -54,10 +55,12 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { MapInfo } from "@/store/common/types";
+import SeasonSelect from "@/components/common/SeasonSelect.vue";
 
 export default defineComponent({
   name: "MatchesView",
   components: {
+    SeasonSelect,
     MatchesGrid,
     MatchesStatusSelect,
     GameModeSelect,
@@ -173,6 +176,9 @@ export default defineComponent({
     function mmrChanged(mmr: Mmr): void {
       matchStore.setMmr(mmr);
     }
+    async function selectSeason(season: Season): Promise<void> {
+      await matchStore.setSeason(season);
+    }
 
     return {
       disabledGameModes,
@@ -183,6 +189,7 @@ export default defineComponent({
       map,
       mmrChanged,
       mmr,
+      selectSeason,
       unfinished,
       matches,
       totalMatches,
