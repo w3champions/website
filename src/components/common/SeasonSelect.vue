@@ -29,14 +29,12 @@
 import { computed, ComputedRef, defineComponent } from "vue";
 import { Season } from "@/store/ranking/types";
 import { useRankingStore } from "@/store/ranking/store";
-import { useMatchStore } from "@/store/match/store";
 
 export default defineComponent({
   name: "SeasonSelect",
   setup: (_, context) => {
     const rankingsStore = useRankingStore();
-    const matchStore = useMatchStore();
-    const selectedSeason: ComputedRef<Season> = computed((): Season => matchStore.selectedSeason);
+    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
     const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
 
     function selectSeason(season: Season): void {
