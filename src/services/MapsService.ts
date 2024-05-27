@@ -11,6 +11,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
     });
 
@@ -26,6 +27,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: data,
     });
@@ -46,6 +48,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: data,
     });
@@ -60,6 +63,7 @@ export default class MapsService {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
     });
 
@@ -73,6 +77,9 @@ export default class MapsService {
     const response = await fetch(url, {
       method: "POST",
       body: form,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
     });
 
     return await response.json();
