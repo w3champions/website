@@ -5,7 +5,7 @@ export default class MapsService {
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
     const filterParam = filter ? `&filter=${filter}` : "";
 
-    const url = `${API_URL}api/maps?authorization=${token}${filterParam}`;
+    const url = `${API_URL}api/maps?${filterParam}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -19,7 +19,7 @@ export default class MapsService {
   }
 
   public static async createMap(token: string, map: Map): Promise<Map> {
-    const url = `${API_URL}api/maps?authorization=${token}`;
+    const url = `${API_URL}api/maps`;
 
     const data = JSON.stringify(map);
     const response = await fetch(url, {
@@ -40,7 +40,7 @@ export default class MapsService {
   }
 
   public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
-    const url = `${API_URL}api/maps/${mapId}?authorization=${token}`;
+    const url = `${API_URL}api/maps/${mapId}`;
 
     const data = JSON.stringify(map);
     const response = await fetch(url, {
@@ -57,7 +57,7 @@ export default class MapsService {
   }
 
   public static async getMapFiles(token: string, mapId: number): Promise<MapFileData[]> {
-    const url = `${API_URL}api/maps/${mapId}/files?authorization=${token}`;
+    const url = `${API_URL}api/maps/${mapId}/files`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -72,7 +72,7 @@ export default class MapsService {
 
   public static async createMapFile(token: string, form: FormData): Promise<Map> {
     const mapId = form.get("mapId");
-    const url = `${API_URL}api/maps/${mapId}/files?authorization=${token}`;
+    const url = `${API_URL}api/maps/${mapId}/files`;
 
     const response = await fetch(url, {
       method: "POST",
