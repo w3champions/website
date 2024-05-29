@@ -30,3 +30,15 @@ export const racesWithTotal: Race[] = [
   { raceId: ERaceEnum.RANDOM, raceName: ERaceEnum[ERaceEnum.RANDOM] },
   { raceId: ERaceEnum.TOTAL, raceName: ERaceEnum[ERaceEnum.TOTAL] },
 ];
+
+export const authorizedFetch = async (method: string, url: RequestInfo | URL, token: string, body?: BodyInit | null): Promise<Response> => {
+    return await fetch(url, {
+      method: method,
+      body: body,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    });
+  };

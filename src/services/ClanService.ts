@@ -1,5 +1,6 @@
 import { API_URL } from "@/main";
 import { Clan, ClanMembership } from "@/store/clan/types";
+import { authorizedFetch } from "@/helpers/general";
 
 export default class ClanService {
   public static async retrieveClanForPlayer(battleTag: string): Promise<Clan> {
@@ -17,13 +18,13 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(
-      battleTag
-    )}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "PUT",
-    });
+    const response = await authorizedFetch(
+      "PUT",
+      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      token
+    );
+
     return response.ok;
   }
 
@@ -32,13 +33,13 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(
-      battleTag
-    )}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-    });
+    const response = await authorizedFetch(
+      "DELETE",
+      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      token
+    );
+
     return response.ok;
   }
 
@@ -47,18 +48,12 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/shamans/?authorization=${token}`;
-
-    const post = { PlayerBattleTag: battleTag };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "POST",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch(
+      "POST",
+      `${API_URL}api/clans/${clanId}/shamans?authorization=${token}`,
+      token,
+      JSON.stringify({ PlayerBattleTag: battleTag })
+    );
     return response.ok ? "" : (await response.json()).error;
   }
 
@@ -67,13 +62,13 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(
-      battleTag
-    )}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-    });
+
+    const response = await authorizedFetch(
+      "DELETE",
+      `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      token
+    );
     return response.ok ? "" : (await response.json()).error;
   }
 
@@ -82,18 +77,12 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/chieftain/?authorization=${token}`;
-
-    const post = { PlayerBattleTag: battleTag };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "PUT",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch(
+      "PUT",
+      `${API_URL}api/clans/${clanId}/chieftain?authorization=${token}`,
+      token,
+      JSON.stringify({ PlayerBattleTag: battleTag })
+    );
 
     return response.ok ? "" : (await response.json()).error;
   }
@@ -103,22 +92,20 @@ export default class ClanService {
     battleTag: string,
     token: string
   ): Promise<boolean> {
-    const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(
-      battleTag
-    )}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-    });
+    const response = await authorizedFetch(
+      "DELETE",
+      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      token);
     return response.ok;
   }
 
   public static async deleteClan(clanId: string, token: string): Promise<boolean> {
-    const url = `${API_URL}api/clans/${clanId}/?authorization=${token}`;
-
-    const response = await fetch(url, {
-      method: "DELETE",
-    });
+    const response = await authorizedFetch(
+      "DELETE",
+      `${API_URL}api/clans/${clanId}`,
+      token
+    );
     return response.ok;
   }
 
@@ -136,19 +123,13 @@ export default class ClanService {
     clanId: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
 
-    const post = { PlayerBattleTag: battleTag };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "DELETE",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
+    const response = await authorizedFetch(
+      "DELETE",
+      `${API_URL}api/clans/${clanId}/invites?authorization=${token}`,
+      token,
+      JSON.stringify({ PlayerBattleTag: battleTag })
+    );
     return response.ok ? "" : (await response.json()).error;
   }
 
@@ -157,18 +138,13 @@ export default class ClanService {
     clanId: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
 
-    const post = { PlayerBattleTag: battleTag };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "POST",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch(
+      "POST",
+      `${API_URL}api/clans/${clanId}/invites?authorization=${token}`,
+      token,
+      JSON.stringify({ PlayerBattleTag: battleTag })
+    );
 
     return response.ok ? "" : (await response.json()).error;
   }
@@ -178,13 +154,12 @@ export default class ClanService {
     clanId: string,
     token: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(
-      battleTag
-    )}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "PUT",
-    });
+    const response = await authorizedFetch(
+      "PUT",
+      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      token
+    );
 
     if (response.ok) return "";
 
@@ -196,19 +171,14 @@ export default class ClanService {
     abbreviation: string,
     authToken: string
   ): Promise<string> {
-    const url = `${API_URL}api/clans/?authorization=${authToken}`;
 
-    const post = { ClanName: clanName, ClanAbbrevation: abbreviation };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "POST",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
 
+    const response = await authorizedFetch(
+      "POST",
+      `${API_URL}api/clans/?authorization=${authToken}`,
+      authToken,
+      JSON.stringify({ ClanName: clanName, ClanAbbrevation: abbreviation })
+    );
     if (response.ok) return "";
 
     const errors = (await response.json()).errors;
