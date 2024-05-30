@@ -21,7 +21,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "PUT",
-      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}`,
       token
     );
 
@@ -36,7 +36,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/invites/${encodeURIComponent(battleTag)}`,
       token
     );
 
@@ -50,7 +50,7 @@ export default class ClanService {
   ): Promise<string> {
     const response = await authorizedFetch(
       "POST",
-      `${API_URL}api/clans/${clanId}/shamans?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/shamans`,
       token,
       JSON.stringify({ PlayerBattleTag: battleTag })
     );
@@ -66,7 +66,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/shamans/${encodeURIComponent(battleTag)}`,
       token
     );
     return response.ok ? "" : (await response.json()).error;
@@ -79,7 +79,7 @@ export default class ClanService {
   ): Promise<string> {
     const response = await authorizedFetch(
       "PUT",
-      `${API_URL}api/clans/${clanId}/chieftain?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/chieftain`,
       token,
       JSON.stringify({ PlayerBattleTag: battleTag })
     );
@@ -95,7 +95,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}`,
       token);
     return response.ok;
   }
@@ -103,7 +103,7 @@ export default class ClanService {
   public static async deleteClan(clanId: string, token: string): Promise<boolean> {
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}`,
       token
     );
     return response.ok;
@@ -126,7 +126,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}/invites?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/invites`,
       token,
       JSON.stringify({ PlayerBattleTag: battleTag })
     );
@@ -141,7 +141,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "POST",
-      `${API_URL}api/clans/${clanId}/invites?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/invites`,
       token,
       JSON.stringify({ PlayerBattleTag: battleTag })
     );
@@ -157,7 +157,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "PUT",
-      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}?authorization=${token}`,
+      `${API_URL}api/clans/${clanId}/members/${encodeURIComponent(battleTag)}`,
       token
     );
 
@@ -175,7 +175,7 @@ export default class ClanService {
 
     const response = await authorizedFetch(
       "POST",
-      `${API_URL}api/clans/?authorization=${authToken}`,
+      `${API_URL}api/clans`,
       authToken,
       JSON.stringify({ ClanName: clanName, ClanAbbrevation: abbreviation })
     );
