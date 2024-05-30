@@ -103,7 +103,7 @@ export default class ClanService {
   public static async deleteClan(clanId: string, token: string): Promise<boolean> {
     const response = await authorizedFetch(
       "DELETE",
-      `${API_URL}api/clans/${clanId}`,
+      `${API_URL}api/clans/${clanId}?authorization=${token}`,
       token
     );
     return response.ok;
