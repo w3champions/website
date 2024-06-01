@@ -1,7 +1,6 @@
 import { API_URL } from "@/main";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
-import { authorizedFetch } from "@/helpers/general";
-import { authDownload } from "@/helpers/date-functions";
+import { authorizedFetch, authDownload } from "@/helpers/general";
 
 export default class CloudStorageService {
   public static async fetchFiles(token: string, provider: CloudStorageProvider): Promise<CloudFile[]> {

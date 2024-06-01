@@ -1,6 +1,5 @@
 import { API_URL } from "@/main";
-import { authorizedFetch } from "@/helpers/general";
-import { authDownload } from "@/helpers/date-functions";
+import { authorizedFetch, authDownload } from "@/helpers/general";
 
 export default class ServerLogsService {
   public static async fetchLogfileNames(token: string): Promise<string[]> {
