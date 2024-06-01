@@ -1,5 +1,6 @@
 import { IPermission } from "@/store/admin/permission/types";
 import { API_URL } from "@/main";
+import { authorizedFetch } from "@/helpers/general";
 
 export interface IPermissionsResponse {
   permissions: IPermission[];
@@ -8,43 +9,21 @@ export interface IPermissionsResponse {
 export default class PermissionService {
   public static async getPermissions(token: string): Promise<IPermission[]> {
     const url = `${API_URL}api/admin/permissions?authorization=${token}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch("GET", url, token);
 
     return response.ok ? await response.json() : [];
   }
 
   public static async addAdmin(token: string, permission: IPermission): Promise<string> {
     const url = `${API_URL}api/admin/permissions/add?authorization=${token}`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(permission),
-    });
-
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(permission));
     return response.ok ? "" : await response.json();
   }
 
   public static async editPermission(token: string, permission: IPermission): Promise<string> {
     const url = `${API_URL}api/admin/permissions/edit?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(permission),
-    });
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(permission));
 
     return response.ok ? "" : await response.json();
   }
@@ -53,13 +32,7 @@ export default class PermissionService {
     const encodedBattleTag = encodeURIComponent(id);
     const url = `${API_URL}api/admin/permissions/delete?id=${encodedBattleTag}&authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      }
-    });
+    const response = await authorizedFetch("DELETE", url, token);
 
     return response.ok ? "" : await response.json();
   }

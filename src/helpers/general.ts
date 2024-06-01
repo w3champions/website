@@ -42,3 +42,31 @@ export const authorizedFetch = async (method: string, url: RequestInfo | URL, to
       },
     });
   };
+
+export const authDownload = (url: string, token: string, fileName: string) => {
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.blob(); // Convert the response to a blob
+    })
+    .then((blob) => {
+      const downloadUrl = URL.createObjectURL(blob); // Create a URL for the blob
+      const a = document.createElement("a"); // Create a temporary anchor element
+      a.href = downloadUrl; // Set the href to the blob URL
+      a.download = fileName; // Set the download attribute to the desired file name
+      document.body.appendChild(a); // Append the anchor to the document body
+      a.click(); // Programmatically click the anchor to trigger the download
+      a.remove(); // Remove the anchor from the document
+      URL.revokeObjectURL(downloadUrl); // Revoke the object URL to free up memory
+    })
+    .catch((error) => {
+      console.error("There has been a problem with your fetch operation:", error); // Handle any errors
+    });
+};
