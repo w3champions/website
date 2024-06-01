@@ -6,8 +6,8 @@ window._env_ = {
 
   //* identification-service URL
   // IDENTIFICATION_URL: "http://localhost:5000/",
-  IDENTIFICATION_URL: "https://identification-service.w3champions.com/",
-  // IDENTIFICATION_URL: "https://identification-service.test.w3champions.com/",
+  // IDENTIFICATION_URL: "https://identification-service.w3champions.com/",
+  IDENTIFICATION_URL: "https://identification-service.test.w3champions.com/",
 
   //* Blizzard oauth redirect URL
   // REDIRECT_URL: "http://localhost:8080/login",
