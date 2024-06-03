@@ -3,7 +3,7 @@ import { authorizedFetch, authDownload } from "@/helpers/general";
 
 export default class ServerLogsService {
   public static async fetchLogfileNames(token: string): Promise<string[]> {
-    const url = `${API_URL}api/admin/logs?authorization=${token}`;
+    const url = `${API_URL}api/admin/logs`;
 
     const response = await authorizedFetch("GET", url, token);
 
@@ -11,7 +11,7 @@ export default class ServerLogsService {
   }
 
   public static async fetchLogContent(token: string, logfileName: string): Promise<string[]> {
-    const url = `${API_URL}api/admin/logs/${logfileName}?authorization=${token}`;
+    const url = `${API_URL}api/admin/logs/${logfileName}`;
 
     const response = await authorizedFetch("GET", url, token);
 
@@ -19,7 +19,7 @@ export default class ServerLogsService {
   }
 
   public static downloadLogfile(token: string, logfileName: string): void {
-    const url = `${API_URL}api/admin/logs/download/${logfileName}?authorization=${token}`;
+    const url = `${API_URL}api/admin/logs/download/${logfileName}`;
     authDownload(url, token, logfileName);
   }
 }

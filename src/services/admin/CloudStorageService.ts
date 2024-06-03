@@ -4,7 +4,7 @@ import { authorizedFetch, authDownload } from "@/helpers/general";
 
 export default class CloudStorageService {
   public static async fetchFiles(token: string, provider: CloudStorageProvider): Promise<CloudFile[]> {
-    const url = `${API_URL}api/admin/storage/${provider}?authorization=${token}`;
+    const url = `${API_URL}api/admin/storage/${provider}`;
 
     const response = await authorizedFetch("GET", url, token);
 
@@ -12,7 +12,7 @@ export default class CloudStorageService {
   }
 
   public static async uploadFile(token: string, file: File, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
-    const url = `${API_URL}api/admin/storage/${provider}/upload?authorization=${token}`;
+    const url = `${API_URL}api/admin/storage/${provider}/upload`;
 
     const filePromise = new Promise<Response>((resolve, reject) => {
       const reader = new FileReader();
@@ -47,12 +47,12 @@ export default class CloudStorageService {
   }
 
   public static downloadFile(token: string, fileName: string, provider: CloudStorageProvider): void {
-    const url = `${API_URL}api/admin/storage/${provider}/download/${fileName}?authorization=${token}`;
+    const url = `${API_URL}api/admin/storage/${provider}/download/${fileName}`;
     authDownload(url, token, fileName);
   }
 
   public static async deleteFile(token: string, fileName: string, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
-    const url = `${API_URL}api/admin/storage/${provider}/${fileName}?authorization=${token}`;
+    const url = `${API_URL}api/admin/storage/${provider}/${fileName}`;
     try {
       const response = await authorizedFetch("DELETE", url, token);
       const message = await response.json();
