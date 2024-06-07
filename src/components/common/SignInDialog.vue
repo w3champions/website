@@ -2,6 +2,7 @@
   <v-dialog v-model="show" max-width="500">
     <v-card>
       <v-card-title class="justify-center">Select Your Gateway</v-card-title>
+      <p class="d-flex justify-center" v-if="isAdminPanel">Your token has expired. Please log in again.</p>
       <v-container>
         <v-row
           class="pa-2"
@@ -26,7 +27,7 @@
           </v-btn>
         </v-row>
 
-        <v-row class="mt-4">
+        <v-row class="mt-4 mb-1">
           <v-spacer></v-spacer>
           <v-btn @click.stop="show = false">Close</v-btn>
           <v-spacer></v-spacer>
@@ -41,6 +42,7 @@ import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
 import { useI18n } from "vue-i18n-bridge";
+import { useOauthStore } from "@/store/oauth/store";
 
 export default defineComponent({
   name: "SignInDialog",
@@ -49,9 +51,16 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
+    isAdminPanel: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup: (props, context) => {
     const { t } = useI18n();
+    const oauthStore = useOauthStore();
+
     const gateways = [
       {
         id: BnetOAuthRegion.eu,
@@ -74,13 +83,9 @@ export default defineComponent({
       },
     });
 
-    function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
-      context.emit("region-change", {
-        region: id,
-        done: () => {
-          location.href = `${uri}/oauth/authorize?region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
-        },
-      });
+    async function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
+      await oauthStore.saveLoginRegion(id);
+      location.href = `${uri}/oauth/authorize?region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
     }
 
     return {

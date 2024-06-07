@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid v-if="isAdmin" style="height: 100%">
+  <v-container fluid style="height: 100%">
     <admin-check-jwt-lifetime />
-    <div class="admin-page-wrapper">
+    <div class="admin-page-wrapper" v-if="isAdmin">
       <admin-navigation></admin-navigation>
       <v-card tile>
         <router-view></router-view>
