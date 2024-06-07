@@ -17,13 +17,13 @@ export default class InfoMessageService {
   }
 
   public static async editNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
-    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
+    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}`;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(newsMessage));
     return response.ok;
   }
 
   public static async deleteNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
-    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}?authorization=${token}`;
+    const url = `${API_URL}api/admin/news/${newsMessage.bsonId}`;
     const response =  await authorizedFetch("DELETE", url, token);
     return response.ok;
   }
@@ -41,7 +41,7 @@ export default class InfoMessageService {
   }
 
   public static async editTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
-    const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}?authorization=${token}`;
+    const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}`;
 
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(loadingScreenTip));
     if (response.status == 400) {
@@ -51,7 +51,7 @@ export default class InfoMessageService {
   }
 
   public static async deleteTip(loadingScreenTip: LoadingScreenTip, token: string): Promise<boolean> {
-    const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}?authorization=${token}`;
+    const url = `${API_URL}api/admin/loadingScreenTips/${loadingScreenTip.bsonId}`;
     const response = await authorizedFetch("DELETE", url, token);
 
     return response.ok;
@@ -72,7 +72,7 @@ export default class InfoMessageService {
   }
 
   public static async putMotd(motd: MessageOfTheDay, token: string): Promise<boolean> {
-    const url = `${API_URL}api/admin/motd/?authorization=${token}`;
+    const url = `${API_URL}api/admin/motd`;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(motd));
 
     return response.ok;

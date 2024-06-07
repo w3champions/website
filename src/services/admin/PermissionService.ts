@@ -8,20 +8,20 @@ export interface IPermissionsResponse {
 
 export default class PermissionService {
   public static async getPermissions(token: string): Promise<IPermission[]> {
-    const url = `${API_URL}api/admin/permissions?authorization=${token}`;
+    const url = `${API_URL}api/admin/permissions`;
     const response = await authorizedFetch("GET", url, token);
 
     return response.ok ? await response.json() : [];
   }
 
   public static async addAdmin(token: string, permission: IPermission): Promise<string> {
-    const url = `${API_URL}api/admin/permissions/add?authorization=${token}`;
+    const url = `${API_URL}api/admin/permissions/add`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify(permission));
     return response.ok ? "" : await response.json();
   }
 
   public static async editPermission(token: string, permission: IPermission): Promise<string> {
-    const url = `${API_URL}api/admin/permissions/edit?authorization=${token}`;
+    const url = `${API_URL}api/admin/permissions/edit`;
 
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(permission));
 
@@ -30,7 +30,7 @@ export default class PermissionService {
 
   public static async deleteAdmin(token: string, id: string): Promise<string> {
     const encodedBattleTag = encodeURIComponent(id);
-    const url = `${API_URL}api/admin/permissions/delete?id=${encodedBattleTag}&authorization=${token}`;
+    const url = `${API_URL}api/admin/permissions/delete?id=${encodedBattleTag}`;
 
     const response = await authorizedFetch("DELETE", url, token);
 
