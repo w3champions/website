@@ -3,6 +3,7 @@ import {
   PersonalSetting,
   ProfilePicture,
 } from "@/store/personalSettings/types";
+import { authorizedFetch } from "@/helpers/general";
 
 export default class PersonalSettingsService {
   public static async retrievePersonalSetting(
@@ -26,16 +27,7 @@ export default class PersonalSettingsService {
       battleTag
     )}/?authorization=${authToken}`;
 
-    const post = value;
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "PUT",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch("PUT", url, authToken, JSON.stringify(value));
     return response.ok;
   }
 
@@ -54,15 +46,7 @@ export default class PersonalSettingsService {
       description: value.description,
       isClassic: value.isClassic,
     };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "PUT",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch("PUT", url, authToken, JSON.stringify(post));
     return response.ok;
   }
 }

@@ -2,6 +2,7 @@ import pickBy from "lodash/pickBy";
 import isUndefined from "lodash/isUndefined";
 import { ITournament, ITournamentFloNode, ITournamentPlayer } from "@/store/tournaments/types";
 import { API_URL } from "@/main";
+import { authorizedFetch } from "@/helpers/general";
 
 export interface ITournamentsResponse {
   tournaments: ITournament[];
@@ -62,14 +63,7 @@ export default class TournamentsService {
 
   public static async registerPlayer(tournamentId: string, player: ITournamentPlayer, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(player),
-    });
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(player));
 
     const responseBody: ITournamentResponse = await response?.json();
 
@@ -78,14 +72,7 @@ export default class TournamentsService {
 
   public static async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ battleTag }),
-    });
+    const response = await authorizedFetch("DELETE", url, token, JSON.stringify({ battleTag }));
 
     const responseBody: ITournamentResponse = await response?.json();
 
@@ -96,14 +83,8 @@ export default class TournamentsService {
     const url = `${API_URL}api/tournaments?authorization=${token}`;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...data } = tournament;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(data));
 
     const responseBody: ITournamentResponse = await response?.json();
 
@@ -128,14 +109,7 @@ export default class TournamentsService {
     body.vetoTimeSeconds = +body.vetoTimeSeconds!;
     body.showWinnerTimeHours = +body.showWinnerTimeHours!;
 
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    const response = await authorizedFetch("PATCH", url, token, JSON.stringify(body));
 
     const responseBody: ITournamentResponse = await response?.json();
 
