@@ -81,7 +81,6 @@
         <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
         <sign-in-dialog
           v-model="showSignInDialog"
-          @region-change="saveLoginRegion"
         ></sign-in-dialog>
       </v-btn>
 
@@ -160,7 +159,6 @@
 import { onBeforeMount, onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
-import { BnetOAuthRegion } from "./store/oauth/types";
 import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
@@ -363,11 +361,6 @@ export default defineComponent({
       );
     }
 
-    async function saveLoginRegion({ region, done }: {region: BnetOAuthRegion; done: () => void}) {
-      await oauthStore.saveLoginRegion(region);
-      done();
-    }
-
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
@@ -411,7 +404,6 @@ export default defineComponent({
       openPlayerProfile,
       savedLocale,
       isNavItemVisible,
-      saveLoginRegion,
       isDarkTheme,
       init,
       activeLanguages,
