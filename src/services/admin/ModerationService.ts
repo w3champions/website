@@ -1,17 +1,12 @@
 import { API_URL } from "@/main";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
+import { authorizedFetch } from "@/helpers/general";
 
 export default class ModerationService {
   public static async getLoungeMutes(token: string): Promise<LoungeMuteResponse[]> {
     const url = `${API_URL}api/moderation/loungeMute?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-      },
-    });
+    const response = await authorizedFetch("GET", url, token);
 
     return await response.json();
   }
@@ -19,15 +14,7 @@ export default class ModerationService {
   public static async postLoungeMute(token: string, loungeMute: LoungeMute): Promise<number> {
     const url = `${API_URL}api/moderation/loungeMute/?authorization=${token}`;
 
-    const data = JSON.stringify(loungeMute);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: data,
-    });
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(loungeMute));
 
     return response.status;
   }
@@ -35,13 +22,7 @@ export default class ModerationService {
   public static async deleteLoungeMute(token: string, battleTag: string): Promise<number> {
     const url = `${API_URL}api/moderation/loungeMute/${encodeURIComponent(battleTag)}?authorization=${token}`;
 
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await authorizedFetch("DELETE", url, token);
 
     return response.status;
   }
