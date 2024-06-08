@@ -120,9 +120,6 @@ export const useAdminStore = defineStore("admin", {
         this.SET_SHOW_JWT_EXPIRED_DIALOG(true);
       }
     },
-    hideJwtExpiredDialog(): void {
-      this.SET_SHOW_JWT_EXPIRED_DIALOG(false);
-    },
     SET_BANNED_PLAYERS(bannedPlayers: BannedPlayer[]): void {
       this.bannedPlayers = bannedPlayers;
     },
