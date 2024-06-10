@@ -39,9 +39,9 @@
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                   <br />
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.png">
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.png">
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.png">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
                   <v-card-text>
                     {{ $t("views_gettingstarted.launcherfeaturestitle") }}
                     <ul>
