@@ -11,9 +11,6 @@
             <v-tab class="profileTab" :href="`#launcher`">
               {{ $t("views_gettingstarted.launcher") }}
             </v-tab>
-            <v-tab class="profileTab" :href="`#windows-setup`">
-              {{ $t("views_gettingstarted.manualwin") }}
-            </v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">
               {{ $t("views_gettingstarted.manualmac") }}
             </v-tab>
@@ -40,29 +37,11 @@
                       <span class="mr-2 hidden-xs-only">Mac</span>
                     </v-btn>
                   </v-card-text>
-                  <br />
-                  <p>{{ $t("views_gettingstarted.downloadlegacylauncher") }}</p>
-                  <v-card-text>
-                    <v-btn
-                      :href="launcherUrlWin"
-                      target="_blank"
-                      class="join-button mt-0 mb-4"
-                    >
-                      <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2 hidden-xs-only">Windows (legacy)</span>
-                    </v-btn>
-                  </v-card-text>
-                  <br />
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                   <br />
-                  <br />
-                  <div class="w3c-screenshot" />
-                  <br />
-                  <br />
-                  <div class="w3c-screenshot-chat" />
-                  <br />
-                  <br />
-                  <div class="w3c-screenshot-map-select" />
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
                   <v-card-text>
                     {{ $t("views_gettingstarted.launcherfeaturestitle") }}
                     <ul>
@@ -85,122 +64,13 @@
                   </v-card-text>
                 </v-card-text>
               </v-tab-item>
-              <v-tab-item :value="'windows-setup'">
-                <v-card-text class="px-16">
-                  <v-alert outlined type="warning" prominent border="left">
-                    {{ alertMessage }}
-                  </v-alert>
-                  <h3 class="mt-10">
-                    {{ $t("views_gettingstarted.manualwintitle") }}
-                  </h3>
-                  <p>
-                    {{ $t("views_gettingstarted.manualwinbody1") }}
-                  </p>
-                  <v-btn
-                    class="w3-background"
-                    color="primary"
-                    :href="webUiLink"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      {{ $t("views_gettingstarted.manualwinbody2") }}
-                    </span>
-                  </v-btn>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualwinbody3") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualwinbody4") }}</code>
-                  </p>
-                  <p>
-                    {{ $t("views_gettingstarted.manualwinbody5") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualwinbody6") }}</code>
-                  </p>
-                  <p>{{ $t("views_gettingstarted.manualwinbody7") }}</p>
-                  <v-btn
-                    class="w3-background"
-                    color="primary"
-                    :href="mapsLink"
-                    target="_blank"
-                    outlined
-                  >
-                    <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      {{ $t("views_gettingstarted.manualwinbody8") }}
-                    </span>
-                  </v-btn>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualwinbody9") }}
-                    <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualwinbody10") }}
-                    </code>
-                  </p>
-                  <p>
-                    <i style="color: red">
-                      {{ $t("views_gettingstarted.manualwinbody11") }}
-                    </i>
-                    <br />
-                    {{ $t("views_gettingstarted.manualwinbody12") }}
-                    <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualwinbody13") }}
-                    </code>
-                    <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualwinbody14") }}
-                    </code>
-                    <br />
-
-                    {{ $t("views_gettingstarted.manualwinbody15") }}
-                    <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualwinbody16") }}
-                    </code>
-                    <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualwinbody17") }}
-                    </code>
-                    <br />
-                  </p>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualwinbody18") }}
-                    <br />
-                  </p>
-                  <div>
-                    <ul>
-                      <li>
-                        {{ $t("views_gettingstarted.manualwinbody19") }}
-                        <code>
-                          {{ $t("views_gettingstarted.manualwinbody19_1") }}
-                        </code>
-                      </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualwinbody20") }}
-                      </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualwinbody21") }}
-                      </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualwinbody22") }}
-                      </li>
-                    </ul>
-                  </div>
-                </v-card-text>
-              </v-tab-item>
               <v-tab-item :value="'mac-setup'">
                 <v-card-text class="px-16">
                   <v-alert outlined type="warning" prominent border="left">
                     {{ alertMessage }}
                   </v-alert>
-                  <h3 class="mt-10">
-                    {{ $t("views_gettingstarted.manualmactitle") }}
-                  </h3>
-                  <p>
-                    {{ $t("views_gettingstarted.manualmacbody1") }}
-                  </p>
+                  <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
+                  <p>{{ $t("views_gettingstarted.manualmacbody1") }}</p>
                   <v-btn
                     class="w3-background"
                     color="primary"
@@ -209,9 +79,7 @@
                     outlined
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      {{ $t("views_gettingstarted.manualmacbody2") }}
-                    </span>
+                    <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualmacbody2") }}</span>
                   </v-btn>
                   <p class="mt-2">
                     {{ $t("views_gettingstarted.manualmacbody3") }}
@@ -221,13 +89,9 @@
                   <p>
                     {{ $t("views_gettingstarted.manualmacbody5") }}
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody6") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody6") }}</code>
                   </p>
-                  <p>
-                    {{ $t("views_gettingstarted.manualmacbody7") }}
-                  </p>
+                  <p>{{ $t("views_gettingstarted.manualmacbody7") }}</p>
                   <v-btn
                     class="w3-background"
                     color="primary"
@@ -236,72 +100,43 @@
                     outlined
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">
-                      {{ $t("views_gettingstarted.manualmacbody8") }}
-                    </span>
+                    <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualmacbody8") }}</span>
                   </v-btn>
                   <p class="mt-2">
                     {{ $t("views_gettingstarted.manualmacbody9") }}
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody10") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody10") }}</code>
                   </p>
                   <p>
-                    <i style="color: red">
-                      {{ $t("views_gettingstarted.manualmacbody11") }}
-                    </i>
+                    <i style="color: red">{{ $t("views_gettingstarted.manualmacbody11") }}</i>
                     <br />
                     {{ $t("views_gettingstarted.manualmacbody12") }}
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody13") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody13") }}</code>
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody14") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody14") }}</code>
                     <br />
-
                     {{ $t("views_gettingstarted.manualmacbody15") }}
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody16") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody16") }}</code>
                     <br />
-                    <code>
-                      {{ $t("views_gettingstarted.manualmacbody17") }}
-                    </code>
+                    <code>{{ $t("views_gettingstarted.manualmacbody17") }}</code>
                     <br />
                   </p>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualmacbody18") }}
-                  </p>
+                  <p class="mt-2">{{ $t("views_gettingstarted.manualmacbody18") }}</p>
                   <div>
                     <ul>
                       <li>
                         {{ $t("views_gettingstarted.manualmacbody19") }}
-                        <code>
-                          {{ $t("views_gettingstarted.manualmacbody19_1") }}
-                        </code>
+                        <code>{{ $t("views_gettingstarted.manualmacbody19_1") }}</code>
                       </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualmacbody20") }}
-                      </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualmacbody21") }}
-                      </li>
-                      <li>
-                        {{ $t("views_gettingstarted.manualmacbody22") }}
-                      </li>
+                      <li>{{ $t("views_gettingstarted.manualmacbody20") }}</li>
+                      <li>{{ $t("views_gettingstarted.manualmacbody21") }}</li>
+                      <li>{{ $t("views_gettingstarted.manualmacbody22") }}</li>
                     </ul>
                   </div>
                   <div class="mt-10 video-container">
-                    <iframe
-                      src="https://www.youtube.com/embed/8s53BHfKPLs"
-                      frameborder="0"
-                      allowfullscreen
-                    ></iframe>
+                    <iframe src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allowfullscreen></iframe>
                   </div>
                 </v-card-text>
               </v-tab-item>
@@ -327,7 +162,6 @@ export default defineComponent({
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
     const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
-    const launcherUrlWin = ref<string>(LAUNCHER_UPDATE_URL + "launcher/win");
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
 
     return {
@@ -337,7 +171,6 @@ export default defineComponent({
       webUiLink,
       mapsLink,
       launcherUrlMac,
-      launcherUrlWin,
       launcherEUrl,
     };
   },
@@ -374,31 +207,8 @@ export default defineComponent({
   height: 100%;
 }
 
-.w3c-screenshot {
+.launcher-screenshot {
   width: 100%;
-  padding-bottom: 56%;
-  background-image: url("/assets/gettingStarted/startButton.png");
-  background-size: cover;
-}
-
-.w3c-launcher-screenshot {
-  width: 100%;
-  padding-bottom: 64.5%;
-  background-image: url("/assets/gettingStarted/launcher.png");
-  background-size: cover;
-}
-
-.w3c-screenshot-chat {
-  width: 100%;
-  padding-bottom: 56%;
-  background-image: url("/assets/gettingStarted/chatOverview.png");
-  background-size: cover;
-}
-
-.w3c-screenshot-map-select {
-  width: 100%;
-  padding-bottom: 56%;
-  background-image: url("/assets/gettingStarted/mapSelection.png");
-  background-size: cover;
+  margin-bottom: 10px;
 }
 </style>

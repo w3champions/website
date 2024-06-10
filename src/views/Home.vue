@@ -68,7 +68,7 @@
               </v-col>
               <v-col cols="12" md="6">
                 <img
-                  src="/assets/gettingStarted/startButton_preview_h320.jpg"
+                  src="/assets/gettingStarted/launcher1_h320.jpg"
                   style="max-width: 90%; max-height: 320px"
                   alt="Screenshot main menu W3Champions start button"
                 />
