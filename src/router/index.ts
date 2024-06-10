@@ -41,6 +41,7 @@ import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
+import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 
 Vue.use(VueRouter);
 
@@ -212,6 +213,7 @@ const routes = [
       { path: "admin-tournaments", name: "Manage Tournaments", component: AdminTournaments },
       { path: "admin-permissions", name: "Manage Permissions", component: AdminPermissions },
       { path: "admin-server-logs", name: "View Server Logs", component: AdminServerLogs },
+      { path: "admin-server-logs/:logFileName", component: AdminServerLog, props: true, name: "Server Log" },
     ],
   },
   {

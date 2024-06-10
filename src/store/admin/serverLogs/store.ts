@@ -6,7 +6,6 @@ import { defineStore } from "pinia";
 export const useServerLogsStore = defineStore("serverLogs", {
   state: (): ServerLogsState => ({
     logfileNames: [],
-    logContent: [],
   }),
   actions: {
     async fetchLogfileNames(): Promise<void> {
@@ -14,10 +13,10 @@ export const useServerLogsStore = defineStore("serverLogs", {
       const response = await ServerLogsService.fetchLogfileNames(oauthStore.token);
       this.SET_LOGFILE_NAMES(response);
     },
-    async fetchLogContent(logfileName: string): Promise<void> {
+    async fetchLogContent(logfileName: string): Promise<string[]> {
       const oauthStore = useOauthStore();
       const lines = await ServerLogsService.fetchLogContent(oauthStore.token, logfileName);
-      this.SET_LOG_CONTENT(lines);
+      return lines;
     },
     downloadLog(logfileName: string): void {
       const oauthStore = useOauthStore();
@@ -25,9 +24,6 @@ export const useServerLogsStore = defineStore("serverLogs", {
     },
     SET_LOGFILE_NAMES(logfileNames: string[]) {
       this.logfileNames = logfileNames;
-    },
-    SET_LOG_CONTENT(content: string[]) {
-      this.logContent = content;
     },
   },
 });
