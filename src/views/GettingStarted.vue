@@ -209,5 +209,6 @@ export default defineComponent({
 
 .launcher-screenshot {
   width: 100%;
+  margin-bottom: 10px;
 }
 </style>
