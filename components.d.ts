@@ -26,6 +26,7 @@ declare module 'vue' {
     AdminProxies: typeof import('./src/components/admin/AdminProxies.vue')['default']
     AdminQueueData: typeof import('./src/components/admin/AdminQueueData.vue')['default']
     AdminReplayChatLog: typeof import('./src/components/admin/replays/AdminReplayChatLog.vue')['default']
+    AdminServerLog: typeof import('./src/components/admin/AdminServerLog.vue')['default']
     AdminServerLogs: typeof import('./src/components/admin/AdminServerLogs.vue')['default']
     AdminStorageAlibaba: typeof import('./src/components/admin/cloudStorage/AdminStorageAlibaba.vue')['default']
     AdminStorageS3: typeof import('./src/components/admin/cloudStorage/AdminStorageS3.vue')['default']
