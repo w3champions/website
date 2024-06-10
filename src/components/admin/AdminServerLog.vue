@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-card-title>
-      {{ logFileName + ".log" }}
+      Server Log
     </v-card-title>
     <v-container fluid>
       <v-row>
-        <v-col>
+        <v-col class="pt-0">
           <v-btn color="primary" class="w3-race-bg--text mr-3" @click="goBack">
             Go Back
           </v-btn>
@@ -14,6 +14,7 @@
           </v-btn>
         </v-col>
       </v-row>
+        <p class="font-weight-bold mt-3">{{ logFileName + ".log" }}</p>
       <v-row>
         <v-col>
           <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>
