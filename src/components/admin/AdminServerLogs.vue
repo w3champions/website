@@ -3,36 +3,14 @@
     <v-card-title>
       View Server Logs
     </v-card-title>
-    <v-container v-if="logContent.length === 0" fluid>
+    <v-container fluid>
       <v-row>
         <v-col>
             <v-row no-gutters :justify="'start'">
-              <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="fetchLogContent(logfileName)">
+              <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="viewLog(logfileName)">
                 {{ logfileName }}
               </v-col>
           </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container v-else fluid>
-      <v-row>
-        <v-col>
-          <v-btn color="primary" class="w3-race-bg--text mr-3" @click="logContent = []">
-            Go Back
-          </v-btn>
-          <v-btn color="primary" class="w3-race-bg--text" @click="downloadLog(selectedLog)">
-            Download
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <span class="font-weight-bold">{{ selectedLog }}</span>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>
         </v-col>
       </v-row>
     </v-container>
@@ -40,39 +18,31 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch, WritableComputedRef } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRouter } from "vue-router/composables";
 
 export default defineComponent({
   name: "AdminServerLogs",
   components: {},
   setup() {
+    const router = useRouter();
     const oauthStore = useOauthStore();
     const serverLogsStore = useServerLogsStore();
-    const selectedLog = ref<string>("");
 
     const logfileNames: ComputedRef<string[]> = computed((): string[] => serverLogsStore.logfileNames);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
 
-    const logContent: WritableComputedRef<string[]> = computed({
-      get(): string[] {
-        return serverLogsStore.logContent;
-      },
-      set(content: string[]): void {
-        serverLogsStore.logContent = content;
-      },
-    });
-
-    async function fetchLogContent(logfileName: string): Promise<void> {
-      selectedLog.value = logfileName;
-      window.scrollTo(0,0);
-      await serverLogsStore.fetchLogContent(logfileName);
+    function viewLog(logFileName: string): void {
+      router.push({
+        path: `/admin/admin-server-logs/${stripExtension(logFileName)}`
+      }).catch(() => null);
     }
 
-    function downloadLog(logfileName: string): void {
-      serverLogsStore.downloadLog(logfileName);
-    }
+    // We need to strip the file extension from the filename before pushing it to the url, because vite doesn't like paths with periods in them, and returns a 404.
+    // Read more here: https://stackoverflow.com/questions/71029445/handling-dot-in-vue-router-params-using-vue-3
+    const stripExtension = (fileName: string): string => fileName.slice(0, -4);
 
     watch(isAdmin, init);
 
@@ -86,11 +56,8 @@ export default defineComponent({
     });
 
     return {
-      logContent,
       logfileNames,
-      fetchLogContent,
-      downloadLog,
-      selectedLog,
+      viewLog,
     };
   },
 });
