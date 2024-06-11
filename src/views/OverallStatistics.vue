@@ -11,25 +11,25 @@
             <v-tab
               class="profileTab"
               exact
-              :to="{ name: 'OverallStatisticsPlayerActivity' }"
+              :to="{ name: EStatisticsRouteName.PLAYER_ACTIVITY }"
             >
               {{ $t("views_statistics.playeractivity") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="{ name: 'OverallStatisticsDistribution' }"
+              :to="{ name: EStatisticsRouteName.MMR }"
             >
               {{ $t("views_statistics.mmr") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="{ name: 'OverallStatisticsWinrates' }"
+              :to="{ name: EStatisticsRouteName.WINRATES }"
             >
               {{ $t("views_statistics.wrs") }}
             </v-tab>
             <v-tab
               class="profileTab"
-              :to="{ name: 'OverallStatisticsHeroesWinrates' }"
+              :to="{ name: EStatisticsRouteName.HEROES }"
             >
               {{ $t("views_statistics.heroes") }}
             </v-tab>
@@ -50,6 +50,7 @@ import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
+import { EStatisticsRouteName } from "@/router/types";
 
 export default defineComponent({
   name: "OverallStatisticsView",
@@ -82,6 +83,7 @@ export default defineComponent({
     });
 
     return {
+      EStatisticsRouteName,
     };
   },
 });
