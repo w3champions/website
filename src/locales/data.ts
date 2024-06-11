@@ -276,12 +276,12 @@ const data = {
       numberofplayers: "Number of players",
       percent: "Percent",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Heroes killed",
       xpgained: "Experience gained",
       itemscollected: "Items collected",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Units killed",
       unitsproduced: "Units produced",
       goldmined: "Gold mined",
@@ -319,12 +319,12 @@ const data = {
     components_matches_replayicon: {
       download: "Download Replay",
     },
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Picked Heroes",
       mode: "Mode",
       pick: "Pick",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Select Season",
       mode: "Mode",
       purplebarsdesc:
@@ -332,7 +332,7 @@ const data = {
       greenbardesc: "The green line shows where you are in the distribution.",
       stddev: "Standard Deviation",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Select Mode",
       gamemodedesc1:
         "Game Modes are normalized to compare their popularity more easily:",
@@ -347,7 +347,7 @@ const data = {
       selectrace: "Select Race",
       selectmmr: "Select MMR",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Select Map",
       selectmmr: "Select MMR",
       selectpatch: "Select Patch",
@@ -357,25 +357,25 @@ const data = {
       vsne: "vs Night Elf",
       vsrdm: "vs Random",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "amount of games",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Any hero selection",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Winrates of hero matchups",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Played maps",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Played heroes",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "accumulated games over the last two weeks",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "No games played with this race yet.",
       map: "Map",
       vshu: "vs Human",
@@ -833,12 +833,12 @@ const data = {
       numberofplayers: "Количество игроков",
       percent: "Процент",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Убито героев",
       xpgained: "Получено опыта",
       itemscollected: "Собрано предметов",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Юнитов убито",
       unitsproduced: "Юнитов создано",
       goldmined: "Золота добыто",
@@ -868,19 +868,19 @@ const data = {
       toplive1v1matches: "Топ онлайн матчей 1vs1",
     },
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Выбранные герои",
       mode: "Режим",
       pick: "Выбрать",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Выберите сезон",
       mode: "Режим",
       purplebarsdesc:
         "Фиолетовая полоса отмечает топ 2%, 5%, 10%, 25% и 50% игроков.",
       greenbardesc: "Зеленая полоса отмечает вашу позицию на графике",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Выберите режим",
       gamemodedesc1:
         "Игровые режимы нормализованы, чтобы легче сравнивать их популярность:",
@@ -892,7 +892,7 @@ const data = {
       gamelengths: "Длина матчей",
       selectseason: "Выберите сезон",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Выберите карту",
       selectmmr: "Выберите MMR",
       selectpatch: "Выберите патч",
@@ -901,25 +901,25 @@ const data = {
       vsud: "против Нежити",
       vsne: "против Ночных Эльфов",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "количество игр",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Любой герой",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Винрейты героев",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Сыгранные карты",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Выбранные герои",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "Всего игр за последние 2 недели",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Еще нет игр этой расой.",
       map: "Карта",
       vshu: "против Альянса",
@@ -1336,12 +1336,12 @@ const data = {
       numberofplayers: "플레이어 수",
       percent: "비율",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "영웅 킬",
       xpgained: "경험치 획득",
       itemscollected: "아이템 획득",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "유닛 킬",
       unitsproduced: "유닛 생산",
       goldmined: "골드 획득",
@@ -1359,35 +1359,35 @@ const data = {
     components_matches_sortselect: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "영웅 선택",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       purplebarsdesc:
         "보라색 바는 상위 2%, 5%, 10%, 25% and 50% 를 표시 합니다",
       greenbardesc: "녹색 선은 당신의 위치를 나타냅니다",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       gamemodedesc1: "게임모드는 인기를 쉽게 비교할 수 있도록 표준화 됩니다.",
       gamemodedesc2: "2대2와 FFA는 2번, 4대4는 4번 계산됩니다.",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       vshu: "vs 휴먼",
       vsorc: "vs 오크",
       vsud: "vs 언데드",
       vsne: "vs 나이트엘프",
     },
-    "components_overall-statistics_gamelengthchart": {},
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_gamelengthchart: {},
+    components_overall_statistics_heropictureselect: {
       anyhero: "영웅 선택",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "상대 영웅별 승률",
     },
-    "components_overall-statistics_mapsperseasonchart": {},
-    "components_overall-statistics_playedheroeschart": {},
-    "components_overall-statistics_populargametimechart": {},
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_mapsperseasonchart: {},
+    components_overall_statistics_playedheroeschart: {},
+    components_overall_statistics_populargametimechart: {},
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "종족 플레이 기록 없음",
       map: "맵",
       vshu: "vs 휴먼",
@@ -1532,7 +1532,7 @@ const data = {
       total: "합계:",
     },
   },
-  zh: {
+    zh: {
     views_app: {
       tournaments: "锦标赛",
       rankings: "排行榜",
@@ -1546,26 +1546,33 @@ const data = {
     views_admin: {
       adminpage: "管理员页面",
       bannedplayers: "黑名单玩家",
-      addplayer: "添加玩家至黑名单",
+      addplayer: "拉黑玩家",
       banenddate: "黑名单截止日期",
+      bansmurfs: "禁用小号",
       ok: "确认",
-      banreason: "黑名单原因",
-      newsforlauncher: "启动客户端相关新闻",
+      banreason: "拉黑原因",
+      newsforlauncher: "客户端相关新闻",
       addnews: "添加新闻",
       headline: "标题",
       message: "信息",
       cancel: "取消",
       save: "保存",
+      gameMode: "游戏模式",
+      mutePlayer: "禁言玩家",
+      profile: "个人档案",
+      portraits: "头像",
+      sanctions: "处罚",
+      flosettings: "Flo设置",
+      stats: "统计",
+      smurfs: "小号玩家",
     },
     views_gettingstarted: {
-      manualwarning:
-        "如果启动客户端无法启动游戏，可按以下步骤手动安装。如需帮助，欢迎加入我们的discord",
-      howtoinstall: "安装W3Champions的步骤",
+      manualwarning: "如果启动客户端无法启动游戏，可按以下说明手动安装。如需帮助，欢迎加入我们的discord。",
+      howtoinstall: "W3Champions安装",
       launcher: "启动客户端",
-      manualwin: "Windows系统手动安装",
-      manualmac: "Mac系统手动安装",
-      downloadlegacylauncher:
-        "如果新版客户端不能正常运行，请点击下方按钮下载经典客户端。",
+      manualwin: "Windows手动安装",
+      manualmac: "Mac OS手动安装",
+      downloadlegacylauncher: "如果新版客户端不能正常运行，请点击下方按钮下载经典客户端。",
       downloadw3ctitle: "下载新版W3Champions客户端",
       launchertitle: "安装完成后，打开 W3Champions 加入我们！",
       launcherfeaturestitle: "启动客户端功能介绍:",
@@ -1574,80 +1581,78 @@ const data = {
       launcherfeaturesbody3: "自定义快捷键图形用户界面",
       launcherfeaturesbody4: "自定义队伍颜色",
       launcherfeaturesbody5: "时刻关注魔兽争霸最新新闻",
-      manualwintitle: "Windows系统手动安装",
+      manualwintitle: "Windows手动安装",
       manualwinbody1: "1.下载压缩包并在魔兽争霸安装目录下解压缩",
       manualwinbody2: "W3Champions",
       manualwinbody3: "2.安装目录类似于:",
       manualwinbody4: "Warcraft III\\webui\\index.html",
       manualwinbody5: "如果在魔兽争霸目录下有_retail_文件夹，请安装在:",
-      manualwinbody6: "Warcraft III\\\\_retail\\_\\\\webui\\\\index.html",
+      manualwinbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualwinbody7: "3.下载地图并解压缩在魔兽争霸地图文件夹下",
       manualwinbody8: "下载地图",
       manualwinbody9: "4.解压后的目录应类似于:",
       manualwinbody10: "Documents\\Warcraft III\\Maps\\W3Champions",
       manualwinbody11: "重要信息",
       manualwinbody12: "如果你的魔兽争霸目录下有一个Maps文件夹，请删除它",
-      manualwinbody13: "删除 魔兽争霸路径\\\\Maps",
+      manualwinbody13: "删除 魔兽争霸路径/Maps",
       manualwinbody14: "删除 魔兽争霸路径/_retail_/Maps",
       manualwinbody15: "比如:",
       manualwinbody16: "删除 C:\\Program Files (x86)\\Warcraft III\\Maps",
-      manualwinbody17:
-        "删除 C:\\Program Files (x86)\\Warcraft III\\\\_retail\\_\\Maps",
+      manualwinbody17: "删除 C:\\Program Files (x86)\\Warcraft III_retail_\\Maps",
       manualwinbody18: "5. 你需要修改注册表 (如用启动客户端，它会自动帮您修改)",
-      manualwinbody19: "复制以下命令",
+      manualwinbody19: "复制以下添加注册表命令",
       manualwinbody19_1:
-        'reg add "HKCU\\Software\\Blizzard Entertainment\\Warcraft III" /v "Allow Local Files" /t REG_DWORD /d 1',
-      manualwinbody20: "打开终端",
-      manualwinbody21: "粘帖以上命令，回车",
-      manualwinbody22: "打开魔兽争霸，你会看到 W3Champions 入口",
+        '"HKCU\\Software\\Blizzard Entertainment\\Warcraft III" /v "Allow Local Files" /t REG_DWORD /d 1',
+      manualwinbody20: "打开命令提示符",
+      manualwinbody21: "粘贴命令并按下回车键",
+      manualwinbody22: "运行魔兽3，此时你应该可以看到客户端",
       manualmactitle: "Mac OS手动安装",
       manualmacbody1: "1.下载压缩包并在魔兽争霸安装目录下解压缩",
       manualmacbody2: "W3Champions",
       manualmacbody3: "2.安装目录类似于:",
       manualmacbody4: "Warcraft III\\webui\\index.html",
       manualmacbody5: "如果在魔兽争霸目录下有_retail_文件夹，请安装在:",
-      manualmacbody6: "Warcraft III/\\_retail\\_/webui/index.html",
+      manualmacbody6: "Warcraft III\\_retail_\\webui\\index.html",
       manualmacbody7: "3.下载地图并解压缩在魔兽争霸地图文件夹下",
       manualmacbody8: "下载地图",
       manualmacbody9: "4.解压后的目录应类似于:",
-      manualmacbody10:
-        "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
+      manualmacbody10: "~/Library/Application Support/Blizzard/Warcraft III/Maps/W3Champions",
       manualmacbody11: "重要信息",
       manualmacbody12: "如果你的魔兽争霸目录下有一个Maps文件夹，请删除它",
       manualmacbody13: "删除 魔兽争霸路径/Maps",
-      manualmacbody14: "删除 魔兽争霸路径/\\_retail\\_/Maps",
+      manualmacbody14: "删除 魔兽争霸路径/_retail_/Maps",
       manualmacbody15: "比如:",
-      manualmacbody16: "删除 /Applications/Warcraft III/Maps",
-      manualmacbody17: "删除 /Applications/Warcraft III/\\_retail\\_/Maps",
-      manualmacbody18: "5. 您需要设置注册表（安装程序会自动执行此操作）",
-      manualmacbody19: "复制以下命令",
-      manualmacbody19_1:
-        'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody16: "删除 Warcraft III\\Maps",
+      manualmacbody17: "删除 Warcraft III_retail_\\Maps",
+      manualmacbody18: "5. 你需要修改注册表 (启动客户端时会自动设置)",
+      manualmacbody19: '复制以下命令defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
+      manualmacbody19_1: 'defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1',
       manualmacbody20: "打开终端",
       manualmacbody21: "粘帖以上命令，回车",
       manualmacbody22: "打开魔兽争霸，你会看到 W3Champions 入口",
     },
     views_home: {
       w3c_motto: "众望所归的天梯！",
+      join_button: "进入战场吧！",
       hometitle: "加入我们吧！",
       homebody1: "W3Champions是一个由玩家社区创造的天梯系统",
       homebody2: "它添加了许多功能，比如：",
-      homebody3: "更加公平的匹配机制",
-      homebody4: "五场定位赛就能准确划分段位",
-      homebody5: "更低的延迟",
-      homebody6: "自定义快捷键",
-      homebody7: "经典战网风格下的全新界面",
-      homebody8: "激动人心的天梯季后赛",
-      homebody9: "详细的数据统计",
-      homebody10: "持续更新的地图库",
-      homebody11: "自定义快捷键图形用户界面",
-      homebody12: "W3C团队还在研发更多新功能：",
+      homebody3: "- 更加公平的匹配机制",
+      homebody4: "- 五场定位赛就能准确划分段位",
+      homebody5: "- 更低的延迟",
+      homebody6: "- 自定义快捷键",
+      homebody7: "- 致敬经典战网风格的全新界面",
+      homebody8: "- 激动人心的天梯季后赛",
+      homebody9: "- 详细的数据统计",
+      homebody10: "- 持续更新的地图库",
+      homebody11: "- 便捷的可视化自定义快捷键设置",
+      homebody12: "- W3C团队还在研发更多新功能：",
       homebody13: "- 跨区服",
-      homebody14: "自动化的比赛",
-      homebody15: "加入W3Champions来享受魔兽争霸的最佳体验",
+      homebody14: "- 自动匹配",
+      homebody15: "加入W3Champions，享受魔兽争霸最佳游戏体验",
       homebody16: "还想拥有更多功能？欢迎赞助",
       mappooltitle: "当前地图库",
-      mappoolbody: "TM,EI,TSLV,CH,NIS,AZ,LR",
+      mappoolbody: "TM,EI,TSLV,CH,NIS,AZ,LR，地图库可能随时更新，请以当前赛季为准",
       community: "社区",
       joinus: "加入我们吧！",
       socialmedia: "社交媒体",
@@ -1677,9 +1682,10 @@ const data = {
       prevseasons: "历史赛季:",
       profile: "用户信息",
       matchhistory: "比赛历史",
-      teams: "团队",
+      teams: "战队",
       statistics: "数据统计",
       clan: "公会",
+      playingFFA: "FFA",
     },
     views_rankings: {
       selectleague: "选择联赛:",
@@ -1705,23 +1711,23 @@ const data = {
     },
     components_clans_acceptinvitepanel: {
       invitemsg1: "你被",
-      invitemsg2: "邀请加入他的公会",
-      join: "加入",
-      reject: "拒绝",
+      invitemsg2: "邀请加入他/她的公会",
+      join: "接受邀请",
+      reject: "拒绝邀请",
     },
     components_clans_clancreationpanel: {
-      noclanmsg: "你现在没有工会，创建或者加入一个吧",
-      clanname: "公会名",
-      enterclanname: "输入公会名",
+      noclanmsg: "你现在还不属于任何公会，创建或者加入一个吧！",
+      clanname: "公会名称",
+      enterclanname: "请输入公会名称",
       clanabbrev: "公会简称",
-      enterclanabbrev: "输入公会简称",
+      enterclanabbrev: "请输入公会简称",
       createclan: "创建公会",
       fieldismandatory: "该项必填",
-      minmaxchars: "字符数必须在${min}和${max}之间",
+      minmaxchars: "至少输入 ${min} 个字符，最多不超过 ${max} 个字符",
     },
     components_clans_clanoverview: {
-      playerhasnoclan: "该玩家没有公会",
-      signeecounter: "创始人数",
+      playerhasnoclan: "该玩家不属于任何公会",
+      signeecounter: "累计入会次数",
     },
     components_clans_deleteclanmodal: {
       delete: "删除",
@@ -1733,9 +1739,9 @@ const data = {
       invite: "邀请",
     },
     components_clans_leaveclanmodal: {
-      leaveclan: "离开",
-      promotefirst: "离开公会前请先提拔一位成员至萨满",
-      areyousureleave: "确定离开公会？",
+      leaveclan: "退出公会",
+      promotefirst: "退出公会前请先提拔一位成员至萨满",
+      areyousureleave: "确定退出公会？",
       close: "关闭",
     },
     components_clans_pendinginvitespanel: {
@@ -1743,13 +1749,13 @@ const data = {
       nonepending: "暂无待确认的邀请",
     },
     components_common_gamemodeselect: {
-      selectgamemode: "选择一个游戏模式：",
+      selectgamemode: "选择游戏模式：",
     },
     components_common_gatewayselect: {
-      selectgateway: "选择一个服务器：",
+      selectgateway: "选择服务器：",
     },
     components_common_mmrselect: {
-      selectmmr: "选择MMR范围",
+      selectmmr: "选择MMR范围：",
     },
     components_common_copybutton: {
       tooltip: "复制到剪贴板",
@@ -1757,7 +1763,7 @@ const data = {
     },
     components_common_seasonselect: {
       season: "赛季",
-      prevseasons: "历史赛季:",
+      prevseasons: "往期赛季:",
     },
     components_ladder_countryrankingsgrid: {
       noplayerfound: "未找到指定玩家",
@@ -1783,17 +1789,17 @@ const data = {
       numberofplayers: "玩家数量",
       percent: "百分比",
     },
-    "components_match-details_matchhighlights": {
-      heroeskilled: "击杀的英雄数量",
-      xpgained: "获得的经验值",
-      itemscollected: "获取宝物的数量",
+    "components_match-details_matchhighlights: {
+      heroeskilled: "英雄击杀数",
+      xpgained: "获取经验值",
+      itemscollected: "获取宝物数",
     },
-    "components_match-details_playerperformanceonmatch": {
-      unitskilled: "击杀的单位数量",
-      unitsproduced: "训练的单位数量",
-      goldmined: "采得的黄金数量",
-      lumbermined: "采得的木材数量",
-      upkeeplost: "维护费消耗数量",
+    "components_match-details_playerperformanceonmatch: {
+      unitskilled: "击杀单位数",
+      unitsproduced: "训练单位数",
+      goldmined: "采集黄金",
+      lumbermined: "采集木材",
+      upkeeplost: "维护费损耗",
       won: "胜",
       lost: "负",
       largestarmy: "最大军队数",
@@ -1808,82 +1814,93 @@ const data = {
       players: "对阵玩家",
       gamemode: "游戏模式",
       map: "地图",
-      starttime: "开始时间",
+      starttime: "游戏开始时间",
       duration: "游戏持续时长",
+      replay: "录像",
     },
     components_matches_matchesstatusselect: {
       selectstatus: "选择状态",
     },
     components_matches_sortselect: {
       sortmatchesby: "按以下方式排序：",
-      starttimedescending: "开始时间",
+      starttimedescending: "游戏开始时间",
       mmrdescending: "MMR",
     },
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "置顶进行中的1V1比赛",
     },
-    components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+   components_matches_replayicon: {
+      download: "下载录像",
+    },
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "选择英雄",
       mode: "模式",
       pick: "选择",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "选择赛季",
       mode: "模式",
-      purplebarsdesc: "紫线代表前 2%， 5%， 10%， 25%， 50%玩家。",
-      greenbardesc: "绿线代表你在这个分布的位置。",
+      purplebarsdesc: "紫线依次为 前 2%， 5%， 10%， 25%， 50% 玩家划分线。",
+      greenbardesc: "绿线代表你在该MMR区间的位置。",
       stddev: "标准差",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "选择模式",
       gamemodedesc1: "游戏模式计算方式：",
-      gamemodedesc2: "2v2和FFA会算两次，4v4会被算4次",
+      gamemodedesc2: "2v2和FFA算2次，4v4算4次",
       playersperday: "每日玩家数量",
       playedmaps: "地图选择次数",
       popularhours: "各时段比赛数量",
       gamelengths: "游戏时长分布",
       selectseason: "选择赛季",
+      matchuplengths: "比赛时长分布",
+      selectrace: "选择种族",
+      selectmmr: "选择MMR",
     },
-    "components_overall-statistics_tabs_winratestab": {
-      vshu: "对阵人族",
-      vsorc: "对阵兽族",
-      vsud: "对阵亡灵",
-      vsne: "对阵暗夜",
-      vsrdm: "对阵随机",
+    components_overall_statistics_tabs_winratestab: {
+      selectmap: "选择地图",
+      selectmmr: "选择MMR",
+      selectpatch: "选择补丁",
+      vshu: "对阵 人族",
+      vsorc: "对阵 兽族",
+      vsud: "对阵 亡灵",
+      vsne: "对阵 暗夜",
+      vsrdm: "对阵 随机",
     },
-    "components_overall-statistics_gamelengthchart": {
-      amountofgames: "总游戏数",
+    components_overall_statistics_gamelengthchart: {
+      amountofgames: "游戏次数",
     },
-    "components_overall-statistics_heropictureselect": {
-      anyhero: "任何英雄",
+    components_overall_statistics_heropictureselect: {
+      anyhero: "未选择任何英雄",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "首发英雄统计",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "比赛地图",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "玩家英雄",
     },
-    "components_overall-statistics_populargametimechart": {
-      accgameslast2weeks: "过去两周累计游戏数量",
+    components_overall_statistics_populargametimechart: {
+      accgameslast2weeks: "过去两周累计游戏数",
     },
-    "components_overall-statistics_racetomapstat": {
-      nogamesplayed: "目前没有该种族的比赛信息",
+    components_overall_statistics_racetomapstat: {
+      nogamesplayed: "目前没有该种族的游戏数据",
       map: "地图",
-      vshu: "对阵人族",
-      vsorc: "对阵兽族",
-      vsne: "对阵亡灵",
-      vsud: "对阵暗夜",
-      total: "总数",
+      vshu: "对阵 人族",
+      vsorc: "对阵 兽族",
+      vsne: "对阵 亡灵",
+      vsud: "对阵 暗夜",
+      total: "统计",
     },
     components_player_tabs_playerprofiletab: {
+      betaText:"这位高贵的玩家参与了我们的测试，因此我们隐藏了他们的错误统计数据，并永远感谢他们;)",
       race: "种族",
+      betastats: "该玩家是beta测试玩家，所以我们隐藏了他的数据",
       statsbygamemode: "按游戏模式统计",
-      statsByMode: "按模式统计",
       statsByRace: "按种族统计",
+      statsByMode: "按模式统计",
       winloss: "胜/负",
     },
     components_player_tabs_playerstatistictab: {
@@ -1893,6 +1910,14 @@ const data = {
       title: "比赛胜率",
       playerheroesstatisticstitle: "英雄使用率",
       playerherowinratetitle: "英雄胜率",
+      playergamelengthtitle: "游戏时长",
+      playergamelengthaveragelabel: "对阵的平均游戏时长",
+      opponentall: "全部",
+      opponentrandom: "随机",
+      opponenthuman: "人族",
+      opponentorc: "兽族",
+      opponentundead: "亡灵",
+      opponentnightelf: "暗夜",
     },
     components_player_modestatsgrid: {
       mode: "模式",
@@ -1901,18 +1926,17 @@ const data = {
       winlossdesc: "按胜/负降序",
       mmr: "MMR对战积分",
       mmrdesc: "按MMR对战积分降序",
-      rp: "RP活跃度积分",
+      rp: "RP活跃度积分，使用MMR和活跃度作为排名依据",
       level: "等级",
-      rpdesc: "RP活跃度积分，是根据你的MMR和活跃度用来作为排名的依据。",
-      leveldesc:
-        "按等级降序，类似战网以前的等级系统，根据本赛季的最高MMR和活跃度计算，但不衰减",
+      rpdesc: "按RP活跃度积分降序",
+      leveldesc:"按等级降序，类似战网旧的等级系统，即按赛季最高MMR和活跃度计算，但不衰减",
     },
     components_player_playeravatar: {
       useClassicIcons: "使用经典图标",
-      games: "对阵次数：",
+      games: "游戏次数：",
       wins: "胜:",
-      homepage: "主页：",
-      about: "关于：",
+      homepage: "个人主页：",
+      about: "个人介绍：",
       edit: "修改信息：",
       userprofile: "玩家信息：",
       entertwitchname: "输入你的Twitch用户名！",
@@ -1922,9 +1946,10 @@ const data = {
       entercustomhp: "输入你的个人主页",
       showalias: "显示别名",
       selectcountry: "选择国家",
-      aboutdesc: "个人介绍：",
+      aboutdesc: "输入你的个人介绍",
       close: "关闭",
       save: "保存",
+      hidematchresult: "隐藏已完成的比赛结果",
     },
     components_player_playerleague: {
       placementsplayed: "排位赛次数",
@@ -1936,7 +1961,7 @@ const data = {
       recentperformance: "近期战绩",
     },
     components_player_tabs_playerarrangedteamtab: {
-      title: "团队",
+      title: "战队",
     },
     components_player_tabs_matchhistorytab: {
       title: "比赛历史",
@@ -1960,7 +1985,7 @@ const data = {
       UNDEAD: "亡灵",
       NIGHT_ELF: "暗夜",
       RANDOM: "随机",
-      TOTAL: "总计",
+      TOTAL: "所有种族",
     },
     racesShort: {
       HUMAN: "人族",
@@ -1970,30 +1995,39 @@ const data = {
       RANDOM: "随机",
     },
     gameModes: {
-      UNDEFINED: "总计",
+      UNDEFINED: "全部",
       GM_1ON1: "1 vs 1",
       GM_2ON2: "2 vs 2",
       GM_3ON3: "3 vs 3",
       GM_2ON2_AT: "2 vs 2 双排",
       GM_4ON4: "4 vs 4",
+      GM_4ON4_AT: "4 vs 4 双排",
       GM_FFA: "FFA",
-      GM_FOOTMEN_FRENZY: "四方大战（Footmen Frenzy)",
+      GM_FOOTMEN_FRENZY: "四方大战（Footmen Frenzy）",
       GM_LEGION_4v4_X3: "军团战争（Legion TD） 4v4 x3",
-      GM_LEGION_1v1_x20: "军团战争（Legion TD）1v1 x20",
-      GM_LEGION_4v4_X20: "军团战争（Legion TD）4v4 x20",
-      GM_ROC_1ON1: "RoC 1vs1",
+      GM_LEGION_1v1_x20: "军团战争（Legion TD） 1v1",
+      GM_LEGION_2v2_X20: "军团战争（Legion TD） 2v2",
+      GM_LEGION_4v4_X20: "军团战争（Legion TD） 4v4",
+      GM_LEGION_4v4_X20_AT: "军团战争（Legion TD） 4v4 双排",
+      GM_ROC_1ON1: "混乱之治 1vs1",
+      GM_RH_1ON1: "随机英雄 1v1",
       GM_LTW_1ON1: "Line Tower Wars 1vs1",
       GM_LTW_FFA: "Line Tower Wars FFA",
+      GM_BANJOBALL_4ON4: "Banjoball 4v4",
+      GM_PTR_1ON1: "测试服 1v1",
       GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
+      GM_RH_1ON1: "随机英雄 1 vs 1",
+      GM_ATR_1ON1: "全随机 1 vs 1",
       GM_DOTA_5ON5: "Dota 5v5",
-      GM_DOTA_5ON5_AT: "Dota 5v5 AT",
+      GM_SC_FFA_4: "种族之战（Survival Chaos）",
     },
     gatewayNames: {
-      Europe: "欧洲",
-      America: "美洲",
+      Europe: "欧服",
+      America: "美服",
+      China: "中国",
     },
     mmrLeagueRanges: {
-      MMR_0: "所有",
+      MMR_0: "所有段位",
       MMR_2200: "> 2200 (~宗师)",
       MMR_2000: "> 2000 (~大师)",
       MMR_1800: "> 1800 (~钻石)",
@@ -2004,10 +2038,21 @@ const data = {
     },
     mapNames: {
       Overall: "全部地图",
+      // customs
+      tmenFrenzyv5_8_0W3C: "四方大战（Footmen Frenzy） 5.8",
+      // LTD
+      ionTD3_45eW3CV2: "军团战争（Legion TD） x3 3.45e",
+      ionTD6_4bTeamOZEW3C: "军团战争（Legion TD） x20 6.4b",
+      ionTD6_4TeamOZEW3C: "军团战争（Legion TD） x20 6.4",
+      ionTD7_0bTeamOZEW3C: "军团战争（Legion TD） x20 7.0b",
+      ionTD7_0c1TeamOZEW3C: "军团战争（Legion TD） x20 7.0c",
+      ionTD7_0dTeamOZEW3C: "军团战争（Legion TD） x20 7.0d",
+      ionTD70eTeamOZE: "军团战争（Legion TD） x20 7.0e",
+      ionTD9_0bTeamOZEW3C: "军团战争（Legion TD） x20 9.0b",
     },
     heroNames: {
-      all: "任何英雄",
-      none: "未选择英雄",
+      all: "随机英雄",
+      none: "不选择英雄",
       archmage: "大法师",
       alchemist: "炼金术师",
       avatarofflame: "火焰领主",
@@ -2035,13 +2080,13 @@ const data = {
     },
     matchStatuses: {
       onGoing: "正在游戏",
-      past: "完成",
+      past: "游戏已结束",
     },
     common: {
-      all: "全部",
-      overall: "全部",
-      wins: "胜: ",
-      won: "胜: ",
+      all: "全部：",
+      overall: "| 全部：",
+      wins: "胜:",
+      won: "| 胜:",
       losses: "负：",
       lost: "| 负：",
       total: " 总游戏数：",
@@ -2050,6 +2095,28 @@ const data = {
       close: "关闭",
       save: "保存",
       selectmap: "选择地图：",
+    },
+    proxies: {
+      eu_east3_via_eu_central2: "欧服（东）_3 连 欧服_2",
+      asia_east_via_cn_east: "亚服（东） 连 中国（东）",
+      russia_central_via_cn_east: "俄服 连 中国（东）",
+      us_west5_via_oceania2: "美服（西）_5 连 大洋洲_2",
+      asia_east2_via_oceania2: "亚服（东）_2 连 大洋洲_2",
+      us_east_via_us_central2: "美服（东） 连 美服_2",
+      us_east_via_eu_west: "美服（东） 连 欧服（西）",
+      russia_central_via_eu_west: "俄服 连 欧服（西）",
+      us_east_via_south_america: "美服（东） 连 南美服",
+      us_central2_via_south_america: "美服_2 连 南美服",
+      eu_east4_via_ucloud_pathx: "欧服（东）_4 连 云服",
+      eu_east4_via_eu_central2: "欧服（东）_4 连 欧服_2",
+      west_india_via_oceania2: "印度（西） 连 大洋洲_2",
+      us_west_7_via_ucloud_pathx: "美服（西）_7 连 云服",
+      asia_east2_via_asia_east: "亚服（东）_2 连 亚服（东）",
+      west_india_via_eu_central2: "印度（西） 连 欧服_2",
+      russia_east_via_asia_east2: "俄服（东） 连 亚服（东）_2",
+      russia_central_via_korea_central2: "俄服 连 韩服_2",
+      africa_east_via_sg: "非洲（东） 连 新加坡",
+      africa_east_via_sg_azure_via_simple_cloud: "非洲（东） 连 新加坡 连 云服（简易）",
     },
   },
   de: {
@@ -2294,12 +2361,12 @@ const data = {
       numberofplayers: "Spieleranzahl",
       percent: "Prozent",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Helden getötet",
       xpgained: "Erfahrung erhalten",
       itemscollected: "Items gesammelt",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Einheiten getötet",
       unitsproduced: "Einheiten produziert",
       goldmined: "Gold geschürft",
@@ -2317,35 +2384,35 @@ const data = {
     components_matches_sortselect: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Ausgewählte Helden",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       purplebarsdesc:
         "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
       greenbardesc: "Die grüne Linie zeigt deinen Platz in der Verteilung.",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       gamemodedesc1: "Spielmodi werden nach ihrer Spieleranzahl genormt:",
       gamemodedesc2: "2vs2 und FFA zählen doppelt, 4vs4 zählt vierfach.",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       vshu: "vs Menschen",
       vsorc: "vs Orks",
       vsud: "vs Untote",
       vsne: "vs Nachtelfen",
     },
-    "components_overall-statistics_gamelengthchart": {},
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_gamelengthchart: {},
+    components_overall_statistics_heropictureselect: {
       anyhero: "Jegliche Helden",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Siegrate von Helden-Matchups",
     },
-    "components_overall-statistics_mapsperseasonchart": {},
-    "components_overall-statistics_playedheroeschart": {},
-    "components_overall-statistics_populargametimechart": {},
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_mapsperseasonchart: {},
+    components_overall_statistics_playedheroeschart: {},
+    components_overall_statistics_populargametimechart: {},
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Noch kein Spiel mit dieser Rasse.",
       map: "Map",
       vshu: "vs Menschen",
@@ -2776,12 +2843,12 @@ const data = {
       numberofplayers: "Liczba graczy",
       percent: "Procent",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Zabici bohaterowie",
       xpgained: "Zdobyte doświadczenie",
       itemscollected: "Zebrane przedmioty",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Zabite jednostki",
       unitsproduced: "Utworzone jednostki",
       goldmined: "Wydobyte złoto",
@@ -2816,19 +2883,19 @@ const data = {
       toplive1v1matches: "Najlepsze streamowane mecze 1v1",
     },
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Wybrani bohaterowie",
       mode: "Tryb",
       pick: "Wybór",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Wybierz sezon",
       mode: "Tryb",
       purplebarsdesc:
         "Fioletowe paski zaznaczają czołowe: 2%, 5%, 10%, 25% i 50% graczy",
       greenbardesc: "Zielonia linia pokazuje twoją pozycję",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Wybierz tryb",
       gamemodedesc1:
         "Tryby gry są znormalizowane, aby łatwiej porównać ich popularność.",
@@ -2839,7 +2906,7 @@ const data = {
       gamelengths: "Długości meczów",
       selectseason: "Wybierz sezon",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Wybierz mapę",
       selectmmr: "Wybierz MMR",
       selectpatch: "Wybierz patch",
@@ -2848,25 +2915,25 @@ const data = {
       vsud: "vs Nieumarli",
       vsne: "vs Nocne Elfy",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "Ilość meczów",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Jacykolwiek bohaterowie",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "% wygranych meczów z bohaterami",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Rozegrane mapy",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Użyci bohaterowie",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "łączna ilość meczów w ciągu ostatnich 2 tygodni",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Nie było jeszcze żadnych meczów tą rasą",
       map: "Mapa",
       vshu: "vs Ludzie",
@@ -3307,12 +3374,12 @@ const data = {
       numberofplayers: "Кількість гравців",
       percent: "Відсоток",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Героїв вбито",
       xpgained: "Отримано досвіду",
       itemscollected: "Зібрано предметів",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Юнітів вбито",
       unitsproduced: "Юнітів створено",
       goldmined: "Зібрано золота",
@@ -3342,19 +3409,19 @@ const data = {
       toplive1v1matches: "Топ онлайн матчів 1v1",
     },
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Обрані герої",
       mode: "Режим",
       pick: "Обрати",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Оберіть сезон",
       mode: "Режим",
       purplebarsdesc:
         "Фіолетова смуга відзначає топ 2%, 5%, 10%, 25% та 50% гравців.",
       greenbardesc: "Зелена смуга відзначає вашу позицію на графіку",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Оберіть режим",
       gamemodedesc1:
         "Ігрові режими нормалізовані, щоб легше порівнювати їх популярність:",
@@ -3366,7 +3433,7 @@ const data = {
       gamelengths: "Тривалість матчів",
       selectseason: "Оберіть сезон",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Оберіть мапу",
       selectmmr: "Оберіть MMR",
       selectpatch: "Оберіть патч",
@@ -3375,25 +3442,25 @@ const data = {
       vsud: "проти Андедів",
       vsne: "проти Нічних Ельфів",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "кількість ігор",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Будь-який герой",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Вінрейти героїв",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Зіграні мапи",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Обрані герої",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "Всього ігор за останні 2 тижні",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Іще немає ігор цією расою",
       map: "Мапа",
       vshu: "проти Альянсу",
@@ -3823,12 +3890,12 @@ const data = {
       numberofplayers: "Número de jogadores",
       percent: "Porcento",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Heróis abatidos\n",
       xpgained: "Experiência obtida\n",
       itemscollected: "Itens coletados",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Unidade abatidas",
       unitsproduced: "Unidades produzidas",
       goldmined: "Ouro minerado",
@@ -3858,19 +3925,19 @@ const data = {
       toplive1v1matches: "Top partidas de 1v1 ao vivo",
     },
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Heróis escolhidos\n",
       mode: "Modo",
       pick: "Escolha",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Selecione Temporada",
       mode: "Modo",
       purplebarsdesc:
         "As barras roxas marcam o top: 2%, 5%, 10%, 25% e 50% dos jogadores.",
       greenbardesc: "A linha verde mostra onde você está na distribuição.\r\n",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Selecione modo",
       gamemodedesc1:
         "Os modos de jogos são normalizados para poder comparar mais facilmente a popularidade:",
@@ -3882,7 +3949,7 @@ const data = {
       gamelengths: "Duração de jogo\n",
       selectseason: "Selecione Temporada",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Selecione o mapa",
       selectmmr: "Selecione o MMR",
       selectpatch: "Selecione o patch",
@@ -3891,25 +3958,25 @@ const data = {
       vsud: "vs Night Elf",
       vsne: "vs Undead",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "Total de jogos",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Qualquer seleção de herói",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Winrates dos matchups de heróis",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Mapas jogados",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Heróis jogados",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "jogos acumulados nas duas últimas semanas",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Ainda não houve jogos com esta raça.",
       map: "Mapa",
       vshu: "vs Human",
@@ -4346,12 +4413,12 @@ const data = {
       numberofplayers: "Nombre de joueurs",
       percent: "Pourcentage",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Héros tués",
       xpgained: "Expérience gagnée",
       itemscollected: "Objets collectés",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Unités tuées",
       unitsproduced: "Unités produites",
       goldmined: "Or extrait",
@@ -4381,12 +4448,12 @@ const data = {
       toplive1v1matches: "Top matchs 1v1 en cours",
     },
     components_matches_replayicon: {},
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Héros choisis",
       mode: "Mode",
       pick: "En choix",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Sélectionnez une Saison",
       mode: "Mode",
       purplebarsdesc:
@@ -4394,7 +4461,7 @@ const data = {
       greenbardesc:
         "La ligne verte montre où vous êtes dans la répartition des joueurs.",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode: "Sélectionnez un Mode",
       gamemodedesc1:
         "Les modes de jeu sont normalisés afin de comparer plus facilement leur popularité :",
@@ -4406,7 +4473,7 @@ const data = {
       gamelengths: "Durées des Parties",
       selectseason: "Sélectionnez une Saison",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Sélectionnez une Carte",
       selectmmr: "Sélectionnez un MMR",
       selectpatch: "Sélectionnez un Patch",
@@ -4415,25 +4482,25 @@ const data = {
       vsud: "vs Mort-Vivant",
       vsne: "vs Elfe de la Nuit",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "quantité de partie",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "N'importe quel héros",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Ratios de victoire selon les héros choisis",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Cartes jouées",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Héros joués",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "parties cumulées sur les deux dernières semaines",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Pas de partie jouée avec cette race.",
       map: "Carte",
       vshu: "vs Humain",
@@ -4876,12 +4943,12 @@ const data = {
       numberofplayers: "Procenat",
       percent: "Ubio heroja:",
     },
-    "components_match-details_matchhighlights": {
+    "components_match-details_matchhighlights: {
       heroeskilled: "Dobio EXP:",
       xpgained: "Sakupio item-a:",
       itemscollected: "Ubio jedinica:",
     },
-    "components_match-details_playerperformanceonmatch": {
+    "components_match-details_playerperformanceonmatch: {
       unitskilled: "Napravio jedinica:",
       unitsproduced: "Iskopao zlata:",
       goldmined: "Nacepao drva:",
@@ -4919,19 +4986,19 @@ const data = {
     components_matches_replayicon: {
       download: "Odabrani heroji",
     },
-    "components_overall-statistics_tabs_herotab": {
+    components_overall_statistics_tabs_herotab: {
       pickedheroes: "Mod",
       mode: "Izbor",
       pick: "Izaberite sezonu",
     },
-    "components_overall-statistics_tabs_mmrdistributiontab": {
+    components_overall_statistics_tabs_mmrdistributiontab: {
       selectseason: "Mod",
       mode: "Ljubičaste crte označavaju: 2%, 5%, 10%, 25% i 50% igrača.",
       purplebarsdesc: "Zelena crta označava gde ste vi na raspodeli.",
       greenbardesc: "Standardno otstupanje",
       stddev: "Izaberite mod",
     },
-    "components_overall-statistics_tabs_playeractivitytab": {
+    components_overall_statistics_tabs_playeractivitytab: {
       selectmode:
         "Modovi su normalizovani kako bi im se popularnost lakše poredila:",
       gamemodedesc1:
@@ -4946,7 +5013,7 @@ const data = {
       selectrace: "Izaberite MMR",
       selectmmr: "Izaberite mapu",
     },
-    "components_overall-statistics_tabs_winratestab": {
+    components_overall_statistics_tabs_winratestab: {
       selectmap: "Izaberite MMR",
       selectmmr: "Izaberite verziju",
       selectpatch: "protiv Ljudi",
@@ -4956,25 +5023,25 @@ const data = {
       vsne: "protiv nasumično odabrane rase",
       vsrdm: "broj igara",
     },
-    "components_overall-statistics_gamelengthchart": {
+    components_overall_statistics_gamelengthchart: {
       amountofgames: "Bilo koji izbor heroja",
     },
-    "components_overall-statistics_heropictureselect": {
+    components_overall_statistics_heropictureselect: {
       anyhero: "Stopa pobede među herojima",
     },
-    "components_overall-statistics_herowinrate": {
+    components_overall_statistics_herowinrate: {
       winratesofheromu: "Igrane mape",
     },
-    "components_overall-statistics_mapsperseasonchart": {
+    components_overall_statistics_mapsperseasonchart: {
       playedmaps: "Igrani heroji",
     },
-    "components_overall-statistics_playedheroeschart": {
+    components_overall_statistics_playedheroeschart: {
       playedheroes: "Gledajući mečeve u poslednje dve nedelje",
     },
-    "components_overall-statistics_populargametimechart": {
+    components_overall_statistics_populargametimechart: {
       accgameslast2weeks: "Ni jedna igra još uvek nije igrana sa ovom rasom.",
     },
-    "components_overall-statistics_racetomapstat": {
+    components_overall_statistics_racetomapstat: {
       nogamesplayed: "Mapa",
       map: "protiv Ljudi",
       vshu: "protiv Orki",
