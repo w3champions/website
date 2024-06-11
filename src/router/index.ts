@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
+import VueRouter, { Route, RouteConfig } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import Tournaments from "@/views/Tournaments.vue";
@@ -42,10 +42,11 @@ import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
+import { EAdminRouteName, EStatisticsRouteName } from "./types";
 
 Vue.use(VueRouter);
 
-const routes = [
+const routes: RouteConfig[] = [
   {
     path: "/",
     name: "Home",
@@ -64,7 +65,7 @@ const routes = [
   },
   {
     path: "/getting-started",
-    name: "GettingStarted",
+    name: "Getting Started",
     component: GettingStarted,
   },
   {
@@ -124,28 +125,32 @@ const routes = [
       freshLogin: route.query.freshLogin === "true",
       id: route.params.id,
     }),
-    name: "Player",
     children: [
       {
         path: "",
+        name: "Player Profile",
         props: true,
         component: PlayerProfileTab,
       },
       {
         path: "matches",
+        name: "Player Profile - Matches",
         props: true,
         component: PlayerMatchesTab,
       },
       {
         path: "at-teams",
+        name: "Player Profile - Teams",
         component: PlayerArrangedTeamsTab,
       },
       {
         path: "statistics",
+        name: "Player Profile - Statistics",
         component: PlayerStatisticTab,
       },
       {
         path: "clan",
+        name: "Player Profile - Clan",
         props: true,
         component: ClanOverview,
       },
@@ -166,26 +171,26 @@ const routes = [
     path: "/OverallStatistics",
     component: OverallStatistics,
     name: "OverallStatistics",
-    redirect: { name: "OverallStatisticsPlayerActivity" },
+    redirect: { name: EStatisticsRouteName.PLAYER_ACTIVITY },
     children: [
       {
         path: "",
         component: PlayerActivityTab,
-        name: "OverallStatisticsPlayerActivity",
+        name: EStatisticsRouteName.PLAYER_ACTIVITY,
       },
       {
         path: "mmr-distribution",
-        name: "OverallStatisticsDistribution",
+        name: EStatisticsRouteName.MMR,
         component: MmrDistributionTab,
       },
       {
         path: "winrates-per-race-and-map",
-        name: "OverallStatisticsWinrates",
+        name: EStatisticsRouteName.WINRATES,
         component: WinrateTab,
       },
       {
         path: "heroes-winrates",
-        name: "OverallStatisticsHeroesWinrates",
+        name: EStatisticsRouteName.HEROES,
         component: HeroTab,
       },
     ],
@@ -195,25 +200,25 @@ const routes = [
     name: "Admin",
     component: Admin,
     children: [
-      { path: "admin-queue-data", name: "Live Queue Data", component: AdminQueueData },
-      { path: "admin-banned-players", name: "Banned Players", component: AdminBannedPlayers },
-      { path: "admin-alts", name: "Smurf Checker", component: AdminAlts },
-      { path: "admin-global-mute", name: "Global Mute", component: AdminGlobalMute },
-      { path: "admin-lounge-mute", name: "Lounge Mute", component: AdminLoungeMute },
-      { path: "admin-view-game-chat", name: "View Game Chat", component: AdminViewGameChat },
-      { path: "admin-proxies", name: "Proxy Settings", component: AdminProxies },
-      { path: "admin-news-for-launcher", name: "News", component: AdminNewsForLauncher },
-      { path: "admin-loading-screen-tips", name: "Loading Screen Tips", component: AdminLoadingScreenTips },
-      { path: "admin-motd", name: "Message Of The Day", component: AdminMotd },
-      { path: "admin-assign-portraits", name: "Assign Portraits", component: AdminAssignPortraits },
-      { path: "admin-manage-portraits", name: "Manage Portraits", component: AdminManagePortraits },
-      { path: "admin-storage-alibaba", name: "Manage Alibaba Files", component: AdminStorageAlibaba },
-      { path: "admin-storage-s3", name: "Manage S3 Files", component: AdminStorageS3 },
-      { path: "admin-maps", name: "Manage Maps", component: AdminMaps },
-      { path: "admin-tournaments", name: "Manage Tournaments", component: AdminTournaments },
-      { path: "admin-permissions", name: "Manage Permissions", component: AdminPermissions },
-      { path: "admin-server-logs", name: "View Server Logs", component: AdminServerLogs },
-      { path: "admin-server-logs/:logFileName", component: AdminServerLog, props: true, name: "Server Log" },
+      { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
+      { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
+      { path: "admin-alts", name: EAdminRouteName.SMURF_CHECKER, component: AdminAlts },
+      { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
+      { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
+      { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
+      { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
+      { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },
+      { path: "admin-loading-screen-tips", name: EAdminRouteName.LOADING_SCREEN_TIPS, component: AdminLoadingScreenTips },
+      { path: "admin-motd", name: EAdminRouteName.MESSAGE_OF_THE_DAY, component: AdminMotd },
+      { path: "admin-assign-portraits", name: EAdminRouteName.ASSIGN_PORTRAITS, component: AdminAssignPortraits },
+      { path: "admin-manage-portraits", name: EAdminRouteName.MANAGE_PORTRAITS, component: AdminManagePortraits },
+      { path: "admin-storage-alibaba", name: EAdminRouteName.MANAGE_ALIBABA_FILES, component: AdminStorageAlibaba },
+      { path: "admin-storage-s3", name: EAdminRouteName.MANAGE_S3_FILES, component: AdminStorageS3 },
+      { path: "admin-maps", name: EAdminRouteName.MANAGE_MAPS, component: AdminMaps },
+      { path: "admin-tournaments", name: EAdminRouteName.MANAGE_TOURNAMENTS, component: AdminTournaments },
+      { path: "admin-permissions", name: EAdminRouteName.MANAGE_PERMISSIONS, component: AdminPermissions },
+      { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
+      { path: "admin-server-logs/:logFileName", component: AdminServerLog, props: true },
     ],
   },
   {
@@ -232,6 +237,16 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   routes,
+});
+
+const documentTitle = (pageName: string | null | undefined) => {
+  return pageName ? `${pageName} | W3Champions` : "W3Champions";
+};
+
+router.afterEach((to: Route) => {
+  Vue.nextTick(() => {
+      document.title = documentTitle(to.name);
+  });
 });
 
 export default router;

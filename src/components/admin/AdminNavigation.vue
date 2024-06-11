@@ -13,7 +13,7 @@
         <v-list-item
           :key="index"
           v-if="!item.items || item.items.length === 0"
-          :to="{ name: item.title }"
+          :to="{ name: item.routeName }"
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
@@ -41,7 +41,7 @@
             class="ml-0 pl-6"
             v-for="(subItem, i) in item.items"
             :key="i"
-            :to="{ name: subItem.title }"
+            :to="{ name: subItem.routeName }"
           >
             <v-list-item-icon>
               <v-icon>{{ subItem.icon || mdiAccountTie }}</v-icon>
@@ -57,11 +57,12 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, watch } from "vue";
-import { NavigationItem } from "@/store/admin/types";
+import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router/composables";
+import { EAdminRouteName } from "@/router/types";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
@@ -79,9 +80,9 @@ export default defineComponent({
     const oauthStore = useOauthStore();
 
     const permissions: ComputedRef<string[]> = computed((): string[] => oauthStore.permissions);
-    const filteredNavItems: ComputedRef<NavigationItem[]> = computed((): NavigationItem[] => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
+    const filteredNavItems: ComputedRef<AdminNavigationItem[]> = computed((): AdminNavigationItem[] => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
 
-    function getFirstItem(items: Array<NavigationItem>): NavigationItem {
+    function getFirstItem(items: Array<AdminNavigationItem>): AdminNavigationItem {
       for (const item of items) {
         if (!item.items) {
           return item;
@@ -111,7 +112,7 @@ export default defineComponent({
 
     watch(permissions, init);
 
-    const navItems: Array<NavigationItem> = [
+    const navItems: Array<AdminNavigationItem> = [
       {
         title: "Data Science",
         icon: mdiChartLine,
@@ -122,6 +123,7 @@ export default defineComponent({
             icon: mdiTable,
             permission: EPermission.Queue,
             component: "admin-queue-data",
+            routeName: EAdminRouteName.LIVE_QUEUE_DATA,
           },
         ],
       },
@@ -135,30 +137,35 @@ export default defineComponent({
             icon: mdiAccountRemove,
             permission: EPermission.Moderation,
             component: "admin-banned-players",
+            routeName: EAdminRouteName.BANNED_PLAYERS,
           },
           {
             title: "Smurf Checker",
             icon: mdiAccountQuestion,
             permission: EPermission.Moderation,
             component: "admin-alts",
+            routeName: EAdminRouteName.SMURF_CHECKER,
           },
           {
             title: "Global Mute",
             icon: mdiChatRemove,
             permission: EPermission.Moderation,
             component: "admin-global-mute",
+            routeName: EAdminRouteName.GLOBAL_MUTE,
           },
           {
             title: "Lounge Mute",
             icon: mdiChatRemoveOutline,
             permission: EPermission.Moderation,
             component: "admin-lounge-mute",
+            routeName: EAdminRouteName.LOUNGE_MUTE,
           },
           {
             title: "View Game Chat",
             icon: mdiFormatAlignLeft,
             permission: EPermission.Moderation,
             component: "admin-view-game-chat",
+            routeName: EAdminRouteName.VIEW_GAME_CHAT,
           },
         ],
       },
@@ -172,6 +179,7 @@ export default defineComponent({
             icon: mdiAccountNetwork,
             permission: EPermission.Proxies,
             component: "admin-proxies",
+            routeName: EAdminRouteName.PROXY_SETTINGS,
           },
         ],
       },
@@ -185,6 +193,7 @@ export default defineComponent({
             icon: mdiRss,
             permission: EPermission.Content,
             component: "admin-news-for-launcher",
+            routeName: EAdminRouteName.NEWS,
           },
         ],
       },
@@ -198,12 +207,14 @@ export default defineComponent({
             icon: mdiTooltipTextOutline,
             permission: EPermission.Content,
             component: "admin-loading-screen-tips",
+            routeName: EAdminRouteName.LOADING_SCREEN_TIPS,
           },
           {
             title: "Message Of The Day",
             icon: mdiMessageAlert,
             permission: EPermission.Content,
             component: "admin-motd",
+            routeName: EAdminRouteName.MESSAGE_OF_THE_DAY,
           },
         ],
       },
@@ -217,24 +228,28 @@ export default defineComponent({
             icon: mdiAccountBoxOutline,
             permission: EPermission.Content,
             component: "admin-assign-portraits",
+            routeName: EAdminRouteName.ASSIGN_PORTRAITS,
           },
           {
             title: "Manage Portraits",
             icon: mdiBriefcase,
             permission: EPermission.Content,
             component: "admin-manage-portraits",
+            routeName: EAdminRouteName.MANAGE_PORTRAITS,
           },
           {
             title: "Manage Alibaba Files",
             icon: mdiFileDocumentOutline,
             permission: EPermission.Content,
             component: "admin-storage-alibaba",
+            routeName: EAdminRouteName.MANAGE_ALIBABA_FILES,
           },
           {
             title: "Manage S3 Files",
             icon: mdiFileDocument,
             permission: EPermission.Content,
             component: "admin-storage-s3",
+            routeName: EAdminRouteName.MANAGE_S3_FILES,
           },
         ],
       },
@@ -248,6 +263,7 @@ export default defineComponent({
             icon: mdiMapPlus,
             permission: EPermission.Maps,
             component: "admin-maps",
+            routeName: EAdminRouteName.MANAGE_MAPS,
           },
         ],
       },
@@ -261,6 +277,7 @@ export default defineComponent({
             icon: mdiSwordCross,
             permission: EPermission.Tournaments,
             component: "admin-tournaments",
+            routeName: EAdminRouteName.MANAGE_TOURNAMENTS,
           },
         ],
       },
@@ -274,6 +291,7 @@ export default defineComponent({
             icon: mdiAccountKey,
             permission: EPermission.Permissions,
             component: "admin-permissions",
+            routeName: EAdminRouteName.MANAGE_PERMISSIONS,
           },
         ],
       },
@@ -287,6 +305,7 @@ export default defineComponent({
             icon: mdiFileDocumentOutline,
             permission: EPermission.Logs,
             component: "admin-server-logs",
+            routeName: EAdminRouteName.VIEW_SERVER_LOGS,
           },
         ],
       },
