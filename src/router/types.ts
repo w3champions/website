@@ -17,6 +17,7 @@ export enum EAdminRouteName {
     MANAGE_TOURNAMENTS = "Admin - Manage Tournaments",
     MANAGE_PERMISSIONS = "Admin - Manage Permissions",
     VIEW_SERVER_LOGS = "Admin - View Server Logs",
+    SERVER_LOG = "Admin - Server Log",
 }
 
 export enum EStatisticsRouteName {

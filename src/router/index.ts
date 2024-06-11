@@ -218,7 +218,7 @@ const routes: RouteConfig[] = [
       { path: "admin-tournaments", name: EAdminRouteName.MANAGE_TOURNAMENTS, component: AdminTournaments },
       { path: "admin-permissions", name: EAdminRouteName.MANAGE_PERMISSIONS, component: AdminPermissions },
       { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
-      { path: "admin-server-logs/:logFileName", component: AdminServerLog, props: true },
+      { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
     ],
   },
   {
@@ -239,14 +239,10 @@ const router = new VueRouter({
   routes,
 });
 
-const documentTitle = (pageName: string | null | undefined) => {
-  return pageName ? `${pageName} | W3Champions` : "W3Champions";
-};
+const documentTitle = (pageName: string | null | undefined) => pageName ? `${pageName} | W3Champions` : "W3Champions";
 
 router.afterEach((to: Route) => {
-  Vue.nextTick(() => {
-      document.title = documentTitle(to.name);
-  });
+  document.title = documentTitle(to.name);
 });
 
 export default router;
