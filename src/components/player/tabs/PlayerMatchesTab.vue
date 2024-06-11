@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -107,19 +107,19 @@ export default defineComponent({
     const isLoadingMatches = ref<boolean>(false);
     const filtersVisible = ref<boolean>(false);
     const foundPlayer = ref<string>("");
+    const currentPage = ref<number | undefined>(undefined);
 
     const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
     const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
     const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
     const filterButtonText: ComputedRef<string> = computed((): string => filtersVisible.value ? "Hide Additional Filters" : "Show Additional Filters");
+    const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
     });
 
     onActivated(async (): Promise<void> => {
-      await rankingsStore.retrieveSeasons();
-      rankingsStore.setSeason(rankingsStore.seasons[0]);
       await getMatches();
     });
 
@@ -218,18 +218,20 @@ export default defineComponent({
       return 0;
     });
 
-    async function getMatches(page?: number): Promise<void> {
+    watch(loadingProfile, getMatches);
+    async function getMatches(): Promise<void> {
       if (isLoadingMatches.value || !playerStore.selectedSeason.id) {
         return;
       }
 
       isLoadingMatches.value = true;
-      await playerStore.loadMatches(page);
+      await playerStore.loadMatches(currentPage.value);
       isLoadingMatches.value = false;
     }
 
     async function onPageChanged(page: number): Promise<void> {
-      await getMatches(page);
+      currentPage.value = page;
+      await getMatches();
     }
 
     return {

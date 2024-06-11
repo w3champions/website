@@ -55,12 +55,13 @@ export interface BannedPlayersResponse {
   players: BannedPlayer[];
 }
 
-export interface NavigationItem {
+export interface AdminNavigationItem {
   title: string;
   icon?: string;
   component?: string;
-  items?: Array<NavigationItem>;
+  items?: Array<AdminNavigationItem>;
   permission: EPermission;
+  routeName?: string;
 }
 
 export interface QueueData {
