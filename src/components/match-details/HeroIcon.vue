@@ -20,7 +20,8 @@ export default defineComponent({
   props: {
     hero: {
       type: Object as PropType<Hero>,
-      required: true,
+      required: false,
+      default: undefined,
     },
     firstHero: {
       type: Boolean,

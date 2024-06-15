@@ -2,7 +2,6 @@ import { EGameMode, ERaceEnum, Match, timestampString } from "../types";
 import { Season, Gateways, PlayerId } from "@/store/ranking/types";
 
 export type PlayerState = {
-  isInitialized: boolean;
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
   playerStatsHeroVersusRaceOnMap: PlayerStatsHeroOnMapVersusRace;
   page: number;
@@ -23,7 +22,7 @@ export type PlayerState = {
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
-  mmrRpTimeline: PlayerMmrRpTimeline | undefined;
+  mmrRpTimeline: PlayerMmrRpTimeline;
   playerGameLengthStats: PlayerGameLengthStats | undefined;
 };
 

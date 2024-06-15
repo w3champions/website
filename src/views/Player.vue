@@ -144,9 +144,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, onUnmounted, ref, watch } from "vue";
 import { PlayerProfile } from "@/store/player/types";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
+import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -283,15 +283,11 @@ export default defineComponent({
       clearInterval(_intervalRefreshHandle);
     }
 
-    onMounted(async (): Promise<void> => {
-      await init();
-    });
-
     onUnmounted((): void => {
       stopLoadingMatches();
     });
 
-    watch(battleTag, init);
+    watch(battleTag, init, { immediate: true });
 
     async function init() {
       // This is needed because the view is not destroyed when going from a profile directly to another profile, leading to multiple interval timers.
@@ -301,6 +297,12 @@ export default defineComponent({
 
       playerStore.SET_BATTLE_TAG(battleTag.value);
 
+      _intervalRefreshHandle = setInterval(async () => {
+        await playerStore.loadOngoingPlayerMatch(battleTag.value);
+      }, AppConstants.ongoingMatchesRefreshInterval);
+
+      if (profile.value && battleTag.value === profile.value.battleTag) return;
+
       await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
       await playerStore.loadGameModeStats({});
       await playerStore.loadRaceStats();
@@ -308,12 +310,24 @@ export default defineComponent({
       await playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
       await playerStore.loadOngoingPlayerMatch(battleTag.value);
       await playerStore.loadPlayerGameLengths();
-
-      _intervalRefreshHandle = setInterval(async () => {
-        await playerStore.loadOngoingPlayerMatch(battleTag.value);
-      }, AppConstants.ongoingMatchesRefreshInterval);
-      playerStore.SET_INITIALIZED();
+      await playerStore.loadMatches(1);
+      await initMmrRpTimeline();
       window.scrollTo(0, 0);
+    }
+
+    async function initMmrRpTimeline() {
+      const raceStats = playerStore.raceStats;
+      let maxRace = ERaceEnum.HUMAN;
+      let maxGames = 0;
+      raceStats.forEach((r) => {
+        if (r.games > maxGames) {
+          maxGames = r.wins;
+          maxRace = r.race;
+        }
+      });
+
+      playerStore.SET_RACE(maxRace);
+      await playerStore.loadPlayerMmrRpTimeline();
     }
 
     return {

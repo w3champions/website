@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -53,29 +53,17 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const playerStore = usePlayerStore();
-    const selectedTab = ref<string>("tab-16");
 
     const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
-    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
+
+    const selectedTab: ComputedRef<string> = computed((): string => {
+      return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
+    });
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);
       return `<img class="mt-1" src="${src}" height="40" width="40" />`;
     }
-
-    watch(isPlayerInitialized, onPlayerInitialized);
-    function onPlayerInitialized(): void {
-      setSelectedTab();
-    }
-
-    function setSelectedTab(): void {
-      selectedTab.value = defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
-    }
-
-    // Use activated() instead of mounted() to trigger when navigating directly from one profile to another.
-    onActivated((): void => {
-      if (isPlayerInitialized.value) setSelectedTab();
-    });
 
     function heroUsages() {
       const heroStatsData = [];

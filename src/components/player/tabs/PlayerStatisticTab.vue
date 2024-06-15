@@ -146,7 +146,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onActivated, onMounted, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, ref, WritableComputedRef } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
@@ -160,6 +160,7 @@ import { races } from "@/helpers/general";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { Season } from "@/store/ranking/types";
+import isEmpty from "lodash/isEmpty";
 
 export default defineComponent({
   name: "PlayerStatisticTab",
@@ -179,62 +180,40 @@ export default defineComponent({
     const selectedMapHeroWinRate = ref<string>("Overall");
     const selectedGameLengthOpponentRace = ref<ERaceEnum>(ERaceEnum.TOTAL);
     const selectedPatch = ref<string>("All");
-    const selectedGameMode = ref<EGameMode>(playerStore.gameMode);
-    const selectedRace = ref<ERaceEnum>(playerStore.race);
+
     const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
     const playerStatsRaceVersusRaceOnMap: ComputedRef<PlayerStatsRaceOnMapVersusRace> = computed((): PlayerStatsRaceOnMapVersusRace => playerStore.playerStatsRaceVersusRaceOnMap);
     const playerStatsHeroVersusRaceOnMap: ComputedRef<PlayerStatsHeroOnMapVersusRace> = computed((): PlayerStatsHeroOnMapVersusRace => playerStore.playerStatsHeroVersusRaceOnMap ?? []);
     const loadingMmrRpTimeline: ComputedRef<boolean> = computed((): boolean => playerStore.loadingMmrRpTimeline);
-    const playerMmrRpTimeline: ComputedRef<PlayerMmrRpTimeline | undefined> = computed((): PlayerMmrRpTimeline | undefined => playerStore.mmrRpTimeline);
-    const isPlayerMmrRpTimelineEmpty: ComputedRef<boolean> = computed((): boolean => playerStore.mmrRpTimeline == undefined);
-    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
+    const playerMmrRpTimeline: ComputedRef<PlayerMmrRpTimeline> = computed((): PlayerMmrRpTimeline => playerStore.mmrRpTimeline);
+    const isPlayerMmrRpTimelineEmpty: ComputedRef<boolean> = computed((): boolean => isEmpty(playerStore.mmrRpTimeline));
 
-    function getMaps(): void {
-      overallStatsStore.loadMapsPerSeason();
-    }
+    const selectedGameMode: WritableComputedRef<EGameMode> = computed({
+      get(): EGameMode {
+        return playerStore.gameMode;
+      },
+      set(val: EGameMode): void {
+        playerStore.SET_GAMEMODE(val);
+      },
+    });
+
+    const selectedRace: WritableComputedRef<ERaceEnum> = computed({
+      get(): ERaceEnum {
+        return playerStore.race;
+      },
+      set(val: ERaceEnum): void {
+        playerStore.SET_RACE(val);
+      },
+    });
 
     function setSelectedPatch(patch: string) {
       selectedPatch.value = patch;
     }
 
     onMounted(async (): Promise<void> => {
-      getMaps();
+      await overallStatsStore.loadMapsPerSeason();
       await loadActiveGameModes();
     });
-
-    // Use onActivated instead of onMounted to trigger when navigating directly from one profile to another.
-    onActivated((): void => {
-      if (isPlayerInitialized.value) {
-        initMmrRpTimeline();
-      }
-    });
-
-    // When loading the statistics tab via URL directly, due to Lifecycle Hooks the mounted() here
-    // is called before mounted of player, which this depends on. For this case isPlayerInitialized
-    // is being watched to init the mmrRpTimeline once player.vue init() has finished.
-    watch(isPlayerInitialized, onPlayerInitialized);
-    function onPlayerInitialized(): void {
-      initMmrRpTimeline();
-      playerStore.loadPlayerGameLengths();
-    }
-
-    async function initMmrRpTimeline() {
-      const raceStats = playerStore.raceStats;
-      let maxRace = ERaceEnum.HUMAN;
-      let maxGames = 0;
-      raceStats.forEach((r) => {
-        if (r.games > maxGames) {
-          maxGames = r.wins;
-          maxRace = r.race;
-        }
-      });
-      await playerStore.SET_GAMEMODE(EGameMode.GM_1ON1);
-      await playerStore.SET_RACE(maxRace);
-      selectedGameMode.value = EGameMode.GM_1ON1;
-      selectedRace.value = maxRace;
-
-      playerStore.loadPlayerMmrRpTimeline();
-    }
 
     async function setTimelineMode(mode: EGameMode) {
       playerStore.SET_GAMEMODE(mode);
