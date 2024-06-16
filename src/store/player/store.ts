@@ -30,8 +30,9 @@ export const usePlayerStore = defineStore("player", {
     loadingMmrRpTimeline: true,
     opponentTag: "",
     selectedSeason: {} as Season,
-    gameMode: EGameMode.GM_1ON1,
-    race: ERaceEnum.RANDOM,
+    profileMatchesGameMode: EGameMode.UNDEFINED,
+    profileStatisticsRace: ERaceEnum.RANDOM,
+    profileStatisticsGameMode: EGameMode.GM_1ON1,
     playerRace: ERaceEnum.TOTAL,
     opponentRace: ERaceEnum.TOTAL,
     ongoingMatch: {} as Match,
@@ -94,7 +95,7 @@ export const usePlayerStore = defineStore("player", {
         this.page - 1,
         this.battleTag,
         this.opponentTag,
-        this.gameMode,
+        this.profileMatchesGameMode,
         this.playerRace,
         this.opponentRace,
         rootStateStore.gateway,
@@ -125,10 +126,10 @@ export const usePlayerStore = defineStore("player", {
       const mmrRpTimeline =
         await ProfileService.retrievePlayerMmrRpTimeline(
           this.battleTag,
-          this.race,
+          this.profileStatisticsRace,
           rootStateStore.gateway,
           this.selectedSeason?.id ?? -1,
-          this.gameMode,
+          this.profileStatisticsGameMode,
         );
       this.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       this.SET_LOADING_MMR_TIMELINE(false);
@@ -176,11 +177,14 @@ export const usePlayerStore = defineStore("player", {
     SET_SELECTED_SEASON(season: Season): void {
       this.selectedSeason = season;
     },
-    SET_GAMEMODE(gameMode: EGameMode): void {
-      this.gameMode = gameMode;
+    SET_PROFILE_MATCHES_GAME_MODE(gameMode: EGameMode): void {
+      this.profileMatchesGameMode = gameMode;
     },
-    SET_RACE(race: ERaceEnum): void {
-      this.race = race;
+    SET_PROFILE_STATISTICS_RACE(race: ERaceEnum): void {
+      this.profileStatisticsRace = race;
+    },
+    SET_PROFILE_STATISTICS_GAME_MODE(gameMode: EGameMode): void {
+      this.profileStatisticsGameMode = gameMode;
     },
     SET_PLAYER_RACE(playerRace: ERaceEnum): void {
       this.playerRace = playerRace;
