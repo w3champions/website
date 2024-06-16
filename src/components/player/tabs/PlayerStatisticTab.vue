@@ -42,7 +42,6 @@
             item-text="name"
             item-value="id"
             v-model="selectedGameMode"
-            @change="setTimelineMode"
             label="Select Mode"
             outlined
           />
@@ -51,7 +50,6 @@
             item-text="raceName"
             item-value="raceId"
             v-model="selectedRace"
-            @change="setTimelineRace"
             label="Select Race"
             outlined
           />
@@ -190,19 +188,21 @@ export default defineComponent({
 
     const selectedGameMode: WritableComputedRef<EGameMode> = computed({
       get(): EGameMode {
-        return playerStore.gameMode;
+        return playerStore.profileStatisticsGameMode;
       },
       set(val: EGameMode): void {
-        playerStore.SET_GAMEMODE(val);
+        playerStore.SET_PROFILE_STATISTICS_GAME_MODE(val);
+        playerStore.loadPlayerMmrRpTimeline();
       },
     });
 
     const selectedRace: WritableComputedRef<ERaceEnum> = computed({
       get(): ERaceEnum {
-        return playerStore.race;
+        return playerStore.profileStatisticsRace;
       },
       set(val: ERaceEnum): void {
-        playerStore.SET_RACE(val);
+        playerStore.SET_PROFILE_STATISTICS_RACE(val);
+        playerStore.loadPlayerMmrRpTimeline();
       },
     });
 
@@ -214,16 +214,6 @@ export default defineComponent({
       await overallStatsStore.loadMapsPerSeason();
       await loadActiveGameModes();
     });
-
-    async function setTimelineMode(mode: EGameMode) {
-      playerStore.SET_GAMEMODE(mode);
-      playerStore.loadPlayerMmrRpTimeline();
-    }
-
-    async function setTimelineRace(race: ERaceEnum) {
-      playerStore.SET_RACE(race);
-      playerStore.loadPlayerMmrRpTimeline();
-    }
 
     const patches: ComputedRef<string[]> = computed((): string[] => {
       if (!playerStatsRaceVersusRaceOnMap.value || !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch) {
@@ -289,9 +279,7 @@ export default defineComponent({
       setSelectedPatch,
       raceWithoutRandom,
       selectedGameMode,
-      setTimelineMode,
       selectedRace,
-      setTimelineRace,
       loadingMmrRpTimeline,
       isPlayerMmrRpTimelineEmpty,
       playerMmrRpTimeline,
