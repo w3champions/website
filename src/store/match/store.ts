@@ -37,7 +37,7 @@ export const useMatchStore = defineStore("match", {
         );
       } else {
         response = await MatchService.retrieveMatches(
-          this.page,
+          this.page - 1,
           rootStateStore.gateway,
           this.gameMode,
           this.map,
