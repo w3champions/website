@@ -327,7 +327,7 @@ export default defineComponent({
         }
       });
 
-      playerStore.SET_RACE(maxRace);
+      playerStore.SET_PROFILE_STATISTICS_RACE(maxRace);
       await playerStore.loadPlayerMmrRpTimeline();
     }
 

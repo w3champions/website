@@ -15,8 +15,9 @@ export type PlayerState = {
   loadingPlayerStatsHeroVersusRaceOnMap: boolean;
   opponentTag: string;
   selectedSeason: Season;
-  gameMode: EGameMode;
-  race: ERaceEnum;
+  profileMatchesGameMode: EGameMode;
+  profileStatisticsRace: ERaceEnum;
+  profileStatisticsGameMode: EGameMode;
   playerRace: ERaceEnum;
   opponentRace: ERaceEnum;
   raceStats: RaceStat[];

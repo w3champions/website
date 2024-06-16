@@ -146,7 +146,7 @@ export default defineComponent({
     });
 
     function setSelectedGameModeForSearch(gameMode: EGameMode): void {
-      playerStore.SET_GAMEMODE(gameMode);
+      playerStore.SET_PROFILE_MATCHES_GAME_MODE(gameMode);
       getMatches();
     }
 
