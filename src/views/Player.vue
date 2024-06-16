@@ -301,6 +301,8 @@ export default defineComponent({
         await playerStore.loadOngoingPlayerMatch(battleTag.value);
       }, AppConstants.ongoingMatchesRefreshInterval);
 
+      await playerStore.loadOngoingPlayerMatch(battleTag.value);
+
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
       await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
@@ -308,7 +310,6 @@ export default defineComponent({
       await playerStore.loadRaceStats();
       await playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value);
       await playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
-      await playerStore.loadOngoingPlayerMatch(battleTag.value);
       await playerStore.loadPlayerGameLengths();
       await playerStore.loadMatches(1);
       await initMmrRpTimeline();

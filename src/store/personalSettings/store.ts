@@ -10,10 +10,10 @@ export const usePersonalSettingsStore = defineStore("personalSettings", {
   }),
   actions: {
     async loadPersonalSetting() {
-      this.SET_PERSONAL_SETTING({} as PersonalSetting);
       const player = usePlayerStore();
       const battleTag = player.battleTag;
-      if (!battleTag) return;
+
+      if (!battleTag || this.personalSettings.id === battleTag) return;
       const response = await PersonalSettingsService.retrievePersonalSetting(battleTag);
       this.SET_PERSONAL_SETTING(response);
     },
