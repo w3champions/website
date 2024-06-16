@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-text v-if="!loadingProfile">
+    <v-card-text v-show="!loadingProfile">
       <v-row class="mt-4 filter-none">
         <v-col cols="12" md="4" lg="3">
           <v-card-text style="padding-top: 0 !important">
