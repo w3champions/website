@@ -31,6 +31,7 @@
             @pageChanged="onPageChanged"
             :itemsPerPage="50"
             :unfinished="unfinished"
+            :is-player-profile="false"
           ></matches-grid>
         </v-card>
       </v-col>

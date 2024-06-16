@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onActivated, PropType, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -85,12 +85,14 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const paginationSize = 10;
     const page = ref<number>(1);
-    const selectedTab = ref<string>("tab-16");
     const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
-    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
     const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
     const pageLength: ComputedRef<number> = computed((): number => Math.ceil(heroWinRates().length / paginationSize));
     const heroStatsCurrentPage: ComputedRef<PlayerHeroWinRateForStatisticsTab[]> = computed((): PlayerHeroWinRateForStatisticsTab[] => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
+
+    const selectedTab: ComputedRef<string> = computed((): string => {
+      return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
+    });
 
     const headers = [
       { text: "", value: "image" },
@@ -104,20 +106,6 @@ export default defineComponent({
     ];
 
     const headersWithoutImageAndName = headers.slice(2);
-
-    watch(isPlayerInitialized, onPlayerInitialized);
-    function onPlayerInitialized(): void {
-      setSelectedTab();
-    }
-
-    function setSelectedTab(): void {
-      selectedTab.value = defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All) || "tab-16";
-    }
-
-    // Use onActivated instead of onMounted to trigger when navigating directly from one profile to another.
-    onActivated((): void => {
-      if (isPlayerInitialized.value) setSelectedTab();
-    });
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);

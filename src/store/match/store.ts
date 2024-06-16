@@ -8,7 +8,7 @@ import { Season } from "@/store/ranking/types";
 
 export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
-    page: 0,
+    page: 1,
     totalMatches: 0,
     loadingMatchDetail: true,
     matches: [] as Match[],
@@ -23,14 +23,12 @@ export const useMatchStore = defineStore("match", {
   }),
   actions: {
     async loadMatches(page?: number) {
-      if (page != null && !isNaN(page)) {
-        this.SET_PAGE(page - 1);
-      }
+      this.SET_PAGE(page ?? 1);
       let response: { count: number; matches: Match[] };
       const rootStateStore = useRootStateStore();
       if (this.status == MatchStatus.onGoing) {
         response = await MatchService.retrieveOnGoingMatchesPaged(
-          this.page,
+          this.page - 1,
           rootStateStore.gateway,
           this.gameMode,
           this.map,

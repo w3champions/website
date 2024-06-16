@@ -18,11 +18,10 @@ import { defineStore } from "pinia";
 
 export const usePlayerStore = defineStore("player", {
   state: (): PlayerState => ({
-    isInitialized: false,
     playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
     playerStatsHeroVersusRaceOnMap: {} as PlayerStatsHeroOnMapVersusRace,
     battleTag: "",
-    page: 0,
+    page: 1,
     totalMatches: 0,
     playerProfile: {} as PlayerProfile,
     matches: [] as Match[],
@@ -31,14 +30,14 @@ export const usePlayerStore = defineStore("player", {
     loadingMmrRpTimeline: true,
     opponentTag: "",
     selectedSeason: {} as Season,
-    gameMode: 0 as EGameMode,
-    race: 0 as ERaceEnum,
-    playerRace: 16 as ERaceEnum,
-    opponentRace: 16 as ERaceEnum,
+    gameMode: EGameMode.GM_1ON1,
+    race: ERaceEnum.RANDOM,
+    playerRace: ERaceEnum.TOTAL,
+    opponentRace: ERaceEnum.TOTAL,
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
-    mmrRpTimeline: {} as PlayerMmrRpTimeline | undefined,
+    mmrRpTimeline: {} as PlayerMmrRpTimeline,
     playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
   } as PlayerState),
   actions: {
@@ -88,13 +87,11 @@ export const usePlayerStore = defineStore("player", {
       this.SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(profile);
     },
     async loadMatches(page?: number) {
-      if (page != null && !isNaN(page)) {
-        this.SET_PAGE(page - 1);
-      }
+      this.SET_PAGE(page ?? 1);
       this.SET_LOADING_RECENT_MATCHES(true);
       const rootStateStore = useRootStateStore();
       const response = await MatchService.retrievePlayerMatches(
-        this.page,
+        this.page - 1,
         this.battleTag,
         this.opponentTag,
         this.gameMode,
@@ -142,9 +139,6 @@ export const usePlayerStore = defineStore("player", {
         this.selectedSeason?.id ?? -1,
       );
       this.SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats);
-    },
-    SET_INITIALIZED(): void {
-      this.isInitialized = true;
     },
     SET_PROFILE(profile: PlayerProfile): void {
       this.playerProfile = profile;
@@ -203,7 +197,7 @@ export const usePlayerStore = defineStore("player", {
     SET_RACE_STATS(stats: RaceStat[]): void {
       this.raceStats = stats;
     },
-    SET_MMR_RP_TIMELINE(mmrRpTimeline: PlayerMmrRpTimeline | undefined): void {
+    SET_MMR_RP_TIMELINE(mmrRpTimeline: PlayerMmrRpTimeline): void {
       this.mmrRpTimeline = mmrRpTimeline;
     },
     SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats: PlayerGameLengthStats | undefined): void {

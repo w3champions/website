@@ -126,7 +126,7 @@ export default class ProfileService {
     gateWay: Gateways,
     season: number,
     gameMode: EGameMode
-  ): Promise<PlayerMmrRpTimeline | undefined> {
+  ): Promise<PlayerMmrRpTimeline> {
     const url = `${API_URL}api/players/${encodeURIComponent(
       battleTag
     )}/mmr-rp-timeline?race=${race}&gateWay=${gateWay}&season=${season}&gameMode=${gameMode}`;
@@ -135,7 +135,7 @@ export default class ProfileService {
     if (response.ok && response.status == 200) {
       return await response.json();
     } else {
-      return undefined;
+      return {} as PlayerMmrRpTimeline;
     }
   }
   public static async retrievePlayerGameLengthStats(
