@@ -24,14 +24,13 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onActivated, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent } from "vue";
 import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import isEmpty from "lodash/isEmpty";
 import { defaultStatsTab } from "@/helpers/profile";
-import { usePlayerStore } from "@/store/player/store";
 
 export default defineComponent({
   name: "PlayerStatsRaceVersusRaceOnMap",
@@ -46,27 +45,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const playerStore = usePlayerStore();
-    const selectedTab = ref<string>("tab-1");
-
-    const isPlayerInitialized: ComputedRef<boolean> = computed((): boolean => playerStore.isInitialized);
     const isStatsEmpty: ComputedRef<boolean> = computed((): boolean => isEmpty(props.stats));
 
-    // Use onActivated instead of onMounted to trigger when navigating directly from one profile to another.
-    onActivated((): void => {
-      if (isPlayerInitialized.value) setSelectedTab();
+    const selectedTab: ComputedRef<string> = computed((): string => {
+      return defaultStatsTab(props.stats);
     });
-
-    // When loading the statistics tab via URL directly, onMounted gets called before loading player data, which this component depends on.
-    // That's why isPlayerInitialized is watched, to set the tab once player.vue init() has finished.
-    watch(isPlayerInitialized, onPlayerInitialized);
-    function onPlayerInitialized(): void {
-      setSelectedTab();
-    }
-
-    function setSelectedTab(): void {
-      selectedTab.value = defaultStatsTab(props.stats);
-    }
 
     return {
       ERaceEnum,

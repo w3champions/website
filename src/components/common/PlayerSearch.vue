@@ -36,7 +36,7 @@ export default defineComponent({
     },
   },
   setup: (_props, context) => {
-    const search = ref<string>("");
+    const search = ref<string | null>(null);
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
     const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
@@ -55,6 +55,7 @@ export default defineComponent({
     });
 
     function dispatchSearch() {
+      if (search.value === null) return;
       playerSearchStore.searchBnetTag({ searchText: search.value.toLowerCase() });
     }
 
@@ -68,6 +69,7 @@ export default defineComponent({
     watch(search, onPlayerSearchChanged);
 
     function onPlayerSearchChanged(): void {
+      if (search.value === null) return;
       if (search.value && search.value.length > 2) {
         isLoading.value = true;
         debouncedSearch();

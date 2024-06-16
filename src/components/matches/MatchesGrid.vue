@@ -92,13 +92,13 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages" :total-visible="5" @input="onPageChanged"></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged"></v-pagination>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, ref, StyleValue } from "vue";
+import { computed, ComputedRef, defineComponent, StyleValue, WritableComputedRef } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -108,6 +108,8 @@ import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { TranslateResult } from "vue-i18n";
 import { useRouter } from "vue-router/composables";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
+import { useMatchStore } from "@/store/match/store";
+import { usePlayerStore } from "@/store/player/store";
 
 interface MatchesGridHeader {
   name: string;
@@ -147,18 +149,21 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    isPlayerProfile: {
+      type: Boolean,
+      required: true,
+    }
   },
   setup(props, context) {
     const { t } = useI18n();
     const router = useRouter();
-    const page = ref<number>(1);
+    const matchStore = useMatchStore();
+    const playerStore = usePlayerStore();
     const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4];
+    const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
+    const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
     const matches: ComputedRef<Match[]> = computed((): Match[] => props.value);
-
-    const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
-
-    const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
     const currentMatchesLowRange: ComputedRef<number> = computed((): number => {
       if (props.totalMatches === 0) return 0;
@@ -171,21 +176,31 @@ export default defineComponent({
       return highRange > props.totalMatches ? props.totalMatches : highRange;
     });
 
-    function onPageChanged(page: number): void {
-      context.emit("pageChanged", page);
-    }
-
     const getTotalPages: ComputedRef<number> = computed((): number => {
       if (!props.totalMatches) return 1;
       return Math.ceil(props.totalMatches / 50);
     });
 
+    function onPageChanged(page: number): void {
+      context.emit("pageChanged", page);
+    }
+
+    const page: WritableComputedRef<number> = computed({
+      get(): number {
+        return props.isPlayerProfile ? playerStore.page : matchStore.page;
+      },
+      set(val: number): void {
+        if (props.isPlayerProfile) {
+          playerStore.SET_PAGE(val);
+        } else {
+          matchStore.SET_PAGE(val);
+        }
+      },
+    });
+
     function goToMatchDetailPage(match: Match): void {
       if (props.unfinished) return;
-
-      router.push({
-        path: `/match/${match.id}`,
-      });
+      router.push({ path: `/match/${match.id}` });
     }
 
     const getWinner = (match: Match): Team => match.teams[0];
@@ -225,10 +240,6 @@ export default defineComponent({
       // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
       return !props.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
     }
-
-    onUnmounted(() => {
-      context.emit("pageChanged", 1);
-    });
 
     const headers: MatchesGridHeader[] = [
       {
