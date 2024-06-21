@@ -510,6 +510,8 @@ const data = {
       GM_ATR_1ON1: "All The Randoms 1vs1",
       GM_DOTA_5ON5: "Dota 5v5",
       GM_DOTA_5ON5_AT: "Dota 5v5 AT",
+      GM_DS: "Direct Strike 3v3",
+      GM_DS_AT: "Direct Strike 3v3 AT",
     },
     gatewayNames: {
       Europe: "Europe",
@@ -2983,6 +2985,8 @@ const data = {
       GM_LTW_1ON1: "Line Tower Wars 1v1",
       GM_BANJOBALL_4ON4: "Banjoball 4v4",
       GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
+      GM_DS: "Direct Strike 3v3",
+      GM_DS_AT: "Direct Strike 3v3 AT",
     },
     gatewayNames: {
       Europe: "Europa",
