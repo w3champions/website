@@ -111,6 +111,9 @@ export default defineComponent({
         case EGameMode.GM_LTW_FFA:
           return "rgb(255,99,240)";
 
+        case EGameMode.GM_DS:
+          return "rgb(150, 150, 20)";
+
         default:
           return "rgb(54, 162, 235)";
       }
@@ -156,6 +159,9 @@ export default defineComponent({
 
         case EGameMode.GM_LTW_FFA:
           return 2.5;
+
+        case EGameMode.GM_DS:
+          return 3;
 
         default:
           return 1;
