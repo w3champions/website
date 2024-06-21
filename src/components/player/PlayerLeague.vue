@@ -104,23 +104,26 @@ export default defineComponent({
     const router = useRouter();
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
-    const matches = ref<Match[]>([]);
 
-    const playerId: ComputedRef<string> = computed((): string => props.modeStat.id);
-    const leagueMode: ComputedRef<TranslateResult> = computed((): TranslateResult => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
-    const gameMode: ComputedRef<EGameMode> = computed((): EGameMode => props.modeStat.gameMode);
-    const league: ComputedRef<number> = computed((): number => props.modeStat.leagueId);
+    const matches = ref<Match[]>([]);
+    const playerId = ref<string>(props.modeStat.id);
+    const leagueMode = ref<TranslateResult>(t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
+    const gameMode = ref<EGameMode>(props.modeStat.gameMode);
+    const league = ref<number>(props.modeStat.leagueId);
+    const isRanked = ref<boolean>(props.modeStat.rank > 0);
+
     const gateWay: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
     const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
     const battleTag: ComputedRef<string> = computed((): string => playerStore.battleTag);
     const seasonAndGameModeAndGateway: ComputedRef<string> = computed((): string => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`);
-    const isRanked: ComputedRef<boolean> = computed((): boolean => props.modeStat.rank > 0);
 
     const atPartner: ComputedRef<PlayerId> = computed((): PlayerId => {
       return props.modeStat.playerIds.filter(
         (id) => battleTag.value !== id.battleTag
       )[0];
     });
+
+    watch(seasonAndGameModeAndGateway, init, { immediate: true });
 
     async function init(): Promise<void> {
       if (!props.showPerformance) return;
@@ -202,11 +205,6 @@ export default defineComponent({
         lastTenMatchesPerformance.value.length > 0
       );
     });
-
-    watch(seasonAndGameModeAndGateway, onSeasonOrGameModeOrGatewayChange, { immediate: true });
-    function onSeasonOrGameModeOrGatewayChange() {
-      init();
-    }
 
     return {
       isRanked,

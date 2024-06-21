@@ -204,7 +204,7 @@ export default defineComponent({
     }
 
     const getWinner = (match: Match): Team => match.teams[0];
-    const getLoser = (match: Match): Team =>match.teams[1];
+    const getLoser = (match: Match): Team => match.teams[1];
 
     function getPlayerTeam(match: Match): Team {
       const playerTeam = match.teams.find((team: Team) =>
