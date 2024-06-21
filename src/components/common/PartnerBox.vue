@@ -38,6 +38,10 @@ export default defineComponent({
           img: "gym",
           link: "https://warcraft-gym.com",
         },
+        {
+          img: "msfds",
+          link: "#"
+        }
       ];
     }
     function imgSource(name: string): string {
