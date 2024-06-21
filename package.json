@@ -14,6 +14,9 @@
     "format": "node_modules/.bin/prettier --write .",
     "generate-locales": "tsx scripts/generate-locales.ts"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@fontsource-variable/inter": "~5.0.16",
     "@mdi/js": "~7.2.96",
