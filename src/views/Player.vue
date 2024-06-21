@@ -134,9 +134,7 @@
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
-          <keep-alive>
-            <router-view></router-view>
-          </keep-alive>
+          <router-view></router-view>
         </v-card>
       </v-col>
     </v-row>
