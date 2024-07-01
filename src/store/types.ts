@@ -10,6 +10,7 @@ export type PlayerInTeam = {
   oldMmr: number;
   currentMmr: number;
   battleTag: string;
+  inviteName?: string;
   name: string;
   mmrGain: number;
   race: ERaceEnum;
