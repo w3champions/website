@@ -290,25 +290,16 @@ export default defineComponent({
 
     function getPlayerScores(team: Team): PlayerScore[] {
       const scores: PlayerScore[] = playerScores.value
-        .filter((s) =>
-          team.players.some(
-            (player) =>
-              player.battleTag.startsWith(s.battleTag) ||
-              s.battleTag
-                .toLowerCase()
-                .includes(player.battleTag.toLowerCase().split("#", 1)[0])
-          )
-        )
-        .map((s) => {
-          // Use the battleTag from the Player record
-          // since it is sometimes incorrect on the PlayerScore record
+        .map((playerScore) => {
+          // Use the battleTag from the Match record, since it is sometimes incorrect on the PlayerScore record
           const matchedPlayer = team.players.find((p) =>
-            s.battleTag
+            playerScore.battleTag
               .toLowerCase()
-              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
+              .includes(p.battleTag.toLowerCase().split("#", 1)[0]) ||
+              p.inviteName && p.inviteName === playerScore.battleTag
           );
           return {
-            ...s,
+            ...playerScore,
             battleTag: matchedPlayer?.battleTag ?? "",
           };
         });
