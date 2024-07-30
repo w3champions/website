@@ -6,16 +6,19 @@
           <v-card-title class="text-center">
             {{ $t("views_gettingstarted.howtoinstall") }}
           </v-card-title>
-          <v-tabs v-model="tabsModel" vertical class="ml-5">
+          <v-tabs v-model="tabsModel.self" vertical class="ml-5">
             <v-tabs-slider></v-tabs-slider>
             <v-tab class="profileTab" :href="`#launcher`">
               {{ $t("views_gettingstarted.launcher") }}
             </v-tab>
+            <v-tab class="profileTab" :href="`#windows-setup`">
+              {{ $t("views_gettingstarted.manualwin") }}
+            </v-tab>
             <v-tab class="profileTab" :href="`#mac-setup`">
               {{ $t("views_gettingstarted.manualmac") }}
             </v-tab>
-            <v-tabs-items v-model="tabsModel" touchless>
-              <v-tab-item :value="'launcher'">
+            <v-tabs-items :value="tabsModel.self" touchless>
+              <v-tab-item value="launcher">
                 <v-card-text class="px-16">
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
@@ -64,7 +67,56 @@
                   </v-card-text>
                 </v-card-text>
               </v-tab-item>
-              <v-tab-item :value="'mac-setup'">
+              <v-tab-item value="windows-setup">
+                <v-card-text class="px-16">
+                  <v-alert outlined type="warning" prominent border="left">
+                    {{ alertMessage }}
+                  </v-alert>
+                  <h3 class="mt-10">
+                    {{ $t("views_gettingstarted.manualwintitle") }}
+                  </h3>
+                  <p>
+                    {{ $t("views_gettingstarted.manualwinbody1") }}
+                  </p>
+                  <v-btn
+                    class="w3-background"
+                    color="primary"
+                    :href="ingameAddonLink"
+                    target="_blank"
+                    outlined
+                  >
+                    <v-icon>{{ mdiDownload }}</v-icon>
+                    <span class="mr-2 hidden-xs-only">
+                      {{ $t("views_gettingstarted.manualwinbody2") }}
+                    </span>
+                  </v-btn>
+                  <p class="mt-2">
+                    {{ $t("views_gettingstarted.manualwinbody3") }}
+                    <br />
+                    <code>{{ $t("views_gettingstarted.manualwinbody3_1") }}</code>
+                  </p>
+                  <p>
+                    <i style="color: red">
+                      {{ $t("views_gettingstarted.manualwinbody4") }}
+                    </i>
+                    <br />
+                    {{ $t("views_gettingstarted.manualwinbody5") }}
+                    <br />
+                    <code>
+                      {{ $t("views_gettingstarted.manualwinbody6") }}
+                    </code>
+                    <br />
+                    <code>
+                      {{ $t("views_gettingstarted.manualwinbody7") }}
+                    </code>
+                    <br />
+
+                    {{ $t("views_gettingstarted.manualwinbody8") }}
+                    <br />
+                  </p>
+                </v-card-text>
+              </v-tab-item>
+              <v-tab-item value="mac-setup">
                 <v-card-text class="px-16">
                   <v-alert outlined type="warning" prominent border="left">
                     {{ alertMessage }}
@@ -152,13 +204,27 @@
 import { defineComponent, ref } from "vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
+import { useRouter } from "vue-router/composables";
 
+class TabsModel {
+  constructor(private router: ReturnType<typeof useRouter>) {}
+  set self (tabsModel: string) {
+    this.router.replace({ query: { ...this.router.currentRoute.query, tabsModel } });
+    console.log(this.router.currentRoute.query.tabsModel);
+  }
+  get self() {
+    return this.router.currentRoute.query.tabsModel || "launcher";
+  }
+}
 export default defineComponent({
   name: "GettingStartedView",
   components: {},
   setup() {
-    const tabsModel = ref(null);
+    const router = useRouter();
+    const tabsModel = ref(new TabsModel(router));
+
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
+    const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
     const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
@@ -168,6 +234,7 @@ export default defineComponent({
       mdiDownload,
       tabsModel,
       alertMessage,
+      ingameAddonLink,
       webUiLink,
       mapsLink,
       launcherUrlMac,
