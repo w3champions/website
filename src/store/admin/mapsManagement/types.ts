@@ -18,7 +18,7 @@ export interface Map {
   category?: string;
   maxTeams: number;
   mappedForces?: MapForce[];
-  gameMap?: GameMapExtended;
+  gameMap?: GameMap;
 }
 
 export interface MapForce {
@@ -32,10 +32,6 @@ export interface MapForceComputer {
   color: EColors;
   race: ERaceEnum;
   difficulty: EComputer;
-}
-
-export interface GameMapExtended extends GameMap {
-  path: string;
 }
 
 export interface GameMap {
@@ -52,6 +48,7 @@ export interface GameMap {
   players: GameMapPlayer[];
   forces: GameMapForce[];
   num_players: number;
+  is_twelve_p: boolean;
 }
 
 export interface GameMapPlayer {
