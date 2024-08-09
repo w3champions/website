@@ -19,7 +19,7 @@
     <!-- PAYPAL -->
     <v-card
       class="support-subcard"
-      href="https://www.paypal.me/w3champions"
+      href="https://www.paypal.me/w3championsdonate"
       target="_blank"
       tile
       outlined
