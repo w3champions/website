@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 
 export default defineComponent({
   name: "LevelProgress",
@@ -17,8 +17,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const progressToNextLevel = ref<number>((props.rp % 1) * 100);
-    const levelNumber = ref<number>(Math.floor(props.rp));
+    const progressToNextLevel = computed<number>(() => (props.rp % 1) * 100);
+    const levelNumber = computed<number>(() => Math.floor(props.rp));
 
     return {
       progressToNextLevel,

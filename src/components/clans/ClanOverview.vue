@@ -10,9 +10,7 @@
       </v-row>
     </div>
     <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
-    <clan-creation-panel
-      v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer"
-    />
+    <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }} ({{ playersClan.clanId }})</span>
@@ -31,11 +29,7 @@
           ]"
           :key="mode"
         >
-          <player-league
-            :small-mode="true"
-            :show-performance="false"
-            :mode-stat="getStats(mode)"
-          />
+          <player-league :small-mode="true" :show-performance="false" :mode-stat="getStats(mode)" />
         </v-col>
       </v-row>
       <br />
@@ -52,11 +46,7 @@
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon
-                          v-on="on"
-                          class="ml-4 mb-1"
-                          :league="getLeagueOrder(playersClan.chiefTain)"
-                        />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -78,11 +68,7 @@
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon
-                          v-on="on"
-                          class="ml-4 mb-1"
-                          :league="getLeagueOrder(shaman)"
-                        />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -112,11 +98,7 @@
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon
-                          v-on="on"
-                          class="ml-4 mb-1"
-                          :league="getLeagueOrder(member)"
-                        />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -137,7 +119,7 @@
       </div>
       <div v-if="!playersClan.isSuccesfullyFounded">
         <v-card-title>
-          {{ $t("components_clans_clanoverview.signeecounter") }} ({{playersClan.foundingFathers.length}} / 2):
+          {{ $t("components_clans_clanoverview.signeecounter") }} ({{ playersClan.foundingFathers.length }} / 2):
         </v-card-title>
         <table class="custom-table">
           <tr v-for="member in playersClan.foundingFathers" :key="member">
@@ -155,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onActivated } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted } from "vue";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
@@ -208,7 +190,9 @@ export default defineComponent({
     const currentSeason: ComputedRef<number> = computed((): number => rankingsStore.seasons[0].id);
     const clanIsFunded: ComputedRef<boolean> = computed((): boolean => playersClan.value.isSuccesfullyFounded);
     const roleEnums: ComputedRef<typeof EClanRole> = computed((): typeof EClanRole => EClanRole);
-    const hasPendingInvite: ComputedRef<boolean> = computed((): boolean => !!clanStore.selectedMemberShip?.pendingInviteFromClan);
+    const hasPendingInvite: ComputedRef<boolean> = computed(
+      (): boolean => !!clanStore.selectedMemberShip?.pendingInviteFromClan
+    );
     const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
     const selectedPlayer: ComputedRef<string> = computed((): string => playerStore.battleTag);
     const hasNoClan: ComputedRef<boolean> = computed((): boolean => !playersClan?.value.clanId);
@@ -216,22 +200,18 @@ export default defineComponent({
     const shamans: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.shamans);
     const members: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.members);
     const loggedInRole: ComputedRef<EClanRole> = computed((): EClanRole => defineRole(verifiedBtag.value));
-    const loggedInPlayerIsChiefTain: ComputedRef<boolean> = computed((): boolean => playersClan.value.chiefTain === verifiedBtag.value);
+    const loggedInPlayerIsChiefTain: ComputedRef<boolean> = computed(
+      (): boolean => playersClan.value.chiefTain === verifiedBtag.value
+    );
 
     const loggedInPlayerIsShaman: ComputedRef<boolean> = computed((): boolean => {
-      return !!(
-        playersClan.value.shamans.find((s) => s === verifiedBtag.value) ||
-        loggedInPlayerIsChiefTain.value
-      );
+      return !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value);
     });
 
     function getLeagueOrder(battleTag: string): number {
       return playersClan.value.ranks
         ?.filter(
-          (r) =>
-            r.season === currentSeason.value &&
-            r.gameMode === EGameMode.GM_1ON1 &&
-            r.id.includes(battleTag)
+          (r) => r.season === currentSeason.value && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
         )
         .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
     }
@@ -253,20 +233,13 @@ export default defineComponent({
         battleTag: battleTag.value,
         freshLogin: false,
       });
-    });
 
-    // Load clans on activate instead of mount,
-    // because component is already mounted when going from a profile to another profile, leading to wrong clan being displayed
-    onActivated(async (): Promise<void> => {
-      playerStore.SET_BATTLE_TAG(battleTag.value);
       await clanStore.retrievePlayersMembership();
       await clanStore.retrievePlayersClan();
     });
 
     function getStats(mode: EGameMode): ModeStat {
-      const modeRankings = playersClan.value.ranks?.filter(
-        (r) => r.gameMode === mode && r.leagueName != null
-      );
+      const modeRankings = playersClan.value.ranks?.filter((r) => r.gameMode === mode && r.leagueName != null);
       const players = modeRankings.map((rankings) => rankings.player);
       if (players.length === 0) return { games: 0, gameMode: mode } as ModeStat;
 
@@ -289,13 +262,8 @@ export default defineComponent({
         }
       );
 
-      const allRanks = playersClan.value.ranks.filter(
-        (r) => r.rankNumber != 0 && r.gameMode === mode
-      );
-      const order = allRanks.reduce(
-        (a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }),
-        { leagueOrder: 0 }
-      );
+      const allRanks = playersClan.value.ranks.filter((r) => r.rankNumber != 0 && r.gameMode === mode);
+      const order = allRanks.reduce((a, b) => ({ leagueOrder: a.leagueOrder + b.leagueOrder }), { leagueOrder: 0 });
       reduced.leagueOrder = Math.round(order.leagueOrder / allRanks.length);
       reduced.rank = allRanks.reduce((a, b) => a + b.rankNumber, 0);
 
