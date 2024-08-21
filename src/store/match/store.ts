@@ -34,6 +34,14 @@ export const useMatchStore = defineStore("match", {
           this.mmr,
           this.sort
         );
+
+        // Handle edge case when loading ongoing matches, if the number of matches are reduced
+        // so that the current page no longer exists, we decrement the current page by 1 and retry.
+        if (!response.matches.length && this.page > 1) {
+          this.SET_PAGE(this.page - 1);
+          await this.loadMatches();
+          return;
+        }
       } else {
         response = await MatchService.retrieveMatches(
           this.page - 1,
