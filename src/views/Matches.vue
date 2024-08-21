@@ -147,7 +147,6 @@ export default defineComponent({
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
       await matchStore.setSeason(rankingsStore.seasons[0]);
-      await getMatches();
       getMaps();
       refreshMatches();
     });
