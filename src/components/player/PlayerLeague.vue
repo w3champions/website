@@ -11,10 +11,7 @@
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
-        <span
-          class="text-center pointer"
-          @click="navigateToPartner()"
-        >
+        <span class="text-center pointer" @click="navigateToPartner()">
           {{ atPartner.name }}
         </span>
         <br v-if="showAtPartner" />
@@ -26,15 +23,12 @@
         -
         <span class="lost">{{ modeStat.losses }}</span>
       </span>
-      <span v-if="!isRanked">
+      <span v-else>
         <span class="number-text">{{ modeStat.games }} / 5</span>
       </span>
     </div>
     <div>
-      <img
-        class="LadderSummaryShowcase-divider"
-        src="/assets/profiles/profile-ladders-divider.png"
-      />
+      <img class="LadderSummaryShowcase-divider" src="/assets/profiles/profile-ladders-divider.png" />
       <div class="text-center" v-if="isRanked && !smallMode">
         <span>
           MMR:
@@ -50,10 +44,7 @@
         <span>{{ $t("components_player_playerleague.placementsplayed") }}</span>
       </div>
     </div>
-    <recent-performance
-      v-if="isRecentPerformanceVisible"
-      :last-ten-matches-performance="lastTenMatchesPerformance"
-    />
+    <recent-performance v-if="isRecentPerformanceVisible" :last-ten-matches-performance="lastTenMatchesPerformance" />
   </div>
 </template>
 
@@ -106,21 +97,21 @@ export default defineComponent({
     const rootStateStore = useRootStateStore();
 
     const matches = ref<Match[]>([]);
-    const playerId = ref<string>(props.modeStat.id);
-    const leagueMode = ref<TranslateResult>(t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
-    const gameMode = ref<EGameMode>(props.modeStat.gameMode);
-    const league = ref<number>(props.modeStat.leagueId);
-    const isRanked = ref<boolean>(props.modeStat.rank > 0);
+    const playerId = computed<string>(() => props.modeStat.id);
+    const leagueMode = computed<TranslateResult>(() => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
+    const gameMode = computed<EGameMode>(() => props.modeStat.gameMode);
+    const league = computed<number>(() => props.modeStat.leagueId);
+    const isRanked = computed<boolean>(() => props.modeStat.rank > 0);
 
     const gateWay: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
     const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
     const battleTag: ComputedRef<string> = computed((): string => playerStore.battleTag);
-    const seasonAndGameModeAndGateway: ComputedRef<string> = computed((): string => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`);
+    const seasonAndGameModeAndGateway: ComputedRef<string> = computed(
+      (): string => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`
+    );
 
     const atPartner: ComputedRef<PlayerId> = computed((): PlayerId => {
-      return props.modeStat.playerIds.filter(
-        (id) => battleTag.value !== id.battleTag
-      )[0];
+      return props.modeStat.playerIds.filter((id) => battleTag.value !== id.battleTag)[0];
     });
 
     watch(seasonAndGameModeAndGateway, init, { immediate: true });
@@ -150,9 +141,7 @@ export default defineComponent({
 
     function navigateToLeague(): void {
       router.push({
-        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${
-          gateWay.value
-        }&gamemode=${gameMode.value}&league=${
+        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${gateWay.value}&gamemode=${gameMode.value}&league=${
           league.value
         }&playerId=${encodeURIComponent(playerId.value)}`,
       });
@@ -189,20 +178,14 @@ export default defineComponent({
     const lastTenMatchesPerformance: ComputedRef<string[]> = computed((): string[] => {
       return matches.value
         .slice(0, 10)
-        .map((match) =>
-          match.teams.find((team) =>
-            team.players.find((player) => player.battleTag === battleTag.value)
-          )
-        )
+        .map((match) => match.teams.find((team) => team.players.find((player) => player.battleTag === battleTag.value)))
         .filter(Boolean)
         .map((team) => (team?.won ? "W" : "L"));
     });
 
     const isRecentPerformanceVisible: ComputedRef<boolean> = computed((): boolean => {
       return (
-        props.showPerformance &&
-        gameMode.value !== EGameMode.GM_2ON2_AT &&
-        lastTenMatchesPerformance.value.length > 0
+        props.showPerformance && gameMode.value !== EGameMode.GM_2ON2_AT && lastTenMatchesPerformance.value.length > 0
       );
     });
 
