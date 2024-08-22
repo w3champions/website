@@ -5,8 +5,11 @@
     </h5>
     <ul class="recent-performance__results">
       <li v-for="(resultSymbol, index) in lastTenMatchesPerformance" :key="resultSymbol + index">
-        <span :class="resultSymbol === 'W' ? 'won' : 'lost'">{{ resultSymbol }}</span>
-        <span v-if="index < lastTenMatchesPerformance.length - 1">-</span>
+        <v-chip color="transparent" :title="resultSymbol === 'W' ? 'Win' : 'Loss'" label style="padding: 0">
+          <v-icon class="sword-icon" :color="resultSymbol === 'W' ? 'green' : 'red'">
+            {{ mdiShieldSwordOutline }}
+          </v-icon>
+        </v-chip>
       </li>
     </ul>
   </div>
@@ -14,6 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mdiShieldSwordOutline } from "@mdi/js";
 
 export default defineComponent({
   name: "RecentPerformance",
@@ -25,13 +29,19 @@ export default defineComponent({
     },
   },
   setup() {
-     // example: ['W', 'W', 'W', 'L', 'L', 'W', 'L', 'W', 'L', 'L']
-    return {};
+    // example: ['W', 'W', 'W', 'L', 'L', 'W', 'L', 'W', 'L', 'L']
+    return { mdiShieldSwordOutline };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+.sword-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
 .recent-performance {
   margin-top: 0.4em;
 
