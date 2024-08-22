@@ -22,8 +22,7 @@ export const useMatchStore = defineStore("match", {
     selectedSeason: {} as Season,
   }),
   actions: {
-    async loadMatches(page?: number) {
-      this.SET_PAGE(page ?? 1);
+    async loadMatches() {
       let response: { count: number; matches: Match[] };
       const rootStateStore = useRootStateStore();
       if (this.status == MatchStatus.onGoing) {
@@ -33,8 +32,16 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
-          this.sort,
+          this.sort
         );
+
+        // Handle edge case when loading ongoing matches, if the number of matches are reduced
+        // so that the current page no longer exists, we decrement the current page by 1 and retry.
+        if (!response.matches.length && this.page > 1) {
+          this.SET_PAGE(this.page - 1);
+          await this.loadMatches();
+          return;
+        }
       } else {
         response = await MatchService.retrieveMatches(
           this.page - 1,
@@ -42,7 +49,7 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
-          this.selectedSeason.id,
+          this.selectedSeason.id
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
@@ -57,7 +64,7 @@ export const useMatchStore = defineStore("match", {
         gameMode || this.gameMode,
         map || this.map,
         this.mmr,
-        this.sort,
+        this.sort
       );
       this.SET_ALL_ONGOING_MATCHES(response.matches);
     },
@@ -70,34 +77,34 @@ export const useMatchStore = defineStore("match", {
     },
     async setStatus(matchStatus: MatchStatus) {
       this.SET_STATUS(matchStatus);
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setGameMode(gameMode: EGameMode) {
       this.SET_GAME_MODE(gameMode);
       this.SET_MAP("Overall");
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setMap(map: string) {
       this.SET_MAP(map);
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setMmr(mmr: Mmr) {
       this.SET_MMR(mmr);
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setSort(sort: string) {
       this.SET_SORT(sort);
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setSeason(season: Season) {
       this.SET_SEASON(season);
-      this.SET_PAGE(0);
-      await this.loadMatches(undefined);
+      this.SET_PAGE(1);
+      await this.loadMatches();
     },
     async setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
@@ -138,9 +145,8 @@ export const useMatchStore = defineStore("match", {
     SET_PLAYER_SCORES(playerScores: PlayerScore[]): void {
       this.matchDetail.playerScores = playerScores;
     },
-    SET_SEASON(season: Season):void {
+    SET_SEASON(season: Season): void {
       this.selectedSeason = season;
     },
   },
 });
-
