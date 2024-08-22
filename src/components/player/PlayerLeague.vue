@@ -313,17 +313,16 @@ export default defineComponent({
 // common
 
 .LadderSummaryShowcase-card:after {
-  width: 250px;
-  height: 100px;
   -ms-flex: 0 0 100px;
   flex: 0 0 100px;
+  width: 250px;
   height: 105px;
   content: "";
   position: absolute;
-  // left: 50%;
-  transform: translateX(-50%);
   top: -50px;
-  margin-left: 163px;
+  margin-left: 49%;
+  left: 75px;
+  transform: translateX(-50%);
 }
 
 .LadderSummaryShowcase-card {
