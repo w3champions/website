@@ -11,7 +11,7 @@
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.id">
-          <td class="cell mode">
+          <td class="cell d-flex justify-center align-center">
             <span>{{ $t("gameModes." + EGameMode[item.gameMode]) }}</span>
             <race-icon style="display: inline; padding-left: 10px" :race="item.race" />
           </td>
@@ -175,11 +175,5 @@ export default defineComponent({
 
 .cell {
   white-space: nowrap;
-
-  &.mode {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 }
 </style>
