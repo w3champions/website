@@ -9,12 +9,7 @@
         </v-col>
         <v-col md="12" lg="9">
           <v-row v-if="!isBetaSeason">
-            <v-col
-              cols="12"
-              md="4"
-              v-for="gameModeStat in topGameModeStats"
-              :key="gameModeStat.gameMode"
-            >
+            <v-col cols="12" md="4" v-for="gameModeStat in topGameModeStats" :key="gameModeStat.gameMode">
               <player-league :modeStat="gameModeStat"></player-league>
             </v-col>
           </v-row>
@@ -30,11 +25,7 @@
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
-              <v-data-table
-                hide-default-footer
-                :headers="raceHeaders"
-                :items="selectedRaceStats"
-              >
+              <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
                 <template v-slot:item.race="{ item }">
                   <span><race-icon v-bind:race="item.race" /></span>
                 </template>
@@ -43,14 +34,12 @@
                     <span class="won">{{ item.wins }}</span>
                     -
                     <span class="lost">{{ item.losses }}</span>
-                    <span style="float: right">
-                      ({{ (item.winrate * 100).toFixed(1) }}%)
-                    </span>
+                    <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                   </span>
                 </template>
               </v-data-table>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="8">
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByMode") }}
               </h4>
@@ -60,17 +49,8 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <v-card-text
-      v-if="loadingProfile"
-      style="min-height: 500px"
-      class="text-center"
-    >
-      <v-progress-circular
-        style="margin-top: 180px"
-        :size="50"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
+    <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
+      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate></v-progress-circular>
     </v-card-text>
   </div>
 </template>
@@ -134,26 +114,19 @@ export default defineComponent({
     const selectedRaceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => {
       if (!raceStats.value) return [];
 
-      return raceStats.value.filter((r) =>
-        r.gateWay === rootStateStore.gateway &&
-        r.season === selectedSeason.value?.id
+      return raceStats.value.filter(
+        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id
       );
     });
 
     const topGameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
       if (!gameModeStats.value) return [];
 
-      const oneVOnes = gameModeStats.value.filter(
-        (g) => g.gameMode === EGameMode.GM_1ON1
-      );
+      const oneVOnes = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_1ON1);
 
       const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
 
-      let bestOneVOne = sortBy(rankedOneVOnes, [
-        "leagueOrder",
-        "division",
-        "rank",
-      ])[0];
+      let bestOneVOne = sortBy(rankedOneVOnes, ["leagueOrder", "division", "rank"])[0];
 
       if (!bestOneVOne) {
         bestOneVOne = oneVOnes[0];
@@ -162,37 +135,25 @@ export default defineComponent({
       const twoV2s = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
       const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
 
-      let besttwoV2s = sortBy(rankedtwoV2s, [
-        "leagueOrder",
-        "division",
-        "rank",
-      ])[0];
+      let besttwoV2s = sortBy(rankedtwoV2s, ["leagueOrder", "division", "rank"])[0];
 
       if (!besttwoV2s) {
         besttwoV2s = twoV2s[0];
       }
 
-      const otherModes = gameModeStats.value.filter((g) =>
-        g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
+      const otherModes = gameModeStats.value.filter(
+        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
       );
 
       const otherModesRanked = otherModes.filter((g) => g.rank != 0);
-      const bestOtherModes = sortBy(otherModesRanked, [
-        "leagueOrder",
-        "division",
-        "rank",
-      ]);
+      const bestOtherModes = sortBy(otherModesRanked, ["leagueOrder", "division", "rank"]);
 
       const allModes = [];
       if (bestOneVOne) allModes.push(bestOneVOne);
       if (besttwoV2s) allModes.push(besttwoV2s);
       allModes.push(...bestOtherModes);
 
-      const bestAllModesSorted = sortBy(allModes, [
-        "leagueOrder",
-        "division",
-        "rank",
-      ]);
+      const bestAllModesSorted = sortBy(allModes, ["leagueOrder", "division", "rank"]);
 
       return take(
         bestAllModesSorted.filter((x) => x.rank != 0),

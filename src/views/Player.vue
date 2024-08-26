@@ -6,17 +6,11 @@
           <v-card-title>
             <v-row no-gutters>
               <v-col :align-self="'center'">
-                <span>
-                  {{ $t("views_player.profile") }} {{ profile.battleTag }}
-                </span>
+                <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
                 <span class="mr-2" />
                 <!-- add some space between name and season badges -->
-                <div
-                  v-for="season in seasonsWithoutCurrentOne"
-                  :key="season.id"
-                  class="ml-1 d-inline-block"
-                >
+                <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block">
                   <season-badge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
@@ -38,15 +32,9 @@
                         <v-subheader>
                           {{ $t("views_player.prevseasons") }}
                         </v-subheader>
-                        <v-list-item
-                          v-for="item in seasons"
-                          :key="item.id"
-                          @click="selectSeason(item)"
-                        >
+                        <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
                           <v-list-item-content>
-                            <v-list-item-title>
-                              {{ $t("views_rankings.season") }} {{ item.id }}
-                            </v-list-item-title>
+                            <v-list-item-title>{{ $t("views_rankings.season") }} {{ item.id }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
                       </v-list>
@@ -92,9 +80,7 @@
           <v-container style="padding-top: 6px">
             <v-row align="center" justify="center">
               <host-icon
-                v-if="
-                  ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider
-                "
+                v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider"
                 :host="ongoingMatch.serverInfo"
               ></host-icon>
             </v-row>
@@ -102,35 +88,19 @@
 
           <v-tabs v-model="tabsModel">
             <v-tabs-slider></v-tabs-slider>
-            <v-tab
-              exact
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(battleTag)}`"
-            >
+            <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(battleTag)}/matches`"
-            >
+            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/matches`">
               {{ $t("views_player.matchhistory") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(battleTag)}/at-teams`"
-            >
+            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/at-teams`">
               {{ $t("views_player.teams") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(battleTag)}/statistics`"
-            >
+            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
               {{ $t("views_player.statistics") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="`/player/${encodeURIComponent(battleTag)}/clan`"
-            >
+            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/clan`">
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
@@ -200,9 +170,7 @@ export default defineComponent({
 
     const seasonsWithoutCurrentOne: ComputedRef<Season[]> = computed((): Season[] => {
       if (!seasons.value) return [];
-      return seasons.value
-        .filter((s) => s.id !== rankingsStore.seasons[0]?.id)
-        .reverse();
+      return seasons.value.filter((s) => s.id !== rankingsStore.seasons[0]?.id).reverse();
     });
 
     const ongoingMatchGameModeClass: ComputedRef<string> = computed((): string => {
@@ -230,8 +198,7 @@ export default defineComponent({
 
     function getDuration(match: Match): number {
       const today = new Date();
-      const diffMs =
-        today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
+      const diffMs = today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
       const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
 
       return diffMins;
@@ -243,9 +210,7 @@ export default defineComponent({
       }
 
       return match.teams.find((team: Team) =>
-        team.players.some(
-          (player: PlayerInTeam) => player.battleTag === battleTag.value
-        )
+        team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value)
       );
     }
 
@@ -254,10 +219,8 @@ export default defineComponent({
         return {} as Team;
       }
 
-      return match.teams.find((team: Team) =>
-          !team.players.some(
-            (player: PlayerInTeam) => player.battleTag === battleTag.value
-          )
+      return match.teams.find(
+        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value)
       );
     }
 
@@ -352,6 +315,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.red {
+  background-color: red;
+  position: absolute;
+  top: 5px;
+  left: 28px;
+}
+
 .profileTab {
   background-color: #f5f5f5;
 }
