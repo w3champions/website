@@ -65,13 +65,6 @@ header.v-app-bar--is-scrolled + main {
   opacity: 0.25;
 }
 
-.red {
-  background-color: red;
-  position: absolute;
-  top: 5px;
-  left: 28px;
-}
-
 .blinker {
   -webkit-animation: up-right 1s infinite;
   -moz-animation: up-right 1s infinite;

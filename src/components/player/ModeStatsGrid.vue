@@ -1,10 +1,5 @@
 <template>
-  <v-data-table
-    hide-default-footer
-    :headers="headers"
-    :items="gameModeStatsCombined"
-    mobile-breakpoint="400"
-  >
+  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400">
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
       <v-tooltip top v-bind:key="h.text">
         <template v-slot:activator="{ on }">
@@ -16,14 +11,11 @@
     <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.id">
-          <td>
+          <td class="cell d-flex justify-center align-center">
             <span>{{ $t("gameModes." + EGameMode[item.gameMode]) }}</span>
-            <race-icon
-              style="display: inline; padding-left: 10px"
-              :race="item.race"
-            />
+            <race-icon style="display: inline; padding-left: 10px" :race="item.race" />
           </td>
-          <td class="number-text text-start">
+          <td class="number-text text-start cell">
             <div class="text-center">
               <span class="won">{{ item.wins }}</span>
               -
@@ -31,7 +23,7 @@
             </div>
             <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
           </td>
-          <td class="number-text text-end">
+          <td class="number-text text-end cell">
             <div class="text-center">
               {{ item.rank !== 0 ? item.mmr : "-" }}
             </div>
@@ -39,7 +31,7 @@
               {{ getTopPercent(item) }}
             </div>
           </td>
-          <td class="number-text text-center" style="min-width: 100px">
+          <td class="number-text text-center cell" style="min-width: 100px">
             <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints"></level-progress>
             <div v-else>-</div>
           </td>
@@ -93,8 +85,7 @@ export default defineComponent({
       const AT_arranged = AT_modes().map((AT_mode) => AT_stats.filter((modeStat) => AT_mode == modeStat.gameMode));
 
       // Filter out AT modes that haven't been played, sort by ranking points and get the stat with the highest rank.
-      const topAtStats = AT_arranged
-        .filter((modeStats) => !isEmpty(modeStats))
+      const topAtStats = AT_arranged.filter((modeStats) => !isEmpty(modeStats))
         .map((modeStats) => modeStats.sort((modeStat) => modeStat.rankingPoints))
         .map((modeStats) => modeStats.filter((modeStat, index) => index === 0))
         .flat();
@@ -111,7 +102,7 @@ export default defineComponent({
     });
 
     function sortByName(mode: ModeStat[]): ModeStat[] {
-      return mode.sort((a, b) => EGameMode[a.gameMode] < EGameMode[b.gameMode] ? -1 : 1);
+      return mode.sort((a, b) => (EGameMode[a.gameMode] < EGameMode[b.gameMode] ? -1 : 1));
     }
 
     function getTopPercent(modeStat: ModeStat): string {
@@ -180,5 +171,9 @@ export default defineComponent({
 
 .tooltip-inner {
   white-space: pre-line;
+}
+
+.cell {
+  white-space: nowrap;
 }
 </style>
