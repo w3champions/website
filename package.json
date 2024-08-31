@@ -12,7 +12,9 @@
     "lint": "eslint --no-fix src/",
     "lint:fix": "eslint --fix src/",
     "format": "node_modules/.bin/prettier --write .",
-    "generate-locales": "tsx scripts/generate-locales.ts"
+    "generate-locales": "tsx scripts/generate-locales.ts",
+    "dprint": "dprint check",
+    "dprint:fix": "dprint fmt"
   },
   "dependencies": {
     "@fontsource-variable/inter": "~5.0.16",
@@ -68,6 +70,7 @@
     "@vue/eslint-config-typescript": "^11.0.2",
     "deepmerge": "^4.2.2",
     "dotenv": "^16.0.3",
+    "dprint": "^0.47.2",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-lodash": "^7.4.0",
