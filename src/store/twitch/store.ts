@@ -5,13 +5,12 @@ import TwitchService from "@/services/TwitchService";
 
 export const useTwitchStore = defineStore("twitch", {
   state: (): TwitchState => ({
-    twitchStreamResponse: {} as TwitchStreamResponse
+    twitchStreamResponse: {} as TwitchStreamResponse,
   }),
   actions: {
     async getStreamStatus(
-      twitchNames: Array<string | null | undefined>
+      twitchNames: Array<string | null | undefined>,
     ) {
-
       const token = await AuthorizationService.authorizeWithTwitch();
 
       const sanitizedTwitchNames = twitchNames
@@ -20,14 +19,13 @@ export const useTwitchStore = defineStore("twitch", {
 
       const response = await TwitchService.getStreamStatus(
         token,
-        sanitizedTwitchNames
+        sanitizedTwitchNames,
       );
 
       this.SET_TWITCH_STREAM_RESPONSE(response);
     },
     SET_TWITCH_STREAM_RESPONSE(response: TwitchStreamResponse) {
       this.twitchStreamResponse = response;
-    }
-  }
-
+    },
+  },
 });

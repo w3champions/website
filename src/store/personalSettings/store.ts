@@ -20,12 +20,11 @@ export const usePersonalSettingsStore = defineStore("personalSettings", {
     async saveUserProfile(setting: PersonalSetting) {
       const oauthStore = useOauthStore();
       const player = usePlayerStore();
-      const success =
-        await PersonalSettingsService.savePersonalSettings(
-          player.battleTag,
-          setting,
-          oauthStore.token,
-        );
+      const success = await PersonalSettingsService.savePersonalSettings(
+        player.battleTag,
+        setting,
+        oauthStore.token,
+      );
       if (success) this.SET_PERSONAL_SETTING(setting);
     },
     async saveAvatar(picture: ProfilePicture) {
@@ -49,4 +48,3 @@ export const usePersonalSettingsStore = defineStore("personalSettings", {
     },
   },
 });
-

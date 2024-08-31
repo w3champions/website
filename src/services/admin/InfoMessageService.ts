@@ -24,7 +24,7 @@ export default class InfoMessageService {
 
   public static async deleteNews(newsMessage: NewsMessage, token: string): Promise<boolean> {
     const url = `${API_URL}api/admin/news/${newsMessage.bsonId}`;
-    const response =  await authorizedFetch("DELETE", url, token);
+    const response = await authorizedFetch("DELETE", url, token);
     return response.ok;
   }
 

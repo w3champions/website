@@ -28,6 +28,6 @@ export const usePlayerSearchStore = defineStore("playerSearch", {
     },
     SET_PLAYER_SEARCH_MODEL(val: string): void {
       this.playerSearchModel = val;
-    }
+    },
   },
 });

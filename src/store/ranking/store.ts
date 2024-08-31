@@ -1,4 +1,4 @@
-import { CountryRanking, Ladder, Ranking, RankingState, Season, ActiveGameMode } from "./types";
+import { ActiveGameMode, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
 import { DataTableOptions, EGameMode } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";

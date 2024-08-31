@@ -1,16 +1,5 @@
 import { API_URL } from "@/main";
-import {
-  GameDayPerMode,
-  GameLength,
-  MatchesOnMapPerSeason,
-  MatchupLength,
-  MmrDistribution,
-  PlayedHeroByMode,
-  PlayersPerDay,
-  PopularHours,
-  StatsPerWinrate,
-  WinLoss,
-} from "@/store/overallStats/types";
+import { GameDayPerMode, GameLength, MatchesOnMapPerSeason, MatchupLength, MmrDistribution, PlayedHeroByMode, PlayersPerDay, PopularHours, StatsPerWinrate, WinLoss } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 
@@ -122,7 +111,7 @@ export default class StatisticService {
   public static async retrieveMmrDistribution(
     season: number,
     gameMode: EGameMode,
-    gateWay: Gateways
+    gateWay: Gateways,
   ): Promise<MmrDistribution> {
     const url = `${API_URL}api/w3c-stats/mmr-distribution?season=${season}&gateWay=${gateWay}&gameMode=${gameMode}`;
     const response = await fetch(url, {
@@ -142,7 +131,7 @@ export default class StatisticService {
     third: string,
     opFirst: string,
     opSecond: string,
-    opThird: string
+    opThird: string,
   ): Promise<WinLoss> {
     const url = `${API_URL}api/w3c-stats/heroes-winrate?first=${first}&second=${second}&third=${third}&opFirst=${opFirst}&opSecond=${opSecond}&opThird=${opThird}`;
     const response = await fetch(url, {

@@ -2,10 +2,7 @@ import { TwitchStreamResponse } from "@/store/twitch/types";
 import { TwitchToken } from "@/store/oauth/types";
 
 export default class TwitchService {
-  public static async getStreamStatus(
-    token: TwitchToken,
-    twitchNames: string[]
-  ): Promise<TwitchStreamResponse> {
+  public static async getStreamStatus(token: TwitchToken, twitchNames: string[]): Promise<TwitchStreamResponse> {
     const baseUrl = "https://api.twitch.tv";
     const params = `user_login=${twitchNames.join("&user_login=")}`;
 

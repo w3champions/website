@@ -1,4 +1,4 @@
-import { CloudStorageState, CloudFile, CloudValidationMessage, CloudStorageProvider } from "./types";
+import { CloudFile, CloudStorageProvider, CloudStorageState, CloudValidationMessage } from "./types";
 import CloudStorageService from "@/services/admin/CloudStorageService";
 import { useOauthStore } from "@/store/oauth/store";
 import { defineStore } from "pinia";

@@ -219,10 +219,10 @@ const en = {
     NeonCity: "Neon City",
     HarvestOfSorrow: "Harvest of Sorrow",
     TwilightRuins: "Twilight Ruins",
-    //MarketSquare: "Market Square",
-    //SanctuaryLV: "Sanctuary LV",
+    // MarketSquare: "Market Square",
+    // SanctuaryLV: "Sanctuary LV",
     Rockslide: "Rockslide",
-    //Ferocity: "Ferocity",
+    // Ferocity: "Ferocity",
     FrozenMarshlands: "Frozen Marshlands",
     TastaCastleGardens: "Tasta Castle Gardens",
 
