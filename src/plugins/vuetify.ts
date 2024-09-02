@@ -17,11 +17,11 @@ export default new Vuetify({
       },
       light: {
         "w3-race-bg": "#e9e9e9",
-      }
-    }
+      },
+    },
   },
   icons: {
-    iconfont: 'mdiSvg', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+    iconfont: "mdiSvg", // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
     values: {
       trovo: {
         component: TrovoIcon,
@@ -32,10 +32,9 @@ export default new Vuetify({
       w3info: {
         component: W3infoIcon,
       },
-    }
-  }
+    },
+  },
 });
-
 
 export const useVuetify = () => {
   const vm = getCurrentInstance();

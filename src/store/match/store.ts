@@ -32,7 +32,7 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
-          this.sort
+          this.sort,
         );
 
         // Handle edge case when loading ongoing matches, if the number of matches are reduced
@@ -49,7 +49,7 @@ export const useMatchStore = defineStore("match", {
           this.gameMode,
           this.map,
           this.mmr,
-          this.selectedSeason.id
+          this.selectedSeason.id,
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
@@ -64,7 +64,7 @@ export const useMatchStore = defineStore("match", {
         gameMode || this.gameMode,
         map || this.map,
         this.mmr,
-        this.sort
+        this.sort,
       );
       this.SET_ALL_ONGOING_MATCHES(response.matches);
     },

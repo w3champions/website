@@ -1,5 +1,5 @@
 import { ERaceEnum } from "@/store/types";
-import { RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
+import { RaceStat, RaceWinsOnMap, WinLossesOnMap } from "@/store/player/types";
 
 export function defaultStatsTab(raceWinsOnMap: RaceWinsOnMap[]): string {
   let maxRace = ERaceEnum.TOTAL;
@@ -13,7 +13,7 @@ export function defaultStatsTab(raceWinsOnMap: RaceWinsOnMap[]): string {
       s.winLossesOnMap.forEach((w: WinLossesOnMap) => {
         const gamesOfRace = w.winLosses
           .map((wl: RaceStat) => wl.games)
-          .reduce((a: number, b:number) => a + b, 0);
+          .reduce((a: number, b: number) => a + b, 0);
 
         if (maxGames < gamesOfRace) {
           maxRace = s.race;

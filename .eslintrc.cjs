@@ -7,23 +7,16 @@ module.exports = {
     es2022: true,
     node: true,
   },
-  //plugins: [
-  //  "prettier"
-  //],
   extends: [
     "eslint:recommended",
     "plugin:vue/essential",
     "plugin:vuetify/base",
     // "plugin:vuetify/recommended",
-    //  "plugin:prettier/recommended",
     "@vue/typescript/recommended",
-    // "@vue/prettier/@typescript-eslint"
     // "@vue/typescript/recommended",
-    // "@vue/prettier/@typescript-eslint",
     "plugin:lodash/recommended",
   ],
   rules: {
-    // "prettier/prettier": "warn",
     "arrow-parens": ["warn", "always"],
     "camelcase": "off",
     "comma-dangle": "off",

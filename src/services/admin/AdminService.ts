@@ -1,20 +1,5 @@
 import { API_URL } from "@/main";
-import {
-  BannedPlayer,
-  BannedPlayersResponse,
-  QueueData,
-  Proxy,
-  SearchedPlayer,
-  ProxySettings,
-  GloballyMutedPlayer,
-  GlobalMute,
-  PortraitDefinition,
-  ChangePortraitsCommand,
-  ChangePortraitsDto,
-  PortraitDefinitionGroup,
-  PortraitDefinitionDTO,
-  ReplayChatLog,
-} from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GloballyMutedPlayer, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 
 export default class AdminService {

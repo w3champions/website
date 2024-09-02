@@ -4,9 +4,9 @@ export type CloudStorageState = {
 };
 
 export type CloudFile = {
-    name: string;
-    size: number;
-    lastModified: Date;
+  name: string;
+  size: number;
+  lastModified: Date;
 };
 
 export type CloudValidationMessage = {
@@ -16,5 +16,5 @@ export type CloudValidationMessage = {
 
 export enum CloudStorageProvider {
   ALIBABA = "alibaba",
-  S3 = "s3"
+  S3 = "s3",
 }

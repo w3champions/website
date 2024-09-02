@@ -1,20 +1,4 @@
-import {
-  GameDay,
-  GameDayPerMode,
-  GameLength,
-  HeroPick,
-  MatchesOnMapPerSeason,
-  MmrDistribution,
-  OverallStatisticState,
-  PlayedHeroByMode,
-  PlayersPerDay,
-  SeasonGameModeGateWayForMMR,
-  StatsPerWinrate,
-  WinLoss,
-  PopularHours,
-  MatchupLength,
-  MmrRangeValues,
-} from "./types";
+import { GameDay, GameDayPerMode, GameLength, HeroPick, MatchesOnMapPerSeason, MatchupLength, MmrDistribution, MmrRangeValues, OverallStatisticState, PlayedHeroByMode, PlayersPerDay, PopularHours, SeasonGameModeGateWayForMMR, StatsPerWinrate, WinLoss } from "./types";
 import { ERaceEnum } from "../types";
 import StatisticService from "@/services/StatisticService";
 import { defineStore } from "pinia";
@@ -76,7 +60,7 @@ export const useOverallStatsStore = defineStore("overallStats", {
       this.SET_GAME_LENGTH_STATS(stats);
     },
     async loadMatchupLengthStatistics(race1 = 1, race2 = 1, season = "all") {
-       const stats = await StatisticService.retrieveMatchupLengths(race1, race2, season);
+      const stats = await StatisticService.retrieveMatchupLengths(race1, race2, season);
       this.SET_MATCHUP_LENGTH_STATS(stats);
     },
     async loadPlayedHeroes() {
@@ -152,6 +136,6 @@ export const useOverallStatsStore = defineStore("overallStats", {
     },
     SET_MATCHUP_MMR_RANGE(mmrRange: MmrRangeValues) {
       this.matchupMmrRange = mmrRange;
-    }
+    },
   },
 });

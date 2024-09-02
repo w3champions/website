@@ -60,6 +60,6 @@ export const useTournamentsManagementStore = defineStore("tournamentsManagement"
     },
     SET_FLO_NODES(floNodes: ITournamentFloNode[]): void {
       this.floNodes = floNodes;
-    }
+    },
   },
 });

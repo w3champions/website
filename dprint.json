@@ -1,0 +1,21 @@
+{
+  "lineWidth": 999,
+  "typescript": {
+    "indentWidth": 2,
+    "quoteStyle": "preferDouble",
+    "newLineKind": "auto",
+    "nextControlFlowPosition": "maintain",
+    "module.sortImportDeclarations": "maintain"
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/yarn.lock",
+    "**/*.js",
+    "src/locales/data.ts",
+    "components.d.ts",
+    ".eslintrc.cjs"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.88.10.wasm"
+  ]
+}

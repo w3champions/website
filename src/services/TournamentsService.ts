@@ -96,13 +96,22 @@ export default class TournamentsService {
     const url = `${API_URL}api/tournaments/${id}?authorization=${token}`;
 
     const fieldNames = [
-      "name", "startDateTime", "gateway", "mode", "format", "mapPool", "state",
-      "registrationTimeMinutes", "readyTimeSeconds", "vetoTimeSeconds",
-      "showWinnerTimeHours", "matcherinoUrl",
+      "name",
+      "startDateTime",
+      "gateway",
+      "mode",
+      "format",
+      "mapPool",
+      "state",
+      "registrationTimeMinutes",
+      "readyTimeSeconds",
+      "vetoTimeSeconds",
+      "showWinnerTimeHours",
+      "matcherinoUrl",
     ];
     const body = pickBy(
       tournament,
-      (value, key) => fieldNames.includes(key) && !isUndefined(value)
+      (value, key) => fieldNames.includes(key) && !isUndefined(value),
     );
     body.registrationTimeMinutes = +body.registrationTimeMinutes!;
     body.readyTimeSeconds = +body.readyTimeSeconds!;

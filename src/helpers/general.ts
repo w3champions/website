@@ -5,10 +5,8 @@ import { useI18n } from "vue-i18n-bridge";
 // got it from here: https://www.petermorlion.com/iterating-a-typescript-enum/
 export const enumKeys = <
   O extends Record<string, unknown>,
-  K extends keyof O = keyof O
->(
-  obj: O
-): K[] => {
+  K extends keyof O = keyof O,
+>(obj: O): K[] => {
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 };
 
@@ -32,23 +30,23 @@ export const racesWithTotal: Race[] = [
 ];
 
 export const authorizedFetch = async (method: string, url: RequestInfo | URL, token: string, body?: BodyInit | null): Promise<Response> => {
-    return await fetch(url, {
-      method: method,
-      body: body,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-    });
-  };
+  return await fetch(url, {
+    method: method,
+    body: body,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export const authDownload = (url: string, token: string, fileName: string) => {
   fetch(url, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`
-    }
+      "Authorization": `Bearer ${token}`,
+    },
   })
     .then((response) => {
       if (!response.ok) {

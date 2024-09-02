@@ -80,6 +80,6 @@ export const useOauthStore = defineStore("oauth", {
     },
     SET_IS_LOADING_BLIZZARD_BTAG(val: boolean): void {
       this.isLoadingBlizzardBtag = val;
-    }
-  }
+    },
+  },
 });

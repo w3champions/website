@@ -1,13 +1,4 @@
-import {
-  AdminState,
-  BannedPlayer,
-  GloballyMutedPlayer,
-  GlobalMute,
-  OverridesList,
-  Proxy,
-  ProxySettings,
-  QueueData,
-} from "./types";
+import { AdminState, BannedPlayer, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
@@ -59,8 +50,7 @@ export const useAdminStore = defineStore("admin", {
       this.SET_QUEUEDATA(queuedata);
     },
     async loadAvailableProxies(token: string) {
-      const availableProxies =
-        await AdminService.getAvailableProxies(token);
+      const availableProxies = await AdminService.getAvailableProxies(token);
       this.SET_AVAILABLEPROXIES(availableProxies);
     },
     async getProxiesForPlayer(battleTag: string): Promise<ProxySettings> {
@@ -152,6 +142,6 @@ export const useAdminStore = defineStore("admin", {
     },
     SET_SHOW_JWT_EXPIRED_DIALOG(value: boolean): void {
       this.showJwtExpiredDialog = value;
-    }
+    },
   },
 });
