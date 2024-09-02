@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import VueI18n from "vue-i18n";
-import { createI18n, castToVueI18n } from "vue-i18n-bridge";
+import { castToVueI18n, createI18n } from "vue-i18n-bridge";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies";
 import { createPinia, PiniaVuePlugin } from "pinia";

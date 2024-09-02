@@ -22,6 +22,6 @@ export const useGlobalSearchStore = defineStore("globalSearch", {
     SET_PLAYERS(payload: { players: PlayerSearchInfo[]; append: boolean }) {
       this.players = payload.append ? [...this.players, ...payload.players] : payload.players;
       this.hasMore = payload.players.length === PAGE_SIZE;
-    }
+    },
   },
 });

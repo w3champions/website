@@ -1,10 +1,4 @@
-import {
-  AdminPlayerManagementState,
-  ChangePortraitsCommand,
-  PortraitDefinition,
-  PortraitDefinitionDTO,
-  PortraitDefinitionGroup,
-} from "../types";
+import { AdminPlayerManagementState, ChangePortraitsCommand, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup } from "../types";
 import { useOauthStore } from "@/store/oauth/store";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import AdminService from "@/services/admin/AdminService";
@@ -71,4 +65,3 @@ export const usePlayerManagementStore = defineStore("playerManagement", {
     },
   },
 });
-

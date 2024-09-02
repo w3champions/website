@@ -28,7 +28,7 @@ export default class MatchService {
     gameMode: EGameMode,
     map: string,
     mmr: Mmr,
-    sort: string
+    sort: string,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
 
@@ -39,7 +39,7 @@ export default class MatchService {
       gameMode,
       map,
       mmr,
-      sort
+      sort,
     );
   }
 
@@ -50,7 +50,7 @@ export default class MatchService {
     gameMode: EGameMode,
     map: string,
     mmr: Mmr,
-    sort: string
+    sort: string,
   ): Promise<{ count: number; matches: Match[] }> {
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
@@ -87,17 +87,13 @@ export default class MatchService {
     playerRace: ERaceEnum,
     opponentRace: ERaceEnum,
     gateway: Gateways,
-    season: number
+    season: number,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
-    let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(
-      battleTag
-    )}&gateway=${gateway}`;
+    let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
 
     if (opponentTag.length) {
-      url += `&offset=${offset}&opponentId=${encodeURIComponent(
-        opponentTag
-      )}&pageSize=${this.pageSize}`;
+      url += `&offset=${offset}&opponentId=${encodeURIComponent(opponentTag)}&pageSize=${this.pageSize}`;
     } else {
       url += `&offset=${offset}&pageSize=${this.pageSize}`;
     }

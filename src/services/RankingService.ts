@@ -1,11 +1,4 @@
-import {
-  Ranking,
-  Gateways,
-  Ladder,
-  Season,
-  CountryRanking,
-  ActiveGameMode,
-} from "@/store/ranking/types";
+import { ActiveGameMode, CountryRanking, Gateways, Ladder, Ranking, Season } from "@/store/ranking/types";
 import { API_URL } from "@/main";
 import { EGameMode } from "@/store/types";
 
@@ -14,7 +7,7 @@ export default class RankingService {
     leagueId: number,
     gateway: Gateways,
     gameMode: EGameMode,
-    season: number
+    season: number,
   ): Promise<Ranking[]> {
     const url = `${API_URL}api/ladder/${leagueId}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
 
@@ -26,7 +19,7 @@ export default class RankingService {
     countryCode: string,
     gateway: Gateways,
     gameMode: EGameMode,
-    season: number
+    season: number,
   ): Promise<CountryRanking[]> {
     const url = `${API_URL}api/ladder/country/${countryCode}?gateWay=${gateway}&gameMode=${gameMode}&season=${season}`;
 
@@ -38,7 +31,7 @@ export default class RankingService {
     str: string,
     gateway: Gateways,
     gameMode: EGameMode,
-    season: number
+    season: number,
   ): Promise<Ranking[]> {
     const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}&gameMode=${gameMode}&season=${season}`;
 

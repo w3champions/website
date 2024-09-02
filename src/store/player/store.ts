@@ -1,13 +1,4 @@
-import {
-  ModeStat,
-  PlayerMmrRpTimeline,
-  PlayerProfile,
-  PlayerState,
-  PlayerStatsHeroOnMapVersusRace,
-  PlayerStatsRaceOnMapVersusRace,
-  RaceStat,
-  PlayerGameLengthStats,
-} from "./types";
+import { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
 import { EGameMode, ERaceEnum, Match } from "../types";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -72,19 +63,17 @@ export const usePlayerStore = defineStore("player", {
       this.SET_RACE_STATS(raceStats);
     },
     async loadPlayerStatsRaceVersusRaceOnMap(battleTag: string) {
-      const profile =
-        await ProfileService.retrievePlayerStatsRaceVersusRaceOnMap(
-          battleTag,
-          this.selectedSeason?.id ?? -1,
-        );
+      const profile = await ProfileService.retrievePlayerStatsRaceVersusRaceOnMap(
+        battleTag,
+        this.selectedSeason?.id ?? -1,
+      );
       this.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
     },
     async loadPlayerStatsHeroVersusRaceOnMap(battleTag: string) {
-      const profile =
-        await ProfileService.retrievePlayerStatsHeroVersusRaceOnMap(
-          battleTag,
-          this.selectedSeason?.id ?? -1,
-        );
+      const profile = await ProfileService.retrievePlayerStatsHeroVersusRaceOnMap(
+        battleTag,
+        this.selectedSeason?.id ?? -1,
+      );
       this.SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(profile);
     },
     async loadMatches(page?: number) {
@@ -123,14 +112,13 @@ export const usePlayerStore = defineStore("player", {
     async loadPlayerMmrRpTimeline() {
       this.SET_LOADING_MMR_TIMELINE(true);
       const rootStateStore = useRootStateStore();
-      const mmrRpTimeline =
-        await ProfileService.retrievePlayerMmrRpTimeline(
-          this.battleTag,
-          this.profileStatisticsRace,
-          rootStateStore.gateway,
-          this.selectedSeason?.id ?? -1,
-          this.profileStatisticsGameMode,
-        );
+      const mmrRpTimeline = await ProfileService.retrievePlayerMmrRpTimeline(
+        this.battleTag,
+        this.profileStatisticsRace,
+        rootStateStore.gateway,
+        this.selectedSeason?.id ?? -1,
+        this.profileStatisticsGameMode,
+      );
       this.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       this.SET_LOADING_MMR_TIMELINE(false);
     },
@@ -206,6 +194,6 @@ export const usePlayerStore = defineStore("player", {
     },
     SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats: PlayerGameLengthStats | undefined): void {
       this.playerGameLengthStats = playerGameLengthStats;
-    }
+    },
   },
 });

@@ -1,6 +1,6 @@
 import { API_URL } from "@/main";
-import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
-import { authorizedFetch, authDownload } from "@/helpers/general";
+import { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
+import { authDownload, authorizedFetch } from "@/helpers/general";
 
 export default class CloudStorageService {
   public static async fetchFiles(token: string, provider: CloudStorageProvider): Promise<CloudFile[]> {
@@ -21,10 +21,15 @@ export default class CloudStorageService {
           const content = readerEvent?.target?.result as string;
           const base64content = content?.split("base64,")[1];
 
-          const response = await authorizedFetch("POST", url, token, JSON.stringify({
-            name: file.name,
-            content: base64content
-          }));
+          const response = await authorizedFetch(
+            "POST",
+            url,
+            token,
+            JSON.stringify({
+              name: file.name,
+              content: base64content,
+            }),
+          );
 
           resolve(response);
         } catch (err) {
