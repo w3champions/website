@@ -7,9 +7,9 @@ module.exports = {
     es2022: true,
     node: true,
   },
-  //plugins: [
-  //  "prettier"
-  //],
+  // plugins: [
+  //   "prettier"
+  // ],
   extends: [
     "eslint:recommended",
     "plugin:vue/essential",

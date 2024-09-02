@@ -4,7 +4,7 @@ import { EAvatarCategory } from "@/store/types";
 export function getAvatarUrl(
   category: EAvatarCategory,
   picId: number,
-  isClassic: boolean
+  isClassic: boolean,
 ) {
   if (picId == undefined || picId == null) {
     return `${INGAME_STATIC_RESOURCES_URL}icons/raceAvatars/STARTER_${Math.floor(Math.random() * 5) + 1}.jpg?v=2`;

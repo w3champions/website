@@ -12,7 +12,8 @@
     "**/yarn.lock",
     "**/*.js",
     "src/locales/data.ts",
-    "components.d.ts"
+    "components.d.ts",
+    ".eslintrc.cjs"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.88.10.wasm"

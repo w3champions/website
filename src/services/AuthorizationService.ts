@@ -1,4 +1,4 @@
-import { W3cToken, TwitchToken, BnetOAuthRegion } from "@/store/oauth/types";
+import { BnetOAuthRegion, TwitchToken, W3cToken } from "@/store/oauth/types";
 import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
 import Vue from "vue";
 
@@ -6,10 +6,7 @@ const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
 
 export default class AuthorizationService {
-  public static async authorize(
-    code: string,
-    region: BnetOAuthRegion = BnetOAuthRegion.eu
-  ): Promise<W3cToken> {
+  public static async authorize(code: string, region: BnetOAuthRegion = BnetOAuthRegion.eu): Promise<W3cToken> {
     const url = `${IDENTIFICATION_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}&region=${region}`;
     const response = await fetch(url, {
       method: "GET",
