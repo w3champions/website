@@ -28,7 +28,7 @@
             <v-icon>{{ item.icon }}</v-icon>
           </template>
           <v-list-item-title>
-            {{ $t(`views_app.${item.title}`) }}
+            {{ t(`views_app.${item.title}`) }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -63,7 +63,7 @@
           :class="item.class"
         >
           <span class="mr-2">
-            {{ $t(`views_app.${item.title}`) }}
+            {{ t(`views_app.${item.title}`) }}
           </span>
           <v-icon>{{ item.icon }}</v-icon>
         </v-btn>
@@ -88,10 +88,10 @@
         </template>
         <v-list>
           <v-list-item @click="openPlayerProfile">
-            <v-list-item-title>{{ $t("views_app.viewprofile") }}</v-list-item-title>
+            <v-list-item-title>{{ t("views_app.viewprofile") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout">
-            <v-list-item-title>{{ $t("views_app.logout") }}</v-list-item-title>
+            <v-list-item-title>{{ t("views_app.logout") }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -104,16 +104,16 @@
         </template>
         <v-list class="theme-selector">
           <v-list-item @click="setTheme('human')">
-            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
+            <v-list-item-title>{{ t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="setTheme('orc')">
-            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
+            <v-list-item-title>{{ t("races.ORC") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="setTheme('nightelf')">
-            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
+            <v-list-item-title>{{ t("races.NIGHT_ELF") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="setTheme('undead')">
-            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
+            <v-list-item-title>{{ t("races.UNDEAD") }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -195,7 +195,7 @@ export default defineComponent({
     GlobalSearch,
   },
   setup() {
-    const { locale } = useI18n();
+    const { locale, t } = useI18n();
     const router = useRouter();
     const theme = useTheme();
     const cookies = useCookies();
@@ -407,6 +407,7 @@ export default defineComponent({
       activeLanguages,
       getTheme,
       setTheme,
+      t,
     };
   },
 });
