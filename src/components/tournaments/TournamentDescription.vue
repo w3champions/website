@@ -1,10 +1,6 @@
 <template>
   <div>
     <div>
-      <b>Gateway:</b>
-      {{ gateway }}
-    </div>
-    <div>
       <b>Start Time:</b>
       {{ formattedDate }}
     </div>
@@ -48,7 +44,7 @@
 import { computed, ComputedRef, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
-import { ETournamentFormatLabel, EGameModeLabel, EGatewayLabel } from "@/helpers/tournaments";
+import { ETournamentFormatLabel, EGameModeLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { ERaceEnum } from "@/store/types";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
@@ -69,7 +65,6 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const gateway: ComputedRef<string> = computed((): string => EGatewayLabel[props.tournament.gateway]);
     const formattedDate: ComputedRef<string> = computed((): string => formatDateToDateWeekday(props.tournament.startDateTime));
     const gameMode: ComputedRef<string> = computed((): string => EGameModeLabel[props.tournament.mode]);
     const format: ComputedRef<string> = computed((): string => ETournamentFormatLabel[props.tournament.format]);
@@ -91,7 +86,6 @@ export default defineComponent({
     });
 
     return {
-      gateway,
       formattedDate,
       gameMode,
       format,

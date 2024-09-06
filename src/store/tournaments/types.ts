@@ -1,5 +1,4 @@
 import { EGameMode, ERaceEnum } from "../types";
-import { Gateways } from "../ranking/types";
 import { Map } from "../admin/mapsManagement/types";
 
 export enum ETournamentFormat {
@@ -50,7 +49,6 @@ export interface ITournament {
   mode: EGameMode;
   format: ETournamentFormat;
   type: ETournamentType;
-  gateway: Gateways;
   matcherinoLink: string;
   mapPool: number[];
   players: ITournamentPlayer[];
