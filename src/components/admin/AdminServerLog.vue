@@ -28,7 +28,7 @@
 import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AdminServerLog",

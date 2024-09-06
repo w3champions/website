@@ -41,8 +41,8 @@
 import { computed, defineComponent, WritableComputedRef } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
-import { useI18n } from "vue-i18n-bridge";
-import { useOauthStore } from "@/store/oauth/store";
+import { useI18n } from "vue-i18n";
+import { useCookies } from "@/mixins/useCookies";
 
 export default defineComponent({
   name: "SignInDialog",
@@ -59,7 +59,7 @@ export default defineComponent({
   },
   setup: (props, context) => {
     const { t } = useI18n();
-    const oauthStore = useOauthStore();
+    const cookies = useCookies();
 
     const gateways = [
       {
@@ -84,7 +84,7 @@ export default defineComponent({
     });
 
     async function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
-      await oauthStore.saveLoginRegion(id);
+      cookies.set("W3ChampionsAuthRegion", id, Infinity); // Cookie never expires
       location.href = `${uri}/oauth/authorize?region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
     }
 

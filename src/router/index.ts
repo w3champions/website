@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueRouter, { Route, RouteConfig } from "vue-router";
+import { createWebHistory, createRouter, RouteRecordRaw, RouteLocationNormalizedGeneric, RouteRecordNameGeneric } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import Tournaments from "@/views/Tournaments.vue";
@@ -44,9 +43,7 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import { EAdminRouteName, EStatisticsRouteName } from "./types";
 
-Vue.use(VueRouter);
-
-const routes: RouteConfig[] = [
+const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Home",
@@ -234,14 +231,14 @@ const routes: RouteConfig[] = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
+const router = createRouter({
+  history: createWebHistory(),
   routes,
 });
 
-const documentTitle = (pageName: string | null | undefined) => pageName ? `${pageName} | W3Champions` : "W3Champions";
+const documentTitle = (pageName: RouteRecordNameGeneric) => pageName ? `${pageName.toString()} | W3Champions` : "W3Champions";
 
-router.afterEach((to: Route) => {
+router.afterEach((to: RouteLocationNormalizedGeneric) => {
   document.title = documentTitle(to.name);
 });
 

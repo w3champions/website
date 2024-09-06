@@ -61,7 +61,7 @@ import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,

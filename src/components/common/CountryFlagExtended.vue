@@ -17,7 +17,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { CountriesByCode } from "@/store/countries";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 // Lazy load.
 const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");

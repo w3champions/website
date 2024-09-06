@@ -327,7 +327,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
@@ -336,7 +336,7 @@ import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.

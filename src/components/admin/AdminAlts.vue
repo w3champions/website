@@ -43,7 +43,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AdminAlts",

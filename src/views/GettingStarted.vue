@@ -204,7 +204,7 @@
 import { defineComponent, ref } from "vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 class TabsModel {
   constructor(private router: ReturnType<typeof useRouter>) {}

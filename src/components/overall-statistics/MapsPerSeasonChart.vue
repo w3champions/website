@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { MapCount } from "@/store/overallStats/types";

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";

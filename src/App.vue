@@ -164,11 +164,12 @@ import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { useVuetify } from "@/plugins/vuetify";
-import { useI18n } from "vue-i18n-bridge";
+import { useTheme } from "vuetify";
+import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
+import { useCookies } from "@/mixins/useCookies";
 
 import {
   mdiAccountCircle,
@@ -201,7 +202,8 @@ export default defineComponent({
   setup() {
     const { locale } = useI18n();
     const router = useRouter();
-    const vuetify = useVuetify();
+    const theme = useTheme();
+    const cookies = useCookies();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
@@ -265,7 +267,7 @@ export default defineComponent({
     }
 
     function logout(): void {
-      oauthStore.logout();
+      oauthStore.logout(cookies);
     }
 
     const loginName = computed({
@@ -305,7 +307,7 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.dark = isDarkTheme.get();
+      theme.global.name.value = "isDarkTheme.get()";
       setThemeColors();
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }
@@ -353,21 +355,22 @@ export default defineComponent({
     }
 
     function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
-      Object.assign(
-        {},
-        vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
-        themeColors.get()
-      );
+      theme.global.name.value = "light";
+      // Object.assign(
+      //   {},
+      //   theme.global.name.value.themes[isDarkTheme.get() ? "dark" : "light"],
+      //   themeColors.get()
+      // );
     }
 
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
-      await oauthStore.loadAuthCodeToState();
+      const bearer: string = cookies?.get("W3ChampionsJWT") ?? "";
+      await oauthStore.loadAuthCodeToState(bearer);
 
       if (authCode.value) {
-        await oauthStore.loadBlizzardBtag(authCode.value);
+        await oauthStore.loadBlizzardBtag(authCode.value, cookies);
       }
     }
 

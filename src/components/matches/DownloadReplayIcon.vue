@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { API_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
 import { TranslateResult } from "vue-i18n";

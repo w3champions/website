@@ -37,7 +37,7 @@ import { defineComponent, PropType } from "vue";
 import { activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
-import { TranslateResult } from "vue-i18n-bridge";
+import { TranslateResult } from "vue-i18n";
 
 export default defineComponent({
   name: "GameModeSelect",
