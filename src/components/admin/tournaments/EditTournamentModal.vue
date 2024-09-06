@@ -11,15 +11,6 @@
       </v-tabs>
       <v-tabs-items v-model="tabsModel">
         <v-tab-item :transition="false">
-          <v-select
-            :items="gateways"
-            v-model="gateway"
-            item-text="name"
-            item-value="id"
-            label="Gateway"
-            hide-details
-            single-line
-          />
           <v-text-field
             v-model="name"
             label="Name"
@@ -185,8 +176,7 @@ import map from "lodash/map";
 import pickBy from "lodash/pickBy";
 import { ETournamentFormat, ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
 import { EGameMode } from "@/store/types";
-import { EGatewayLabel, EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
-import { Gateways } from "@/store/ranking/types";
+import { EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { formatISO } from "date-fns";
 import { formatTimestampString } from "@/helpers/date-functions";
@@ -214,7 +204,6 @@ export default defineComponent({
     const tournamentsManagementStore = useTournamentsManagementStore();
     const now = formatISO(new Date());
     const name = ref<string>("Standard One vs One Tournament");
-    const gateway = ref<Gateways>(Gateways.Europe);
     const startDate = ref<string>(now.substring(0, 10));
     const startTime = ref<string>(now.substring(11, 16));
     const startDateTime = ref<Date>(new Date());
@@ -234,7 +223,6 @@ export default defineComponent({
 
     const isEdit: ComputedRef<boolean> = computed((): boolean => !!props.tournament);
     const mapOptions: ComputedRef<Map[]> = computed((): Map[] => props.maps);
-    const gateways: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(EGatewayLabel));
     const gameModes: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(EGameModeLabel));
     const formats: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
     const enabledFloNodes: ComputedRef<ITournamentFloNode[]> = computed((): ITournamentFloNode[] => tournamentsManagementStore.floNodes);
@@ -262,7 +250,6 @@ export default defineComponent({
 
       const tournamentData = {
         name: name.value,
-        gateway: gateway.value,
         startDateTime: startDateTime.value,
         mode: mode.value,
         format: format.value,
@@ -306,7 +293,6 @@ export default defineComponent({
       const startDateTime = formatTimestampString(props.tournament.startDateTime, "yyyy-MM-dd HH:mm");
 
       name.value = props.tournament.name;
-      gateway.value = props.tournament.gateway;
       startDate.value = startDateTime.substring(0, 10);
       startTime.value = startDateTime.substring(11, 16);
       mode.value = props.tournament.mode;
@@ -326,8 +312,6 @@ export default defineComponent({
     return {
       isEdit,
       tabsModel,
-      gateways,
-      gateway,
       name,
       startDate,
       startTime,

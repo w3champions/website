@@ -1,4 +1,3 @@
-import { Gateways } from "@/store/ranking/types";
 import { ETournamentFormat, ETournamentState } from "@/store/tournaments/types";
 import { EGameMode, ERaceEnum } from "@/store/types";
 
@@ -28,10 +27,4 @@ export const ERaceEnumLabel: { [key: number]: string } = {
   [ERaceEnum.NIGHT_ELF]: "Night Elf",
   [ERaceEnum.UNDEAD]: "Undead",
   [ERaceEnum.RANDOM]: "Random",
-};
-
-export const EGatewayLabel: { [key: number]: string } = {
-  [Gateways.America]: "America",
-  [Gateways.Europe]: "Europe",
-  [Gateways.Asia]: "Asia",
 };
