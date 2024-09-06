@@ -98,7 +98,6 @@ export default class TournamentsService {
     const fieldNames = [
       "name",
       "startDateTime",
-      "gateway",
       "mode",
       "format",
       "mapPool",
