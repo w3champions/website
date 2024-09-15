@@ -345,6 +345,7 @@ export default defineComponent({
       isCompleteGame,
       scoresOfWinners,
       scoresOfLosers,
+      ffaLoser1,
       ffaLoser2,
       ffaLoser3,
       rowLabels,

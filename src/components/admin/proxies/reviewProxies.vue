@@ -133,7 +133,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     //! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
     //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
     //! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
@@ -148,8 +148,6 @@ export default defineComponent({
     const originalProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
     const dialog = ref<boolean>(false);
 
-    const availableProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => props.proxies);
-    const modifiedProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.modifiedProxies);
     const isProxyModified: ComputedRef<boolean> = computed((): boolean => adminStore.proxyModified);
 
     function putNewProxies(): void {
@@ -166,18 +164,6 @@ export default defineComponent({
 
     function newNodeOverrides(auto: boolean): string[] {
       return auto ? adminStore.modifiedProxies.automaticNodeOverrides : adminStore.modifiedProxies.nodeOverrides;
-    }
-
-    function checkOverridesAreSame(initOverrides: string[], modifiedOverrides: string[]): boolean {
-      const uniqueValues = new Set([...initOverrides, ...modifiedOverrides]);
-
-      for (const v of uniqueValues) {
-        const initOverridesCount = initOverrides.filter((e) => e === v).length;
-        const modifiedOverridesCount = modifiedOverrides.filter((e) => e === v).length;
-        if (initOverridesCount !== modifiedOverridesCount) return false;
-      }
-
-      return true;
     }
 
     async function init(): Promise<void> {

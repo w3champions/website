@@ -62,7 +62,7 @@ export default defineComponent({
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);
-      return `<img class="mt-1" src="${src}" height="40" width="40" />`;
+      return `<img class="mt-1" src="${src}" height="40" width="40" alt="hero" />`;
     }
 
     function heroUsages() {
@@ -103,7 +103,7 @@ export default defineComponent({
         heroStatsData.push(rowObject);
       }
 
-      let tableData: any[] = [];
+      let tableData: never[] = [];
 
       populateDataForTable(tableData, heroStatsData);
 
@@ -112,8 +112,8 @@ export default defineComponent({
       return tableData;
     }
 
-    function sortHeroStatsTableData(tableData: any[]): any[] {
-      return tableData.sort((a: any, b: any): number => {
+    function sortHeroStatsTableData<T extends {total:string}>(tableData: T[]): T[] {
+      return tableData.sort((a: T, b: T): number => {
         const aTotal = Number(a.total.replace("%", ""));
         const bTotal = Number(b.total.replace("%", ""));
         if (aTotal > bTotal) {
@@ -126,7 +126,7 @@ export default defineComponent({
       });
     }
 
-    function populateDataForTable(tableData: any[], heroStatsData: any[]) {
+    function populateDataForTable(tableData: never[], heroStatsData: never[]) {
       const totals: { [key: number]: number } = {
         [ERaceEnum.HUMAN]: 0,
         [ERaceEnum.ORC]: 0,

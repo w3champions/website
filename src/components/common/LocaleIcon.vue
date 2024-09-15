@@ -2,7 +2,7 @@
   <v-container class="pa-0">
     <v-row class="pa-0" align="center" justify="center">
       <v-col>
-        <img :src="flag()" width="22px" height="22px" />
+        <img :src="flag()" width="22px" height="22px" :alt="locale.toUpperCase()" />
       </v-col>
       <v-col v-if="showTwoLetterCode">{{ locale.toUpperCase() }}</v-col>
     </v-row>

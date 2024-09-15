@@ -19,6 +19,7 @@ import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 export default defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "Tournament",
   components: {
     TournamentDescription,

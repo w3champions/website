@@ -58,6 +58,7 @@ export default defineComponent({
     return {
       upcomingTournaments,
       tournaments,
+      pastTournaments,
       onRowClick,
     };
   },

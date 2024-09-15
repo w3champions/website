@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
-import { Proxy, ProxySettings } from "@/store/admin/types";
+import { Proxy } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
@@ -57,10 +57,8 @@ export default defineComponent({
 
     const chipGroupIndex = ref<number[]>([]);
     const isLoaded = ref<boolean>(false);
-    const isProxyListChanged = ref<boolean>(false);
     const modifiedOverrides = ref<string[]>([]);
 
-    const searchedPlayersSetProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.proxiesSetForSearchedPlayer);
     const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
     const isAutomaticNode: ComputedRef<boolean> = computed((): boolean => props.automaticNodes ? true : false);
     const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
@@ -92,10 +90,6 @@ export default defineComponent({
 
       return false;
     });
-
-    function setProxyModified(val: boolean): void {
-      adminStore.SET_PROXY_MODIFIED(val);
-    }
 
     function updateProxies(node: string): void {
       if (modifiedOverrides.value.includes(node)) {
