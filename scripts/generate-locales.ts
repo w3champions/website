@@ -1,6 +1,6 @@
 /**
  * Generates locale files in `src/locales/[lang].ts`
- * Content is pulled from this Goolge Sheet:
+ * Content is pulled from this Google Sheet:
  * https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc/edit#gid=0
  *
  * ⚠️ For this script to work you need to have a Google API key with Sheets enabled (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication)
