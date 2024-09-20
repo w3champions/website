@@ -123,7 +123,7 @@
         </v-list>
       </v-menu>
 
-      <v-menu>
+      <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" style="margin-top: 2px">
             <locale-icon
