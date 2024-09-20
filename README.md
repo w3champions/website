@@ -41,7 +41,7 @@ actions you might require a local instance of the website backend:
 
 1) Clone (and fork) the [w3champions/website-backend](https://github.com/w3champions/website-backend)
 2) Follow the [setup instructions](https://github.com/w3champions/website-backend#readme) and spin up your local website backend api server
-3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (eg. https://localhost:44336/)
+3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (e.g. https://localhost:44336/)
 4) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL
 
 ### Authenticating as Admin
@@ -53,7 +53,7 @@ Granting yourself admin permissions consists of two steps:
 Permission is validated using a JWT, to intercept the process you can skip the 
 JWT validation and return a valid `W3CUserAuthenticationDto` object which grants you `IsAdmin` rights.
 
-Open the file [`W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs`](https://github.com/w3champions/website-backend/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs) and just return an object which contains your battletag and `IsAdmin = true` like
+Open the file [`W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs`](https://github.com/w3champions/website-backend/blob/master/W3ChampionsStatisticService/WebApi/ActionFilters/W3CAuthenticationService.cs) and just return an object which contains your battleTag and `IsAdmin = true` like
 
 ```csharp
 public async Task<W3CUserAuthenticationDto> GetUserByToken(string bearer)
@@ -88,7 +88,7 @@ SET_IS_ADMIN(isAdmin: boolean): void {
 ### Deploying to a Pull Request Environment
 If you branch starts with "DEPLOY_" azure will create an automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://add-new-language.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
 
-If you need any other connection strings, just update the docker-dompose.toke.yaml file accordingly, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
+If you need any other connection strings, just update the docker-compose.toke.yaml file accordingly, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
 
 When you are done, please contact one of the older devs, because they can delete the unused containers again.
 
