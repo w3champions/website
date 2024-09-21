@@ -128,8 +128,7 @@ export default class ClanService {
 
     if (response.ok) return "";
 
-    const errors = (await response.json()).errors;
-    if (errors.ClanName) return errors.ClanName[0];
-    else return errors.ClanAbbrevation[0];
+    const error = (await response.json()).error;
+    return error;
   }
 }
