@@ -43,7 +43,7 @@ export default defineComponent({
   },
   setup(props) {
     const won: ComputedRef<boolean> = computed((): boolean => props.player?.won ?? false);
-    const name: ComputedRef<string> = computed((): string => getName(props.player?.battleTag ?? ""));
+    const name: ComputedRef<string> = computed((): string => battleTagToName(props.player?.battleTag));
     const countryCode: ComputedRef<string | undefined> = computed((): string | undefined => props.player?.countryCode);
 
     const score: ComputedRef<string> = computed((): string => {
@@ -70,8 +70,6 @@ export default defineComponent({
       const race = props.player.race;
       return ERaceEnum[race].toLowerCase();
     });
-
-    const getName = (battleTag: string): string => battleTag.split("#")[0];
 
     const style: ComputedRef<StyleValue> = computed((): StyleValue => {
       let height = props.playerHeight;
