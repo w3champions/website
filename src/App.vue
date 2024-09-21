@@ -269,7 +269,7 @@ export default defineComponent({
     }
 
     const loginName = computed({
-      get: () => oauthStore.blizzardVerifiedBtag?.split("#")[0],
+      get: () => battleTagToName(oauthStore.blizzardVerifiedBtag),
       set: noop,
     });
 

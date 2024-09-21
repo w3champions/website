@@ -122,7 +122,7 @@
                 </v-col>
                 <v-col v-for="player in ffaPlayers" :key="player?.battleTag">
                   <div v-if="index === 0">
-                    {{ player?.battleTag.split("#")[0] }}
+                    {{ battleTagToName(player?.battleTag) }}
                   </div>
                   <div v-if="index === 1">
                     {{ player?.unitScore.unitsKilled }}
