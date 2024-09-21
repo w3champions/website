@@ -3,7 +3,7 @@
     <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile class="pa-6">
+        <v-card tile class="pb-5">
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
