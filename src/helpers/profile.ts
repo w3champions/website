@@ -23,3 +23,5 @@ export function defaultStatsTab(raceWinsOnMap: RaceWinsOnMap[]): string {
     );
   return `tab-${maxRace}`;
 }
+
+export const battleTagToName = (battleTag: string): string => battleTag ? battleTag.split("#")[0] : "";
