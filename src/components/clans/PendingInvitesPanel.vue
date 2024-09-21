@@ -34,6 +34,7 @@ import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiDelete } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
+import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({
   name: "PendingInvitesPanel",
@@ -64,6 +65,7 @@ export default defineComponent({
       hasNoPendingInvites,
       goToPlayer,
       revokeInvite,
+      battleTagToName
     };
   },
 });

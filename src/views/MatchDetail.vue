@@ -166,6 +166,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
+import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -349,6 +350,7 @@ export default defineComponent({
       ffaLoser3,
       rowLabels,
       ffaPlayers,
+      battleTagToName
     };
   },
 });
