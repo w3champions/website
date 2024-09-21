@@ -182,6 +182,7 @@ import {
   mdiTrophy,
   mdiViewList,
 } from "@mdi/js";
+import { battleTagToName } from "./helpers/profile";
 
 export type ItemType = {
   title: string;

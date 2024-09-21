@@ -157,6 +157,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useClanStore } from "@/store/clan/store";
 import { useRouter } from "vue-router/composables";
+import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({
   name: "ClanOverview",
@@ -287,6 +288,7 @@ export default defineComponent({
       defineRole,
       loggedInRole,
       members,
+      battleTagToName
     };
   },
 });

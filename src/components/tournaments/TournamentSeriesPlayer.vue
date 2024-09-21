@@ -26,6 +26,7 @@ import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { ERaceEnum } from "@/store/types";
+import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({
   name: "TournamentSeriesPlayer",
@@ -43,7 +44,7 @@ export default defineComponent({
   },
   setup(props) {
     const won: ComputedRef<boolean> = computed((): boolean => props.player?.won ?? false);
-    const name: ComputedRef<string> = computed((): string => battleTagToName(props.player?.battleTag));
+    const name: ComputedRef<string> = computed((): string => battleTagToName(props.player?.battleTag ?? ""));
     const countryCode: ComputedRef<string | undefined> = computed((): string | undefined => props.player?.countryCode);
 
     const score: ComputedRef<string> = computed((): string => {
@@ -97,6 +98,7 @@ export default defineComponent({
       raceClass,
       style,
       slotStyle,
+      battleTagToName
     };
   },
 });
