@@ -13,10 +13,16 @@
               :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
             ></game-mode-select>
-            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
-            <mmr-select @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
-            <sort-select v-if="unfinished"></sort-select>
-            <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
+            <div v-show="unfinished" class="filter-button">
+              <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
+            </div>
+            <div v-show="unfinished" class="filter-button">
+              <mmr-select @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
+            </div>
+            <div v-show="!unfinished" class="filter-button">
+              <season-select @seasonSelected="selectSeason"></season-select>
+            </div>
+            <sort-select></sort-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -188,3 +194,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.filter-button {
+  display: inline-block;
+}
+</style>
