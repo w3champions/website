@@ -12,20 +12,16 @@
             :setAutofocus="false"
           ></player-search>
         </v-col>
-        <v-col>
-          <v-btn outlined @click="filtersVisible = !filtersVisible">
-            {{ filterButtonText }}
-          </v-btn>
-        </v-col>
       </v-row>
-      <v-row v-show="filtersVisible">
+      <v-row>
         <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
-            :items="activeGameModesWithAT()"
+            :items="activeGameModes()"
             item-text="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
+            v-model="profileMatchesGameMode"
             label="Mode"
             outlined
           />
@@ -37,6 +33,7 @@
             item-text="raceName"
             item-value="raceId"
             @change="setPlayerRaceForSearch"
+            v-model="playerRace"
             label="Player Race"
             outlined
           />
@@ -48,6 +45,7 @@
             item-text="raceName"
             item-value="raceId"
             @change="setOpponentRaceForSearch"
+            v-model="opponentRace"
             label="Opponent Race"
             outlined
           />
@@ -82,7 +80,7 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { loadActiveGameModes, activeGameModesWithAT } from "@/mixins/GameModesMixin";
+import { loadActiveGameModes, activeGameModes } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -106,13 +104,14 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
     const isLoadingMatches = ref<boolean>(false);
-    const filtersVisible = ref<boolean>(false);
     const foundPlayer = ref<string>("");
 
     const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
     const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
     const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
-    const filterButtonText: ComputedRef<string> = computed((): string => filtersVisible.value ? "Hide Additional Filters" : "Show Additional Filters");
+    const profileMatchesGameMode: ComputedRef<EGameMode> = computed((): EGameMode => playerStore.profileMatchesGameMode);
+    const playerRace: ComputedRef<ERaceEnum | undefined> = computed((): ERaceEnum | undefined => playerStore.playerRace);
+    const opponentRace: ComputedRef<ERaceEnum | undefined> = computed((): ERaceEnum | undefined => playerStore.opponentRace);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
@@ -228,11 +227,12 @@ export default defineComponent({
     }
 
     return {
-      activeGameModesWithAT,
+      activeGameModes,
+      profileMatchesGameMode,
+      playerRace,
+      opponentRace,
       playerFound,
       searchCleared,
-      filtersVisible,
-      filterButtonText,
       setSelectedGameModeForSearch,
       races,
       setPlayerRaceForSearch,
@@ -249,3 +249,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+::v-deep(.v-text-field__details) {
+  display: none;
+}
+</style>

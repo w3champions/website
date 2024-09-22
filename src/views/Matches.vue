@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, ComputedRef, defineComponent, onMounted, onUnmounted } from "vue";
 import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
@@ -133,7 +133,7 @@ export default defineComponent({
       overallStatsStore.loadMapsPerSeason();
     }
 
-    function onPageChanged(page: number): void {
+    function onPageChanged(): void {
       getMatches();
     }
 
