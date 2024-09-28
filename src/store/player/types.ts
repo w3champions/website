@@ -18,8 +18,8 @@ export type PlayerState = {
   profileMatchesGameMode: EGameMode;
   profileStatisticsRace: ERaceEnum;
   profileStatisticsGameMode: EGameMode;
-  playerRace: ERaceEnum;
-  opponentRace: ERaceEnum;
+  playerRace: ERaceEnum | undefined;
+  opponentRace: ERaceEnum | undefined;
   raceStats: RaceStat[];
   ongoingMatch: Match;
   gameModeStats: ModeStat[];

@@ -133,8 +133,7 @@ export default defineComponent({
       overallStatsStore.loadMapsPerSeason();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function onPageChanged(page: number): void {
+    function onPageChanged(): void {
       getMatches();
     }
 

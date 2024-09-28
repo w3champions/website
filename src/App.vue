@@ -123,7 +123,7 @@
         </v-list>
       </v-menu>
 
-      <v-menu>
+      <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" style="margin-top: 2px">
             <locale-icon
@@ -182,6 +182,7 @@ import {
   mdiTrophy,
   mdiViewList,
 } from "@mdi/js";
+import { battleTagToName } from "./helpers/profile";
 
 export type ItemType = {
   title: string;
@@ -269,7 +270,7 @@ export default defineComponent({
     }
 
     const loginName = computed({
-      get: () => oauthStore.blizzardVerifiedBtag?.split("#")[0],
+      get: () => battleTagToName(oauthStore.blizzardVerifiedBtag),
       set: noop,
     });
 

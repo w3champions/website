@@ -3,7 +3,7 @@
     <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile>
+        <v-card tile class="pb-5">
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
@@ -122,7 +122,7 @@
                 </v-col>
                 <v-col v-for="player in ffaPlayers" :key="player?.battleTag">
                   <div v-if="index === 0">
-                    {{ player?.battleTag.split("#")[0] }}
+                    {{ battleTagToName(player?.battleTag) }}
                   </div>
                   <div v-if="index === 1">
                     {{ player?.unitScore.unitsKilled }}
@@ -166,6 +166,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
+import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -350,6 +351,7 @@ export default defineComponent({
       ffaLoser3,
       rowLabels,
       ffaPlayers,
+      battleTagToName
     };
   },
 });
