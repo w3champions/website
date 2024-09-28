@@ -103,7 +103,7 @@ export default defineComponent({
         heroStatsData.push(rowObject);
       }
 
-      let tableData: never[] = [];
+      let tableData: any[] = [];
 
       populateDataForTable(tableData, heroStatsData);
 
@@ -126,7 +126,7 @@ export default defineComponent({
       });
     }
 
-    function populateDataForTable(tableData: never[], heroStatsData: never[]) {
+    function populateDataForTable(tableData: any[], heroStatsData: any[]) {
       const totals: { [key: number]: number } = {
         [ERaceEnum.HUMAN]: 0,
         [ERaceEnum.ORC]: 0,

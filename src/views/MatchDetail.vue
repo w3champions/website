@@ -245,12 +245,6 @@ export default defineComponent({
       );
     });
 
-    const ffaLoser1: ComputedRef<PlayerScore> = computed((): PlayerScore => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[1].players[0].battleTag
-      )!;
-    });
-
     const ffaLoser2: ComputedRef<PlayerScore> = computed((): PlayerScore => {
       return playerScores.value.find(
         (s) => s.battleTag === match.value.teams[2].players[0].battleTag
@@ -346,7 +340,6 @@ export default defineComponent({
       isCompleteGame,
       scoresOfWinners,
       scoresOfLosers,
-      ffaLoser1,
       ffaLoser2,
       ffaLoser3,
       rowLabels,

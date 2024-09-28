@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted } from "vue";
-import difference from "lodash/difference";
 import { isFuture } from "date-fns";
 import TournamentsTable from "@/components/tournaments/TournamentsTable.vue";
 import { ITournament } from "@/store/tournaments/types";
@@ -37,7 +36,6 @@ export default defineComponent({
     const tournamentsStore = useTournamentsStore();
 
     const tournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => tournamentsStore.tournaments);
-    const pastTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => difference(tournaments.value, upcomingTournaments.value));
 
     const upcomingTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => {
       return tournaments.value.filter((tournament) => (
@@ -58,7 +56,6 @@ export default defineComponent({
     return {
       upcomingTournaments,
       tournaments,
-      pastTournaments,
       onRowClick,
     };
   },
