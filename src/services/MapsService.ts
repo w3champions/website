@@ -67,7 +67,7 @@ export default class MapsService {
       },
     });
 
-    return await response.json();
+    return response.ok ? await response.json() : [];
   }
 
   public static async createMapFile(token: string, form: FormData): Promise<Map> {
@@ -82,7 +82,7 @@ export default class MapsService {
       },
     });
 
-    return await response.json();
+    return response.ok ? await response.json() : null;
   }
 
   public static async getTournamentMaps(): Promise<GetMapsResponse> {
