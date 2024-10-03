@@ -114,6 +114,9 @@ export default defineComponent({
         case EGameMode.GM_DS:
           return "rgb(150, 150, 20)";
 
+          case EGameMode.GM_WARHAMMER_1ON1:
+          return "rgb(255, 0, 192)";
+
         default:
           return "rgb(54, 162, 235)";
       }
@@ -162,6 +165,9 @@ export default defineComponent({
 
         case EGameMode.GM_DS:
           return 3;
+
+        case EGameMode.GM_WARHAMMER_1ON1:
+          return 1;
 
         default:
           return 1;
