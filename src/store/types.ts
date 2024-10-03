@@ -153,6 +153,8 @@ export enum EGameMode {
 
   GM_DS = 1101,
   GM_DS_AT = 1102,
+
+  GM_WARHAMMER_1ON1 = 1201,
 }
 
 export enum EGameModeType {
