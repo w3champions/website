@@ -35,9 +35,11 @@ export const useOverallStatsStore = defineStore("overallStats", {
       this.SET_GAMES_PER_DAY(games);
       this.SET_LOADING_GAMES_PER_DAY(false);
     },
-    async loadMapsPerSeason() {
-      const games = await StatisticService.retrieveMapsPerSeason();
-      this.SET_MAPS_PER_SEASON(games);
+    async loadMatchesOnMapsPerSeason() {
+      const games = await StatisticService.retrieveMatchesOnMapsPerSeason();
+      if (games) {
+        this.SET_MATCHES_ON_MAPS_PER_SEASON(games);
+      }
     },
     async loadPlayersPerDayStatistics() {
       this.SET_LOADING_PLAYERS_PER_DAY(true);
@@ -96,7 +98,7 @@ export const useOverallStatsStore = defineStore("overallStats", {
     SET_GAMES_PER_DAY(games: GameDayPerMode[][]): void {
       this.gamesPerDay = games;
     },
-    SET_MAPS_PER_SEASON(games: MatchesOnMapPerSeason[]): void {
+    SET_MATCHES_ON_MAPS_PER_SEASON(games: MatchesOnMapPerSeason[]): void {
       this.matchesOnMapPerSeason = games;
     },
     SET_LOADING_PLAYERS_PER_DAY(loading: boolean): void {

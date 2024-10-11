@@ -211,7 +211,7 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
-      await overallStatsStore.loadMapsPerSeason();
+      await overallStatsStore.loadMatchesOnMapsPerSeason();
       await loadActiveGameModes();
     });
 

@@ -47,7 +47,9 @@ export const useAdminStore = defineStore("admin", {
     },
     async loadQueueData(token: string) {
       const queuedata = await AdminService.getQueueData(token);
-      this.SET_QUEUEDATA(queuedata);
+      if (queuedata) {
+        this.SET_QUEUEDATA(queuedata);
+      }
     },
     async loadAvailableProxies(token: string) {
       const availableProxies = await AdminService.getAvailableProxies(token);
