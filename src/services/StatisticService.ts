@@ -4,7 +4,7 @@ import { EGameMode } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 
 export default class StatisticService {
-  public static async retrieveMapsPerSeason(): Promise<MatchesOnMapPerSeason[]> {
+  public static async retrieveMatchesOnMapsPerSeason(): Promise<MatchesOnMapPerSeason[] | null> {
     const url = `${API_URL}api/w3c-stats/matches-on-map`;
     const response = await fetch(url, {
       method: "GET",
@@ -13,6 +13,10 @@ export default class StatisticService {
         "Content-Type": "application/json",
       },
     });
+
+    if (!response.ok) {
+      return null;
+    }
 
     return await response.json();
   }

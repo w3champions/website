@@ -129,10 +129,6 @@ export default defineComponent({
       await matchStore.loadMatches();
     }
 
-    function getMaps(): void {
-      overallStatsStore.loadMapsPerSeason();
-    }
-
     function onPageChanged(): void {
       getMatches();
     }
@@ -147,7 +143,7 @@ export default defineComponent({
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
       await matchStore.setSeason(rankingsStore.seasons[0]);
-      getMaps();
+      overallStatsStore.loadMatchesOnMapsPerSeason();
       refreshMatches();
     });
 

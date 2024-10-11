@@ -64,7 +64,7 @@ export default defineComponent({
 
     async function init() {
       await overallStatsStore.loadGamesPerDayStatistics();
-      await overallStatsStore.loadMapsPerSeason();
+      await overallStatsStore.loadMatchesOnMapsPerSeason();
       await overallStatsStore.loadPlayersPerDayStatistics();
       await overallStatsStore.loadGameLengthStatistics();
       await overallStatsStore.loadPopularGameHours();
