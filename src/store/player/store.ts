@@ -67,7 +67,9 @@ export const usePlayerStore = defineStore("player", {
         battleTag,
         this.selectedSeason?.id ?? -1,
       );
-      this.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
+      if (profile) {
+        this.SET_PLAYER_STATS_RACE_VERSUS_RACE_ON_MAP(profile);
+      }
     },
     async loadPlayerStatsHeroVersusRaceOnMap(battleTag: string) {
       const profile = await ProfileService.retrievePlayerStatsHeroVersusRaceOnMap(

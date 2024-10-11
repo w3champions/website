@@ -37,7 +37,9 @@ export const useOverallStatsStore = defineStore("overallStats", {
     },
     async loadMapsPerSeason() {
       const games = await StatisticService.retrieveMapsPerSeason();
-      this.SET_MAPS_PER_SEASON(games);
+      if (games) {
+        this.SET_MAPS_PER_SEASON(games);
+      }
     },
     async loadPlayersPerDayStatistics() {
       this.SET_LOADING_PLAYERS_PER_DAY(true);

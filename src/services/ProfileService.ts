@@ -65,9 +65,12 @@ export default class ProfileService {
     return await response.json();
   }
 
-  public static async retrievePlayerStatsRaceVersusRaceOnMap(battleTag: string, season: number): Promise<PlayerStatsRaceOnMapVersusRace> {
+  public static async retrievePlayerStatsRaceVersusRaceOnMap(battleTag: string, season: number): Promise<PlayerStatsRaceOnMapVersusRace | null> {
     const url = `${API_URL}api/player-stats/${encodeURIComponent(battleTag)}/race-on-map-versus-race?season=${season}`;
     const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
     return await response.json();
   }
 
