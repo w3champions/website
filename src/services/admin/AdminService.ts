@@ -21,9 +21,12 @@ export default class AdminService {
     return response.ok ? "" : (await response.json()).error;
   }
 
-  public static async getQueueData(token: string): Promise<QueueData[]> {
+  public static async getQueueData(token: string): Promise<QueueData[] | null> {
     const url = `${API_URL}api/admin/queue-data`;
     const response = await authorizedFetch("GET", url, token);
+    if (!response.ok) {
+      return null;
+    }
     return await response.json();
   }
 
