@@ -1,35 +1,42 @@
 <template>
   <div>
-    <v-card-title>Games per Day</v-card-title>
-    <v-card-text v-if="!loadingGamesPerDayStats">
-      <v-row>
-        <v-col cols="12" md="2">
-          <v-card-text>
-            <v-select
-              v-model="selectedGamesPerDayMode"
-              :items="activeGameModesWithAll()"
-              item-text="name"
-              item-value="id"
-              @change="setSelectedGamesPerDayMode"
-              :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
-              outlined
-            />
-          </v-card-text>
+    <v-card-title>
+      {{ $t("components_overall-statistics_tabs_playeractivitytab.gamesperday") }}
+    </v-card-title>
+    <v-row v-if="!loadingGamesPerDayStats">
+      <v-col cols="12" md="2">
+        <v-card-text>
+          <v-select
+            v-model="selectedGamesPerDayMode"
+            :items="activeGameModesWithAll()"
+            item-text="name"
+            item-value="id"
+            @change="setSelectedGamesPerDayMode"
+            :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
+            outlined
+            hide-details
+          />
+          <v-switch
+            v-model="normalizedGamesPerDay"
+            @change="setNormalizedGamesPerDay"
+            :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
+          ></v-switch>
           <div v-if="isAllMode">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
             <br />
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc2") }}
           </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <activity-per-day-chart
-            style="position: relative"
-            :selectedGameMode="selectedGamesPerDayMode"
-            :game-days="gameDays"
-          />
-        </v-col>
-      </v-row>
-    </v-card-text>
+        </v-card-text>
+      </v-col>
+      <v-col cols="12" md="10">
+        <activity-per-day-chart
+          style="position: relative"
+          :selectedGameMode="selectedGamesPerDayMode"
+          :game-days="gameDays"
+          :normalized="normalizedGamesPerDay"
+        />
+      </v-col>
+    </v-row>
     <v-card-title>
       {{ $t("components_overall-statistics_tabs_playeractivitytab.playersperday") }}
     </v-card-title>
@@ -219,17 +226,18 @@ export default defineComponent({
     const selectedMatchupRace2 = ref<ERaceEnum>(ERaceEnum.HUMAN);
     const selectedMatchupMmr = ref<string>("all");
     const selectedMatchupSeason = ref<string>("all");
+    const normalizedGamesPerDay = ref<boolean>(true);
     const selectedSeasonForMapsInitial: ComputedRef<string> = computed((): string => rankingsStore.seasons[0]?.id?.toString() ?? "");
     const isAllMode: ComputedRef<boolean> = computed((): boolean => selectedGamesPerDayMode.value === EGameMode.UNDEFINED);
     const race1String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace1.value)[0].name);
     const race2String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace2.value)[0].name);
     let overWrittenOnce = false;
 
-     onMounted(async (): Promise<void> => {
+    onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
       await rankingsStore.retrieveSeasons();
       setMatchupLengthSeason("all");
-     });
+    });
 
     function setSelectedLengthMode(mode: EGameMode) {
       selectedLengthMode.value = mode;
@@ -271,6 +279,10 @@ export default defineComponent({
       overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
     }
 
+    function setNormalizedGamesPerDay(normalized: boolean) {
+      normalizedGamesPerDay.value = normalized;
+    }
+
     const seasons: ComputedRef<string[]> = computed((): string[] => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
 
     const seasonsForMatchup: ComputedRef<{ id: string; name: string }[]> = computed((): { id: string; name: string }[] => {
@@ -299,8 +311,8 @@ export default defineComponent({
 
     const selectedGameLength: ComputedRef<GameLength> = computed((): GameLength => {
       return gameLength.value?.filter(
-          (g) => g.gameMode == selectedLengthMode.value
-        )[0] ?? { lengths: [] };
+        (g) => g.gameMode == selectedLengthMode.value
+      )[0] ?? { lengths: [] };
     });
 
     const selectedGameHours: ComputedRef<PopularHours> = computed((): PopularHours => {
@@ -383,6 +395,8 @@ export default defineComponent({
       setMatchupLengthSeason,
       race1String,
       race2String,
+      normalizedGamesPerDay,
+      setNormalizedGamesPerDay,
     };
   },
 });

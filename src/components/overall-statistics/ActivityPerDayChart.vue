@@ -10,6 +10,7 @@ import LineChart, { getBackgroundColor } from "@/components/overall-statistics/L
 import { ChartData, ScriptableContext } from "chart.js";
 import { EGameMode } from "@/store/types";
 import { parseJSON } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 
 export default defineComponent({
   name: "ActivityPerDayChart",
@@ -23,6 +24,10 @@ export default defineComponent({
     },
     selectedGameMode: {
       type: Number as PropType<EGameMode>,
+      required: true,
+    },
+    normalized: {
+      type: Boolean,
       required: true,
     },
   },
@@ -55,8 +60,8 @@ export default defineComponent({
               data: c.gameDays
                 .map((g) => {
                   return {
-                    x: parseJSON(g.date),
-                    y: g.gamesPlayed * multiplier(c.gameMode),
+                    x: utcToZonedTime(parseJSON(g.date), "UTC"),
+                    y: g.gamesPlayed * (props.normalized ? multiplier(c.gameMode) : 1),
                   };
                 })
                 .splice(0, c.gameDays.length - 1),
@@ -114,7 +119,7 @@ export default defineComponent({
         case EGameMode.GM_DS:
           return "rgb(150, 150, 20)";
 
-          case EGameMode.GM_WARHAMMER_1ON1:
+        case EGameMode.GM_WARHAMMER_1ON1:
           return "rgb(255, 0, 192)";
 
         default:

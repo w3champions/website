@@ -333,9 +333,11 @@ const data = {
       stddev: "Standard Deviation",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Games per Day",
       selectmode: "Select Mode",
+      normalized: "Normalized",
       gamemodedesc1:
-        "Game Modes are normalized to compare their popularity more easily:",
+        "Game modes are normalized to compare their popularity more easily:",
       gamemodedesc2:
         "2v2 and FFA games are counted twice, 4v4 games are counted four times",
       playersperday: "Players per Day",
@@ -522,7 +524,7 @@ const data = {
       MMR_2200: "> 2200 (~Grandmaster)",
       MMR_2000: "> 2000 (~Master)",
       MMR_1800: "> 1800 (~Diamond)",
-      MMR_1600: "> 1600 (~Platin)",
+      MMR_1600: "> 1600 (~Platinum)",
       MMR_1400: "> 1400 (~Gold)",
       MMR_1200: "> 1200 (~Silver)",
       MMR_1000: "> 1000 (~Bronze)",
@@ -883,7 +885,9 @@ const data = {
       greenbardesc: "Зеленая полоса отмечает вашу позицию на графике",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Игры в день",
       selectmode: "Выберите режим",
+      normalized: "нормализованный",
       gamemodedesc1:
         "Игровые режимы нормализованы, чтобы легче сравнивать их популярность:",
       gamemodedesc2:
@@ -1370,6 +1374,8 @@ const data = {
       greenbardesc: "녹색 선은 당신의 위치를 나타냅니다",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "하루당 게임 수",
+      normalized: "정규화됨",
       gamemodedesc1: "게임모드는 인기를 쉽게 비교할 수 있도록 표준화 됩니다.",
       gamemodedesc2: "2대2와 FFA는 2번, 4대4는 4번 계산됩니다.",
     },
@@ -1838,7 +1844,9 @@ const data = {
       stddev: "标准差",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "每日游戏数",
       selectmode: "选择模式",
+      normalized: "标准化",
       gamemodedesc1: "游戏模式计算方式：",
       gamemodedesc2: "2v2和FFA会算两次，4v4会被算4次",
       playersperday: "每日玩家数量",
@@ -2328,6 +2336,8 @@ const data = {
       greenbardesc: "Die grüne Linie zeigt deinen Platz in der Verteilung.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Spiele pro Tag",
+      normalized: "Normalisiert",
       gamemodedesc1: "Spielmodi werden nach ihrer Spieleranzahl genormt:",
       gamemodedesc2: "2vs2 und FFA zählen doppelt, 4vs4 zählt vierfach.",
     },
@@ -2831,7 +2841,9 @@ const data = {
       greenbardesc: "Zielonia linia pokazuje twoją pozycję",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Gry na dzień",
       selectmode: "Wybierz tryb",
+      normalized: "Znormalizowany",
       gamemodedesc1:
         "Tryby gry są znormalizowane, aby łatwiej porównać ich popularność.",
       gamemodedesc2: "Mecze 2v2 i FFA są liczone podwójne, a 4v4 poczwórnie.",
@@ -3359,7 +3371,9 @@ const data = {
       greenbardesc: "Зелена смуга відзначає вашу позицію на графіку",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Ігри на день",
       selectmode: "Оберіть режим",
+      normalized: "Нормалізований",
       gamemodedesc1:
         "Ігрові режими нормалізовані, щоб легше порівнювати їх популярність:",
       gamemodedesc2:
@@ -3875,11 +3889,13 @@ const data = {
       greenbardesc: "A linha verde mostra onde você está na distribuição.\r\n",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Jogos por dia",
       selectmode: "Selecione modo",
+      normalized: "Normalizado",
       gamemodedesc1:
         "Os modos de jogos são normalizados para poder comparar mais facilmente a popularidade:",
       gamemodedesc2:
-        "Jogos de 2v2 e FFA são contadas duas vezes, jogos de 4v4 são  contadas quatro vezes",
+        "Jogos de 2v2 e FFA são contadas duas vezes, jogos de 4v4 são contadas quatro vezes",
       playersperday: "Jogadores por dia",
       playedmaps: "Mapas jogados",
       popularhours: "Horários populares",
@@ -4399,7 +4415,9 @@ const data = {
         "La ligne verte montre où vous êtes dans la répartition des joueurs.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
+      gamesperday: "Jeux par jour",
       selectmode: "Sélectionnez un Mode",
+      normalized: "Normalisé",
       gamemodedesc1:
         "Les modes de jeu sont normalisés afin de comparer plus facilement leur popularité :",
       gamemodedesc2:
