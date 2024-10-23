@@ -203,6 +203,11 @@ export default defineComponent({
       type: Number as PropType<EGameMode>,
       required: true,
     },
+    playerId: {
+      type: String,
+      required: false,
+      default: undefined,
+    }
   },
   setup(props) {
     // @Prop({ default: "" })
@@ -217,7 +222,6 @@ export default defineComponent({
     const searchModel = ref<Ranking>({} as Ranking);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
-    const playerId = ref<string>("");
 
     const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
     const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
@@ -365,8 +369,8 @@ export default defineComponent({
 
       await getRankings();
 
-      if (playerId.value) {
-        const selectedPlayer = rankings.value.find((r) => r.player.id === playerId.value);
+      if (props.playerId) {
+        const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
         searchModel.value = selectedPlayer ?? ({} as Ranking);
       }
 
