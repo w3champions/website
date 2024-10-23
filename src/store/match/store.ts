@@ -47,9 +47,8 @@ export const useMatchStore = defineStore("match", {
           this.page - 1,
           rootStateStore.gateway,
           this.gameMode,
-          this.map,
-          this.mmr,
           this.selectedSeason.id,
+          this.sort,
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
