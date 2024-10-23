@@ -17,7 +17,7 @@
         <v-col cols="12" md="2">
           <v-select
             class="over-chart-select-box"
-            :items="activeGameModes()"
+            :items="activeGameModesWithAll()"
             item-text="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
@@ -80,7 +80,7 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { loadActiveGameModes, activeGameModes } from "@/mixins/GameModesMixin";
+import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -227,7 +227,7 @@ export default defineComponent({
     }
 
     return {
-      activeGameModes,
+      activeGameModesWithAll,
       profileMatchesGameMode,
       playerRace,
       opponentRace,
