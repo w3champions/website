@@ -239,6 +239,7 @@ export default defineComponent({
           l.gameMode === rankingsStore.gameMode &&
           l.season === rankingsStore.selectedSeason.id
       )[0];
+
       return league?.leagues;
     });
 
@@ -363,7 +364,7 @@ export default defineComponent({
       await loadOngoingMatches();
       await getLadders();
 
-      if (ladders.value && !selectedLeague.value?.id) {
+      if (Array.isArray(ladders.value) && ladders.value.length > 0 && !selectedLeague.value?.id) {
         rankingsStore.setLeague(ladders.value[0].id);
       }
 
