@@ -270,12 +270,14 @@ export default defineComponent({
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
       await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
-      await playerStore.loadGameModeStats({});
-      await playerStore.loadRaceStats();
-      await playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value);
-      await playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
-      await playerStore.loadPlayerGameLengths();
-      await playerStore.loadMatches(1);
+      await Promise.all([
+        playerStore.loadGameModeStats({}),
+        playerStore.loadRaceStats(),
+        playerStore.loadMatches(1),
+        playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
+        playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
+        playerStore.loadPlayerGameLengths(),
+      ]);
       await initMmrRpTimeline();
       window.scrollTo(0, 0);
     }
