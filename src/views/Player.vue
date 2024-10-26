@@ -226,14 +226,7 @@ export default defineComponent({
 
     async function selectSeason(season: Season): Promise<void> {
       playerStore.SET_SELECTED_SEASON(season);
-      await Promise.all([
-        playerStore.loadGameModeStats({}),
-        playerStore.loadRaceStats(),
-        playerStore.loadMatches(1),
-        playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerGameLengths(),
-      ]);
+      await loadAllDataForSelectedSeason();
       // This requires loadGameModeStats and loadRaceStats to be called first
       await initMmrRpTimeline();
     }
@@ -270,6 +263,12 @@ export default defineComponent({
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
       await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
+      await loadAllDataForSelectedSeason();
+      await initMmrRpTimeline();
+      window.scrollTo(0, 0);
+    }
+
+    async function loadAllDataForSelectedSeason() {
       await Promise.all([
         playerStore.loadGameModeStats({}),
         playerStore.loadRaceStats(),
@@ -278,8 +277,6 @@ export default defineComponent({
         playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
         playerStore.loadPlayerGameLengths(),
       ]);
-      await initMmrRpTimeline();
-      window.scrollTo(0, 0);
     }
 
     async function initMmrRpTimeline() {
