@@ -33,6 +33,7 @@ import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
+import { ERaceEnum } from "@/store/types";
 
 interface RaceToMapStatHeader {
   text: TranslateResult;
@@ -55,11 +56,18 @@ export default defineComponent({
     const { t } = useI18n();
 
     function totalWins(stat: RaceStat[]) {
+      const totalGames = stat.map((s) => s.games).reduce((a, b) => a + b, 0);
       const totalWins = stat.map((s) => s.wins).reduce((a, b) => a + b, 0);
       const totalLosses = stat.map((s) => s.losses).reduce((a, b) => a + b, 0);
       const totalWinrate = totalLosses + totalWins != 0 ? totalWins / (totalWins + totalLosses) : 0;
 
-      return { wins: totalWins, losses: totalLosses, winrate: totalWinrate };
+      return {
+        games: totalGames,
+        wins: totalWins,
+        losses: totalLosses,
+        winrate: totalWinrate,
+        race: ERaceEnum.TOTAL,
+      };
     }
 
     const headers: RaceToMapStatHeader[] = [

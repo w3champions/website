@@ -3,9 +3,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { GameLength, Length } from "@/store/overallStats/types";
+import { GameLength } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData } from "chart.js";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
@@ -24,16 +24,16 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const trimmedStats: ComputedRef<Length[]> = computed((): Length[] => {
+    const trimmedStats = computed(() => {
       const stats = props.gameLength.lengths.slice(4); // Do not display games lasting less than 2 minutes.
       stats.pop(); // Do not display the last entry, because all games longer than the last timeslot are accumulated here.
       return stats;
     });
 
-    const passedTime: ComputedRef<string[]> = computed((): string[] => trimmedStats.value.map((g) => formatSecondsToDuration(g.seconds)));
-    const gamesCount: ComputedRef<number[]> = computed((): number[] => trimmedStats.value.map((g) => g.games));
+    const passedTime = computed(() => trimmedStats.value.map((g) => formatSecondsToDuration(g.seconds)));
+    const gamesCount = computed(() => trimmedStats.value.map((g) => g.games));
 
-    const gameHourChartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const gameHourChartData = computed<ChartData<"bar">>(() => {
       return {
         labels: passedTime.value,
         datasets: [

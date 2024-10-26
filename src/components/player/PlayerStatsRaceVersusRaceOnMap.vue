@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { RaceWinsOnMap } from "@/store/player/types";
 import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/types";
@@ -45,11 +45,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const isStatsEmpty: ComputedRef<boolean> = computed((): boolean => isEmpty(props.stats));
+    const isStatsEmpty = computed(() => isEmpty(props.stats));
 
-    const selectedTab: ComputedRef<string> = computed((): string => {
-      return defaultStatsTab(props.stats);
-    });
+    const selectedTab = computed(() => defaultStatsTab(props.stats));
 
     return {
       ERaceEnum,

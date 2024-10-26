@@ -163,12 +163,25 @@ export type PlayerGameLength = {
 };
 
 export type PlayerHeroStatistic = {
+  image: string;
+  name: string;
   hero: string;
   total: string;
   ud: string;
   orc: string;
   hu: string;
   ne: string;
+  rand: string;
+  numbers_by_race: NumbersByPlayerHeroStatistic;
+};
+
+export type NumbersByPlayerHeroStatistic = {
+  total: FractionForTooltip;
+  ud: FractionForTooltip;
+  orc: FractionForTooltip;
+  hu: FractionForTooltip;
+  ne: FractionForTooltip;
+  rand: FractionForTooltip;
 };
 
 export type FractionForTooltip = {
@@ -177,6 +190,7 @@ export type FractionForTooltip = {
 };
 
 export type NumbersByRaceForTooltip = {
+  [ERaceEnum.RANDOM]: FractionForTooltip;
   [ERaceEnum.HUMAN]: FractionForTooltip;
   [ERaceEnum.NIGHT_ELF]: FractionForTooltip;
   [ERaceEnum.ORC]: FractionForTooltip;

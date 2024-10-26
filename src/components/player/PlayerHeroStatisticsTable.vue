@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref } from "vue";
-import { PlayerHeroStatistic } from "@/store/player/types";
+import { NumbersByPlayerHeroStatistic, PlayerHeroStatistic } from "@/store/player/types";
 import { mdiMenuLeft } from "@mdi/js";
 import { mdiMenuRight } from "@mdi/js";
 
@@ -67,9 +67,9 @@ export default defineComponent({
       { text: "vs. Undead", value: "ud" },
       { text: "vs. Night Elf", value: "ne" },
       { text: "vs. Random", value: "rand" },
-    ];
+    ] satisfies { text: string, value: keyof PlayerHeroStatistic}[];
 
-    const headersWithoutImageAndName = headers.slice(2);
+    const headersWithoutImageAndName = headers.slice(2) as { text: string, value: keyof NumbersByPlayerHeroStatistic}[];
 
     return {
       mdiMenuLeft,
