@@ -224,15 +224,18 @@ export default defineComponent({
       );
     }
 
-    function selectSeason(season: Season): void {
+    async function selectSeason(season: Season): Promise<void> {
       playerStore.SET_SELECTED_SEASON(season);
-      playerStore.loadGameModeStats({});
-      playerStore.loadRaceStats();
-      playerStore.loadMatches(1);
-      playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value);
-      playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value);
-      playerStore.loadPlayerMmrRpTimeline();
-      playerStore.loadPlayerGameLengths();
+      await Promise.all([
+        playerStore.loadGameModeStats({}),
+        playerStore.loadRaceStats(),
+        playerStore.loadMatches(1),
+        playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
+        playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
+        playerStore.loadPlayerGameLengths(),
+      ]);
+      // This requires loadGameModeStats and loadRaceStats to be called first
+      await initMmrRpTimeline();
     }
 
     function gatewayChanged() {
@@ -278,17 +281,29 @@ export default defineComponent({
     }
 
     async function initMmrRpTimeline() {
-      const raceStats = playerStore.raceStats;
+      const selectedSeason = playerStore.selectedSeason?.id;
+      let maxMode = EGameMode.GM_1ON1;
+      let maxModeGames = 0;
+      playerStore.gameModeStats.forEach((m) => {
+        if (m.season !== selectedSeason) return;
+        if (m.games > maxModeGames) {
+          maxModeGames = m.games;
+          maxMode = m.gameMode;
+        }
+      });
+      playerStore.SET_PROFILE_STATISTICS_GAME_MODE(maxMode);
+
       let maxRace = ERaceEnum.HUMAN;
-      let maxGames = 0;
-      raceStats.forEach((r) => {
-        if (r.games > maxGames) {
-          maxGames = r.wins;
+      let maxRaceGames = 0;
+      playerStore.raceStats.forEach((r) => {
+        if (r.season !== selectedSeason) return;
+        if (r.games > maxRaceGames) {
+          maxRaceGames = r.games;
           maxRace = r.race;
         }
       });
-
       playerStore.SET_PROFILE_STATISTICS_RACE(maxRace);
+
       await playerStore.loadPlayerMmrRpTimeline();
     }
 
