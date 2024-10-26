@@ -72,6 +72,7 @@ export default defineComponent({
             pointStyle: "circle",
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
+            pointHitRadius: 6,
             tension: 0.4, // Smooth line.
           },
           {
@@ -85,6 +86,7 @@ export default defineComponent({
             pointStyle: "circle",
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
+            pointHitRadius: 6,
             tension: 0.4, // Smooth line.
           },
         ],

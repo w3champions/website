@@ -142,6 +142,7 @@ export default defineComponent({
             data: cumulativeSumData.value,
             borderColor: "rgb(60,208,88)",
             fill: false,
+            pointHitRadius: 6,
           },
         ],
       };

@@ -43,7 +43,10 @@ export default defineComponent({
     );
 
     // Get the list of dates for the x-axis
-    const gameDayDates = computed(() => allSet.value.gameDays.map((g) => utcToZonedTime(parseJSON(g.date), "UTC")));
+    const gameDayDates = computed(() => allSet.value.gameDays
+      .slice(0, allSet.value.gameDays.length - 1) // Drop today's data (last entry)
+      .map((g) => utcToZonedTime(parseJSON(g.date), "UTC"))
+    );
 
     // Recompute the "All" set using all the other game modes,
     // using each mode's normalizing multiplier (the backend doesn't normalize)
@@ -94,6 +97,7 @@ export default defineComponent({
             borderColor: mapColor(c.gameMode),
             borderWidth: 1.5,
             tension: 0.4, // Smooth line.
+            pointHitRadius: 6,
           } satisfies ChartDataset<"line">)),
       };
     });
