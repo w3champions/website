@@ -40,7 +40,7 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
 
-    const colors: ComputedRef<string[]> = computed((): string[] => {
+    const colors = computed(() => {
       const colors: string[] = [];
       for (let i = 0; i < props.mmrDistribution.distributedMmrs.length; i++) {
         if (
@@ -122,7 +122,7 @@ export default defineComponent({
         .reverse();
     });
 
-    const mmrDistributionChartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const mmrDistributionChartData = computed<ChartData<"bar"|"line">>(() => {
       return {
         labels: props.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
         datasets: [
@@ -149,26 +149,26 @@ export default defineComponent({
 
     const mmrDistributionChartOptions: ComputedRef<ChartOptions> = computed((): ChartOptions => {
       const annotations: { [key: string]: AnnotationOptions } = mmrGroupOfLoggedInPlayer.value
-          ? {
-            x: {
-              type: "line",
-              scaleID: "x",
-              value: `> ${mmrGroupOfLoggedInPlayer.value}`,
-              borderColor: "rgb(28,95,47, 0.7)",
-              borderWidth: 2,
-              borderDash: [10, 10],
-              label: {
-                display: true,
-                content: "Your MMR",
-                backgroundColor: "rgb(28,95,47, 0.7)",
-                yAdjust: 10,
-                xAdjust: isTop50percent.value ? 40 : -40, //Move label to left or right of line
-                position: "start",
-                borderRadius: 0,
-              },
+        ? {
+          x: {
+            type: "line",
+            scaleID: "x",
+            value: `> ${mmrGroupOfLoggedInPlayer.value}`,
+            borderColor: "rgb(28,95,47, 0.7)",
+            borderWidth: 2,
+            borderDash: [10, 10],
+            label: {
+              display: true,
+              content: "Your MMR",
+              backgroundColor: "rgb(28,95,47, 0.7)",
+              yAdjust: 10,
+              xAdjust: isTop50percent.value ? 40 : -40, //Move label to left or right of line
+              position: "start",
+              borderRadius: 0,
             },
-          }
-          : {};
+          },
+        }
+        : {};
 
       return {
         plugins: {

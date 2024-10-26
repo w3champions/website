@@ -57,7 +57,7 @@ export default defineComponent({
       return { ...defaultOptions(), ...options };
     });
 
-    const mmrRpChartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const mmrRpChartData = computed<ChartData<"line">>(() => {
       return {
         labels: dates.value,
         datasets: [

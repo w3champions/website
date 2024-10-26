@@ -177,6 +177,7 @@ export type FractionForTooltip = {
 };
 
 export type NumbersByRaceForTooltip = {
+  [ERaceEnum.RANDOM]: FractionForTooltip;
   [ERaceEnum.HUMAN]: FractionForTooltip;
   [ERaceEnum.NIGHT_ELF]: FractionForTooltip;
   [ERaceEnum.ORC]: FractionForTooltip;

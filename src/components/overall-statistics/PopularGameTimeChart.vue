@@ -54,7 +54,7 @@ export default defineComponent({
 
     const gamesCount: ComputedRef<number[]> = computed((): number[] => timeslots.value.map((g) => g.games));
 
-    const gameHourChartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const gameHourChartData = computed<ChartData<"bar">>(() => {
       return {
         labels: gameStartHour.value,
         datasets: [

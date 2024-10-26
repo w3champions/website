@@ -1,7 +1,7 @@
 <template>
   <line-chart-generic
-      :data="chartData"
-      :options="chartOptions"
+    :data="chartData"
+    :options="chartOptions"
   />
 </template>
 
@@ -20,9 +20,12 @@ import {
   Legend,
   ChartArea,
   ScriptableContext,
+  ChartData,
+  Point,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
+import { PropType } from "vue";
 import { Line as LineChartGeneric } from "vue-chartjs";
 
 ChartJS.register(LineController);
@@ -104,7 +107,8 @@ export default {
   components: { LineChartGeneric },
   props: {
     chartData: {
-      type: Object,
+      type: Object as PropType<ChartData<"line">>,
+      required: true,
     },
     chartOptions: {
       type: Object,
