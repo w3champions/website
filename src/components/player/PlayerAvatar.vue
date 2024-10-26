@@ -87,9 +87,9 @@
               <template v-slot:activator="{ on }">
                 <v-card-text
                   v-on="on"
-                  :class="getCorrectClasses(race, number)"
-                  @click="isLoggedInPlayer ? savePicture(race, number) : null"
-                  :style="{'background-image': 'url(' + picture(race, number) + ')'}"
+                  :class="getCorrectClasses(raceToAvatar(race), number)"
+                  @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
+                  :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
                 />
               </template>
               <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
@@ -300,7 +300,6 @@
                         label="About"
                         clearable
                         :rules="[rules.maxLength(300)]"
-                        value
                         v-model="userProfile.about"
                         :hint="$t('components_player_playeravatar.aboutdesc')"
                       ></v-textarea>
@@ -480,6 +479,18 @@ export default defineComponent({
       personalSettingsDialogOpened.value = false;
     }
 
+    function raceToAvatar(race: ERaceEnum): EAvatarCategory {
+      return {
+        [ERaceEnum.RANDOM]: EAvatarCategory.RANDOM,
+        [ERaceEnum.HUMAN]: EAvatarCategory.HUMAN,
+        [ERaceEnum.ORC]: EAvatarCategory.ORC,
+        [ERaceEnum.NIGHT_ELF]: EAvatarCategory.NIGHTELF,
+        [ERaceEnum.UNDEAD]: EAvatarCategory.UNDEAD,
+        [ERaceEnum.TOTAL]: EAvatarCategory.TOTAL,
+        [ERaceEnum.STARTER]: EAvatarCategory.STARTER,
+      }[race];
+    }
+
     function getCorrectClasses(category: EAvatarCategory, iconId: number): string[] {
       const classes = ["player-avatar-choosing"];
       if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("pointer");
@@ -619,6 +630,7 @@ export default defineComponent({
       rules,
       resetUserProfile,
       saveUserProfile,
+      raceToAvatar,
     };
   },
 });
