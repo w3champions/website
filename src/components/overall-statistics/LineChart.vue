@@ -21,7 +21,6 @@ import {
   ChartArea,
   ScriptableContext,
   ChartData,
-  Point,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";

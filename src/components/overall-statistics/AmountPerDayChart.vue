@@ -6,7 +6,7 @@ import { computed, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { GameDay } from "@/store/overallStats/types";
 import LineChart from "@/components/overall-statistics/LineChart.vue";
-import { ChartData, ChartDataset } from "chart.js";
+import { ChartData } from "chart.js";
 import { parseJSON } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 

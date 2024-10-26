@@ -75,7 +75,7 @@ export default defineComponent({
           // Filter out inactive gamemodes, but show total games (UNDEFINED)
           .filter((c) => activeGameModeIds.includes(c.gameMode) || c.gameMode === EGameMode.UNDEFINED)
           // Only show the mode that user selected (but "All" shows everything)
-          .filter((c) => 
+          .filter((c) =>
             props.selectedGameMode === EGameMode.UNDEFINED
             || c.gameMode === props.selectedGameMode
           )

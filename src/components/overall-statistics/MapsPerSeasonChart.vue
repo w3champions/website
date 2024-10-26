@@ -2,7 +2,7 @@
   <bar-chart :chart-data="barChartData" />
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { ChartData } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
