@@ -80,7 +80,7 @@ export default defineComponent({
       return flatten(computedArray);
     });
 
-    const chartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const chartData = computed<ChartData<"bar">>(() => {
       return {
         labels: orderedHeroes.value.map((p: PlayedHero) => p.icon),
         datasets: [

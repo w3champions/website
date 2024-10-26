@@ -1,13 +1,14 @@
 <template>
   <bar-chart-generic
-      :data="chartData"
-      :options="chartOptions"
+    :data="chartData"
+    :options="chartOptions"
   />
 </template>
 
 <script lang="ts">
-import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend } from "chart.js";
+import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend, ChartData } from "chart.js";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
+import { PropType } from "vue";
 import { Bar as BarChartGeneric } from "vue-chartjs";
 
 ChartJS.register(BarController);
@@ -51,7 +52,12 @@ export default {
   components: { BarChartGeneric },
   props: {
     chartData: {
-      type: Object,
+      // Unfortunately we can't use ChartData<"bar"> here,
+      // because we sometimes pass mixed charts (line and bar)
+      // which chartjs supports, but vue-chartjs doesn't expose
+      // types for.
+      type: Object as PropType<ChartData<any>>,
+      required: true,
     },
     chartOptions: {
       type: Object,

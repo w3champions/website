@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -85,14 +85,12 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const paginationSize = 10;
     const page = ref<number>(1);
-    const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
-    const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
-    const pageLength: ComputedRef<number> = computed((): number => Math.ceil(heroWinRates().length / paginationSize));
-    const heroStatsCurrentPage: ComputedRef<PlayerHeroWinRateForStatisticsTab[]> = computed((): PlayerHeroWinRateForStatisticsTab[] => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
+    const selectedRace = computed(() => Number(selectedTab.value.split("-")[1]));
+    const pageOffset = computed(() => paginationSize * page.value);
+    const pageLength = computed(() => Math.ceil(heroWinRates().length / paginationSize));
+    const heroStatsCurrentPage = computed(() => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
 
-    const selectedTab: ComputedRef<string> = computed((): string => {
-      return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
-    });
+    const selectedTab = computed(() => defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
     const headers = [
       { text: "", value: "image" },
@@ -105,7 +103,7 @@ export default defineComponent({
       { text: "vs. Random", value: ERaceEnum.RANDOM },
     ];
 
-    const headersWithoutImageAndName = headers.slice(2);
+    const headersWithoutImageAndName = headers.slice(2) as { text: string; value: ERaceEnum }[];
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);

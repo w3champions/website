@@ -21,7 +21,7 @@
             @change="setNormalizedGamesPerDay"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
           ></v-switch>
-          <div v-if="isAllMode">
+          <div v-if="normalizedGamesPerDay">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
             <br />
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc2") }}
