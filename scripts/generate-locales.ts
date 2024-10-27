@@ -3,7 +3,7 @@
  * Content is pulled from this Google Sheet:
  * https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc/edit#gid=0
  *
- * ⚠️ For this script to work you need to have a Google API key with Sheets enabled (https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication)
+ * ⚠️ For this script to work you need to have a Google API key with Sheets enabled (https://theoephraim.github.io/node-google-spreadsheet/#/guides/authentication)
  * Place it in a .env file as GOOGLE_API_KEY
  */
 
