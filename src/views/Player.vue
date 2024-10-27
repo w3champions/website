@@ -280,11 +280,9 @@ export default defineComponent({
     }
 
     async function initMmrRpTimeline() {
-      const selectedSeason = playerStore.selectedSeason?.id;
       let maxMode = EGameMode.GM_1ON1;
       let maxModeGames = 0;
       playerStore.gameModeStats.forEach((m) => {
-        if (m.season !== selectedSeason) return;
         if (m.games > maxModeGames) {
           maxModeGames = m.games;
           maxMode = m.gameMode;
@@ -295,7 +293,6 @@ export default defineComponent({
       let maxRace = ERaceEnum.HUMAN;
       let maxRaceGames = 0;
       playerStore.raceStats.forEach((r) => {
-        if (r.season !== selectedSeason) return;
         if (r.games > maxRaceGames) {
           maxRaceGames = r.games;
           maxRace = r.race;
