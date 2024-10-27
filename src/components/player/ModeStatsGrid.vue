@@ -1,5 +1,5 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400">
+  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
       <v-tooltip top v-bind:key="h.text">
         <template v-slot:activator="{ on }">
