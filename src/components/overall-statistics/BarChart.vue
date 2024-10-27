@@ -56,6 +56,7 @@ export default {
       // because we sometimes pass mixed charts (line and bar)
       // which chartjs supports, but vue-chartjs doesn't expose
       // types for.
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       type: Object as PropType<ChartData<any>>,
       required: true,
     },

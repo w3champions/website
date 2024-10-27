@@ -175,12 +175,12 @@ export default defineComponent({
     });
 
     // country code of the data being displayed
-    const currentCountryCode = computed(() => 
+    const currentCountryCode = computed(() =>
       rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
       rankings.value[0]?.ranks[0].playersInfo[0].location
     );
 
-    const isLoading = computed(() => 
+    const isLoading = computed(() =>
       (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value)
       || (!initialized.value && rankings.value.length === 0)
     );

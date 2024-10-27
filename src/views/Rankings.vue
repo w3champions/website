@@ -157,7 +157,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { Gateways, League, PlayerId, Ranking, Season } from "@/store/ranking/types";
+import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -171,10 +171,6 @@ import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
-
-type RankingSlot = {
-  item: Ranking;
-}
 
 export default defineComponent({
   name: "RankingsView",

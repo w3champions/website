@@ -54,7 +54,7 @@
         </v-row>
 
         <div v-if="tournament.id">
-          <Tournament :tournament="tournament" />
+          <tournament-view :tournament="tournament" />
         </div>
         <div v-else>
           No upcoming tournament.
@@ -68,7 +68,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import throttle from "lodash/throttle";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
-import Tournament from "../tournaments/Tournament.vue";
+import TournamentView from "../tournaments/TournamentView.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
 import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
@@ -80,7 +80,7 @@ import { useTournamentsManagementStore } from "@/store/admin/tournamentsManageme
 export default defineComponent({
   name: "AdminTournaments",
   components: {
-    Tournament,
+    TournamentView,
     AddPlayerModal,
     RemovePlayerModal,
     EditTournamentModal,

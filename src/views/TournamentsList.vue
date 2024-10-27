@@ -28,7 +28,7 @@ import { useTournamentsStore } from "@/store/tournaments/store";
 import { useRouter } from "vue-router/composables";
 
 export default defineComponent({
-  name: "TournamentsView",
+  name: "TournamentsList",
   components: {
     TournamentsTable,
   },
@@ -39,9 +39,9 @@ export default defineComponent({
     const tournaments = computed<ITournament[]>(() => tournamentsStore.tournaments);
     const pastTournaments = computed<ITournament[]>(() => difference(tournaments.value, upcomingTournaments.value));
 
-    const upcomingTournaments = computed<ITournament[]>(() => 
+    const upcomingTournaments = computed<ITournament[]>(() =>
       tournaments.value
-        .filter((tournament) => 
+        .filter((tournament) =>
           [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state)
           && isFuture(tournament.startDateTime)
         ));

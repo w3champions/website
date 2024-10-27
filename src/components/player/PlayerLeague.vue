@@ -171,7 +171,7 @@ export default defineComponent({
       }
     });
 
-    const lastTenMatchesPerformance = computed<("W"|"L")[]>(() => {
+    const lastTenMatchesPerformance = computed<("W" | "L")[]>(() => {
       return matches.value
         .slice(0, 10)
         .map((match) => match.teams.find((team) => team.players.find((player) => player.battleTag === battleTag.value)))
