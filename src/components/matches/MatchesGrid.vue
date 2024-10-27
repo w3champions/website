@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, StyleValue, WritableComputedRef } from "vue";
+import { computed, defineComponent, StyleValue } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -163,20 +163,20 @@ export default defineComponent({
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
     const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
-    const matches: ComputedRef<Match[]> = computed((): Match[] => props.value);
+    const matches = computed(() => props.value);
 
-    const currentMatchesLowRange: ComputedRef<number> = computed((): number => {
+    const currentMatchesLowRange = computed(() => {
       if (props.totalMatches === 0) return 0;
       if (props.totalMatches <= 50) return 1;
       return page.value * 50 - 49;
     });
 
-    const currentMatchesHighRange: ComputedRef<number> = computed((): number => {
+    const currentMatchesHighRange = computed(() => {
       const highRange = page.value * 50;
       return highRange > props.totalMatches ? props.totalMatches : highRange;
     });
 
-    const getTotalPages: ComputedRef<number> = computed((): number => {
+    const getTotalPages = computed(() => {
       if (!props.totalMatches) return 1;
       return Math.ceil(props.totalMatches / 50);
     });
@@ -185,8 +185,8 @@ export default defineComponent({
       context.emit("pageChanged", page);
     }
 
-    const page: WritableComputedRef<number> = computed({
-      get(): number {
+    const page = computed({
+      get() {
         return props.isPlayerProfile ? playerStore.page : matchStore.page;
       },
       set(val: number): void {

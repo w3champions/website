@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
@@ -84,7 +84,7 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
 
     const dialogOpened = ref<boolean>(false);
-    const heroPicks: ComputedRef<HeroPick[]> = computed((): HeroPick[] => overallStatsStore.heroPicks);
+    const heroPicks = computed<HeroPick[]>(() => overallStatsStore.heroPicks);
 
     function openDialog() {
       dialogOpened.value = true;
@@ -159,18 +159,16 @@ export default defineComponent({
       return getAsset(`heroes/${hero.heroId}.png`);
     }
 
-    const isEnabledForChange: ComputedRef<boolean> = computed((): boolean => {
-      return previousHero.value?.heroId !== "all" && previousHero.value?.heroId !== "none";
-    });
+    const isEnabledForChange = computed(() =>  previousHero.value?.heroId !== "all" && previousHero.value?.heroId !== "none");
 
-    const previousHero: ComputedRef<HeroPick | null> = computed((): HeroPick | null => {
+    const previousHero = computed(() => {
       if (props.heroIndex === 3 || props.heroIndex === 0) {
         return null;
       }
       return heroPicks.value[props.heroIndex - 1];
     });
 
-    const previousPreviousHero: ComputedRef<HeroPick | null> = computed((): HeroPick | null => {
+    const previousPreviousHero = computed(() => {
       if (
         props.heroIndex === 4 ||
         props.heroIndex === 1 ||
@@ -214,9 +212,9 @@ export default defineComponent({
       return heroPick.race === raceWithoutRandom;
     }
 
-    const heroPicture: ComputedRef<string> = computed((): string => parsePicture(heroPicks.value[props.heroIndex]));
+    const heroPicture = computed(() => parsePicture(heroPicks.value[props.heroIndex]));
 
-    const heroPickName: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const heroPickName = computed<TranslateResult>(() => {
       const heroName = heroPicks.value[props.heroIndex].name;
       if (heroName === "anyhero") {
         return t("components_overall-statistics_heropictureselect.anyhero");

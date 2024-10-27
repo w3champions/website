@@ -45,7 +45,7 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { TranslateResult, useI18n } from "vue-i18n-bridge";
 import { useClanStore } from "@/store/clan/store";
 
@@ -58,8 +58,8 @@ export default defineComponent({
     const clanNameToCreate = ref<string>("");
     const clanAbbreviationToCreate = ref<string>("");
 
-    const clanValidationError: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
-    const isValidationError: ComputedRef<boolean> = computed((): boolean => clanStore.clanValidationError !== "");
+    const clanValidationError = computed(() => clanStore.clanValidationError);
+    const isValidationError = computed(() => clanStore.clanValidationError !== "");
 
     function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
       return (v: string): TranslateResult => {

@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -54,9 +54,9 @@ export default defineComponent({
     const { t } = useI18n();
     const playerStore = usePlayerStore();
 
-    const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
+    const selectedRace = computed(() => Number(selectedTab.value.split("-")[1]));
 
-    const selectedTab: ComputedRef<string> = computed((): string => {
+    const selectedTab = computed(() => {
       return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
     });
 

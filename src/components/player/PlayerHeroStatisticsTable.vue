@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { NumbersByPlayerHeroStatistic, PlayerHeroStatistic } from "@/store/player/types";
 import { mdiMenuLeft } from "@mdi/js";
 import { mdiMenuRight } from "@mdi/js";
@@ -54,9 +54,9 @@ export default defineComponent({
     const page = ref<number>(1);
     const paginationSize = 10;
 
-    const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
-    const pageLength: ComputedRef<number> = computed((): number => Math.ceil(props.heroStatistics.length / paginationSize));
-    const heroStatsCurrentPage: ComputedRef<PlayerHeroStatistic[]> = computed((): PlayerHeroStatistic[] => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
+    const pageOffset = computed(() => paginationSize * page.value);
+    const pageLength = computed(() => Math.ceil(props.heroStatistics.length / paginationSize));
+    const heroStatsCurrentPage = computed(() => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
 
     const headers = [
       { text: "", value: "image" },

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import AdminNavigation from "@/components/admin/AdminNavigation.vue";
 import AdminCheckJwtLifetime from "@/components/admin/AdminCheckJwtLifetime.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -24,7 +24,7 @@ export default defineComponent({
   },
   setup() {
     const oauthStore = useOauthStore();
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const isAdmin = computed(() => oauthStore.isAdmin);
 
     return {
       isAdmin,

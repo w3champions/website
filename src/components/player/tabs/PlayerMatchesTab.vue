@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -106,12 +106,12 @@ export default defineComponent({
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
 
-    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
-    const totalMatches: ComputedRef<number> = computed((): number => playerStore.totalMatches);
-    const matches: ComputedRef<Match[]> = computed((): Match[] => playerStore.matches);
-    const profileMatchesGameMode: ComputedRef<EGameMode> = computed((): EGameMode => playerStore.profileMatchesGameMode);
-    const playerRace: ComputedRef<ERaceEnum | undefined> = computed((): ERaceEnum | undefined => playerStore.playerRace);
-    const opponentRace: ComputedRef<ERaceEnum | undefined> = computed((): ERaceEnum | undefined => playerStore.opponentRace);
+    const battleTag = computed(() => decodeURIComponent(props.id));
+    const totalMatches = computed(() => playerStore.totalMatches);
+    const matches = computed<Match[]>(() => playerStore.matches);
+    const profileMatchesGameMode = computed(() => playerStore.profileMatchesGameMode);
+    const playerRace = computed(() => playerStore.playerRace);
+    const opponentRace = computed(() => playerStore.opponentRace);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
@@ -139,7 +139,7 @@ export default defineComponent({
       { raceName: t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`), raceId: ERaceEnum.RANDOM },
     ];
 
-    const winRateVsOpponent: ComputedRef<string> = computed((): string => {
+    const winRateVsOpponent = computed(() => {
       if (opponentWins.value == 0) return "0";
       return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
     });
@@ -159,7 +159,7 @@ export default defineComponent({
       getMatches();
     }
 
-    const totalMatchesAgainstOpponent: ComputedRef<number> = computed((): number => {
+    const totalMatchesAgainstOpponent = computed(() => {
       const opponentTag = playerStore.opponentTag;
 
       if (!opponentTag || !matches.value) return 0;
@@ -186,30 +186,27 @@ export default defineComponent({
       return totalMatchesAgainstOpponent;
     });
 
-    const opponentWins: ComputedRef<number> = computed((): number => {
-      if (playerStore.opponentTag.length) {
-        return matches.value.filter((match: Match) =>
-          match.teams.some((team: Team) => {
-            const playerHasWin = team.players.some(
+    const opponentWins = computed(() => {
+      if (!playerStore.opponentTag.length) return 0;
+      return matches.value.filter((match: Match) =>
+        match.teams.some((team: Team) => {
+          const playerHasWin = team.players.some(
+            (player: PlayerInTeam) =>
+              player.battleTag === battleTag.value && player.won
+          );
+
+          const otherTeams = match.teams.filter((x) => x != team);
+
+          const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
+            return otherTeam.players.some(
               (player: PlayerInTeam) =>
-                player.battleTag === battleTag.value && player.won
+                player.battleTag === playerStore.opponentTag
             );
+          });
 
-            const otherTeams = match.teams.filter((x) => x != team);
-
-            const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
-              return otherTeam.players.some(
-                (player: PlayerInTeam) =>
-                  player.battleTag === playerStore.opponentTag
-              );
-            });
-
-            return playerHasWin && opponentIsOnTheOtherTeam;
-          })
-        ).length;
-      }
-
-      return 0;
+          return playerHasWin && opponentIsOnTheOtherTeam;
+        })
+      ).length;
     });
 
     async function getMatches(page?: number): Promise<void> {

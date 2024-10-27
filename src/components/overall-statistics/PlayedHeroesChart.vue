@@ -2,7 +2,7 @@
   <bar-chart :chart-data="chartData" :chart-options="chartOptions" />
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import map from "lodash/map";
 import round from "lodash/round";
@@ -46,7 +46,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const orderedHeroes: ComputedRef<PlayedHeroExtra[]> = computed((): PlayedHeroExtra[] => {
+    const orderedHeroes = computed<PlayedHeroExtra[]>(() => {
       const playedHeroesExtra = props.playedHeroes
         .map((hero) => {
           const race = HERO_DATA[hero.icon].race;
@@ -93,7 +93,7 @@ export default defineComponent({
       };
     });
 
-    const chartOptions: ComputedRef<ChartOptions> = computed((): ChartOptions => {
+    const chartOptions = computed<ChartOptions>(() => {
       return {
         plugins: {
           legend: {

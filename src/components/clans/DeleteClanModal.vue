@@ -32,7 +32,7 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -41,7 +41,7 @@ export default defineComponent({
   setup() {
     const clanStore = useClanStore();
     const dialog = ref<boolean>(false);
-    const clanName: ComputedRef<string> = computed((): string => clanStore.playersClan.clanName);
+    const clanName = computed(() => clanStore.playersClan.clanName);
 
     async function deleteClan(): Promise<void> {
       await clanStore.deleteClan();

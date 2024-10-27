@@ -171,7 +171,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import map from "lodash/map";
 import pickBy from "lodash/pickBy";
 import { ETournamentFormat, ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
@@ -221,25 +221,20 @@ export default defineComponent({
     const floNode = ref<ITournamentFloNode | null>(null);
     const tabsModel = ref({});
 
-    const isEdit: ComputedRef<boolean> = computed((): boolean => !!props.tournament);
-    const mapOptions: ComputedRef<Map[]> = computed((): Map[] => props.maps);
-    const gameModes: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(EGameModeLabel));
-    const formats: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
-    const enabledFloNodes: ComputedRef<ITournamentFloNode[]> = computed((): ITournamentFloNode[] => tournamentsManagementStore.floNodes);
+    const isEdit = computed(() => !!props.tournament);
+    const mapOptions = computed<Map[]>(() => props.maps);
+    const gameModes = computed(() => getSelectOptions(EGameModeLabel));
+    const formats = computed(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
+    const enabledFloNodes = computed<ITournamentFloNode[]>(() => tournamentsManagementStore.floNodes);
 
-    const states: ComputedRef<{id: number; name: string}[]> = computed((): {id: number; name: string}[] => {
+    const states = computed(() => {
       const validStates = pickBy(ETournamentState, (_value, key) => {
         return !isNaN(Number(key));
       }) as { [key: number]: string };
       return getSelectOptions(validStates);
     });
 
-    const formValid: ComputedRef<boolean> = computed((): boolean => {
-      if (mapPool.value.length < 3) {
-        return false;
-      }
-      return true;
-    });
+    const formValid = computed(() => mapPool.value.length >= 3);
 
     function cancel(): void {
       context.emit("cancel");

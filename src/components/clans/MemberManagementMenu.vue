@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { EClanRole } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiPencil } from "@mdi/js";
@@ -74,7 +74,7 @@ export default defineComponent({
       await clanStore.retrievePlayersMembership();
     }
 
-    const actions: ComputedRef<Array<MemberManagementMenuAction>> = computed(():  Array<MemberManagementMenuAction> => {
+    const actions = computed<MemberManagementMenuAction[]>(() => {
       switch (props.role) {
         case EClanRole.Member:
           switch (props.loggedInUserRole) {

@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -38,8 +38,8 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const adminStore = useAdminStore();
     const showProxyOptions = ref<boolean>(false);
-    const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const availableProxies = computed<Proxy[]>(() => adminStore.availableProxies);
+    const isAdmin = computed(() => oauthStore.isAdmin);
 
     async function playerFound(bTag: string): Promise<void> {
       const proxies = await adminStore.getProxiesForPlayer(bTag);

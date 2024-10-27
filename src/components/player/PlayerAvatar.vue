@@ -325,7 +325,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
@@ -365,36 +365,36 @@ export default defineComponent({
 
     const enumToString = (race: ERaceEnum) => t(`races.${ERaceEnum[race]}`);
 
-    const personalSetting: ComputedRef<PersonalSetting> = computed((): PersonalSetting => personalSettingsStore.personalSettings);
+    const personalSetting = computed<PersonalSetting>(() => personalSettingsStore.personalSettings);
 
     const starterPicNumbers = Array.from({ length: 5 }, (_, i) => i + 1);
     const racePicNumbers = Array.from({ length: 18 }, (_, i) => i + 1);
 
-    const playerGames: ComputedRef<number> = computed((): number => {
+    const playerGames = computed(() => {
       return personalSetting.value.winLosses?.reduce((sum, stat) => {
         return sum + stat.games;
       }, 0);
     });
 
-    const homePage: ComputedRef<string> = computed((): string => personalSetting.value.homePage || "-");
-    const countryCode: ComputedRef<string> = computed((): string => personalSetting.value.countryCode || "");
-    const twitch: ComputedRef<string> = computed((): string => personalSetting.value.twitch || "");
-    const youtube: ComputedRef<string> = computed((): string => personalSetting.value.youTube || "");
-    const twitter: ComputedRef<string> = computed((): string => personalSetting.value.twitter || "");
-    const trovo: ComputedRef<string> = computed((): string => personalSetting.value.trovo || "");
-    const douyu: ComputedRef<string> = computed((): string => personalSetting.value.douyu || "");
+    const homePage = computed(() => personalSetting.value.homePage || "-");
+    const countryCode = computed(() => personalSetting.value.countryCode || "");
+    const twitch = computed(() => personalSetting.value.twitch || "");
+    const youtube = computed(() => personalSetting.value.youTube || "");
+    const twitter = computed(() => personalSetting.value.twitter || "");
+    const trovo = computed(() => personalSetting.value.trovo || "");
+    const douyu = computed(() => personalSetting.value.douyu || "");
 
-    const aliasSettings: ComputedRef<AkaSettings> = computed((): AkaSettings => {
+    const aliasSettings = computed<AkaSettings>(() => {
       return (
         personalSetting.value.aliasSettings || {
           showAka: true,
           showW3info: true,
           showLiquipedia: true,
-        }
+        } satisfies AkaSettings
       );
     });
 
-    const homePageLinks: ComputedRef<string[]> = computed((): string[] => {
+    const homePageLinks = computed(() => {
       if (!homePage.value || !homePage.value.includes("http")) {
         return [];
       }
@@ -405,10 +405,10 @@ export default defineComponent({
         .map((url) => url.trim());
     });
 
-    const specialPictures: ComputedRef<SpecialPicture[]> = computed((): SpecialPicture[] => personalSetting.value.specialPictures || []);
-    const savedMessageValue: ComputedRef<string> = computed((): string => personalSetting.value.profileMessage);
-    const avatarIcon: ComputedRef<number> = computed((): number => personalSetting.value?.profilePicture?.pictureId ?? 0);
-    const avatarCategory: ComputedRef<EAvatarCategory> = computed((): EAvatarCategory => personalSetting.value?.profilePicture?.race ?? EAvatarCategory.TOTAL);
+    const specialPictures = computed<SpecialPicture[]>(() => personalSetting.value.specialPictures || []);
+    const savedMessageValue = computed(() => personalSetting.value.profileMessage);
+    const avatarIcon = computed(() => personalSetting.value?.profilePicture?.pictureId ?? 0);
+    const avatarCategory = computed(() => personalSetting.value?.profilePicture?.race ?? EAvatarCategory.TOTAL);
 
     const rules = {
       maxLength: (len: number) => (v: string) => (v || "").length < len || `Can not exceed ${len} characters`,
@@ -417,7 +417,7 @@ export default defineComponent({
     const selectedCountry = ref<string>("");
     const selectedCountryCode = ref<string>("");
 
-    const userProfile: ComputedRef<ProfilePlayerSocials> = computed((): ProfilePlayerSocials => {
+    const userProfile = computed<ProfilePlayerSocials>(() => {
       return {
         twitch: twitch.value,
         youtube: youtube.value,
@@ -427,7 +427,7 @@ export default defineComponent({
         aliasSettings: aliasSettings.value,
         about: savedMessageValue.value,
         homePage: homePage.value,
-      };
+      } satisfies ProfilePlayerSocials;
     });
 
     function countryFilter(item: CountryType, queryText: string): boolean {
@@ -500,7 +500,7 @@ export default defineComponent({
       return classes;
     }
 
-    const avatarDescription: ComputedRef<string> = computed((): string => {
+    const avatarDescription = computed(() => {
       if (avatarCategory.value != EAvatarCategory.SPECIAL) return "";
       const specialPicture = specialPictures.value.find((x) => x.pictureId == avatarIcon.value);
       return specialPicture?.description ?? "";

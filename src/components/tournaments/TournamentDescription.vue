@@ -41,9 +41,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
+import { ETournamentState, ITournament } from "@/store/tournaments/types";
 import { ETournamentFormatLabel, EGameModeLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { ERaceEnum } from "@/store/types";
@@ -65,21 +65,21 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const formattedDate: ComputedRef<string> = computed((): string => formatDateToDateWeekday(props.tournament.startDateTime));
-    const gameMode: ComputedRef<string> = computed((): string => EGameModeLabel[props.tournament.mode]);
-    const format: ComputedRef<string> = computed((): string => ETournamentFormatLabel[props.tournament.format]);
-    const playerCount: ComputedRef<number> = computed((): number => props.tournament.players.length);
-    const mapPool: ComputedRef<string> = computed((): string => props.tournament.mapPool.map((mapId) => props.maps.find((map) => map.id === mapId)?.name).sort().join(", "));
-    const statusInit: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.INIT);
-    const statusRegistration: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.REGISTRATION);
-    const statusMatchGeneration: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.MATCH_GENERATION);
-    const statusCanceled: ComputedRef<boolean> = computed((): boolean => props.tournament.state === ETournamentState.CANCELED);
-    const matcherinoUrl: ComputedRef<string | undefined> = computed((): string | undefined => props.tournament.matcherinoUrl);
-    const maxPlayers: ComputedRef<number> = computed((): number => props.tournament.maxPlayers);
-    const floNode: ComputedRef<ITournamentFloNode> = computed((): ITournamentFloNode => props.tournament.floNode);
-    const floNodeMaxPing: ComputedRef<number> = computed((): number => props.tournament.floNodeMaxPing);
+    const formattedDate = computed(() => formatDateToDateWeekday(props.tournament.startDateTime));
+    const gameMode = computed(() => EGameModeLabel[props.tournament.mode]);
+    const format = computed(() => ETournamentFormatLabel[props.tournament.format]);
+    const playerCount = computed(() => props.tournament.players.length);
+    const mapPool = computed(() => props.tournament.mapPool.map((mapId) => props.maps.find((map) => map.id === mapId)?.name).sort().join(", "));
+    const statusInit = computed(() => props.tournament.state === ETournamentState.INIT);
+    const statusRegistration = computed(() => props.tournament.state === ETournamentState.REGISTRATION);
+    const statusMatchGeneration = computed(() => props.tournament.state === ETournamentState.MATCH_GENERATION);
+    const statusCanceled = computed(() => props.tournament.state === ETournamentState.CANCELED);
+    const matcherinoUrl = computed(() => props.tournament.matcherinoUrl);
+    const maxPlayers = computed(() => props.tournament.maxPlayers);
+    const floNode = computed(() => props.tournament.floNode);
+    const floNodeMaxPing = computed(() => props.tournament.floNodeMaxPing);
 
-    const registeredPlayers: ComputedRef<string> = computed((): string => {
+    const registeredPlayers = computed(() => {
       return props.tournament.players.map((player) => (
         `${player.battleTag}(${t(`racesShort.${ERaceEnum[player.race]}`)})`
       )).join(", ");

@@ -161,7 +161,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { ChangePortraitsCommand } from "@/store/admin/types";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
@@ -197,19 +197,19 @@ export default defineComponent({
     const mouseoverText = ref<string>("");
     const foundPlayer = ref<string>("");
 
-    const searchedPlayerPortraits: ComputedRef<number[]> = computed((): number[] => playerManagement.searchedPlayerSpecialPortraits);
-    const hasSpecialPortraits: ComputedRef<boolean> = computed((): boolean => searchedPlayerPortraits.value != null && searchedPlayerPortraits.value.length > 0);
-    const hasSpecialPortraitsAssigned: ComputedRef<boolean> = computed((): boolean => assignedPortraitsModel.value.length > 0);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const searchedPlayerPortraits = computed(() => playerManagement.searchedPlayerSpecialPortraits);
+    const hasSpecialPortraits = computed(() => searchedPlayerPortraits.value != null && searchedPlayerPortraits.value.length > 0);
+    const hasSpecialPortraitsAssigned = computed(() => assignedPortraitsModel.value.length > 0);
+    const isAdmin = computed(() => oauthStore.isAdmin);
 
-    const rules: ComputedRef<AdminAssignPortraitsRules> = computed((): AdminAssignPortraitsRules => {
+    const rules = computed(() => {
       return {
         required: (value: string) => !!value || "Required",
         min: (text: string) => text.length >= 3 || "Min 3 characters",
-      };
+      } satisfies AdminAssignPortraitsRules;
     });
 
-    const assignmentsChanged: ComputedRef<boolean> = computed((): boolean => {
+    const assignmentsChanged = computed(() => {
       const assignedSorted = assignedPortraitsModel.value.slice().sort();
       const searchedSorted = searchedPlayerPortraits.value.slice().sort();
       if (

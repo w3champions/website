@@ -117,9 +117,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
-import { ProxySettings } from "@/store/admin/types";
+import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useAdminStore } from "@/store/admin/store";
 
 export default defineComponent({
@@ -129,7 +129,7 @@ export default defineComponent({
   },
   props: {
     proxies: {
-      type: Object as PropType<ProxySettings>,
+      type: Object as PropType<Proxy[]>,
       required: true,
     },
   },
@@ -138,19 +138,15 @@ export default defineComponent({
     //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
     //! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
 
-    // Kovax comment:
-    // props.proxies is not ProxySettings. It is an Proxy[]. But the prop is not used anyway, because it is only referenced in the
-    // availableProxies getter, and it is not used.
-
     const adminStore = useAdminStore();
     const searchedPlayerTag = ref<string>("");
     const initProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
     const originalProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
     const dialog = ref<boolean>(false);
 
-    const availableProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => props.proxies);
-    const modifiedProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.modifiedProxies);
-    const isProxyModified: ComputedRef<boolean> = computed((): boolean => adminStore.proxyModified);
+    const availableProxies = computed(() => props.proxies);
+    const modifiedProxies = computed<ProxySettings>(() => adminStore.modifiedProxies);
+    const isProxyModified = computed(() => adminStore.proxyModified);
 
     function putNewProxies(): void {
       if (isProxyModified.value) {

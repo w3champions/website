@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, ref, watch } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { EGameMode, ERaceEnum, Match } from "@/store/types";
@@ -60,7 +60,7 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { Gateways, PlayerId, Season } from "@/store/ranking/types";
+import { Season } from "@/store/ranking/types";
 import { useRouter } from "vue-router/composables";
 
 export default defineComponent({
@@ -103,16 +103,12 @@ export default defineComponent({
     const league = computed<number>(() => props.modeStat.leagueId);
     const isRanked = computed<boolean>(() => props.modeStat.rank > 0);
 
-    const gateWay: ComputedRef<Gateways> = computed((): Gateways => rootStateStore.gateway);
-    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
-    const battleTag: ComputedRef<string> = computed((): string => playerStore.battleTag);
-    const seasonAndGameModeAndGateway: ComputedRef<string> = computed(
-      (): string => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`
-    );
+    const gateWay = computed(() => rootStateStore.gateway);
+    const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+    const battleTag = computed(() => playerStore.battleTag);
+    const seasonAndGameModeAndGateway = computed(() => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`);
 
-    const atPartner: ComputedRef<PlayerId> = computed((): PlayerId => {
-      return props.modeStat.playerIds.filter((id) => battleTag.value !== id.battleTag)[0];
-    });
+    const atPartner = computed(() => props.modeStat.playerIds.filter((id) => battleTag.value !== id.battleTag)[0]);
 
     watch(seasonAndGameModeAndGateway, init, { immediate: true });
 
@@ -147,7 +143,7 @@ export default defineComponent({
       });
     }
 
-    const leagueName: ComputedRef<string> = computed((): string => {
+    const leagueName = computed<string>(() => {
       if (!props.modeStat) return "";
       if (!isRanked.value) return "unranked";
 
@@ -175,7 +171,7 @@ export default defineComponent({
       }
     });
 
-    const lastTenMatchesPerformance: ComputedRef<string[]> = computed((): string[] => {
+    const lastTenMatchesPerformance = computed<("W"|"L")[]>(() => {
       return matches.value
         .slice(0, 10)
         .map((match) => match.teams.find((team) => team.players.find((player) => player.battleTag === battleTag.value)))
@@ -183,11 +179,11 @@ export default defineComponent({
         .map((team) => (team?.won ? "W" : "L"));
     });
 
-    const isRecentPerformanceVisible: ComputedRef<boolean> = computed((): boolean => {
-      return (
-        props.showPerformance && gameMode.value !== EGameMode.GM_2ON2_AT && lastTenMatchesPerformance.value.length > 0
-      );
-    });
+    const isRecentPerformanceVisible = computed(() =>
+      props.showPerformance
+      && gameMode.value !== EGameMode.GM_2ON2_AT
+      && lastTenMatchesPerformance.value.length > 0
+    );
 
     return {
       isRanked,

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import Tournament from "@/components/tournaments/Tournament.vue";
 import { useTournamentsStore } from "@/store/tournaments/store";
@@ -27,7 +27,7 @@ export default defineComponent({
   },
   setup(props) {
     const tournamentsStore = useTournamentsStore();
-    const tournament: ComputedRef<ITournament | undefined> = computed((): ITournament | undefined => tournamentsStore.tournaments.find((t) => t.id === props.tournamentId));
+    const tournament = computed<ITournament>(() => tournamentsStore.tournaments.find((t) => t.id === props.tournamentId)!);
 
     onMounted(async (): Promise<void> => {
       await tournamentsStore.retrieveTournaments();

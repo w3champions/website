@@ -164,7 +164,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, nextTick, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
@@ -202,13 +202,13 @@ export default defineComponent({
     const tableSearch = ref<string>("");
     const foundPlayer = ref<string>("");
 
-    const bannedPlayers: ComputedRef<BannedPlayer[]> = computed((): BannedPlayer[] => adminStore.bannedPlayers);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const isAddDialog: ComputedRef<boolean> = computed((): boolean => editedIndex.value === -1);
-    const banValidationError: ComputedRef<string> = computed((): string => adminStore.banValidationError);
-    const isValidationError: ComputedRef<boolean> = computed((): boolean => adminStore.banValidationError !== "");
-    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Item" : "Edit Item");
+    const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
+    const isAdmin = computed(() => oauthStore.isAdmin);
+    const isAddDialog = computed(() => editedIndex.value === -1);
+    const banValidationError = computed(() => adminStore.banValidationError);
+    const isValidationError = computed(() => adminStore.banValidationError !== "");
+    const author = computed(() => oauthStore.blizzardVerifiedBtag);
+    const formTitle = computed(() => isAddDialog.value ? "New Item" : "Edit Item");
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
 
     const defaultItem = {
@@ -222,7 +222,7 @@ export default defineComponent({
     };
 
     // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
-    const endDateIsSet: ComputedRef<boolean> = computed((): boolean => editedItem.value.endDate.length == 10);
+    const endDateIsSet = computed(() => editedItem.value.endDate.length == 10);
 
     function getGameModeName(id: EGameMode): TranslateResult {
       return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
@@ -230,7 +230,7 @@ export default defineComponent({
 
     // For a new ban, only allow active game modes to be chosen.
     // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
-    const selectableGameModes: ComputedRef<IGameModeBrief[]> = computed((): IGameModeBrief[] => {
+    const selectableGameModes = computed<IGameModeBrief[]>(() => {
       const bannedModesForEditedItem = editedItem.value.gameModes;
       const activeModeIds = activeGameModes().map((mode) => mode.id);
       const bannedInactiveModesForEditedItem = bannedModesForEditedItem

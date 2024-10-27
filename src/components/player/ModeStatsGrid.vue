@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { AT_modes } from "@/mixins/GameModesMixin";
@@ -76,7 +76,7 @@ export default defineComponent({
 
     const isAtMode = (mode: EGameMode): boolean => AT_modes().includes(mode);
 
-    const gameModeStatsCombined: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
+    const gameModeStatsCombined = computed<ModeStat[]>(() => {
       const AT_stats = props.stats.filter((g) => isAtMode(g.gameMode));
 
       if (AT_stats.length === 0) return sortByName(props.stats);

@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, WritableComputedRef } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
@@ -84,18 +84,18 @@ export default defineComponent({
     const loadingData = ref<boolean>(true);
     const loadingMapAndRaceStats = ref<boolean>(overallStatsStore.loadingMapAndRaceStats);
 
-    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
-    const mmrDistribution: ComputedRef<MmrDistribution> = computed((): MmrDistribution => overallStatsStore.mmrDistribution);
-    const standardDeviation: ComputedRef<string> = computed((): string => mmrDistribution.value?.standardDeviation?.toString() ?? "-");
-    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => selectedSeason.value.id <= 5);
+    const verifiedBtag = computed(() => oauthStore.blizzardVerifiedBtag);
+    const authCode = computed(() => oauthStore.token);
+    const seasons = computed<Season[]>(() => rankingsStore.seasons);
+    const mmrDistribution = computed<MmrDistribution>(() => overallStatsStore.mmrDistribution);
+    const standardDeviation = computed(() => mmrDistribution.value?.standardDeviation?.toString() ?? "-");
+    const isGatewayNeeded = computed(() => selectedSeason.value.id <= 5);
 
-    const selectedSeason: WritableComputedRef<Season> = computed({
-      get(): Season {
+    const selectedSeason = computed<Season>({
+      get() {
         return selectedSeasonRef.value;
       },
-      async set(season: Season): Promise<void> {
+      async set(season): Promise<void> {
         selectedSeasonRef.value = season;
         loadingData.value = true;
         if (verifiedBtag.value) {

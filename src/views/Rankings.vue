@@ -64,38 +64,33 @@
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
-          <template v-slot:item="data">
-            <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+          <!--
+            In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
+            but for now in Vue 2 we can't use TypeScript in templates.
+          -->
+          <template v-slot:item="{ item }">
+            <template v-if="item?.player === undefined">
+              <v-list-item-content>{{ item }}</v-list-item-content>
             </template>
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">
-                    {{ data.item.player.name }}
+                  <span v-if="!isDuplicateName(item.player.name)">
+                    {{ item.player.name }}
                   </span>
-                  <span v-if="isDuplicateName(data.item.player.name)">
-                    {{
-                      data.item.player.playerIds
-                        .map((p) => p.battleTag)
-                        .join(" & ")
-                    }}
+                  <span v-if="isDuplicateName(item.player.name)">
+                    {{ item.player.playerIds.map((p) => p.battleTag).join(" & ") }}
                   </span>
-                  <span
-                    v-if="
-                      data.item.player.gameMode === EGameMode.GM_1ON1 &&
-                      data.item.player.race
-                    "
-                  >
-                    ({{ $t(`racesShort.${ERaceEnum[data.item.player.race]}`) }})
+                  <span v-if="item.player.gameMode === EGameMode.GM_1ON1 && item.player.race">
+                    ({{ $t(`racesShort.${ERaceEnum[item.player.race]}`) }})
                   </span>
                 </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                  {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
+                <v-list-item-subtitle v-if="playerIsRanked(item)">
+                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
                   {{ $t(`common.losses`) }}
-                  {{ data.item.player.losses }} |
+                  {{ item.player.losses }} |
                   {{ $t(`common.total`) }}
-                  {{ data.item.player.games }}
+                  {{ item.player.games }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>
                   {{ $t(`views_rankings.unranked`) }}
@@ -161,8 +156,8 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { Gateways, League, PlayerId, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
@@ -176,6 +171,10 @@ import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
+
+type RankingSlot = {
+  item: Ranking;
+}
 
 export default defineComponent({
   name: "RankingsView",
@@ -223,32 +222,30 @@ export default defineComponent({
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
-    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
-    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
-    const selectedGameMode: ComputedRef<EGameMode> = computed((): EGameMode => rankingsStore.gameMode);
-    const selectedLeagueName: ComputedRef<string> = computed((): string => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
-    const rankings: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.rankings);
-    const searchRanks: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.searchRanks);
-    const showRaceDistribution: ComputedRef<boolean> = computed((): boolean => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const isGatewayNeeded = computed(() => rankingsStore.selectedSeason.id <= 5);
+    const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
+    const seasons = computed<Season[]>(() => rankingsStore.seasons);
+    const selectedGameMode = computed(() => rankingsStore.gameMode);
+    const selectedLeagueName = computed(() => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
+    const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
+    const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
+    const showRaceDistribution = computed(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
 
-    const ladders: ComputedRef<League[]> = computed((): League[] => {
-      const league = rankingsStore.ladders?.filter(
-        (l) =>
-          l.gateway === rootStateStore.gateway &&
-          l.gameMode === rankingsStore.gameMode &&
-          l.season === rankingsStore.selectedSeason.id
+    const ladders = computed<League[]>(() => {
+      const league = rankingsStore.ladders?.filter((l) =>
+        l.gateway === rootStateStore.gateway
+        && l.gameMode === rankingsStore.gameMode
+        && l.season === rankingsStore.selectedSeason.id
       )[0];
-
       return league?.leagues;
     });
 
-    const selectedLeague: ComputedRef<League> = computed((): League => {
+    const selectedLeague = computed<League>(() => {
       if (!ladders.value) return {} as League;
       return ladders.value.filter((l) => l.id == rankingsStore.league)[0] || {};
     });
 
-    const selectedLeagueOrder: ComputedRef<number> = computed((): number => {
+    const selectedLeagueOrder = computed(() => {
       const season = rankingsStore.selectedSeason;
       if (season?.id < 5 && selectedLeague.value?.order > 1) {
         return selectedLeague.value.order + 1;
@@ -316,7 +313,7 @@ export default defineComponent({
       return item.order;
     }
 
-    const noDataText: ComputedRef<string> = computed((): string => {
+    const noDataText = computed(() => {
       if (!search.value || search.value.length < 3) {
         return "Type at least 3 letters";
       }

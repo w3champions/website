@@ -56,7 +56,8 @@
                           <v-col>
                             <b>Permissions</b>
                             <v-checkbox
-                              v-for="permission in availablePermissions" :key="permission.value"
+                              v-for="permission in availablePermissions"
+                              :key="permission.value"
                               :multiple="true"
                               v-model="editedItem.permissions"
                               :label="permission.name"
@@ -111,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, nextTick, ref, watch, WritableComputedRef } from "vue";
+import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { IPermission, EPermission } from "@/store/admin/permission/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -133,18 +134,18 @@ export default defineComponent({
     const battleTag = ref<string>("");
     const editedItem = ref<IPermission>({} as IPermission);
 
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const permissions: ComputedRef<IPermission[]> = computed((): IPermission[] => permissionStore.permissions);
-    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const isAddDialog: ComputedRef<boolean> = computed((): boolean => editedIndex.value === -1);
-    const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Admin" : "Edit Admin");
-    const isValidationError: ComputedRef<boolean> = computed((): boolean => permissionStore.validationError !== "");
+    const isAdmin = computed(() => oauthStore.isAdmin);
+    const permissions = computed<IPermission[]>(() => permissionStore.permissions);
+    const author = computed(() => oauthStore.blizzardVerifiedBtag);
+    const isAddDialog = computed(() => editedIndex.value === -1);
+    const formTitle = computed(() => isAddDialog.value ? "New Admin" : "Edit Admin");
+    const isValidationError = computed(() => permissionStore.validationError !== "");
 
-    const validationError: WritableComputedRef<string> = computed({
-      get(): string {
+    const validationError = computed({
+      get() {
         return permissionStore.validationError;
       },
-      set(error: string): void {
+      set(error): void {
         permissionStore.validationError = error;
       },
     });

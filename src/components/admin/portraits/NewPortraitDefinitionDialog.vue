@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
@@ -72,7 +72,7 @@ export default defineComponent({
     const valid = ref<boolean>(false);
     const groups = ref<string[]>([]);
 
-    const allSpecialPortraits: ComputedRef<PortraitDefinition[]> = computed((): PortraitDefinition[] => playerManagement.allSpecialPortraits);
+    const allSpecialPortraits = computed<PortraitDefinition[]>(() => playerManagement.allSpecialPortraits);
 
     // Input validation rules
     const ruleRequired = computed(() => !!portraitId.value || "Required");
@@ -94,11 +94,11 @@ export default defineComponent({
       );
     });
 
-    const newPortraitDefinition: ComputedRef<PortraitDefinitionDTO> = computed((): PortraitDefinitionDTO => {
+    const newPortraitDefinition = computed<PortraitDefinitionDTO>(() => {
       return {
         ids: [portraitId.value],
         groups: groups.value,
-      } as PortraitDefinitionDTO;
+      } satisfies PortraitDefinitionDTO;
     });
 
     function confirmDialog(): void {

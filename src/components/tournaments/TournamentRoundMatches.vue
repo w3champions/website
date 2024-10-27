@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
-import { ITournamentRound, ITournamentSeries } from "@/store/tournaments/types";
+import { computed, defineComponent, PropType, StyleValue } from "vue";
+import { ITournamentRound } from "@/store/tournaments/types";
 import TournamentSeries from "./TournamentSeries.vue";
 
 export default defineComponent({
@@ -38,21 +38,21 @@ export default defineComponent({
     marginTop: { type: Number, required: true },
   },
   setup(props) {
-    const series: ComputedRef<ITournamentSeries[]> = computed((): ITournamentSeries[] => props.round.series);
+    const series = computed(() => props.round.series);
 
-    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const style = computed<StyleValue>(() => {
       return {
         width: `${props.roundWidth}px`,
       };
     });
 
-    const matchesStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const matchesStyle = computed<StyleValue>(() => {
       return {
         "margin-top": `${props.marginTop + props.playerHeight}px`,
       };
     });
 
-    const roundNameStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const roundNameStyle = computed<StyleValue>(() => {
       return {
         height: `${props.roundNameHeight}px`,
       };

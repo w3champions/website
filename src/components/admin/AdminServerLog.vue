@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter } from "vue-router/composables";
@@ -45,7 +45,7 @@ export default defineComponent({
     const serverLogsStore = useServerLogsStore();
     const logContent = ref<string[]>([]);
 
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const isAdmin = computed(() => oauthStore.isAdmin);
 
     function downloadLog(): void {
       serverLogsStore.downloadLog(`${props.logFileName}.log`);

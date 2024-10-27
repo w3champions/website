@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref, watch, WritableComputedRef } from "vue";
+import { computed, defineComponent, ref, watch, WritableComputedRef } from "vue";
 import debounce from "debounce";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 
@@ -86,9 +86,14 @@ export default defineComponent({
       playerSearchStore.clearPlayerSearch();
     }
 
-    const searchedPlayers: ComputedRef<string[]> = computed((): string[] => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
+    const searchedPlayers = computed(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
 
-    const noDataText: ComputedRef<string> = computed((): string => (!search.value || search.value.length < 3) ? "Type at least 3 letters" : isLoading.value ? "Loading..." : "No player found");
+    const noDataText = computed(() =>
+      (!search.value || search.value.length < 3)
+        ? "Type at least 3 letters"
+        : isLoading.value
+          ? "Loading..."
+          : "No player found");
 
     watch(searchedPlayers, onPlayersChanged);
 

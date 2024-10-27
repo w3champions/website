@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, ref, watch } from "vue";
+import { computed, defineComponent, onUnmounted, ref, watch } from "vue";
 import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
@@ -150,30 +150,30 @@ export default defineComponent({
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
 
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => playerStore.playerProfile.participatedInSeasons);
-    const profile: ComputedRef<PlayerProfile> = computed((): PlayerProfile => playerStore.playerProfile);
-    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
-    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
-    const ongoingMatch: ComputedRef<Match> = computed((): Match => playerStore.ongoingMatch);
+    const seasons = computed<Season[]>(() => playerStore.playerProfile.participatedInSeasons);
+    const profile = computed<PlayerProfile>(() => playerStore.playerProfile);
+    const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+    const battleTag = computed(() => decodeURIComponent(props.id));
+    const ongoingMatch = computed<Match>(() => playerStore.ongoingMatch);
 
-    const isOngoingMatchFFA: ComputedRef<boolean> = computed((): boolean => {
+    const isOngoingMatchFFA = computed(() => {
       const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
       return ongoingMatch.value && ffaModes.includes(ongoingMatch.value.gameMode);
     });
 
-    const aliasName: ComputedRef<string | false> = computed((): string | false => {
+    const aliasName = computed(() => {
       if (playerStore.playerProfile.playerAkaData != null) {
         return playerStore.playerProfile.playerAkaData.name ?? false;
       }
       return false;
     });
 
-    const seasonsWithoutCurrentOne: ComputedRef<Season[]> = computed((): Season[] => {
+    const seasonsWithoutCurrentOne = computed<Season[]>(() => {
       if (!seasons.value) return [];
       return seasons.value.filter((s) => s.id !== rankingsStore.seasons[0]?.id).reverse();
     });
 
-    const ongoingMatchGameModeClass: ComputedRef<string> = computed((): string => {
+    const ongoingMatchGameModeClass = computed<string>(() => {
       if (!ongoingMatch.value.id) return "";
 
       switch (ongoingMatch.value.gameMode) {

@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import ClanCreationPanel from "@/components/clans/ClanCreationPanel.vue";
 import InvitePlayerModal from "@/components/clans/InvitePlayerModal.vue";
 import PendingInvitesPanel from "@/components/clans/PendingInvitesPanel.vue";
@@ -186,28 +186,21 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const router = useRouter();
 
-    const playersClan: ComputedRef<Clan> = computed((): Clan => clanStore.playersClan);
-    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
-    const currentSeason: ComputedRef<number> = computed((): number => rankingsStore.seasons[0].id);
-    const clanIsFunded: ComputedRef<boolean> = computed((): boolean => playersClan.value.isSuccesfullyFounded);
-    const roleEnums: ComputedRef<typeof EClanRole> = computed((): typeof EClanRole => EClanRole);
-    const hasPendingInvite: ComputedRef<boolean> = computed(
-      (): boolean => !!clanStore.selectedMemberShip?.pendingInviteFromClan
-    );
-    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const selectedPlayer: ComputedRef<string> = computed((): string => playerStore.battleTag);
-    const hasNoClan: ComputedRef<boolean> = computed((): boolean => !playersClan?.value.clanId);
-    const isLoggedInPlayer: ComputedRef<boolean> = computed((): boolean => verifiedBtag.value === selectedPlayer.value);
-    const shamans: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.shamans);
-    const members: ComputedRef<string[]> = computed((): string[] => clanStore.playersClan.members);
-    const loggedInRole: ComputedRef<EClanRole> = computed((): EClanRole => defineRole(verifiedBtag.value));
-    const loggedInPlayerIsChiefTain: ComputedRef<boolean> = computed(
-      (): boolean => playersClan.value.chiefTain === verifiedBtag.value
-    );
-
-    const loggedInPlayerIsShaman: ComputedRef<boolean> = computed((): boolean => {
-      return !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value);
-    });
+    const playersClan = computed<Clan>(() => clanStore.playersClan);
+    const battleTag = computed(() => decodeURIComponent(props.id));
+    const currentSeason = computed(() => rankingsStore.seasons[0].id);
+    const clanIsFunded = computed(() => playersClan.value.isSuccesfullyFounded);
+    const roleEnums = computed(() => EClanRole);
+    const hasPendingInvite = computed(() => !!clanStore.selectedMemberShip?.pendingInviteFromClan);
+    const verifiedBtag = computed(() => oauthStore.blizzardVerifiedBtag);
+    const selectedPlayer = computed(() => playerStore.battleTag);
+    const hasNoClan = computed(() => !playersClan?.value.clanId);
+    const isLoggedInPlayer = computed(() => verifiedBtag.value === selectedPlayer.value);
+    const shamans = computed(() => clanStore.playersClan.shamans);
+    const members = computed(() => clanStore.playersClan.members);
+    const loggedInRole = computed(() => defineRole(verifiedBtag.value));
+    const loggedInPlayerIsChiefTain = computed(() => playersClan.value.chiefTain === verifiedBtag.value);
+    const loggedInPlayerIsShaman = computed(() => !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value));
 
     function getLeagueOrder(battleTag: string): number {
       return playersClan.value.ranks

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 
 export default defineComponent({
@@ -39,9 +39,9 @@ export default defineComponent({
     const playerManagement = usePlayerManagementStore();
     const chips = ref<string[]>([]);
     const items = ref<string[]>([]);
-    const initItems: ComputedRef<string[]> = computed((): string[] => playerManagement.portraitDefinitionGroups.map((x) => x.group));
+    const initItems = computed(() => playerManagement.portraitDefinitionGroups.map((x) => x.group));
 
-    const getChips: ComputedRef<string[]> = computed((): string[] => {
+    const getChips = computed(() => {
       return playerManagement.portraitDefinitionGroups
         .filter((x) => x.portraitIds.includes(props.portraitId))
         .map((x) => x.group);
