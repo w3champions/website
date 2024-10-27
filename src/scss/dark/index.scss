@@ -2,6 +2,14 @@
 @import "./nightelf.scss";
 
 .theme--dark {
+  .won {
+    color: var(--v-success-base) !important;
+  }
+  
+  .lost {
+    color: var(--v-error-base) !important;
+  }
+
   .custom-table {
     td {
       border-bottom: thin solid hsla(0, 0%, 100%, 0.12);
