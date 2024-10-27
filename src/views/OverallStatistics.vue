@@ -63,19 +63,21 @@ export default defineComponent({
     const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
 
     async function init() {
-      await overallStatsStore.loadGamesPerDayStatistics();
-      await overallStatsStore.loadMatchesOnMapsPerSeason();
-      await overallStatsStore.loadPlayersPerDayStatistics();
-      await overallStatsStore.loadGameLengthStatistics();
-      await overallStatsStore.loadPopularGameHours();
-      await overallStatsStore.loadMapAndRaceStatistics();
-      await overallStatsStore.loadMatchupLengthStatistics(1, 1, "all");
+      const promises = [];
+      promises.push(overallStatsStore.loadGamesPerDayStatistics());
+      promises.push(overallStatsStore.loadMatchesOnMapsPerSeason());
+      promises.push(overallStatsStore.loadPlayersPerDayStatistics());
+      promises.push(overallStatsStore.loadGameLengthStatistics());
+      promises.push(overallStatsStore.loadPopularGameHours());
+      promises.push(overallStatsStore.loadMapAndRaceStatistics());
+      promises.push(overallStatsStore.loadMatchupLengthStatistics(1, 1, "all"));
       if (verifiedBtag.value) {
-        await playerStore.loadProfile({
+        promises.push(playerStore.loadProfile({
           battleTag: verifiedBtag.value,
           freshLogin: false,
-        });
+        }));
       }
+      await Promise.all(promises);
     }
 
     onMounted((): void => {

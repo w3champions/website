@@ -520,7 +520,7 @@ const data = {
       America: "America",
     },
     mmrLeagueRanges: {
-      MMR_0: "all",
+      MMR_0: "All",
       MMR_2200: "> 2200 (~Grandmaster)",
       MMR_2000: "> 2000 (~Master)",
       MMR_1800: "> 1800 (~Diamond)",
@@ -2458,7 +2458,7 @@ const data = {
       America: "Amerika",
     },
     mmrLeagueRanges: {
-      MMR_0: "alle",
+      MMR_0: "Alle",
       MMR_2200: "> 2200 (~Großmeister)",
       MMR_2000: "> 2000 (~Meister)",
       MMR_1800: "> 1800 (~Diamant)",

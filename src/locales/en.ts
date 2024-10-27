@@ -50,11 +50,11 @@ const en = {
   },
 
   mmrLeagueRanges: {
-    MMR_0: "all",
+    MMR_0: "All",
     MMR_2200: "> 2200 (~Grandmaster)",
     MMR_2000: "> 2000 (~Master)",
     MMR_1800: "> 1800 (~Diamond)",
-    MMR_1600: "> 1600 (~Platin)",
+    MMR_1600: "> 1600 (~Platinum)",
     MMR_1400: "> 1400 (~Gold)",
     MMR_1200: "> 1200 (~Silver)",
     MMR_1000: "> 1000 (~Bronze)",
