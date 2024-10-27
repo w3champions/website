@@ -2,6 +2,14 @@
 @import "./orc.scss";
 
 .theme--light {
+  .won {
+    color: var(--v-success-darken2) !important;
+  }
+  
+  .lost {
+    color: var(--v-error-darken2) !important;
+  }
+
   .custom-table {
     td {
       border-bottom: thin solid rgba(0, 0, 0, 0.12);
