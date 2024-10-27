@@ -138,7 +138,7 @@ export default defineComponent({
 
       if (isEmpty(heroStatsData)) return;
 
-      const winLossesOnMap = playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch.All
+      const winLossesOnMap = playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All
         .filter((obj: RaceWinsOnMap) => obj.race == selectedRace.value)[0]
         .winLossesOnMap
         .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == props.selectedMap)[0];
