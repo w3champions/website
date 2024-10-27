@@ -276,12 +276,13 @@ export default defineComponent({
         playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
         playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
         playerStore.loadPlayerGameLengths(),
+        rankingsStore.retrieveRankings(),
       ]);
     }
 
     async function initMmrRpTimeline() {
       // Make a lookup table for active game modes
-      const activeGameModes = rankingsStore.activeModes.reduce((acc, mode) => {
+      const activeGameModesMap = rankingsStore.activeModes.reduce((acc, mode) => {
         acc[mode.id] = true;
         return acc;
       }, {} as Record<number, boolean>);
@@ -289,7 +290,7 @@ export default defineComponent({
       let maxMode = EGameMode.GM_1ON1;
       let maxModeGames = 0;
       playerStore.gameModeStats.forEach((m) => {
-        if (!activeGameModes[m.gameMode]) return;
+        if (!activeGameModesMap[m.gameMode]) return;
         if (m.games > maxModeGames) {
           maxModeGames = m.games;
           maxMode = m.gameMode;
