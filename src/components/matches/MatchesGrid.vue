@@ -19,7 +19,7 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div v-if="isFfa(item.gameMode)"  @click="goToMatchDetailPage(item)" class="my-3">
+              <div v-if="isFfa(item.gameMode)" @click="goToMatchDetailPage(item)" class="clickable my-3">
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -41,8 +41,8 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row @click="goToMatchDetailPage(item)" v-if="!isFfa(item.gameMode)">
-                <v-col cols="5.5" class="team-match-info-container left-side">
+              <v-row @click="goToMatchDetailPage(item)" v-if="!isFfa(item.gameMode)" class="clickable">
+                <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
@@ -50,11 +50,11 @@
                     :left="true"
                   ></team-match-info>
                 </v-col>
-                <v-col cols="1">
-                  <span class="text-no-wrap">VS</span>
+                <v-col cols="1" align-self="center">
+                  <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
-                <v-col cols="5.5" class="team-match-info-container">
+                <v-col cols="5.5" class="team-match-info-container" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
@@ -326,5 +326,8 @@ export default defineComponent({
   &.left-side {
     justify-content: end;
   }
+}
+.clickable {
+  cursor: pointer;
 }
 </style>

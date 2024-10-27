@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-col>
     <v-row>
-      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
+      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiSkull }}</v-icon>
@@ -9,12 +9,12 @@
           <div>{{ $t("components_match-details_matchhighlights.heroeskilled") }}</div>
         </v-tooltip>
       </v-col>
-      <v-col :class="heroKillsComparison" :align="left ? 'left' : 'right'">
+      <v-col :class="heroKillsComparison" :align="left ? 'left' : 'right'" class="pa-1">
         {{ getText(heroKills) }}
       </v-col>
     </v-row>
     <v-row>
-      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
+      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiChevronTripleUp }}</v-icon>
@@ -22,12 +22,12 @@
           <div>{{ $t("components_match-details_matchhighlights.xpgained") }}</div>
         </v-tooltip>
       </v-col>
-      <v-col :class="experienceComparison" :align="left ? 'left' : 'right'">
+      <v-col :class="experienceComparison" :align="left ? 'left' : 'right'" class="pa-1">
         {{ getText(experience) }}
       </v-col>
     </v-row>
     <v-row>
-      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'">
+      <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiTreasureChest }}</v-icon>
@@ -35,11 +35,11 @@
           <div>{{ $t("components_match-details_matchhighlights.itemscollected") }}</div>
         </v-tooltip>
       </v-col>
-      <v-col :class="itemsCollectedComparison" :align="left ? 'left' : 'right'">
+      <v-col :class="itemsCollectedComparison" :align="left ? 'left' : 'right'" class="pa-1">
         {{ getText(itemsCollected) }}
       </v-col>
     </v-row>
-  </div>
+  </v-col>
 </template>
 
 <script lang="ts">

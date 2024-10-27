@@ -1,5 +1,10 @@
 <template>
-  <span :class="classes"></span>
+  <v-tooltip bottom style="white-space: pre-line">
+    <template v-slot:activator="{ on }">
+      <span v-on="on" :class="classes"></span>
+    </template>
+    <span>{{ (isRandom ? `${$t("races.RANDOM")} -> ` : "") + $t(`races.${raceName}`) }}</span>
+  </v-tooltip>
 </template>
 
 <script lang="ts">
@@ -41,6 +46,8 @@ export default defineComponent({
 
     return {
       classes,
+      isRandom: props.rndRace !== null,
+      raceName: ERaceEnum[props.rndRace] ?? ERaceEnum[props.race],
     };
   },
 });
@@ -61,6 +68,8 @@ export default defineComponent({
   height: 36px;
   background-position: center;
   background-size: cover;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .race-icon-HUMAN {

@@ -5,9 +5,8 @@
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-      class="mr-1"
     />
-    <div>
+    <span :class="{ 'mr-2': left, 'ml-2': !left }">
       <a
         class="name-link"
         :class="won"
@@ -29,13 +28,12 @@
           size="small"
         />
       </div>
-    </div>
+    </span>
     <player-icon
       v-if="left"
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-      class="ml-2"
     />
   </div>
 </template>
