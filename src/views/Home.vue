@@ -183,9 +183,11 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
-      await rankingsStore.getTopFive();
-      await infoMessagesStore.loadNews();
-      await rankingsStore.retrieveActiveGameModes();
+      await Promise.all([
+        rankingsStore.getTopFive(),
+        infoMessagesStore.loadNews(),
+        rankingsStore.retrieveActiveGameModes(),
+      ]);
       // this.activeGameModes = this.rankingsStore.activeModes;
     });
 
