@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip bottom style="white-space: pre-line">
+  <v-tooltip top style="white-space: pre-line">
     <template v-slot:activator="{ on }">
       <span v-on="on" :class="classes"></span>
     </template>
