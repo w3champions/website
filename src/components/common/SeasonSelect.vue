@@ -13,7 +13,7 @@
             <v-list-item-title>{{ $t("components_common_seasonselect.prevseasons") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-list dense>
+        <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item v-for="season in seasons" :key="season.id" @click="selectSeason(season)">
             <v-list-item-content>
               <v-list-item-title>{{ $t("components_common_seasonselect.season") }} {{ season.id }}</v-list-item-title>

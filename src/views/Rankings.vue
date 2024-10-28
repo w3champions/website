@@ -30,7 +30,7 @@
                 </v-list-item-content>
               </v-list>
               <v-divider></v-divider>
-              <v-list dense class="leagues-list">
+              <v-list dense max-height="400" class="leagues-list overflow-y-auto">
                 <v-list-item
                   v-for="item in ladders"
                   :key="item.id"
@@ -123,7 +123,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list>
-            <v-list dense>
+            <v-list dense max-height="400" class="overflow-y-auto">
               <v-list-item
                 v-for="item in seasons"
                 :key="item.id"

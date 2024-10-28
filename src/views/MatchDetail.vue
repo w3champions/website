@@ -18,20 +18,20 @@
                   style="padding-right: 0px"
                 ></host-icon>
               </v-col>
-              <v-col cols="4" v-if="!matchIsFFA">
+              <v-col cols="4" v-if="!matchIsFFA" align-self="center">
                 <team-match-info
                   :big-race-icon="true"
                   :left="true"
                   :team="match.teams[0]"
                 />
               </v-col>
-              <v-col cols="1" class="text-center" >
+              <v-col cols="1" class="text-center" align-self="center" >
                 <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
-              <v-col v-if="!matchIsFFA" cols="4">
+              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
-              <v-col v-if="matchIsFFA" cols="6">
+              <v-col v-if="matchIsFFA" cols="6" align-self="center">
                 <team-match-info
                   class="ma-1"
                   :big-race-icon="true"
@@ -65,12 +65,7 @@
           <v-card-title v-if="isJubileeGame" class="justify-center">
             {{ $t(`views_matchdetail.jubileeGameMessage`) }}
           </v-card-title>
-          <v-card-title class="justify-center small-title">
-            <v-card-subtitle>
-              {{ mapNameFromMatch(match) }} ({{ matchDuration }})
-              {{ playedDate }}
-            </v-card-subtitle>
-          </v-card-title>
+          <v-card-title class="justify-center">{{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}</v-card-title>
           <div v-if="isCompleteGame">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
@@ -163,7 +158,7 @@ import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
-import { formatSecondsToDuration, formatTimestampStringToDate } from "@/helpers/date-functions";
+import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
@@ -190,7 +185,7 @@ export default defineComponent({
 
     const match: ComputedRef<Match> = computed((): Match => matchStore.matchDetail.match);
     const matchDuration: ComputedRef<string> = computed((): string => formatSecondsToDuration(match.value.durationInSeconds));
-    const playedDate: ComputedRef<string> = computed((): string => formatTimestampStringToDate(match.value.startTime));
+    const playedDate: ComputedRef<string> = computed((): string => formatTimestampStringToDateTime(match.value.startTime));
     const ffaPlayers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => [ffaWinner.value, ...ffaLosers.value]);
     const gateWay: ComputedRef<string> = computed((): string => Gateways[matchStore.matchDetail.match.gateWay]);
     const season: ComputedRef<number> = computed((): number => matchStore.matchDetail.match.season ?? 1);
@@ -375,6 +370,7 @@ export default defineComponent({
 .subicon {
   display: block;
   position: absolute;
-  right: 1%;
+  top: 8px;
+  right: 8px;
 }
 </style>

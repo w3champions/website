@@ -14,7 +14,7 @@
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item v-for="sort in sortings" :key="sort.mode" @click="currentSort = sort">
             <v-list-item-content>
               <v-list-item-title>{{ sort.name }}</v-list-item-title>

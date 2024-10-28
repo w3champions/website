@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip bottom style="white-space: pre-line">
+  <v-tooltip bottom transition="scroll-y-transition" style="white-space: pre-line">
     <template v-slot:activator="{ on }">
       <div v-on="on" class="globe">
         <v-img :src="icon" :max-height="18" :max-width="18"></v-img>

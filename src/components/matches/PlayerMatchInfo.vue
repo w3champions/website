@@ -5,12 +5,11 @@
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-      class="mr-1"
     />
-    <div>
+    <span :class="{ 'mr-2': left, 'ml-2': !left }">
       <a
         class="name-link"
-        :class="won"
+        :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
         @click="notClickable ? null : goToPlayer()"
         @click.middle="openProfileInNewTab()"
         @click.right="openProfileInNewTab()"
@@ -22,20 +21,19 @@
           <span v-else>{{ mmrChange }}</span>
         </span>
       </a>
-      <div class="flag-container">
+      <div class="flag-container" :class="{ 'ml-1': !left }">
         <country-flag-extended
           :countryCode="player.countryCode"
           :location="player.location"
           size="small"
         />
       </div>
-    </div>
+    </span>
     <player-icon
       v-if="left"
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-      class="ml-2"
     />
   </div>
 </template>
@@ -81,6 +79,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       undefined,
+    },
+    highlighted: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {
