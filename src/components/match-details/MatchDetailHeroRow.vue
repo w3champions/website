@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-col
       v-if="heroesOfWinner.length !== 3"
-      :cols="heroesOfWinner.length === 1 ? 2 : 1"
+      :cols="heroesOfWinner.length <= 1 ? 2 : 1"
     />
     <v-col cols="1" v-if="heroesOfWinner.length === 3">
       <hero-icon :hero="heroesOfWinner[2]" />
