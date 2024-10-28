@@ -2,8 +2,8 @@
   <div v-if="team">
     <div
       v-for="(player, index) in team.players"
-      v-bind:key="index"
-      v-bind:class="{ mt2: index > 0 }"
+      :key="index"
+      :class="{ mt2: index > 0 }"
     >
       <player-match-info
         :unfinishedMatch="unfinishedMatch"
@@ -12,6 +12,7 @@
         :big-race-icon="bigRaceIcon"
         :not-clickable="notClickable"
         :is-anonymous="isAnonymous"
+        :highlighted="highlightedPlayer === team.players[index].battleTag"
       />
     </div>
   </div>
@@ -58,6 +59,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    highlightedPlayer: {
+      type: String,
+      required: false,
+      default: "",
+    }
   },
 });
 </script>

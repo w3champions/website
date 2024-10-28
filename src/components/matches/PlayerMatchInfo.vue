@@ -9,7 +9,7 @@
     <span :class="{ 'mr-2': left, 'ml-2': !left }">
       <a
         class="name-link"
-        :class="won"
+        :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
         @click="notClickable ? null : goToPlayer()"
         @click.middle="openProfileInNewTab()"
         @click.right="openProfileInNewTab()"
@@ -79,6 +79,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       undefined,
+    },
+    highlighted: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {

@@ -27,6 +27,7 @@
                       :team="getPlayerTeam(item)"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :highlightedPlayer="alwaysLeftName"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -48,6 +49,7 @@
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
                     :left="true"
+                    :highlightedPlayer="alwaysLeftName"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1" align-self="center">
@@ -152,7 +154,7 @@ export default defineComponent({
     isPlayerProfile: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   setup(props, context) {
     const { t } = useI18n();
