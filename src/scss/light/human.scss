@@ -11,6 +11,14 @@
   align-items: center !important;
   justify-content: center !important;
 
+  .won {
+    color: var(--v-success-darken1) !important;
+  }
+  
+  .lost {
+    color: var(--v-error-darken1) !important;
+  }
+
   .v-data-table,
   .custom-table {
     tr:hover {
