@@ -6,7 +6,7 @@
       </v-btn>
     </template>
     <v-card>
-      <v-list dense>
+      <v-list dense max-height="400" class="overflow-y-auto">
         <v-list-item
           v-for="a in actions"
           :key="a.name"

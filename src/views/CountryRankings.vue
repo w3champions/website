@@ -34,7 +34,7 @@
                 </v-list-item-content>
               </v-list>
               <v-divider></v-divider>
-              <v-list dense class="countries-list">
+              <v-list dense max-height="400" class="countries-list overflow-y-auto">
                 <v-list-item
                   v-for="item in countries"
                   :key="item.countryCode"
@@ -77,7 +77,7 @@
                   <v-list-item-title>Previous seasons:</v-list-item-title>
                 </v-list-item-content>
               </v-list>
-              <v-list dense>
+              <v-list dense max-height="400" class="overflow-y-auto">
                 <v-list-item
                   v-for="item in seasons"
                   :key="item.id"

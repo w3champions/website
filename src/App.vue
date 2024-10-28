@@ -107,7 +107,7 @@
             <v-icon>{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
-        <v-list class="theme-selector">
+        <v-list max-height="400" class="theme-selector overflow-y-auto">
           <v-list-item @click="setTheme('human')">
             <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
           </v-list-item>

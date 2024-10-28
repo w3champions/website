@@ -16,7 +16,7 @@
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>
-        <v-list dense>
+        <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="mode in gameModes()"
             :key="mode.id"
