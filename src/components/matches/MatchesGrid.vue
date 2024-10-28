@@ -19,7 +19,12 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div v-if="isFfa(item.gameMode)" @click="goToMatchDetailPage(item)" class="clickable my-3">
+              <div 
+                v-if="isFfa(item.gameMode)"
+                @click="goToMatchDetailPage(item)"
+                class="my-3"
+                :class="{ clickable: !unfinished }"
+              >
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -42,7 +47,11 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row @click="goToMatchDetailPage(item)" v-if="!isFfa(item.gameMode)" class="clickable">
+              <v-row
+                v-if="!isFfa(item.gameMode)"
+                @click="goToMatchDetailPage(item)"
+                :class="{ clickable: !unfinished }"
+              >
                 <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
