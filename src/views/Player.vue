@@ -276,7 +276,7 @@ export default defineComponent({
         playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
         playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
         playerStore.loadPlayerGameLengths(),
-        rankingsStore.retrieveRankings(),
+        rankingsStore.retrieveActiveGameModes(),
       ]);
     }
 
