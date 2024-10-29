@@ -58,7 +58,7 @@
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
                     :left="true"
-                    :highlightedPlayer="alwaysLeftName"
+                    :highlightedPlayer="nameIfNonSolo(item)"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1" align-self="center">
@@ -238,6 +238,11 @@ export default defineComponent({
       return opponentTeams;
     }
 
+    function nameIfNonSolo(match: Match): string {
+      if (!props.alwaysLeftName || getPlayerTeam(match).players.length === 1) return "";
+      return props.alwaysLeftName;
+    }
+
     function getStartTime(match: Match): string {
       return formatTimestampStringToDateTime(match.startTime);
     }
@@ -320,6 +325,7 @@ export default defineComponent({
       getPlayerTeam,
       getOpponentTeam,
       getOpponentTeams,
+      nameIfNonSolo,
       getStartTime,
       getDuration,
       showReplayDownload,
