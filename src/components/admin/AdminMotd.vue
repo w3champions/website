@@ -31,6 +31,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
+import { InputValidationRules } from "vuetify";
 
 export default defineComponent({
   name: "AdminMotd",
@@ -42,7 +43,7 @@ export default defineComponent({
     const loaded = ref<boolean>(false);
     const newMotd = ref<string>("");
 
-    const rules = computed<unknown>(() => [(value: string) => value.length <= 400 || "Max 400 characters"]);
+    const rules = computed<InputValidationRules>(() => [(value: string) => value.length <= 400 || "Max 400 characters"]);
     const motd = computed<string>(() => infoMessagesStore.messageOfTheDay.motd);
 
     async function confirmNewMotd(): Promise<void> {

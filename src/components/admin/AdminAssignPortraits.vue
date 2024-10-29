@@ -206,7 +206,7 @@ export default defineComponent({
       return {
         required: (value: string) => !!value || "Required",
         min: (text: string) => text.length >= 3 || "Min 3 characters",
-      };
+      } satisfies AdminAssignPortraitsRules;
     });
 
     const assignmentsChanged = computed<boolean>(() => {

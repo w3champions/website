@@ -44,7 +44,6 @@ export default defineComponent({
       const lengthStatsIntervals = playerStore.playerGameLengthStats?.playerGameLengthIntervalByOpponentRace;
       const lengths = lengthStatsIntervals?.[props.selectedOpponentRace]?.lengths || {};
       fillNonExistingIntervals(lengths);
-
       return lengths;
     });
 

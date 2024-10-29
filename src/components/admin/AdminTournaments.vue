@@ -101,9 +101,10 @@ export default defineComponent({
     const isLoading = computed<boolean>(() => tournamentsManagementStore.isLoading);
     const tournament = computed<ITournament>(() => tournamentsManagementStore.upcomingTournament);
 
-    const registrationOpen = computed<boolean>(() => {
-      return tournament.value.state === ETournamentState.INIT || tournament.value.state === ETournamentState.REGISTRATION;
-    });
+    const registrationOpen = computed<boolean>(() =>
+      tournament.value.state === ETournamentState.INIT
+      || tournament.value.state === ETournamentState.REGISTRATION
+    );
 
     async function init(): Promise<void> {
       await tournamentsManagementStore.loadEnabledFloNodes();

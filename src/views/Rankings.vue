@@ -64,38 +64,33 @@
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
         >
-          <template v-slot:item="data">
-            <template v-if="typeof data.item !== 'object'">
-              <v-list-item-content>{{ data.item }}</v-list-item-content>
+          <!--
+            In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
+            but for now in Vue 2 we can't use TypeScript in templates.
+          -->
+          <template v-slot:item="{ item }">
+            <template v-if="item?.player === undefined">
+              <v-list-item-content>{{ item }}</v-list-item-content>
             </template>
             <template v-else>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="!isDuplicateName(data.item.player.name)">
-                    {{ data.item.player.name }}
+                  <span v-if="!isDuplicateName(item.player.name)">
+                    {{ item.player.name }}
                   </span>
-                  <span v-if="isDuplicateName(data.item.player.name)">
-                    {{
-                      data.item.player.playerIds
-                        .map((p) => p.battleTag)
-                        .join(" & ")
-                    }}
+                  <span v-if="isDuplicateName(item.player.name)">
+                    {{ item.player.playerIds.map((p) => p.battleTag).join(" & ") }}
                   </span>
-                  <span
-                    v-if="
-                      data.item.player.gameMode === EGameMode.GM_1ON1 &&
-                      data.item.player.race
-                    "
-                  >
-                    ({{ $t(`racesShort.${ERaceEnum[data.item.player.race]}`) }})
+                  <span v-if="item.player.gameMode === EGameMode.GM_1ON1 && item.player.race">
+                    ({{ $t(`racesShort.${ERaceEnum[item.player.race]}`) }})
                   </span>
                 </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(data.item)">
-                  {{ $t(`common.wins`) }} {{ data.item.player.wins }} |
+                <v-list-item-subtitle v-if="playerIsRanked(item)">
+                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
                   {{ $t(`common.losses`) }}
-                  {{ data.item.player.losses }} |
+                  {{ item.player.losses }} |
                   {{ $t(`common.total`) }}
-                  {{ data.item.player.games }}
+                  {{ item.player.games }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>
                   {{ $t(`views_rankings.unranked`) }}
@@ -233,13 +228,11 @@ export default defineComponent({
     const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
 
     const ladders = computed<League[]>(() => {
-      const league = rankingsStore.ladders?.filter(
-        (l) =>
-          l.gateway === rootStateStore.gateway &&
-          l.gameMode === rankingsStore.gameMode &&
-          l.season === rankingsStore.selectedSeason.id
+      const league = rankingsStore.ladders?.filter((l) =>
+        l.gateway === rootStateStore.gateway
+        && l.gameMode === rankingsStore.gameMode
+        && l.season === rankingsStore.selectedSeason.id
       )[0];
-
       return league?.leagues;
     });
 
@@ -323,13 +316,11 @@ export default defineComponent({
       if (isLoading.value) {
         return "Loading...";
       }
-
       return "No player found";
     });
 
     async function onGatewayChanged() {
       rankingsStore.SET_PAGE(0);
-
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
       }

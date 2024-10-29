@@ -228,35 +228,25 @@ export default defineComponent({
       return getPlayerScores(losingTeam);
     });
 
-    const ffaWinner = computed<PlayerScore>(() => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[0].players[0].battleTag
-      )!;
-    });
+    const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[0].players[0].battleTag
+    )!);
 
-    const ffaLosers = computed<PlayerScore[]>(() => {
-      return playerScores.value.filter(
-        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
-      );
-    });
+    const ffaLosers = computed<PlayerScore[]>(() => playerScores.value.filter(
+      (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
+    ));
 
-    const ffaLoser1 = computed<PlayerScore>(() => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[1].players[0].battleTag
-      )!;
-    });
+    const ffaLoser1 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[1].players[0].battleTag
+    )!);
 
-    const ffaLoser2 = computed<PlayerScore>(() => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[2].players[0].battleTag
-      )!;
-    });
+    const ffaLoser2 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[2].players[0].battleTag
+    )!);
 
-    const ffaLoser3 = computed<PlayerScore>(() => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[3].players[0].battleTag
-      )!;
-    });
+    const ffaLoser3 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[3].players[0].battleTag
+    )!);
 
     const gameNumber = computed<string>(() => {
       const number = match.value.number / 1000000;

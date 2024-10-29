@@ -100,7 +100,7 @@ export interface PlayerOverview extends WinLoss {
   playerIds: PlayerId[];
   gameMode?: number;
   season?: number;
-  race?: string;
+  race?: number;
 }
 
 export enum Gateways {

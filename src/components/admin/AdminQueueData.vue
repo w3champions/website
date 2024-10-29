@@ -41,12 +41,11 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
-import { TranslateResult } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -65,7 +64,7 @@ export default defineComponent({
 
     const queueData = computed<QueueData[]>(() => adminStore.queuedata);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
-    const gameModes = computed<Array<{ name: TranslateResult; id: number }>>(() => {
+    const gameModes = computed<IGameModeBrief[]>(() => {
       let modes = activeGameModes();
 
       if (props.disabledModes) {

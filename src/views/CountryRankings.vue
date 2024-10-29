@@ -195,7 +195,6 @@ export default defineComponent({
       refreshRankings();
     }
 
-
     async function onGameModeChanged(gameMode: EGameMode): Promise<void> {
       await rankingsStore.setGameMode(gameMode);
       refreshRankings();

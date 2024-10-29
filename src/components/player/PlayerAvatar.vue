@@ -390,7 +390,7 @@ export default defineComponent({
           showAka: true,
           showW3info: true,
           showLiquipedia: true,
-        }
+        } satisfies AkaSettings
       );
     });
 
@@ -427,7 +427,7 @@ export default defineComponent({
         aliasSettings: aliasSettings.value,
         about: savedMessageValue.value,
         homePage: homePage.value,
-      };
+      } satisfies ProfilePlayerSocials;
     });
 
     function countryFilter(item: CountryType, queryText: string): boolean {

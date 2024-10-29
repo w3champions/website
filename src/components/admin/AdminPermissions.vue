@@ -56,7 +56,8 @@
                           <v-col>
                             <b>Permissions</b>
                             <v-checkbox
-                              v-for="permission in availablePermissions" :key="permission.value"
+                              v-for="permission in availablePermissions"
+                              :key="permission.value"
                               :multiple="true"
                               v-model="editedItem.permissions"
                               :label="permission.name"

@@ -179,11 +179,11 @@ export default defineComponent({
         .map((team) => (team?.won ? "W" : "L"));
     });
 
-    const isRecentPerformanceVisible = computed<boolean>(() => {
-      return (
-        props.showPerformance && gameMode.value !== EGameMode.GM_2ON2_AT && lastTenMatchesPerformance.value.length > 0
-      );
-    });
+    const isRecentPerformanceVisible = computed<boolean>(() =>
+      props.showPerformance
+      && gameMode.value !== EGameMode.GM_2ON2_AT
+      && lastTenMatchesPerformance.value.length > 0
+    );
 
     return {
       isRanked,

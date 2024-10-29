@@ -55,10 +55,7 @@ export default defineComponent({
     const playerStore = usePlayerStore();
 
     const selectedRace = computed<number>(() => Number(selectedTab.value.split("-")[1]));
-
-    const selectedTab = computed<string>(() => {
-      return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
-    });
+    const selectedTab = computed<string>(() => defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);

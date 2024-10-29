@@ -88,7 +88,12 @@ export default defineComponent({
 
     const searchedPlayers = computed<string[]>(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
 
-    const noDataText = computed<string>(() => (!search.value || search.value.length < 3) ? "Type at least 3 letters" : isLoading.value ? "Loading..." : "No player found");
+    const noDataText = computed<string>(() =>
+      (!search.value || search.value.length < 3)
+        ? "Type at least 3 letters"
+        : isLoading.value
+          ? "Loading..."
+          : "No player found");
 
     watch(searchedPlayers, onPlayersChanged);
 

@@ -159,9 +159,10 @@ export default defineComponent({
       return getAsset(`heroes/${hero.heroId}.png`);
     }
 
-    const isEnabledForChange = computed<boolean>(() => {
-      return previousHero.value?.heroId !== "all" && previousHero.value?.heroId !== "none";
-    });
+    const isEnabledForChange = computed<boolean>(() =>
+      previousHero.value?.heroId !== "all"
+      && previousHero.value?.heroId !== "none"
+    );
 
     const previousHero = computed<HeroPick | null>(() => {
       if (props.heroIndex === 3 || props.heroIndex === 0) {

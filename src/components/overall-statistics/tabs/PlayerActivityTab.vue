@@ -283,11 +283,13 @@ export default defineComponent({
       normalizedGamesPerDay.value = normalized;
     }
 
-    const seasons = computed<string[]>(() => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
+    const seasons = computed<string[]>(() =>
+      ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]
+    );
 
-    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() => {
-      return seasons.value.map((e) => { return { id: e.toLowerCase(), name: e }; });
-    });
+    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() =>
+      seasons.value.map((e) => ({ id: e.toLowerCase(), name: e }))
+    );
 
     const raceOptions = [
       { name: "Human", id: ERaceEnum.HUMAN },

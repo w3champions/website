@@ -234,12 +234,7 @@ export default defineComponent({
       return getSelectOptions(validStates);
     });
 
-    const formValid = computed<boolean>(() => {
-      if (mapPool.value.length < 3) {
-        return false;
-      }
-      return true;
-    });
+    const formValid = computed<boolean>(() => mapPool.value.length >= 3);
 
     function cancel(): void {
       context.emit("cancel");

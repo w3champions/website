@@ -187,29 +187,26 @@ export default defineComponent({
     });
 
     const opponentWins = computed<number>(() => {
-      if (playerStore.opponentTag.length) {
-        return matches.value.filter((match: Match) =>
-          match.teams.some((team: Team) => {
-            const playerHasWin = team.players.some(
+      if (!playerStore.opponentTag.length) return 0;
+      return matches.value.filter((match: Match) =>
+        match.teams.some((team: Team) => {
+          const playerHasWin = team.players.some(
+            (player: PlayerInTeam) =>
+              player.battleTag === battleTag.value && player.won
+          );
+
+          const otherTeams = match.teams.filter((x) => x != team);
+
+          const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
+            return otherTeam.players.some(
               (player: PlayerInTeam) =>
-                player.battleTag === battleTag.value && player.won
+                player.battleTag === playerStore.opponentTag
             );
+          });
 
-            const otherTeams = match.teams.filter((x) => x != team);
-
-            const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
-              return otherTeam.players.some(
-                (player: PlayerInTeam) =>
-                  player.battleTag === playerStore.opponentTag
-              );
-            });
-
-            return playerHasWin && opponentIsOnTheOtherTeam;
-          })
-        ).length;
-      }
-
-      return 0;
+          return playerHasWin && opponentIsOnTheOtherTeam;
+        })
+      ).length;
     });
 
     async function getMatches(page?: number): Promise<void> {
