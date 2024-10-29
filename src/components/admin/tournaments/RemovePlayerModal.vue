@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 
 export default defineComponent({
@@ -50,7 +50,7 @@ export default defineComponent({
   setup(props, context) {
     const battleTag = ref<string>("");
 
-    const players: ComputedRef<ITournamentPlayer[]> = computed((): ITournamentPlayer[] => props.tournament.players);
+    const players = computed<ITournamentPlayer[]>(() => props.tournament.players);
 
     function cancel() {
       context.emit("cancel");

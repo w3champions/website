@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { EChatScope } from "@/store/common/types";
 
 export default defineComponent({
@@ -28,7 +28,7 @@ export default defineComponent({
     sentTo: { type: String, required: false, default: undefined },
   },
   setup(props) {
-    const isPrivate: ComputedRef<boolean> = computed((): boolean => props.scope == EChatScope.PLAYER ? true : false);
+    const isPrivate = computed<boolean>(() => props.scope == EChatScope.PLAYER ? true : false);
 
     function getTeamColor(team: number): string {
       if (props.scope == EChatScope.OBSERVERS) return "black--text";

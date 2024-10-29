@@ -149,7 +149,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
@@ -183,26 +183,26 @@ export default defineComponent({
 
     // const matchIdRef = ref<string>(props.matchId);
 
-    const match: ComputedRef<Match> = computed((): Match => matchStore.matchDetail.match);
-    const matchDuration: ComputedRef<string> = computed((): string => formatSecondsToDuration(match.value.durationInSeconds));
-    const playedDate: ComputedRef<string> = computed((): string => formatTimestampStringToDateTime(match.value.startTime));
-    const ffaPlayers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => [ffaWinner.value, ...ffaLosers.value]);
-    const gateWay: ComputedRef<string> = computed((): string => Gateways[matchStore.matchDetail.match.gateWay]);
-    const season: ComputedRef<number> = computed((): number => matchStore.matchDetail.match.season ?? 1);
-    const isCompleteGame: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => matchStore.matchDetail.playerScores);
-    const loading: ComputedRef<boolean> = computed((): boolean => matchStore.loadingMatchDetail);
+    const match = computed<Match>(() => matchStore.matchDetail.match);
+    const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
+    const playedDate = computed<string>(() => formatTimestampStringToDateTime(match.value.startTime));
+    const ffaPlayers = computed<PlayerScore[]>(() => [ffaWinner.value, ...ffaLosers.value]);
+    const gateWay = computed<string>(() => Gateways[matchStore.matchDetail.match.gateWay]);
+    const season = computed<number>(() => matchStore.matchDetail.match.season ?? 1);
+    const isCompleteGame = computed<PlayerScore[]>(() => matchStore.matchDetail.playerScores);
+    const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
 
-    const matchIsFFA: ComputedRef<boolean> = computed((): boolean => {
+    const matchIsFFA = computed<boolean>(() => {
       const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
       return ffaModes.includes(matchStore.matchDetail.match.gameMode);
     });
 
-    const isJubileeGame: ComputedRef<boolean> = computed((): boolean => {
+    const isJubileeGame = computed<boolean>(() => {
       if (!match.value?.number) return false;
       return match.value.number !== 0 && match.value?.number % 1000000 === 0;
     });
 
-    const playerScores: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+    const playerScores = computed<PlayerScore[]>(() => {
       const { playerScores, match } = matchStore.matchDetail;
       if (matchIsFFA.value) {
         const ffaMappedPlayerScores = playerScores.map((playerScore) => {
@@ -218,47 +218,37 @@ export default defineComponent({
       return playerScores ?? [];
     });
 
-    const scoresOfWinners: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+    const scoresOfWinners = computed<PlayerScore[]>(() => {
       const winningTeam = match.value.teams[0];
       return getPlayerScores(winningTeam);
     });
 
-    const scoresOfLosers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
+    const scoresOfLosers = computed<PlayerScore[]>(() => {
       const losingTeam = match.value.teams[1];
       return getPlayerScores(losingTeam);
     });
 
-    const ffaWinner: ComputedRef<PlayerScore> = computed((): PlayerScore => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[0].players[0].battleTag
-      )!;
-    });
+    const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[0].players[0].battleTag
+    )!);
 
-    const ffaLosers: ComputedRef<PlayerScore[]> = computed((): PlayerScore[] => {
-      return playerScores.value.filter(
-        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
-      );
-    });
+    const ffaLosers = computed<PlayerScore[]>(() => playerScores.value.filter(
+      (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
+    ));
 
-    const ffaLoser1: ComputedRef<PlayerScore> = computed((): PlayerScore => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[1].players[0].battleTag
-      )!;
-    });
+    const ffaLoser1 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[1].players[0].battleTag
+    )!);
 
-    const ffaLoser2: ComputedRef<PlayerScore> = computed((): PlayerScore => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[2].players[0].battleTag
-      )!;
-    });
+    const ffaLoser2 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[2].players[0].battleTag
+    )!);
 
-    const ffaLoser3: ComputedRef<PlayerScore> = computed((): PlayerScore => {
-      return playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[3].players[0].battleTag
-      )!;
-    });
+    const ffaLoser3 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[3].players[0].battleTag
+    )!);
 
-    const gameNumber: ComputedRef<string> = computed((): string => {
+    const gameNumber = computed<string>(() => {
       const number = match.value.number / 1000000;
       switch (number) {
         case 1:
@@ -341,6 +331,7 @@ export default defineComponent({
       isCompleteGame,
       scoresOfWinners,
       scoresOfLosers,
+      ffaLoser1,
       ffaLoser2,
       ffaLoser3,
       rowLabels,

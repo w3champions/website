@@ -191,7 +191,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { GameDay, GameDayPerMode, GameLength, MapCount, MmrRangeValues, PopularHours } from "@/store/overallStats/types";
 import { activeGameModes, activeGameModesWithAll, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
@@ -227,10 +227,10 @@ export default defineComponent({
     const selectedMatchupMmr = ref<string>("all");
     const selectedMatchupSeason = ref<string>("all");
     const normalizedGamesPerDay = ref<boolean>(true);
-    const selectedSeasonForMapsInitial: ComputedRef<string> = computed((): string => rankingsStore.seasons[0]?.id?.toString() ?? "");
-    const isAllMode: ComputedRef<boolean> = computed((): boolean => selectedGamesPerDayMode.value === EGameMode.UNDEFINED);
-    const race1String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace1.value)[0].name);
-    const race2String: ComputedRef<string> = computed((): string => raceOptions.filter((r) => r.id == selectedMatchupRace2.value)[0].name);
+    const selectedSeasonForMapsInitial = computed<string>(() => rankingsStore.seasons[0]?.id?.toString() ?? "");
+    const isAllMode = computed<boolean>(() => selectedGamesPerDayMode.value === EGameMode.UNDEFINED);
+    const race1String = computed<string>(() => raceOptions.filter((r) => r.id == selectedMatchupRace1.value)[0].name);
+    const race2String = computed<string>(() => raceOptions.filter((r) => r.id == selectedMatchupRace2.value)[0].name);
     let overWrittenOnce = false;
 
     onMounted(async (): Promise<void> => {
@@ -283,11 +283,13 @@ export default defineComponent({
       normalizedGamesPerDay.value = normalized;
     }
 
-    const seasons: ComputedRef<string[]> = computed((): string[] => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
+    const seasons = computed<string[]>(() =>
+      ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]
+    );
 
-    const seasonsForMatchup: ComputedRef<{ id: string; name: string }[]> = computed((): { id: string; name: string }[] => {
-      return seasons.value.map((e) => { return { id: e.toLowerCase(), name: e }; });
-    });
+    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() =>
+      seasons.value.map((e) => ({ id: e.toLowerCase(), name: e }))
+    );
 
     const raceOptions = [
       { name: "Human", id: ERaceEnum.HUMAN },
@@ -296,7 +298,7 @@ export default defineComponent({
       { name: "Undead", id: ERaceEnum.UNDEAD },
     ];
 
-    const matchupMmrOptions: ComputedRef<{ id: string; name: string }[]> = computed((): { id: string; name: string }[] => {
+    const matchupMmrOptions = computed<{ id: string; name: string }[]>(() => {
       const mmrOptions = ["all"];
       for (let i = 400; i < 3000; i += 200) {
         mmrOptions.push(i.toString());
@@ -309,23 +311,23 @@ export default defineComponent({
       });
     });
 
-    const selectedGameLength: ComputedRef<GameLength> = computed((): GameLength => {
+    const selectedGameLength = computed<GameLength>(() => {
       return gameLength.value?.filter(
         (g) => g.gameMode == selectedLengthMode.value
       )[0] ?? { lengths: [] };
     });
 
-    const selectedGameHours: ComputedRef<PopularHours> = computed((): PopularHours => {
+    const selectedGameHours = computed<PopularHours>(() => {
       return popularGameHours.value.filter(
         (g) => g.gameMode == selectedPopularHourMode.value
       )[0] ?? { timeslots: [] };
     });
 
-    const loadingGamesPerDayStats: ComputedRef<boolean> = computed((): boolean => overallStatsStore.loadingGamesPerDayStats);
-    const loadingPlayersPerDayStats: ComputedRef<boolean> = computed((): boolean => overallStatsStore.loadingPlayersPerDayStats);
-    const gameDays: ComputedRef<GameDayPerMode[]> = computed((): GameDayPerMode[] => overallStatsStore.gamesPerDay[0]);
-    const gameLength: ComputedRef<GameLength[]> = computed((): GameLength[] => overallStatsStore.gameLengths);
-    const popularGameHours: ComputedRef<PopularHours[]> = computed((): PopularHours[] => overallStatsStore.popularHours);
+    const loadingGamesPerDayStats = computed<boolean>(() => overallStatsStore.loadingGamesPerDayStats);
+    const loadingPlayersPerDayStats = computed<boolean>(() => overallStatsStore.loadingPlayersPerDayStats);
+    const gameDays = computed<GameDayPerMode[]>(() => overallStatsStore.gamesPerDay[0]);
+    const gameLength = computed<GameLength[]>(() => overallStatsStore.gameLengths);
+    const popularGameHours = computed<PopularHours[]>(() => overallStatsStore.popularHours);
 
     function mapsPerSeason(): MapCount[] {
       if (selectedSeasonForMapsInitial.value && !overWrittenOnce) {
@@ -349,7 +351,7 @@ export default defineComponent({
       );
     }
 
-    const playersPerDay: ComputedRef<GameDay[]> = computed((): GameDay[] => {
+    const playersPerDay = computed<GameDay[]>(() => {
       return (
         overallStatsStore.playersPerDay
           .toReversed()

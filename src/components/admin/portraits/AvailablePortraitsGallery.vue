@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import AssignPortrait from "./AssignPortrait.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
@@ -32,7 +32,7 @@ export default defineComponent({
     const playerManagement = usePlayerManagementStore();
     const allSpecialPortraits = ref<number[]>([]);
 
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     watch(isAdmin, init);
 

@@ -54,7 +54,7 @@
         </v-row>
 
         <div v-if="tournament.id">
-          <Tournament :tournament="tournament" />
+          <tournament-view :tournament="tournament" />
         </div>
         <div v-else>
           No upcoming tournament.
@@ -65,10 +65,10 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import throttle from "lodash/throttle";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
-import Tournament from "../tournaments/Tournament.vue";
+import TournamentView from "../tournaments/TournamentView.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
 import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";
 import EditTournamentModal from "./tournaments/EditTournamentModal.vue";
@@ -80,7 +80,7 @@ import { useTournamentsManagementStore } from "@/store/admin/tournamentsManageme
 export default defineComponent({
   name: "AdminTournaments",
   components: {
-    Tournament,
+    TournamentView,
     AddPlayerModal,
     RemovePlayerModal,
     EditTournamentModal,
@@ -97,13 +97,14 @@ export default defineComponent({
     const isCreateTournamentOpen = ref<boolean>(false);
     const isEditTournamentOpen = ref<boolean>(false);
 
-    const tournamentMaps: ComputedRef<Map[]> = computed((): Map[] => tournamentsStore.tournamentMaps);
-    const isLoading: ComputedRef<boolean> = computed((): boolean => tournamentsManagementStore.isLoading);
-    const tournament: ComputedRef<ITournament> = computed((): ITournament => tournamentsManagementStore.upcomingTournament);
+    const tournamentMaps = computed<Map[]>(() => tournamentsStore.tournamentMaps);
+    const isLoading = computed<boolean>(() => tournamentsManagementStore.isLoading);
+    const tournament = computed<ITournament>(() => tournamentsManagementStore.upcomingTournament);
 
-    const registrationOpen: ComputedRef<boolean> = computed((): boolean => {
-      return tournament.value.state === ETournamentState.INIT || tournament.value.state === ETournamentState.REGISTRATION;
-    });
+    const registrationOpen = computed<boolean>(() =>
+      tournament.value.state === ETournamentState.INIT
+      || tournament.value.state === ETournamentState.REGISTRATION
+    );
 
     async function init(): Promise<void> {
       await tournamentsManagementStore.loadEnabledFloNodes();

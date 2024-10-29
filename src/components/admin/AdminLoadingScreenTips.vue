@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { format } from "date-fns";
 import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -82,9 +82,9 @@ export default defineComponent({
     const editedIndex = ref<number>(-1);
     const editedTipItem = ref<LoadingScreenTip>({} as LoadingScreenTip);
 
-    const tips: ComputedRef<LoadingScreenTip[]> = computed((): LoadingScreenTip[] => infoMessagesStore.tips);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const formTitle: ComputedRef<string> = computed((): string => editedIndex.value === -1 ? "New Item" : "Edit Item");
+    const tips = computed<LoadingScreenTip[]>(() => infoMessagesStore.tips);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
+    const formTitle = computed<string>(() => editedIndex.value === -1 ? "New Item" : "Edit Item");
 
     const defaultTipItem: LoadingScreenTip = {
       message: "",

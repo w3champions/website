@@ -208,7 +208,7 @@ import { useRouter } from "vue-router/composables";
 
 class TabsModel {
   constructor(private router: ReturnType<typeof useRouter>) {}
-  set self (tabsModel: string) {
+  set self (tabsModel: string | (string | null)[]) {
     this.router.replace({ query: { ...this.router.currentRoute.query, tabsModel } });
     console.log(this.router.currentRoute.query.tabsModel);
   }

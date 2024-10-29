@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
   name: "LeagueIcon",
@@ -16,7 +16,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const leagueIcon: ComputedRef<string> = computed((): string => props.league !== undefined ? `/assets/leagueIcons/${props.league}.png` : "");
+    const leagueIcon = computed<string>(() => props.league !== undefined ? `/assets/leagueIcons/${props.league}.png` : "");
     return {
       leagueIcon,
     };

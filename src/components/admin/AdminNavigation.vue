@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, watch } from "vue";
+import { computed, defineComponent, onMounted, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
@@ -79,8 +79,8 @@ export default defineComponent({
     const route = useRoute();
     const oauthStore = useOauthStore();
 
-    const permissions: ComputedRef<string[]> = computed((): string[] => oauthStore.permissions);
-    const filteredNavItems: ComputedRef<AdminNavigationItem[]> = computed((): AdminNavigationItem[] => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
+    const permissions = computed<string[]>(() => oauthStore.permissions);
+    const filteredNavItems = computed<AdminNavigationItem[]>(() => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
 
     function getFirstItem(items: Array<AdminNavigationItem>): AdminNavigationItem {
       for (const item of items) {

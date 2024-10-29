@@ -118,14 +118,14 @@ export default defineComponent({
       await playerManagement.updatePortraitDefinition({
         ids: [editPortraitId.value],
         groups: groupsModel.value,
-      } as PortraitDefinitionDTO);
+      } satisfies PortraitDefinitionDTO);
       editDialogOpen.value = false;
     }
 
     async function confirmDelete(): Promise<void> {
       await playerManagement.removePortraitDefinition({
         ids: [editPortraitId.value],
-      } as PortraitDefinitionDTO);
+      } satisfies PortraitDefinitionDTO);
       confirmDeleteDialogOpen.value = false;
     }
 

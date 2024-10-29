@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent, onMounted } from "vue";
+import { computed, PropType, defineComponent, onMounted } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";
@@ -19,7 +19,7 @@ import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 export default defineComponent({
-  name: "Tournament",
+  name: "TournamentView",
   components: {
     TournamentDescription,
     TournamentBracket,
@@ -32,7 +32,7 @@ export default defineComponent({
   },
   setup() {
     const tournamentsStore = useTournamentsStore();
-    const maps: ComputedRef<Map[]> = computed((): Map[] => tournamentsStore.tournamentMaps);
+    const maps = computed<Map[]>(() => tournamentsStore.tournamentMaps);
 
     onMounted(async (): Promise<void> => {
       await tournamentsStore.loadTournamentMaps();

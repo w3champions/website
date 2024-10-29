@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, WritableComputedRef } from "vue";
+import { computed, defineComponent } from "vue";
 import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiControllerClassic } from "@mdi/js";
@@ -52,7 +52,7 @@ export default defineComponent({
     const { t } = useI18n();
     const matchStore = useMatchStore();
 
-    const currentStatus: WritableComputedRef<MatchStatusSelectData> = computed({
+    const currentStatus = computed<MatchStatusSelectData>({
       get(): MatchStatusSelectData {
         const selectedStatus = matchStore.status;
         return matchStatuses.find((x) => x.status == selectedStatus)!;

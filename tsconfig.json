@@ -17,5 +17,13 @@
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
+  "vueCompilerOptions": {
+    "experimentalModelPropName": {
+      "checked": {
+        "input": { "type": "checkbox" },
+        "v-checkbox": true
+      },
+    }
+  },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"]
 }

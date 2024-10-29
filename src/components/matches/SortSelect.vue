@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, WritableComputedRef } from "vue";
+import { computed, defineComponent } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiSortAscending } from "@mdi/js";
@@ -46,7 +46,7 @@ export default defineComponent({
     const { t } = useI18n();
     const matchStore = useMatchStore();
 
-    const currentSort: WritableComputedRef<SortSelectData> = computed({
+    const currentSort = computed<SortSelectData>({
       get(): SortSelectData {
         const selectedSort = matchStore.sort;
         return sortings.find((sort) => sort.mode == selectedSort)!;

@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import sortBy from "lodash/sortBy";
@@ -98,20 +98,20 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
 
-    const battleTag: ComputedRef<string> = computed((): string => decodeURIComponent(props.id));
-    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
-    const isBetaSeason: ComputedRef<boolean> = computed((): boolean => selectedSeason.value?.id === 0);
-    const loadingProfile: ComputedRef<boolean> = computed((): boolean => playerStore.loadingProfile);
-    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
-    const raceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => playerStore.raceStats);
+    const battleTag = computed<string>(() => decodeURIComponent(props.id));
+    const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+    const isBetaSeason = computed<boolean>(() => selectedSeason.value?.id === 0);
+    const loadingProfile = computed<boolean>(() => playerStore.loadingProfile);
+    const verifiedBtag = computed<string>(() => oauthStore.blizzardVerifiedBtag);
+    const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
+    const raceStats = computed<RaceStat[]>(() => playerStore.raceStats);
 
-    const isLoggedInPlayer: ComputedRef<boolean> = computed((): boolean => {
+    const isLoggedInPlayer = computed<boolean>(() => {
       if (verifiedBtag.value === "") return false;
       return battleTag.value.startsWith(verifiedBtag.value);
     });
 
-    const selectedRaceStats: ComputedRef<RaceStat[]> = computed((): RaceStat[] => {
+    const selectedRaceStats = computed<RaceStat[]>(() => {
       if (!raceStats.value) return [];
 
       return raceStats.value.filter(
@@ -119,7 +119,7 @@ export default defineComponent({
       );
     });
 
-    const topGameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
+    const topGameModeStats = computed<ModeStat[]>(() => {
       if (!gameModeStats.value) return [];
 
       const oneVOnes = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_1ON1);

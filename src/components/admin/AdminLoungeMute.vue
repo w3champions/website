@@ -123,7 +123,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -148,10 +148,10 @@ export default defineComponent({
     const battleTag = ref<string>("");
     const endDate = ref<string>("");
 
-    const loungeMutes: ComputedRef<LoungeMuteResponse[]> = computed((): LoungeMuteResponse[] => loungeMuteStore.loungeMutedPlayers);
-    const isMuteEndDateSet: ComputedRef<boolean> = computed((): boolean => endDate.value != "");
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const loungeMutes = computed<LoungeMuteResponse[]>(() => loungeMuteStore.loungeMutedPlayers);
+    const isMuteEndDateSet = computed<boolean>(() => endDate.value != "");
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
+    const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
 
     async function deleteItem(item: LoungeMute): Promise<void> {
       confirm("Are you sure you want to delete this item?") &&

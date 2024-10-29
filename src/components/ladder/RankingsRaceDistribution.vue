@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
@@ -51,7 +51,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const raceDistributions: ComputedRef<RankingsRaceDistributionData[]> = computed((): RankingsRaceDistributionData[] => {
+    const raceDistributions = computed<RankingsRaceDistributionData[]>(() => {
       if (!props.rankings) {
         return [];
       }

@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, WritableComputedRef } from "vue";
+import { computed, defineComponent } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
 import { useI18n } from "vue-i18n-bridge";
@@ -74,7 +74,7 @@ export default defineComponent({
       },
     ];
 
-    const show: WritableComputedRef<boolean> = computed({
+    const show = computed<boolean>({
       get(): boolean {
         return props.value;
       },

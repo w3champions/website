@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 
@@ -60,7 +60,7 @@ export default defineComponent({
     const mapsManagementStore = useMapsManagementStore();
     const fileName = ref<string>("");
     const file = ref<File>({} as File);
-    const mapFiles: ComputedRef<MapFileData[]> = computed((): MapFileData[] => mapsManagementStore.mapFiles);
+    const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
 
     function selectMapFile(file: MapFileData) {
       if (confirm(`Are you sure you want to select file with path ${file.filePath}?`)) {
