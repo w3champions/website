@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 import { TranslateResult } from "vue-i18n";
@@ -116,7 +116,7 @@ export default defineComponent({
 
     const alignText = ref<string>(props.left ? "right" : "left");
 
-    const goldComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const goldComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScoreOpponent
           .map((s) => s.goldCollected)
@@ -125,7 +125,7 @@ export default defineComponent({
       );
     });
 
-    const woodComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const woodComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScoreOpponent
           .map((s) => s.lumberCollected)
@@ -136,7 +136,7 @@ export default defineComponent({
       );
     });
 
-    const upkeepComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const upkeepComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScore
           .map((s) => s.goldUpkeepLost)
@@ -147,7 +147,7 @@ export default defineComponent({
       );
     });
 
-    const armyComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const armyComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s.largestArmy)
@@ -156,7 +156,7 @@ export default defineComponent({
       );
     });
 
-    const unitsKilledComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const unitsKilledComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s.unitsKilled)
@@ -165,7 +165,7 @@ export default defineComponent({
       );
     });
 
-    const unitsProducedComparison: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const unitsProducedComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s.unitsProduced)

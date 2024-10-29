@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { NewsMessage } from "@/store/admin/infoMessages/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import {
@@ -241,8 +241,8 @@ export default defineComponent({
 
     const editedIndex = ref<number>(-1);
 
-    const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
-    const formTitle: ComputedRef<string> = computed((): string => editedIndex.value === -1 ? "New Item" : "Edit Item");
+    const news = computed<NewsMessage[]>(() => infoMessagesStore.news);
+    const formTitle = computed<string>(() => editedIndex.value === -1 ? "New Item" : "Edit Item");
 
     const dialog = ref<boolean>(false);
 

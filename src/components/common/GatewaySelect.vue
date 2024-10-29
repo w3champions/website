@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, WritableComputedRef } from "vue";
+import { defineComponent, computed } from "vue";
 import { Gateways } from "@/store/ranking/types";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiEarth } from "@mdi/js";
@@ -48,7 +48,7 @@ export default defineComponent({
       },
     ];
 
-    const gateway: WritableComputedRef<{ id: number; name: string }> = computed({
+    const gateway = computed<{ id: number; name: string }>({
       get(): { id: number; name: string } {
         return gateways.find((g) => g.id === rootStateStore.gateway)!;
       },

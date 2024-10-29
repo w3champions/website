@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { PopularHours, Timeslot } from "@/store/overallStats/types";
 import { ChartData } from "chart.js";
@@ -22,15 +22,13 @@ export default defineComponent({
   },
   setup(props) {
     const { t } = useI18n();
-    const timeslots: ComputedRef<Timeslot[]> = computed((): Timeslot[] => props.popularGameHours ? props.popularGameHours?.timeslots.slice(0) : []);
+    const timeslots = computed<Timeslot[]>(() => props.popularGameHours ? props.popularGameHours?.timeslots.slice(0) : []);
 
-    const gameStartHour: ComputedRef<string[]> = computed((): string[] => {
-      return timeslots.value.map((g) =>
-        g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
-      );
-    });
+    const gameStartHour = computed<string[]>(() => timeslots.value.map((g) =>
+      g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
+    ));
 
-    const utcTimeOffset: ComputedRef<number> = computed((): number => {
+    const utcTimeOffset = computed<number>(() => {
       const time = new Date();
       const timeOffset = time.getTimezoneOffset() / 60;
       return timeOffset;
@@ -52,7 +50,7 @@ export default defineComponent({
       return gamesCount;
     }
 
-    const gamesCount: ComputedRef<number[]> = computed((): number[] => timeslots.value.map((g) => g.games));
+    const gamesCount = computed<number[]>(() => timeslots.value.map((g) => g.games));
 
     const gameHourChartData = computed<ChartData<"bar">>(() => {
       return {

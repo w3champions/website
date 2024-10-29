@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref, WritableComputedRef } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -66,9 +66,9 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const player = ref<string>("");
 
-    const clanValidationErrorText: ComputedRef<string> = computed((): string => clanStore.clanValidationError);
+    const clanValidationErrorText = computed<string>(() => clanStore.clanValidationError);
 
-    const clanValidationError: WritableComputedRef<boolean> = computed({
+    const clanValidationError = computed<boolean>({
       get(): boolean {
         return clanStore.clanValidationError !== "";
       },

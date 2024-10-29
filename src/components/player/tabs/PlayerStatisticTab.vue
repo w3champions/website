@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, WritableComputedRef } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
@@ -179,14 +179,14 @@ export default defineComponent({
     const selectedGameLengthOpponentRace = ref<ERaceEnum>(ERaceEnum.TOTAL);
     const selectedPatch = ref<string>("All");
 
-    const selectedSeason: ComputedRef<Season> = computed((): Season => playerStore.selectedSeason);
-    const playerStatsRaceVersusRaceOnMap: ComputedRef<PlayerStatsRaceOnMapVersusRace> = computed((): PlayerStatsRaceOnMapVersusRace => playerStore.playerStatsRaceVersusRaceOnMap);
-    const playerStatsHeroVersusRaceOnMap: ComputedRef<PlayerStatsHeroOnMapVersusRace> = computed((): PlayerStatsHeroOnMapVersusRace => playerStore.playerStatsHeroVersusRaceOnMap ?? []);
-    const loadingMmrRpTimeline: ComputedRef<boolean> = computed((): boolean => playerStore.loadingMmrRpTimeline);
-    const playerMmrRpTimeline: ComputedRef<PlayerMmrRpTimeline> = computed((): PlayerMmrRpTimeline => playerStore.mmrRpTimeline);
-    const isPlayerMmrRpTimelineEmpty: ComputedRef<boolean> = computed((): boolean => isEmpty(playerStore.mmrRpTimeline));
+    const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+    const playerStatsRaceVersusRaceOnMap = computed<PlayerStatsRaceOnMapVersusRace>(() => playerStore.playerStatsRaceVersusRaceOnMap);
+    const playerStatsHeroVersusRaceOnMap = computed<PlayerStatsHeroOnMapVersusRace>(() => playerStore.playerStatsHeroVersusRaceOnMap ?? []);
+    const loadingMmrRpTimeline = computed<boolean>(() => playerStore.loadingMmrRpTimeline);
+    const playerMmrRpTimeline = computed<PlayerMmrRpTimeline>(() => playerStore.mmrRpTimeline);
+    const isPlayerMmrRpTimelineEmpty = computed<boolean>(() => isEmpty(playerStore.mmrRpTimeline));
 
-    const selectedGameMode: WritableComputedRef<EGameMode> = computed({
+    const selectedGameMode = computed<EGameMode>({
       get(): EGameMode {
         return playerStore.profileStatisticsGameMode;
       },
@@ -196,7 +196,7 @@ export default defineComponent({
       },
     });
 
-    const selectedRace: WritableComputedRef<ERaceEnum> = computed({
+    const selectedRace = computed<ERaceEnum>({
       get(): ERaceEnum {
         return playerStore.profileStatisticsRace;
       },
@@ -215,7 +215,7 @@ export default defineComponent({
       await loadActiveGameModes();
     });
 
-    const patches: ComputedRef<string[]> = computed((): string[] => {
+    const patches = computed<string[]>(() => {
       if (!playerStatsRaceVersusRaceOnMap.value || !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch) {
         return [];
       }
@@ -228,7 +228,7 @@ export default defineComponent({
       return patches;
     });
 
-    const raceWithoutRandom: ComputedRef<RaceWinsOnMap[]> = computed((): RaceWinsOnMap[] => {
+    const raceWithoutRandom = computed<RaceWinsOnMap[]>(() => {
       if (
         !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch ||
         !(
@@ -244,7 +244,7 @@ export default defineComponent({
       ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
     });
 
-    const maps: ComputedRef<{ mapName: string; mapId: string }[]> = computed((): { mapName: string; mapId: string }[] => {
+    const maps = computed<{ mapName: string; mapId: string }[]>(() => {
       const maps = [{ mapName: "Overall", mapId: "Overall" }];
       const mapsList: string[] = [];
       playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {

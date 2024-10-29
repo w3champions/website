@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import debounce from "debounce";
 import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
@@ -138,7 +138,7 @@ export default defineComponent({
       }
     }
 
-    const noDataText: ComputedRef<string> = computed((): string => {
+    const noDataText = computed<string>(() => {
       if (!search.value || search.value.length < 3) {
         return "Type at least 3 letters";
       }
@@ -149,7 +149,7 @@ export default defineComponent({
       return "No player found";
     });
 
-    const players: ComputedRef<PlayerSearchInfo[]> = computed((): PlayerSearchInfo[] => globalSearchStore.players);
+    const players = computed<PlayerSearchInfo[]>(() => globalSearchStore.players);
 
     function getPlayerAvatarUrl(player: PlayerSearchInfo): string {
       const pfp = player.profilePicture;

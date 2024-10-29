@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, WritableComputedRef } from "vue";
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
   name: "AlternatePaymentsDialog",
@@ -37,7 +37,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const show: WritableComputedRef<boolean> = computed({
+    const show = computed<boolean>({
       get(): boolean {
         return props.value;
       },

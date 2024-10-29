@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { mdiTrophy } from "@mdi/js";
 
@@ -51,7 +51,7 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    const selectedTournamentText: ComputedRef<string> = computed((): string => props.selectedTournament ? props.selectedTournament.name : "Select tournament");
+    const selectedTournamentText = computed<string>(() => props.selectedTournament ? props.selectedTournament.name : "Select tournament");
 
     function selectTournament(tournament: ITournament) {
       context.emit("tournamentSelected", tournament);

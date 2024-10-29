@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
-import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat, PlayerHeroStatistic, PlayerHeroTotals } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
 import { defaultStatsTab } from "@/helpers/profile";
 import { racesWithTotal } from "@/helpers/general";
@@ -54,11 +54,8 @@ export default defineComponent({
     const { t } = useI18n();
     const playerStore = usePlayerStore();
 
-    const selectedRace: ComputedRef<number> = computed((): number => Number(selectedTab.value.split("-")[1]));
-
-    const selectedTab: ComputedRef<string> = computed((): string => {
-      return defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All);
-    });
+    const selectedRace = computed<number>(() => Number(selectedTab.value.split("-")[1]));
+    const selectedTab = computed<string>(() => defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);
@@ -66,7 +63,7 @@ export default defineComponent({
     }
 
     function heroUsages() {
-      const heroStatsData = [];
+      const heroStatsData: PlayerHeroTotals[] = [];
       const heroStatsItemList = props.playerStatsHeroVersusRaceOnMap?.heroStatsItemList || [];
       let gamesSum = 0;
       for (const playerHeroStats of heroStatsItemList) {
@@ -80,7 +77,7 @@ export default defineComponent({
           ud: 0,
           rand: 0,
           total: 0,
-        };
+        } satisfies PlayerHeroTotals;
         playerHeroStats.stats
           .filter((raceWinOnMap: RaceWinsOnMap) => raceWinOnMap.race === selectedRace.value)
           .map((raceWinOnMap: RaceWinsOnMap) => {
@@ -103,17 +100,13 @@ export default defineComponent({
         heroStatsData.push(rowObject);
       }
 
-      let tableData: any[] = [];
-
-      populateDataForTable(tableData, heroStatsData);
-
+      let tableData = populateDataForTable(heroStatsData);
       tableData = sortHeroStatsTableData(tableData);
-
       return tableData;
     }
 
-    function sortHeroStatsTableData(tableData: any[]): any[] {
-      return tableData.sort((a: any, b: any): number => {
+    function sortHeroStatsTableData(tableData: PlayerHeroStatistic[]): PlayerHeroStatistic[] {
+      return tableData.sort((a, b): number => {
         const aTotal = Number(a.total.replace("%", ""));
         const bTotal = Number(b.total.replace("%", ""));
         if (aTotal > bTotal) {
@@ -126,7 +119,8 @@ export default defineComponent({
       });
     }
 
-    function populateDataForTable(tableData: any[], heroStatsData: any[]) {
+    function populateDataForTable(heroStatsData: PlayerHeroTotals[]) {
+      const tableData: PlayerHeroStatistic[] = [];
       const totals: { [key: number]: number } = {
         [ERaceEnum.HUMAN]: 0,
         [ERaceEnum.ORC]: 0,
@@ -136,7 +130,7 @@ export default defineComponent({
         [ERaceEnum.TOTAL]: 0,
       };
 
-      if (isEmpty(heroStatsData)) return;
+      if (isEmpty(heroStatsData)) return tableData;
 
       const winLossesOnMap = playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All
         .filter((obj: RaceWinsOnMap) => obj.race == selectedRace.value)[0]
@@ -154,9 +148,9 @@ export default defineComponent({
           return;
         }
         tableData.push({
-          id: heroStat.id,
           name: heroStat.name,
           image: heroStat.image,
+          hero: heroStat.id,
           numbers_by_race: {
             hu: { total: totals[ERaceEnum.HUMAN], number: heroStat.hu },
             orc: { total: totals[ERaceEnum.ORC], number: heroStat.orc },
@@ -171,8 +165,9 @@ export default defineComponent({
           ud: totals[ERaceEnum.UNDEAD] > 0 ? String((heroStat.ud * 100 / totals[ERaceEnum.UNDEAD]).toFixed(2)) + "%" : "N/A",
           rand: totals[ERaceEnum.RANDOM] > 0 ? String((heroStat.rand * 100 / totals[ERaceEnum.RANDOM]).toFixed(2)) + "%" : "N/A",
           total: totals[ERaceEnum.TOTAL] > 0 ? String((heroStat.total * 100 / totals[ERaceEnum.TOTAL]).toFixed(2)) + "%" : "N/A",
-        });
+        } satisfies PlayerHeroStatistic);
       });
+      return tableData;
     }
 
     return {

@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import HeroPictureSelect from "@/components/overall-statistics/HeroPictureSelect.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 
@@ -50,15 +50,15 @@ export default defineComponent({
   setup() {
     const overallStatsStore = useOverallStatsStore();
 
-    const winrateClass: ComputedRef<string> = computed((): string => {
+    const winrateClass = computed<string>(() => {
       if (winrate.value > 0.55) return "won";
       if (winrate.value < 0.45) return "lost";
       return "";
     });
 
-    const winrate: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.winrate);
-    const wins: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.wins);
-    const losses: ComputedRef<number> = computed((): number => overallStatsStore.heroWinrate.losses);
+    const winrate = computed<number>(() => overallStatsStore.heroWinrate.winrate);
+    const wins = computed<number>(() => overallStatsStore.heroWinrate.wins);
+    const losses = computed<number>(() => overallStatsStore.heroWinrate.losses);
 
     onMounted(() => overallStatsStore.loadHeroWinrates());
 

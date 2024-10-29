@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
@@ -61,8 +61,8 @@ export default defineComponent({
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
 
-    const maps: ComputedRef<Map[]> = computed((): Map[] => mapsManagementStore.maps);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const maps = computed<Map[]>(() => mapsManagementStore.maps);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     function getMapPath(map: Map): string {
       const path = map?.gameMap?.path;

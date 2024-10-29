@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
@@ -43,8 +43,8 @@ export default defineComponent({
     const router = useRouter();
     const clanStore = useClanStore();
 
-    const playersClan: ComputedRef<Clan> = computed((): Clan => clanStore.playersClan);
-    const hasNoPendingInvites: ComputedRef<boolean> = computed((): boolean => playersClan.value?.pendingInvites?.length === 0);
+    const playersClan = computed<Clan>(() => clanStore.playersClan);
+    const hasNoPendingInvites = computed<boolean>(() => playersClan.value?.pendingInvites?.length === 0);
 
     async function revokeInvite(member: string): Promise<void> {
       await clanStore.revokeInvite(member);

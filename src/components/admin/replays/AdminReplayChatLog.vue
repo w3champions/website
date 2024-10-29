@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
@@ -56,7 +56,7 @@ export default defineComponent({
     const log = ref<ReplayChatLog>({} as ReplayChatLog);
     const openGameDetail = ref<boolean>(false);
 
-    const messages: ComputedRef<ReplayMessage[]> = computed((): ReplayMessage[] => log.value.messages);
+    const messages = computed<ReplayMessage[]>(() => log.value.messages);
 
     function getSenderName(message: ReplayMessage): string {
       const name = log.value.players.find((x) => x.id == message.fromPlayer)?.name;

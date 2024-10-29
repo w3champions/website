@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { NumbersByPlayerHeroStatistic, PlayerHeroStatistic } from "@/store/player/types";
 import { mdiMenuLeft } from "@mdi/js";
 import { mdiMenuRight } from "@mdi/js";
@@ -54,9 +54,9 @@ export default defineComponent({
     const page = ref<number>(1);
     const paginationSize = 10;
 
-    const pageOffset: ComputedRef<number> = computed((): number => paginationSize * page.value);
-    const pageLength: ComputedRef<number> = computed((): number => Math.ceil(props.heroStatistics.length / paginationSize));
-    const heroStatsCurrentPage: ComputedRef<PlayerHeroStatistic[]> = computed((): PlayerHeroStatistic[] => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
+    const pageOffset = computed<number>(() => paginationSize * page.value);
+    const pageLength = computed<number>(() => Math.ceil(props.heroStatistics.length / paginationSize));
+    const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
 
     const headers = [
       { text: "", value: "image" },
@@ -67,9 +67,9 @@ export default defineComponent({
       { text: "vs. Undead", value: "ud" },
       { text: "vs. Night Elf", value: "ne" },
       { text: "vs. Random", value: "rand" },
-    ] satisfies { text: string, value: keyof PlayerHeroStatistic}[];
+    ] satisfies { text: string; value: keyof PlayerHeroStatistic }[];
 
-    const headersWithoutImageAndName = headers.slice(2) as { text: string, value: keyof NumbersByPlayerHeroStatistic}[];
+    const headersWithoutImageAndName = headers.slice(2) as { text: string; value: keyof NumbersByPlayerHeroStatistic }[];
 
     return {
       mdiMenuLeft,

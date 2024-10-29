@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { useRouter } from "vue-router/composables";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
@@ -89,7 +89,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
 
-    const won: ComputedRef<string> = computed((): string => {
+    const won = computed<string>(() => {
       if (props.unfinishedMatch) return "";
 
       if (Object.prototype.hasOwnProperty.call(props.player, "won")) {
@@ -106,7 +106,7 @@ export default defineComponent({
     const nameWithoutBtag = ref<string>(props.player.name);
     const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
 
-    const mmrChange: ComputedRef<number> = computed((): number => {
+    const mmrChange = computed<number>(() => {
       if (props.player.oldMmr && props.player.currentMmr) {
         return Math.floor(props.player.currentMmr - props.player.oldMmr);
       }

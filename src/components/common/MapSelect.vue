@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { MapInfo } from "@/store/common/types";
@@ -54,12 +54,12 @@ export default defineComponent({
   },
   setup: (props, context) => {
     const { t } = useI18n();
-    const selected: ComputedRef<string | TranslateResult> = computed((): string | TranslateResult => {
+    const selected = computed<string | TranslateResult>(() => {
       const match = maps.value.find((m) => m.key === props.map);
       return match ? match.mapName : "Overall";
     });
 
-    const maps: ComputedRef<MapSelectMap[]> = computed((): MapSelectMap[] => {
+    const maps = computed<MapSelectMap[]>(() => {
       const maps = props.mapInfo
         .map((map) => ({ mapName: (map.mapName ?? map.map), key: map.map }))
         .sort((mapA, mapB) => {

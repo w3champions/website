@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRefs, watch, WritableComputedRef } from "vue";
+import { computed, defineComponent, PropType, ref, toRefs, watch } from "vue";
 import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import { useTwitchStore } from "@/store/twitch/store";
@@ -180,7 +180,7 @@ export default defineComponent({
       let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
       const sortedRankings = ref<Ranking[]>([]);
 
-      const rankingsRef: WritableComputedRef<Ranking[]> = computed({
+      const rankingsRef = computed<Ranking[]>({
         get(): Ranking[] {
           return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
         },

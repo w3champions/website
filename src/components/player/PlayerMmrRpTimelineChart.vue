@@ -8,7 +8,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { PlayerMmrRpTimeline } from "@/store/player/types";
 import { ChartData , ChartOptions, ScriptableContext } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
@@ -27,13 +27,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const mmrValues: ComputedRef<number[]> = computed((): number[] => props.mmrRpTimeline.mmrRpAtDates.map((m) => m.mmr));
-    const rpValues: ComputedRef<number[]> = computed((): number[] => props.mmrRpTimeline.mmrRpAtDates.map((m) => m.rp));
+    const mmrValues = computed<number[]>(() => props.mmrRpTimeline.mmrRpAtDates.map((m) => m.mmr));
+    const rpValues = computed<number[]>(() => props.mmrRpTimeline.mmrRpAtDates.map((m) => m.rp));
 
     // Workaround: prevent dates from moving into the next day due to timezone conversion.
-    const dates: ComputedRef<Date[]> = computed((): Date[] => props.mmrRpTimeline.mmrRpAtDates.map((m) => startOfDay(utcToZonedTime(parseJSON(m.date), "UTC"))));
+    const dates = computed<Date[]>(() => props.mmrRpTimeline.mmrRpAtDates.map((m) => startOfDay(utcToZonedTime(parseJSON(m.date), "UTC"))));
 
-    const chartOptions: ComputedRef<ChartOptions> = computed((): ChartOptions => {
+    const chartOptions = computed<ChartOptions>(() => {
       const options: ChartOptions = {
         scales: {
           x: defaultOptionsXAxis,

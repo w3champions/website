@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import isNil from "lodash/isNil";
 import { RaceWinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const toWinText: ComputedRef<string> = computed((): string => {
+    const toWinText = computed<string>(() => {
       if (isComparingSameRace.value || props.stats.games == 0) {
         return "-";
       }
@@ -50,7 +50,7 @@ export default defineComponent({
       return `${(props.stats.winrate * 100).toFixed(1)}%`;
     });
 
-    const toWinClass: ComputedRef<string[]> = computed((): string[] => {
+    const toWinClass = computed<string[]>(() => {
       const classes: string[] = [];
 
       if (props.stats.games == 0 || isComparingSameRace.value) {
@@ -68,7 +68,7 @@ export default defineComponent({
       return classes;
     });
 
-    const isComparingSameRace: ComputedRef<boolean> = computed((): boolean => {
+    const isComparingSameRace = computed<boolean>(() => {
       // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
       if (isNil(props.compareRace) || !props.stats) {
         return false;

@@ -39,14 +39,13 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
-import { TranslateResult } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -63,9 +62,9 @@ export default defineComponent({
     const adminStore = useAdminStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
 
-    const queueData: ComputedRef<QueueData[]> = computed((): QueueData[] => adminStore.queuedata);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const gameModes: ComputedRef<Array<{ name: TranslateResult; id: number }>> = computed((): Array<{ name: TranslateResult; id: number }> => {
+    const queueData = computed<QueueData[]>(() => adminStore.queuedata);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
+    const gameModes = computed<IGameModeBrief[]>(() => {
       let modes = activeGameModes();
 
       if (props.disabledModes) {

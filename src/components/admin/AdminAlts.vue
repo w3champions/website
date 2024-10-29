@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
@@ -59,7 +59,7 @@ export default defineComponent({
     const oldSearchTerm = ref<string>("");
     const alts = ref<string[]>([]);
 
-    const searchedPlayers: ComputedRef<string[]> = computed((): string[] => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
+    const searchedPlayers = computed<string[]>(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
 
     function goToProfile(alt: string): void {
       router.push({

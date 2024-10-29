@@ -31,8 +31,8 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
-import { Proxy, ProxySettings } from "@/store/admin/types";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { Proxy } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
@@ -57,21 +57,21 @@ export default defineComponent({
 
     const chipGroupIndex = ref<number[]>([]);
     const isLoaded = ref<boolean>(false);
-    const isProxyListChanged = ref<boolean>(false);
+    // const isProxyListChanged = ref<boolean>(false);
     const modifiedOverrides = ref<string[]>([]);
 
-    const searchedPlayersSetProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.proxiesSetForSearchedPlayer);
-    const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
-    const isAutomaticNode: ComputedRef<boolean> = computed((): boolean => props.automaticNodes ? true : false);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    // const searchedPlayersSetProxies = computed<ProxySettings>(() => adminStore.proxiesSetForSearchedPlayer);
+    const availableProxies = computed<Proxy[]>(() => adminStore.availableProxies);
+    const isAutomaticNode = computed<boolean>(() => props.automaticNodes ? true : false);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
-      // todo:
+    // todo:
     // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
     // todo: 1.1. think this happens when you select the username too quickly before loading the reviewProxies component - need a break in it.
     // todo: 2. link "confirm" button on modal to PUT request
     // todo: 3. format PUT request to endpoint using setOverrides
 
-    const isProxyListModified: ComputedRef<boolean> = computed((): boolean => {
+    const isProxyListModified = computed<boolean>(() => {
       if (props.passedOverrides.length !== modifiedOverrides.value.length)
         return true;
 
@@ -93,9 +93,9 @@ export default defineComponent({
       return false;
     });
 
-    function setProxyModified(val: boolean): void {
-      adminStore.SET_PROXY_MODIFIED(val);
-    }
+    // function setProxyModified(val: boolean): void {
+    //   adminStore.SET_PROXY_MODIFIED(val);
+    // }
 
     function updateProxies(node: string): void {
       if (modifiedOverrides.value.includes(node)) {
