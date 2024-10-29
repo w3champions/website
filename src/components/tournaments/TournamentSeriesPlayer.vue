@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
+import { computed, defineComponent, PropType, StyleValue } from "vue";
 import isNil from "lodash/isNil";
 import { ISeriesPlayer } from "@/store/tournaments/types";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
@@ -43,11 +43,11 @@ export default defineComponent({
     seriesCanceled: { type: Boolean, required: false, default: undefined },
   },
   setup(props) {
-    const won: ComputedRef<boolean> = computed((): boolean => props.player?.won ?? false);
-    const name: ComputedRef<string> = computed((): string => battleTagToName(props.player?.battleTag ?? ""));
-    const countryCode: ComputedRef<string | undefined> = computed((): string | undefined => props.player?.countryCode);
+    const won = computed<boolean>(() => props.player?.won ?? false);
+    const name = computed<string>(() => battleTagToName(props.player?.battleTag ?? ""));
+    const countryCode = computed<string | undefined>(() => props.player?.countryCode);
 
-    const score: ComputedRef<string> = computed((): string => {
+    const score = computed<string>(() => {
       if (!props.seriesFinished) return "";
       if (isNil(props.player)) return "";
 
@@ -65,14 +65,14 @@ export default defineComponent({
       return score;
     });
 
-    const raceClass: ComputedRef<string> = computed((): string => {
+    const raceClass = computed<string>(() => {
       if (isNil(props.player)) return "";
 
       const race = props.player.race;
       return ERaceEnum[race].toLowerCase();
     });
 
-    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const style = computed<StyleValue>(() => {
       let height = props.playerHeight;
       if (props.side === "bottom") {
         // Subtract 2px to account for the 1px outer border and 1px divider border
@@ -83,7 +83,7 @@ export default defineComponent({
       };
     });
 
-    const slotStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const slotStyle = computed<StyleValue>(() => {
       return {
         // subtract box and border width
         "max-width": `${props.roundWidth - 27 - 2}px`,

@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
 import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { EGameMode } from "@/store/types";
@@ -63,9 +63,9 @@ export default defineComponent({
     const adminStore = useAdminStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
 
-    const queueData: ComputedRef<QueueData[]> = computed((): QueueData[] => adminStore.queuedata);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const gameModes: ComputedRef<Array<{ name: TranslateResult; id: number }>> = computed((): Array<{ name: TranslateResult; id: number }> => {
+    const queueData = computed<QueueData[]>(() => adminStore.queuedata);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
+    const gameModes = computed<Array<{ name: TranslateResult; id: number }>>(() => {
       let modes = activeGameModes();
 
       if (props.disabledModes) {

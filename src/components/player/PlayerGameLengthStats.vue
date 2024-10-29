@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { usePlayerStore } from "@/store/player/store";
@@ -34,13 +34,13 @@ export default defineComponent({
     const { t } = useI18n();
     const playerStore = usePlayerStore();
 
-    const averageAgainstRace: ComputedRef<string> = computed((): string => {
+    const averageAgainstRace = computed<string>(() => {
       const lengthState = playerStore.playerGameLengthStats;
       const average = lengthState?.averageGameLengthByOpponentRace?.[props.selectedOpponentRace] || 0;
       return formatSecondsToDuration(average);
     });
 
-    const lengths: ComputedRef<Record<number, number>> = computed((): Record<number, number> => {
+    const lengths = computed<Record<number, number>>(() => {
       const lengthStatsIntervals = playerStore.playerGameLengthStats?.playerGameLengthIntervalByOpponentRace;
       const lengths = lengthStatsIntervals?.[props.selectedOpponentRace]?.lengths || {};
       fillNonExistingIntervals(lengths);
@@ -64,16 +64,16 @@ export default defineComponent({
       }
     }
 
-    const intervals: ComputedRef<string[]> = computed((): string[] => {
+    const intervals = computed<string[]>(() => {
       const intervals = Object.keys(lengths.value).map((e) => formatSecondsToDuration(parseInt(e)));
       // games in the last position have 60 min or more, so add + as suffix
       intervals[intervals.length - 1] = intervals[intervals.length - 1] + "+";
       return intervals.slice(2); // slicing to ignoring first 2 min of game
     });
 
-    const games: ComputedRef<number[]> = computed((): number[] => Object.values(lengths.value).slice(2)); // slicing to ignoring first 2 min of game
+    const games = computed<number[]>(() => Object.values(lengths.value).slice(2)); // slicing to ignoring first 2 min of game
 
-    const playerGameLengthChartData: ComputedRef<ChartData> = computed((): ChartData => {
+    const playerGameLengthChartData = computed<ChartData>(() => {
       return {
         labels: intervals.value,
         datasets: [

@@ -142,7 +142,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { marked } from "marked";
 import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
@@ -172,11 +172,11 @@ export default defineComponent({
     const rankingsStore = useRankingStore();
     const model = ref<number>(0);
 
-    const topFive: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.topFive);
-    const news: ComputedRef<NewsMessage[]> = computed((): NewsMessage[] => infoMessagesStore.news);
+    const topFive = computed<Ranking[]>(() => rankingsStore.topFive);
+    const news = computed<NewsMessage[]>(() => infoMessagesStore.news);
 
     // Only display 1v1, 2v2 and 4v4 instead of all game modes.
-    const activeGameModes: ComputedRef<ActiveGameMode[]> = computed((): ActiveGameMode[] => {
+    const activeGameModes = computed<ActiveGameMode[]>(() => {
       return rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4);
     });
 

@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, StyleValue } from "vue";
+import { computed, defineComponent, StyleValue } from "vue";
 import TournamentRoundConnector from "./TournamentRoundConnector.vue";
 
 export default defineComponent({
@@ -37,7 +37,7 @@ export default defineComponent({
     marginTop: { type: Number, required: true },
   },
   setup(props) {
-    const containerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const containerStyle = computed<StyleValue>(() => {
       return {
         width: `${props.connectorWidth}px`,
         "margin-top": `${props.playerHeight + props.roundNameHeight + props.marginTop}px`,

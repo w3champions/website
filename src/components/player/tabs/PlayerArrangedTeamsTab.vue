@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { EGameMode } from "@/store/types";
 import { usePlayerStore } from "@/store/player/store";
@@ -37,9 +37,9 @@ export default defineComponent({
   },
   setup() {
     const playerStore = usePlayerStore();
-    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
+    const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
 
-    const gameModeStatsAt: ComputedRef<ModeStat[]> = computed((): ModeStat[] => {
+    const gameModeStatsAt = computed<ModeStat[]>(() => {
       const atStats = gameModeStats.value.filter(
         (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
       );

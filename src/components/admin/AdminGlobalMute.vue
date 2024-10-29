@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
@@ -146,9 +146,9 @@ export default defineComponent({
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
 
-    const globallyMutedPlayers: ComputedRef<GloballyMutedPlayer[]> = computed((): GloballyMutedPlayer[] => adminStore.globallyMutedPlayers);
-    const banDateSet: ComputedRef<boolean> = computed((): boolean => banExpiry.value != "");
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
+    const banDateSet = computed<boolean>(() => banExpiry.value != "");
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
       confirm("Are you sure you want to delete this item?") &&

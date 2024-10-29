@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
+import { computed, defineComponent, PropType, StyleValue } from "vue";
 import assign from "lodash/assign";
 import fromPairs from "lodash/fromPairs";
 import pick from "lodash/pick";
@@ -53,19 +53,19 @@ export default defineComponent({
     fontSize: { type: Number, required: false, default: 14 },
   },
   setup(props) {
-    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const style = computed<StyleValue>(() => {
       return {
         "font-size": `${props.fontSize}px`,
       };
     });
 
-    const showBracket: ComputedRef<boolean> = computed((): boolean => {
+    const showBracket = computed<boolean>(() => {
       return [
         ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
       ].includes(props.tournament.state);
     });
 
-    const rounds: ComputedRef<ITournamentRound[]> = computed((): ITournamentRound[] => {
+    const rounds = computed<ITournamentRound[]>(() => {
       const playerExtraData = fromPairs(
         props.tournament.players.map((p) => [
           p.battleTag,
@@ -85,7 +85,7 @@ export default defineComponent({
       return props.tournament.rounds;
     });
 
-    const roundDimensions: ComputedRef<BracketDimensions[]> = computed((): BracketDimensions[] => {
+    const roundDimensions = computed<BracketDimensions[]>(() => {
       const playerHeight = props.playerHeight;
       let verticalSpace = props.verticalSpace;
       let marginTop = 0;

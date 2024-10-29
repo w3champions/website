@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 
@@ -42,8 +42,8 @@ export default defineComponent({
     const loaded = ref<boolean>(false);
     const newMotd = ref<string>("");
 
-    const rules: ComputedRef<unknown> = computed((): unknown => [(value: string) => value.length <= 400 || "Max 400 characters"]);
-    const motd: ComputedRef<string> = computed((): string => infoMessagesStore.messageOfTheDay.motd);
+    const rules = computed<unknown>(() => [(value: string) => value.length <= 400 || "Max 400 characters"]);
+    const motd = computed<string>(() => infoMessagesStore.messageOfTheDay.motd);
 
     async function confirmNewMotd(): Promise<void> {
       await setMotd(newMotd.value);

@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted } from "vue";
 import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
@@ -68,15 +68,15 @@ export default defineComponent({
     const matchStore = useMatchStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
 
-    const matches: ComputedRef<Match[]> = computed((): Match[] => matchStore.matches);
-    const totalMatches: ComputedRef<number> = computed((): number => matchStore.totalMatches);
-    const currentSeason: ComputedRef<Season> = computed((): Season => rankingsStore.seasons[0]);
-    const unfinished: ComputedRef<boolean> = computed((): boolean => matchStore.status === MatchStatus.onGoing);
-    const gameMode: ComputedRef<EGameMode> = computed((): EGameMode => matchStore.gameMode);
-    const map: ComputedRef<string> = computed((): string => matchStore.map);
-    const mmr: ComputedRef<Mmr> = computed((): Mmr => matchStore.mmr);
+    const matches = computed<Match[]>(() => matchStore.matches);
+    const totalMatches = computed<number>(() => matchStore.totalMatches);
+    const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
+    const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
+    const gameMode = computed<EGameMode>(() => matchStore.gameMode);
+    const map = computed<string>(() => matchStore.map);
+    const mmr = computed<Mmr>(() => matchStore.mmr);
 
-    const maps: ComputedRef<Array<MapInfo>> = computed((): Array<MapInfo> => {
+    const maps = computed<Array<MapInfo>>(() => {
       if (!currentSeason.value) {
         return [];
       }
@@ -85,7 +85,7 @@ export default defineComponent({
       return Array.from(maps);
     });
 
-    const disabledGameModes: ComputedRef<Array<EGameMode>> = computed((): Array<EGameMode> => {
+    const disabledGameModes = computed<Array<EGameMode>>(() => {
       if (matchStore.status === MatchStatus.onGoing) {
         return [
           EGameMode.GM_2ON2_AT,
@@ -99,31 +99,29 @@ export default defineComponent({
       return [];
     });
 
-    const mapsByGameMode: ComputedRef<Record<EGameMode, Set<MapInfo>>> = computed(
-      (): Record<EGameMode, Set<MapInfo>> => {
-        const filterSeasons =
-          matchStore.status === MatchStatus.onGoing
-            ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
-            : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
+    const mapsByGameMode = computed<Record<EGameMode, Set<MapInfo>>>(() => {
+      const filterSeasons =
+        matchStore.status === MatchStatus.onGoing
+          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
+          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
 
-        return overallStatsStore.matchesOnMapPerSeason
-          .filter(filterSeasons)
-          .reduce<Record<EGameMode, Set<MapInfo>>>((mapsByMode, matchesOnMapPerSeason) => {
-            for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-              // just get the map name and ignore the count
-              const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
+      return overallStatsStore.matchesOnMapPerSeason
+        .filter(filterSeasons)
+        .reduce<Record<EGameMode, Set<MapInfo>>>((mapsByMode, matchesOnMapPerSeason) => {
+          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+            // just get the map name and ignore the count
+            const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
 
-              if (!mapsByMode[modes.gameMode]) {
-                mapsByMode[modes.gameMode] = new Set(mapsInfos);
-              } else {
-                // combine this seasons mode maps with other seasons modes maps without dupes
-                mapsByMode[modes.gameMode] = new Set([...mapsByMode[modes.gameMode], ...mapsInfos]);
-              }
+            if (!mapsByMode[modes.gameMode]) {
+              mapsByMode[modes.gameMode] = new Set(mapsInfos);
+            } else {
+              // combine this seasons mode maps with other seasons modes maps without dupes
+              mapsByMode[modes.gameMode] = new Set([...mapsByMode[modes.gameMode], ...mapsInfos]);
             }
-            return mapsByMode;
-          }, {} as Record<EGameMode, Set<MapInfo>>);
-      }
-    );
+          }
+          return mapsByMode;
+        }, {} as Record<EGameMode, Set<MapInfo>>);
+    });
 
     async function getMatches(): Promise<void> {
       await matchStore.loadMatches();

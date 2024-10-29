@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import difference from "lodash/difference";
 import { isFuture } from "date-fns";
 import TournamentsTable from "@/components/tournaments/TournamentsTable.vue";
@@ -36,10 +36,10 @@ export default defineComponent({
     const router = useRouter();
     const tournamentsStore = useTournamentsStore();
 
-    const tournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => tournamentsStore.tournaments);
-    const pastTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => difference(tournaments.value, upcomingTournaments.value));
+    const tournaments = computed<ITournament[]>(() => tournamentsStore.tournaments);
+    const pastTournaments = computed<ITournament[]>(() => difference(tournaments.value, upcomingTournaments.value));
 
-    const upcomingTournaments: ComputedRef<ITournament[]> = computed((): ITournament[] => {
+    const upcomingTournaments = computed<ITournament[]>(() => {
       return tournaments.value.filter((tournament) => (
         [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state)
         && isFuture(tournament.startDateTime)

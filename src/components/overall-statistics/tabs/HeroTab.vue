@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
@@ -65,7 +65,7 @@ export default defineComponent({
       await overallStatsStore.loadPlayedHeroes();
     });
 
-    const gameModes: ComputedRef<IGameModeBrief[]> = computed((): IGameModeBrief[] => activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT));
+    const gameModes = computed<IGameModeBrief[]>(() => activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT));
 
     const picks = [
       {
@@ -86,7 +86,7 @@ export default defineComponent({
       },
     ];
 
-    const selectedPlayedHeroes: ComputedRef<PlayedHero[]> = computed((): PlayedHero[] => {
+    const selectedPlayedHeroes = computed<PlayedHero[]>(() => {
       const heroes = overallStatsStore.playedHeroes;
       if (heroes.length === 0) return [];
       return (

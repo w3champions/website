@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
@@ -105,9 +105,9 @@ export default defineComponent({
     const isLoadingFiles = ref<boolean>(true);
     const isUploadingFile = ref<boolean>(false);
 
-    const files: ComputedRef<CloudFile[]> = computed((): CloudFile[] => cloudStorageStore.files);
-    const validationMessage: ComputedRef<CloudValidationMessage> = computed((): CloudValidationMessage => cloudStorageStore.validationMessage);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const files = computed<CloudFile[]>(() => cloudStorageStore.files);
+    const validationMessage = computed<CloudValidationMessage>(() => cloudStorageStore.validationMessage);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     function resetValidationMessage() {
       isValidationMessageVisible.value = false;

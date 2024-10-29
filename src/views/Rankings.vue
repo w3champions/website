@@ -161,7 +161,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -223,16 +223,16 @@ export default defineComponent({
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
-    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
-    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
-    const selectedGameMode: ComputedRef<EGameMode> = computed((): EGameMode => rankingsStore.gameMode);
-    const selectedLeagueName: ComputedRef<string> = computed((): string => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
-    const rankings: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.rankings);
-    const searchRanks: ComputedRef<Ranking[]> = computed((): Ranking[] => rankingsStore.searchRanks);
-    const showRaceDistribution: ComputedRef<boolean> = computed((): boolean => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
+    const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
+    const seasons = computed<Season[]>(() => rankingsStore.seasons);
+    const selectedGameMode = computed<EGameMode>(() => rankingsStore.gameMode);
+    const selectedLeagueName = computed<string>(() => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
+    const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
+    const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
+    const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
 
-    const ladders: ComputedRef<League[]> = computed((): League[] => {
+    const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter(
         (l) =>
           l.gateway === rootStateStore.gateway &&
@@ -243,12 +243,12 @@ export default defineComponent({
       return league?.leagues;
     });
 
-    const selectedLeague: ComputedRef<League> = computed((): League => {
+    const selectedLeague = computed<League>(() => {
       if (!ladders.value) return {} as League;
       return ladders.value.filter((l) => l.id == rankingsStore.league)[0] || {};
     });
 
-    const selectedLeagueOrder: ComputedRef<number> = computed((): number => {
+    const selectedLeagueOrder = computed<number>(() => {
       const season = rankingsStore.selectedSeason;
       if (season?.id < 5 && selectedLeague.value?.order > 1) {
         return selectedLeague.value.order + 1;
@@ -316,7 +316,7 @@ export default defineComponent({
       return item.order;
     }
 
-    const noDataText: ComputedRef<string> = computed((): string => {
+    const noDataText = computed<string>(() => {
       if (!search.value || search.value.length < 3) {
         return "Type at least 3 letters";
       }

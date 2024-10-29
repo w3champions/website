@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, WritableComputedRef } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 
@@ -17,7 +17,7 @@ export default defineComponent({
     const checkJwtLifetimeInterval = 1000 * 60 * 5; // Check if jwt has expired every 5 minutes.
     let _intervalRefreshHandle: NodeJS.Timeout;
 
-    const showSignInDialog: WritableComputedRef<boolean> = computed({
+    const showSignInDialog = computed<boolean>({
       get(): boolean {
         if (adminStore.showJwtExpiredDialog) {
           clearInterval(_intervalRefreshHandle);

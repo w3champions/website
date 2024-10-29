@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, PropType, defineComponent } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
@@ -34,12 +34,12 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const icon: ComputedRef<string> = computed((): string => {
+    const icon = computed<string>(() => {
       if (!props.host) return getAsset(`icons/hosterror.png`);
       return getAsset(`icons/${props.host.provider}.png`);
     });
 
-    const tooltip: ComputedRef<TranslateResult> = computed((): TranslateResult => {
+    const tooltip = computed<TranslateResult>(() => {
       if (!props.host) return t("components_matches_hosticon.error");
       if (props.host.provider === "BNET") return t("components_matches_hosticon.hostedonbnet");
       return `${t("components_matches_hosticon.hostedonflo")} / ${props.host.name}`;

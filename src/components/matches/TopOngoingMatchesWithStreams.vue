@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import orderBy from "lodash/orderBy";
 import sumBy from "lodash/sumBy";
 import { EGameMode, Match, PlayerInTeam } from "@/store/types";
@@ -69,7 +69,7 @@ export default defineComponent({
       }
     });
 
-    const matchesSortedByMMR: ComputedRef<Match[]> = computed((): Match[] => {
+    const matchesSortedByMMR = computed<Match[]>(() => {
       return orderBy(
         matches.value,
         (match) =>

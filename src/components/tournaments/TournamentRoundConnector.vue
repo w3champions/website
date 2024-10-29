@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
+import { computed, defineComponent, PropType, StyleValue } from "vue";
 
 export default defineComponent({
   name: "TournamentRoundConnectors",
@@ -25,7 +25,7 @@ export default defineComponent({
     marginTop: { type: Number, required: false, default: 0 },
   },
   setup(props) {
-    const containerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const containerStyle = computed<StyleValue>(() => {
       let marginTop = props.playerHeight;
       if (props.index > 0 && props.side !== "bottom") {
         marginTop += props.playerHeight + props.verticalSpace;

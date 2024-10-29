@@ -4,7 +4,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { MmrDistribution } from "@/store/overallStats/types";
 import { Season } from "@/store/ranking/types";
@@ -38,7 +38,7 @@ export default defineComponent({
   },
   setup(props) {
     const playerStore = usePlayerStore();
-    const gameModeStats: ComputedRef<ModeStat[]> = computed((): ModeStat[] => playerStore.gameModeStats);
+    const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
 
     const colors = computed(() => {
       const colors: string[] = [];
@@ -58,7 +58,7 @@ export default defineComponent({
       return colors;
     });
 
-    const mmrOfLoggedInPlayer: ComputedRef<number> = computed((): number => {
+    const mmrOfLoggedInPlayer = computed<number>(() => {
       if (!gameModeStats.value) return 0;
 
       return (
@@ -70,7 +70,7 @@ export default defineComponent({
       );
     });
 
-    const mmrGroupOfLoggedInPlayer: ComputedRef<number> = computed((): number => {
+    const mmrGroupOfLoggedInPlayer = computed<number>(() => {
       if (!mmrOfLoggedInPlayer.value || !props.mmrDistribution.distributedMmrs) {
         return 0;
       }
@@ -96,13 +96,13 @@ export default defineComponent({
       return mmrGroup ? mmrGroup.mmr : 0;
     });
 
-    const mmrDistributionTotalPlayers: ComputedRef<number> = computed((): number => {
+    const mmrDistributionTotalPlayers = computed<number>(() => {
       return props.mmrDistribution.distributedMmrs
         .map((d) => d.count)
         .reduce((a, b) => a + b);
     });
 
-    const isTop50percent: ComputedRef<boolean> = computed((): boolean => {
+    const isTop50percent = computed<boolean>(() => {
       const top50mmr =
         props.mmrDistribution.distributedMmrs[
           props.mmrDistribution.top50PercentIndex
@@ -110,7 +110,7 @@ export default defineComponent({
       return mmrOfLoggedInPlayer.value > top50mmr;
     });
 
-    const cumulativeSumData: ComputedRef<number[]> = computed((): number[] => {
+    const cumulativeSumData = computed<number[]>(() => {
       return props.mmrDistribution.distributedMmrs
         .slice()
         .reverse()
@@ -148,7 +148,7 @@ export default defineComponent({
       };
     });
 
-    const mmrDistributionChartOptions: ComputedRef<ChartOptions> = computed((): ChartOptions => {
+    const mmrDistributionChartOptions = computed<ChartOptions>(() => {
       const annotations: { [key: string]: AnnotationOptions } = mmrGroupOfLoggedInPlayer.value
         ? {
           x: {

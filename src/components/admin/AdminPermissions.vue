@@ -111,7 +111,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, nextTick, ref, watch, WritableComputedRef } from "vue";
+import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { IPermission, EPermission } from "@/store/admin/permission/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
@@ -133,14 +133,14 @@ export default defineComponent({
     const battleTag = ref<string>("");
     const editedItem = ref<IPermission>({} as IPermission);
 
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
-    const permissions: ComputedRef<IPermission[]> = computed((): IPermission[] => permissionStore.permissions);
-    const author: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const isAddDialog: ComputedRef<boolean> = computed((): boolean => editedIndex.value === -1);
-    const formTitle: ComputedRef<string> = computed((): string => isAddDialog.value ? "New Admin" : "Edit Admin");
-    const isValidationError: ComputedRef<boolean> = computed((): boolean => permissionStore.validationError !== "");
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
+    const permissions = computed<IPermission[]>(() => permissionStore.permissions);
+    const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
+    const isAddDialog = computed<boolean>(() => editedIndex.value === -1);
+    const formTitle = computed<string>(() => isAddDialog.value ? "New Admin" : "Edit Admin");
+    const isValidationError = computed<boolean>(() => permissionStore.validationError !== "");
 
-    const validationError: WritableComputedRef<string> = computed({
+    const validationError = computed<string>({
       get(): string {
         return permissionStore.validationError;
       },

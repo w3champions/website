@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, StyleValue } from "vue";
+import { computed, defineComponent, PropType, StyleValue } from "vue";
 import { ITournamentSeries, ESeriesState, EMatchState, ISeriesPlayer } from "@/store/tournaments/types";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
 
@@ -39,17 +39,17 @@ export default defineComponent({
     roundWidth: { type: Number, required: true },
   },
   setup(props) {
-    const topPlayer: ComputedRef<ISeriesPlayer | undefined> = computed((): ISeriesPlayer | undefined => props.series.players?.find((p) => p.team === 0));
-    const bottomPlayer: ComputedRef<ISeriesPlayer | undefined> = computed((): ISeriesPlayer | undefined => props.series.players?.find((p) => p.team === 1));
-    const seriesFinished: ComputedRef<boolean> = computed((): boolean => [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(props.series.state));
-    const seriesCanceled: ComputedRef<boolean> = computed((): boolean => props.series.state === ESeriesState.CANCELED);
+    const topPlayer = computed<ISeriesPlayer | undefined>(() => props.series.players?.find((p) => p.team === 0));
+    const bottomPlayer = computed<ISeriesPlayer | undefined>(() => props.series.players?.find((p) => p.team === 1));
+    const seriesFinished = computed<boolean>(() => [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(props.series.state));
+    const seriesCanceled = computed<boolean>(() => props.series.state === ESeriesState.CANCELED);
 
-    const seriesSpecial: ComputedRef<boolean | undefined> = computed((): boolean | undefined => {
+    const seriesSpecial = computed<boolean | undefined>(() => {
       return [ESeriesState.BYE, ESeriesState.CANCELED].includes(props.series.state) ||
         props.series.matches?.some((match) => match.state === EMatchState.CANCELED);
     });
 
-    const style: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const style = computed<StyleValue>(() => {
       const marginTop = props.seriesIndex === 0 ? 0 : props.verticalSpace;
       return {
         "margin-top": `${marginTop}px`,
@@ -57,7 +57,7 @@ export default defineComponent({
       };
     });
 
-    const playerStyle: ComputedRef<StyleValue> = computed((): StyleValue => {
+    const playerStyle = computed<StyleValue>(() => {
       return {
         height: `${props.playerHeight}px`,
       };

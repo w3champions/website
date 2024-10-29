@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import throttle from "lodash/throttle";
 import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
 import Tournament from "../tournaments/Tournament.vue";
@@ -97,11 +97,11 @@ export default defineComponent({
     const isCreateTournamentOpen = ref<boolean>(false);
     const isEditTournamentOpen = ref<boolean>(false);
 
-    const tournamentMaps: ComputedRef<Map[]> = computed((): Map[] => tournamentsStore.tournamentMaps);
-    const isLoading: ComputedRef<boolean> = computed((): boolean => tournamentsManagementStore.isLoading);
-    const tournament: ComputedRef<ITournament> = computed((): ITournament => tournamentsManagementStore.upcomingTournament);
+    const tournamentMaps = computed<Map[]>(() => tournamentsStore.tournamentMaps);
+    const isLoading = computed<boolean>(() => tournamentsManagementStore.isLoading);
+    const tournament = computed<ITournament>(() => tournamentsManagementStore.upcomingTournament);
 
-    const registrationOpen: ComputedRef<boolean> = computed((): boolean => {
+    const registrationOpen = computed<boolean>(() => {
       return tournament.value.state === ETournamentState.INIT || tournament.value.state === ETournamentState.REGISTRATION;
     });
 

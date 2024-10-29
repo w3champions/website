@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
@@ -60,7 +60,7 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
     const playerStore = usePlayerStore();
 
-    const verifiedBtag: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
+    const verifiedBtag = computed<string>(() => oauthStore.blizzardVerifiedBtag);
 
     async function init() {
       const promises = [];

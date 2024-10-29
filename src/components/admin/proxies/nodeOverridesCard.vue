@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
@@ -60,10 +60,10 @@ export default defineComponent({
     const isProxyListChanged = ref<boolean>(false);
     const modifiedOverrides = ref<string[]>([]);
 
-    const searchedPlayersSetProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.proxiesSetForSearchedPlayer);
-    const availableProxies: ComputedRef<Proxy[]> = computed((): Proxy[] => adminStore.availableProxies);
-    const isAutomaticNode: ComputedRef<boolean> = computed((): boolean => props.automaticNodes ? true : false);
-    const isAdmin: ComputedRef<boolean> = computed((): boolean => oauthStore.isAdmin);
+    const searchedPlayersSetProxies = computed<ProxySettings>(() => adminStore.proxiesSetForSearchedPlayer);
+    const availableProxies = computed<Proxy[]>(() => adminStore.availableProxies);
+    const isAutomaticNode = computed<boolean>(() => props.automaticNodes ? true : false);
+    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
       // todo:
     // todo: 1. Figure out why the v-chip :input-value doesnt properly work on first page load. State looks fine eventually.
@@ -71,7 +71,7 @@ export default defineComponent({
     // todo: 2. link "confirm" button on modal to PUT request
     // todo: 3. format PUT request to endpoint using setOverrides
 
-    const isProxyListModified: ComputedRef<boolean> = computed((): boolean => {
+    const isProxyListModified = computed<boolean>(() => {
       if (props.passedOverrides.length !== modifiedOverrides.value.length)
         return true;
 

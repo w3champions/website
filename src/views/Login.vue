@@ -13,7 +13,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter } from "vue-router/composables";
@@ -31,8 +31,8 @@ export default defineComponent({
     const router = useRouter();
     const oauthStore = useOauthStore();
 
-    const account: ComputedRef<string> = computed((): string => oauthStore.blizzardVerifiedBtag);
-    const authCode: ComputedRef<string> = computed((): string => oauthStore.token);
+    const account = computed<string>(() => oauthStore.blizzardVerifiedBtag);
+    const authCode = computed<string>(() => oauthStore.token);
 
     function openPlayerProfile() {
       router.push({

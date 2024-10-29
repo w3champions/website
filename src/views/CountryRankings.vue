@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { CountryRanking, CountryType, Gateways, Season } from "@/store/ranking/types";
 import { EGameMode, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
@@ -161,20 +161,20 @@ export default defineComponent({
     const initialized = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
     const countries = ref<CountryType[]>(Countries);
-    const countryRef: ComputedRef<string> = computed((): string => props.country);
+    const countryRef = computed<string>(() => props.country);
 
-    const selectedGameMode: ComputedRef<EGameMode> = computed((): EGameMode => rankingsStore.gameMode);
-    const selectedSeason: ComputedRef<Season> = computed((): Season => rankingsStore.selectedSeason);
-    const seasons: ComputedRef<Season[]> = computed((): Season[] => rankingsStore.seasons);
-    const rankings: ComputedRef<CountryRanking[]> = computed((): CountryRanking[] => rankingsStore.countryRankings);
-    const selectedCountryCode: ComputedRef<string> = computed((): string => rankingsStore.selectedCountry);
-    const isGatewayNeeded: ComputedRef<boolean> = computed((): boolean => rankingsStore.selectedSeason.id <= 5);
+    const selectedGameMode = computed<EGameMode>(() => rankingsStore.gameMode);
+    const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
+    const seasons = computed<Season[]>(() => rankingsStore.seasons);
+    const rankings = computed<CountryRanking[]>(() => rankingsStore.countryRankings);
+    const selectedCountryCode = computed<string>(() => rankingsStore.selectedCountry);
+    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
 
-    const selectedCountry: ComputedRef<CountryType> = computed((): CountryType => {
+    const selectedCountry = computed<CountryType>(() => {
       return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;
     });
 
-    const currentCountryCode: ComputedRef<string> = computed((): string => {
+    const currentCountryCode = computed<string>(() => {
       // country code of the data being displayed
       return (
         rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
@@ -182,7 +182,7 @@ export default defineComponent({
       );
     });
 
-    const isLoading: ComputedRef<boolean> = computed((): boolean => {
+    const isLoading = computed<boolean>(() => {
       return (
         (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value) ||
         (!initialized.value && rankings.value.length === 0)

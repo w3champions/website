@@ -117,9 +117,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
-import { ProxySettings } from "@/store/admin/types";
+import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useAdminStore } from "@/store/admin/store";
 
 export default defineComponent({
@@ -129,7 +129,7 @@ export default defineComponent({
   },
   props: {
     proxies: {
-      type: Object as PropType<ProxySettings>,
+      type: Object as PropType<Proxy[]>,
       required: true,
     },
   },
@@ -148,9 +148,9 @@ export default defineComponent({
     const originalProxySettings = ref<ProxySettings>({ nodeOverrides: [], automaticNodeOverrides: [] });
     const dialog = ref<boolean>(false);
 
-    const availableProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => props.proxies);
-    const modifiedProxies: ComputedRef<ProxySettings> = computed((): ProxySettings => adminStore.modifiedProxies);
-    const isProxyModified: ComputedRef<boolean> = computed((): boolean => adminStore.proxyModified);
+    const availableProxies = computed<Proxy[]>(() => props.proxies);
+    const modifiedProxies = computed<ProxySettings>(() => adminStore.modifiedProxies);
+    const isProxyModified = computed<boolean>(() => adminStore.proxyModified);
 
     function putNewProxies(): void {
       if (isProxyModified.value) {

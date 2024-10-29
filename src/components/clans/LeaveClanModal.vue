@@ -36,7 +36,7 @@
   </v-card-text>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -52,7 +52,7 @@ export default defineComponent({
     const clanStore = useClanStore();
     const invitePlayerDialog = ref<boolean>(false);
 
-    const clanName: ComputedRef<string> = computed((): string => clanStore.playersClan.clanName);
+    const clanName = computed<string>(() => clanStore.playersClan.clanName);
 
     async function leaveClan(): Promise<void> {
       await clanStore.leaveClan();

@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
@@ -110,7 +110,7 @@ export default defineComponent({
     const selectedPatch = ref<string>("All");
     const selectedMmr = ref<number>(0);
     const selectedMap = ref<TranslateResult>(t("common.overall"));
-    const statsPerRaceAndMap: ComputedRef<StatsPerWinrate[]> = computed((): StatsPerWinrate[] => overallStatsStore.statsPerMapAndRace);
+    const statsPerRaceAndMap = computed<StatsPerWinrate[]>(() => overallStatsStore.statsPerMapAndRace);
 
     const headers: WinratesTabHeader[] = [
       {
@@ -139,7 +139,7 @@ export default defineComponent({
       },
     ];
 
-    const mmrs: ComputedRef<{ league: TranslateResult; mmr: number }[]> = computed((): { league: TranslateResult; mmr: number }[] => {
+    const mmrs = computed<{ league: TranslateResult; mmr: number }[]>(() => {
       const mmrsSorted = statsPerRaceAndMap.value
         .map((r) => r.mmrRange)
         .sort()
@@ -151,7 +151,7 @@ export default defineComponent({
       return mapped;
     });
 
-    const maps: ComputedRef<{ mapId: string; mapName: TranslateResult }[]> = computed((): { mapId: string; mapName: TranslateResult }[] => {
+    const maps = computed<{ mapId: string; mapName: TranslateResult }[]>(() => {
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
       return stats.patchToStatsPerModes[selectedPatch.value].map((r) => {
@@ -159,7 +159,7 @@ export default defineComponent({
       });
     });
 
-    const raceWinrate: ComputedRef<Ratio[]> = computed((): Ratio[] => {
+    const raceWinrate = computed<Ratio[]>(() => {
       if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
         return [];
       }
@@ -175,7 +175,7 @@ export default defineComponent({
       return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
     });
 
-    const patches: ComputedRef<string[]> = computed((): string[] => {
+    const patches = computed<string[]>(() => {
       if (statsPerRaceAndMap.value[0]) {
         const allowedPatches = ["All"];
         const patches = Object.keys(
