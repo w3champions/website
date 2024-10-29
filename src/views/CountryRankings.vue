@@ -174,20 +174,16 @@ export default defineComponent({
       return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;
     });
 
-    const currentCountryCode = computed<string>(() => {
-      // country code of the data being displayed
-      return (
-        rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
-        rankings.value[0]?.ranks[0].playersInfo[0].location
-      );
-    });
+    // country code of the data being displayed
+    const currentCountryCode = computed<string>(() =>
+      rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
+      rankings.value[0]?.ranks[0].playersInfo[0].location
+    );
 
-    const isLoading = computed<boolean>(() => {
-      return (
-        (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value) ||
-        (!initialized.value && rankings.value.length === 0)
-      );
-    });
+    const isLoading = computed<boolean>(() =>
+      (rankingsStore.countryRankingsLoading && selectedCountryCode.value !== currentCountryCode.value)
+      || (!initialized.value && rankings.value.length === 0)
+    );
 
     watch(countryRef, onCountryChanged);
     function onCountryChanged(newValue: string) {

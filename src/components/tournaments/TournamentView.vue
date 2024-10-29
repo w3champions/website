@@ -19,7 +19,7 @@ import { Map } from "@/store/admin/mapsManagement/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 export default defineComponent({
-  name: "Tournament",
+  name: "TournamentView",
   components: {
     TournamentDescription,
     TournamentBracket,

@@ -170,13 +170,11 @@ export default defineComponent({
 
     function checkOverridesAreSame(initOverrides: string[], modifiedOverrides: string[]): boolean {
       const uniqueValues = new Set([...initOverrides, ...modifiedOverrides]);
-
       for (const v of uniqueValues) {
         const initOverridesCount = initOverrides.filter((e) => e === v).length;
         const modifiedOverridesCount = modifiedOverrides.filter((e) => e === v).length;
         if (initOverridesCount !== modifiedOverridesCount) return false;
       }
-
       return true;
     }
 
@@ -194,6 +192,8 @@ export default defineComponent({
     });
 
     return {
+      availableProxies,
+      modifiedProxies,
       searchedPlayerTag,
       initProxySettings,
       isProxyModified,
@@ -201,6 +201,7 @@ export default defineComponent({
       sanitizeString,
       dialog,
       putNewProxies,
+      checkOverridesAreSame,
     };
   },
 });

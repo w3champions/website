@@ -122,7 +122,7 @@ export default defineComponent({
         .reverse();
     });
 
-    const mmrDistributionChartData = computed<ChartData<"bar"|"line">>(() => {
+    const mmrDistributionChartData = computed<ChartData<"bar" | "line">>(() => {
       return {
         labels: props.mmrDistribution.distributedMmrs.map((d) => `> ${d.mmr}`),
         datasets: [

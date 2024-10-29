@@ -19,7 +19,7 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div 
+              <div
                 v-if="isFfa(item.gameMode)"
                 @click="goToMatchDetailPage(item)"
                 class="my-3"

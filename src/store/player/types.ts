@@ -162,6 +162,18 @@ export type PlayerGameLength = {
   lengths: Record<number, number>;
 };
 
+export type PlayerHeroTotals = {
+  id: string;
+  name: string;
+  image: string;
+  hu: number;
+  orc: number;
+  ne: number;
+  ud: number;
+  rand: number;
+  total: number;
+};
+
 export type PlayerHeroStatistic = {
   image: string;
   name: string;

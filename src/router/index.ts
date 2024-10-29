@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { Route, RouteConfig } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
-import Tournaments from "@/views/Tournaments.vue";
+import TournamentsList from "@/views/TournamentsList.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
@@ -224,7 +224,7 @@ const routes: RouteConfig[] = [
   {
     path: "/tournaments",
     name: "Tournaments",
-    component: Tournaments,
+    component: TournamentsList,
   },
   {
     path: "/tournaments/:tournamentId",

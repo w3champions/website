@@ -176,9 +176,9 @@ export default defineComponent({
     const news = computed<NewsMessage[]>(() => infoMessagesStore.news);
 
     // Only display 1v1, 2v2 and 4v4 instead of all game modes.
-    const activeGameModes = computed<ActiveGameMode[]>(() => {
-      return rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4);
-    });
+    const activeGameModes = computed<ActiveGameMode[]>(() =>
+      rankingsStore.activeModes.filter((mode) => mode.id === 1 || mode.id === 2 || mode.id === 4)
+    );
 
     onMounted(async (): Promise<void> => {
       await rankingsStore.retrieveSeasons();

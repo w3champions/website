@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="pa-md-4">
       <div v-if="tournament">
-        <tournament :tournament="tournament" />
+        <tournament-view :tournament="tournament" />
       </div>
     </v-card>
   </v-container>
@@ -11,13 +11,13 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import { ITournament } from "@/store/tournaments/types";
-import Tournament from "@/components/tournaments/Tournament.vue";
+import TournamentView from "@/components/tournaments/TournamentView.vue";
 import { useTournamentsStore } from "@/store/tournaments/store";
 
 export default defineComponent({
   name: "TournamentDetail",
   components: {
-    Tournament,
+    TournamentView,
   },
   props: {
     tournamentId: {
