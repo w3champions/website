@@ -244,9 +244,9 @@ export default defineComponent({
     onMounted((): void => {
       // Since # is a reserver character for the "fragment/hash" part of the URL
       // we can try to redirect to the correct URL if the hash is a battle tag,
-      // (starts with 4 digits). It may also be followed by a tab name, for
-      // example Someone#9999/matches would redirect to Someone%239999/matches
-      if (window.location.hash.match(/^#\d{4}\b/)) {
+      // (starts with at least 4 digits). It may also be followed by a tab name,
+      // for example Someone#9999/matches would redirect to Someone%239999/matches
+      if (window.location.hash.match(/^#\d{4}/)) {
         const url = new URL(window.location.href);
         url.pathname = `${url.pathname}${url.hash}`;
         url.hash = "";
