@@ -298,8 +298,14 @@ const data = {
     },
     components_matches_sortselect: {
       sortmatchesby: "Sort matches by:",
-      starttimedescending: "Start time",
-      mmrdescending: "MMR",
+      starttime: "Start time",
+      endtime: "End time",
+      mmr: "MMR",
+    },
+    components_matches_sort_direction_select: {
+      sortmatchesinorder: "Sort in order:",
+      ascending: "Ascending",
+      descending: "Descending",
     },
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Top live 1v1 matches",
@@ -845,6 +851,7 @@ const data = {
       selectstatus: "Выберите статус:",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Топ онлайн матчей 1vs1",
     },
@@ -1328,6 +1335,7 @@ const data = {
       selectstatus: "상태 선택",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
     "components_overall-statistics_tabs_herotab": {
@@ -1777,9 +1785,10 @@ const data = {
     },
     components_matches_sortselect: {
       sortmatchesby: "按以下方式排序：",
-      starttimedescending: "开始时间",
-      mmrdescending: "MMR",
+      starttime: "开始时间",
+      mmr: "MMR",
     },
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "置顶进行中的1V1比赛",
     },
@@ -2268,6 +2277,7 @@ const data = {
       selectstatus: "Status auswählen:",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
     "components_overall-statistics_tabs_herotab": {
@@ -2751,9 +2761,10 @@ const data = {
     },
     components_matches_sortselect: {
       sortmatchesby: "Sortuj mecze wg:",
-      starttimedescending: "Czas rozpoczęcia",
-      mmrdescending: "MMR",
+      starttime: "Czas rozpoczęcia",
+      mmr: "MMR",
     },
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Najlepsze streamowane mecze 1v1",
     },
@@ -3272,6 +3283,7 @@ const data = {
       selectstatus: "Оберіть статус:",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Топ онлайн матчів 1v1",
     },
@@ -3778,6 +3790,7 @@ const data = {
       selectstatus: "Selecione um status:",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Top partidas de 1v1 ao vivo",
     },
@@ -4290,6 +4303,7 @@ const data = {
       selectstatus: "Choisissez un statut :",
     },
     components_matches_sortselect: {},
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Top matchs 1v1 en cours",
     },
@@ -4810,9 +4824,10 @@ const data = {
     },
     components_matches_sortselect: {
       sortmatchesby: "Sortirajte mečeve po:",
-      starttimedescending: "Vreme početka",
-      mmrdescending: "MMR",
+      starttime: "Vreme početka",
+      mmr: "MMR",
     },
+    components_matches_sort_direction_select: {},
     components_matches_topongoingmatcheswithstreams: {
       toplive1v1matches: "Najpopularniji 1v1 mečevi trenutno uživo",
     },
