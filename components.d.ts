@@ -122,6 +122,7 @@ declare module 'vue' {
     SeasonSelect: typeof import('./src/components/common/SeasonSelect.vue')['default']
     SignInDialog: typeof import('./src/components/common/SignInDialog.vue')['default']
     SocialBox: typeof import('./src/components/common/SocialBox.vue')['default']
+    SortDirectionSelect: typeof import('./src/components/matches/SortDirectionSelect.vue')['default']
     SortSelect: typeof import('./src/components/matches/SortSelect.vue')['default']
     StreamedMatchInfo: typeof import('./src/components/matches/StreamedMatchInfo.vue')['default']
     StreamedMatchPlayerInfo: typeof import('./src/components/matches/StreamedMatchPlayerInfo.vue')['default']
