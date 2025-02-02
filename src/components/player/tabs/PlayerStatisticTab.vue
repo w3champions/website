@@ -239,9 +239,8 @@ export default defineComponent({
         return [];
       }
 
-      return playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch[
-        selectedPatch.value
-      ].filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
+      return playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch[selectedPatch.value]
+        .filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
     });
 
     const maps = computed<{ mapName: string; mapId: string }[]>(() => {

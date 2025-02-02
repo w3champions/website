@@ -85,24 +85,8 @@ export interface RaceWinsOnMap {
   winLossesOnMap: WinLossesOnMap[];
 }
 
-export interface PlayerStatsRaceOnMapVersusRaceByPatch {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-
-  patch: string;
-  raceWinsOnMap: RaceWinsOnMap[];
-}
-
-export interface PlayerStatsHeroOnMapVersusRaceByPatch {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-
-  patch: string;
-  raceWinsOnMap: RaceWinsOnMap[];
-}
-
 export interface PlayerStatsRaceOnMapVersusRace {
-  raceWinsOnMapByPatch: PlayerStatsRaceOnMapVersusRaceByPatch;
+  raceWinsOnMapByPatch: { [key: string]: RaceWinsOnMap[] };
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
 }
@@ -114,7 +98,7 @@ export interface PlayerHeroStats {
 
 export interface PlayerStatsHeroOnMapVersusRace {
   heroStatsItemList: PlayerHeroStats[];
-  raceWinsOnMapByPatch: PlayerStatsHeroOnMapVersusRaceByPatch;
+  raceWinsOnMapByPatch: { [key: string]: RaceWinsOnMap[] };
   raceWinsOnMap: RaceWinsOnMap[];
   id: string;
   season: string;
