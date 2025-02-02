@@ -12,7 +12,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
-            <player-hero-statistics-table :hero-statistics="heroUsages()"></player-hero-statistics-table>
+            <player-hero-statistics-table :hero-statistics="heroUsages"></player-hero-statistics-table>
           </v-col>
         </v-row>
       </v-card-text>
@@ -59,7 +59,7 @@ export default defineComponent({
     const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
-        (newData) => {
+        (newData: RaceWinsOnMap[]) => {
           selectedTab.value = defaultStatsTab(newData);
         }
     );
@@ -69,7 +69,7 @@ export default defineComponent({
       return `<img class="mt-1" src="${src}" height="40" width="40" />`;
     }
 
-    function heroUsages() {
+    const heroUsages = computed<PlayerHeroStatistic[]>(() => {
       const heroStatsData: PlayerHeroTotals[] = [];
       const heroStatsItemList = props.playerStatsHeroVersusRaceOnMap?.heroStatsItemList || [];
       let gamesSum = 0;
@@ -110,7 +110,7 @@ export default defineComponent({
       let tableData = populateDataForTable(heroStatsData);
       tableData = sortHeroStatsTableData(tableData);
       return tableData;
-    }
+    });
 
     function sortHeroStatsTableData(tableData: PlayerHeroStatistic[]): PlayerHeroStatistic[] {
       return tableData.sort((a, b): number => {

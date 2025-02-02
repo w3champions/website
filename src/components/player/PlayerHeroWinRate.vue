@@ -58,7 +58,7 @@ import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
 import { defaultStatsTab } from "@/helpers/profile";
 import { racesWithTotal } from "@/helpers/general";
@@ -93,7 +93,7 @@ export default defineComponent({
     const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
-        (newData) => {
+        (newData: RaceWinsOnMap[]) => {
           selectedTab.value = defaultStatsTab(newData);
         }
     );
