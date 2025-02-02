@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -90,7 +90,13 @@ export default defineComponent({
     const pageLength = computed(() => Math.ceil(heroWinRates().length / paginationSize));
     const heroStatsCurrentPage = computed(() => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
 
-    const selectedTab = computed(() => defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+
+    watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
+        (newData) => {
+          selectedTab.value = defaultStatsTab(newData);
+        }
+    );
 
     const headers = [
       { text: "", value: "image" },

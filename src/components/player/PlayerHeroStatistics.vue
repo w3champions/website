@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -55,7 +55,14 @@ export default defineComponent({
     const playerStore = usePlayerStore();
 
     const selectedRace = computed<number>(() => Number(selectedTab.value.split("-")[1]));
-    const selectedTab = computed<string>(() => defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+
+    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+
+    watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
+        (newData) => {
+          selectedTab.value = defaultStatsTab(newData);
+        }
+    );
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);
