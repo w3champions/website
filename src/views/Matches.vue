@@ -12,11 +12,12 @@
               :disabledModes="disabledGameModes"
               :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
-            ></game-mode-select>
-            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
-            <mmr-select @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
-            <sort-select v-if="unfinished"></sort-select>
-            <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
+              />
+            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map" />
+            <mmr-select @mmrChanged="mmrChanged" :mmr="mmr" />
+            <sort-select :sortings="sortmodes"/>
+            <sort-direction-select />
+            <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -25,7 +26,7 @@
             :itemsPerPage="50"
             :unfinished="unfinished"
             :is-player-profile="false"
-          ></matches-grid>
+            />
         </v-card>
       </v-col>
     </v-row>
@@ -35,7 +36,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted } from "vue";
 import { Match, EGameMode } from "@/store/types";
-import { MatchStatus, Mmr } from "@/store/match/types";
+import {MatchStatus, Mmr, SortDirection, SortMode} from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
@@ -50,10 +51,20 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
+import SortDirectionSelect from "@/components/matches/SortDirectionSelect.vue";
 
 export default defineComponent({
   name: "MatchesView",
+  computed: {
+    SortMode() {
+      return SortMode
+    },
+    SortDirection() {
+      return SortDirection
+    }
+  },
   components: {
+    SortDirectionSelect,
     SeasonSelect,
     MatchesGrid,
     MatchesStatusSelect,
@@ -75,6 +86,7 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
+    const sortmodes = computed<SortMode[]>(() => matchStore.status === MatchStatus.onGoing ? [SortMode.startTime, SortMode.mmr] : [SortMode.endTime, SortMode.mmr]);
 
     const maps = computed<Array<MapInfo>>(() => {
       if (!currentSeason.value) {
@@ -141,7 +153,7 @@ export default defineComponent({
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
       await matchStore.setSeason(rankingsStore.seasons[0]);
-      overallStatsStore.loadMatchesOnMapsPerSeason();
+      void overallStatsStore.loadMatchesOnMapsPerSeason();
       refreshMatches();
     });
 
@@ -174,6 +186,7 @@ export default defineComponent({
       mmrChanged,
       mmr,
       selectSeason,
+      sortmodes,
       unfinished,
       matches,
       totalMatches,

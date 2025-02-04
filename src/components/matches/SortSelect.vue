@@ -2,7 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
+        <v-icon class="mr-1">{{mdiSortVariant}}</v-icon>
         {{ currentSort.name }}
       </v-btn>
     </template>
@@ -30,7 +30,7 @@
 import { computed, defineComponent } from "vue";
 import { SortMode } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
-import { mdiSortAscending } from "@mdi/js";
+import { mdiSortVariant } from "@mdi/js";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 
@@ -42,33 +42,38 @@ interface SortSelectData {
 export default defineComponent({
   name: "SortSelect",
   components: {},
-  setup() {
+  props: ['sortings'],
+  setup(props) {
     const { t } = useI18n();
     const matchStore = useMatchStore();
 
     const currentSort = computed<SortSelectData>({
       get(): SortSelectData {
         const selectedSort = matchStore.sort;
-        return sortings.find((sort) => sort.mode == selectedSort)!;
+        return sortings.value.find((sort) => sort.mode == selectedSort)!;
       },
       set(val: SortSelectData): void {
         matchStore.setSort(val.mode);
       },
     });
 
-    const sortings: SortSelectData[] = [
+    const sortings = computed<SortSelectData[]>(() => ([
       {
-        name: t(`components_matches_sortselect.starttimedescending`),
-        mode: SortMode.startTimeDescending,
+        name: t(`components_matches_sortselect.starttime`),
+        mode: SortMode.startTime,
       },
       {
-        name: t(`components_matches_sortselect.mmrdescending`),
-        mode: SortMode.mmrDescending,
+        name: t(`components_matches_sortselect.endtime`),
+        mode: SortMode.endTime,
       },
-    ];
+      {
+        name: t(`components_matches_sortselect.mmr`),
+        mode: SortMode.mmr,
+      },
+    ].filter(s => props.sortings.includes(s.mode))));
 
     return {
-      mdiSortAscending,
+      mdiSortVariant,
       currentSort,
       sortings,
     };
