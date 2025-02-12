@@ -196,6 +196,7 @@ export default defineComponent({
       },
     });
 
+
     const selectedRace = computed<ERaceEnum>({
       get(): ERaceEnum {
         return playerStore.profileStatisticsRace;
