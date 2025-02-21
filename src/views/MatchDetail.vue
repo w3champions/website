@@ -193,7 +193,7 @@ export default defineComponent({
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
 
     const matchIsFFA = computed<boolean>(() => {
-      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
+      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
       return ffaModes.includes(matchStore.matchDetail.match.gameMode);
     });
 
