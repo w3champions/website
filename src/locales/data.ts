@@ -502,7 +502,11 @@ const data = {
       GM_ATR_1ON1: "All The Randoms 1vs1",
       GM_DOTA_5ON5: "Dota 5v5",
       GM_DOTA_5ON5_AT: "Dota 5v5 AT",
+      GM_SC_FFA_4: "Survival Chaos",
+      GM_SC_OZ: "Survival Chaos (OZ)",
       GM_WARHAMMER_1ON1: "Warhammer 1v1",
+      GM_CF: "Castle Fight 3v3",
+      GM_CF_AT: "Castle Fight 3v3 AT",
     },
     gatewayNames: {
       Europe: "Europe",
