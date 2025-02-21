@@ -155,9 +155,6 @@ export default defineComponent({
         case EGameMode.GM_CF:
           return "rgb(44,196,196)";
 
-        case EGameMode.GM_CF_AT:
-          return "rgb(44,196,196)";
-
         default:
           return "rgb(54, 162, 235)";
       }
