@@ -150,11 +150,15 @@ export enum EGameMode {
   GM_DOTA_5ON5_AT = 902,
 
   GM_SC_FFA_4 = 1001,
+  GM_SC_OZ = 1002,
 
   GM_DS = 1101,
   GM_DS_AT = 1102,
 
   GM_WARHAMMER_1ON1 = 1201,
+
+  GM_CF = 1301,
+  GM_CF_AT = 1302,
 }
 
 export enum EGameModeType {

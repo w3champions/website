@@ -93,6 +93,7 @@ export default defineComponent({
           EGameMode.GM_LEGION_4v4_X20_AT,
           EGameMode.GM_DOTA_5ON5_AT,
           EGameMode.GM_DS_AT,
+          EGameMode.GM_CF_AT,
         ];
       }
 

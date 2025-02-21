@@ -140,6 +140,9 @@ export default defineComponent({
         case EGameMode.GM_SC_FFA_4:
           return "rgb(46, 230, 58)";
 
+        case EGameMode.GM_SC_OZ:
+          return "rgb(28,133,32)";
+
         case EGameMode.GM_LTW_FFA:
           return "rgb(255,99,240)";
 
@@ -148,6 +151,12 @@ export default defineComponent({
 
         case EGameMode.GM_WARHAMMER_1ON1:
           return "rgb(255, 0, 192)";
+
+        case EGameMode.GM_CF:
+          return "rgb(44,196,196)";
+
+        case EGameMode.GM_CF_AT:
+          return "rgb(44,196,196)";
 
         default:
           return "rgb(54, 162, 235)";
@@ -192,6 +201,9 @@ export default defineComponent({
         case EGameMode.GM_SC_FFA_4:
           return 2;
 
+        case EGameMode.GM_SC_OZ:
+          return 2;
+
         case EGameMode.GM_LTW_FFA:
           return 2.5;
 
@@ -200,6 +212,9 @@ export default defineComponent({
 
         case EGameMode.GM_WARHAMMER_1ON1:
           return 1;
+
+        case EGameMode.GM_CF:
+          return 3;
 
         default:
           return 1;
