@@ -157,7 +157,7 @@ export default defineComponent({
     const ongoingMatch = computed<Match>(() => playerStore.ongoingMatch);
 
     const isOngoingMatchFFA = computed<boolean>(() => {
-      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4];
+      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
       return ongoingMatch.value && ffaModes.includes(ongoingMatch.value.gameMode);
     });
 
@@ -188,7 +188,8 @@ export default defineComponent({
           return "four-v-four";
         }
         case EGameMode.GM_FFA:
-        case EGameMode.GM_SC_FFA_4: {
+        case EGameMode.GM_SC_FFA_4:
+        case EGameMode.GM_SC_OZ: {
           return "ffa";
         }
       }

@@ -170,7 +170,7 @@ export default defineComponent({
     const router = useRouter();
     const matchStore = useMatchStore();
     const playerStore = usePlayerStore();
-    const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4];
+    const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
     const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
 
