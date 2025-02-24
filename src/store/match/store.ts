@@ -1,5 +1,5 @@
 import { EGameMode, PlayerScore } from "@/store/types";
-import { MatchState, MatchStatus, Mmr } from "./types";
+import { MatchState, MatchStatus, Mmr, SortDirection, SortMode } from "./types";
 import { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
@@ -18,7 +18,8 @@ export const useMatchStore = defineStore("match", {
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
     mmr: { min: 0, max: 3000 } as Mmr,
-    sort: "startTimeDescending",
+    sort: SortMode.startTime,
+    sortDirection: SortDirection.Ascending,
     selectedSeason: {} as Season,
   }),
   actions: {
@@ -33,6 +34,7 @@ export const useMatchStore = defineStore("match", {
           this.map,
           this.mmr,
           this.sort,
+          this.sortDirection,
         );
 
         // Handle edge case when loading ongoing matches, if the number of matches are reduced
@@ -50,6 +52,8 @@ export const useMatchStore = defineStore("match", {
           this.map,
           this.mmr,
           this.selectedSeason.id,
+          this.sort,
+          this.sortDirection,
         );
       }
       this.SET_TOTAL_MATCHES(response.count);
@@ -65,6 +69,7 @@ export const useMatchStore = defineStore("match", {
         map || this.map,
         this.mmr,
         this.sort,
+        this.sortDirection,
       );
       this.SET_ALL_ONGOING_MATCHES(response.matches);
     },
@@ -77,7 +82,10 @@ export const useMatchStore = defineStore("match", {
     },
     async setStatus(matchStatus: MatchStatus) {
       this.SET_STATUS(matchStatus);
+      this.SET_MAP("Overall");
       this.SET_PAGE(1);
+      this.SET_SORT(matchStatus === MatchStatus.onGoing ? SortMode.startTime : SortMode.endTime);
+      this.SET_SORT_DIRECTION(matchStatus === MatchStatus.onGoing ? SortDirection.Ascending : SortDirection.Descending);
       await this.loadMatches();
     },
     async setGameMode(gameMode: EGameMode) {
@@ -96,8 +104,14 @@ export const useMatchStore = defineStore("match", {
       this.SET_PAGE(1);
       await this.loadMatches();
     },
-    async setSort(sort: string) {
+    async setSort(sort: SortMode) {
       this.SET_SORT(sort);
+      this.SET_SORT_DIRECTION(SortDirection.Ascending);
+      this.SET_PAGE(1);
+      await this.loadMatches();
+    },
+    async setSortDirection(direction: SortDirection) {
+      this.SET_SORT_DIRECTION(direction);
       this.SET_PAGE(1);
       await this.loadMatches();
     },
@@ -139,8 +153,11 @@ export const useMatchStore = defineStore("match", {
     SET_MMR(mmr: Mmr): void {
       this.mmr = mmr;
     },
-    SET_SORT(sort: string): void {
+    SET_SORT(sort: SortMode): void {
       this.sort = sort;
+    },
+    SET_SORT_DIRECTION(direction: SortDirection): void {
+      this.sortDirection = direction;
     },
     SET_PLAYER_SCORES(playerScores: PlayerScore[]): void {
       this.matchDetail.playerScores = playerScores;

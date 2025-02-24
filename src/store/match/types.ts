@@ -13,7 +13,8 @@ export type MatchState = {
   gameMode: EGameMode;
   map: string;
   mmr: Mmr;
-  sort: string;
+  sort: SortMode;
+  sortDirection: SortDirection;
   selectedSeason: Season;
 };
 
@@ -23,8 +24,14 @@ export enum MatchStatus {
 }
 
 export enum SortMode {
-  startTimeDescending = "startTimeDescending",
-  mmrDescending = "mmrDescending",
+  startTime = "startTime",
+  endTime = "endTime",
+  mmr = "mmr",
+}
+
+export enum SortDirection {
+  Ascending = "asc",
+  Descending = "desc",
 }
 
 export type Mmr = {
