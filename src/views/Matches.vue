@@ -14,7 +14,7 @@
               @gameModeChanged="gameModeChanged"
             ></game-mode-select>
             <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
-            <mmr-select @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
+            <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
           </v-card-text>
