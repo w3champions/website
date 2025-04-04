@@ -242,7 +242,7 @@ export default defineComponent({
     }
 
     onMounted((): void => {
-      // Since # is a reserver character for the "fragment/hash" part of the URL
+      // Since # is a reserved character for the "fragment/hash" part of the URL
       // we can try to redirect to the correct URL if the hash is a battle tag,
       // (starts with at least 4 digits). It may also be followed by a tab name,
       // for example Someone#9999/matches would redirect to Someone%239999/matches
