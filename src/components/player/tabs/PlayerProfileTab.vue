@@ -1,6 +1,18 @@
 <template>
   <div>
-    <v-card-text v-if="!loadingProfile">
+    <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
+      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate></v-progress-circular>
+    </v-card-text>
+    <v-card-text v-else-if="loadProfileError" style="min-height: 500px" class="text-center">
+      <v-row class="mt-4 filter-none">
+        <v-col>
+          <v-card-title class="justify-center">
+            {{loadProfileError}}
+          </v-card-title>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-card-text v-else>
       <v-row class="mt-4 filter-none">
         <v-col cols="12" md="4" lg="3">
           <v-card-text style="padding-top: 0 !important">
@@ -48,9 +60,6 @@
           </v-row>
         </v-col>
       </v-row>
-    </v-card-text>
-    <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
-      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate></v-progress-circular>
     </v-card-text>
   </div>
 </template>
@@ -102,6 +111,7 @@ export default defineComponent({
     const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
     const isBetaSeason = computed<boolean>(() => selectedSeason.value?.id === 0);
     const loadingProfile = computed<boolean>(() => playerStore.loadingProfile);
+    const loadProfileError = computed<string | undefined>(() => playerStore.loadProfileError);
     const verifiedBtag = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
     const raceStats = computed<RaceStat[]>(() => playerStore.raceStats);
@@ -176,6 +186,7 @@ export default defineComponent({
 
     return {
       loadingProfile,
+      loadProfileError,
       isLoggedInPlayer,
       isBetaSeason,
       topGameModeStats,

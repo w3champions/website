@@ -21,6 +21,13 @@ export default class ProfileService {
 
     const response = await fetch(url);
 
+    if (response.status === 404) {
+      throw new Error("Profile not found");
+    }
+    if (!response.ok) {
+      throw new Error("Something went wrong fetching the profile");
+    }
+
     return await response.json();
   }
 

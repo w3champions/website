@@ -31,17 +31,24 @@ export const usePlayerStore = defineStore("player", {
     raceStats: [] as RaceStat[],
     mmrRpTimeline: {} as PlayerMmrRpTimeline,
     playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
+    loadProfileError: undefined,
   } as PlayerState),
   actions: {
     async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
       this.SET_LOADING_PROFILE(true);
       const oauthStore = useOauthStore();
-      const profile = await ProfileService.retrieveProfile(
-        params.battleTag,
-        params.freshLogin ? oauthStore.token : null,
-      );
-      this.SET_PROFILE(profile);
-      this.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
+      try {
+        const profile = await ProfileService.retrieveProfile(
+          params.battleTag,
+          params.freshLogin ? oauthStore.token : null,
+        );
+        this.SET_PROFILE(profile);
+        this.SET_LOAD_PROFILE_ERROR(undefined);
+        this.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
+      } catch (err) {
+        const ex = err as Error;
+        this.SET_LOAD_PROFILE_ERROR(ex.message);
+      }
       this.SET_LOADING_PROFILE(false);
     },
     async loadGameModeStats(params: { battleTag?: string; season?: number }) {
@@ -145,6 +152,9 @@ export const usePlayerStore = defineStore("player", {
     },
     SET_LOADING_PROFILE(loading: boolean): void {
       this.loadingProfile = loading;
+    },
+    SET_LOAD_PROFILE_ERROR(errorMessage: string | undefined): void {
+      this.loadProfileError = errorMessage;
     },
     SET_LOADING_RECENT_MATCHES(loading: boolean): void {
       this.loadingRecentMatches = loading;
