@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onUnmounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { PlayerProfile } from "@/store/player/types";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
@@ -240,6 +240,19 @@ export default defineComponent({
       playerStore.SET_ONGOING_MATCH({} as Match);
       clearInterval(_intervalRefreshHandle);
     }
+
+    onMounted((): void => {
+      // Since # is a reserved character for the "fragment/hash" part of the URL
+      // we can try to redirect to the correct URL if the hash is a battle tag,
+      // (starts with at least 4 digits). It may also be followed by a tab name,
+      // for example Someone#9999/matches would redirect to Someone%239999/matches
+      if (window.location.hash.match(/^#\d{4}/)) {
+        const url = new URL(window.location.href);
+        url.pathname = `${url.pathname}${url.hash}`;
+        url.hash = "";
+        window.location.href = url.toString();
+      }
+    });
 
     onUnmounted((): void => {
       stopLoadingMatches();
