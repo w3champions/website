@@ -7,7 +7,7 @@ export default class PersonalSettingsService {
     const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}`;
 
     const response = await fetch(url);
-    if (!response) return {} as PersonalSetting;
+    if (!response.ok) return {} as PersonalSetting;
     return await response.json();
   }
 

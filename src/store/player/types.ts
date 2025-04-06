@@ -25,6 +25,7 @@ export type PlayerState = {
   gameModeStats: ModeStat[];
   mmrRpTimeline: PlayerMmrRpTimeline;
   playerGameLengthStats: PlayerGameLengthStats | undefined;
+  loadProfileError: string | undefined;
 };
 
 export type PlayerProfile = {
