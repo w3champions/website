@@ -124,6 +124,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
+import { GAME_MODES_FFA } from "@/store/constants";
 
 export default defineComponent({
   name: "PlayerView",
@@ -157,8 +158,7 @@ export default defineComponent({
     const ongoingMatch = computed<Match>(() => playerStore.ongoingMatch);
 
     const isOngoingMatchFFA = computed<boolean>(() => {
-      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
-      return ongoingMatch.value && ffaModes.includes(ongoingMatch.value.gameMode);
+      return ongoingMatch.value && GAME_MODES_FFA.includes(ongoingMatch.value.gameMode);
     });
 
     const aliasName = computed<string | false>(() => {

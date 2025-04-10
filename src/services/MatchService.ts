@@ -105,7 +105,7 @@ export default class MatchService {
     url += `&season=${season}`;
 
     if (playerRace !== ERaceEnum.TOTAL) {
-      url += `&playerRAce=${playerRace}`;
+      url += `&playerRace=${playerRace}`;
     }
 
     if (opponentRace !== ERaceEnum.TOTAL) {

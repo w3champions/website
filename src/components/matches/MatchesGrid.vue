@@ -112,6 +112,7 @@
 import { computed, defineComponent, StyleValue } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
+import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
@@ -170,9 +171,8 @@ export default defineComponent({
     const router = useRouter();
     const matchStore = useMatchStore();
     const playerStore = usePlayerStore();
-    const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_LTW_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
-    const isFfa = (gameMode: EGameMode) => ffaModes.includes(gameMode);
+    const isFfa = (gameMode: EGameMode) => GAME_MODES_FFA.includes(gameMode);
 
     const matches = computed<Match[]>(() => props.value);
 
