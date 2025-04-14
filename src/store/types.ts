@@ -19,6 +19,7 @@ export type PlayerInTeam = {
   location?: string;
   countryCode?: string;
   twitch?: string | null;
+	heroes: Hero[];
 };
 
 export type Team = {
