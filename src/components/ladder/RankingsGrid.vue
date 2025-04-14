@@ -325,9 +325,6 @@ export default defineComponent({
       if (triggerTwitchLookup) {
         getStreamStatus();
       }
-
-      sortedRankings.value = [];
-      sortColumn.value = "Rank";
     }
 
     async function getStreamStatus(): Promise<void> {
