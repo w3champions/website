@@ -1,7 +1,7 @@
 <template>
   <div v-if="hero">
     <hero-picture :hero-icon="hero.icon" />
-    <div class="text-center hero-level-flag" :class="firstHeroOrNot">
+    <div v-if="showLevel"  class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>
   </div>
@@ -27,6 +27,11 @@ export default defineComponent({
       type: Boolean,
       false: true,
       default: undefined,
+    },
+    showLevel: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props) {

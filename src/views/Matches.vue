@@ -6,7 +6,7 @@
           <v-card-title>
             {{ $t("views_app.matches") }}
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="d-flex align-center">
             <matches-status-select />
             <game-mode-select
               :disabledModes="disabledGameModes"
@@ -17,6 +17,7 @@
             <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
+            <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" :unfinished="unfinished" />
           </v-card-text>
           <matches-grid
             v-model="matches"
@@ -25,6 +26,7 @@
             :itemsPerPage="50"
             :unfinished="unfinished"
             :is-player-profile="false"
+            :showHeroes="showHeroIcons"
           ></matches-grid>
         </v-card>
       </v-col>
@@ -50,6 +52,8 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
+import { ref } from "vue";
+import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 
 export default defineComponent({
   name: "MatchesView",
@@ -61,6 +65,7 @@ export default defineComponent({
     MapSelect,
     MmrSelect,
     SortSelect,
+    HeroIconToggle,
   },
   setup() {
     const overallStatsStore = useOverallStatsStore();
@@ -75,6 +80,8 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
+
+    const showHeroIcons = ref<boolean>(true);
 
     const maps = computed<Array<MapInfo>>(() => {
       if (!currentSeason.value) {
@@ -179,6 +186,7 @@ export default defineComponent({
       matches,
       totalMatches,
       onPageChanged,
+      showHeroIcons,
     };
   },
 });
