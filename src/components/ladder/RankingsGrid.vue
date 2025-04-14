@@ -326,8 +326,9 @@ export default defineComponent({
         getStreamStatus();
       }
 
-      sortedRankings.value = [];
-      sortColumn.value = "Rank";
+      if (sortColumn.value && _lastSortFunction) {
+        sortedRankings.value = isSortedAsc.value ? newVal.sort(_lastSortFunction) : newVal.sort(_lastSortFunction).reverse();
+      }
     }
 
     async function getStreamStatus(): Promise<void> {
