@@ -55,6 +55,8 @@ declare module 'vue' {
     GatewaySelect: typeof import('./src/components/common/GatewaySelect.vue')['default']
     GlobalSearch: typeof import('./src/components/common/GlobalSearch.vue')['default']
     HeroIcon: typeof import('./src/components/match-details/HeroIcon.vue')['default']
+    HeroIconRow: typeof import('./src/components/matches/HeroIconRow.vue')['default']
+    HeroIconToggle: typeof import('./src/components/matches/HeroIconToggle.vue')['default']
     HeroPicture: typeof import('./src/components/match-details/HeroPicture.vue')['default']
     HeroPictureSelect: typeof import('./src/components/overall-statistics/HeroPictureSelect.vue')['default']
     HeroTab: typeof import('./src/components/overall-statistics/tabs/HeroTab.vue')['default']

@@ -380,6 +380,8 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
+    showHeroIcons: "Show Heros",
+    hideHeroIcons: "Hide Heros",
   },
 
   proxies: {
@@ -402,7 +404,8 @@ const en = {
     russia_east_via_asia_east2: "Russia East via Asia East 2",
     russia_central_via_korea_central2: "Russia Central via Korea Central 2",
     africa_east_via_sg: "Africa East via Singapore",
-    africa_east_via_sg_azure_via_simple_cloud: "Africa East via Singapore via simplecloud",
+    africa_east_via_sg_azure_via_simple_cloud:
+      "Africa East via Singapore via simplecloud",
   },
 };
 
