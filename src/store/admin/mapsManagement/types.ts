@@ -48,7 +48,7 @@ export interface GameMap {
   players: GameMapPlayer[];
   forces: GameMapForce[];
   num_players: number;
-  is_twelve_p: boolean;
+  twelve_p: boolean;
 }
 
 export interface GameMapPlayer {
