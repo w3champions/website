@@ -1,13 +1,13 @@
 <template>
-  <v-row v-if="show" :class="rowClasses" style="margin: 0;">
-    <v-col cols="auto" v-for="(hero, heroIndex) in heroes" :key="heroIndex" class="px-1">
-      <hero-icon :hero="hero" :firstHero="heroIndex === 0" :show-level="false" />
+  <v-row v-if="show" no-gutters>
+    <v-col v-for="(hero, heroIndex) in heroes" :key="heroIndex" class="pa-1">
+      <hero-icon :hero="hero" :firstHero="heroIndex === 0" :show-level="false" :size="size" />
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { Hero } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 
@@ -31,21 +31,10 @@ export default defineComponent({
       required: false,
       default: false
     },
-  },
-  setup(props) {
-    const rowClasses = computed(() => {
-      const classes = ['mt-n1'];
-      if (props.left) {
-        classes.push('justify-end');
-      } else {
-        classes.push('justify-start');
-      }
-      return classes;
-    });
-
-    return {
-      rowClasses
-    };
+    size: {
+      type: Number,
+      required: false
+    },
   },
 });
 </script>

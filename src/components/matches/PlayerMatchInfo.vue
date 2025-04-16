@@ -1,20 +1,11 @@
 <template>
   <div class="player-info" :class="textClass">
-    <player-icon
-      v-if="!left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
-    />
+    <player-icon v-if="!left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
-        <a
-          class="name-link"
-          :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-          @click="notClickable ? null : goToPlayer()"
-          @click.middle="openProfileInNewTab()"
-          @click.right="openProfileInNewTab()"
-        >
+        <a class="name-link" :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+          @click="notClickable ? null : goToPlayer()" @click.middle="openProfileInNewTab()"
+          @click.right="openProfileInNewTab()">
           {{ nameWithoutBtag }}
           <span class="number-text">({{ currentRating }})</span>
           <span class="number-text" v-if="mmrChange !== 0" :class="won">
@@ -22,25 +13,11 @@
             <span v-else>{{ mmrChange }}</span>
           </span>
         </a>
-        <country-flag-extended
-          :countryCode="player.countryCode"
-          :location="player.location"
-          size="small"
-          class="ml-1"
-        />
       </span>
-      <hero-icon-row
-        :heroes="player.heroes"
-        :left="left"
-        :show="showHeroes"
-      />
+      <country-flag-extended :countryCode="player.countryCode" :location="player.location" size="small" class="ml-1" />
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" />
     </div>
-    <player-icon
-      v-if="left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
-    />
+    <player-icon v-if="left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
   </div>
 </template>
 
@@ -171,11 +148,11 @@ export default defineComponent({
   flex-direction: column;
 }
 
-span > a {
+span>a {
   display: inline-block;
 }
 
-span > .flag-container {
+span>.flag-container {
   display: inline-block;
 }
 
