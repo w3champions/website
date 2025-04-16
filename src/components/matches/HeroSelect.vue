@@ -63,8 +63,8 @@ export default defineComponent({
       return [{ heroName: "All Heroes", key: "All Heroes" }, ...heroList];
     });
     const selected = computed<string>(() => {
-      const match = props.hero as EHeroes;
-      return match ? match : "All Heroes";
+      const match = Object.values(EHeroes).includes(props.hero as EHeroes);
+      return match ? t(`heroNames.${props.hero}`) : "All Heroes";
     });
 
     function selectHero(hero: EHeroes): void {

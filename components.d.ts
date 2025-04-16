@@ -174,7 +174,6 @@ declare module 'vue' {
     VFooter: typeof import('vuetify/lib')['VFooter']
     VForm: typeof import('vuetify/lib')['VForm']
     VIcon: typeof import('vuetify/lib')['VIcon']
-    VImage: typeof import('vuetify/lib')['VImage']
     VImg: typeof import('vuetify/lib')['VImg']
     VList: typeof import('vuetify/lib')['VList']
     VListGroup: typeof import('vuetify/lib')['VListGroup']
