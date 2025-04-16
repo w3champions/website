@@ -59,6 +59,7 @@ declare module 'vue' {
     HeroIconToggle: typeof import('./src/components/matches/HeroIconToggle.vue')['default']
     HeroPicture: typeof import('./src/components/match-details/HeroPicture.vue')['default']
     HeroPictureSelect: typeof import('./src/components/overall-statistics/HeroPictureSelect.vue')['default']
+    HeroSelect: typeof import('./src/components/matches/HeroSelect.vue')['default']
     HeroTab: typeof import('./src/components/overall-statistics/tabs/HeroTab.vue')['default']
     HeroWinrate: typeof import('./src/components/overall-statistics/HeroWinrate.vue')['default']
     HostIcon: typeof import('./src/components/matches/HostIcon.vue')['default']
