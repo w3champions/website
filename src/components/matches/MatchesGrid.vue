@@ -33,6 +33,7 @@
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
                       :highlightedPlayer="alwaysLeftName"
+                      :showHeroes="showHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -43,6 +44,7 @@
                       :team="team"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :showHeroes="showHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -52,24 +54,26 @@
                 @click="goToMatchDetailPage(item)"
                 :class="{ clickable: !unfinished }"
               >
-                <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
+                <v-col cols="5.5" class="team-match-info-container left-side py-2" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
+                    :showHeroes="showHeroes"
                   ></team-match-info>
                 </v-col>
-                <v-col cols="1" align-self="center">
+                <v-col cols="1" align-self="center" class="py-2">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
-                <v-col cols="5.5" class="team-match-info-container" align-self="center">
+                <v-col cols="5.5" class="team-match-info-container py-2" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
+                    :showHeroes="showHeroes"
                   ></team-match-info>
                 </v-col>
               </v-row>
@@ -163,6 +167,11 @@ export default defineComponent({
     isPlayerProfile: {
       type: Boolean,
       required: true,
+    },
+    showHeroes: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props, context) {

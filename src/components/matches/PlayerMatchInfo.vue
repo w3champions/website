@@ -1,40 +1,23 @@
 <template>
   <div class="player-info" :class="textClass">
-    <player-icon
-      v-if="!left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
-    />
-    <span :class="{ 'mr-2': left, 'ml-2': !left }">
-      <a
-        class="name-link"
-        :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-        @click="notClickable ? null : goToPlayer()"
-        @click.middle="openProfileInNewTab()"
-        @click.right="openProfileInNewTab()"
-      >
-        {{ nameWithoutBtag }}
-        <span class="number-text">({{ currentRating }})</span>
-        <span class="number-text" v-if="mmrChange !== 0" :class="won">
-          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-          <span v-else>{{ mmrChange }}</span>
-        </span>
-      </a>
-      <div class="flag-container" :class="{ 'ml-1': !left }">
-        <country-flag-extended
-          :countryCode="player.countryCode"
-          :location="player.location"
-          size="small"
-        />
-      </div>
-    </span>
-    <player-icon
-      v-if="left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
-    />
+    <player-icon v-if="!left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
+    <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
+      <span>
+        <a class="name-link" :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+          @click="notClickable ? null : goToPlayer()" @click.middle="openProfileInNewTab()"
+          @click.right="openProfileInNewTab()">
+          {{ nameWithoutBtag }}
+          <span class="number-text">({{ currentRating }})</span>
+          <span class="number-text" v-if="mmrChange !== 0" :class="won">
+            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+            <span v-else>{{ mmrChange }}</span>
+          </span>
+        </a>
+      </span>
+      <country-flag-extended :countryCode="player.countryCode" :location="player.location" size="small" class="ml-1" />
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" />
+    </div>
+    <player-icon v-if="left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
   </div>
 </template>
 
@@ -81,6 +64,11 @@ export default defineComponent({
       undefined,
     },
     highlighted: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showHeroes: {
       type: Boolean,
       required: false,
       default: false,
@@ -150,8 +138,22 @@ export default defineComponent({
 <style lang="scss" scoped>
 .player-info {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   position: relative;
-  overflow: hidden;
+}
+
+.details-column {
+  display: flex;
+  flex-direction: column;
+}
+
+span>a {
+  display: inline-block;
+}
+
+span>.flag-container {
+  display: inline-block;
 }
 
 .player-info__right {
@@ -159,10 +161,8 @@ export default defineComponent({
   text-align: right;
   z-index: 2;
 
-  .flag-container {
-    right: 38px;
-    top: 15px;
-    height: 0px;
+  .details-column {
+    align-items: flex-end;
   }
 }
 
@@ -171,15 +171,9 @@ export default defineComponent({
   text-align: left;
   z-index: 2;
 
-  .flag-container {
-    left: 35px;
-    top: 15px;
-    height: 0px;
+  .details-column {
+    align-items: flex-start;
   }
-}
-
-.flag-container {
-  position: absolute;
 }
 
 .name-link {

@@ -1,11 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-card-text
-        v-on="on"
-        class="hero-icon"
-        :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-      />
+      <v-img v-on="on" :src="heroPicture" :width="size" :aspect-ratio="1 / 1"></v-img>
     </template>
     <div>{{ heroName }}</div>
   </v-tooltip>
@@ -25,6 +21,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    size: {
+      type: Number,
+      required: false,
+      default: 128
+    }
   },
   setup(props) {
     const { t } = useI18n();
@@ -39,16 +40,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.hero-icon {
-  z-index: 1;
-  position: relative;
-  padding-top: 100%;
-  padding-bottom: 0;
-  width: 100%;
-  margin-bottom: -2px !important;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-</style>

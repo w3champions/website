@@ -6,49 +6,25 @@
           {{ $t("components_player_tabs_matchhistorytab.title") }}
         </v-col>
         <v-col cols="12" md="5">
-          <player-search
-            @playerFound="playerFound"
-            @searchCleared="searchCleared"
-            :setAutofocus="false"
-          ></player-search>
+          <player-search @playerFound="playerFound" @searchCleared="searchCleared"
+            :setAutofocus="false"></player-search>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="2">
-          <v-select
-            class="over-chart-select-box"
-            :items="activeGameModesWithAll()"
-            item-text="name"
-            item-value="id"
-            @change="setSelectedGameModeForSearch"
-            v-model="profileMatchesGameMode"
-            label="Mode"
-            outlined
-          />
+          <v-select class="over-chart-select-box" :items="activeGameModesWithAll()" item-text="name" item-value="id"
+            @change="setSelectedGameModeForSearch" v-model="profileMatchesGameMode" label="Mode" outlined />
         </v-col>
         <v-col cols="12" md="2">
-          <v-select
-            class="player-race-select-box"
-            :items="races"
-            item-text="raceName"
-            item-value="raceId"
-            @change="setPlayerRaceForSearch"
-            v-model="playerRace"
-            label="Player Race"
-            outlined
-          />
+          <v-select class="player-race-select-box" :items="races" item-text="raceName" item-value="raceId"
+            @change="setPlayerRaceForSearch" v-model="playerRace" label="Player Race" outlined />
         </v-col>
         <v-col cols="12" md="2">
-          <v-select
-            class="opponent-race-select-box"
-            :items="races"
-            item-text="raceName"
-            item-value="raceId"
-            @change="setOpponentRaceForSearch"
-            v-model="opponentRace"
-            label="Opponent Race"
-            outlined
-          />
+          <v-select class="opponent-race-select-box" :items="races" item-text="raceName" item-value="raceId"
+            @change="setOpponentRaceForSearch" v-model="opponentRace" label="Opponent Race" outlined />
+        </v-col>
+        <v-col align-self="center" align="end">
+          <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
     </v-card-title>
@@ -65,15 +41,8 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <matches-grid
-      v-model="matches"
-      :total-matches="totalMatches"
-      :items-per-page="50"
-      :always-left-name="battleTag"
-      only-show-enemy
-      @pageChanged="onPageChanged"
-      :is-player-profile="true"
-    ></matches-grid>
+    <matches-grid v-model="matches" :total-matches="totalMatches" :items-per-page="50" :always-left-name="battleTag"
+      only-show-enemy @pageChanged="onPageChanged" :is-player-profile="true" :showHeroes="showHeroIcons"></matches-grid>
   </div>
 </template>
 
@@ -86,12 +55,14 @@ import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
+import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 
 export default defineComponent({
   name: "PlayerMatchesTab",
   components: {
     MatchesGrid,
     PlayerSearch,
+    HeroIconToggle,
   },
   props: {
     id: {
@@ -105,6 +76,7 @@ export default defineComponent({
     const rankingsStore = useRankingStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
+    const showHeroIcons = ref<boolean>(true);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
@@ -242,6 +214,7 @@ export default defineComponent({
       totalMatches,
       battleTag,
       onPageChanged,
+      showHeroIcons,
     };
   },
 });

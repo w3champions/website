@@ -377,9 +377,11 @@ const en = {
     download: "Download Replay",
   },
 
-  components_matches_matchesgrid: {
-    replay: "Replay",
-  },
+	components_matches_matchesgrid: {
+		replay: "Replay",
+		showHeroIcons: "Show Heros",
+		hideHeroIcons: "Hide Heros",
+	},
 
   proxies: {
     eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
