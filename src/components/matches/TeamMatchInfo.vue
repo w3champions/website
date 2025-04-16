@@ -13,11 +13,7 @@
         :not-clickable="notClickable"
         :is-anonymous="isAnonymous"
         :highlighted="highlightedPlayer === player.battleTag"
-      />
-      <hero-icon-row
-        :heroes="player.heroes"
-        :left="left"
-        :show="showHeroes"
+        :show-heroes="showHeroes"
       />
     </div>
   </div>

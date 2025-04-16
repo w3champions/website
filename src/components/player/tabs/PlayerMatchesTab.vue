@@ -50,6 +50,9 @@
             outlined
           />
         </v-col>
+        <v-col align-self="center">
+          <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
+        </v-col>
       </v-row>
     </v-card-title>
     <v-card-text v-if="foundPlayer">
@@ -65,15 +68,8 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <matches-grid
-      v-model="matches"
-      :total-matches="totalMatches"
-      :items-per-page="50"
-      :always-left-name="battleTag"
-      only-show-enemy
-      @pageChanged="onPageChanged"
-      :is-player-profile="true"
-    ></matches-grid>
+    <matches-grid v-model="matches" :total-matches="totalMatches" :items-per-page="50" :always-left-name="battleTag"
+      only-show-enemy @pageChanged="onPageChanged" :is-player-profile="true" :showHeroes="showHeroIcons"></matches-grid>
   </div>
 </template>
 
@@ -86,12 +82,14 @@ import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
+import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 
 export default defineComponent({
   name: "PlayerMatchesTab",
   components: {
     MatchesGrid,
     PlayerSearch,
+    HeroIconToggle,
   },
   props: {
     id: {
@@ -105,6 +103,7 @@ export default defineComponent({
     const rankingsStore = useRankingStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
+    const showHeroIcons = ref<boolean>(true);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
@@ -242,6 +241,7 @@ export default defineComponent({
       totalMatches,
       battleTag,
       onPageChanged,
+      showHeroIcons,
     };
   },
 });
