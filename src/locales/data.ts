@@ -292,6 +292,7 @@ const data = {
       starttime: "Start time",
       duration: "Duration",
       replay: "Replay",
+      floNode: "Flo Node",
     },
     components_matches_matchesstatusselect: {
       selectstatus: "Select a status:",
