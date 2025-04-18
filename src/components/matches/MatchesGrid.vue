@@ -86,6 +86,9 @@
             <td>
               <span class="number-text">{{ getDuration(item) }}</span>
             </td>
+            <td>
+              {{  getFloNode(item) }}
+            </td>
             <td v-if="showReplayDownload(item)">
               <download-replay-icon :gameId="item.id"></download-replay-icon>
             </td>
@@ -247,6 +250,10 @@ export default defineComponent({
       return formatTimestampStringToDateTime(match.startTime);
     }
 
+    function getFloNode(match: Match): string {
+      return match.serverInfo?.name || "";
+    }
+
     function getDuration(match: Match): string {
       if (props.unfinished) return t("matchStatuses.onGoing").toString();
       return formatSecondsToDuration(match.durationInSeconds);
@@ -275,7 +282,7 @@ export default defineComponent({
         value: "gameMode",
         style: {
           textAlign: "start",
-          minWidth: "100px",
+          minWidth: "90px",
         },
       },
       {
@@ -306,6 +313,16 @@ export default defineComponent({
           textAlign: "start",
         },
       },
+      {
+        name: "Flo Node",
+        text: t("components_matches_matchesgrid.floNode"),
+        sortable: false,
+        value: "floNode",
+        style: {
+          textAlign: "start",
+          minWidth: "50px",
+        },
+      }
     ];
 
     return {
@@ -328,6 +345,7 @@ export default defineComponent({
       nameIfNonSolo,
       getStartTime,
       getDuration,
+      getFloNode,
       showReplayDownload,
     };
   },
