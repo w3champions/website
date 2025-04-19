@@ -4,11 +4,7 @@
       <table class="custom-table">
         <thead>
           <tr>
-            <td
-              v-for="header in headers"
-              :key="header.name"
-              :style="header.style"
-            >
+            <td v-for="header in headers" :key="header.name" :style="header.style">
               {{ header.text }}
             </td>
             <td v-if="!unfinished">
@@ -19,62 +15,37 @@
         <tbody>
           <tr v-for="item in matches" :key="item.id">
             <td>
-              <div
-                v-if="isFfa(item.gameMode)"
-                @click="goToMatchDetailPage(item)"
-                class="my-3"
-                :class="{ clickable: !unfinished }"
-              >
+              <div v-if="isFfa(item.gameMode)" @click="goToMatchDetailPage(item)" class="my-3"
+                :class="{ clickable: !unfinished }">
                 <v-row justify="center" v-if="alwaysLeftName">
                   <v-col offset="4" class="py-1">
-                    <team-match-info
-                      :not-clickable="!unfinished"
-                      :team="getPlayerTeam(item)"
-                      :unfinishedMatch="unfinished"
-                      :is-anonymous="true"
-                      :highlightedPlayer="alwaysLeftName"
-                      :showHeroes="showHeroes"
-                    ></team-match-info>
+                    <team-match-info :not-clickable="!unfinished" :team="getPlayerTeam(item)"
+                      :unfinishedMatch="unfinished" :is-anonymous="true" :highlightedPlayer="alwaysLeftName"
+                      :showHeroes="showHeroes"></team-match-info>
                   </v-col>
                 </v-row>
                 <v-row justify="center" v-for="(team, index) in getOpponentTeams(item)" :key="index">
                   <v-col offset="4" class="py-1">
-                    <team-match-info
-                      :not-clickable="!unfinished"
-                      :team="team"
-                      :unfinishedMatch="unfinished"
-                      :is-anonymous="true"
-                      :showHeroes="showHeroes"
-                    ></team-match-info>
+                    <team-match-info :not-clickable="!unfinished" :team="team" :unfinishedMatch="unfinished"
+                      :is-anonymous="true" :showHeroes="showHeroes"></team-match-info>
                   </v-col>
                 </v-row>
               </div>
-              <v-row
-                v-if="!isFfa(item.gameMode)"
-                @click="goToMatchDetailPage(item)"
-                :class="{ clickable: !unfinished }"
-              >
+              <v-row v-if="!isFfa(item.gameMode)" @click="goToMatchDetailPage(item)"
+                :class="{ clickable: !unfinished }">
                 <v-col cols="5.5" class="team-match-info-container left-side py-2" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
-                    :unfinishedMatch="unfinished"
-                    :left="true"
-                    :highlightedPlayer="nameIfNonSolo(item)"
-                    :showHeroes="showHeroes"
-                  ></team-match-info>
+                  <team-match-info :not-clickable="!unfinished"
+                    :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)" :unfinishedMatch="unfinished"
+                    :left="true" :highlightedPlayer="nameIfNonSolo(item)" :showHeroes="showHeroes"></team-match-info>
                 </v-col>
                 <v-col cols="1" align-self="center" class="py-2">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
                 <v-col cols="5.5" class="team-match-info-container py-2" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
-                    :unfinishedMatch="unfinished"
-                    :showHeroes="showHeroes"
-                  ></team-match-info>
+                  <team-match-info :not-clickable="!unfinished"
+                    :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)" :unfinishedMatch="unfinished"
+                    :showHeroes="showHeroes"></team-match-info>
                 </v-col>
               </v-row>
             </td>
@@ -176,7 +147,7 @@ export default defineComponent({
     showHeroes: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
     },
   },
   setup(props, context) {
@@ -373,6 +344,7 @@ export default defineComponent({
     justify-content: end;
   }
 }
+
 .clickable {
   cursor: pointer;
 }

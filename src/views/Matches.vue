@@ -81,7 +81,7 @@ export default defineComponent({
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
 
-    const showHeroIcons = ref<boolean>(true);
+    const showHeroIcons = ref<boolean>(false);
 
     const maps = computed<Array<MapInfo>>(() => {
       if (!currentSeason.value) {
