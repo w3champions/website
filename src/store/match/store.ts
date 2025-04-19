@@ -20,6 +20,7 @@ export const useMatchStore = defineStore("match", {
     mmr: { min: 0, max: 3000 } as Mmr,
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
+    showHeroIcons: false,
   }),
   actions: {
     async loadMatches() {
@@ -109,6 +110,9 @@ export const useMatchStore = defineStore("match", {
     async setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
     },
+    async setShowHeroIcons(showHeroIcons: boolean) {
+      this.SET_SHOW_HERO_ICONS(showHeroIcons);
+    },
     SET_PAGE(page: number): void {
       this.page = page;
     },
@@ -147,6 +151,9 @@ export const useMatchStore = defineStore("match", {
     },
     SET_SEASON(season: Season): void {
       this.selectedSeason = season;
+    },
+    SET_SHOW_HERO_ICONS(showHeroIcons: boolean): void {
+      this.showHeroIcons = showHeroIcons;
     },
   },
 });
