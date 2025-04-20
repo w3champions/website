@@ -13,7 +13,7 @@
       outlined
       style="padding-bottom: 0px"
     >
-      <v-img src="/assets/socials/Patreon_button.png" alt="Patreon"/>
+      <v-img src="/assets/socials/Patreon_button.png" alt="Patreon" />
     </v-card>
 
     <!-- PAYPAL -->
@@ -24,31 +24,31 @@
       tile
       outlined
     >
-      <v-img src="/assets/socials/PayPal_button.png" alt="Paypal"/>
+      <v-img src="/assets/socials/PayPal_button.png" alt="Paypal" />
     </v-card>
 
     <!-- CRYPTOCURRENCIES -->
     <v-card
-      v-for="(crypto) in cryptos"
-      v-bind:key="crypto.coin"
+      v-for="crypto in cryptos"
+      :key="crypto.coin"
       class="support-subcard"
       tile
       outlined
       @click.stop="crypto.dialog = true"
     >
-      <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name"></v-img>
+      <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name" />
       <crypto-dialog
         v-model="crypto.dialog"
         :crypto="crypto.coin"
         :cryptoName="crypto.name"
         :cryptoAddress="crypto.address"
-      ></crypto-dialog>
+      />
     </v-card>
 
     <!-- Alternates -->
     <v-card
-      v-for="(alternate) in alternates"
-      v-bind:key="alternate.name"
+      v-for="alternate in alternates"
+      :key="alternate.name"
       class="support-subcard"
       tile
       outlined
@@ -57,8 +57,8 @@
       <alternate-payments-dialog
         v-model="alternate.dialog"
         :name="alternate.name"
-      ></alternate-payments-dialog>
-      <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name"></v-img>
+      />
+      <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name" />
     </v-card>
   </v-card>
 </template>
@@ -75,7 +75,7 @@ export default defineComponent({
     AlternatePaymentsDialog,
   },
   setup() {
-    const cryptos = ref<{coin: string; name: string; address: string; dialog: boolean}[]>([
+    const cryptos = ref<{ coin: string; name: string; address: string; dialog: boolean }[]>([
       { coin: `BTC`, name: "Bitcoin", address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`, dialog: false },
       { coin: `ETH`, name: "Ethereum", address: `0x284a0e918e126dF38cFc0207c00D5564CAFbe658`, dialog: false },
       { coin: `LTC`, name: "Litecoin", address: `ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0`, dialog: false },

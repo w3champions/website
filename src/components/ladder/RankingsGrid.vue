@@ -5,13 +5,15 @@
         <tr>
           <td
             class="header"
-            v-bind:class="{ clickable: header.sortFunction !== undefined }"
+            :class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
             :key="header.name"
-            v-bind:style="{
-              width: header.width,
-              'min-width': header.minWidth,
-            }"
+            :style="
+              {
+                width: header.width,
+                'min-width': header.minWidth,
+              }
+            "
             @click="sortRankings(header.name, header.sortFunction)"
           >
             {{ header.text }}
@@ -27,29 +29,37 @@
           :id="`listitem_${item.rankNumber}`"
           v-for="item in rankingsRef"
           :key="item.player.id"
-          :class="{
-            searchedItem: item.player.id === selectedRankBattleTag(),
-          }"
+          :class="
+            {
+              searchedItem: item.player.id === selectedRankBattleTag(),
+            }
+          "
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td class="d-md-flex">
             <div
               class="rank-icon-container my-1"
-              v-bind:class="{ 'ml-md-3': index > 0 }"
+              :class="{ 'ml-md-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag + '_' + item.race"
             >
               <div
                 class="player-avatar mr-1 alignRight race-icon"
                 :title="getTitleRace(item, index).toString()"
-                :style="{
-                  'background-image': 'url(' + getRaceIcon(item, index) + ')',
-                }"
-              ></div>
+                :style="
+                  {
+                    'background-image': 'url(' + getRaceIcon(item, index) + ')',
+                  }
+                "
+              >
+              </div>
               <player-rank-info :player-id="playerId" />
               <div
                 class="country-flag__container ml-1"
-                v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
+                v-if="
+                  (item.playersInfo && item.playersInfo[index].countryCode) ||
+                  item.playersInfo[index].location
+                "
               >
                 <country-flag-extended
                   class="country-flag"
@@ -60,7 +70,7 @@
               </div>
               <div class="twitch__container" v-if="isTwitchLive(item, index)">
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <v-btn
                         icon
@@ -86,8 +96,7 @@
                   </template>
 
                   <div v-if="isCurrentlyLive(item.player.playerIds)">
-                    {{ $t("components_ladder_rankingsgrid.streamingmatch") }}
-                    {{ getLiveOpponent(item.player.playerIds) }}
+                    {{ $t("components_ladder_rankingsgrid.streamingmatch") }} {{ getLiveOpponent(item.player.playerIds) }}
                   </div>
                   <div v-if="!isCurrentlyLive(item.player.playerIds)">
                     {{ $t("components_ladder_rankingsgrid.streaminglive") }}
@@ -99,21 +108,20 @@
                 v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
               >
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <sword-icon class="swords blinker" />
                     </span>
                   </template>
                   <div>
-                    {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
-                    {{ getLiveOpponent(item.player.playerIds) }}
+                    {{ $t("components_ladder_rankingsgrid.nowplayingvs") }} {{ getLiveOpponent(item.player.playerIds) }}
                   </div>
                 </v-tooltip>
               </span>
             </div>
           </td>
           <td class="number-text text-end">
-            <level-progress :rp="item.rankingPoints"></level-progress>
+            <level-progress :rp="item.rankingPoints" />
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
@@ -132,7 +140,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, toRefs, watch } from "vue";
-import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
+import { PlayerId, PlayerInfo, Ranking } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import { useTwitchStore } from "@/store/twitch/store";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
@@ -159,35 +167,37 @@ export default defineComponent({
   props: {
     rankings: {
       type: Array<Ranking>,
-        required: true,
-      },
-      ongoingMatches: {
-        type: Object as PropType<OngoingMatches>,
+      required: true,
+    },
+    ongoingMatches: {
+      type: Object as PropType<OngoingMatches>,
       required: true,
     },
     selectedRank: {
       type: Object as PropType<Ranking>,
-        required: true,
-      }
+      required: true,
     },
-    setup(props) {
-      const { t } = useI18n();
-      const vuetify = useVuetify();
-      const twitchStore = useTwitchStore();
-      const rankingsStore = useRankingStore();
-      const sortColumn = ref<string>("Rank");
-      const isSortedAsc = ref<boolean>(true);
-      let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
-      const sortedRankings = ref<Ranking[]>([]);
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const vuetify = useVuetify();
+    const twitchStore = useTwitchStore();
+    const rankingsStore = useRankingStore();
+    const sortColumn = ref<string>("Rank");
+    const isSortedAsc = ref<boolean>(true);
+    let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
+    const sortedRankings = ref<Ranking[]>([]);
 
-      const rankingsRef = computed<Ranking[]>({
-        get(): Ranking[] {
-          return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
-        },
-        set(val: Ranking[]): void {
-          sortedRankings.value = isSortedAsc.value ? val.toSorted(_lastSortFunction) : val.toSorted(_lastSortFunction).reverse();
-        },
-      });
+    const rankingsRef = computed<Ranking[]>({
+      get(): Ranking[] {
+        return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
+      },
+      set(val: Ranking[]): void {
+        sortedRankings.value = isSortedAsc.value
+          ? val.toSorted(_lastSortFunction)
+          : val.toSorted(_lastSortFunction).reverse();
+      },
+    });
 
     const headers = [
       {
@@ -238,7 +248,7 @@ export default defineComponent({
         width: "50px",
         sortFunction: (a: Ranking, b: Ranking): number => {
           return ("" + b.playersInfo[0].clanId).localeCompare(
-            a.playersInfo[0].clanId
+            a.playersInfo[0].clanId,
           );
         },
       },
@@ -327,16 +337,22 @@ export default defineComponent({
       }
 
       if (sortColumn.value && _lastSortFunction) {
-        sortedRankings.value = isSortedAsc.value ? newVal.sort(_lastSortFunction) : newVal.sort(_lastSortFunction).reverse();
+        sortedRankings.value = isSortedAsc.value
+          ? newVal.sort(_lastSortFunction)
+          : newVal.sort(_lastSortFunction).reverse();
       }
     }
 
     async function getStreamStatus(): Promise<void> {
       // filter nulls and empty strings
-      const twitchNames = [...new Set(props.rankings
-        .map((r) => r.playersInfo)
-        .map((r) => r.map((i) => i.twitchName))
-        .flat())].filter((r) => (r && r.length > 0));
+      const twitchNames = [
+        ...new Set(
+          props.rankings
+            .map((r) => r.playersInfo)
+            .map((r) => r.map((i) => i.twitchName))
+            .flat(),
+        ),
+      ].filter((r) => (r && r.length > 0));
 
       if (twitchNames.length > 0) {
         await twitchStore.getStreamStatus(twitchNames);
@@ -372,13 +388,13 @@ export default defineComponent({
         return getAvatarUrl(
           playerInfo.selectedRace,
           playerInfo.pictureId,
-          playerInfo.isClassicPicture
+          playerInfo.isClassicPicture,
         );
       } else {
         return getAvatarUrl(
           playerInfo.selectedRace,
           playerInfo.pictureId,
-          playerInfo.isClassicPicture
+          playerInfo.isClassicPicture,
         );
         // old way to get race icon: return this.raceIcon(playerInfo.calculatedRace);
       }
@@ -389,8 +405,8 @@ export default defineComponent({
       if (!playersInfo) return "Random";
       const playerInfo = playersInfo[playerIndex];
       if (
-        hasSelectedIcon(playerInfo) &&
-        playerInfo.selectedRace <= ERaceEnum.UNDEAD
+        hasSelectedIcon(playerInfo)
+        && playerInfo.selectedRace <= ERaceEnum.UNDEAD
       ) {
         return t(`races.${ERaceEnum[playerInfo.selectedRace]}`);
       } else {
@@ -400,10 +416,10 @@ export default defineComponent({
 
     function hasSelectedIcon(playerInfo: PlayerInfo) {
       if (
-        playerInfo.selectedRace !== undefined &&
-        playerInfo.selectedRace != null &&
-        playerInfo.pictureId !== undefined &&
-        playerInfo.pictureId != null
+        playerInfo.selectedRace !== undefined
+        && playerInfo.selectedRace != null
+        && playerInfo.pictureId !== undefined
+        && playerInfo.pictureId != null
       ) {
         return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
       }
@@ -421,8 +437,8 @@ export default defineComponent({
         for (let i = 0; i < streamData.length; i++) {
           const stream = streamData[i];
           if (
-            stream &&
-            stream.user_name.toLowerCase() == twitchName.toLowerCase()
+            stream
+            && stream.user_name.toLowerCase() == twitchName.toLowerCase()
           ) {
             return true;
           }
@@ -504,7 +520,7 @@ export default defineComponent({
       sortRankings,
       rankingsRef,
     };
-  }
+  },
 });
 </script>
 

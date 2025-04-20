@@ -1,8 +1,9 @@
 <template>
-    <div>
-      {{ $t("components_player_tabs_playerstatistictab.playergamelengthaveragelabel") }} {{ selectedOpponentRaceName }}: {{ averageAgainstRace }}
-      <bar-chart class="player-game-length" :chart-data="playerGameLengthChartData" />
-    </div>
+  <div>
+    {{ $t("components_player_tabs_playerstatistictab.playergamelengthaveragelabel") }}
+    {{ selectedOpponentRaceName }}: {{ averageAgainstRace }}
+    <bar-chart class="player-game-length" :chart-data="playerGameLengthChartData" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -56,7 +57,7 @@ export default defineComponent({
         for (let i = 0; i < maxNumberOfIntervals; i++) {
           const key: number = i * 60;
           const shouldAdd = !(key in lengths);
-          if ( shouldAdd ) {
+          if (shouldAdd) {
             lengths[key] = 0;
           }
         }

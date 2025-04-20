@@ -7,7 +7,7 @@
             {{ $t("views_gettingstarted.howtoinstall") }}
           </v-card-title>
           <v-tabs v-model="tabsModel.self" vertical class="ml-5">
-            <v-tabs-slider></v-tabs-slider>
+            <v-tabs-slider />
             <v-tab class="profileTab" :href="`#launcher`">
               {{ $t("views_gettingstarted.launcher") }}
             </v-tab>
@@ -42,9 +42,9 @@
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                   <br />
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
-                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg" />
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg" />
+                  <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg" />
                   <v-card-text>
                     {{ $t("views_gettingstarted.launcherfeaturestitle") }}
                     <ul>
@@ -179,8 +179,7 @@
                   <div>
                     <ul>
                       <li>
-                        {{ $t("views_gettingstarted.manualmacbody19") }}
-                        <code>{{ $t("views_gettingstarted.manualmacbody19_1") }}</code>
+                        {{ $t("views_gettingstarted.manualmacbody19") }} <code>{{ $t("views_gettingstarted.manualmacbody19_1") }}</code>
                       </li>
                       <li>{{ $t("views_gettingstarted.manualmacbody20") }}</li>
                       <li>{{ $t("views_gettingstarted.manualmacbody21") }}</li>
@@ -208,7 +207,7 @@ import { useRouter } from "vue-router/composables";
 
 class TabsModel {
   constructor(private router: ReturnType<typeof useRouter>) {}
-  set self (tabsModel: string | (string | null)[]) {
+  set self(tabsModel: string | (string | null)[]) {
     this.router.replace({ query: { ...this.router.currentRoute.query, tabsModel } });
     console.log(this.router.currentRoute.query.tabsModel);
   }
@@ -223,7 +222,9 @@ export default defineComponent({
     const router = useRouter();
     const tabsModel = ref(new TabsModel(router));
 
-    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
+    const alertMessage = ref<string>(
+      "These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!",
+    );
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");

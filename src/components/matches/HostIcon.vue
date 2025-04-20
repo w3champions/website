@@ -1,8 +1,8 @@
 <template>
   <v-tooltip bottom transition="scroll-y-transition" style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <div v-on="on" class="globe">
-        <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
+        <v-img :src="icon" :max-height="18" :max-width="18" />
       </div>
     </template>
     <span>{{ tooltip }}</span>
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { computed, PropType, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";

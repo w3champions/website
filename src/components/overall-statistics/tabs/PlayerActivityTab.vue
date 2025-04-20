@@ -20,7 +20,7 @@
             v-model="normalizedGamesPerDay"
             @change="setNormalizedGamesPerDay"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
-          ></v-switch>
+          />
           <div v-if="normalizedGamesPerDay">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
             <br />
@@ -182,8 +182,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          {{ race1String }} vs {{ race2String }}
-          <matchup-length-bar-chart />
+          {{ race1String }} vs {{ race2String }} <matchup-length-bar-chart />
         </v-card-text>
       </v-col>
     </v-row>
@@ -261,12 +260,20 @@ export default defineComponent({
 
     function setSelectedMatchupRace1(race: ERaceEnum) {
       selectedMatchupRace1.value = race;
-      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+      overallStatsStore.loadMatchupLengthStatistics(
+        selectedMatchupRace1.value,
+        selectedMatchupRace2.value,
+        selectedMatchupSeason.value,
+      );
     }
 
     function setSelectedMatchupRace2(race: ERaceEnum) {
       selectedMatchupRace2.value = race;
-      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+      overallStatsStore.loadMatchupLengthStatistics(
+        selectedMatchupRace1.value,
+        selectedMatchupRace2.value,
+        selectedMatchupSeason.value,
+      );
     }
 
     function setSelectedMatchupMmr(mmr: string) {
@@ -276,20 +283,20 @@ export default defineComponent({
 
     function setMatchupLengthSeason(season: string) {
       selectedMatchupSeason.value = season.toLocaleLowerCase();
-      overallStatsStore.loadMatchupLengthStatistics(selectedMatchupRace1.value, selectedMatchupRace2.value, selectedMatchupSeason.value);
+      overallStatsStore.loadMatchupLengthStatistics(
+        selectedMatchupRace1.value,
+        selectedMatchupRace2.value,
+        selectedMatchupSeason.value,
+      );
     }
 
     function setNormalizedGamesPerDay(normalized: boolean) {
       normalizedGamesPerDay.value = normalized;
     }
 
-    const seasons = computed<string[]>(() =>
-      ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]
-    );
+    const seasons = computed<string[]>(() => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
 
-    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() =>
-      seasons.value.map((e) => ({ id: e.toLowerCase(), name: e }))
-    );
+    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() => seasons.value.map((e) => ({ id: e.toLowerCase(), name: e })));
 
     const raceOptions = [
       { name: "Human", id: ERaceEnum.HUMAN },
@@ -306,20 +313,20 @@ export default defineComponent({
       return mmrOptions.map((mmr) => {
         return {
           id: mmr,
-          name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`
+          name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`,
         };
       });
     });
 
     const selectedGameLength = computed<GameLength>(() => {
       return gameLength.value?.filter(
-        (g) => g.gameMode == selectedLengthMode.value
+        (g) => g.gameMode == selectedLengthMode.value,
       )[0] ?? { lengths: [] };
     });
 
     const selectedGameHours = computed<PopularHours>(() => {
       return popularGameHours.value.filter(
-        (g) => g.gameMode == selectedPopularHourMode.value
+        (g) => g.gameMode == selectedPopularHourMode.value,
       )[0] ?? { timeslots: [] };
     });
 
@@ -335,18 +342,17 @@ export default defineComponent({
         overWrittenOnce = true;
       }
 
-      const selectedSeasonMaps =
-        overallStatsStore.matchesOnMapPerSeason.filter(
-          (m) =>
-            m.season ===
-            (selectedSeasonForMaps.value === "All"
+      const selectedSeasonMaps = overallStatsStore.matchesOnMapPerSeason.filter(
+        (m) =>
+          m.season
+            === (selectedSeasonForMaps.value === "All"
               ? -1
-              : parseInt(selectedSeasonForMaps.value))
-        )[0];
+              : parseInt(selectedSeasonForMaps.value)),
+      )[0];
       if (!selectedSeasonMaps) return [];
       return (
         selectedSeasonMaps?.matchesOnMapPerModes?.filter(
-          (m) => m.gameMode === selectedModeForMaps.value
+          (m) => m.gameMode === selectedModeForMaps.value,
         )[0]?.maps ?? []
       );
     }
@@ -357,7 +363,7 @@ export default defineComponent({
           .toReversed()
           ?.splice(
             0,
-            overallStatsStore.playersPerDay.length - 1
+            overallStatsStore.playersPerDay.length - 1,
           ) ?? []
       );
     });

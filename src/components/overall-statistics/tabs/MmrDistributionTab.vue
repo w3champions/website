@@ -28,8 +28,7 @@
         </v-card-text>
 
         <v-card-text>
-          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
-          <div>{{ standardDeviation }}</div>
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }} <div>{{ standardDeviation }}</div>
         </v-card-text>
         <v-card-text>
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
@@ -40,7 +39,7 @@
       </v-col>
       <v-col cols="md-10">
         <div class="text-center my-auto">
-          <v-progress-circular indeterminate v-if="loadingData"></v-progress-circular>
+          <v-progress-circular indeterminate v-if="loadingData" />
         </div>
         <mmr-distribution-chart
           v-if="!loadingData"

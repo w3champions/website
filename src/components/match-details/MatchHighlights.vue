@@ -3,7 +3,7 @@
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiSkull }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.heroeskilled") }}</div>
@@ -16,7 +16,7 @@
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiChevronTripleUp }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.xpgained") }}</div>
@@ -29,7 +29,7 @@
     <v-row>
       <v-col :order="left ? 0 : 1" :align="left ? 'right' : 'left'" class="pa-1">
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-icon class="mr-4 ml-4" v-on="on">{{ mdiTreasureChest }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.itemscollected") }}</div>

@@ -36,11 +36,11 @@
         <v-card-text>
           <v-data-table
             hide-default-footer
-            :headers="headers"
+            :headers
             :items="raceWinrate"
             :mobile-breakpoint="400"
           >
-            <template v-slot:body="{ items }">
+            <template #body="{ items }">
               <tbody>
                 <tr v-for="item in items" :key="item.race">
                   <td>{{ $t("races." + raceEnums[item.race]) }}</td>
@@ -160,14 +160,17 @@ export default defineComponent({
     });
 
     const raceWinrate = computed<Ratio[]>(() => {
-      if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
+      if (
+        !statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] ||
+        !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]
+      ) {
         return [];
       }
 
       const statsPerMapAndRace = statsPerRaceAndMap.value
         .filter((r) => r.mmrRange === selectedMmr.value)[0]
         .patchToStatsPerModes[selectedPatch.value].filter(
-          (r) => r.mapName === selectedMap.value
+          (r) => r.mapName === selectedMap.value,
         )[0];
 
       if (!statsPerMapAndRace) return [];
@@ -179,7 +182,7 @@ export default defineComponent({
       if (statsPerRaceAndMap.value[0]) {
         const allowedPatches = ["All"];
         const patches = Object.keys(
-          statsPerRaceAndMap.value[0].patchToStatsPerModes
+          statsPerRaceAndMap.value[0].patchToStatsPerModes,
         );
         for (const key in patches) {
           const patch = patches[key];
@@ -212,8 +215,8 @@ export default defineComponent({
             const k1 = charArray[1] || "0";
 
             if (
-              (k0 == r.race.toString() && k1 == wL.race.toString()) ||
-              (k1 == r.race.toString() && k0 == wL.race.toString())
+              (k0 == r.race.toString() && k1 == wL.race.toString())
+              || (k1 == r.race.toString() && k0 == wL.race.toString())
             ) {
               found = true;
               break;

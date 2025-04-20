@@ -1,7 +1,7 @@
 <template>
   <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div v-on="on">
           <v-card-text
             class="hero-picture-select"
@@ -34,7 +34,7 @@
             :key="heroPickSelection.heroId"
           >
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div v-on="on" class="ma-1">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
@@ -43,11 +43,13 @@
                       :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
                       @click="
                         () => {
-                          if (isEnabledForSelect(heroPickSelection))
+                          if (isEnabledForSelect(heroPickSelection)) {
                             pickHero(heroPickSelection);
+                          }
                         }
                       "
-                    ></div>
+                    >
+                    </div>
                   </v-responsive>
                 </div>
               </template>
@@ -68,7 +70,6 @@ import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { getAsset } from "@/helpers/url-functions";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-
 
 export default defineComponent({
   name: "HeroPictureSelect",
@@ -173,10 +174,10 @@ export default defineComponent({
 
     const previousPreviousHero = computed<HeroPick | null>(() => {
       if (
-        props.heroIndex === 4 ||
-        props.heroIndex === 1 ||
-        props.heroIndex === 3 ||
-        props.heroIndex === 0
+        props.heroIndex === 4
+        || props.heroIndex === 1
+        || props.heroIndex === 3
+        || props.heroIndex === 0
       ) {
         return null;
       }

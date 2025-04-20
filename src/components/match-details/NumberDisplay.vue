@@ -5,7 +5,7 @@
       :left="align === 'left'"
       v-if="object.length > 1 && delimiter !== AddValuesDelimiter.SLASH"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <span v-on="on" v-bind="attrs">{{ stringValues }}</span>
       </template>
       <div>{{ addValues }}</div>
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import { AddValuesDelimiter } from "./PlayerPerformanceOnMatch.vue";
 import isNil from "lodash/isNil";
 import { ResourceScore, UnitScore } from "@/store/types";

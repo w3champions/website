@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="pa-md-4">
       <div v-if="tournament">
-        <tournament-view :tournament="tournament" />
+        <tournament-view :tournament />
       </div>
     </v-card>
   </v-container>
