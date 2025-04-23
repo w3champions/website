@@ -33,17 +33,17 @@
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
                       :highlightedPlayer="alwaysLeftName"
-                    ></team-match-info>
+                    />
                   </v-col>
                 </v-row>
                 <v-row justify="center" v-for="(team, index) in getOpponentTeams(item)" :key="index">
                   <v-col offset="4" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
-                      :team="team"
+                      :team
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
-                    ></team-match-info>
+                    />
                   </v-col>
                 </v-row>
               </div>
@@ -59,18 +59,18 @@
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
-                  ></team-match-info>
+                  />
                 </v-col>
                 <v-col cols="1" align-self="center">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
+                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
                 </v-col>
                 <v-col cols="5.5" class="team-match-info-container" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
-                  ></team-match-info>
+                  />
                 </v-col>
               </v-row>
             </td>
@@ -87,10 +87,10 @@
               <span class="number-text">{{ getDuration(item) }}</span>
             </td>
             <td>
-              {{  getFloNode(item) }}
+              {{ getFloNode(item) }}
             </td>
             <td v-if="showReplayDownload(item)">
-              <download-replay-icon :gameId="item.id"></download-replay-icon>
+              <download-replay-icon :gameId="item.id" />
             </td>
           </tr>
           <tr v-if="!matches || matches.length == 0">
@@ -106,7 +106,7 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged"></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged" />
     </div>
   </div>
 </template>
@@ -114,7 +114,7 @@
 <script lang="ts">
 import { computed, defineComponent, StyleValue } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { Match, Team, PlayerInTeam, EGameMode } from "@/store/types";
+import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
@@ -230,7 +230,7 @@ export default defineComponent({
 
     function getOpponentTeam(match: Match): Team {
       return match.teams.find(
-        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
+        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName),
       )!;
     }
 
@@ -322,7 +322,7 @@ export default defineComponent({
           textAlign: "start",
           minWidth: "50px",
         },
-      }
+      },
     ];
 
     return {

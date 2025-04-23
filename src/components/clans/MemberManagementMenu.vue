@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
         <v-icon style="margin-right: 5px">{{ mdiPencil }}</v-icon>
       </v-btn>
@@ -53,7 +53,7 @@ export default defineComponent({
     const clanStore = useClanStore();
 
     async function kickPlayer(): Promise<void> {
-        await clanStore.kickPlayer(props.battleTag);
+      await clanStore.kickPlayer(props.battleTag);
     }
 
     async function promoteToShaman(): Promise<void> {
@@ -80,12 +80,12 @@ export default defineComponent({
           switch (props.loggedInUserRole) {
             case EClanRole.Shaman:
               return [
-                { name: "Kick Player", action: kickPlayer }
+                { name: "Kick Player", action: kickPlayer },
               ];
             case EClanRole.ChiefTain:
               return [
                 { name: "Promote To Shaman", action: promoteToShaman },
-                { name: "Kick Player", action: kickPlayer }
+                { name: "Kick Player", action: kickPlayer },
               ];
             default:
               return [];
@@ -98,7 +98,7 @@ export default defineComponent({
               return [
                 { name: "Demote To Member", action: demoteShaman },
                 { name: "Kick Player", action: kickPlayer },
-                { name: "Make Chieftain", action: makeChiefTain }
+                { name: "Make Chieftain", action: makeChiefTain },
               ];
             default:
               return [];

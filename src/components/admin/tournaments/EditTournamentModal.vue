@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
-        <v-tabs-slider></v-tabs-slider>
+        <v-tabs-slider />
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
@@ -32,18 +32,18 @@
             <v-date-picker
               v-model="startDate"
               landscape
-            ></v-date-picker>
+            />
             <v-time-picker
               v-model="startTime"
               landscape
               format="24hr"
-            ></v-time-picker>
+            />
           </div>
           <div class="mt-4">
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
-            <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
+            <v-col cols="4" class="py-0" v-for="map in mapOptions" :key="map.id">
               <v-checkbox
                 :multiple="true"
                 v-model="mapPool"
@@ -223,11 +223,11 @@ export default defineComponent({
 
     const isEdit = computed<boolean>(() => !!props.tournament);
     const mapOptions = computed<Map[]>(() => props.maps);
-    const gameModes = computed<{id: number; name: string}[]>(() => getSelectOptions(EGameModeLabel));
-    const formats = computed<{id: number; name: string}[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
+    const gameModes = computed<{ id: number; name: string }[]>(() => getSelectOptions(EGameModeLabel));
+    const formats = computed<{ id: number; name: string }[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
     const enabledFloNodes = computed<ITournamentFloNode[]>(() => tournamentsManagementStore.floNodes);
 
-    const states = computed<{id: number; name: string}[]>(() => {
+    const states = computed<{ id: number; name: string }[]>(() => {
       const validStates = pickBy(ETournamentState, (_value, key) => {
         return !isNaN(Number(key));
       }) as { [key: number]: string };
@@ -257,7 +257,7 @@ export default defineComponent({
         matcherinoUrl: matcherinoUrl.value,
         maxPlayers: maxPlayers.value,
         floNode: floNode.value,
-        floNodeMaxPing: floNodeMaxPing.value
+        floNodeMaxPing: floNodeMaxPing.value,
       };
 
       context.emit("save", tournamentData);

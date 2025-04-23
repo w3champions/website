@@ -9,13 +9,13 @@
           @searchCleared="searchCleared"
           @playerFound="playerFound"
           classes="ml-5 mr-5"
-        ></player-search>
+        />
       </v-row>
 
       <review-proxies
         v-if="showProxyOptions"
         :proxies="availableProxies"
-      ></review-proxies>
+      />
     </v-container>
   </div>
 </template>
@@ -43,11 +43,11 @@ export default defineComponent({
 
     async function playerFound(bTag: string): Promise<void> {
       const proxies = await adminStore.getProxiesForPlayer(bTag);
-        await setPlayerProxies(proxies);
+      await setPlayerProxies(proxies);
 
-        if (proxies._id) {
-          showProxyOptions.value = true;
-        }
+      if (proxies._id) {
+        showProxyOptions.value = true;
+      }
     }
 
     function searchCleared() {

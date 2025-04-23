@@ -6,7 +6,7 @@
     <v-card-text>
       <v-container>
         <v-data-table
-          :headers="headers"
+          :headers
           :items="mapFiles"
           class="elevation-1"
           :hide-default-header="true"
@@ -22,11 +22,11 @@
         <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-file-input label="Map file" v-model="file"></v-file-input>
+            <v-file-input label="Map file" v-model="file" />
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="fileName" label="File name (optional)"></v-text-field>
+            <v-text-field v-model="fileName" label="File name (optional)" />
           </v-col>
         </v-row>
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMapFile()">Add map file</v-btn>
@@ -34,7 +34,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
@@ -108,5 +108,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

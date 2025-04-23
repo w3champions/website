@@ -6,8 +6,7 @@
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
   >
     <h2 class="LadderSummaryShowcase-title">
-      {{ leagueMode }} {{ leagueName }}
-      {{ modeStat.division !== 0 ? modeStat.division : null }}
+      {{ leagueMode }} {{ leagueName }} {{ modeStat.division !== 0 ? modeStat.division : null }}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
@@ -36,7 +35,7 @@
         </span>
         <span class="ml-2" style="font-size: 13px">
           <v-col>
-            <level-progress :rp="modeStat.rankingPoints"></level-progress>
+            <level-progress :rp="modeStat.rankingPoints" />
           </v-col>
         </span>
       </div>
@@ -123,7 +122,7 @@ export default defineComponent({
         ERaceEnum.TOTAL,
         ERaceEnum.TOTAL,
         gateWay.value,
-        selectedSeason.value.id
+        selectedSeason.value.id,
       );
 
       matches.value = playerMatches.matches;
@@ -137,9 +136,10 @@ export default defineComponent({
 
     function navigateToLeague(): void {
       router.push({
-        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${gateWay.value}&gamemode=${gameMode.value}&league=${
-          league.value
-        }&playerId=${encodeURIComponent(playerId.value)}`,
+        path:
+          `/Rankings?season=${selectedSeason.value.id}&gateway=${gateWay.value}&gamemode=${gameMode.value}&league=${league.value}&playerId=${
+            encodeURIComponent(playerId.value)
+          }`,
       });
     }
 

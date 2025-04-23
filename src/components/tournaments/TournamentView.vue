@@ -4,14 +4,14 @@
       {{ tournament.name }}
     </v-card-title>
     <div class="pl-4 pb-4">
-      <tournament-description :tournament="tournament" :maps="maps" />
-      <tournament-bracket :tournament="tournament" />
+      <tournament-description :tournament :maps />
+      <tournament-bracket :tournament />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, PropType, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted, PropType } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import TournamentDescription from "@/components/tournaments/TournamentDescription.vue";
 import TournamentBracket from "@/components/tournaments/TournamentBracket.vue";

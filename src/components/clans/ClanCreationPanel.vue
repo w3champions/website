@@ -63,13 +63,15 @@ export default defineComponent({
 
     function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
       return (v: string): TranslateResult => {
-        if (!v)
+        if (!v) {
           return t("components_clans_clancreationpanel.fieldismandatory");
-        if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
+        }
+        if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`)) {
           return t("components_clans_clancreationpanel.minmaxchars", {
             min,
             max,
           });
+        }
         return "";
       };
     }

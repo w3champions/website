@@ -2,8 +2,8 @@
   <div class="player-info" :class="textClass">
     <player-icon
       v-if="!left"
-      :race="race"
-      :rndRace="rndRace"
+      :race
+      :rndRace
       :big="bigRaceIcon"
     />
     <span :class="{ 'mr-2': left, 'ml-2': !left }">
@@ -31,8 +31,8 @@
     </span>
     <player-icon
       v-if="left"
-      :race="race"
-      :rndRace="rndRace"
+      :race
+      :rndRace
       :big="bigRaceIcon"
     />
   </div>

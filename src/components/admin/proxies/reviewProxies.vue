@@ -22,9 +22,7 @@
       <!-- nodeOverrides -->
       <v-col class="px-0">
         <v-card class="px-1 m-1">
-          <node-overrides-card
-            :passedOverrides="initProxySettings.nodeOverrides"
-          ></node-overrides-card>
+          <node-overrides-card :passedOverrides="initProxySettings.nodeOverrides" />
         </v-card>
       </v-col>
 
@@ -34,15 +32,15 @@
           <node-overrides-card
             :passedOverrides="initProxySettings.automaticNodeOverrides"
             :automaticNodes="true"
-          ></node-overrides-card>
+          />
         </v-card>
       </v-col>
     </v-row>
 
     <v-row v-if="isProxyModified">
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-dialog v-model="dialog" width="600">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn color="primary" v-on="on">Update Proxies</v-btn>
         </template>
 
@@ -61,11 +59,11 @@
             <!-- Show selected nodes container -->
             <v-container class="mb-4">
               <v-row v-if="newNodeOverrides(false).length > 0">
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-card-subtitle class="font-weight-bold">
                   Node Overrides:
                 </v-card-subtitle>
-                <v-spacer></v-spacer>
+                <v-spacer />
 
                 <template>
                   <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(false)" :key="node">
@@ -77,11 +75,11 @@
               </v-row>
 
               <v-row v-if="newNodeOverrides(true).length > 0">
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-card-subtitle class="font-weight-bold">
                   Auto Node Overrides:
                 </v-card-subtitle>
-                <v-spacer></v-spacer>
+                <v-spacer />
 
                 <template>
                   <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(true)" :key="node">
@@ -111,7 +109,7 @@
           </v-container>
         </v-card>
       </v-dialog>
-      <v-spacer></v-spacer>
+      <v-spacer />
     </v-row>
   </v-container>
 </template>
@@ -125,7 +123,7 @@ import { useAdminStore } from "@/store/admin/store";
 export default defineComponent({
   name: "reviewProxies",
   components: {
-    nodeOverridesCard
+    nodeOverridesCard,
   },
   props: {
     proxies: {
@@ -134,9 +132,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    //! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
-    //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
-    //! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
+    // ! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
+    // ! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
+    // ! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
 
     // Kovax comment:
     // props.proxies is not ProxySettings. It is an Proxy[]. But the prop is not used anyway, because it is only referenced in the
@@ -182,7 +180,10 @@ export default defineComponent({
       searchedPlayerTag.value = adminStore.searchedBattletag;
       initProxySettings.value = await adminStore.getProxiesForPlayer(searchedPlayerTag.value);
       adminStore.updateModifiedProxies({ overrides: initProxySettings.value.nodeOverrides, isAutomatic: false });
-      adminStore.updateModifiedProxies({ overrides: initProxySettings.value.automaticNodeOverrides, isAutomatic: true });
+      adminStore.updateModifiedProxies({
+        overrides: initProxySettings.value.automaticNodeOverrides,
+        isAutomatic: true,
+      });
       originalProxySettings.value = JSON.parse(JSON.stringify(initProxySettings.value));
       adminStore.SET_PROXY_MODIFIED(false);
     }
