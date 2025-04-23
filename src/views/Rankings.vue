@@ -9,15 +9,13 @@
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
-        ></game-mode-select>
+        />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn tile v-on="on" class="transparent">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
-              {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
-              }}
+              {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
             </v-btn>
           </template>
           <v-card>
@@ -29,7 +27,7 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list>
-              <v-divider></v-divider>
+              <v-divider />
               <v-list dense max-height="400" class="leagues-list overflow-y-auto">
                 <v-list-item
                   v-for="item in ladders"
@@ -38,9 +36,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title>
-                      <league-icon :league="listLeagueIcon(item)" />
-                      {{ item.name }}
-                      {{ item.division !== 0 ? item.division : null }}
+                      <league-icon :league="listLeagueIcon(item)" /> {{ item.name }} {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -48,7 +44,7 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-autocomplete
           v-model="searchModel"
           :append-icon="mdiMagnify"
@@ -68,7 +64,7 @@
             In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
             but for now in Vue 2 we can't use TypeScript in templates.
           -->
-          <template v-slot:item="{ item }">
+          <template #item="{ item }">
             <template v-if="item?.player === undefined">
               <v-list-item-content>{{ item }}</v-list-item-content>
             </template>
@@ -86,7 +82,8 @@
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="playerIsRanked(item)">
-                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
+                  {{ $t(`common.wins`) }}
+                  {{ item.player.wins }} |
                   {{ $t(`common.losses`) }}
                   {{ item.player.losses }} |
                   {{ $t(`common.total`) }}
@@ -101,7 +98,7 @@
         </v-autocomplete>
       </v-card-title>
       <v-menu offset-x>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn tile v-on="on" class="ma-4 transparent">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
@@ -136,17 +133,15 @@
       </v-menu>
       <v-card-text>
         <rankings-grid
-          :rankings="rankings"
+          :rankings
           :ongoingMatches="ongoingMatchesMap"
           :selectedRank="searchModel"
-        ></rankings-grid>
+        />
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
             <div class="mt-10">
               <h3 class="pl-5">{{ $t("views_rankings.racedist") }}</h3>
-              <rankings-race-distribution
-                :rankings="rankings"
-              ></rankings-race-distribution>
+              <rankings-race-distribution :rankings />
             </div>
           </v-col>
         </v-row>
@@ -202,7 +197,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: undefined,
-    }
+    },
   },
   setup(props) {
     // @Prop({ default: "" })
@@ -225,7 +220,9 @@ export default defineComponent({
     const selectedLeagueName = computed<string>(() => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
     const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
     const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
-    const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const showRaceDistribution = computed<boolean>(() =>
+      rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1
+    );
 
     const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter((l) =>

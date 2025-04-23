@@ -13,8 +13,7 @@
     <v-row class="justify-center">
       <v-col cols="3" class="text-center">
         <v-btn @click="joinClan">
-          {{ $t("components_clans_acceptinvitepanel.join") }}
-          {{ clanName }} !
+          {{ $t("components_clans_acceptinvitepanel.join") }} {{ clanName }} !
         </v-btn>
       </v-col>
       <v-col cols="3" class="text-center">

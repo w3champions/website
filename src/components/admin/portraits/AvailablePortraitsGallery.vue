@@ -3,7 +3,7 @@
     <v-card-title class="justify-center">Special Portraits</v-card-title>
     <v-row no-gutters :justify="'start'">
       <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-        <assign-portrait :portraitId="portraitId" class="pa-1" :selectable="selectable" v-on="$listeners"/>
+        <assign-portrait :portraitId class="pa-1" :selectable v-on="$listeners" />
       </v-col>
     </v-row>
   </v-col>
@@ -40,9 +40,10 @@ export default defineComponent({
       if (!isAdmin.value) return;
 
       await playerManagement.loadAllSpecialPortraits();
-      allSpecialPortraits.value = Object.create(playerManagement.allSpecialPortraits
-        .map((x) => parseInt(x.id))
-        .sort((a, b) => b - a)
+      allSpecialPortraits.value = Object.create(
+        playerManagement.allSpecialPortraits
+          .map((x) => parseInt(x.id))
+          .sort((a, b) => b - a),
       );
     }
 

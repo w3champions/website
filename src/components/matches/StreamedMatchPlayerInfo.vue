@@ -45,7 +45,7 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
-    }
+    },
   },
   setup(props) {
     const twitchLink = ref<string>(`https://twitch.tv/${props.player.twitch}`);

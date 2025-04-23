@@ -21,7 +21,7 @@
           <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.largestarmy") }}</v-col>
         </v-row>
       </v-col>
-      <v-col :order="1" cols="1"></v-col>
+      <v-col :order="1" cols="1" />
       <v-col
         class="col-md-auto"
         :order="left ? 3 : 0"
@@ -121,7 +121,7 @@ export default defineComponent({
         props.resourceScoreOpponent
           .map((s) => s.goldCollected)
           .reduce((a, b) => a + b, 0),
-        props.resourceScore.map((s) => s.goldCollected).reduce((a, b) => a + b, 0)
+        props.resourceScore.map((s) => s.goldCollected).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -132,7 +132,7 @@ export default defineComponent({
           .reduce((a, b) => a + b, 0),
         props.resourceScore
           .map((s) => s.lumberCollected)
-          .reduce((a, b) => a + b, 0)
+          .reduce((a, b) => a + b, 0),
       );
     });
 
@@ -143,7 +143,7 @@ export default defineComponent({
           .reduce((a, b) => a + b, 0),
         props.resourceScoreOpponent
           .map((s) => s.goldUpkeepLost)
-          .reduce((a, b) => a + b, 0)
+          .reduce((a, b) => a + b, 0),
       );
     });
 
@@ -152,7 +152,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.largestArmy)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -161,7 +161,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.unitsKilled)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -170,7 +170,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.unitsProduced)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0),
       );
     });
 

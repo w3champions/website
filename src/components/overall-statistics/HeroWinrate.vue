@@ -23,9 +23,7 @@
     </v-row>
     <h2 class="justify-center text-center mt-4">
       <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">
-        {{
-          wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%"
-        }}
+        {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       </span>
       <br />
       <span class="won">{{ wins }}</span>

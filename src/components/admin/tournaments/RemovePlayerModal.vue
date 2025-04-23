@@ -19,7 +19,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t("views_admin.cancel") }}
       </v-btn>

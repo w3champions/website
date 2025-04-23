@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :headers="headers"
+    :headers
     :items="tournaments"
     :disable-pagination="true"
     :items-per-page="-1"

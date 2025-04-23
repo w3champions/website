@@ -65,7 +65,7 @@ export default defineComponent({
       hasNoPendingInvites,
       goToPlayer,
       revokeInvite,
-      battleTagToName
+      battleTagToName,
     };
   },
 });

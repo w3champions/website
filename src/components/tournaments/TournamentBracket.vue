@@ -1,23 +1,23 @@
 <template>
   <div v-if="showBracket" class="black--text">
     <h3 class="mt-3">Bracket</h3>
-    <div class="d-flex pa-2" v-bind:style="style">
+    <div class="d-flex pa-2" :style>
       <div v-for="(round, roundIndex) in rounds" :key="`matches-${roundIndex}`" class="d-flex">
         <template>
           <tournament-round-matches
-            :round="round"
-            :roundWidth="roundWidth"
-            :playerHeight="playerHeight"
-            :roundNameHeight="roundNameHeight"
+            :round
+            :roundWidth
+            :playerHeight
+            :roundNameHeight
             :verticalSpace="roundDimensions[roundIndex].verticalSpace"
             :marginTop="roundDimensions[roundIndex].marginTop"
           />
           <tournament-round-connectors
             v-if="roundIndex + 1 < rounds.length"
             :seriesCount="round.series.length"
-            :connectorWidth="connectorWidth"
-            :playerHeight="playerHeight"
-            :roundNameHeight="roundNameHeight"
+            :connectorWidth
+            :playerHeight
+            :roundNameHeight
             :verticalSpace="roundDimensions[roundIndex].verticalSpace"
             :marginTop="roundDimensions[roundIndex].marginTop"
           />
@@ -33,7 +33,7 @@ import assign from "lodash/assign";
 import fromPairs from "lodash/fromPairs";
 import pick from "lodash/pick";
 import times from "lodash/times";
-import { ETournamentState, ITournament, ITournamentRound, BracketDimensions } from "@/store/tournaments/types";
+import { BracketDimensions, ETournamentState, ITournament, ITournamentRound } from "@/store/tournaments/types";
 import TournamentRoundMatches from "./TournamentRoundMatches.vue";
 import TournamentRoundConnectors from "./TournamentRoundConnectors.vue";
 
@@ -61,7 +61,9 @@ export default defineComponent({
 
     const showBracket = computed<boolean>(() => {
       return [
-        ETournamentState.STARTED, ETournamentState.SHOW_WINNER, ETournamentState.FINISHED,
+        ETournamentState.STARTED,
+        ETournamentState.SHOW_WINNER,
+        ETournamentState.FINISHED,
       ].includes(props.tournament.state);
     });
 
@@ -69,8 +71,8 @@ export default defineComponent({
       const playerExtraData = fromPairs(
         props.tournament.players.map((p) => [
           p.battleTag,
-          pick(p, [ "countryCode", "race" ]),
-        ])
+          pick(p, ["countryCode", "race"]),
+        ]),
       );
       for (const round of props.tournament.rounds) {
         for (const series of round.series) {
