@@ -1,9 +1,8 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>
-        {{ $t(gateway.name) }}
+        <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon> {{ $t(gateway.name) }}
       </v-btn>
     </template>
     <v-card>
@@ -26,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { Gateways } from "@/store/ranking/types";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiEarth } from "@mdi/js";

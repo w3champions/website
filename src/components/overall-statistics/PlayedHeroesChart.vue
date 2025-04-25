@@ -58,7 +58,7 @@ export default defineComponent({
           };
         });
 
-      const ordered = orderBy(playedHeroesExtra, [ "race", "count", "icon" ], [ "asc", "desc", "asc" ]);
+      const ordered = orderBy(playedHeroesExtra, ["race", "count", "icon"], ["asc", "desc", "asc"]);
       const groupedByRace = groupBy(ordered, "race");
       const computed = mapValues(groupedByRace, (heroes: PlayedHeroExtra[], race: string) => {
         // Compute percentages within the race

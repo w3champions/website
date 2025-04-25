@@ -5,7 +5,7 @@
     </v-card-title>
     <v-container>
       <v-data-table
-        :headers="headers"
+        :headers
         :items-per-page="10"
         :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
         :items="files"
@@ -15,18 +15,18 @@
         :loading="isLoadingFiles"
         loading-text="Loading... Please wait"
       >
-        <template v-slot:top>
+        <template #top>
           <v-toolbar flat color="transparent">
             <template>
               <v-text-field
                 v-model="tableSearch"
                 label="Search"
                 :prepend-icon="mdiMagnify"
-              ></v-text-field>
+              />
             </template>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
@@ -50,13 +50,13 @@
                           :prepend-icon="mdiCamera"
                           accept="image/*"
                           label="Select an image"
-                        ></v-file-input>
+                        />
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn text @click="close" :disabled="isUploadingFile">
                     {{ $t(`views_admin.cancel`) }}
                   </v-btn>
@@ -73,9 +73,13 @@
           <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
-      <v-snackbar v-model="isValidationMessageVisible" top :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
+      <v-snackbar
+        v-model="isValidationMessageVisible"
+        top
+        :color="validationMessage.isSuccess ? 'green' : 'red accent-2'"
+      >
         {{ validationMessage.message }}
-        <template v-slot:action="{ attrs }">
+        <template #action="{ attrs }">
           <v-btn color="black" text v-bind="attrs" @click="resetValidationMessage">
             Close
           </v-btn>
@@ -89,8 +93,8 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
-import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
+import { mdiCamera, mdiDelete, mdiDownload, mdiMagnify } from "@mdi/js";
+import { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
 
 export default defineComponent({
   name: "AdminStorageAlibaba",
@@ -188,5 +192,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

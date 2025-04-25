@@ -7,7 +7,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="battleTag" label="Battletag" autofocus></v-text-field>
+            <v-text-field v-model="battleTag" label="Battletag" autofocus />
           </v-col>
         </v-row>
         <v-row>
@@ -25,7 +25,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>

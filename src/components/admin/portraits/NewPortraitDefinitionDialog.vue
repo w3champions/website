@@ -2,7 +2,7 @@
   <v-row>
     <v-col>
       <v-dialog v-model="dialogOpen" max-width="700">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
             <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now)</v-btn>
           </v-row>
@@ -28,13 +28,13 @@
                       v-model="portraitId"
                       :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                       label="Portrait Id"
-                    ></v-text-field>
+                    />
                   </v-container>
                 </v-row>
 
                 <v-row>
                   <v-container class="ml-3 mr-3">
-                    <portrait-group-combobox :portraitId="portraitId" />
+                    <portrait-group-combobox :portraitId />
                   </v-container>
                 </v-row>
               </v-container>
@@ -77,7 +77,9 @@ export default defineComponent({
     // Input validation rules
     const ruleRequired = computed(() => !!portraitId.value || "Required");
     const ruleMin = computed(() => portraitId.value.toString().length >= 1 || "Min 1 characters");
-    const ruleTaken = computed(() => !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString()) || "Portrait already exists");
+    const ruleTaken = computed(() =>
+      !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString()) || "Portrait already exists"
+    );
     const ruleNumber = computed(() => {
       const pattern = /^[0-9]*$/;
       return pattern.test(portraitId.value.toString()) || "Must be a number";
@@ -86,11 +88,11 @@ export default defineComponent({
 
     const checkRules = computed(() => {
       return (
-        !!portraitId.value &&
-        portraitId.value.toString().length >= 1 &&
-        !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString()) &&
-        /^[0-9]*$/.test(portraitId.value.toString()) &&
-        !portraitId.value.toString().startsWith("0")
+        !!portraitId.value
+        && portraitId.value.toString().length >= 1
+        && !allSpecialPortraits.value.map((x) => x.id).includes(portraitId.value.toString())
+        && /^[0-9]*$/.test(portraitId.value.toString())
+        && !portraitId.value.toString().startsWith("0")
       );
     });
 

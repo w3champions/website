@@ -8,21 +8,20 @@
               <v-col :align-self="'center'">
                 <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
-                <span class="mr-2" />
+                <span class="mr-2"></span>
                 <!-- add some space between name and season badges -->
                 <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block">
-                  <season-badge :season="season" :on-click="selectSeason" />
+                  <season-badge :season :on-click="selectSeason" />
                 </div>
               </v-col>
               <v-col :cols="12" :sm="'auto'">
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
                   <v-menu offset-x v-if="!!seasons && seasons.length > 0">
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-btn tile v-on="on" class="ma-2 transparent">
                         <span class="pa-0" v-if="selectedSeason">
-                          {{ $t("views_rankings.season") }}
-                          {{ selectedSeason.id }}
+                          {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
                         </span>
                       </v-btn>
                     </template>
@@ -57,7 +56,7 @@
                   :team="getPlayerTeam(ongoingMatch)"
                   :unfinishedMatch="true"
                   :left="true"
-                ></team-match-info>
+                />
               </div>
               <div class="live-match__vstext">VS</div>
               <div class="live-match__team2">
@@ -66,7 +65,7 @@
                   :team="getOpponentTeam(ongoingMatch)"
                   :unfinishedMatch="true"
                   right="true"
-                ></team-match-info>
+                />
               </div>
             </div>
             <div v-if="isOngoingMatchFFA" class="live-match__ffa">
@@ -82,12 +81,12 @@
               <host-icon
                 v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider"
                 :host="ongoingMatch.serverInfo"
-              ></host-icon>
+              />
             </v-row>
           </v-container>
 
           <v-tabs v-model="tabsModel">
-            <v-tabs-slider></v-tabs-slider>
+            <v-tabs-slider />
             <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
@@ -104,7 +103,7 @@
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
-          <router-view></router-view>
+          <router-view />
         </v-card>
       </v-col>
     </v-row>
@@ -210,9 +209,7 @@ export default defineComponent({
         return {} as Team;
       }
 
-      return match.teams.find((team: Team) =>
-        team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value)
-      );
+      return match.teams.find((team: Team) => team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value));
     }
 
     function getOpponentTeam(match: Match): Team | undefined {
@@ -221,7 +218,7 @@ export default defineComponent({
       }
 
       return match.teams.find(
-        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value)
+        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === battleTag.value),
       );
     }
 

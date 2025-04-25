@@ -1,6 +1,6 @@
 <template>
   <v-tooltip top style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <span v-on="on" :class="classes"></span>
     </template>
     <span>{{ (isRandom ? `${$t("races.RANDOM")} -> ` : "") + $t(`races.${raceName}`) }}</span>

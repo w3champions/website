@@ -379,6 +379,7 @@ const en = {
 
   components_matches_matchesgrid: {
     replay: "Replay",
+    floNode: "Flo Node",
   },
 
   proxies: {

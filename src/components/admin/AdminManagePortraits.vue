@@ -14,7 +14,7 @@
         <v-btn class="secondary w3-race-bg--text" :disabled="true">Add New Portrait (Coming Soon)</v-btn>
       </v-row>
       <v-row class="ma-1 pa-1">
-        <new-portrait-definition-dialog></new-portrait-definition-dialog>
+        <new-portrait-definition-dialog />
       </v-row>
 
       <v-dialog v-model="editDialogOpen" max-width="650">
@@ -115,17 +115,21 @@ export default defineComponent({
     }
 
     async function changeGroups(): Promise<void> {
-      await playerManagement.updatePortraitDefinition({
-        ids: [editPortraitId.value],
-        groups: groupsModel.value,
-      } satisfies PortraitDefinitionDTO);
+      await playerManagement.updatePortraitDefinition(
+        {
+          ids: [editPortraitId.value],
+          groups: groupsModel.value,
+        } satisfies PortraitDefinitionDTO,
+      );
       editDialogOpen.value = false;
     }
 
     async function confirmDelete(): Promise<void> {
-      await playerManagement.removePortraitDefinition({
-        ids: [editPortraitId.value],
-      } satisfies PortraitDefinitionDTO);
+      await playerManagement.removePortraitDefinition(
+        {
+          ids: [editPortraitId.value],
+        } satisfies PortraitDefinitionDTO,
+      );
       confirmDeleteDialogOpen.value = false;
     }
 

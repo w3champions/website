@@ -19,7 +19,7 @@
                 min-height="32"
                 max-height="48"
                 :src="`/assets/flags/${gateway.id}.svg`"
-              ></v-img>
+              />
             </v-col>
             <v-col cols="2" align-self="center">
               {{ gateway.name }}
@@ -28,9 +28,9 @@
         </v-row>
 
         <v-row class="mt-4 mb-1">
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn @click.stop="show = false">Close</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
     </v-card>
@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
+import { BNET_API_CLIENT_ID, REDIRECT_URL } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
 import { useI18n } from "vue-i18n-bridge";
 import { useOauthStore } from "@/store/oauth/store";
@@ -95,5 +95,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

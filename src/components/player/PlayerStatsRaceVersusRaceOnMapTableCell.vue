@@ -1,6 +1,6 @@
 <template>
   <v-tooltip top>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <td v-on="on" class="number-text" :class="toWinClass">
         {{ toWinText }}
       </td>
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { computed, PropType, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import isNil from "lodash/isNil";
 import { RaceWinLoss } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";

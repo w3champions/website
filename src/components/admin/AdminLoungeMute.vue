@@ -5,17 +5,17 @@
     </v-card-title>
     <v-container>
       <v-data-table
-        :headers="headers"
+        :headers
         :items-per-page="-1"
         :items="loungeMutes"
         sort-by="insertDate"
         :sort-desc="true"
       >
-        <template v-slot:top>
+        <template #top>
           <v-toolbar flat color="transparent">
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
@@ -38,7 +38,7 @@
                         @searchCleared="searchCleared"
                         @playerFound="playerFound"
                         classes="ml-5 mr-5"
-                      ></player-search>
+                      />
                     </v-row>
                     <v-row v-if="showConfirmation" class="ma-2">
                       <v-menu
@@ -59,10 +59,10 @@
                           <v-spacer />
                           <v-btn
                             text
-                            @click="
-                              endDate = '';
+                            @click='
+                              endDate = "";
                               dateMenu = false;
-                            "
+                            '
                           >
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
@@ -80,8 +80,7 @@
                         Are you sure you want to mute this player?
                       </v-card-text>
                       <v-card-title>
-                        {{ battleTag }}
-                        <v-spacer></v-spacer>
+                        {{ battleTag }} <v-spacer />
                       </v-card-title>
                     </v-row>
 
@@ -118,7 +117,6 @@
         </template>
       </v-data-table>
     </v-container>
-
   </div>
 </template>
 
@@ -154,8 +152,8 @@ export default defineComponent({
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
 
     async function deleteItem(item: LoungeMute): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-      await loungeMuteStore.deleteLoungeMute(item.battleTag);
+      confirm("Are you sure you want to delete this item?")
+        && await loungeMuteStore.deleteLoungeMute(item.battleTag);
       loadMutes();
     }
 
@@ -193,7 +191,6 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await init();
     });
-
 
     function searchCleared(): void {
       showConfirmation.value = false;

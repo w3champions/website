@@ -28,10 +28,10 @@
           :key="index"
           v-if="item.items && item.items.length > 0"
           :value="false"
-          v-bind:prepend-icon="item.icon"
+          :prepend-icon="item.icon"
           no-action
         >
-          <template v-slot:activator>
+          <template #activator>
             <v-list-item-content>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
@@ -61,14 +61,33 @@ import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountTie } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRoute, useRouter } from "vue-router/composables";
 import { EAdminRouteName } from "@/router/types";
 import {
-  mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
-  mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
-  mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
-  mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument
+  mdiAccountBoxOutline,
+  mdiAccountGroup,
+  mdiAccountKey,
+  mdiAccountNetwork,
+  mdiAccountQuestion,
+  mdiAccountRemove,
+  mdiBriefcase,
+  mdiChartLine,
+  mdiChatRemove,
+  mdiChatRemoveOutline,
+  mdiCog,
+  mdiFileDocument,
+  mdiFileDocumentOutline,
+  mdiFormatAlignLeft,
+  mdiGift,
+  mdiMapPlus,
+  mdiMapSearch,
+  mdiMessageAlert,
+  mdiMonitorDashboard,
+  mdiRocket,
+  mdiRss,
+  mdiSwordCross,
+  mdiTable,
+  mdiTooltipTextOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -80,7 +99,9 @@ export default defineComponent({
     const oauthStore = useOauthStore();
 
     const permissions = computed<string[]>(() => oauthStore.permissions);
-    const filteredNavItems = computed<AdminNavigationItem[]>(() => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
+    const filteredNavItems = computed<AdminNavigationItem[]>(() =>
+      navItems.filter((item) => permissions.value.includes(EPermission[item.permission]))
+    );
 
     function getFirstItem(items: Array<AdminNavigationItem>): AdminNavigationItem {
       for (const item of items) {

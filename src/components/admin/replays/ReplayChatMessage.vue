@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { computed, PropType, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { EChatScope } from "@/store/common/types";
 
 export default defineComponent({
@@ -59,7 +59,6 @@ export default defineComponent({
           return "";
       }
     }
-
 
     return {
       isPrivate,
