@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
-        {{ selected }}
+        {{ selectedText }}
       </v-btn>
     </template>
     <v-card>
@@ -15,9 +15,9 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
-          <v-list-item v-for="(m, index) in heroes" :key="index" @click="selectHero(m.key)">
+          <v-list-item v-for="hero in heroFilters" :key="hero.id" @click="selectHero(hero)">
             <v-list-item-content>
-              <v-list-item-title>{{ m.heroName }}</v-list-item-title>
+              <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -27,55 +27,44 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { TranslateResult } from "vue-i18n";
+import { computed, defineComponent, onMounted, ref } from "vue";
+import { TranslateResult, useI18n } from "vue-i18n-bridge";
 import { mdiDramaMasks } from "@mdi/js";
-import { EHeroes } from "@/store/heroes";
+import { useCommonStore } from "@/store/common/store";
+import { HeroFilter } from "@/store/heroes";
 
-type HeroSelectHero = {
-  heroName: TranslateResult;
-  key: EHeroes | string;
-};
 
 export default defineComponent({
   name: "HeroSelect",
-  props: {
-    hero: {
-      type: String,
-      required: false,
-      default: "All Heroes",
-    }
-  },
-  setup: (props, context) => {
+  setup: (_, context) => {
     const { t } = useI18n();
-    const heroes = computed<HeroSelectHero[]>(() => {
-      const heroList = Object.values(EHeroes)
-        .map((hero) => ({ heroName: t(`heroNames.${hero}`), key: hero }))
-        .sort((heroA, heroB) => {
-          if (heroA.heroName < heroB.heroName) {
-            return -1;
-          }
-          if (heroA.heroName > heroB.heroName) {
-            return 1;
-          } return 0;
-        });
-      return [{ heroName: "All Heroes", key: "All Heroes" }, ...heroList];
-    });
-    const selected = computed<string>(() => {
-      const match = Object.values(EHeroes).includes(props.hero as EHeroes);
-      return match ? t(`heroNames.${props.hero}`) : "All Heroes";
+    const commonStore = useCommonStore();
+    const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
+
+    let selectedHero = ref<HeroFilter>();
+    const selectedText = computed<TranslateResult>(() => {
+      if (selectedHero === undefined || selectedHero.value === undefined) {
+        return t("heroNames.allfilter");
+      } else {
+        return t(`heroNames.${selectedHero.value.name}`);
+      }
     });
 
-    function selectHero(hero: EHeroes): void {
-      context.emit("heroChanged", hero);
-    }
+    onMounted(async (): Promise<void> => {
+      await commonStore.loadHeroFilters();
+    });
+
+    const selectHero = (hero: HeroFilter) => {
+      selectedHero.value = hero;
+      context.emit("heroChanged", hero.id);
+    };
 
     return {
       mdiDramaMasks,
-      selected,
-      heroes,
+      heroFilters,
       selectHero,
+      selectedHero,
+      selectedText,
     };
   },
 });

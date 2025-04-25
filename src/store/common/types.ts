@@ -1,3 +1,5 @@
+import { HeroFilter } from "../heroes";
+
 export enum EChatScope {
   ALL = 0,
   ALLIES = 1,
@@ -8,4 +10,8 @@ export enum EChatScope {
 export type MapInfo = {
   readonly mapName: string;
   readonly map: string;
+};
+
+export type CommonState = {
+  heroFilters: HeroFilter[];
 };

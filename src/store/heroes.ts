@@ -27,6 +27,11 @@ export enum EHeroes {
   WARDEN = "warden",
 }
 
+export type HeroFilter = {
+  id: number;
+  name: string;
+};
+
 export type HeroData = {
   [key: string]: {
     race: ERaceEnum;

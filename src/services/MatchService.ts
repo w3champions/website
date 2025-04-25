@@ -2,7 +2,7 @@ import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 import { Mmr } from "@/store/match/types";
-import {EHeroes} from "@/store/heroes";
+import { EHeroes } from "@/store/heroes";
 
 export default class MatchService {
   static pageSize = 50;
@@ -14,14 +14,12 @@ export default class MatchService {
     map: string,
     mmr: Mmr,
     season: number,
-    hero: string,
+    hero: number,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
-    const heroQuery = Object.values(EHeroes).includes(hero as EHeroes)
-      ? `&hero=${hero}`
-      : "";
+    const heroQuery = hero > 0 ? `&hero=${hero}` : "";
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&season=${season}${heroQuery}`;
     const response = await fetch(url);
     return await response.json();
