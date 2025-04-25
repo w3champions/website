@@ -4,7 +4,7 @@
       Banned Players
     </v-card-title>
     <v-data-table
-      :headers
+      :headers="headers"
       :items="bannedPlayers"
       :items-per-page="10"
       :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
@@ -13,18 +13,19 @@
       :search="tableSearch"
       class="elevation-1"
     >
-      <template #top>
+
+      <template v-slot:top>
         <v-toolbar flat color="transparent">
           <template>
             <v-text-field
               v-model="tableSearch"
               label="Search ban"
               :prepend-icon="mdiMagnify"
-            />
+            ></v-text-field>
           </template>
-          <v-spacer />
+          <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
-            <template #activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -47,12 +48,12 @@
                         v-if="isAddDialog"
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
-                      />
+                      ></player-search>
                       <v-text-field
                         v-else
                         v-model="editedItem.battleTag"
                         label="BattleTag"
-                      />
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="py-0">
                       <v-menu
@@ -77,10 +78,10 @@
                           <v-spacer />
                           <v-btn
                             text
-                            @click='
-                              editedItem.endDate = "";
+                            @click="
+                              editedItem.endDate = '';
                               dateMenu = false;
-                            '
+                            "
                           >
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
@@ -97,7 +98,7 @@
 
                     <v-col class="py-0">
                       <v-tooltip top>
-                        <template #activator="{ on }">
+                        <template v-slot:activator="{ on }">
                           <v-select
                             v-on="on"
                             v-model="editedItem.gameModes"
@@ -108,7 +109,7 @@
                             :label="$t(`views_admin.gameMode`)"
                             multiple
                             hint="Which game modes to ban from?"
-                          />
+                          ></v-select>
                         </template>
                         <span>
                           To ban from all game modes, leave this field blank
@@ -120,7 +121,7 @@
                       <v-text-field
                         v-model="editedItem.banReason"
                         :label="$t(`views_admin.banreason`)"
-                      />
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -136,7 +137,7 @@
               </v-alert>
 
               <v-card-actions>
-                <v-spacer />
+                <v-spacer></v-spacer>
                 <v-btn text @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
@@ -163,7 +164,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
@@ -237,13 +238,14 @@ export default defineComponent({
         .map((id) => {
           return {
             id,
-            name: `gameModes.${EGameMode[id]}`,
+            name: `gameModes.${EGameMode[id]}`
           };
         });
       const activeModes = activeGameModes();
 
       return activeModes.concat(bannedInactiveModesForEditedItem);
     });
+
 
     async function loadBanList() {
       await adminStore.loadBannedPlayers();
@@ -259,6 +261,7 @@ export default defineComponent({
       confirm("Are you sure you want to delete this item?") && await adminStore.deleteBan(item);
       await loadBanList();
     }
+
 
     async function save(): Promise<void> {
       editedItem.value.author = author.value;

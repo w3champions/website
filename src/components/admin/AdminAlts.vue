@@ -18,7 +18,7 @@
           return-object
           @click:clear="revertToDefault"
           autofocus
-        />
+        ></v-autocomplete>
       </v-row>
 
       <v-card v-if="showAlts">
@@ -27,7 +27,7 @@
           <template>
             <v-list-item v-for="alt in alts" :key="alt">
               <div @click="searchAltsFromClick(alt)" style="cursor: pointer">{{ alt }}</div>
-              <v-spacer />
+              <v-spacer></v-spacer>
               <v-btn @click="goToProfile(alt)">Go to profile</v-btn>
             </v-list-item>
           </template>

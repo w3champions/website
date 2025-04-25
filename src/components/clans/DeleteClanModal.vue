@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col class="text-end">
         <v-dialog v-model="dialog" max-width="400px">
-          <template #activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn v-on="on" outlined color="error">
               {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
             </v-btn>
@@ -11,7 +11,8 @@
           <v-card>
             <v-card-title class="text-center">
               <span>
-                {{ $t("components_clans_deleteclanmodal.areyousuredelete") }} {{ clanName }}?
+                {{ $t("components_clans_deleteclanmodal.areyousuredelete") }}
+                {{ clanName }}?
               </span>
             </v-card-title>
             <v-card-actions>
@@ -20,7 +21,8 @@
                 {{ $t("components_clans_deleteclanmodal.close") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="deleteClan">
-                {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
+                {{ $t("components_clans_deleteclanmodal.delete") }}
+                {{ clanName }}
               </v-btn>
             </v-card-actions>
           </v-card>

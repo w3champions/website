@@ -1,13 +1,13 @@
 <template>
   <v-combobox
     v-model="chips"
-    :items
+    :items="items"
     small-chips
     clearable
     label="Assign Groups (optional) - Select existing or enter a new group"
     multiple
   >
-    <template #selection="{ attrs, item, select, selected }">
+    <template v-slot:selection="{ attrs, item, select, selected }">
       <v-chip
         v-bind="attrs"
         :color="'blue lighten-3'"

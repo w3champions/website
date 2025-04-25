@@ -1,5 +1,5 @@
 <template>
-  <div :style="containerStyle" :class="`connector ${side}-connector`">
+  <div v-bind:style="containerStyle" v-bind:class="`connector ${side}-connector`">
     <div class="connector-row top">
       <div class="cell top-left"></div>
       <div class="cell top-right"></div>

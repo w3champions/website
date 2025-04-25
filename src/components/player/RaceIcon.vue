@@ -1,6 +1,6 @@
 <template>
   <v-tooltip v-if="renderIcon" top style="white-space: pre-line">
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <img
         v-on="on"
         :src="renderIcon"

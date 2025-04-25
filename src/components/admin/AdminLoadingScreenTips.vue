@@ -4,16 +4,16 @@
       Loading Screen Tips
     </v-card-title>
     <v-data-table
-      :headers
+      :headers="headers"
       :items="tips"
       :items-per-page="10"
       class="elevation-1"
     >
-      <template #top>
+      <template v-slot:top>
         <v-toolbar flat color="transparent">
-          <v-spacer />
+          <v-spacer></v-spacer>
           <v-dialog v-model="dialog">
-            <template #activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -41,7 +41,7 @@
               </v-card-text>
 
               <v-card-actions>
-                <v-spacer />
+                <v-spacer></v-spacer>
                 <v-btn text @click="closeTips">Cancel</v-btn>
                 <v-btn
                   color="primary"
@@ -99,10 +99,12 @@ export default defineComponent({
     }
 
     async function deleteTipItem(item: LoadingScreenTip): Promise<void> {
-      confirm("Are you sure you want to delete this item?")
-        && (await infoMessagesStore.deleteTip(item));
+      confirm("Are you sure you want to delete this item?") &&
+        (await infoMessagesStore.deleteTip(item));
       dialog.value = false;
     }
+
+
 
     async function saveTips(): Promise<void> {
       editedTipItem.value.author = oauthStore.blizzardVerifiedBtag;

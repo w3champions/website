@@ -41,10 +41,10 @@
 
     <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
       <!-- toggle button for drawer menu, only for lower than lg -->
-      <v-app-bar-nav-icon
-        @click="setNavigationDrawerOpen(true)"
-        class="d-lg-none"
-      />
+     <v-app-bar-nav-icon
+       @click="setNavigationDrawerOpen(true)"
+       class="d-lg-none"
+     ></v-app-bar-nav-icon>
       <v-toolbar-title class="pa-0">
         <router-link :to="{ name: 'Home' }">
           <brand-logo
@@ -54,7 +54,7 @@
           />
         </router-link>
       </v-toolbar-title>
-      <v-spacer />
+      <v-spacer></v-spacer>
 
       <!-- alternative menu for lg+ only -->
       <span class="d-none d-lg-flex">
@@ -79,11 +79,13 @@
 
       <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
         <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
-        <sign-in-dialog v-model="showSignInDialog" />
+        <sign-in-dialog
+          v-model="showSignInDialog"
+        ></sign-in-dialog>
       </v-btn>
 
       <v-menu v-if="authCode">
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
             <v-icon>{{ mdiAccountCircle }}</v-icon>
@@ -100,7 +102,7 @@
       </v-menu>
 
       <v-menu offset-y>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
             <v-icon>{{ mdiInvertColors }}</v-icon>
           </v-btn>
@@ -122,12 +124,12 @@
       </v-menu>
 
       <v-menu offset-y>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" style="margin-top: 2px">
             <locale-icon
               :locale="savedLocale.get()"
               :showTwoLetterCode="false"
-            />
+            ></locale-icon>
           </v-btn>
         </template>
         <v-list class="locale-selector">
@@ -136,7 +138,7 @@
             :key="lang"
             @click="savedLocale.set(lang)"
           >
-            <locale-icon :locale="lang" />
+            <locale-icon :locale="lang"></locale-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -154,7 +156,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import localeIcon from "@/components/common/LocaleIcon.vue";
@@ -279,9 +281,9 @@ export default defineComponent({
       set: noop,
     });
 
-    const isAdmin = {
+    const isAdmin = ({
       get: () => oauthStore.isAdmin,
-    };
+    });
 
     function openPlayerProfile(): void {
       router.push({
@@ -289,17 +291,17 @@ export default defineComponent({
       });
     }
 
-    const savedLocale = {
+    const savedLocale = ({
       get: () => rootStateStore.locale,
       set: (newVal: string) => {
         locale.value = newVal;
         rootStateStore.saveLocale(newVal);
-      },
-    };
+      }
+    });
 
-    const activeLanguages = {
+    const activeLanguages = ({
       get: () => Object.keys(languages),
-    };
+    });
 
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
@@ -309,7 +311,7 @@ export default defineComponent({
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }
 
-    const themeColors = {
+    const themeColors = ({
       get: () => {
         switch (getTheme.value) {
           case "nightelf":
@@ -334,14 +336,14 @@ export default defineComponent({
             };
         }
       },
-    };
+    });
 
-    const isDarkTheme = {
+    const isDarkTheme = ({
       get: () => {
         const isDark = getTheme.value === "nightelf" || getTheme.value === "undead";
         return isDark;
       },
-    };
+    });
 
     // Check if given ItemType element is visible for the current user
     function isNavItemVisible(item: ItemType): boolean {
@@ -352,10 +354,11 @@ export default defineComponent({
     }
 
     function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] = Object.assign(
+      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
+      Object.assign(
         {},
         vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
-        themeColors.get(),
+        themeColors.get()
       );
     }
 

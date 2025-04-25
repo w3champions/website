@@ -20,15 +20,13 @@
       <br />
       <v-row v-if="clanIsFunded">
         <v-col
-          v-for="
-            mode in [
-              EGameMode.GM_1ON1,
-              EGameMode.GM_2ON2,
-              EGameMode.GM_2ON2_AT,
-              EGameMode.GM_4ON4,
-              EGameMode.GM_FFA,
-            ]
-          "
+          v-for="mode in [
+            EGameMode.GM_1ON1,
+            EGameMode.GM_2ON2,
+            EGameMode.GM_2ON2_AT,
+            EGameMode.GM_4ON4,
+            EGameMode.GM_FFA,
+          ]"
           :key="mode"
         >
           <player-league :small-mode="true" :show-performance="false" :mode-stat="getStats(mode)" />
@@ -46,7 +44,7 @@
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template #activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
                         <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
                       </div>
@@ -68,7 +66,7 @@
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template #activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
                         <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)" />
                       </div>
@@ -98,7 +96,7 @@
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template #activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
                         <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)" />
                       </div>
@@ -202,14 +200,12 @@ export default defineComponent({
     const members = computed<string[]>(() => clanStore.playersClan.members);
     const loggedInRole = computed<EClanRole>(() => defineRole(verifiedBtag.value));
     const loggedInPlayerIsChiefTain = computed<boolean>(() => playersClan.value.chiefTain === verifiedBtag.value);
-    const loggedInPlayerIsShaman = computed<boolean>(() =>
-      !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value)
-    );
+    const loggedInPlayerIsShaman = computed<boolean>(() => !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value));
 
     function getLeagueOrder(battleTag: string): number {
       return playersClan.value.ranks
         ?.filter(
-          (r) => r.season === currentSeason.value && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag),
+          (r) => r.season === currentSeason.value && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
         )
         .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
     }
@@ -257,7 +253,7 @@ export default defineComponent({
           games: 0,
           rank: 0,
           leagueOrder: 0,
-        },
+        }
       );
 
       const allRanks = playersClan.value.ranks.filter((r) => r.rankNumber != 0 && r.gameMode === mode);
@@ -285,7 +281,7 @@ export default defineComponent({
       defineRole,
       loggedInRole,
       members,
-      battleTagToName,
+      battleTagToName
     };
   },
 });

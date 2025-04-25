@@ -5,15 +5,15 @@
     </v-card-title>
     <v-container>
       <v-data-table
-        :headers
+        :headers="headers"
         :items-per-page="-1"
         :items="permissions"
       >
-        <template #top>
+        <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-spacer />
+            <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template #activator="{ on, attrs }">
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
@@ -36,20 +36,20 @@
                         v-if="isAddDialog"
                         @playerFound="playerFound"
                         class="mx-5"
-                      />
+                      ></player-search>
                       <v-text-field
                         v-else
                         v-model="editedItem.battleTag"
                         label="BattleTag"
                         class="mx-5"
-                      />
+                      ></v-text-field>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="12" md="12" class="px-5 pb-0">
                         <v-text-field
                           v-model="editedItem.description"
                           :label="'Description'"
-                        />
+                        ></v-text-field>
                       </v-col>
                       <v-col class="py-0">
                         <template>
@@ -62,8 +62,8 @@
                               v-model="editedItem.permissions"
                               :label="permission.name"
                               :value="permission.value"
-                              :dense="true"
-                            />
+                              :dense=true
+                            ></v-checkbox>
                           </v-col>
                         </template>
                       </v-col>
@@ -98,10 +98,10 @@
           </v-toolbar>
         </template>
         <template #[`item.permissionName`]="{ item }">
-          <td>
-            <div v-for="id in item.permissions" :key="id">{{ getPermissionName(id) }}</div>
-          </td>
-        </template>
+        <td>
+          <div v-for="id in item.permissions" :key="id">{{ getPermissionName(id) }}</div>
+        </td>
+      </template>
         <template #[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
@@ -112,8 +112,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from "vue";
-import { EPermission, IPermission } from "@/store/admin/permission/types";
+import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
+import { IPermission, EPermission } from "@/store/admin/permission/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePermissionStore } from "@/store/admin/permission/store";
@@ -176,14 +176,15 @@ export default defineComponent({
     }
 
     async function deleteItem(item: IPermission): Promise<void> {
-      confirm("Are you sure you want to delete this item?")
-        && await permissionStore.deleteAdmin(item.id);
+      confirm("Are you sure you want to delete this item?") &&
+      await permissionStore.deleteAdmin(item.id);
       await loadPermissions();
     }
 
     function close(): void {
       dialog.value = false;
     }
+
 
     async function save(): Promise<void> {
       editedItem.value.author = author.value;

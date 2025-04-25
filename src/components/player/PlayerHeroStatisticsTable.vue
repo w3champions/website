@@ -1,7 +1,7 @@
 <template>
   <div class="player-hero-statistics-table">
     <v-simple-table>
-      <template #default>
+      <template v-slot:default>
         <thead>
           <tr>
             <th v-for="header in headers" :key="header.value" class="text-left">
@@ -14,7 +14,7 @@
             <td v-html="item.image"></td>
             <td v-html="item.name"></td>
             <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-              <template #activator="{ on }">
+              <template v-slot:activator="{ on }">
                 <td v-on="on" v-html="item[header.value]"></td>
               </template>
               <div v-if="item.numbers_by_race[header.value]">
@@ -31,7 +31,7 @@
       :length="pageLength"
       :prev-icon="mdiMenuLeft"
       :next-icon="mdiMenuRight"
-    />
+    ></v-pagination>
   </div>
 </template>
 
@@ -56,9 +56,7 @@ export default defineComponent({
 
     const pageOffset = computed<number>(() => paginationSize * page.value);
     const pageLength = computed<number>(() => Math.ceil(props.heroStatistics.length / paginationSize));
-    const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() =>
-      props.heroStatistics.slice(pageOffset.value - paginationSize, pageOffset.value)
-    );
+    const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
 
     const headers = [
       { text: "", value: "image" },
@@ -71,10 +69,7 @@ export default defineComponent({
       { text: "vs. Random", value: "rand" },
     ] satisfies { text: string; value: keyof PlayerHeroStatistic }[];
 
-    const headersWithoutImageAndName = headers.slice(2) as {
-      text: string;
-      value: keyof NumbersByPlayerHeroStatistic;
-    }[];
+    const headersWithoutImageAndName = headers.slice(2) as { text: string; value: keyof NumbersByPlayerHeroStatistic }[];
 
     return {
       mdiMenuLeft,

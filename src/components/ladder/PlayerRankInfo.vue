@@ -1,6 +1,6 @@
 <template>
   <v-tooltip top>
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <div
         style="display: inline"
         class="pointer player-name"

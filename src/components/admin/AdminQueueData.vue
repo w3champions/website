@@ -19,12 +19,12 @@
                 <template>
                   <div v-if="getPlayerDataInGamemode(mode.id) != null">
                     <v-data-table
-                      :headers
+                      :headers="headers"
                       :items="getPlayerDataInGamemode(mode.id)"
                       :items-per-page="-1"
                       :disable-pagination="true"
                       :hide-default-footer="true"
-                    />
+                    ></v-data-table>
                   </div>
                   <div v-else>No Data found.</div>
                 </template>
@@ -34,6 +34,7 @@
         </v-expansion-panels>
       </v-card>
     </v-container>
+
   </div>
 </template>
 

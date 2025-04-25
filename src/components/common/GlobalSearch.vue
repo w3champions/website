@@ -9,7 +9,7 @@
     :nudge-width="300"
     :close-on-content-click="false"
   >
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn text tile v-on="on">
         <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
@@ -32,7 +32,7 @@
           item-text="battleTag"
           item-value="battleTag"
         >
-          <template #item="data">
+          <template v-slot:item="data">
             <v-list-item-avatar>
               <img :src="getPlayerAvatarUrl(data.item)" />
             </v-list-item-avatar>
@@ -46,12 +46,12 @@
                   :key="season.id"
                   class="mr-1 mt-1 d-inline-block"
                 >
-                  <season-badge :season />
+                  <season-badge :season="season" />
                 </div>
               </v-list-item-subtitle>
             </v-list-item-content>
           </template>
-          <template #append-item>
+          <template v-slot:append-item>
             <div v-intersect="endIntersect"></div>
           </template>
         </v-autocomplete>
@@ -178,6 +178,7 @@ export default defineComponent({
     };
   },
 });
+
 </script>
 
 <style lang="scss" scoped>

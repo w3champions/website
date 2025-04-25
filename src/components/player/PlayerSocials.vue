@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
       <v-tooltip bottom>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             v-on="on"
@@ -18,7 +18,7 @@
     </v-col>
     <v-col cols="2" v-if="userProfile.youtube != ''" class="socialIcon">
       <v-tooltip bottom>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             v-on="on"
@@ -33,7 +33,7 @@
     </v-col>
     <v-col cols="2" v-if="userProfile.twitter != ''" class="socialIcon">
       <v-tooltip bottom>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             v-on="on"
@@ -48,7 +48,7 @@
     </v-col>
     <v-col cols="2" v-if="!!userProfile.trovo" class="socialIcon">
       <v-tooltip bottom>
-        <template #activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             v-on="on"
