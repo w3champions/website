@@ -1,14 +1,14 @@
 <template>
   <v-tabs v-model="selectedTab">
     <v-tabs-slider></v-tabs-slider>
-    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
+    <v-tab v-for="race in racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
       <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
       </span>
-      <race-icon v-else :race="race.raceId" />
+      <race-icon v-else :race="race.raceId"></race-icon>
     </v-tab>
 
-    <v-tab-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
+    <v-tab-item v-for="race in racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
@@ -58,7 +58,7 @@ import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap } from "@/store/player/types";
+import { PlayerHeroWinRateForStatisticsTab, PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
 import { defaultStatsTab } from "@/helpers/profile";
 import { racesWithTotal } from "@/helpers/general";
@@ -88,15 +88,13 @@ export default defineComponent({
     const selectedRace = computed(() => Number(selectedTab.value.split("-")[1]));
     const pageOffset = computed(() => paginationSize * page.value);
     const pageLength = computed(() => Math.ceil(heroWinRates().length / paginationSize));
-    const heroStatsCurrentPage = computed(() => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
+    const heroStatsCurrentPage = computed(() => heroWinRates().slice(pageOffset.value - paginationSize, pageOffset.value));
 
     const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
 
-    watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
-        (newData: RaceWinsOnMap[]) => {
-          selectedTab.value = defaultStatsTab(newData);
-        }
-    );
+    watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All, (newData: RaceWinsOnMap[]) => {
+      selectedTab.value = defaultStatsTab(newData);
+    });
 
     const headers = [
       { text: "", value: "image" },

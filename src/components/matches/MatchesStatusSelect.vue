@@ -2,8 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
-        {{ currentStatus.name }}
+        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon> {{ currentStatus.name }}
       </v-btn>
     </template>
     <v-card>

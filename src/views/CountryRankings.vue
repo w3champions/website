@@ -5,7 +5,7 @@
         <gateway-select
           @gatewayChanged="onGatewayChanged"
           v-if="isGatewayNeeded"
-        />
+        ></gateway-select>
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
@@ -21,7 +21,7 @@
                   class="country-flag"
                   :country="selectedCountry.countryCode"
                   size="normal"
-                />
+                ></country-flag>
               </div>
               {{ selectedCountry.country }}
             </v-btn>
@@ -47,7 +47,7 @@
                           class="country-flag"
                           :country="item.countryCode"
                           size="normal"
-                        />
+                        ></country-flag>
                       </span>
                       {{ item.country }}
                     </v-list-item-title>
@@ -232,7 +232,6 @@ export default defineComponent({
     onUnmounted((): void => {
       clearInterval(_intervalRefreshHandle);
     });
-
 
     async function refreshRankings(): Promise<void> {
       await loadOngoingMatches();

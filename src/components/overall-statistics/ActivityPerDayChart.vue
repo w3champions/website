@@ -1,5 +1,5 @@
 <template>
-  <line-chart :chart-data="gameHourChartData" />
+  <line-chart :chart-data="gameHourChartData"></line-chart>
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
@@ -35,34 +35,40 @@ export default defineComponent({
     const { t } = useI18n();
 
     // Get the "All" set, or an empty set if it doesn't exist
-    const allSet = computed(() => props.gameDays
-      .find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
+    const allSet = computed(() =>
+      props.gameDays
+        .find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
         gameMode: EGameMode.UNDEFINED,
         gameDays: [] as GameDay[],
       } as GameDayPerMode
     );
 
     // Get the list of dates for the x-axis
-    const gameDayDates = computed(() => allSet.value.gameDays
-      .slice(0, allSet.value.gameDays.length - 1) // Drop today's data (last entry)
-      .map((g) => utcToZonedTime(parseJSON(g.date), "UTC"))
+    const gameDayDates = computed(() =>
+      allSet.value.gameDays
+        .slice(0, allSet.value.gameDays.length - 1) // Drop today's data (last entry)
+        .map((g) => utcToZonedTime(parseJSON(g.date), "UTC"))
     );
 
     // Recompute the "All" set using all the other game modes,
     // using each mode's normalizing multiplier (the backend doesn't normalize)
-    const normalizedAllSet = computed(() => props.gameDays
-      .filter((g) => g.gameMode !== EGameMode.UNDEFINED)
-      .reduce((acc: GameDayPerMode, curr: GameDayPerMode) => ({
-        ...acc,
-        gameDays: acc.gameDays.map((g, i) => {
-          const mult = normalizingMultiplier(curr.gameMode);
-          const normalizedGamesPlayed = (curr.gameDays[i]?.gamesPlayed ?? 0) * mult;
-          return { ...g, gamesPlayed: g.gamesPlayed + normalizedGamesPlayed };
-        }),
-      }), {
-        gameMode: EGameMode.UNDEFINED,
-        gameDays: allSet.value.gameDays.map((g) => ({ ...g, gamesPlayed: 0 })),
-      } satisfies GameDayPerMode)
+    const normalizedAllSet = computed(() =>
+      props.gameDays
+        .filter((g) => g.gameMode !== EGameMode.UNDEFINED)
+        .reduce(
+          (acc: GameDayPerMode, curr: GameDayPerMode) => ({
+            ...acc,
+            gameDays: acc.gameDays.map((g, i) => {
+              const mult = normalizingMultiplier(curr.gameMode);
+              const normalizedGamesPlayed = (curr.gameDays[i]?.gamesPlayed ?? 0) * mult;
+              return { ...g, gamesPlayed: g.gamesPlayed + normalizedGamesPlayed };
+            }),
+          }),
+          {
+            gameMode: EGameMode.UNDEFINED,
+            gameDays: allSet.value.gameDays.map((g) => ({ ...g, gamesPlayed: 0 })),
+          } satisfies GameDayPerMode,
+        )
     );
 
     const gameHourChartData = computed<ChartData<"line">>(() => {

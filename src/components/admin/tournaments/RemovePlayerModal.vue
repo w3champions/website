@@ -13,7 +13,7 @@
               item-text="battleTag"
               item-value="battleTag"
               label="Player"
-            />
+            ></v-select>
           </v-col>
         </v-row>
       </v-container>

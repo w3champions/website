@@ -1,18 +1,18 @@
 <template>
   <v-tabs v-model="selectedTab" v-if="!isStatsEmpty">
     <v-tabs-slider></v-tabs-slider>
-    <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
+    <v-tab v-for="stat in stats" :key="stat.race" :href="`#tab-${stat.race}`">
       <span v-if="stat.race === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
       </span>
-      <race-icon v-else :race="stat.race" />
+      <race-icon v-else :race="stat.race"></race-icon>
     </v-tab>
 
-    <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
+    <v-tab-item v-for="stat in stats" :key="stat.race" :value="'tab-' + stat.race">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
-            <race-to-map-stat :stats="stat.winLossesOnMap" />
+            <race-to-map-stat :stats="stat.winLossesOnMap"></race-to-map-stat>
           </v-col>
         </v-row>
       </v-card-text>

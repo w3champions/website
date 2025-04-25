@@ -7,7 +7,7 @@
           class="country-flag"
           :country="selectedCountryCode.get()"
           size="small"
-        />
+        ></country-flag>
       </span>
     </template>
     <span>{{ tooltip() }}</span>
@@ -25,7 +25,7 @@ const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-cou
 export default defineComponent({
   name: "CountryFlagExtended",
   components: {
-    CountryFlag
+    CountryFlag,
   },
   props: {
     countryCode: { type: String, required: false, default: "" },
@@ -35,9 +35,9 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
 
-    const selectedCountryCode = ({
+    const selectedCountryCode = {
       get: (): string => props.countryCode ? props.countryCode : props.location,
-    });
+    };
 
     function tooltip(): string {
       if (props.countryCode) return CountriesByCode[props.countryCode];

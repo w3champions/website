@@ -13,7 +13,7 @@
           :hide-default-footer="true"
           :items-per-page="100"
         >
-          <template #[`item.actions`]="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>
           </template>
         </v-data-table>
@@ -108,5 +108,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

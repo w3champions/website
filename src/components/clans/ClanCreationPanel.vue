@@ -16,14 +16,14 @@
           :rules="[mustBeBetween(3, 30, ' ')]"
           :label="$t(`components_clans_clancreationpanel.clanname`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
-        />
+        ></v-text-field>
         <v-text-field
           :v-model="clanAbbreviationToCreate"
           @change="changeInsertedClanAbbreviation"
           :rules="[mustBeBetween(2, 5, '')]"
           :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
-        />
+        ></v-text-field>
       </v-col>
     </v-row>
     <v-row class="justify-center">
@@ -63,13 +63,15 @@ export default defineComponent({
 
     function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
       return (v: string): TranslateResult => {
-        if (!v)
+        if (!v) {
           return t("components_clans_clancreationpanel.fieldismandatory");
-        if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`))
+        }
+        if (!v.match(`^[a-zA-Z0-9${space}]{${min},${max}}$`)) {
           return t("components_clans_clancreationpanel.minmaxchars", {
             min,
             max,
           });
+        }
         return "";
       };
     }

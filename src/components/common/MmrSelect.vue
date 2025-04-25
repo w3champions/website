@@ -2,8 +2,7 @@
   <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>
-        {{ selected }}
+        <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon> {{ selected }}
       </v-btn>
     </template>
     <v-card class="px-2 pt-2">
@@ -26,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { Mmr } from "@/store/match/types";
 import { mdiChevronTripleUp } from "@mdi/js";
 
@@ -73,7 +72,6 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss" scoped>

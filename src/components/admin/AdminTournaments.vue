@@ -11,7 +11,7 @@
             :saving="isLoading"
             @cancel="closeAddPlayer"
             @save="addPlayer"
-          />
+          ></add-player-modal>
         </v-dialog>
         <v-dialog v-if="isRemovePlayerOpen" v-model="isRemovePlayerOpen" max-width="800px">
           <remove-player-modal
@@ -19,7 +19,7 @@
             :saving="isLoading"
             @cancel="closeRemovePlayer"
             @save="removePlayer"
-          />
+          ></remove-player-modal>
         </v-dialog>
         <v-dialog v-if="isCreateTournamentOpen" v-model="isCreateTournamentOpen" max-width="1000px">
           <edit-tournament-modal
@@ -27,7 +27,7 @@
             :maps="tournamentMaps"
             @cancel="closeCreateTournament"
             @save="createTournament"
-          />
+          ></edit-tournament-modal>
         </v-dialog>
         <v-dialog v-if="isEditTournamentOpen" v-model="isEditTournamentOpen" max-width="1000px">
           <edit-tournament-modal
@@ -36,7 +36,7 @@
             :maps="tournamentMaps"
             @cancel="closeEditTournament"
             @save="updateTournament"
-          />
+          ></edit-tournament-modal>
         </v-dialog>
 
         <v-row>
@@ -46,7 +46,8 @@
           <v-col class="d-flex justify-end">
             <div v-if="tournament.id">
               <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openAddPlayer">Add Player</v-btn>
-              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openRemovePlayer">Remove Player</v-btn>
+              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openRemovePlayer"
+              >Remove Player</v-btn>
               <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openEditTournament">Edit</v-btn>
             </div>
             <v-btn v-else color="primary" class="mb-2 w3-race-bg--text" @click="openCreateTournament">Create Tournament</v-btn>
@@ -54,7 +55,7 @@
         </v-row>
 
         <div v-if="tournament.id">
-          <tournament-view :tournament="tournament" />
+          <tournament-view :tournament="tournament"></tournament-view>
         </div>
         <div v-else>
           No upcoming tournament.
@@ -67,7 +68,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import throttle from "lodash/throttle";
-import { ITournament, ITournamentPlayer, ETournamentState } from "@/store/tournaments/types";
+import { ETournamentState, ITournament, ITournamentPlayer } from "@/store/tournaments/types";
 import TournamentView from "../tournaments/TournamentView.vue";
 import AddPlayerModal from "./tournaments/AddPlayerModal.vue";
 import RemovePlayerModal from "./tournaments/RemovePlayerModal.vue";

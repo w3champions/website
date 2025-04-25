@@ -27,15 +27,15 @@
               <v-card-title>Portrait Id: {{ editPortraitId }}</v-card-title>
             </v-row>
             <v-row>
-              <v-col />
+              <v-col></v-col>
               <v-col>
-                <assign-portrait :portraitId="editPortraitId" :selectable="false" />
+                <assign-portrait :portraitId="editPortraitId" :selectable="false"></assign-portrait>
               </v-col>
-              <v-col />
+              <v-col></v-col>
             </v-row>
             <v-row class="justify-center">
               <v-card-actions>
-                <portrait-group-combobox @groups-changed="updateGroupModel" :portraitId="editPortraitId" />
+                <portrait-group-combobox @groups-changed="updateGroupModel" :portraitId="editPortraitId"></portrait-group-combobox>
               </v-card-actions>
             </v-row>
             <v-row class="justify-center">
@@ -75,7 +75,7 @@
       </v-row>
 
       <v-row>
-        <available-portraits-gallery @portrait-selected="selectPortrait" />
+        <available-portraits-gallery @portrait-selected="selectPortrait"></available-portraits-gallery>
       </v-row>
     </v-container>
   </div>
@@ -115,17 +115,21 @@ export default defineComponent({
     }
 
     async function changeGroups(): Promise<void> {
-      await playerManagement.updatePortraitDefinition({
-        ids: [editPortraitId.value],
-        groups: groupsModel.value,
-      } satisfies PortraitDefinitionDTO);
+      await playerManagement.updatePortraitDefinition(
+        {
+          ids: [editPortraitId.value],
+          groups: groupsModel.value,
+        } satisfies PortraitDefinitionDTO,
+      );
       editDialogOpen.value = false;
     }
 
     async function confirmDelete(): Promise<void> {
-      await playerManagement.removePortraitDefinition({
-        ids: [editPortraitId.value],
-      } satisfies PortraitDefinitionDTO);
+      await playerManagement.removePortraitDefinition(
+        {
+          ids: [editPortraitId.value],
+        } satisfies PortraitDefinitionDTO,
+      );
       confirmDeleteDialogOpen.value = false;
     }
 

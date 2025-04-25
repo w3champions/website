@@ -2,25 +2,25 @@
   <line-chart-generic
     :data="chartData"
     :options="chartOptions"
-  />
+  ></line-chart-generic>
 </template>
 
 <script lang="ts">
 import {
   Chart as ChartJS,
+  ChartArea,
+  ChartData,
   ChartOptions,
   Filler,
+  Legend,
   LinearScale,
   LineController,
   LineElement,
   PointElement,
   ScaleOptions,
+  ScriptableContext,
   TimeScale,
   Tooltip,
-  Legend,
-  ChartArea,
-  ScriptableContext,
-  ChartData,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
@@ -53,7 +53,7 @@ export const defaultOptions = (): ChartOptions => {
   return {
     plugins: {
       legend: {
-        display: window.innerWidth > 680 // Don't display legends for mobile devices, because they overflow into the chart area.
+        display: window.innerWidth > 680, // Don't display legends for mobile devices, because they overflow into the chart area.
       },
       tooltip: {
         bodyAlign: "center",
@@ -84,13 +84,13 @@ export const defaultOptions = (): ChartOptions => {
 };
 
 const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color: string): CanvasGradient => {
-    const regex = /\((\d*,\s?){2}\d*/g;
-    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-    gradient.addColorStop(0.0, "rgba" + color.match(regex) + ", 0.0)");
-    gradient.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.25)");
-    gradient.addColorStop(0.8, "rgba" + color.match(regex) + ", 0.50)");
-    gradient.addColorStop(1, "rgba" + color.match(regex) + ", 0.75)");
-    return gradient;
+  const regex = /\((\d*,\s?){2}\d*/g;
+  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  gradient.addColorStop(0.0, "rgba" + color.match(regex) + ", 0.0)");
+  gradient.addColorStop(0.3, "rgba" + color.match(regex) + ", 0.25)");
+  gradient.addColorStop(0.8, "rgba" + color.match(regex) + ", 0.50)");
+  gradient.addColorStop(1, "rgba" + color.match(regex) + ", 0.75)");
+  return gradient;
 };
 
 export const getBackgroundColor = (context: ScriptableContext<"line">, color: string) => {
@@ -113,6 +113,6 @@ export default {
       type: Object,
       default: defaultOptions,
     },
-  }
+  },
 };
 </script>

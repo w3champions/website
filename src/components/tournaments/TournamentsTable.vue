@@ -9,16 +9,16 @@
     @click:row="onRowClick"
     :hide-default-footer="true"
   >
-    <template #[`item.startDateTime`]="{ item }">
+    <template v-slot:[`item.startDateTime`]="{ item }">
       {{ formatDate(item) }}
     </template>
-    <template #[`item.state`]="{ item }">
+    <template v-slot:[`item.state`]="{ item }">
       {{ getStateDescription(item) }}
     </template>
-    <template #[`item.playerCount`]="{ item }">
+    <template v-slot:[`item.playerCount`]="{ item }">
       {{ item.players.length }}
     </template>
-    <template #[`item.winner`]="{ item }">
+    <template v-slot:[`item.winner`]="{ item }">
       {{ item.winner ? item.winner.battleTag : "-" }}
     </template>
   </v-data-table>

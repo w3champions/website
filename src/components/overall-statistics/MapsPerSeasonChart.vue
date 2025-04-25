@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="barChartData" />
+  <bar-chart :chart-data="barChartData"></bar-chart>
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";

@@ -1,7 +1,13 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
+  <v-data-table
+    hide-default-footer
+    :headers="headers"
+    :items="gameModeStatsCombined"
+    mobile-breakpoint="400"
+    :items-per-page="-1"
+  >
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
-      <v-tooltip top v-bind:key="h.text">
+      <v-tooltip top :key="h.text">
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ header.text }}</span>
         </template>
@@ -13,7 +19,7 @@
         <tr v-for="item in items" :key="item.id">
           <td class="cell d-flex justify-center align-center">
             <span>{{ $t("gameModes." + EGameMode[item.gameMode]) }}</span>
-            <race-icon style="display: inline; padding-left: 10px" :race="item.race" />
+            <race-icon style="display: inline; padding-left: 10px" :race="item.race"></race-icon>
           </td>
           <td class="number-text text-start cell">
             <div class="text-center">

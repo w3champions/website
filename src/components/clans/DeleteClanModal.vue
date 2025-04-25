@@ -11,18 +11,16 @@
           <v-card>
             <v-card-title class="text-center">
               <span>
-                {{ $t("components_clans_deleteclanmodal.areyousuredelete") }}
-                {{ clanName }}?
+                {{ $t("components_clans_deleteclanmodal.areyousuredelete") }} {{ clanName }}?
               </span>
             </v-card-title>
             <v-card-actions>
-              <v-spacer />
+              <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="dialog = false">
                 {{ $t("components_clans_deleteclanmodal.close") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="deleteClan">
-                {{ $t("components_clans_deleteclanmodal.delete") }}
-                {{ clanName }}
+                {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
               </v-btn>
             </v-card-actions>
           </v-card>

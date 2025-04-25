@@ -15,7 +15,7 @@
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
             hide-details
-          />
+          ></v-select>
           <v-switch
             v-model="normalizedGamesPerDay"
             @change="setNormalizedGamesPerDay"
@@ -34,7 +34,7 @@
           :selectedGameMode="selectedGamesPerDayMode"
           :game-days="gameDays"
           :normalized="normalizedGamesPerDay"
-        />
+        ></activity-per-day-chart>
       </v-col>
     </v-row>
     <v-card-title>
@@ -45,7 +45,7 @@
       <amount-per-day-chart
         style="position: relative"
         :game-days="playersPerDay"
-      />
+      ></amount-per-day-chart>
     </v-card-text>
 
     <v-card-title>
@@ -62,7 +62,7 @@
             @change="setSelectedModeForMaps"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedSeasonForMaps"
             :items="seasons"
@@ -71,7 +71,7 @@
             @change="setSelectedSeasonForMaps"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
@@ -79,7 +79,7 @@
           <maps-per-season-chart
             style="position: relative"
             :maps-per-season="mapsPerSeason()"
-          />
+          ></maps-per-season-chart>
         </v-card-text>
       </v-col>
     </v-row>
@@ -98,7 +98,7 @@
             @change="setSelectedPopularHourMode"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
         <div style="padding: 15px; font-size: 14px">
           Graph adjusted to your timezone
@@ -106,7 +106,7 @@
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <popular-game-time-chart :popular-game-hours="selectedGameHours" />
+          <popular-game-time-chart :popular-game-hours="selectedGameHours"></popular-game-time-chart>
         </v-card-text>
       </v-col>
     </v-row>
@@ -125,12 +125,12 @@
             @change="setSelectedLengthMode"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <game-length-chart :game-length="selectedGameLength" />
+          <game-length-chart :game-length="selectedGameLength"></game-length-chart>
         </v-card-text>
       </v-col>
     </v-row>
@@ -150,7 +150,7 @@
             @change="setSelectedMatchupRace1"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedMatchupRace2"
             :items="raceOptions"
@@ -159,7 +159,7 @@
             @change="setSelectedMatchupRace2"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedMatchupMmr"
             :items="matchupMmrOptions"
@@ -168,7 +168,7 @@
             @change="setSelectedMatchupMmr"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmmr`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedMatchupSeason"
             :items="seasonsForMatchup"
@@ -177,13 +177,12 @@
             @change="setMatchupLengthSeason"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          {{ race1String }} vs {{ race2String }}
-          <matchup-length-bar-chart />
+          {{ race1String }} vs {{ race2String }} <matchup-length-bar-chart></matchup-length-bar-chart>
         </v-card-text>
       </v-col>
     </v-row>
@@ -283,13 +282,9 @@ export default defineComponent({
       normalizedGamesPerDay.value = normalized;
     }
 
-    const seasons = computed<string[]>(() =>
-      ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]
-    );
+    const seasons = computed<string[]>(() => ["All", ...rankingsStore.seasons.map((s) => s.id.toString())]);
 
-    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() =>
-      seasons.value.map((e) => ({ id: e.toLowerCase(), name: e }))
-    );
+    const seasonsForMatchup = computed<{ id: string; name: string }[]>(() => seasons.value.map((e) => ({ id: e.toLowerCase(), name: e })));
 
     const raceOptions = [
       { name: "Human", id: ERaceEnum.HUMAN },
@@ -306,20 +301,20 @@ export default defineComponent({
       return mmrOptions.map((mmr) => {
         return {
           id: mmr,
-          name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`
+          name: mmr == "all" ? "All" : `${mmr}-${parseInt(mmr) + 200}`,
         };
       });
     });
 
     const selectedGameLength = computed<GameLength>(() => {
       return gameLength.value?.filter(
-        (g) => g.gameMode == selectedLengthMode.value
+        (g) => g.gameMode == selectedLengthMode.value,
       )[0] ?? { lengths: [] };
     });
 
     const selectedGameHours = computed<PopularHours>(() => {
       return popularGameHours.value.filter(
-        (g) => g.gameMode == selectedPopularHourMode.value
+        (g) => g.gameMode == selectedPopularHourMode.value,
       )[0] ?? { timeslots: [] };
     });
 
@@ -335,18 +330,17 @@ export default defineComponent({
         overWrittenOnce = true;
       }
 
-      const selectedSeasonMaps =
-        overallStatsStore.matchesOnMapPerSeason.filter(
-          (m) =>
-            m.season ===
+      const selectedSeasonMaps = overallStatsStore.matchesOnMapPerSeason.filter(
+        (m) =>
+          m.season ===
             (selectedSeasonForMaps.value === "All"
               ? -1
-              : parseInt(selectedSeasonForMaps.value))
-        )[0];
+              : parseInt(selectedSeasonForMaps.value)),
+      )[0];
       if (!selectedSeasonMaps) return [];
       return (
         selectedSeasonMaps?.matchesOnMapPerModes?.filter(
-          (m) => m.gameMode === selectedModeForMaps.value
+          (m) => m.gameMode === selectedModeForMaps.value,
         )[0]?.maps ?? []
       );
     }
@@ -357,7 +351,7 @@ export default defineComponent({
           .toReversed()
           ?.splice(
             0,
-            overallStatsStore.playersPerDay.length - 1
+            overallStatsStore.playersPerDay.length - 1,
           ) ?? []
       );
     });

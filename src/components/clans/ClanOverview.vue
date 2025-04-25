@@ -9,27 +9,29 @@
         </v-col>
       </v-row>
     </div>
-    <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
-    <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
+    <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer"></accept-invite-panel>
+    <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer"></clan-creation-panel>
     <div v-if="!hasNoClan">
       <v-card-title class="justify-space-between">
         <span>{{ playersClan.clanName }} ({{ playersClan.clanId }})</span>
-        <invite-player-modal v-if="loggedInPlayerIsShaman" />
+        <invite-player-modal v-if="loggedInPlayerIsShaman"></invite-player-modal>
       </v-card-title>
       <br />
       <br />
       <v-row v-if="clanIsFunded">
         <v-col
-          v-for="mode in [
-            EGameMode.GM_1ON1,
-            EGameMode.GM_2ON2,
-            EGameMode.GM_2ON2_AT,
-            EGameMode.GM_4ON4,
-            EGameMode.GM_FFA,
-          ]"
+          v-for="
+            mode in [
+              EGameMode.GM_1ON1,
+              EGameMode.GM_2ON2,
+              EGameMode.GM_2ON2_AT,
+              EGameMode.GM_4ON4,
+              EGameMode.GM_FFA,
+            ]
+          "
           :key="mode"
         >
-          <player-league :small-mode="true" :show-performance="false" :mode-stat="getStats(mode)" />
+          <player-league :small-mode="true" :show-performance="false" :mode-stat="getStats(mode)"></player-league>
         </v-col>
       </v-row>
       <br />
@@ -39,14 +41,14 @@
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
-                  <clan-role-icon :role="roleEnums.ChiefTain" />
+                  <clan-role-icon :role="roleEnums.ChiefTain"></clan-role-icon>
                   <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)"></league-icon>
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -61,14 +63,14 @@
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
-                  <clan-role-icon :role="roleEnums.Shaman" />
+                  <clan-role-icon :role="roleEnums.Shaman"></clan-role-icon>
                   <span class="pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)" />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)"></league-icon>
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -80,7 +82,7 @@
                     :battle-tag="shaman"
                     :role="defineRole(shaman)"
                     :logged-in-user-role="loggedInRole"
-                  />
+                  ></member-management-menu>
                 </v-col>
               </v-row>
             </td>
@@ -91,14 +93,14 @@
             <td>
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
-                  <clan-role-icon :role="roleEnums.Member" />
+                  <clan-role-icon :role="roleEnums.Member"></clan-role-icon>
                   <span class="pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
                     <template v-slot:activator="{ on }">
                       <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)" />
+                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)"></league-icon>
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -110,7 +112,7 @@
                     :battle-tag="member"
                     :role="defineRole(member)"
                     :logged-in-user-role="loggedInRole"
-                  />
+                  ></member-management-menu>
                 </v-col>
               </v-row>
             </td>
@@ -129,9 +131,9 @@
           </tr>
         </table>
       </div>
-      <pending-invites-panel v-if="loggedInPlayerIsShaman" />
-      <leave-clan-modal v-if="isLoggedInPlayer" :is-chieftain="loggedInPlayerIsChiefTain" />
-      <delete-clan-modal v-if="loggedInPlayerIsChiefTain" />
+      <pending-invites-panel v-if="loggedInPlayerIsShaman"></pending-invites-panel>
+      <leave-clan-modal v-if="isLoggedInPlayer" :is-chieftain="loggedInPlayerIsChiefTain"></leave-clan-modal>
+      <delete-clan-modal v-if="loggedInPlayerIsChiefTain"></delete-clan-modal>
     </div>
   </v-card-text>
 </template>
@@ -200,12 +202,14 @@ export default defineComponent({
     const members = computed<string[]>(() => clanStore.playersClan.members);
     const loggedInRole = computed<EClanRole>(() => defineRole(verifiedBtag.value));
     const loggedInPlayerIsChiefTain = computed<boolean>(() => playersClan.value.chiefTain === verifiedBtag.value);
-    const loggedInPlayerIsShaman = computed<boolean>(() => !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value));
+    const loggedInPlayerIsShaman = computed<boolean>(() =>
+      !!(playersClan.value.shamans.find((s) => s === verifiedBtag.value) || loggedInPlayerIsChiefTain.value)
+    );
 
     function getLeagueOrder(battleTag: string): number {
       return playersClan.value.ranks
         ?.filter(
-          (r) => r.season === currentSeason.value && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag)
+          (r) => r.season === currentSeason.value && r.gameMode === EGameMode.GM_1ON1 && r.id.includes(battleTag),
         )
         .sort((a, b) => a.leagueOrder - b.leagueOrder)[0]?.leagueOrder;
     }
@@ -253,7 +257,7 @@ export default defineComponent({
           games: 0,
           rank: 0,
           leagueOrder: 0,
-        }
+        },
       );
 
       const allRanks = playersClan.value.ranks.filter((r) => r.rankNumber != 0 && r.gameMode === mode);
@@ -281,7 +285,7 @@ export default defineComponent({
       defineRole,
       loggedInRole,
       members,
-      battleTagToName
+      battleTagToName,
     };
   },
 });

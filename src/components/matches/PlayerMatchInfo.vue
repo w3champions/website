@@ -5,7 +5,7 @@
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-    />
+    ></player-icon>
     <span :class="{ 'mr-2': left, 'ml-2': !left }">
       <a
         class="name-link"
@@ -26,7 +26,7 @@
           :countryCode="player.countryCode"
           :location="player.location"
           size="small"
-        />
+        ></country-flag-extended>
       </div>
     </span>
     <player-icon
@@ -34,7 +34,7 @@
       :race="race"
       :rndRace="rndRace"
       :big="bigRaceIcon"
-    />
+    ></player-icon>
   </div>
 </template>
 

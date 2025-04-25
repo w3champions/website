@@ -11,7 +11,7 @@
             @change="setSelectedMap"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedMmr"
             :items="mmrs"
@@ -20,7 +20,7 @@
             @change="setSelectedMmr"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
             outlined
-          />
+          ></v-select>
           <v-select
             :items="patches"
             item-text="patchVersion"
@@ -29,7 +29,7 @@
             @change="setSelectedPatch"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="md-8">
@@ -49,31 +49,31 @@
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
-                  />
+                  ></player-stats-race-versus-race-on-map-table-cell>
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[2]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
-                  />
+                  ></player-stats-race-versus-race-on-map-table-cell>
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[3]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
-                  />
+                  ></player-stats-race-versus-race-on-map-table-cell>
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[4]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
-                  />
+                  ></player-stats-race-versus-race-on-map-table-cell>
                   <player-stats-race-versus-race-on-map-table-cell
                     :stats="item.winLosses[0]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
-                  />
+                  ></player-stats-race-versus-race-on-map-table-cell>
                 </tr>
               </tbody>
             </template>
@@ -160,14 +160,16 @@ export default defineComponent({
     });
 
     const raceWinrate = computed<Ratio[]>(() => {
-      if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
+      if (
+        !statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]
+      ) {
         return [];
       }
 
       const statsPerMapAndRace = statsPerRaceAndMap.value
         .filter((r) => r.mmrRange === selectedMmr.value)[0]
         .patchToStatsPerModes[selectedPatch.value].filter(
-          (r) => r.mapName === selectedMap.value
+          (r) => r.mapName === selectedMap.value,
         )[0];
 
       if (!statsPerMapAndRace) return [];
@@ -179,7 +181,7 @@ export default defineComponent({
       if (statsPerRaceAndMap.value[0]) {
         const allowedPatches = ["All"];
         const patches = Object.keys(
-          statsPerRaceAndMap.value[0].patchToStatsPerModes
+          statsPerRaceAndMap.value[0].patchToStatsPerModes,
         );
         for (const key in patches) {
           const patch = patches[key];

@@ -5,7 +5,7 @@
         v-on="on"
         class="hero-icon"
         :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-      />
+      ></v-card-text>
     </template>
     <div>{{ heroName }}</div>
   </v-tooltip>

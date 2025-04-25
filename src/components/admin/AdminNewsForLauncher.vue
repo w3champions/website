@@ -34,7 +34,7 @@
                   v-model="editedNewsItem.date"
                   filled
                   :label="$t(`views_admin.headline`)"
-                />
+                ></v-text-field>
                 <div class="editor">
                   <div class="menubar">
                     <button
@@ -163,7 +163,7 @@
                   </div>
                 </div>
 
-                <editor-content class="editor__content" :editor="editor" />
+                <editor-content class="editor__content" :editor="editor"></editor-content>
               </v-card-text>
 
               <v-card-actions>
@@ -179,12 +179,11 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
-
   </div>
 </template>
 
@@ -285,7 +284,7 @@ export default defineComponent({
 
     async function deleteNewsItem(item: NewsMessage): Promise<void> {
       confirm("Are you sure you want to delete this item?") &&
-      (await infoMessagesStore.deleteNews(item));
+        (await infoMessagesStore.deleteNews(item));
       dialog.value = false;
     }
 

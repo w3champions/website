@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="gameHourChartData" />
+  <bar-chart :chart-data="gameHourChartData"></bar-chart>
 </template>
 
 <script lang="ts">
@@ -24,9 +24,9 @@ export default defineComponent({
     const { t } = useI18n();
     const timeslots = computed<Timeslot[]>(() => props.popularGameHours ? props.popularGameHours?.timeslots.slice(0) : []);
 
-    const gameStartHour = computed<string[]>(() => timeslots.value.map((g) =>
-      g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0")
-    ));
+    const gameStartHour = computed<string[]>(() =>
+      timeslots.value.map((g) => g.hours.toString().padStart(2, "0") + ":" + g.minutes.toString().padStart(2, "0"))
+    );
 
     const utcTimeOffset = computed<number>(() => {
       const time = new Date();
@@ -72,5 +72,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

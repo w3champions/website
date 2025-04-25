@@ -46,23 +46,23 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="banExpiry"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="attrs"
                             v-on="on"
-                          />
+                          ></v-text-field>
                         </template>
                         <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
-                          <v-spacer />
+                          <v-spacer></v-spacer>
                           <v-btn
                             text
-                            @click="
-                              banExpiry = '';
+                            @click='
+                              banExpiry = "";
                               dateMenu = false;
-                            "
+                            '
                           >
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
@@ -80,8 +80,7 @@
                         Are you sure you want to mute this player?
                       </v-card-text>
                       <v-card-title>
-                        {{ player }}
-                        <v-spacer></v-spacer>
+                        {{ player }} <v-spacer></v-spacer>
                       </v-card-title>
                     </v-row>
 
@@ -113,7 +112,7 @@
           </v-toolbar>
         </template>
 
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
@@ -152,7 +151,7 @@ export default defineComponent({
 
     async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
       confirm("Are you sure you want to delete this item?") &&
-      await adminStore.deleteGlobalMute(item);
+        await adminStore.deleteGlobalMute(item);
       loadMutes();
     }
 

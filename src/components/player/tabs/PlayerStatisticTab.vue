@@ -21,14 +21,14 @@
             @change="setSelectedPatch"
             label="Select Patch"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="md-9">
         <player-stats-race-versus-race-on-map
           v-if="selectedSeason.id !== 0"
           :stats="raceWithoutRandom"
-        />
+        ></player-stats-race-versus-race-on-map>
       </v-col>
     </v-row>
     <v-card-title>
@@ -44,7 +44,7 @@
             v-model="selectedGameMode"
             label="Select Mode"
             outlined
-          />
+          ></v-select>
           <v-select
             :items="races()"
             item-text="raceName"
@@ -52,7 +52,7 @@
             v-model="selectedRace"
             label="Select Race"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
@@ -61,7 +61,7 @@
             v-if="!isPlayerMmrRpTimelineEmpty"
             style="position: relative"
             :mmrRpTimeline="playerMmrRpTimeline"
-          />
+          ></player-mmr-rp-timeline-chart>
           <v-card-text v-else>
             {{ $t("components_player_tabs_playerstatistictab.playerhasnomatches") }}
           </v-card-text>
@@ -81,7 +81,7 @@
             item-value="mapId"
             label="Map"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
@@ -89,7 +89,7 @@
           v-if="selectedSeason.id !== 0"
           :selectedMap="selectedMap"
           :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
-        />
+        ></player-hero-statistics>
       </v-col>
     </v-row>
     <v-card-title>
@@ -105,7 +105,7 @@
             item-value="mapId"
             label="Map"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
@@ -113,7 +113,7 @@
           v-if="selectedSeason.id !== 0"
           :selectedMap="selectedMapHeroWinRate"
           :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
-        />
+        ></player-hero-win-rate>
       </v-col>
     </v-row>
     <v-card-title>
@@ -129,7 +129,7 @@
             item-value="raceId"
             label="Opponent Race"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
@@ -137,7 +137,7 @@
           v-if="selectedSeason.id !== 0"
           :selectedOpponentRace="selectedGameLengthOpponentRace"
           :selectedOpponentRaceName="gameLengthOpponentRaces.filter(e => e.raceId === selectedGameLengthOpponentRace)[0].opponentRace"
-        />
+        ></player-game-length-stats>
       </v-col>
     </v-row>
   </div>
@@ -222,7 +222,7 @@ export default defineComponent({
       const patches = ["All"];
 
       Object.keys(playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch).map(
-        (p) => patches.push(p)
+        (p) => patches.push(p),
       );
 
       return patches;
@@ -233,7 +233,7 @@ export default defineComponent({
         !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch ||
         !(
           selectedPatch.value in
-          playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
+            playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
         )
       ) {
         return [];

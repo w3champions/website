@@ -3,19 +3,19 @@
     <v-col
       v-if="heroesOfWinner.length !== 3"
       :cols="heroesOfWinner.length <= 1 ? 2 : 1"
-    />
+    ></v-col>
     <v-col cols="1" v-if="heroesOfWinner.length === 3">
-      <hero-icon :hero="heroesOfWinner[2]" />
+      <hero-icon :hero="heroesOfWinner[2]"></hero-icon>
     </v-col>
     <v-col cols="1" v-if="heroesOfWinner.length >= 2">
-      <hero-icon :hero="heroesOfWinner[1]" />
+      <hero-icon :hero="heroesOfWinner[1]"></hero-icon>
     </v-col>
     <v-col cols="1">
       <hero-icon
         :first-hero="true"
         :hero="heroesOfWinner[0]"
         v-if="heroesOfWinner.length >= 1"
-      />
+      ></hero-icon>
     </v-col>
     <v-col cols="2">
       <match-highlights
@@ -27,7 +27,7 @@
         :hero-kills-opponent="scoresOfLoser.heroesKilled"
         :experience-opponent="scoresOfLoser.expGained"
         :items-collected-opponent="scoresOfLoser.itemsObtained"
-      />
+      ></match-highlights>
     </v-col>
     <v-col cols="2">
       <match-highlights
@@ -38,21 +38,21 @@
         :hero-kills-opponent="scoresOfWinner.heroesKilled"
         :experience-opponent="scoresOfWinner.expGained"
         :items-collected-opponent="scoresOfWinner.itemsObtained"
-      />
+      ></match-highlights>
     </v-col>
     <v-col cols="1">
-      <hero-icon :first-hero="true" :hero="heroesOfLoser[0]" />
+      <hero-icon :first-hero="true" :hero="heroesOfLoser[0]"></hero-icon>
     </v-col>
     <v-col cols="1" v-if="heroesOfLoser.length >= 2">
-      <hero-icon :hero="heroesOfLoser[1]" />
+      <hero-icon :hero="heroesOfLoser[1]"></hero-icon>
     </v-col>
     <v-col cols="1" v-if="heroesOfLoser.length === 3">
-      <hero-icon :hero="heroesOfLoser[2]" />
+      <hero-icon :hero="heroesOfLoser[2]"></hero-icon>
     </v-col>
     <v-col
       v-if="heroesOfLoser.length !== 3"
       :cols="heroesOfLoser.length <= 1 ? 2 : 1"
-    />
+    ></v-col>
   </v-row>
 </template>
 

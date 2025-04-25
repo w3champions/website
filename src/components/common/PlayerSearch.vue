@@ -92,8 +92,9 @@ export default defineComponent({
       (!search.value || search.value.length < 3)
         ? "Type at least 3 letters"
         : isLoading.value
-          ? "Loading..."
-          : "No player found");
+        ? "Loading..."
+        : "No player found"
+    );
 
     watch(searchedPlayers, onPlayersChanged);
 
@@ -112,7 +113,6 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss"></style>

@@ -16,7 +16,7 @@
             label="Name"
             hide-details
             single-line
-          />
+          ></v-text-field>
           <v-select
             v-if="isEdit"
             :items="states"
@@ -27,7 +27,7 @@
             hide-details
             single-line
             :menu-props="{ maxHeight: '400' }"
-          />
+          ></v-select>
           <div class="mt-5 d-flex justify-center">
             <v-date-picker
               v-model="startDate"
@@ -43,7 +43,7 @@
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
-            <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
+            <v-col cols="4" class="py-0" v-for="map in mapOptions" :key="map.id">
               <v-checkbox
                 :multiple="true"
                 v-model="mapPool"
@@ -51,7 +51,7 @@
                 :value="map.id"
                 :dense="true"
                 hide-details
-              />
+              ></v-checkbox>
             </v-col>
           </v-row>
         </v-tab-item>
@@ -63,7 +63,7 @@
                 label="Registration Time (mins)"
                 hide-details
                 type="number"
-              />
+              ></v-text-field>
             </v-col>
             <v-col cols="4">
               <v-text-field
@@ -71,7 +71,7 @@
                 label="Ready Time (s)"
                 hide-details
                 type="number"
-              />
+              ></v-text-field>
             </v-col>
             <v-col cols="4">
               <v-text-field
@@ -79,7 +79,7 @@
                 label="Veto Time (s)"
                 hide-details
                 type="number"
-              />
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -89,14 +89,14 @@
                 label="Show Winner Time (hrs)"
                 hide-details
                 type="number"
-              />
+              ></v-text-field>
             </v-col>
             <v-col cols="8">
               <v-text-field
                 v-model="matcherinoUrl"
                 label="Matcherino URL"
                 hide-details
-              />
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -110,7 +110,7 @@
                 label="Game Mode"
                 hide-details
                 single-line
-              />
+              ></v-select>
             </v-col>
             <v-col cols="4">
               <v-select
@@ -122,7 +122,7 @@
                 label="Format"
                 hide-details
                 single-line
-              />
+              ></v-select>
             </v-col>
           </v-row>
           <v-row>
@@ -132,7 +132,7 @@
                 v-model="maxPlayers"
                 label="Max Players"
                 outlined
-              />
+              ></v-select>
             </v-col>
             <v-col cols="3">
               <v-select
@@ -143,7 +143,7 @@
                 return-object
                 outlined
                 @change="setFloNode"
-              />
+              ></v-select>
             </v-col>
             <v-col cols="3">
               <v-select
@@ -152,14 +152,14 @@
                 label="Flo Node Max Ping"
                 outlined
                 :disabled="floNode === null"
-              />
+              ></v-select>
             </v-col>
           </v-row>
         </v-tab-item>
       </v-tabs-items>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
-      <v-spacer />
+      <v-spacer></v-spacer>
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
@@ -223,11 +223,11 @@ export default defineComponent({
 
     const isEdit = computed<boolean>(() => !!props.tournament);
     const mapOptions = computed<Map[]>(() => props.maps);
-    const gameModes = computed<{id: number; name: string}[]>(() => getSelectOptions(EGameModeLabel));
-    const formats = computed<{id: number; name: string}[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
+    const gameModes = computed<{ id: number; name: string }[]>(() => getSelectOptions(EGameModeLabel));
+    const formats = computed<{ id: number; name: string }[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
     const enabledFloNodes = computed<ITournamentFloNode[]>(() => tournamentsManagementStore.floNodes);
 
-    const states = computed<{id: number; name: string}[]>(() => {
+    const states = computed<{ id: number; name: string }[]>(() => {
       const validStates = pickBy(ETournamentState, (_value, key) => {
         return !isNaN(Number(key));
       }) as { [key: number]: string };
@@ -257,7 +257,7 @@ export default defineComponent({
         matcherinoUrl: matcherinoUrl.value,
         maxPlayers: maxPlayers.value,
         floNode: floNode.value,
-        floNodeMaxPing: floNodeMaxPing.value
+        floNodeMaxPing: floNodeMaxPing.value,
       };
 
       context.emit("save", tournamentData);

@@ -56,7 +56,9 @@ export default defineComponent({
 
     const pageOffset = computed<number>(() => paginationSize * page.value);
     const pageLength = computed<number>(() => Math.ceil(props.heroStatistics.length / paginationSize));
-    const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
+    const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() =>
+      props.heroStatistics.slice(pageOffset.value - paginationSize, pageOffset.value)
+    );
 
     const headers = [
       { text: "", value: "image" },

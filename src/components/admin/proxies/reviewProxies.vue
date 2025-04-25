@@ -22,9 +22,7 @@
       <!-- nodeOverrides -->
       <v-col class="px-0">
         <v-card class="px-1 m-1">
-          <node-overrides-card
-            :passedOverrides="initProxySettings.nodeOverrides"
-          ></node-overrides-card>
+          <node-overrides-card :passedOverrides="initProxySettings.nodeOverrides"></node-overrides-card>
         </v-card>
       </v-col>
 
@@ -125,7 +123,7 @@ import { useAdminStore } from "@/store/admin/store";
 export default defineComponent({
   name: "reviewProxies",
   components: {
-    nodeOverridesCard
+    nodeOverridesCard,
   },
   props: {
     proxies: {
@@ -134,9 +132,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    //! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
-    //! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
-    //! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
+    // ! There's a visual bug with this component + nodeOverridesCard component, if anyone would like to figure it out
+    // ! When the component is created, sometimes the :input-value for the v-chip in nodeOverridesCard.vue is not set fast enough.
+    // ! this only seems to happen for Nodes (not autonodes) and is purely visual, the state and submission works fine.
 
     // Kovax comment:
     // props.proxies is not ProxySettings. It is an Proxy[]. But the prop is not used anyway, because it is only referenced in the

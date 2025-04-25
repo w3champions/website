@@ -1,6 +1,6 @@
 <template>
   <v-container fluid style="height: 100%">
-    <admin-check-jwt-lifetime />
+    <admin-check-jwt-lifetime></admin-check-jwt-lifetime>
     <div class="admin-page-wrapper" v-if="isAdmin">
       <admin-navigation></admin-navigation>
       <v-card tile>

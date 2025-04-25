@@ -13,7 +13,7 @@
         :not-clickable="notClickable"
         :is-anonymous="isAnonymous"
         :highlighted="highlightedPlayer === team.players[index].battleTag"
-      />
+      ></player-match-info>
     </div>
   </div>
 </template>
@@ -63,7 +63,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: "",
-    }
+    },
   },
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <bar-chart :chart-data="gameHourChartData" />
+  <bar-chart :chart-data="gameHourChartData"></bar-chart>
 </template>
 
 <script lang="ts">

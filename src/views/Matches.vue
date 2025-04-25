@@ -7,7 +7,7 @@
             {{ $t("views_app.matches") }}
           </v-card-title>
           <v-card-text>
-            <matches-status-select />
+            <matches-status-select></matches-status-select>
             <game-mode-select
               :disabledModes="disabledGameModes"
               :gameMode="gameMode"
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted } from "vue";
-import { Match, EGameMode } from "@/store/types";
+import { EGameMode, Match } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -101,10 +101,9 @@ export default defineComponent({
     });
 
     const mapsByGameMode = computed<Record<EGameMode, Set<MapInfo>>>(() => {
-      const filterSeasons =
-        matchStore.status === MatchStatus.onGoing
-          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
-          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
+      const filterSeasons = matchStore.status === MatchStatus.onGoing
+        ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
+        : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
 
       return overallStatsStore.matchesOnMapPerSeason
         .filter(filterSeasons)

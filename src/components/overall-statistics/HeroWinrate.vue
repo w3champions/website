@@ -3,29 +3,27 @@
     <v-card-title>Winrates of hero matchups</v-card-title>
     <v-row no-gutters>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="0" />
+        <hero-picture-select :hero-index="0"></hero-picture-select>
       </v-col>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="1" />
+        <hero-picture-select :hero-index="1"></hero-picture-select>
       </v-col>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="2" />
+        <hero-picture-select :hero-index="2"></hero-picture-select>
       </v-col>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="3" />
+        <hero-picture-select :hero-index="3"></hero-picture-select>
       </v-col>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="4" />
+        <hero-picture-select :hero-index="4"></hero-picture-select>
       </v-col>
       <v-col :cols="4" :sm="2">
-        <hero-picture-select :hero-index="5" />
+        <hero-picture-select :hero-index="5"></hero-picture-select>
       </v-col>
     </v-row>
     <h2 class="justify-center text-center mt-4">
       <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">
-        {{
-          wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%"
-        }}
+        {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       </span>
       <br />
       <span class="won">{{ wins }}</span>

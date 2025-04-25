@@ -12,7 +12,7 @@
               }
             "
             :style="{ 'background-image': 'url(' + heroPicture + ')' }"
-          />
+          ></v-card-text>
         </div>
       </template>
       <div>{{ heroPickName }}</div>
@@ -43,11 +43,13 @@
                       :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
                       @click="
                         () => {
-                          if (isEnabledForSelect(heroPickSelection))
+                          if (isEnabledForSelect(heroPickSelection)) {
                             pickHero(heroPickSelection);
+                          }
                         }
                       "
-                    ></div>
+                    >
+                    </div>
                   </v-responsive>
                 </div>
               </template>
@@ -68,7 +70,6 @@ import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { getAsset } from "@/helpers/url-functions";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-
 
 export default defineComponent({
   name: "HeroPictureSelect",

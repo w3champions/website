@@ -2,15 +2,15 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-tooltip top v-bind:disabled="!avatarDescription">
+        <v-tooltip top :disabled="!avatarDescription">
           <template v-slot:activator="{ on }">
             <v-card-text
               v-on="on"
               style="cursor: pointer"
               @click.stop="iconsDialogOpened = true"
               class="player-avatar text-center"
-              :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
-            />
+              :style="{ 'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')' }"
+            ></v-card-text>
           </template>
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
@@ -27,14 +27,14 @@
                 class="player-country"
                 :country="selectedCountryCode"
                 size="normal"
-              />
+              ></country-flag>
             </div>
           </template>
           <span>{{ selectedCountry }}</span>
         </v-tooltip>
       </v-col>
     </v-row>
-    <player-socials :userProfile="userProfile" />
+    <player-socials :userProfile="userProfile"></player-socials>
 
     <v-dialog v-model="iconsDialogOpened" max-width="1150px" class="scroll-v-dialog">
       <v-card>
@@ -48,21 +48,22 @@
         <v-row
           class="pb-3"
           align="center"
-          justify="center">
+          justify="center"
+        >
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
           <v-col
             cols="auto"
             v-for="number in starterPicNumbers"
             :key="number"
           >
-          <v-tooltip top>
+            <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-card-text
                   v-on="on"
                   class="player-avatar-choosing"
                   @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
-                />
+                  :style="{ 'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')' }"
+                ></v-card-text>
               </template>
               <span>Starter</span>
             </v-tooltip>
@@ -79,7 +80,9 @@
           justify="center"
         >
           <v-card-text
-            class="avatar-choose-headers pa-0 ma-0" align="center">
+            class="avatar-choose-headers pa-0 ma-0"
+            align="center"
+          >
             {{ enumToString(race) }}
           </v-card-text>
           <v-col cols="auto" v-for="number in racePicNumbers" :key="number">
@@ -89,8 +92,8 @@
                   v-on="on"
                   :class="getCorrectClasses(raceToAvatar(race), number)"
                   @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
-                  :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
-                />
+                  :style="{ 'background-image': 'url(' + picture(raceToAvatar(race), number) + ')' }"
+                ></v-card-text>
               </template>
               <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
             </v-tooltip>
@@ -106,14 +109,14 @@
                 <v-card-text
                   v-on="on"
                   class="player-avatar-choosing"
-                  v-bind:class="{ pointer: isLoggedInPlayer }"
+                  :class="{ pointer: isLoggedInPlayer }"
                   @click="
                     isLoggedInPlayer
-                      ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
-                      : null
+                    ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
+                    : null
                   "
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
-                />
+                  :style="{ 'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')' }"
+                ></v-card-text>
               </template>
               <span>{{ specialPicture.description }}</span>
             </v-tooltip>
@@ -125,8 +128,7 @@
     <v-row>
       <v-col style="margin-top: -5px">
         <h3>
-          {{ $t("components_player_playeravatar.games") }}
-          {{ playerGames }}
+          {{ $t("components_player_playeravatar.games") }} {{ playerGames }}
         </h3>
       </v-col>
     </v-row>
@@ -134,8 +136,7 @@
     <v-row>
       <v-col style="margin-top: -15px">
         <h3>
-          {{ $t("components_player_playeravatar.wins") }}
-          {{ totalWins() }}
+          {{ $t("components_player_playeravatar.wins") }} {{ totalWins() }}
         </h3>
       </v-col>
     </v-row>
@@ -177,8 +178,7 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left>{{ mdiPencil }}</v-icon>
-                {{ $t("components_player_playeravatar.edit") }}
+                <v-icon left>{{ mdiPencil }}</v-icon> {{ $t("components_player_playeravatar.edit") }}
               </v-btn>
             </template>
             <v-card>
@@ -281,12 +281,12 @@
                         :return-object="false"
                       >
                         <template v-slot:item="{ item }">
-                          <country-flag :country="item.countryCode" size="normal" />
+                          <country-flag :country="item.countryCode" size="normal"></country-flag>
                           {{ item.country }}
                           <v-spacer></v-spacer>
                         </template>
                         <template v-slot:selection="{ item }">
-                          <country-flag :country="item.countryCode" size="normal" />
+                          <country-flag :country="item.countryCode" size="normal"></country-flag>
                           <span class="pr-2">{{ item.country }}</span>
                         </template>
                       </v-autocomplete>
@@ -327,7 +327,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { ERaceEnum, EAvatarCategory } from "@/store/types";
+import { EAvatarCategory, ERaceEnum } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";

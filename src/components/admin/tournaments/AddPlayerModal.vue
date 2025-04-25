@@ -18,7 +18,7 @@
               item-text="raceName"
               item-value="raceId"
               label="Race"
-            />
+            ></v-select>
           </v-col>
         </v-row>
       </v-container>

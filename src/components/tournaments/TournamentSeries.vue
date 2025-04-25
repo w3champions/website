@@ -1,5 +1,5 @@
 <template>
-  <div class="bracket-series" v-bind:style="style">
+  <div class="bracket-series" :style="style">
     <tournament-series-player
       :side="'top'"
       :player="topPlayer"
@@ -8,7 +8,7 @@
       :seriesFinished="seriesFinished"
       :seriesSpecial="seriesSpecial"
       :roundWidth="roundWidth"
-    />
+    ></tournament-series-player>
     <tournament-series-player
       :side="'bottom'"
       :player="bottomPlayer"
@@ -17,13 +17,13 @@
       :seriesFinished="seriesFinished"
       :seriesSpecial="seriesSpecial"
       :roundWidth="roundWidth"
-    />
+    ></tournament-series-player>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, StyleValue } from "vue";
-import { ITournamentSeries, ESeriesState, EMatchState, ISeriesPlayer } from "@/store/tournaments/types";
+import { EMatchState, ESeriesState, ISeriesPlayer, ITournamentSeries } from "@/store/tournaments/types";
 import TournamentSeriesPlayer from "./TournamentSeriesPlayer.vue";
 
 export default defineComponent({
@@ -41,7 +41,9 @@ export default defineComponent({
   setup(props) {
     const topPlayer = computed<ISeriesPlayer | undefined>(() => props.series.players?.find((p) => p.team === 0));
     const bottomPlayer = computed<ISeriesPlayer | undefined>(() => props.series.players?.find((p) => p.team === 1));
-    const seriesFinished = computed<boolean>(() => [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(props.series.state));
+    const seriesFinished = computed<boolean>(() =>
+      [ESeriesState.BYE, ESeriesState.CANCELED, ESeriesState.FINISHED].includes(props.series.state)
+    );
     const seriesCanceled = computed<boolean>(() => props.series.state === ESeriesState.CANCELED);
 
     const seriesSpecial = computed<boolean | undefined>(() => {

@@ -44,7 +44,7 @@ import CopyButton from "./CopyButton.vue";
 export default defineComponent({
   name: "CryptoDialog",
   components: {
-    CopyButton
+    CopyButton,
   },
   props: {
     crypto: { type: String, required: true },

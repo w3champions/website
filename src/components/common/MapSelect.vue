@@ -2,8 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon style="margin-right: 5px">{{ mdiMap }}</v-icon>
-        {{ selected }}
+        <v-icon style="margin-right: 5px">{{ mdiMap }}</v-icon> {{ selected }}
       </v-btn>
     </template>
     <v-card>

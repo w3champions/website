@@ -5,7 +5,7 @@
     </v-card-text>
     <v-card
       v-for="(partner, index) in partners()"
-      v-bind:key="'partner_card_' + index"
+      :key="'partner_card_' + index"
       class="socials-subcard"
       tile
       :href="partner.link"
@@ -40,8 +40,8 @@ export default defineComponent({
         },
         {
           img: "msfds",
-          link: "#"
-        }
+          link: "#",
+        },
       ];
     }
     function imgSource(name: string): string {

@@ -10,7 +10,7 @@
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
             outlined
-          />
+          ></v-select>
 
           <v-select
             v-model="selectedGameMode"
@@ -21,15 +21,14 @@
             @change="gameModeChanged"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded">
-          <gateway-select @gatewayChanged="gatewayChanged" />
+          <gateway-select @gatewayChanged="gatewayChanged"></gateway-select>
         </v-card-text>
 
         <v-card-text>
-          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
-          <div>{{ standardDeviation }}</div>
+          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }} <div>{{ standardDeviation }}</div>
         </v-card-text>
         <v-card-text>
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
@@ -47,7 +46,7 @@
           :mmr-distribution="mmrDistribution"
           :selected-season="selectedSeason"
           :selected-game-mode="selectedGameMode"
-        />
+        ></mmr-distribution-chart>
       </v-col>
     </v-row>
   </div>

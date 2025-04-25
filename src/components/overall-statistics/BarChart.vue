@@ -2,11 +2,22 @@
   <bar-chart-generic
     :data="chartData"
     :options="chartOptions"
-  />
+  ></bar-chart-generic>
 </template>
 
 <script lang="ts">
-import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend, ChartData } from "chart.js";
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  ChartData,
+  ChartOptions,
+  Filler,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from "chart.js";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
 import { PropType } from "vue";
 import { Bar as BarChartGeneric } from "vue-chartjs";

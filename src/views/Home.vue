@@ -26,7 +26,7 @@
               :light="!$vuetify.theme.dark"
               height="350px"
             >
-              <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
+              <v-carousel-item v-for="newsItem in news.slice(0, 8)" :key="newsItem.date">
                 <v-card-title>
                   {{ newsItem.date }}
                 </v-card-title>
@@ -94,15 +94,15 @@
       <v-col cols="12" md="4">
         <v-row>
           <v-col cols="12" class="no-padding">
-            <social-box />
-            <support-box />
-            <partner-box />
+            <social-box></social-box>
+            <support-box></support-box>
+            <partner-box></partner-box>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="12">
-            <top-ongoing-matches-with-streams />
+            <top-ongoing-matches-with-streams></top-ongoing-matches-with-streams>
           </v-col>
         </v-row>
 
@@ -124,9 +124,7 @@
                       <v-col cols="10">
                         {{ rank.player.name }}
                         <div style="font-size: 11px">
-                          {{ $t("views_home.wlt") }}: {{ rank.player.wins }}/{{
-                            rank.player.losses
-                          }}/{{ rank.player.games }}
+                          {{ $t("views_home.wlt") }}: {{ rank.player.wins }}/{{ rank.player.losses }}/{{ rank.player.games }}
                         </div>
                       </v-col>
                     </v-row>
@@ -144,7 +142,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { marked } from "marked";
-import { Ranking, ActiveGameMode } from "@/store/ranking/types";
+import { ActiveGameMode, Ranking } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";

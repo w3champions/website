@@ -7,7 +7,7 @@
     <v-card-text>
       <v-row>
         <v-col class="mb-10" cols="12" md="3" v-for="atPartner in gameModeStatsAt" :key="atPartner.id">
-          <player-league :mode-stat="atPartner" :show-at-partner="true" />
+          <player-league :mode-stat="atPartner" :show-at-partner="true"></player-league>
         </v-col>
       </v-row>
     </v-card-text>
@@ -41,16 +41,16 @@ export default defineComponent({
 
     const gameModeStatsAt = computed<ModeStat[]>(() => {
       const atStats = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0,
       );
 
       const atStatsUnranked = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0,
       );
 
       return [
         ...atStats.sort(
-          (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank)
+          (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank),
         ),
         ...atStatsUnranked,
       ];

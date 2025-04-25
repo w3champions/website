@@ -1,12 +1,12 @@
 <template>
-  <div v-bind:class="`player ${side} ${won ? 'winner' : 'loser'}`" v-bind:style="style">
-    <span class="player-slot d-flex align-center" v-bind:class="raceClass" v-bind:style="slotStyle">
+  <div :class="`player ${side} ${won ? 'winner' : 'loser'}`" :style="style">
+    <span class="player-slot d-flex align-center" :class="raceClass" :style="slotStyle">
       <span class="player-country d-flex justify-center align-center">
         <country-flag-extended
           class="country-flag"
           :location="countryCode"
           :clickable="false"
-        />
+        ></country-flag-extended>
       </span>
       <span class="player-name">
         {{ name }}
@@ -98,7 +98,7 @@ export default defineComponent({
       raceClass,
       style,
       slotStyle,
-      battleTagToName
+      battleTagToName,
     };
   },
 });

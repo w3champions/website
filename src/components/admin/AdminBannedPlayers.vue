@@ -13,7 +13,6 @@
       :search="tableSearch"
       class="elevation-1"
     >
-
       <template v-slot:top>
         <v-toolbar flat color="transparent">
           <template>
@@ -61,27 +60,27 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="editedItem.endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="attrs"
                             v-on="on"
-                          />
+                          ></v-text-field>
                         </template>
                         <v-date-picker
                           v-model="editedItem.endDate"
                           no-title
                           scrollable
                         >
-                          <v-spacer />
+                          <v-spacer></v-spacer>
                           <v-btn
                             text
-                            @click="
-                              editedItem.endDate = '';
+                            @click='
+                              editedItem.endDate = "";
                               dateMenu = false;
-                            "
+                            '
                           >
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
@@ -149,13 +148,13 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.gameModesText`]="{ item }">
+      <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
           <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
         </td>
         <td v-else>All</td>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
@@ -164,7 +163,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, onMounted, ref, watch } from "vue";
 import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
@@ -238,14 +237,13 @@ export default defineComponent({
         .map((id) => {
           return {
             id,
-            name: `gameModes.${EGameMode[id]}`
+            name: `gameModes.${EGameMode[id]}`,
           };
         });
       const activeModes = activeGameModes();
 
       return activeModes.concat(bannedInactiveModesForEditedItem);
     });
-
 
     async function loadBanList() {
       await adminStore.loadBannedPlayers();
@@ -261,7 +259,6 @@ export default defineComponent({
       confirm("Are you sure you want to delete this item?") && await adminStore.deleteBan(item);
       await loadBanList();
     }
-
 
     async function save(): Promise<void> {
       editedItem.value.author = author.value;

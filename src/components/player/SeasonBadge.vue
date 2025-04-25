@@ -6,11 +6,11 @@
         v-on="on"
         :class="['season-badge', 'pointer']"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
-      ></div>
+      >
+      </div>
     </template>
     <span>
-      {{ $t("components_player_seasonbadge.participatedinseason") }}
-      {{ seasonId }}
+      {{ $t("components_player_seasonbadge.participatedinseason") }} {{ seasonId }}
     </span>
   </v-tooltip>
 </template>

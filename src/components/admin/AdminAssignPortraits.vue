@@ -60,7 +60,7 @@
                                   :rules="[rules.required, rules.min]"
                                   label="Mouseover tooltip"
                                 ></v-text-field>
-                                <v-spacer />
+                                <v-spacer></v-spacer>
                               </v-row>
                             </v-card-actions>
                           </v-container>
@@ -86,7 +86,7 @@
                         </v-row>
 
                         <v-row>
-                          <v-spacer />
+                          <v-spacer></v-spacer>
                           <v-container>
                             <v-card-actions class="justify-end">
                               <v-btn class="primary w3-race-bg--text" x-large @click="confirmDialog">Confirm</v-btn>
@@ -100,7 +100,7 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-divider />
+          <v-divider></v-divider>
 
           <!-- To Be Assigned -->
           <v-col class="mt-2 mb-2">
@@ -110,7 +110,7 @@
                 <v-card-title class="justify-center">To Be Assigned</v-card-title>
               </v-col>
               <v-col>
-                <v-spacer />
+                <v-spacer></v-spacer>
                 <portrait-group-dropdown
                   class="d-flex justify-end"
                   @add-group-of-portraits="assignGroupPortraits"
@@ -132,7 +132,7 @@
               <v-card-subtitle class="justify-center">No special portraits assigned for this player.</v-card-subtitle>
             </v-row>
           </v-col>
-          <v-divider />
+          <v-divider></v-divider>
 
           <!-- Currently Assigned -->
           <v-col class="mt-2 mb-2">
@@ -147,7 +147,7 @@
               <v-card-subtitle class="justify-center">No special portraits found for this player.</v-card-subtitle>
             </v-row>
           </v-col>
-          <v-divider />
+          <v-divider></v-divider>
 
           <!-- Available -->
           <available-portraits-gallery
@@ -309,7 +309,7 @@ export default defineComponent({
       allSpecialPortraits.value = Object.create(
         playerManagement.allSpecialPortraits
           .map((x) => parseInt(x.id))
-          .sort((a, b) => b - a)
+          .sort((a, b) => b - a),
       );
     }
 

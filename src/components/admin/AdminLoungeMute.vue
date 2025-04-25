@@ -46,23 +46,23 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="attrs"
                             v-on="on"
-                          />
+                          ></v-text-field>
                         </template>
                         <v-date-picker v-model="endDate" no-title scrollable max="2099-01-01">
-                          <v-spacer />
+                          <v-spacer></v-spacer>
                           <v-btn
                             text
-                            @click="
-                              endDate = '';
+                            @click='
+                              endDate = "";
                               dateMenu = false;
-                            "
+                            '
                           >
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
@@ -80,8 +80,7 @@
                         Are you sure you want to mute this player?
                       </v-card-text>
                       <v-card-title>
-                        {{ battleTag }}
-                        <v-spacer></v-spacer>
+                        {{ battleTag }} <v-spacer></v-spacer>
                       </v-card-title>
                     </v-row>
 
@@ -113,12 +112,11 @@
           </v-toolbar>
         </template>
 
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
-
   </div>
 </template>
 
@@ -155,7 +153,7 @@ export default defineComponent({
 
     async function deleteItem(item: LoungeMute): Promise<void> {
       confirm("Are you sure you want to delete this item?") &&
-      await loungeMuteStore.deleteLoungeMute(item.battleTag);
+        await loungeMuteStore.deleteLoungeMute(item.battleTag);
       loadMutes();
     }
 
@@ -193,7 +191,6 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await init();
     });
-
 
     function searchCleared(): void {
       showConfirmation.value = false;

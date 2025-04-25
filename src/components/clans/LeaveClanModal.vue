@@ -7,8 +7,7 @@
         <v-dialog v-model="invitePlayerDialog" max-width="600px">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="isChieftain" v-on="on" outlined color="error">
-              {{ $t("components_clans_leaveclanmodal.leaveclan") }}
-              {{ clanName }}
+              {{ $t("components_clans_leaveclanmodal.leaveclan") }} {{ clanName }}
             </v-btn>
             <v-card-subtitle class="pr-0" v-if="isChieftain">
               {{ $t("components_clans_leaveclanmodal.promotefirst") }}
@@ -16,17 +15,15 @@
           </template>
           <v-card>
             <v-card-title>
-              {{ $t("components_clans_leaveclanmodal.areyousureleave") }}
-              {{ clanName }}?
+              {{ $t("components_clans_leaveclanmodal.areyousureleave") }} {{ clanName }}?
             </v-card-title>
             <v-card-actions>
-              <v-spacer />
+              <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="invitePlayerDialog = false">
                 {{ $t("components_clans_leaveclanmodal.close") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="leaveClan">
-                {{ $t("components_clans_leaveclanmodal.leaveclan") }}
-                {{ clanName }}
+                {{ $t("components_clans_leaveclanmodal.leaveclan") }} {{ clanName }}
               </v-btn>
             </v-card-actions>
           </v-card>

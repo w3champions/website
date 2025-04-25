@@ -29,27 +29,27 @@
       >
         <v-row dense>
           <v-col :class="unitsKilledComparison" :align="alignText">
-            <number-display :object="unitScore" value="unitsKilled" />
+            <number-display :object="unitScore" value="unitsKilled"></number-display>
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="unitsProducedComparison" :align="alignText">
-            <number-display :object="unitScore" value="unitsProduced" />
+            <number-display :object="unitScore" value="unitsProduced"></number-display>
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="goldComparison" :align="alignText">
-            <number-display :object="resourceScore" value="goldCollected" />
+            <number-display :object="resourceScore" value="goldCollected"></number-display>
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="woodComparison" :align="alignText">
-            <number-display :object="resourceScore" value="lumberCollected" />
+            <number-display :object="resourceScore" value="lumberCollected"></number-display>
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="upkeepComparison" :align="alignText">
-            <number-display :object="resourceScore" value="goldUpkeepLost" />
+            <number-display :object="resourceScore" value="goldUpkeepLost"></number-display>
           </v-col>
         </v-row>
         <v-row dense>
@@ -59,7 +59,7 @@
               value="largestArmy"
               :delimiter="AddValuesDelimiter.SLASH"
               :align="alignText"
-            />
+            ></number-display>
           </v-col>
         </v-row>
       </v-col>
@@ -121,7 +121,7 @@ export default defineComponent({
         props.resourceScoreOpponent
           .map((s) => s.goldCollected)
           .reduce((a, b) => a + b, 0),
-        props.resourceScore.map((s) => s.goldCollected).reduce((a, b) => a + b, 0)
+        props.resourceScore.map((s) => s.goldCollected).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -132,7 +132,7 @@ export default defineComponent({
           .reduce((a, b) => a + b, 0),
         props.resourceScore
           .map((s) => s.lumberCollected)
-          .reduce((a, b) => a + b, 0)
+          .reduce((a, b) => a + b, 0),
       );
     });
 
@@ -143,7 +143,7 @@ export default defineComponent({
           .reduce((a, b) => a + b, 0),
         props.resourceScoreOpponent
           .map((s) => s.goldUpkeepLost)
-          .reduce((a, b) => a + b, 0)
+          .reduce((a, b) => a + b, 0),
       );
     });
 
@@ -152,7 +152,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.largestArmy)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -161,7 +161,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.unitsKilled)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0),
       );
     });
 
@@ -170,7 +170,7 @@ export default defineComponent({
         props.unitScoreOpponent
           .map((s) => s.unitsProduced)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0),
       );
     });
 

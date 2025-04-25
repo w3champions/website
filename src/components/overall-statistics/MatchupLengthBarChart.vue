@@ -1,6 +1,6 @@
 <template>
   <div>
-    <bar-chart class="matchup-length" :chart-data="matchupLengthChartData" />
+    <bar-chart class="matchup-length" :chart-data="matchupLengthChartData"></bar-chart>
   </div>
 </template>
 

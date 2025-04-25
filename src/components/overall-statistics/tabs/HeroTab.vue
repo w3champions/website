@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <hero-winrate />
+        <hero-winrate></hero-winrate>
       </v-col>
     </v-row>
     <v-card-title>
@@ -19,7 +19,7 @@
             @change="setSelectedHeroesPlayedMode"
             :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
             outlined
-          />
+          ></v-select>
           <v-select
             v-model="selectedHeroesPlayedPick"
             :items="picks"
@@ -28,12 +28,12 @@
             @change="setSelectedHeroesPlayedPick"
             :label="$t(`components_overall-statistics_tabs_herotab.pick`)"
             outlined
-          />
+          ></v-select>
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
         <v-card-text>
-          <played-heroes-chart :played-heroes="selectedPlayedHeroes" />
+          <played-heroes-chart :played-heroes="selectedPlayedHeroes"></played-heroes-chart>
         </v-card-text>
       </v-col>
     </v-row>

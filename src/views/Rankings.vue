@@ -5,7 +5,7 @@
         <gateway-select
           @gatewayChanged="onGatewayChanged"
           v-if="isGatewayNeeded"
-        />
+        ></gateway-select>
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
@@ -13,11 +13,9 @@
         <v-menu offset-x>
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" class="transparent">
-              <league-icon :league="selectedLeagueOrder" />
+              <league-icon :league="selectedLeagueOrder"></league-icon>
               {{ selectedLeagueName }}
-              {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
-              }}
+              {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
             </v-btn>
           </template>
           <v-card>
@@ -38,7 +36,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title>
-                      <league-icon :league="listLeagueIcon(item)" />
+                      <league-icon :league="listLeagueIcon(item)"></league-icon>
                       {{ item.name }}
                       {{ item.division !== 0 ? item.division : null }}
                     </v-list-item-title>
@@ -86,7 +84,8 @@
                   </span>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="playerIsRanked(item)">
-                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
+                  {{ $t(`common.wins`) }}
+                  {{ item.player.wins }} |
                   {{ $t(`common.losses`) }}
                   {{ item.player.losses }} |
                   {{ $t(`common.total`) }}
@@ -144,9 +143,7 @@
           <v-col cols="12">
             <div class="mt-10">
               <h3 class="pl-5">{{ $t("views_rankings.racedist") }}</h3>
-              <rankings-race-distribution
-                :rankings="rankings"
-              ></rankings-race-distribution>
+              <rankings-race-distribution :rankings="rankings"></rankings-race-distribution>
             </div>
           </v-col>
         </v-row>
@@ -202,7 +199,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: undefined,
-    }
+    },
   },
   setup(props) {
     // @Prop({ default: "" })
@@ -225,7 +222,9 @@ export default defineComponent({
     const selectedLeagueName = computed<string>(() => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
     const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
     const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
-    const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const showRaceDistribution = computed<boolean>(() =>
+      rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1
+    );
 
     const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter((l) =>

@@ -1,11 +1,11 @@
 <template>
   <div class="streamed-match-info">
-    <streamed-match-player-info :player="match.teams[0].players[0]" />
+    <streamed-match-player-info :player="match.teams[0].players[0]"></streamed-match-player-info>
     <span>{{ $t(`views_matchdetail.vs`) }}</span>
     <streamed-match-player-info
       :player="match.teams[1].players[0]"
       :align-right="true"
-    />
+    ></streamed-match-player-info>
   </div>
 </template>
 

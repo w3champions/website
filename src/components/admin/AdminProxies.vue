@@ -43,11 +43,11 @@ export default defineComponent({
 
     async function playerFound(bTag: string): Promise<void> {
       const proxies = await adminStore.getProxiesForPlayer(bTag);
-        await setPlayerProxies(proxies);
+      await setPlayerProxies(proxies);
 
-        if (proxies._id) {
-          showProxyOptions.value = true;
-        }
+      if (proxies._id) {
+        showProxyOptions.value = true;
+      }
     }
 
     function searchCleared() {

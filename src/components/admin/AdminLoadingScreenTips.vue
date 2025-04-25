@@ -36,7 +36,7 @@
                     rows="1"
                     v-model="editedTipItem.message"
                     label="Message"
-                  />
+                  ></v-textarea>
                 </v-container>
               </v-card-text>
 
@@ -56,7 +56,7 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
       </template>
@@ -103,8 +103,6 @@ export default defineComponent({
         (await infoMessagesStore.deleteTip(item));
       dialog.value = false;
     }
-
-
 
     async function saveTips(): Promise<void> {
       editedTipItem.value.author = oauthStore.blizzardVerifiedBtag;

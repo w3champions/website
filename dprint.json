@@ -5,7 +5,30 @@
     "quoteStyle": "preferDouble",
     "newLineKind": "auto",
     "nextControlFlowPosition": "maintain",
-    "module.sortImportDeclarations": "maintain"
+    "module.sortImportDeclarations": "maintain",
+    "importDeclaration.forceMultiLine": "never",
+    "jsx.forceNewLinesSurroundingContent": true,
+    "operatorPosition": "maintain",
+  },
+  "markup": {
+    "indentWidth": 2,
+    "useTabs": false,
+    "printWidth": 140,
+    "quotes": "double",
+    "closingBracketSameLine": false,
+    "preferAttrsSingleLine": false,
+    "scriptFormatter": "dprint",
+    "whitespaceSensitivity": "css",
+    "vBindStyle": "short",
+    "vOnStyle": "short",
+    "vForDelimiterStyle": "in",
+    "vSlotStyle": "long",
+    "vBindSameNameShortHand": "false",
+    "component.selfClosing": false,
+    "html.normal.selfClosing": false,
+    "html.void.selfClosing": true,
+    "svg.selfClosing": true,
+    "closingTagLineBreakForEmpty": "fit"
   },
   "excludes": [
     "**/node_modules",
@@ -16,6 +39,7 @@
     ".eslintrc.cjs"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/typescript-0.88.10.wasm"
+    "https://plugins.dprint.dev/typescript-0.94.0.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.19.1.wasm"
   ]
 }

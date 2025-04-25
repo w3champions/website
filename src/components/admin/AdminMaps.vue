@@ -23,10 +23,10 @@
           :search="search"
           class="elevation-1"
         >
-          <template #[`item.path`]="{ item }">
+          <template v-slot:[`item.path`]="{ item }">
             {{ getMapPath(item) }}
           </template>
-          <template #[`item.actions`]="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-icon small class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
             <v-icon small class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
           </template>
@@ -109,7 +109,7 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
-      } catch(err) {
+      } catch (err) {
         err ? alert(err) : alert("Error trying to save map.");
       }
     }
@@ -164,12 +164,12 @@ export default defineComponent({
       {
         text: "File",
         value: "path",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Actions",
         value: "actions",
-        sortable: false
+        sortable: false,
       },
     ];
 

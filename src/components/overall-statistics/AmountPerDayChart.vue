@@ -1,5 +1,5 @@
 <template>
-  <line-chart :chart-data="chartData" />
+  <line-chart :chart-data="chartData"></line-chart>
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";

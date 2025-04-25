@@ -6,10 +6,10 @@
     <v-container fluid>
       <v-row>
         <v-col>
-            <v-row no-gutters :justify="'start'">
-              <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="viewLog(logfileName)">
-                {{ logfileName }}
-              </v-col>
+          <v-row no-gutters :justify="'start'">
+            <v-col v-for="logfileName in logfileNames" :key="logfileName" cols="3" class="mb-1 logfileName" @click="viewLog(logfileName)">
+              {{ logfileName }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -36,7 +36,7 @@ export default defineComponent({
 
     function viewLog(logFileName: string): void {
       router.push({
-        path: `/admin/admin-server-logs/${stripExtension(logFileName)}`
+        path: `/admin/admin-server-logs/${stripExtension(logFileName)}`,
       }).catch(() => null);
     }
 

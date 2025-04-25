@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import { AddValuesDelimiter } from "./PlayerPerformanceOnMatch.vue";
 import isNil from "lodash/isNil";
 import { ResourceScore, UnitScore } from "@/store/types";

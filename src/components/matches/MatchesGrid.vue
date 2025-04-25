@@ -87,7 +87,7 @@
               <span class="number-text">{{ getDuration(item) }}</span>
             </td>
             <td>
-              {{  getFloNode(item) }}
+              {{ getFloNode(item) }}
             </td>
             <td v-if="showReplayDownload(item)">
               <download-replay-icon :gameId="item.id"></download-replay-icon>
@@ -230,7 +230,7 @@ export default defineComponent({
 
     function getOpponentTeam(match: Match): Team {
       return match.teams.find(
-        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName)
+        (team: Team) => !team.players.some((player: PlayerInTeam) => player.battleTag === props.alwaysLeftName),
       )!;
     }
 
@@ -322,7 +322,7 @@ export default defineComponent({
           textAlign: "start",
           minWidth: "50px",
         },
-      }
+      },
     ];
 
     return {

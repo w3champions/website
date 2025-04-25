@@ -14,7 +14,7 @@
             <race-icon
               style="display: inline; padding-right: 10px"
               :race="item.race"
-            />
+            ></race-icon>
             <span>{{ $t(`races.${ERaceEnum[item.race]}`) }}</span>
           </td>
           <td>{{ item.total }}</td>

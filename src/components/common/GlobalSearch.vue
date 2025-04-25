@@ -46,7 +46,7 @@
                   :key="season.id"
                   class="mr-1 mt-1 d-inline-block"
                 >
-                  <season-badge :season="season" />
+                  <season-badge :season="season"></season-badge>
                 </div>
               </v-list-item-subtitle>
             </v-list-item-content>
@@ -178,7 +178,6 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss" scoped>

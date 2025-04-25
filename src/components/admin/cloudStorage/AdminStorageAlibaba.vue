@@ -68,7 +68,7 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
           <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
         </template>
@@ -89,8 +89,8 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
-import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
+import { mdiCamera, mdiDelete, mdiDownload, mdiMagnify } from "@mdi/js";
+import { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
 
 export default defineComponent({
   name: "AdminStorageAlibaba",
@@ -188,5 +188,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>

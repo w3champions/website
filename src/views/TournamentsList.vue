@@ -5,11 +5,11 @@
       <v-card-text>
         <div class="mb-4">
           <h3>Upcoming</h3>
-          <tournaments-table :tournaments="upcomingTournaments" @click:row="onRowClick" />
+          <tournaments-table :tournaments="upcomingTournaments" @click:row="onRowClick"></tournaments-table>
         </div>
         <div>
           <h3>Past</h3>
-          <tournaments-table :tournaments="tournaments" @click:row="onRowClick" />
+          <tournaments-table :tournaments="tournaments" @click:row="onRowClick"></tournaments-table>
         </div>
       </v-card-text>
     </v-card>
@@ -44,7 +44,8 @@ export default defineComponent({
         .filter((tournament) =>
           [ETournamentState.INIT, ETournamentState.REGISTRATION].includes(tournament.state)
           && isFuture(tournament.startDateTime)
-        ));
+        )
+    );
 
     function onRowClick(item: ITournament) {
       router.push({

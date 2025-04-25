@@ -2,8 +2,7 @@
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
-        {{ currentSort.name }}
+        <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon> {{ currentSort.name }}
       </v-btn>
     </template>
     <v-card>

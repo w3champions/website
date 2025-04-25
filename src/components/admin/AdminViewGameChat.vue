@@ -23,10 +23,10 @@
                     <v-card-subtitle>Is this the game you are looking for?</v-card-subtitle>
 
                     <v-card-actions>
-                      <v-spacer />
+                      <v-spacer></v-spacer>
                       <v-btn x-large color="primary w3-race-bg--text" @click="accept">Accept</v-btn>
                       <v-btn x-large color="error w3-race-bg--text" @click="dialog = false">Cancel</v-btn>
-                      <v-spacer />
+                      <v-spacer></v-spacer>
                     </v-card-actions>
                     <match-detail-view :matchId="matchId"></match-detail-view>
                   </v-container>
@@ -40,7 +40,6 @@
         <admin-replay-chat-log v-if="acceptedGame" :matchId="matchId"></admin-replay-chat-log>
       </v-card>
     </v-container>
-
   </div>
 </template>
 

@@ -24,7 +24,7 @@
             :value="profileMatchesGameMode"
             label="Mode"
             outlined
-          />
+          ></v-select>
         </v-col>
         <v-col cols="12" md="2">
           <v-select
@@ -36,7 +36,7 @@
             :value="playerRace"
             label="Player Race"
             outlined
-          />
+          ></v-select>
         </v-col>
         <v-col cols="12" md="2">
           <v-select
@@ -48,7 +48,7 @@
             :value="opponentRace"
             label="Opponent Race"
             outlined
-          />
+          ></v-select>
         </v-col>
       </v-row>
     </v-card-title>
@@ -80,7 +80,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
+import { activeGameModesWithAll, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -167,15 +167,14 @@ export default defineComponent({
       const totalMatchesAgainstOpponent = matches.value.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerTeamMatch = team.players.some(
-            (player: PlayerInTeam) => player.battleTag === battleTag.value
+            (player: PlayerInTeam) => player.battleTag === battleTag.value,
           );
 
           const otherTeams = match.teams.filter((x) => x != team);
 
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
-              (player: PlayerInTeam) =>
-                player.battleTag === playerStore.opponentTag
+              (player: PlayerInTeam) => player.battleTag === playerStore.opponentTag,
             );
           });
 
@@ -191,16 +190,14 @@ export default defineComponent({
       return matches.value.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerHasWin = team.players.some(
-            (player: PlayerInTeam) =>
-              player.battleTag === battleTag.value && player.won
+            (player: PlayerInTeam) => player.battleTag === battleTag.value && player.won,
           );
 
           const otherTeams = match.teams.filter((x) => x != team);
 
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
-              (player: PlayerInTeam) =>
-                player.battleTag === playerStore.opponentTag
+              (player: PlayerInTeam) => player.battleTag === playerStore.opponentTag,
             );
           });
 

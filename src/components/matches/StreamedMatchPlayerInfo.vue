@@ -12,7 +12,7 @@
       <player-icon
         class="streamed-match-player-info__race"
         :race="player.race"
-      />
+      ></player-icon>
       <router-link
         :to="playerProfilePage"
         class="streamed-match-player-info__name"
@@ -45,7 +45,7 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
-    }
+    },
   },
   setup(props) {
     const twitchLink = ref<string>(`https://twitch.tv/${props.player.twitch}`);

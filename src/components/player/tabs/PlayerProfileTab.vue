@@ -7,7 +7,7 @@
       <v-row class="mt-4 filter-none">
         <v-col>
           <v-card-title class="justify-center">
-            {{loadProfileError}}
+            {{ loadProfileError }}
           </v-card-title>
         </v-col>
       </v-row>
@@ -16,7 +16,7 @@
       <v-row class="mt-4 filter-none">
         <v-col cols="12" md="4" lg="3">
           <v-card-text style="padding-top: 0 !important">
-            <player-avatar :is-logged-in-player="isLoggedInPlayer" />
+            <player-avatar :is-logged-in-player="isLoggedInPlayer"></player-avatar>
           </v-card-text>
         </v-col>
         <v-col md="12" lg="9">
@@ -39,7 +39,7 @@
               </h4>
               <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
                 <template v-slot:item.race="{ item }">
-                  <span><race-icon v-bind:race="item.race" /></span>
+                  <span><race-icon :race="item.race"></race-icon></span>
                 </template>
                 <template v-slot:item.wins="{ item }">
                   <span class="number-text">
@@ -55,7 +55,7 @@
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByMode") }}
               </h4>
-              <mode-stats-grid :stats="gameModeStats" />
+              <mode-stats-grid :stats="gameModeStats"></mode-stats-grid>
             </v-col>
           </v-row>
         </v-col>
@@ -125,7 +125,7 @@ export default defineComponent({
       if (!raceStats.value) return [];
 
       return raceStats.value.filter(
-        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id
+        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id,
       );
     });
 
@@ -152,7 +152,7 @@ export default defineComponent({
       }
 
       const otherModes = gameModeStats.value.filter(
-        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
+        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT,
       );
 
       const otherModesRanked = otherModes.filter((g) => g.rank != 0);
@@ -167,7 +167,7 @@ export default defineComponent({
 
       return take(
         bestAllModesSorted.filter((x) => x.rank != 0),
-        3
+        3,
       );
     });
 

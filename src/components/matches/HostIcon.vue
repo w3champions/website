@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { computed, PropType, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
