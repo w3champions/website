@@ -21,7 +21,7 @@
             item-text="name"
             item-value="id"
             @change="setSelectedGameModeForSearch"
-            v-model="profileMatchesGameMode"
+            :value="profileMatchesGameMode"
             label="Mode"
             outlined
           />
@@ -33,7 +33,7 @@
             item-text="raceName"
             item-value="raceId"
             @change="setPlayerRaceForSearch"
-            v-model="playerRace"
+            :value="playerRace"
             label="Player Race"
             outlined
           />
@@ -45,7 +45,7 @@
             item-text="raceName"
             item-value="raceId"
             @change="setOpponentRaceForSearch"
-            v-model="opponentRace"
+            :value="opponentRace"
             label="Opponent Race"
             outlined
           />

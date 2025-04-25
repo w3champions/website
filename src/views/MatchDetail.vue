@@ -162,6 +162,7 @@ import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/help
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
+import { GAME_MODES_FFA } from "@/store/constants";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -180,9 +181,6 @@ export default defineComponent({
   },
   setup(props) {
     const matchStore = useMatchStore();
-
-    // const matchIdRef = ref<string>(props.matchId);
-
     const match = computed<Match>(() => matchStore.matchDetail.match);
     const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
     const playedDate = computed<string>(() => formatTimestampStringToDateTime(match.value.startTime));
@@ -193,8 +191,7 @@ export default defineComponent({
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
 
     const matchIsFFA = computed<boolean>(() => {
-      const ffaModes = [EGameMode.GM_FFA, EGameMode.GM_SC_FFA_4, EGameMode.GM_SC_OZ];
-      return ffaModes.includes(matchStore.matchDetail.match.gameMode);
+      return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
     });
 
     const isJubileeGame = computed<boolean>(() => {
