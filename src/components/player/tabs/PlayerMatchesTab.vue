@@ -10,7 +10,7 @@
             @playerFound="playerFound"
             @searchCleared="searchCleared"
             :setAutofocus="false"
-          />
+          ></player-search>
         </v-col>
       </v-row>
       <v-row>
@@ -73,14 +73,14 @@
       only-show-enemy
       @pageChanged="onPageChanged"
       :is-player-profile="true"
-    />
+    ></matches-grid>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
-import { activeGameModesWithAll, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -167,14 +167,15 @@ export default defineComponent({
       const totalMatchesAgainstOpponent = matches.value.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerTeamMatch = team.players.some(
-            (player: PlayerInTeam) => player.battleTag === battleTag.value,
+            (player: PlayerInTeam) => player.battleTag === battleTag.value
           );
 
           const otherTeams = match.teams.filter((x) => x != team);
 
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
-              (player: PlayerInTeam) => player.battleTag === playerStore.opponentTag,
+              (player: PlayerInTeam) =>
+                player.battleTag === playerStore.opponentTag
             );
           });
 
@@ -190,14 +191,16 @@ export default defineComponent({
       return matches.value.filter((match: Match) =>
         match.teams.some((team: Team) => {
           const playerHasWin = team.players.some(
-            (player: PlayerInTeam) => player.battleTag === battleTag.value && player.won,
+            (player: PlayerInTeam) =>
+              player.battleTag === battleTag.value && player.won
           );
 
           const otherTeams = match.teams.filter((x) => x != team);
 
           const opponentIsOnTheOtherTeam = otherTeams.some((otherTeam) => {
             return otherTeam.players.some(
-              (player: PlayerInTeam) => player.battleTag === playerStore.opponentTag,
+              (player: PlayerInTeam) =>
+                player.battleTag === playerStore.opponentTag
             );
           });
 

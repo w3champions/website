@@ -10,7 +10,7 @@
         style="align-items: center"
       >
         <v-col cols="12">
-          <streamed-match-info :match />
+          <streamed-match-info :match="match" />
         </v-col>
       </v-row>
     </v-container>
@@ -39,9 +39,10 @@ export default defineComponent({
     onMounted(async () => {
       await matchStore.loadAllOngoingMatches(EGameMode.GM_1ON1);
 
-      const matchesWithStreamers = matchStore.allOngoingMatches.filter((match) =>
-        match.teams.some((team) => team.players.some((player) => player.twitch))
-      );
+      const matchesWithStreamers =
+        matchStore.allOngoingMatches.filter((match) =>
+          match.teams.some((team) => team.players.some((player) => player.twitch))
+        );
       const streamerNames = matchesWithStreamers.flatMap((match) =>
         match.teams.flatMap((team) => team.players.map((player) => player.twitch))
       );
@@ -49,9 +50,10 @@ export default defineComponent({
       if (streamerNames.length > 0) {
         await twitchStore.getStreamStatus(streamerNames);
 
-        const activeStreamers = twitchStore.twitchStreamResponse.data.map(
-          (stream) => stream.user_name.toLowerCase(),
-        );
+        const activeStreamers =
+          twitchStore.twitchStreamResponse.data.map(
+            (stream) => stream.user_name.toLowerCase()
+          );
 
         matches.value = matchesWithStreamers
           .filter((match) =>
@@ -72,9 +74,11 @@ export default defineComponent({
         matches.value,
         (match) =>
           sumBy(
-            match.teams.flatMap((team) => team.players.map((player) => player.oldMmr)),
+            match.teams.flatMap((team) =>
+              team.players.map((player) => player.oldMmr)
+            )
           ),
-        ["desc"],
+        ["desc"]
       );
     });
 

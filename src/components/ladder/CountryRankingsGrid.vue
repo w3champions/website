@@ -17,8 +17,8 @@
               {{ leagueMap.get(countryRank.league)?.name }}
               {{
                 leagueMap.get(countryRank.league)?.division !== 0
-                ? leagueMap.get(countryRank.league)?.division
-                : null
+                  ? leagueMap.get(countryRank.league)?.division
+                  : null
               }}
             </div>
           </td>
@@ -30,12 +30,10 @@
             class="header"
             v-for="(header, index) in headers"
             :key="index"
-            :style="
-              {
-                width: header.width,
-                'min-width': header.minWidth,
-              }
-            "
+            :style="{
+              width: header.width,
+              'min-width': header.minWidth,
+            }"
           >
             {{ header.text }}
           </td>
@@ -51,28 +49,27 @@
           <td>
             <div
               class="d-inline-block rank-icon-container"
-              :class="{ 'ml-3': index > 0 }"
+              v-bind:class="{ 'ml-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag + '_' + item.race"
             >
               <div
                 v-if="
-                  item.playersInfo
-                  && (item.playersInfo[index].countryCode
-                      || item.playersInfo[index].location) === selectedCountry
+                  item.playersInfo &&
+                  (item.playersInfo[index].countryCode ||
+                    item.playersInfo[index].location) === selectedCountry
                 "
               >
                 <div
                   class="player-avatar mr-1 alignRight race-icon"
                   :title="getTitleRace(item, index).toString()"
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
-                >
-                </div>
+                ></div>
 
                 <player-rank-info :player-id="playerId" />
                 <div class="twitch__container" v-if="isTwitchLive(item)">
                   <v-tooltip bottom>
-                    <template #activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <span style="display: inline" class="pointer" v-on="on">
                         <v-btn
                           icon
@@ -98,7 +95,8 @@
                     </template>
 
                     <div v-if="isCurrentlyLive(item.player.playerIds)">
-                      {{ $t("components_ladder_rankingsgrid.streamingmatch") }} {{ getLiveOpponent(item.player.playerIds) }}
+                      {{ $t("components_ladder_rankingsgrid.streamingmatch") }}
+                      {{ getLiveOpponent(item.player.playerIds) }}
                     </div>
                     <div v-if="!isCurrentlyLive(item.player.playerIds)">
                       {{ $t("components_ladder_rankingsgrid.streaminglive") }}
@@ -112,8 +110,8 @@
                 <div
                   class="country-flag__container"
                   v-if="
-                    (item.playersInfo && item.playersInfo[index].countryCode)
-                    || item.playersInfo[index].location
+                    (item.playersInfo && item.playersInfo[index].countryCode) ||
+                    item.playersInfo[index].location
                   "
                 >
                   <country-flag-extended
@@ -131,19 +129,20 @@
               v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
             >
               <v-tooltip bottom>
-                <template #activator="{ on }">
+                <template v-slot:activator="{ on }">
                   <span style="display: inline" class="pointer" v-on="on">
                     <sword-icon class="swords blinker" />
                   </span>
                 </template>
                 <div>
-                  {{ $t("components_ladder_rankingsgrid.nowplayingvs") }} {{ getLiveOpponent(item.player.playerIds) }}
+                  {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
+                  {{ getLiveOpponent(item.player.playerIds) }}
                 </div>
               </v-tooltip>
             </span>
           </td>
           <td class="number-text text-end">
-            <level-progress :rp="item.rankingPoints" />
+            <level-progress :rp="item.rankingPoints"></level-progress>
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
@@ -175,7 +174,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
-import { CountryRanking, League, PlayerId, PlayerInfo, Ranking } from "@/store/ranking/types";
+import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
 import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -265,7 +264,7 @@ export default defineComponent({
         width: "50px",
         sortFunction: (a: Ranking, b: Ranking): number => {
           return ("" + b.playersInfo[0].clanId).localeCompare(
-            a.playersInfo[0].clanId,
+            a.playersInfo[0].clanId
           );
         },
       },
@@ -344,7 +343,7 @@ export default defineComponent({
 
     async function getStreamStatus(): Promise<void> {
       const twitchNames = flatMap(props.rankings, (cr) => cr.ranks).map(
-        (r) => r.playersInfo[0].twitchName,
+        (r) => r.playersInfo[0].twitchName
       );
 
       if (twitchNames.length > 0) {
@@ -355,9 +354,9 @@ export default defineComponent({
     function initLeagueMap() {
       const league = rankingsStore.ladders?.filter(
         (l) =>
-          l.gateway === rootStateStore.gateway
-          && l.gameMode === rankingsStore.gameMode
-          && l.season === rankingsStore.selectedSeason.id,
+          l.gateway === rootStateStore.gateway &&
+          l.gameMode === rankingsStore.gameMode &&
+          l.season === rankingsStore.selectedSeason.id
       )[0];
       leagueMap.value = new Map(league?.leagues.map((l) => [l.id, l]));
     }
@@ -370,7 +369,7 @@ export default defineComponent({
         return getAvatarUrl(
           playerInfo.selectedRace,
           playerInfo.pictureId,
-          playerInfo.isClassicPicture,
+          playerInfo.isClassicPicture
         );
       } else {
         return getRaceIcon(playerInfo.calculatedRace);
@@ -390,10 +389,10 @@ export default defineComponent({
 
     function hasSelectedIcon(playerInfo: PlayerInfo) {
       if (
-        playerInfo.selectedRace !== undefined
-        && playerInfo.selectedRace != null
-        && playerInfo.pictureId !== undefined
-        && playerInfo.pictureId != null
+        playerInfo.selectedRace !== undefined &&
+        playerInfo.selectedRace != null &&
+        playerInfo.pictureId !== undefined &&
+        playerInfo.pictureId != null
       ) {
         return playerInfo.selectedRace !== EAvatarCategory.TOTAL;
       }
@@ -469,6 +468,7 @@ export default defineComponent({
     };
   },
 });
+
 </script>
 
 <style lang="scss" scoped>

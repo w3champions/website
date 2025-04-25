@@ -8,13 +8,15 @@
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
                 <v-card-subtitle class="pa-0">
-                  {{ $t(`gatewayNames.${gateWay}`) }} <br /> {{ $t(`views_matchdetail.season`) }}: {{ season }}
+                  {{ $t(`gatewayNames.${gateWay}`) }}
+                  <br />
+                  {{ $t(`views_matchdetail.season`) }}: {{ season }}
                 </v-card-subtitle>
                 <host-icon
                   v-if="match.serverInfo && match.serverInfo.provider"
                   :host="match.serverInfo"
                   style="padding-right: 0px"
-                />
+                ></host-icon>
               </v-col>
               <v-col cols="4" v-if="!matchIsFFA" align-self="center">
                 <team-match-info
@@ -23,7 +25,7 @@
                   :team="match.teams[0]"
                 />
               </v-col>
-              <v-col cols="1" class="text-center" align-self="center">
+              <v-col cols="1" class="text-center" align-self="center" >
                 <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
               <v-col v-if="!matchIsFFA" cols="4" align-self="center">
@@ -53,7 +55,7 @@
               </v-col>
               <v-col cols="1" />
               <div class="subicon">
-                <download-replay-icon :gameId="matchId" />
+                <download-replay-icon :gameId="matchId"/>
               </div>
             </v-row>
           </v-card-title>
@@ -67,7 +69,7 @@
           <div v-if="isCompleteGame">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
-              :key="index"
+              v-bind:key="index"
               :heroes-of-winner="scoresOfWinners[index]?.heroes"
               :heroes-of-loser="scoresOfLosers[index]?.heroes"
               :scores-of-winner="scoresOfWinners[index]?.heroScore"
@@ -87,10 +89,9 @@
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
-          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
+          <v-row  v-if="isCompleteGame && !matchIsFFA" class="justify-center">
             <v-col cols="5" class="mr-7">
-              <player-performance-on-match
-                class="mt-4"
+              <player-performance-on-match class="mt-4"
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
                 :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
                 :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
@@ -99,8 +100,7 @@
               />
             </v-col>
             <v-col cols="5" class="ml-7">
-              <player-performance-on-match
-                class="mt-4"
+              <player-performance-on-match class="mt-4"
                 :unit-score="scoresOfLosers.map((h) => h.unitScore)"
                 :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
                 :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
@@ -225,35 +225,25 @@ export default defineComponent({
       return getPlayerScores(losingTeam);
     });
 
-    const ffaWinner = computed<PlayerScore>(() =>
-      playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[0].players[0].battleTag,
-      )!
-    );
+    const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[0].players[0].battleTag
+    )!);
 
-    const ffaLosers = computed<PlayerScore[]>(() =>
-      playerScores.value.filter(
-        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag,
-      )
-    );
+    const ffaLosers = computed<PlayerScore[]>(() => playerScores.value.filter(
+      (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
+    ));
 
-    const ffaLoser1 = computed<PlayerScore>(() =>
-      playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[1].players[0].battleTag,
-      )!
-    );
+    const ffaLoser1 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[1].players[0].battleTag
+    )!);
 
-    const ffaLoser2 = computed<PlayerScore>(() =>
-      playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[2].players[0].battleTag,
-      )!
-    );
+    const ffaLoser2 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[2].players[0].battleTag
+    )!);
 
-    const ffaLoser3 = computed<PlayerScore>(() =>
-      playerScores.value.find(
-        (s) => s.battleTag === match.value.teams[3].players[0].battleTag,
-      )!
-    );
+    const ffaLoser3 = computed<PlayerScore>(() => playerScores.value.find(
+      (s) => s.battleTag === match.value.teams[3].players[0].battleTag
+    )!);
 
     const gameNumber = computed<string>(() => {
       const number = match.value.number / 1000000;
@@ -288,8 +278,8 @@ export default defineComponent({
           const matchedPlayer = team.players.find((p) =>
             playerScore.battleTag
               .toLowerCase()
-              .includes(p.battleTag.toLowerCase().split("#", 1)[0])
-            || p.inviteName && p.inviteName === playerScore.battleTag
+              .includes(p.battleTag.toLowerCase().split("#", 1)[0]) ||
+              p.inviteName && p.inviteName === playerScore.battleTag
           );
           return {
             ...playerScore,
@@ -300,7 +290,7 @@ export default defineComponent({
       const playerScoreDictionary = _keyBy(scores, "battleTag");
 
       return team.players.map(
-        (player) => playerScoreDictionary[player.battleTag],
+        (player) => playerScoreDictionary[player.battleTag]
       );
     }
 
@@ -343,7 +333,7 @@ export default defineComponent({
       ffaLoser3,
       rowLabels,
       ffaPlayers,
-      battleTagToName,
+      battleTagToName
     };
   },
 });

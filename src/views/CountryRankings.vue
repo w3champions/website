@@ -9,9 +9,9 @@
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
-        />
+        ></game-mode-select>
         <v-menu offset-x>
-          <template #activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent">
               <div
                 class="country-flag__container"
@@ -33,7 +33,7 @@
                   <v-list-item-title>Select a country:</v-list-item-title>
                 </v-list-item-content>
               </v-list>
-              <v-divider />
+              <v-divider></v-divider>
               <v-list dense max-height="400" class="countries-list overflow-y-auto">
                 <v-list-item
                   v-for="item in countries"
@@ -57,9 +57,9 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer />
+        <v-spacer></v-spacer>
         <v-menu offset-x>
-          <template #activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn
               tile
               v-on="on"
@@ -95,15 +95,15 @@
       <v-card-text>
         <country-rankings-grid
           v-if="!isLoading"
-          :rankings
+          :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
           :selectedCountry="selectedCountry.countryCode"
-        />
+        ></country-rankings-grid>
         <div class="text-center my-5">
           <v-progress-circular
             indeterminate
             v-if="isLoading"
-          />
+          ></v-progress-circular>
         </div>
         <div></div>
       </v-card-text>
@@ -176,8 +176,8 @@ export default defineComponent({
 
     // country code of the data being displayed
     const currentCountryCode = computed<string>(() =>
-      rankings.value[0]?.ranks[0].playersInfo[0].countryCode
-      || rankings.value[0]?.ranks[0].playersInfo[0].location
+      rankings.value[0]?.ranks[0].playersInfo[0].countryCode ||
+      rankings.value[0]?.ranks[0].playersInfo[0].location
     );
 
     const isLoading = computed<boolean>(() =>
@@ -232,6 +232,7 @@ export default defineComponent({
     onUnmounted((): void => {
       clearInterval(_intervalRefreshHandle);
     });
+
 
     async function refreshRankings(): Promise<void> {
       await loadOngoingMatches();

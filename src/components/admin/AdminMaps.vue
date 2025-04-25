@@ -7,20 +7,20 @@
       <v-card class="pa-md-4">
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
-          <edit-map :map="editedMap" :isAddDialog @cancel="closeEdit" @save="saveMap" />
+          <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
         </v-dialog>
 
         <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
-          <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
+          <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected"></edit-map-files>
         </v-dialog>
 
-        <v-text-field label="Search" v-model="search" />
+        <v-text-field label="Search" v-model="search"></v-text-field>
         <v-data-table
-          :headers
+          :headers="headers"
           :items="maps"
           :items-per-page="10"
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
-          :search
+          :search="search"
           class="elevation-1"
         >
           <template #[`item.path`]="{ item }">
@@ -109,7 +109,7 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
-      } catch (err) {
+      } catch(err) {
         err ? alert(err) : alert("Error trying to save map.");
       }
     }
@@ -164,12 +164,12 @@ export default defineComponent({
       {
         text: "File",
         value: "path",
-        sortable: false,
+        sortable: false
       },
       {
         text: "Actions",
         value: "actions",
-        sortable: false,
+        sortable: false
       },
     ];
 

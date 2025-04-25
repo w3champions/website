@@ -7,31 +7,31 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.name" label="Name" autofocus />
+            <v-text-field v-model="mapRef.name" label="Name" autofocus></v-text-field>
           </v-col>
 
           <v-tooltip left v-if="isAddDialog">
-            <template #activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-col cols="12" sm="6" md="12">
-                <v-text-field v-model="mapId" label="Id" v-bind="attrs" v-on="on" />
+                <v-text-field v-model="mapId" label="Id" v-bind="attrs" v-on="on"></v-text-field>
               </v-col>
             </template>
             <span>Leave blank to auto assign an Id</span>
           </v-tooltip>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.category" label="Category" />
+            <v-text-field v-model="mapRef.category" label="Category"></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.maxTeams" label="Max Teams" />
+            <v-text-field v-model="mapRef.maxTeams" label="Max Teams"></v-text-field>
           </v-col>
         </v-row>
       </v-container>
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer />
+      <v-spacer></v-spacer>
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>

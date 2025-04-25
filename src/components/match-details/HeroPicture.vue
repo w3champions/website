@@ -1,6 +1,6 @@
 <template>
   <v-tooltip top>
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-card-text
         v-on="on"
         class="hero-icon"

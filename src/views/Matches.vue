@@ -10,22 +10,22 @@
             <matches-status-select />
             <game-mode-select
               :disabledModes="disabledGameModes"
-              :gameMode
+              :gameMode="gameMode"
               @gameModeChanged="gameModeChanged"
-            />
-            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map />
-            <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr />
-            <sort-select v-if="unfinished" />
-            <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
+            ></game-mode-select>
+            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
+            <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
+            <sort-select v-if="unfinished"></sort-select>
+            <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
           </v-card-text>
           <matches-grid
             v-model="matches"
-            :totalMatches
+            :totalMatches="totalMatches"
             @pageChanged="onPageChanged"
             :itemsPerPage="50"
-            :unfinished
+            :unfinished="unfinished"
             :is-player-profile="false"
-          />
+          ></matches-grid>
         </v-card>
       </v-col>
     </v-row>
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted } from "vue";
-import { EGameMode, Match } from "@/store/types";
+import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -101,9 +101,10 @@ export default defineComponent({
     });
 
     const mapsByGameMode = computed<Record<EGameMode, Set<MapInfo>>>(() => {
-      const filterSeasons = matchStore.status === MatchStatus.onGoing
-        ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
-        : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
+      const filterSeasons =
+        matchStore.status === MatchStatus.onGoing
+          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
+          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
 
       return overallStatsStore.matchesOnMapPerSeason
         .filter(filterSeasons)

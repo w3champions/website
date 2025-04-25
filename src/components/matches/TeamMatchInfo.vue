@@ -6,9 +6,9 @@
       :class="{ mt2: index > 0 }"
     >
       <player-match-info
-        :unfinishedMatch
+        :unfinishedMatch="unfinishedMatch"
         :player="team.players[index]"
-        :left
+        :left="left"
         :big-race-icon="bigRaceIcon"
         :not-clickable="notClickable"
         :is-anonymous="isAnonymous"
@@ -63,7 +63,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: "",
-    },
+    }
   },
 });
 </script>

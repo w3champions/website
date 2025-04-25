@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
-      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate />
+      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate></v-progress-circular>
     </v-card-text>
     <v-card-text v-else-if="loadProfileError" style="min-height: 500px" class="text-center">
       <v-row class="mt-4 filter-none">
         <v-col>
           <v-card-title class="justify-center">
-            {{ loadProfileError }}
+            {{loadProfileError}}
           </v-card-title>
         </v-col>
       </v-row>
@@ -22,7 +22,7 @@
         <v-col md="12" lg="9">
           <v-row v-if="!isBetaSeason">
             <v-col cols="12" md="4" v-for="gameModeStat in topGameModeStats" :key="gameModeStat.gameMode">
-              <player-league :modeStat="gameModeStat" />
+              <player-league :modeStat="gameModeStat"></player-league>
             </v-col>
           </v-row>
           <v-row v-if="isBetaSeason">
@@ -38,10 +38,10 @@
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
               <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
-                <template #item.race="{ item }">
-                  <span><race-icon :race="item.race" /></span>
+                <template v-slot:item.race="{ item }">
+                  <span><race-icon v-bind:race="item.race" /></span>
                 </template>
-                <template #item.wins="{ item }">
+                <template v-slot:item.wins="{ item }">
                   <span class="number-text">
                     <span class="won">{{ item.wins }}</span>
                     -
@@ -125,7 +125,7 @@ export default defineComponent({
       if (!raceStats.value) return [];
 
       return raceStats.value.filter(
-        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id,
+        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id
       );
     });
 
@@ -152,7 +152,7 @@ export default defineComponent({
       }
 
       const otherModes = gameModeStats.value.filter(
-        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT,
+        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
       );
 
       const otherModesRanked = otherModes.filter((g) => g.rank != 0);
@@ -167,7 +167,7 @@ export default defineComponent({
 
       return take(
         bestAllModesSorted.filter((x) => x.rank != 0),
-        3,
+        3
       );
     });
 

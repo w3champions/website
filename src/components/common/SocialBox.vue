@@ -13,7 +13,7 @@
       outlined
       style="padding-bottom: 0px"
     >
-      <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
+      <v-img src="/assets/socials/Discord_button.png" alt="Discord"/>
     </v-card>
 
     <v-card-text class="text-center" style="opacity: 0.87">
@@ -28,7 +28,7 @@
       tile
       outlined
     >
-      <v-img src="/assets/socials/Twitter_button.png" alt="Twitter" />
+      <v-img src="/assets/socials/Twitter_button.png" alt="Twitter"/>
     </v-card>
   </v-card>
 </template>

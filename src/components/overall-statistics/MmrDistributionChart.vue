@@ -44,11 +44,11 @@ export default defineComponent({
       const colors: string[] = [];
       for (let i = 0; i < props.mmrDistribution.distributedMmrs.length; i++) {
         if (
-          i === props.mmrDistribution.top2PercentIndex
-          || i === props.mmrDistribution.top5PercentIndex
-          || i === props.mmrDistribution.top10PercentIndex
-          || i === props.mmrDistribution.top25PercentIndex
-          || i === props.mmrDistribution.top50PercentIndex
+          i === props.mmrDistribution.top2PercentIndex ||
+          i === props.mmrDistribution.top5PercentIndex ||
+          i === props.mmrDistribution.top10PercentIndex ||
+          i === props.mmrDistribution.top25PercentIndex ||
+          i === props.mmrDistribution.top50PercentIndex
         ) {
           colors.push("rgb(66,23,63, 0.7)");
         } else {
@@ -64,8 +64,8 @@ export default defineComponent({
       return (
         gameModeStats.value.find(
           (g) =>
-            g.gameMode === props.selectedGameMode
-            && g.season === props.selectedSeason?.id,
+            g.gameMode === props.selectedGameMode &&
+            g.season === props.selectedSeason?.id
         )?.mmr ?? 0
       );
     });
@@ -77,20 +77,20 @@ export default defineComponent({
 
       const minMMR = minBy(
         props.mmrDistribution.distributedMmrs,
-        (d) => d.mmr,
+        (d) => d.mmr
       ) || { mmr: 0, count: 0 };
       const maxMMR = maxBy(
         props.mmrDistribution.distributedMmrs,
-        (d) => d.mmr,
+        (d) => d.mmr
       ) || { mmr: 0, count: 0 };
 
       const clampedPlayerMMR = clamp(
         mmrOfLoggedInPlayer.value,
         minMMR.mmr,
-        maxMMR.mmr,
+        maxMMR.mmr
       );
       const mmrGroup = props.mmrDistribution.distributedMmrs.find(
-        (d) => Math.abs(d.mmr + 25 - clampedPlayerMMR) <= 25,
+        (d) => Math.abs(d.mmr + 25 - clampedPlayerMMR) <= 25
       );
 
       return mmrGroup ? mmrGroup.mmr : 0;
@@ -103,9 +103,10 @@ export default defineComponent({
     });
 
     const isTop50percent = computed<boolean>(() => {
-      const top50mmr = props.mmrDistribution.distributedMmrs[
-        props.mmrDistribution.top50PercentIndex
-      ].mmr;
+      const top50mmr =
+        props.mmrDistribution.distributedMmrs[
+          props.mmrDistribution.top50PercentIndex
+        ].mmr;
       return mmrOfLoggedInPlayer.value > top50mmr;
     });
 
@@ -162,7 +163,7 @@ export default defineComponent({
               content: "Your MMR",
               backgroundColor: "rgb(28,95,47, 0.7)",
               yAdjust: 10,
-              xAdjust: isTop50percent.value ? 40 : -40, // Move label to left or right of line
+              xAdjust: isTop50percent.value ? 40 : -40, //Move label to left or right of line
               position: "start",
               borderRadius: 0,
             },
