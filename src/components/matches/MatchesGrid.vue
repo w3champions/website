@@ -86,9 +86,10 @@
             <td>
               <span class="number-text">{{ getDuration(item) }}</span>
             </td>
-            <td>
+            <!-- TODO: Showing the Flo Node column causes the row to overflow and take up double the vertical space, so the grid might need to be widened. -->
+            <!-- <td>
               {{  getFloNode(item) }}
-            </td>
+            </td> -->
             <td v-if="showReplayDownload(item)">
               <download-replay-icon :gameId="item.id"></download-replay-icon>
             </td>
@@ -313,16 +314,17 @@ export default defineComponent({
           textAlign: "start",
         },
       },
-      {
-        name: "Flo Node",
-        text: t("components_matches_matchesgrid.floNode"),
-        sortable: false,
-        value: "floNode",
-        style: {
-          textAlign: "start",
-          minWidth: "50px",
-        },
-      }
+      // TODO: Showing the Flo Node column causes the row to overflow and take up double the vertical space, so the grid might need to be widened.
+      // {
+      //   name: "Flo Node",
+      //   text: t("components_matches_matchesgrid.floNode"),
+      //   sortable: false,
+      //   value: "floNode",
+      //   style: {
+      //     textAlign: "start",
+      //     minWidth: "50px",
+      //   },
+      // }
     ];
 
     return {
