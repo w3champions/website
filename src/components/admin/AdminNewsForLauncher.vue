@@ -4,17 +4,17 @@
       News
     </v-card-title>
     <v-data-table
-      :headers
+      :headers="headers"
       :items="news"
       :items-per-page="5"
       class="elevation-1"
     >
-      <template #top>
+      <template v-slot:top>
         <v-toolbar flat color="transparent">
           <v-toolbar-title>News for Launcher</v-toolbar-title>
-          <v-spacer />
+          <v-spacer></v-spacer>
           <v-dialog max-width="1185" v-model="dialog" @click:outside="closeNews">
-            <template #activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -163,11 +163,11 @@
                   </div>
                 </div>
 
-                <editor-content class="editor__content" :editor />
+                <editor-content class="editor__content" :editor="editor" />
               </v-card-text>
 
               <v-card-actions>
-                <v-spacer />
+                <v-spacer></v-spacer>
                 <v-btn text @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
@@ -184,6 +184,7 @@
         <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
+
   </div>
 </template>
 
@@ -283,8 +284,8 @@ export default defineComponent({
     }
 
     async function deleteNewsItem(item: NewsMessage): Promise<void> {
-      confirm("Are you sure you want to delete this item?")
-        && (await infoMessagesStore.deleteNews(item));
+      confirm("Are you sure you want to delete this item?") &&
+      (await infoMessagesStore.deleteNews(item));
       dialog.value = false;
     }
 

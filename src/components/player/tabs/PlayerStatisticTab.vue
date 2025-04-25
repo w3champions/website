@@ -87,8 +87,8 @@
       <v-col cols="md-10">
         <player-hero-statistics
           v-if="selectedSeason.id !== 0"
-          :selectedMap
-          :playerStatsHeroVersusRaceOnMap
+          :selectedMap="selectedMap"
+          :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
         />
       </v-col>
     </v-row>
@@ -112,7 +112,7 @@
         <player-hero-win-rate
           v-if="selectedSeason.id !== 0"
           :selectedMap="selectedMapHeroWinRate"
-          :playerStatsHeroVersusRaceOnMap
+          :playerStatsHeroVersusRaceOnMap="playerStatsHeroVersusRaceOnMap"
         />
       </v-col>
     </v-row>
@@ -222,7 +222,7 @@ export default defineComponent({
       const patches = ["All"];
 
       Object.keys(playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch).map(
-        (p) => patches.push(p),
+        (p) => patches.push(p)
       );
 
       return patches;
@@ -230,10 +230,10 @@ export default defineComponent({
 
     const raceWithoutRandom = computed<RaceWinsOnMap[]>(() => {
       if (
-        !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
-        || !(
-          selectedPatch.value
-            in playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
+        !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch ||
+        !(
+          selectedPatch.value in
+          playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch
         )
       ) {
         return [];

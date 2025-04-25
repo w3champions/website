@@ -49,7 +49,7 @@ export default defineComponent({
       type: Array<string>,
       required: false,
       default: [],
-    },
+    }
   },
   setup(props) {
     const oauthStore = useOauthStore();
@@ -72,9 +72,8 @@ export default defineComponent({
     // todo: 3. format PUT request to endpoint using setOverrides
 
     const isProxyListModified = computed<boolean>(() => {
-      if (props.passedOverrides.length !== modifiedOverrides.value.length) {
+      if (props.passedOverrides.length !== modifiedOverrides.value.length)
         return true;
-      }
 
       const uniqueValues = new Set([
         ...modifiedOverrides.value,
@@ -83,10 +82,10 @@ export default defineComponent({
 
       for (const v of uniqueValues) {
         const modifiedOverridesCount = modifiedOverrides.value.filter(
-          (e) => e === v,
+          (e) => e === v
         ).length;
         const passedOverridesCount = props.passedOverrides.filter(
-          (e) => e === v,
+          (e) => e === v
         ).length;
         if (modifiedOverridesCount !== passedOverridesCount) return true;
       }
@@ -171,4 +170,5 @@ export default defineComponent({
     };
   },
 });
+
 </script>

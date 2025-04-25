@@ -1,8 +1,9 @@
 <template>
   <v-menu offset-x>
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon> {{ currentStatus.name }}
+        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
+        {{ currentStatus.name }}
       </v-btn>
     </template>
     <v-card>
@@ -14,7 +15,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-divider />
+        <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="s in matchStatuses"

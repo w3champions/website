@@ -1,8 +1,9 @@
 <template>
   <v-menu offset-x>
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" class="transparent">
-        {{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }} <v-icon class="mr-1">mdi-chevron-right</v-icon>
+        {{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }}
+        <v-icon class="mr-1">mdi-chevron-right</v-icon>
       </v-btn>
     </template>
     <v-card>

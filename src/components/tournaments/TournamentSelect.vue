@@ -1,8 +1,9 @@
 <template>
   <v-menu offset-x>
-    <template #activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn tile v-on="on" style="background-color: transparent">
-        <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon> {{ selectedTournamentText }}
+        <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon>
+        {{ selectedTournamentText }}
       </v-btn>
     </template>
     <v-card>
@@ -14,7 +15,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-divider />
+        <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="tournament in tournaments"
@@ -32,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { mdiTrophy } from "@mdi/js";
 
@@ -47,7 +48,7 @@ export default defineComponent({
     selectedTournament: {
       type: Object as PropType<ITournament>,
       required: true,
-    },
+    }
   },
   setup(props, context) {
     const selectedTournamentText = computed<string>(() => props.selectedTournament ? props.selectedTournament.name : "Select tournament");

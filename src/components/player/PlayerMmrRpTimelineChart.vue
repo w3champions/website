@@ -8,9 +8,9 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, PropType, defineComponent } from "vue";
 import { PlayerMmrRpTimeline } from "@/store/player/types";
-import { ChartData, ChartOptions, ScriptableContext } from "chart.js";
+import { ChartData , ChartOptions, ScriptableContext } from "chart.js";
 import { parseJSON, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import LineChart, { defaultOptions, defaultOptionsXAxis, getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";

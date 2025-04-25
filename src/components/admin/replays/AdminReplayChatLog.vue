@@ -4,17 +4,17 @@
     <v-card-text>
       <v-row>
         <v-col align="left">
-          <v-switch v-model="openGameDetail" :label="`Show Game Detail`" />
+          <v-switch v-model="openGameDetail" :label="`Show Game Detail`"></v-switch>
         </v-col>
         <v-col>
-          <download-replay-icon :gameId="matchId" />
+          <download-replay-icon :gameId="matchId"></download-replay-icon>
           <span>Download Replay</span>
         </v-col>
       </v-row>
       <v-row v-if="openGameDetail" class="mb-4">
-        <match-detail-view :matchId />
+        <match-detail-view :matchId="matchId"></match-detail-view>
       </v-row>
-      <v-divider class="mb-4" />
+      <v-divider class="mb-4"></v-divider>
       <v-row class="ma-1">
         <replay-chat-message
           v-for="(item, index) in messages"
@@ -24,7 +24,7 @@
           :content="item.content"
           :scope="item.scope.type"
           :sentTo="getPrivateRecipientName(item)"
-        />
+        ></replay-chat-message>
       </v-row>
     </v-card-text>
   </v-container>

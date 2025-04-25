@@ -1,30 +1,34 @@
 <template>
   <div>
     <div>
-      <b>Start Time:</b> {{ formattedDate }}
+      <b>Start Time:</b>
+      {{ formattedDate }}
     </div>
     <div>
-      <b>Game Mode:</b> {{ gameMode }}
+      <b>Game Mode:</b>
+      {{ gameMode }}
     </div>
     <div>
-      <b>Format:</b> {{ format }}
+      <b>Format:</b>
+      {{ format }}
     </div>
     <div>
-      <b>Player Count:</b> {{ playerCount }}
+      <b>Player Count:</b>
+      {{ playerCount }}
     </div>
     <div>
-      <b>Map Pool:</b> {{ mapPool }}
+      <b>Map Pool:</b>
+      {{ mapPool }}
     </div>
     <div v-if="maxPlayers">
-      <b>Max Players:</b> {{ maxPlayers }}
+      <b>Max Players:</b>
+      {{ maxPlayers }}
     </div>
     <div v-if="floNode">
-      <div>
-        Players must have a ping of <b>{{ floNodeMaxPing }}</b> or less to <b>{{ floNode.name }}</b>.
-      </div>
+      <div>Players must have a ping of <b>{{ floNodeMaxPing }}</b> or less to <b>{{ floNode.name }}</b>.</div>
     </div>
     <div v-if="matcherinoUrl">
-      <a :href="matcherinoUrl">Donate to the prize pool</a>
+      <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
     </div>
     <div class="mt-2" v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled">
       <div v-if="statusInit">Registration didn't start yet.</div>
@@ -40,7 +44,7 @@
 import { computed, defineComponent, PropType } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { ETournamentState, ITournament, ITournamentFloNode } from "@/store/tournaments/types";
-import { EGameModeLabel, ETournamentFormatLabel } from "@/helpers/tournaments";
+import { ETournamentFormatLabel, EGameModeLabel } from "@/helpers/tournaments";
 import { Map } from "@/store/admin/mapsManagement/types";
 import { ERaceEnum } from "@/store/types";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
@@ -65,9 +69,7 @@ export default defineComponent({
     const gameMode = computed<string>(() => EGameModeLabel[props.tournament.mode]);
     const format = computed<string>(() => ETournamentFormatLabel[props.tournament.format]);
     const playerCount = computed<number>(() => props.tournament.players.length);
-    const mapPool = computed<string>(() =>
-      props.tournament.mapPool.map((mapId) => props.maps.find((map) => map.id === mapId)?.name).sort().join(", ")
-    );
+    const mapPool = computed<string>(() => props.tournament.mapPool.map((mapId) => props.maps.find((map) => map.id === mapId)?.name).sort().join(", "));
     const statusInit = computed<boolean>(() => props.tournament.state === ETournamentState.INIT);
     const statusRegistration = computed<boolean>(() => props.tournament.state === ETournamentState.REGISTRATION);
     const statusMatchGeneration = computed<boolean>(() => props.tournament.state === ETournamentState.MATCH_GENERATION);

@@ -41,16 +41,16 @@ export default defineComponent({
 
     const gameModeStatsAt = computed<ModeStat[]>(() => {
       const atStats = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0,
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
       );
 
       const atStatsUnranked = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0,
+        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0
       );
 
       return [
         ...atStats.sort(
-          (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank),
+          (a, b) => a.leagueId * 1000 + a.rank - (b.leagueId * 1000 + b.rank)
         ),
         ...atStatsUnranked,
       ];

@@ -1,8 +1,8 @@
 <template>
   <v-container class="ma-0 pa-0" @click="assignPortrait">
     <v-tooltip top>
-      <template #activator="{ on }">
-        <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-on="on" />
+      <template v-slot:activator="{ on }">
+        <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-on="on"/>
       </template>
       <span>ID: {{ portraitId }}</span>
     </v-tooltip>

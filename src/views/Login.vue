@@ -50,7 +50,8 @@ export default defineComponent({
       init();
     });
 
-    return {};
+    return {
+    };
   },
 });
 </script>

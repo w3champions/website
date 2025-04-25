@@ -26,7 +26,7 @@
               :light="!$vuetify.theme.dark"
               height="350px"
             >
-              <v-carousel-item v-for="newsItem in news.slice(0, 8)" :key="newsItem.date">
+              <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
                 <v-card-title>
                   {{ newsItem.date }}
                 </v-card-title>
@@ -82,7 +82,7 @@
             <div v-for="mode in activeGameModes" :key="mode.id">
               <div v-if="mode.id === 1 || mode.id === 2 || mode.id === 4">
                 <b class="mode">{{ mode.name }}</b>
-                <copy-button :copyText="mapNamesAsString(mode.id)" tooltipText="maptooltip" />
+                <copy-button :copyText="mapNamesAsString(mode.id)" tooltipText="maptooltip"></copy-button>
                 <ul><li v-for="map in mode.maps" :key="map.id">{{ map.name }}</li></ul>
               </div>
             </div>
@@ -124,7 +124,9 @@
                       <v-col cols="10">
                         {{ rank.player.name }}
                         <div style="font-size: 11px">
-                          {{ $t("views_home.wlt") }}: {{ rank.player.wins }}/{{ rank.player.losses }}/{{ rank.player.games }}
+                          {{ $t("views_home.wlt") }}: {{ rank.player.wins }}/{{
+                            rank.player.losses
+                          }}/{{ rank.player.games }}
                         </div>
                       </v-col>
                     </v-row>
@@ -142,7 +144,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { marked } from "marked";
-import { ActiveGameMode, Ranking } from "@/store/ranking/types";
+import { Ranking, ActiveGameMode } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
 import SocialBox from "@/components/common/SocialBox.vue";
 import SupportBox from "@/components/common/SupportBox.vue";
