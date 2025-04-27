@@ -28,7 +28,7 @@ export enum EHeroes {
 }
 
 export type HeroFilter = {
-  id: number;
+  type: number;
   name: string;
 };
 

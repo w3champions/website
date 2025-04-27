@@ -61,6 +61,7 @@
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
+                    :show-heroes="showHeroes"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1" align-self="center" class="py-2">

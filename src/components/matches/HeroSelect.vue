@@ -15,7 +15,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
-          <v-list-item v-for="hero in heroFilters" :key="hero.id" @click="selectHero(hero)">
+          <v-list-item v-for="hero in heroFilters" :key="hero.type" @click="selectHero(hero)">
             <v-list-item-content>
               <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             </v-list-item-content>
@@ -56,7 +56,7 @@ export default defineComponent({
 
     const selectHero = (hero: HeroFilter) => {
       selectedHero.value = hero;
-      context.emit("heroChanged", hero.id);
+      context.emit("heroChanged", hero.type);
     };
 
     return {

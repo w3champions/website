@@ -1,20 +1,20 @@
 <template>
   <div class="player-info" :class="textClass">
     <player-icon
-      v-if="!left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
+        v-if="!left"
+        :race="race"
+        :rndRace="rndRace"
+        :big="bigRaceIcon"
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span :class="{ 'mr-2': left, 'ml-2': !left }">
         <a
-        class="name-link"
-        :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-        @click="notClickable ? null : goToPlayer()"
-        @click.middle="openProfileInNewTab()"
-        @click.right="openProfileInNewTab()"
-      >
+            class="name-link"
+            :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+            @click="notClickable ? null : goToPlayer()"
+            @click.middle="openProfileInNewTab()"
+            @click.right="openProfileInNewTab()"
+        >
         {{ nameWithoutBtag }}
         <span class="number-text">({{ currentRating }})</span>
         <span class="number-text" v-if="mmrChange !== 0" :class="won">
@@ -25,17 +25,18 @@
     </span>
       <div class="flag-container" :class="{ 'ml-1': !left }">
         <country-flag-extended
-          :countryCode="player.countryCode"
-          :location="player.location"
-          size="small"
+            :countryCode="player.countryCode"
+            :location="player.location"
+            size="small"
         />
-      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" />
+      </div>
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24"/>
     </div>
     <player-icon
-      v-if="left"
-      :race="race"
-      :rndRace="rndRace"
-      :big="bigRaceIcon"
+        v-if="left"
+        :race="race"
+        :rndRace="rndRace"
+        :big="bigRaceIcon"
     />
   </div>
 </template>
@@ -134,13 +135,14 @@ export default defineComponent({
       if (!showPlayerInfo.value) return;
 
       router
-        .push({
-          path: getProfileUrl(props.player.battleTag),
-        })
-        .catch((err) => {
-          return err;
-        });
+          .push({
+            path: getProfileUrl(props.player.battleTag),
+          })
+          .catch((err) => {
+            return err;
+          });
     }
+
     return {
       won,
       race,
@@ -169,11 +171,11 @@ export default defineComponent({
   flex-direction: column;
 }
 
-span>a {
+span > a {
   display: inline-block;
 }
 
-span>.flag-container {
+span > .flag-container {
   display: inline-block;
 }
 
