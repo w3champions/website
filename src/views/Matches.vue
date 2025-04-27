@@ -8,8 +8,11 @@
           </v-card-title>
           <v-card-text class="d-flex align-center">
             <matches-status-select />
-            <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode"
-              @gameModeChanged="gameModeChanged"></game-mode-select>
+            <game-mode-select
+              :disabledModes="disabledGameModes"
+              :gameMode="gameMode"
+              @gameModeChanged="gameModeChanged"
+            ></game-mode-select>
             <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
             <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
@@ -18,8 +21,15 @@
             <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
               :unfinished="unfinished" />
           </v-card-text>
-          <matches-grid v-model="matches" :totalMatches="totalMatches" @pageChanged="onPageChanged" :itemsPerPage="50"
-            :unfinished="unfinished" :is-player-profile="false" :showHeroes="showHeroIcons"></matches-grid>
+          <matches-grid
+            v-model="matches"
+            :totalMatches="totalMatches"
+            @pageChanged="onPageChanged"
+            :itemsPerPage="50"
+            :unfinished="unfinished"
+            :is-player-profile="false"
+            :show-heroes="showHeroIcons"
+          ></matches-grid>
         </v-card>
       </v-col>
     </v-row>
@@ -72,9 +82,7 @@ export default defineComponent({
     const matches = computed<Match[]>(() => matchStore.matches);
     const totalMatches = computed<number>(() => matchStore.totalMatches);
     const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
-    const unfinished = computed<boolean>(
-      () => matchStore.status === MatchStatus.onGoing
-    );
+    const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
@@ -108,36 +116,25 @@ export default defineComponent({
     const mapsByGameMode = computed<Record<EGameMode, Set<MapInfo>>>(() => {
       const filterSeasons =
         matchStore.status === MatchStatus.onGoing
-          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-              matchesOnMapPerSeason.season === currentSeason.value.id
-          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) =>
-              matchesOnMapPerSeason.season >= 0;
+          ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
+          : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
 
       return overallStatsStore.matchesOnMapPerSeason
         .filter(filterSeasons)
-        .reduce<Record<EGameMode, Set<MapInfo>>>(
-          (mapsByMode, matchesOnMapPerSeason) => {
-            for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-              // just get the map name and ignore the count
-              const mapsInfos = modes.maps.map(({ map, mapName }) => ({
-                map,
-                mapName,
-              }));
+        .reduce<Record<EGameMode, Set<MapInfo>>>((mapsByMode, matchesOnMapPerSeason) => {
+          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+            // just get the map name and ignore the count
+            const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
 
-              if (!mapsByMode[modes.gameMode]) {
-                mapsByMode[modes.gameMode] = new Set(mapsInfos);
-              } else {
-                // combine this seasons mode maps with other seasons modes maps without dupes
-                mapsByMode[modes.gameMode] = new Set([
-                  ...mapsByMode[modes.gameMode],
-                  ...mapsInfos,
-                ]);
-              }
+            if (!mapsByMode[modes.gameMode]) {
+              mapsByMode[modes.gameMode] = new Set(mapsInfos);
+            } else {
+              // combine this seasons mode maps with other seasons modes maps without dupes
+              mapsByMode[modes.gameMode] = new Set([...mapsByMode[modes.gameMode], ...mapsInfos]);
             }
-            return mapsByMode;
-          },
-          {} as Record<EGameMode, Set<MapInfo>>
-        );
+          }
+          return mapsByMode;
+        }, {} as Record<EGameMode, Set<MapInfo>>);
     });
 
     async function getMatches(): Promise<void> {

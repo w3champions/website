@@ -1,23 +1,42 @@
 <template>
   <div class="player-info" :class="textClass">
-    <player-icon v-if="!left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
+    <player-icon
+      v-if="!left"
+      :race="race"
+      :rndRace="rndRace"
+      :big="bigRaceIcon"
+    />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
-      <span>
-        <a class="name-link" :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-          @click="notClickable ? null : goToPlayer()" @click.middle="openProfileInNewTab()"
-          @click.right="openProfileInNewTab()">
-          {{ nameWithoutBtag }}
-          <span class="number-text">({{ currentRating }})</span>
-          <span class="number-text" v-if="mmrChange !== 0" :class="won">
-            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-            <span v-else>{{ mmrChange }}</span>
-          </span>
-        </a>
-      </span>
-      <country-flag-extended :countryCode="player.countryCode" :location="player.location" size="small" class="ml-1" />
+      <span :class="{ 'mr-2': left, 'ml-2': !left }">
+        <a
+        class="name-link"
+        :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+        @click="notClickable ? null : goToPlayer()"
+        @click.middle="openProfileInNewTab()"
+        @click.right="openProfileInNewTab()"
+      >
+        {{ nameWithoutBtag }}
+        <span class="number-text">({{ currentRating }})</span>
+        <span class="number-text" v-if="mmrChange !== 0" :class="won">
+          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+          <span v-else>{{ mmrChange }}</span>
+        </span>
+      </a>
+    </span>
+      <div class="flag-container" :class="{ 'ml-1': !left }">
+        <country-flag-extended
+          :countryCode="player.countryCode"
+          :location="player.location"
+          size="small"
+        />
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" />
     </div>
-    <player-icon v-if="left" :race="race" :rndRace="rndRace" :big="bigRaceIcon" />
+    <player-icon
+      v-if="left"
+      :race="race"
+      :rndRace="rndRace"
+      :big="bigRaceIcon"
+    />
   </div>
 </template>
 
@@ -28,10 +47,12 @@ import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import HeroIconRow from "@/components/matches/HeroIconRow.vue";
 
 export default defineComponent({
   name: "PlayerMatchInfo",
   components: {
+    HeroIconRow,
     PlayerIcon,
     CountryFlagExtended,
   },

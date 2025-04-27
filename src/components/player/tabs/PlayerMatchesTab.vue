@@ -68,8 +68,16 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <matches-grid v-model="matches" :total-matches="totalMatches" :items-per-page="50" :always-left-name="battleTag"
-      only-show-enemy @pageChanged="onPageChanged" :is-player-profile="true" :showHeroes="showHeroIcons"></matches-grid>
+    <matches-grid
+      v-model="matches"
+      :total-matches="totalMatches"
+      :items-per-page="50"
+      :always-left-name="battleTag"
+      only-show-enemy
+      @pageChanged="onPageChanged"
+      :is-player-profile="true"
+      :show-heroes="showHeroIcons"
+    ></matches-grid>
   </div>
 </template>
 
