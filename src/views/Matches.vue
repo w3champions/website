@@ -17,7 +17,7 @@
             <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
-            <hero-select v-if="!unfinished" @heroChanged="heroChanged"></hero-select>
+            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged"></hero-select>
             <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
               :unfinished="unfinished" />
           </v-card-text>
@@ -88,9 +88,10 @@ export default defineComponent({
     const mmr = computed<Mmr>(() => matchStore.mmr);
 
     const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
+    const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
 
     const maps = computed<Array<MapInfo>>(() => {
-      if (!currentSeason.value) {
+      if (!currentSeason.value) { 
         return [];
       }
 
@@ -202,6 +203,7 @@ export default defineComponent({
       onPageChanged,
       showHeroIcons,
       toggleShowHeroIcons,
+      showHeroSelect,
       heroChanged,
     };
   },
