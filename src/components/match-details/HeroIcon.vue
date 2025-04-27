@@ -1,6 +1,6 @@
 <template>
   <div v-if="hero">
-    <hero-picture :hero-icon="hero.icon" :size="size" />
+    <hero-picture :hero-icon="hero.name" :size="size" />
     <div v-if="showLevel" class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>

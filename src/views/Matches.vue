@@ -15,7 +15,7 @@
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
             <hero-select v-if="!unfinished" @heroChanged="heroChanged"></hero-select>
-            <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event"
+            <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
               :unfinished="unfinished" />
           </v-card-text>
           <matches-grid v-model="matches" :totalMatches="totalMatches" @pageChanged="onPageChanged" :itemsPerPage="50"
