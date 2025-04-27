@@ -3,7 +3,6 @@
     <div
       v-for="(player, index) in team.players"
       :key="index"
-      class="my-2"
     >
       <player-match-info
         :unfinishedMatch="unfinishedMatch"

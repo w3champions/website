@@ -10,7 +10,7 @@
       <v-card-text>
         <v-list>
           <v-list-item-content>
-            <v-list-item-title>{{ $t("common.selecthero") }}</v-list-item-title>
+            <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
         <v-divider></v-divider>

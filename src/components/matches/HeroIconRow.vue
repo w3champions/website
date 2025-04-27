@@ -38,7 +38,7 @@ export default defineComponent({
   },
   setup(props, context) {
     let heroList = props.heroes;
-    if (props.left) {
+    if (props.left && heroList) {
       heroList = heroList.reverse();
     }
     return {

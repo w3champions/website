@@ -7,7 +7,7 @@
         :big="bigRaceIcon"
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
-      <span :class="{ 'mr-2': left, 'ml-2': !left }">
+      <span>
         <a
             class="name-link"
             :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
