@@ -1,6 +1,6 @@
 <template>
   <v-row v-if="show" no-gutters>
-    <v-col v-for="(hero, heroIndex) in heroes" :key="heroIndex" class="pa-1">
+    <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex" class="pa-1">
       <hero-icon :hero="hero" :firstHero="heroIndex === 0" :show-level="false" :size="size" />
     </v-col>
   </v-row>
@@ -36,5 +36,14 @@ export default defineComponent({
       required: false
     },
   },
+  setup(props, context) {
+    let heroList = props.heroes;
+    if (props.left) {
+      heroList = heroList.reverse();
+    }
+    return {
+      heroList
+    };
+  }
 });
 </script>
