@@ -19,6 +19,7 @@ export type PlayerInTeam = {
   location?: string;
   countryCode?: string;
   twitch?: string | null;
+  heroes: Hero[];
 };
 
 export type Team = {
@@ -80,7 +81,7 @@ export interface UnitScore {
 }
 
 export interface Hero {
-  icon: string;
+  name: string;
   level: number;
 }
 

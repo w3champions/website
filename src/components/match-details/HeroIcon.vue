@@ -1,7 +1,7 @@
 <template>
   <div v-if="hero">
-    <hero-picture :hero-icon="hero.icon" />
-    <div class="text-center hero-level-flag" :class="firstHeroOrNot">
+    <hero-picture :hero-icon="hero.name" :size="size" />
+    <div v-if="showLevel" class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>
   </div>
@@ -28,6 +28,15 @@ export default defineComponent({
       false: true,
       default: undefined,
     },
+    showLevel: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    size: {
+      type: Number,
+      required: false,
+    }
   },
   setup(props) {
     const firstHeroOrNot = ref<string>(props.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second-hero");

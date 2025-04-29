@@ -340,6 +340,7 @@ const en = {
   },
 
   heroNames: {
+    allfilter: "All Heroes",
     all: "Any hero selection",
     none: "No hero selection",
     archmage: "Archmage",
@@ -380,6 +381,8 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
+    showHeroIcons: "Show Heros",
+    hideHeroIcons: "Hide Heros",
   },
 
   proxies: {
