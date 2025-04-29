@@ -33,6 +33,7 @@
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
                       :highlightedPlayer="alwaysLeftName"
+                      :show-heroes="showHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -43,6 +44,7 @@
                       :team="team"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :show-heroes="showHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -59,9 +61,10 @@
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
+                    :show-heroes="showHeroes"
                   ></team-match-info>
                 </v-col>
-                <v-col cols="1" align-self="center">
+                <v-col cols="1" align-self="center" class="py-2">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
                 </v-col>
@@ -70,6 +73,7 @@
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
+                    :show-heroes="showHeroes"
                   ></team-match-info>
                 </v-col>
               </v-row>
@@ -168,6 +172,11 @@ export default defineComponent({
     isPlayerProfile: {
       type: Boolean,
       required: true,
+    },
+    showHeroes: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props, context) {
@@ -364,6 +373,7 @@ export default defineComponent({
     justify-content: end;
   }
 }
+
 .clickable {
   cursor: pointer;
 }

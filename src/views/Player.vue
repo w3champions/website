@@ -422,19 +422,19 @@ export default defineComponent({
 
   &.one-v-one {
     .live-match__map {
-      top: 33px;
+      top: 40px;
     }
   }
   &.two-v-two-at {
-    height: 67px;
+    height: 95px;
     .live-match__map {
-      top: 65px;
+      top: 90px;
     }
   }
   &.four-v-four {
-    height: 135px;
+    height: 195px;
     .live-match__map {
-      top: 130px;
+      top: 190px;
     }
   }
 }
