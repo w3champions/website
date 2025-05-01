@@ -24,6 +24,7 @@ export interface TwitchToken {
 }
 
 export enum BnetOAuthRegion {
+  us = "us",
   eu = "eu",
   cn = "cn",
 }

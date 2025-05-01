@@ -63,6 +63,11 @@ export default defineComponent({
 
     const gateways = [
       {
+        id: BnetOAuthRegion.us,
+        name: t("gatewayNames.America"),
+        uri: "https://battle.net",
+      },
+      {
         id: BnetOAuthRegion.eu,
         name: t("gatewayNames.Europe"),
         uri: "https://eu.battle.net",
