@@ -65,7 +65,7 @@ export default defineComponent({
       {
         id: BnetOAuthRegion.us,
         name: t("gatewayNames.America"),
-        uri: "https://battle.net",
+        uri: "https://us.battle.net",
       },
       {
         id: BnetOAuthRegion.eu,
