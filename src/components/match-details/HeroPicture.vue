@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-img v-on="on" :src="heroPicture" :width="size" :aspect-ratio="1 / 1"></v-img>
     </template>
-    <div>{{ heroName }}</div>
+    <div>{{ heroName }} ({{ $t("common.level") }} {{ heroLevel }})</div>
   </v-tooltip>
 </template>
 
@@ -21,6 +21,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    heroLevel: {
+      type: Number,
+      required: false,
+    },
     size: {
       type: Number,
       required: false,
@@ -36,6 +40,7 @@ export default defineComponent({
     return {
       heroPicture,
       heroName,
+      heroLevel: props.heroLevel,
     };
   },
 });

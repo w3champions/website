@@ -381,8 +381,8 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
-    showHeroIcons: "Show Heros",
-    hideHeroIcons: "Hide Heros",
+    showHeroIcons: "Show Heroes",
+    hideHeroIcons: "Hide Heroes",
   },
 
   proxies: {
