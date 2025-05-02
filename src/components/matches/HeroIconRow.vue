@@ -1,5 +1,5 @@
 <template>
-  <v-row v-if="show" no-gutters class="d-flex mt-1 ga-2">
+  <v-row no-gutters :class="[show ? 'd-flex' : 'd-none', 'mt-1', 'ga-2']">
     <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex">
       <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" />
     </v-col>
@@ -45,7 +45,7 @@ export default defineComponent({
     return {
       heroList,
       left: props.left,
-      firstHeroIndex: props.left ? props.heroes.length - 1 : 0,
+      firstHeroIndex: props.left && heroList ? heroList.length - 1 : 0,
     };
   }
 });
