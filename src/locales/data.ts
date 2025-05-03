@@ -571,6 +571,8 @@ const data = {
       close: "Close",
       save: "Save",
       selectmap: "Select a map:",
+      selecthero_highestlevel: "Highest level hero:",
+      level: "Level",
     },
   },
   ru: {
