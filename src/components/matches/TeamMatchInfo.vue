@@ -1,5 +1,8 @@
 <template>
-  <div v-if="team">
+  <div
+    v-if="team"
+    class="team-match-info"
+  >
     <div
       v-for="(player, index) in team.players"
       :key="index"
@@ -74,3 +77,10 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.team-match-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+</style>
