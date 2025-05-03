@@ -61,6 +61,13 @@ export default defineComponent({
   background-size: cover;
   display: inline-block;
   vertical-align: middle;
+
+  // The race icons have a bit of extra room
+  // on the bottom for the shadow, so lets account
+  // for that with a negative margin to visually
+  // align it with text beside it.
+  margin-top: 2px;
+  margin-bottom: -2px;
 }
 
 .race-icon-big {
@@ -70,6 +77,9 @@ export default defineComponent({
   background-size: cover;
   display: inline-block;
   vertical-align: middle;
+
+  margin-top: 2px;
+  margin-bottom: -2px;
 }
 
 .race-icon-HUMAN {

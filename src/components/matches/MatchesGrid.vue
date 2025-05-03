@@ -11,7 +11,7 @@
             >
               {{ header.text }}
             </td>
-            <td v-if="!unfinished">
+            <td v-if="!unfinished" class="text-center">
               {{ $t("components_matches_matchesgrid.replay") }}
             </td>
           </tr>
@@ -78,19 +78,21 @@
                 </v-col>
               </v-row>
             </td>
-            <td>
-              {{ gameModeTranslation(item.gameMode) }}
+            <td class="text-center">
+              <span>{{ gameModeTranslation(item.gameMode) }}</span>
+              <br />
+              <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
             </td>
-            <td>
-              <span>{{ mapNameFromMatch(item) }}</span>
-            </td>
-            <td>
+            <td class="text-right">
               {{ getStartTime(item) }}
             </td>
-            <td>
-              <span class="number-text">{{ getDuration(item) }}</span>
+            <td class="text-right">
+              <div class="d-flex flex-column text-right align-end">
+                <span class="number-text">{{ getDuration(item) }}</span>
+                <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }" />
+              </div>
             </td>
-            <td v-if="showReplayDownload(item)">
+            <td v-if="showReplayDownload(item)" class="text-center">
               <download-replay-icon :gameId="item.id"></download-replay-icon>
             </td>
           </tr>
@@ -261,6 +263,14 @@ export default defineComponent({
       return formatSecondsToDuration(match.durationInSeconds);
     }
 
+    function getDurationBarWidth(match: Match): string {
+      if (props.unfinished) return "0%";
+      // TODO: Use a percentile based on the game mode length instead (requires backend API data)
+      const maxDuration = 1800; // 30 minutes, for now.
+      const minPercent = 5; // Minimum width so it's not too small
+      return `${Math.max(minPercent, Math.min(maxDuration, match.durationInSeconds) / maxDuration * 100)}%`;
+    }
+
     function showReplayDownload(item: Match): boolean {
       // Timestamp is - 29th September 2022 - 17:17 UTC - first game of 1.33.0.19378
       return !props.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
@@ -283,17 +293,8 @@ export default defineComponent({
         sortable: false,
         value: "gameMode",
         style: {
-          textAlign: "start",
+          textAlign: "center",
           minWidth: "90px",
-        },
-      },
-      {
-        name: "Map",
-        text: t("components_matches_matchesgrid.map"),
-        sortable: false,
-        value: "map",
-        style: {
-          textAlign: "start",
         },
       },
       {
@@ -302,7 +303,7 @@ export default defineComponent({
         sortable: false,
         value: "startTime",
         style: {
-          textAlign: "start",
+          textAlign: "end",
           minWidth: "170px",
         },
       },
@@ -312,7 +313,7 @@ export default defineComponent({
         sortable: false,
         value: "duration",
         style: {
-          textAlign: "start",
+          textAlign: "end",
         },
       },
     ];
@@ -337,6 +338,7 @@ export default defineComponent({
       nameIfNonSolo,
       getStartTime,
       getDuration,
+      getDurationBarWidth,
       showReplayDownload,
     };
   },
@@ -356,5 +358,12 @@ export default defineComponent({
 
 .clickable {
   cursor: pointer;
+}
+
+.duration-bar {
+  background-color: var(--v-primary-base);
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 2px;
 }
 </style>
