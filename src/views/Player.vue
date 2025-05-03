@@ -10,7 +10,7 @@
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
                 <span class="mr-2" />
                 <!-- add some space between name and season badges -->
-                <div v-for="season in seasonsWithoutCurrentOne" :key="season.id" class="ml-1 d-inline-block">
+                <div v-for="season in seasonsReversed" :key="season.id" class="ml-1 d-inline-block">
                   <season-badge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
@@ -168,9 +168,9 @@ export default defineComponent({
       return false;
     });
 
-    const seasonsWithoutCurrentOne = computed<Season[]>(() => {
+    const seasonsReversed = computed<Season[]>(() => {
       if (!seasons.value) return [];
-      return seasons.value.filter((s) => s.id !== rankingsStore.seasons[0]?.id).reverse();
+      return seasons.value.slice().reverse();
     });
 
     const ongoingMatchGameModeClass = computed<string>(() => {
@@ -329,7 +329,7 @@ export default defineComponent({
       mapNameFromMatch,
       profile,
       aliasName,
-      seasonsWithoutCurrentOne,
+      seasonsReversed,
       selectSeason,
       gatewayChanged,
       seasons,
