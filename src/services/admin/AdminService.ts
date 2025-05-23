@@ -62,8 +62,14 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
-    const url = `${API_URL}api/admin/globalChatBans`;
+  public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | undefined): Promise<GloballyMutedPlayer[]> {
+    let url = `${API_URL}api/admin/globalChatBans`;
+    if (searchQuery) {
+      url += `?query=${searchQuery}`;
+    }
+    if (nextId) {
+      url += `?nextId=${nextId}`;
+    }
 
     const response = await authorizedFetch("GET", url, token);
 

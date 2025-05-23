@@ -84,6 +84,7 @@ export interface GlobalMute {
 
 export interface GloballyMutedPlayer extends GlobalMute {
   id: string;
+  createdAt: string;
 }
 
 export interface Proxy {

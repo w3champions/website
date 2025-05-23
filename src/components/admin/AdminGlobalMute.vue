@@ -8,11 +8,19 @@
         :headers="headers"
         :items-per-page="-1"
         :items="globallyMutedPlayers"
-        sort-by="id"
+        sort-by="createdAt"
         :sort-desc="true"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
+          <template>
+            <v-text-field
+              v-model="searchQuery"
+              label="Search mute"
+              :prepend-icon="mdiMagnify"
+              @keydown.enter="loadMutes"
+            ></v-text-field>
+          </template>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
@@ -128,7 +136,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
-import { mdiDelete } from "@mdi/js";
+import { mdiMagnify, mdiDelete } from "@mdi/js";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -145,6 +153,8 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
+    const searchQuery = ref<string | undefined>(undefined);
+    const nextId = ref<number | undefined>(undefined);
 
     const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
     const banDateSet = computed<boolean>(() => banExpiry.value != "");
@@ -170,7 +180,7 @@ export default defineComponent({
 
     async function loadMutes(): Promise<void> {
       if (isAdmin.value) {
-        await adminStore.loadGlobalMutes();
+        await adminStore.loadGlobalMutes(searchQuery.value, nextId.value);
       }
     }
 
@@ -206,19 +216,24 @@ export default defineComponent({
 
     const headers = [
       {
-        text: "Flo Ban Id",
-        sortable: true,
-        value: "id",
-      },
-      {
         text: "BattleTag",
         sortable: true,
         value: "battleTag",
       },
       {
+        text: "Ban Insert Date",
+        sortable: true,
+        value: "createdAt",
+      },
+      {
         text: "Ban Expiry Date",
         sortable: true,
         value: "expiresAt",
+      },
+      {
+        text: "Flo Ban Id",
+        sortable: true,
+        value: "id",
       },
       {
         text: "Actions",
@@ -228,9 +243,11 @@ export default defineComponent({
     ];
 
     return {
+      mdiMagnify,
       mdiDelete,
       headers,
       globallyMutedPlayers,
+      searchQuery,
       dialog,
       searchCleared,
       playerFound,
@@ -242,6 +259,7 @@ export default defineComponent({
       save,
       close,
       deleteItem,
+      loadMutes,
     };
   },
 });

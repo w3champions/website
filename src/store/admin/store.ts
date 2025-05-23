@@ -88,9 +88,9 @@ export const useAdminStore = defineStore("admin", {
       const oauthStore = useOauthStore();
       return await AdminService.getAltsForBattletag(btag, oauthStore.token);
     },
-    async loadGlobalMutes(): Promise<void> {
+    async loadGlobalMutes(searchQuery: string | undefined, nextId: number | undefined): Promise<void> {
       const oauthStore = useOauthStore();
-      const getGlobalMutes = await AdminService.getGlobalMutes(oauthStore.token);
+      const getGlobalMutes = await AdminService.getGlobalMutes(oauthStore.token, searchQuery, nextId);
       this.SET_MUTED_PLAYERS(getGlobalMutes);
     },
     async deleteGlobalMute(
