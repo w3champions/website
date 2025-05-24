@@ -80,6 +80,7 @@ export interface ProxySettings {
 export interface GlobalMute {
   battleTag: string;
   expiresAt: string | null;
+  author: string;
 }
 
 export interface GloballyMutedPlayer extends GlobalMute {

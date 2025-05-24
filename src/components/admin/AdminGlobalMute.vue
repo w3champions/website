@@ -8,7 +8,7 @@
         :headers="headers"
         :items-per-page="-1"
         :items="globallyMutedPlayers"
-        sort-by="createdAt"
+        sort-by="id"
         :sort-desc="true"
       >
         <template v-slot:top>
@@ -158,6 +158,7 @@ export default defineComponent({
 
     const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
     const banDateSet = computed<boolean>(() => banExpiry.value != "");
+    const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
@@ -173,7 +174,7 @@ export default defineComponent({
 
     async function save(): Promise<void> {
       close();
-      const mute = { battleTag: player.value, expiresAt: banExpiry.value } as GlobalMute;
+      const mute = { battleTag: player.value, expiresAt: banExpiry.value, author: author.value } as GlobalMute;
       await adminStore.addGlobalMute(mute);
       loadMutes();
     }
@@ -216,6 +217,11 @@ export default defineComponent({
 
     const headers = [
       {
+        text: "Flo Ban Id",
+        sortable: true,
+        value: "id",
+      },
+      {
         text: "BattleTag",
         sortable: true,
         value: "battleTag",
@@ -231,9 +237,9 @@ export default defineComponent({
         value: "expiresAt",
       },
       {
-        text: "Flo Ban Id",
+        text: "Author",
         sortable: true,
-        value: "id",
+        value: "author",
       },
       {
         text: "Actions",
