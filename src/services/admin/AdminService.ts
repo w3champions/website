@@ -62,8 +62,14 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
-    const url = `${API_URL}api/admin/globalChatBans`;
+  public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | undefined): Promise<GloballyMutedPlayer[]> {
+    let url = `${API_URL}api/admin/globalChatBans`;
+    if (searchQuery) {
+      url += `?query=${encodeURIComponent(searchQuery)}`;
+    }
+    else if (nextId) {
+      url += `?nextId=${nextId}`;
+    }
 
     const response = await authorizedFetch("GET", url, token);
 
@@ -72,15 +78,13 @@ export default class AdminService {
 
   public static async deleteGlobalMute(token: string, id: string): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/${id}`;
-
     const response = await authorizedFetch("DELETE", url, token);
-
     return response.status;
   }
 
-  public static async putGlobalMute(token: string, globalMutedPlayer: GlobalMute): Promise<number> {
+  public static async putGlobalMute(token: string, mute: GlobalMute): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans`;
-    const response = await authorizedFetch("PUT", url, token, JSON.stringify(globalMutedPlayer));
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(mute));
     return response.status;
   }
 

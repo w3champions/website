@@ -13,6 +13,14 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
+          <template>
+            <v-text-field
+              v-model="searchQuery"
+              label="Search mute"
+              :prepend-icon="mdiMagnify"
+              @keydown.enter="loadMutes"
+            ></v-text-field>
+          </template>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
@@ -128,7 +136,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
-import { mdiDelete } from "@mdi/js";
+import { mdiMagnify, mdiDelete } from "@mdi/js";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -145,9 +153,12 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
+    const searchQuery = ref<string | undefined>(undefined);
+    const nextId = ref<number | undefined>(undefined);
 
     const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
     const banDateSet = computed<boolean>(() => banExpiry.value != "");
+    const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
@@ -163,14 +174,14 @@ export default defineComponent({
 
     async function save(): Promise<void> {
       close();
-      const mute = { battleTag: player.value, expiresAt: banExpiry.value } as GlobalMute;
+      const mute = { battleTag: player.value, expiresAt: banExpiry.value, author: author.value } as GlobalMute;
       await adminStore.addGlobalMute(mute);
       loadMutes();
     }
 
     async function loadMutes(): Promise<void> {
       if (isAdmin.value) {
-        await adminStore.loadGlobalMutes();
+        await adminStore.loadGlobalMutes(searchQuery.value, nextId.value);
       }
     }
 
@@ -216,9 +227,19 @@ export default defineComponent({
         value: "battleTag",
       },
       {
+        text: "Ban Insert Date",
+        sortable: true,
+        value: "createdAt",
+      },
+      {
         text: "Ban Expiry Date",
         sortable: true,
         value: "expiresAt",
+      },
+      {
+        text: "Author",
+        sortable: true,
+        value: "author",
       },
       {
         text: "Actions",
@@ -228,9 +249,11 @@ export default defineComponent({
     ];
 
     return {
+      mdiMagnify,
       mdiDelete,
       headers,
       globallyMutedPlayers,
+      searchQuery,
       dialog,
       searchCleared,
       playerFound,
@@ -242,6 +265,7 @@ export default defineComponent({
       save,
       close,
       deleteItem,
+      loadMutes,
     };
   },
 });
