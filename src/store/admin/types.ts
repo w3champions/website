@@ -13,6 +13,7 @@ export type AdminState = {
   modifiedProxies: ProxySettings;
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
+  mutesNextId: number | null;
   banValidationError: string;
   showJwtExpiredDialog: boolean;
 };
@@ -81,6 +82,11 @@ export interface GlobalMute {
   battleTag: string;
   expiresAt: string | null;
   author: string;
+}
+
+export interface GlobalChatBanResponse {
+  globalChatBans: GloballyMutedPlayer[];
+  next_id: number;
 }
 
 export interface GloballyMutedPlayer extends GlobalMute {

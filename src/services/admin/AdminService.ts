@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GloballyMutedPlayer, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 
 export default class AdminService {
@@ -62,7 +62,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | undefined): Promise<GloballyMutedPlayer[]> {
+  public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | null): Promise<GlobalChatBanResponse> {
     let url = `${API_URL}api/admin/globalChatBans`;
     if (searchQuery) {
       url += `?query=${encodeURIComponent(searchQuery)}`;

@@ -18,6 +18,7 @@ export const useAdminStore = defineStore("admin", {
     } as ProxySettings,
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
+    mutesNextId: null,
     banValidationError: "",
     showJwtExpiredDialog: false,
   }),
@@ -88,10 +89,11 @@ export const useAdminStore = defineStore("admin", {
       const oauthStore = useOauthStore();
       return await AdminService.getAltsForBattletag(btag, oauthStore.token);
     },
-    async loadGlobalMutes(searchQuery: string | undefined, nextId: number | undefined): Promise<void> {
+    async loadGlobalMutes(searchQuery: string | undefined, nextId: number | null): Promise<void> {
       const oauthStore = useOauthStore();
-      const getGlobalMutes = await AdminService.getGlobalMutes(oauthStore.token, searchQuery, nextId);
-      this.SET_MUTED_PLAYERS(getGlobalMutes);
+      const response = await AdminService.getGlobalMutes(oauthStore.token, searchQuery, nextId);
+      this.SET_MUTED_PLAYERS(response.globalChatBans);
+      this.SET_MUTES_NEXT_ID(response.next_id);
     },
     async deleteGlobalMute(
       player: GloballyMutedPlayer,
@@ -141,6 +143,9 @@ export const useAdminStore = defineStore("admin", {
     },
     SET_MUTED_PLAYERS(mutedPlayers: GloballyMutedPlayer[]): void {
       this.globallyMutedPlayers = mutedPlayers;
+    },
+    SET_MUTES_NEXT_ID(next_id: number | null): void {
+      this.mutesNextId = next_id;
     },
     SET_SHOW_JWT_EXPIRED_DIALOG(value: boolean): void {
       this.showJwtExpiredDialog = value;

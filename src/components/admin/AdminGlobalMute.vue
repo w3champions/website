@@ -8,6 +8,7 @@
         :headers="headers"
         :items-per-page="-1"
         :items="globallyMutedPlayers"
+        hide-default-footer
         sort-by="id"
         :sort-desc="true"
       >
@@ -125,6 +126,13 @@
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
+      <v-row class="ma-2">
+        <v-spacer />
+        <v-btn color="primary" class="w3-race-bg--text" v-if="!searchQuery" @click="loadMutes">
+          Next
+        </v-btn>
+        <v-spacer />
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -154,7 +162,7 @@ export default defineComponent({
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
     const searchQuery = ref<string | undefined>(undefined);
-    const nextId = ref<number | undefined>(undefined);
+    const mutesNextId = computed<number | null>(() => adminStore.mutesNextId);
 
     const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
     const banDateSet = computed<boolean>(() => banExpiry.value != "");
@@ -181,7 +189,7 @@ export default defineComponent({
 
     async function loadMutes(): Promise<void> {
       if (isAdmin.value) {
-        await adminStore.loadGlobalMutes(searchQuery.value, nextId.value);
+        await adminStore.loadGlobalMutes(searchQuery.value, mutesNextId.value);
       }
     }
 
