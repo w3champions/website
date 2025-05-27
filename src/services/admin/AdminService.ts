@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GloballyMutedPlayer, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 
 export default class AdminService {
@@ -62,8 +62,14 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async getGlobalMutes(token: string): Promise<GloballyMutedPlayer[]> {
-    const url = `${API_URL}api/admin/globalChatBans`;
+  public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | null): Promise<GlobalChatBanResponse> {
+    let url = `${API_URL}api/admin/globalChatBans`;
+    if (searchQuery) {
+      url += `?query=${encodeURIComponent(searchQuery)}`;
+    }
+    else if (nextId) {
+      url += `?nextId=${nextId}`;
+    }
 
     const response = await authorizedFetch("GET", url, token);
 
@@ -72,15 +78,13 @@ export default class AdminService {
 
   public static async deleteGlobalMute(token: string, id: string): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans/${id}`;
-
     const response = await authorizedFetch("DELETE", url, token);
-
     return response.status;
   }
 
-  public static async putGlobalMute(token: string, globalMutedPlayer: GlobalMute): Promise<number> {
+  public static async putGlobalMute(token: string, mute: GlobalMute): Promise<number> {
     const url = `${API_URL}api/admin/globalChatBans`;
-    const response = await authorizedFetch("PUT", url, token, JSON.stringify(globalMutedPlayer));
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(mute));
     return response.status;
   }
 
