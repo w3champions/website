@@ -155,6 +155,9 @@ export default defineComponent({
         case EGameMode.GM_CF:
           return "rgb(44,196,196)";
 
+        case EGameMode.GM_RISK_EUROPE_1ON1:
+          return "rgb(237, 198, 41)";
+
         default:
           return "rgb(54, 162, 235)";
       }
@@ -212,6 +215,9 @@ export default defineComponent({
 
         case EGameMode.GM_CF:
           return 3;
+
+        case EGameMode.GM_RISK_EUROPE_1ON1:
+          return 1;
 
         default:
           return 1;
