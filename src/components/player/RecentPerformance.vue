@@ -3,15 +3,17 @@
     <h5 class="recent-performance__title">
       {{ $t("components_player_recentperformance.recentperformance") }}
     </h5>
-    <ul class="recent-performance__results">
-      <li v-for="(resultSymbol, index) in lastTenMatchesPerformance" :key="resultSymbol + index">
-        <v-chip color="transparent" :title="resultSymbol === 'W' ? 'Win' : 'Loss'" label style="padding: 0">
-          <v-icon class="sword-icon" :color="resultSymbol === 'W' ? 'green' : 'red'">
-            {{ mdiShieldSwordOutline }}
-          </v-icon>
-        </v-chip>
-      </li>
-    </ul>
+    <div class="recent-performance__results-wrapper">
+      <ul :class="{ 'recent-performance__results': true, 'enough-items': lastTenMatchesPerformance.length > 1 }">
+        <li v-for="(resultSymbol, index) in lastTenMatchesPerformance.slice().reverse()" :key="resultSymbol + index">
+          <v-chip color="transparent" :title="resultSymbol === 'W' ? 'Win' : 'Loss'" label style="padding: 0">
+            <v-icon class="sword-icon" :color="resultSymbol === 'W' ? 'green' : 'red'">
+              {{ mdiShieldSwordOutline }}
+            </v-icon>
+          </v-chip>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -49,11 +51,40 @@ export default defineComponent({
     text-align: center;
   }
 
-  &__results {
+  &__results-wrapper {
     display: flex;
     justify-content: center;
-    padding: 0;
+  }
+
+  &__results {
+    position: relative;
+    padding: 0 0 5px 0;
+    display: flex;
+    justify-content: center;
     list-style-type: none;
+    width: fit-content;
+
+    &.enough-items {
+      mask-image: linear-gradient(to left, black 70%, rgba(0, 0, 0, 0.4));
+      mask-size: 100% 100%;
+      mask-repeat: no-repeat;
+    }
+
+    &.enough-items::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(
+        to left,
+        color-mix(in srgb, var(--v-primary-base) 70%, transparent) 70%,
+        color-mix(in srgb, var(--v-primary-base) 20%, transparent)
+      );
+      pointer-events: none;
+      border-radius: 4px;
+    }
   }
 }
 </style>
