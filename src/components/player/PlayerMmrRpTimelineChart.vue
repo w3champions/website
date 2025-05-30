@@ -49,7 +49,7 @@ export default defineComponent({
             beginAtZero: false,
             title: {
               display: true,
-              text: "RP",
+              text: "Level",
             },
           },
         },
@@ -77,7 +77,7 @@ export default defineComponent({
           },
           {
             yAxisID: "y1",
-            label: "RP",
+            label: "Level",
             data: rpValues.value,
             borderColor: "rgb(150, 80, 100)",
             fill: true,
