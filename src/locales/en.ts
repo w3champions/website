@@ -44,6 +44,7 @@ const en = {
     GM_WARHAMMER_1ON1: "Warhammer 1v1",
     GM_CF: "Castle Fight 3v3",
     GM_CF_AT: "Castle Fight 3v3 AT",
+    GM_RISK_EUROPE_1ON1: "Risk Europe 1v1",
   },
 
   gatewayNames: {
