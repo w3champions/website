@@ -160,6 +160,8 @@ export enum EGameMode {
 
   GM_CF = 1301,
   GM_CF_AT = 1302,
+
+  GM_RISK_EUROPE_1ON1 = 1401,
 }
 
 export enum EGameModeType {
