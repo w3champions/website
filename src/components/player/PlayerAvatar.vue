@@ -325,7 +325,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
@@ -334,6 +334,7 @@ import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
+import { usePlayerStore } from "@/store/player/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
 import { CountryType } from "@/store/ranking/types";
@@ -357,6 +358,7 @@ export default defineComponent({
     const { t } = useI18n();
     const router = useRouter();
     const personalSettingsStore = usePersonalSettingsStore();
+    const playerStore = usePlayerStore();
     const races = [ERaceEnum.HUMAN, ERaceEnum.ORC, ERaceEnum.NIGHT_ELF, ERaceEnum.UNDEAD, ERaceEnum.RANDOM, ERaceEnum.TOTAL];
     const countries = ref<CountryType[]>([]);
     const iconsDialogOpened = ref<boolean>(false);
@@ -557,6 +559,16 @@ export default defineComponent({
     onMounted((): void => {
       init();
     });
+
+    // Watch for battleTag changes and reload personal settings
+    watch(
+      () => playerStore.battleTag,
+      (newBattleTag, oldBattleTag) => {
+        if (newBattleTag && newBattleTag !== oldBattleTag) {
+          init();
+        }
+      }
+    );
 
     async function init() {
       await personalSettingsStore.loadPersonalSetting();
