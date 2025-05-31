@@ -29,6 +29,7 @@
     </v-simple-table>
 
     <v-pagination
+      v-if="pageLength > 1"
       v-model="page"
       :length="pageLength"
       :prev-icon="mdiMenuLeft"
@@ -54,7 +55,7 @@ export default defineComponent({
   },
   setup(props) {
     const page = ref<number>(1);
-    const paginationSize = 10;
+    const paginationSize = 16;
 
     const pageOffset = computed<number>(() => paginationSize * page.value);
     const pageLength = computed<number>(() => Math.ceil(props.heroStatistics.length / paginationSize));

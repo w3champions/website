@@ -44,6 +44,7 @@
               </v-simple-table>
 
               <v-pagination
+                v-if="pageLength > 1"
                 v-model="page"
                 :length="pageLength"
                 :prev-icon="mdiMenuLeft"
@@ -87,7 +88,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const playerStore = usePlayerStore();
-    const paginationSize = 10;
+    const paginationSize = 16;
     const page = ref<number>(1);
     const selectedRace = computed(() => Number(selectedTab.value.split("-")[1]));
     const pageOffset = computed(() => paginationSize * page.value);
