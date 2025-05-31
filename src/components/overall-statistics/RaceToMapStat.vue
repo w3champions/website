@@ -39,6 +39,7 @@ interface RaceToMapStatHeader {
   text: TranslateResult;
   sortable: boolean;
   width: string;
+  align?: 'left' | 'center' | 'right';
 }
 
 export default defineComponent({
@@ -89,26 +90,31 @@ export default defineComponent({
         text: t("components_overall-statistics_racetomapstat.total"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vshu"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsorc"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsne"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsud"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
     ];
 

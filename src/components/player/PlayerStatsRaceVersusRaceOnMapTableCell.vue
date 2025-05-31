@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <td v-on="on" class="number-text" :class="toWinClass">
+      <td v-on="on" class="number-text text-right" :class="toWinClass">
         {{ toWinText }}
       </td>
     </template>
@@ -88,9 +88,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.stats-empty {
-  padding-left: 30px;
-}
-</style>

@@ -4,7 +4,11 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th v-for="header in headers" :key="header.value" class="text-left">
+            <th
+              v-for="header in headers"
+              :key="header.value"
+              :class="`text-${header.align}`"
+            >
               {{ header.text }}
             </th>
           </tr>
@@ -15,7 +19,7 @@
             <td v-html="item.name"></td>
             <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
               <template v-slot:activator="{ on }">
-                <td v-on="on" v-html="item[header.value]"></td>
+                <td v-on="on" v-html="item[header.value]" class="text-right"></td>
               </template>
               <div v-if="item.numbers_by_race[header.value]">
                 {{ $t("components_player_playeravatar.games") }} {{ item.numbers_by_race[header.value].number }}
@@ -62,15 +66,15 @@ export default defineComponent({
     const heroStatsCurrentPage = computed<PlayerHeroStatistic[]>(() => props.heroStatistics.slice((pageOffset.value - paginationSize), pageOffset.value));
 
     const headers = [
-      { text: "", value: "image" },
-      { text: "Hero", value: "name" },
-      { text: "Total", value: "total" },
-      { text: "vs. Human", value: "hu" },
-      { text: "vs. Orc", value: "orc" },
-      { text: "vs. Night Elf", value: "ne" },
-      { text: "vs. Undead", value: "ud" },
-      { text: "vs. Random", value: "rand" },
-    ] satisfies { text: string; value: keyof PlayerHeroStatistic }[];
+      { text: "", value: "image", align: "left" },
+      { text: "Hero", value: "name", align: "left" },
+      { text: "Total", value: "total", align: "right" },
+      { text: "vs. Human", value: "hu", align: "right" },
+      { text: "vs. Orc", value: "orc", align: "right" },
+      { text: "vs. Night Elf", value: "ne", align: "right" },
+      { text: "vs. Undead", value: "ud", align: "right" },
+      { text: "vs. Random", value: "rand", align: "right" },
+    ] satisfies { text: string; value: keyof PlayerHeroStatistic; align: 'left' | 'right' }[];
 
     const headersWithoutImageAndName = headers.slice(2) as { text: string; value: keyof NumbersByPlayerHeroStatistic }[];
 

@@ -96,6 +96,7 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 interface WinratesTabHeader {
   text: TranslateResult;
   sortable: boolean;
+  align?: 'left' | 'center' | 'right';
 }
 
 export default defineComponent({
@@ -120,22 +121,27 @@ export default defineComponent({
       {
         text: t("components_overall-statistics_tabs_winratestab.vshu"),
         sortable: false,
+        align: "right",
       },
       {
         text: t("components_overall-statistics_tabs_winratestab.vsorc"),
         sortable: false,
+        align: "right",
       },
       {
         text: t("components_overall-statistics_tabs_winratestab.vsne"),
         sortable: false,
+        align: "right",
       },
       {
         text: t("components_overall-statistics_tabs_winratestab.vsud"),
         sortable: false,
+        align: "right",
       },
       {
         text: t("components_overall-statistics_tabs_winratestab.vsrdm"),
         sortable: false,
+        align: "right",
       },
     ];
 
