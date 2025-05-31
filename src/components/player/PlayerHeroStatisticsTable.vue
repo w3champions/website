@@ -67,8 +67,8 @@ export default defineComponent({
       { text: "Total", value: "total" },
       { text: "vs. Human", value: "hu" },
       { text: "vs. Orc", value: "orc" },
-      { text: "vs. Undead", value: "ud" },
       { text: "vs. Night Elf", value: "ne" },
+      { text: "vs. Undead", value: "ud" },
       { text: "vs. Random", value: "rand" },
     ] satisfies { text: string; value: keyof PlayerHeroStatistic }[];
 

@@ -109,8 +109,8 @@ export default defineComponent({
       { text: "Total", value: ERaceEnum.TOTAL },
       { text: "vs. Human", value: ERaceEnum.HUMAN },
       { text: "vs. Orc", value: ERaceEnum.ORC },
-      { text: "vs. Undead", value: ERaceEnum.UNDEAD },
       { text: "vs. Night Elf", value: ERaceEnum.NIGHT_ELF },
+      { text: "vs. Undead", value: ERaceEnum.UNDEAD },
       { text: "vs. Random", value: ERaceEnum.RANDOM },
     ];
 

@@ -57,13 +57,13 @@
                     :lossThreshold="0.49"
                   />
                   <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[3]"
+                    :stats="item.winLosses[4]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
                   />
                   <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[4]"
+                    :stats="item.winLosses[3]"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
@@ -126,11 +126,11 @@ export default defineComponent({
         sortable: false,
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsud"),
+        text: t("components_overall-statistics_tabs_winratestab.vsne"),
         sortable: false,
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsne"),
+        text: t("components_overall-statistics_tabs_winratestab.vsud"),
         sortable: false,
       },
       {
@@ -172,7 +172,10 @@ export default defineComponent({
 
       if (!statsPerMapAndRace) return [];
 
-      return statsPerMapAndRace.ratio.slice(1, 5).concat(statsPerMapAndRace.ratio[0]);
+      return statsPerMapAndRace.ratio
+        .slice(1, 5)
+        .sort((a, b) => a.race - b.race)
+        .concat(statsPerMapAndRace.ratio[0]);
     });
 
     const patches = computed<string[]>(() => {
