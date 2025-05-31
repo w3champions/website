@@ -1,14 +1,14 @@
 <template>
   <v-tabs v-model="selectedTab" v-if="!isStatsEmpty">
     <v-tabs-slider></v-tabs-slider>
-    <v-tab v-for="stat of stats" :key="stat.race" :href="`#tab-${stat.race}`">
+    <v-tab v-for="stat of sortedStats" :key="stat.race" :href="`#tab-${stat.race}`">
       <span v-if="stat.race === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
       </span>
       <race-icon v-else :race="stat.race" />
     </v-tab>
 
-    <v-tab-item v-for="stat of stats" :key="stat.race" :value="'tab-' + stat.race">
+    <v-tab-item v-for="stat of sortedStats" :key="stat.race" :value="'tab-' + stat.race">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
@@ -49,10 +49,17 @@ export default defineComponent({
 
     const selectedTab = computed(() => defaultStatsTab(props.stats));
 
+    // Sort by race, so that the tabs are in the correct order.
+    const sortedStats = computed(() => {
+      if (!props.stats) return [];
+      return [...props.stats].sort((a, b) => a.race - b.race);
+    });
+
     return {
       ERaceEnum,
       selectedTab,
       isStatsEmpty,
+      sortedStats,
     };
   },
 });

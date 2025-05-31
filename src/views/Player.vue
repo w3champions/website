@@ -48,7 +48,7 @@
             <div class="live-match__indicator">
               Live
               <span class="circle red blinker"></span>
-              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}'</span>
+              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}</span>
             </div>
             <div v-if="!isOngoingMatchFFA">
               <div class="live-match__team1">
@@ -197,12 +197,17 @@ export default defineComponent({
       return "";
     });
 
-    function getDuration(match: Match): number {
-      const today = new Date();
-      const diffMs = today.getTime() - new Date(match.startTime.toString()).getTime(); // milliseconds between now & Christmas
-      const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    function getDuration(match: Match): string {
+      const now = new Date();
+      const start = new Date(match.startTime.toString());
+      const diffMs = now.getTime() - start.getTime();
 
-      return diffMins;
+      const totalMinutes = Math.floor(diffMs / 60000);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
     }
 
     function getPlayerTeam(match: Match): Team | undefined {
@@ -418,6 +423,7 @@ export default defineComponent({
   .live-match__duration {
     position: absolute;
     left: 44px;
+    width: 70px;
   }
 
   &.one-v-one {

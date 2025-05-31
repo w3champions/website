@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="stats"
+      :items="sortedStats"
       :items-per-page="-1"
       hide-default-footer
       :mobile-breakpoint="400"
@@ -10,13 +10,16 @@
     >
       <template v-slot:body>
         <tbody>
-          <tr v-for="item in stats" :key="item.mapName || item.map">
+          <tr v-for="item in sortedStats" :key="item.mapName || item.map">
             <td>{{ item.mapName || item.map }}</td>
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
+            <player-stats-race-versus-race-on-map-table-cell
+              :stats="totalWins(item.winLosses)"
+            />
+            <player-stats-race-versus-race-on-map-table-cell
+              v-for="(winLoss, index) in item.winLosses"
+              :key="index"
+              :stats="winLoss"
+            />
           </tr>
         </tbody>
       </template>
@@ -28,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { TranslateResult } from "vue-i18n";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
@@ -39,6 +42,7 @@ interface RaceToMapStatHeader {
   text: TranslateResult;
   sortable: boolean;
   width: string;
+  align?: 'left' | 'center' | 'right';
 }
 
 export default defineComponent({
@@ -52,7 +56,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const { t } = useI18n();
 
     function totalWins(stat: RaceStat[]) {
@@ -70,6 +74,24 @@ export default defineComponent({
       };
     }
 
+    const sortedStats = computed(() => {
+      return [...props.stats]
+        // Sort the maps by total games played, descending.
+        .sort((a, b) => {
+          const totalGamesA = a.winLosses.reduce((sum, current) => sum + current.games, 0);
+          const totalGamesB = b.winLosses.reduce((sum, current) => sum + current.games, 0);
+          return totalGamesB - totalGamesA;
+        })
+        .map((stat) => ({
+          ...stat,
+          winLosses: [...stat.winLosses]
+            // Remove RANDOM race
+            .filter((winLoss) => winLoss.race !== ERaceEnum.RANDOM)
+            // Sort winLosses by race for consistent ordering
+            .sort((a, b) => a.race - b.race),
+        }));
+    });
+
     const headers: RaceToMapStatHeader[] = [
       {
         text: t("components_overall-statistics_racetomapstat.map"),
@@ -77,35 +99,41 @@ export default defineComponent({
         width: "25px",
       },
       {
+        text: t("components_overall-statistics_racetomapstat.total"),
+        sortable: false,
+        width: "25px",
+        align: "right",
+      },
+      {
         text: t("components_overall-statistics_racetomapstat.vshu"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsorc"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsne"),
         sortable: false,
         width: "25px",
+        align: "right",
       },
       {
         text: t("components_overall-statistics_racetomapstat.vsud"),
         sortable: false,
         width: "25px",
-      },
-      {
-        text: t("components_overall-statistics_racetomapstat.total"),
-        sortable: false,
-        width: "25px",
+        align: "right",
       },
     ];
 
     return {
       headers,
       totalWins,
+      sortedStats,
     };
   },
 });
