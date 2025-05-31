@@ -12,11 +12,14 @@
         <tbody>
           <tr v-for="item in sortedStats" :key="item.mapName || item.map">
             <td>{{ item.mapName || item.map }}</td>
-            <player-stats-race-versus-race-on-map-table-cell :stats="totalWins(item.winLosses)" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[1]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[2]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[4]" />
-            <player-stats-race-versus-race-on-map-table-cell :stats="item.winLosses[3]" />
+            <player-stats-race-versus-race-on-map-table-cell
+              :stats="totalWins(item.winLosses)"
+            />
+            <player-stats-race-versus-race-on-map-table-cell
+              v-for="(winLoss, index) in item.winLosses"
+              :key="index"
+              :stats="winLoss"
+            />
           </tr>
         </tbody>
       </template>
@@ -71,13 +74,22 @@ export default defineComponent({
       };
     }
 
-    // Sort the maps by total games played, descending.
     const sortedStats = computed(() => {
-      return [...props.stats].sort((a, b) => {
-        const totalGamesA = a.winLosses.reduce((sum, current) => sum + current.games, 0);
-        const totalGamesB = b.winLosses.reduce((sum, current) => sum + current.games, 0);
-        return totalGamesB - totalGamesA;
-      });
+      return [...props.stats]
+        // Sort the maps by total games played, descending.
+        .sort((a, b) => {
+          const totalGamesA = a.winLosses.reduce((sum, current) => sum + current.games, 0);
+          const totalGamesB = b.winLosses.reduce((sum, current) => sum + current.games, 0);
+          return totalGamesB - totalGamesA;
+        })
+        .map((stat) => ({
+          ...stat,
+          winLosses: [...stat.winLosses]
+            // Remove RANDOM race
+            .filter((winLoss) => winLoss.race !== ERaceEnum.RANDOM)
+            // Sort winLosses by race for consistent ordering
+            .sort((a, b) => a.race - b.race),
+        }));
     });
 
     const headers: RaceToMapStatHeader[] = [

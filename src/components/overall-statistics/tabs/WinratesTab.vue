@@ -45,31 +45,9 @@
                 <tr v-for="item in items" :key="item.race">
                   <td>{{ $t("races." + raceEnums[item.race]) }}</td>
                   <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[1]"
-                    :compareRace="item.race"
-                    :winThreshold="0.51"
-                    :lossThreshold="0.49"
-                  />
-                  <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[2]"
-                    :compareRace="item.race"
-                    :winThreshold="0.51"
-                    :lossThreshold="0.49"
-                  />
-                  <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[4]"
-                    :compareRace="item.race"
-                    :winThreshold="0.51"
-                    :lossThreshold="0.49"
-                  />
-                  <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[3]"
-                    :compareRace="item.race"
-                    :winThreshold="0.51"
-                    :lossThreshold="0.49"
-                  />
-                  <player-stats-race-versus-race-on-map-table-cell
-                    :stats="item.winLosses[0]"
+                    v-for="(winloss, index) in item.winLosses"
+                    :key="index"
+                    :stats="winloss"
                     :compareRace="item.race"
                     :winThreshold="0.51"
                     :lossThreshold="0.49"
@@ -165,6 +143,12 @@ export default defineComponent({
       });
     });
 
+    const sortByRaceWithRandomLast = (a: { race: ERaceEnum }, b: { race: ERaceEnum }): number => {
+      if (a.race === ERaceEnum.RANDOM) return 1;
+      if (b.race === ERaceEnum.RANDOM) return -1;
+      return a.race - b.race;
+    };
+
     const raceWinrate = computed<Ratio[]>(() => {
       if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
         return [];
@@ -178,10 +162,10 @@ export default defineComponent({
 
       if (!statsPerMapAndRace) return [];
 
+      // Sort both the rows and columns by race.
       return statsPerMapAndRace.ratio
-        .slice(1, 5)
-        .sort((a, b) => a.race - b.race)
-        .concat(statsPerMapAndRace.ratio[0]);
+        .sort(sortByRaceWithRandomLast)
+        .map((item) => ({ ...item, winLosses: [...item.winLosses].sort(sortByRaceWithRandomLast) }));
     });
 
     const patches = computed<string[]>(() => {
