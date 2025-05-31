@@ -31,7 +31,11 @@
                           <td v-on="on" v-html="item[header.value]"></td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">
-                          {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
+                          <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
+                          -
+                          <span class="number-text lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
+                          &nbsp;&nbsp;
+                          {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
                         </div>
                       </v-tooltip>
                     </tr>

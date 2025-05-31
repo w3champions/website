@@ -6,7 +6,11 @@
       </td>
     </template>
     <div>
-      {{ stats.wins }} - {{ stats.losses }}
+      <span class="number-text won">{{ stats.wins }}W</span>
+      -
+      <span class="number-text lost">{{ stats.losses }}L</span>
+      &nbsp;&nbsp;
+      {{ $t("common.total") }} <span class="number-text">{{ stats.games }}</span>
     </div>
   </v-tooltip>
 </template>

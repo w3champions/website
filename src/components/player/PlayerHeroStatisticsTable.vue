@@ -18,7 +18,9 @@
                 <td v-on="on" v-html="item[header.value]"></td>
               </template>
               <div v-if="item.numbers_by_race[header.value]">
-                {{ item.numbers_by_race[header.value].number }}/{{ item.numbers_by_race[header.value].total }}
+                {{ $t("components_player_playeravatar.games") }} {{ item.numbers_by_race[header.value].number }}
+                &nbsp;&nbsp;
+                {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
               </div>
             </v-tooltip>
           </tr>
