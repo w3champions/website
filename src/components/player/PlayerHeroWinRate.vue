@@ -189,7 +189,7 @@ export default defineComponent({
         };
         resp.push(playerWinRate);
       }) || [];
-      return resp;
+      return resp.sort((a, b) => b.numbers_by_race[ERaceEnum.TOTAL].total - a.numbers_by_race[ERaceEnum.TOTAL].total);
     }
 
     return {
