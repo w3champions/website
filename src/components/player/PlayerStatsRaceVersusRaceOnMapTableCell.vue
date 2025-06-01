@@ -1,12 +1,16 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <td v-on="on" class="number-text" :class="toWinClass">
+      <td v-on="on" class="number-text text-right" :class="toWinClass">
         {{ toWinText }}
       </td>
     </template>
     <div>
-      {{ stats.wins }} - {{ stats.losses }}
+      <span class="number-text won">{{ stats.wins }}W</span>
+      -
+      <span class="number-text lost">{{ stats.losses }}L</span>
+      &nbsp;&nbsp;
+      {{ $t("common.total") }} <span class="number-text">{{ stats.games }}</span>
     </div>
   </v-tooltip>
 </template>
@@ -84,9 +88,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.stats-empty {
-  padding-left: 30px;
-}
-</style>
