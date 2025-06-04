@@ -20,4 +20,7 @@ export enum EPermission {
   Tournaments,
   Content,
   Proxies,
+  SmurfCheckerQuery,
+  SmurfCheckerQueryExplanation,
+  SmurfCheckerAdministration,
 }

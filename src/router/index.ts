@@ -26,6 +26,8 @@ import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
 import Admin from "@/views/Admin.vue";
 import AdminAlts from "@/components/admin/AdminAlts.vue";
+import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
+import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
@@ -203,6 +205,8 @@ const routes: RouteConfig[] = [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
       { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
       { path: "admin-alts", name: EAdminRouteName.SMURF_CHECKER, component: AdminAlts },
+      { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
+      { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
