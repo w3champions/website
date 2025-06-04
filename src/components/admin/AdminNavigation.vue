@@ -58,7 +58,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
-import { mdiAccountTie } from "@mdi/js";
+import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router/composables";
@@ -166,6 +166,27 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-view-game-chat",
             routeName: EAdminRouteName.VIEW_GAME_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Smurf Checker",
+        icon: mdiAccountQuestion,
+        permission: EPermission.SmurfCheckerQuery,
+        items: [
+          {
+            title: "Search Smurfs",
+            icon: mdiAccountSearch,
+            permission: EPermission.SmurfCheckerQuery,
+            component: "admin-smurfs",
+            routeName: EAdminRouteName.SMURF_CHECKER_V2,
+          },
+          {
+            title: "Manage Identifiers",
+            icon: mdiFileLinkOutline,
+            permission: EPermission.SmurfCheckerAdministration,
+            component: "admin-smurfs-manage-identifiers",
+            routeName: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS,
           },
         ],
       },

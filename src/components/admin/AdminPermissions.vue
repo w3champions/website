@@ -159,6 +159,9 @@ export default defineComponent({
       { name: EPermission[EPermission.Tournaments], value: EPermission.Tournaments },
       { name: EPermission[EPermission.Content], value: EPermission.Content },
       { name: EPermission[EPermission.Proxies], value: EPermission.Proxies },
+      { name: EPermission[EPermission.SmurfCheckerQuery], value: EPermission.SmurfCheckerQuery },
+      { name: EPermission[EPermission.SmurfCheckerQueryExplanation], value: EPermission.SmurfCheckerQueryExplanation },
+      { name: EPermission[EPermission.SmurfCheckerAdministration], value: EPermission.SmurfCheckerAdministration },
     ];
 
     const defaultItem: IPermission = {

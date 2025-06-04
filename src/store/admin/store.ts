@@ -3,7 +3,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
-
+import { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
@@ -88,6 +88,17 @@ export const useAdminStore = defineStore("admin", {
     async getAltsForPlayer(btag: string): Promise<string[]> {
       const oauthStore = useOauthStore();
       return await AdminService.getAltsForBattletag(btag, oauthStore.token);
+    },
+    async querySmurfsForIdentifier(identifierType: string, identifier: string, iterationDepth: number, generateExplanation: boolean): Promise<SmurfDetectionResult> {
+      if (identifierType != "battleTag") {
+        throw new Error("Unsupported identifier type");
+      }
+      const oauthStore = useOauthStore();
+      return await AdminService.querySmurfsForIdentifier(identifierType, identifier, iterationDepth, generateExplanation, oauthStore.token);
+    },
+    async getSmurfIdentifierTypes(): Promise<string[]> {
+      const oauthStore = useOauthStore();
+      return await AdminService.getSmurfIdentifierTypes(oauthStore.token);
     },
     async loadGlobalMutes(searchQuery: string | undefined, nextId: number | null): Promise<void> {
       const oauthStore = useOauthStore();
