@@ -58,7 +58,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
-import { mdiAccountTie } from "@mdi/js";
+import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router/composables";
@@ -80,7 +80,22 @@ export default defineComponent({
     const oauthStore = useOauthStore();
 
     const permissions = computed<string[]>(() => oauthStore.permissions);
-    const filteredNavItems = computed<AdminNavigationItem[]>(() => navItems.filter((item) => permissions.value.includes(EPermission[item.permission])));
+    const filteredNavItems = computed<AdminNavigationItem[]>(() => {
+      return navItems
+        .map((item) => ({
+          ...item,
+          items: item.items
+            ? item.items.filter((subItem) =>
+                permissions.value.includes(EPermission[subItem.permission])
+              )
+            : [],
+        }))
+        .filter(
+          (item) =>
+            item.items.length > 0 ||
+            permissions.value.includes(EPermission[item.permission])
+        );
+    });
 
     function getFirstItem(items: Array<AdminNavigationItem>): AdminNavigationItem {
       for (const item of items) {
@@ -166,6 +181,27 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-view-game-chat",
             routeName: EAdminRouteName.VIEW_GAME_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Smurf Checker",
+        icon: mdiAccountQuestion,
+        permission: EPermission.SmurfCheckerQuery,
+        items: [
+          {
+            title: "Search Smurfs",
+            icon: mdiAccountSearch,
+            permission: EPermission.SmurfCheckerQuery,
+            component: "admin-smurfs",
+            routeName: EAdminRouteName.SMURF_CHECKER_QUERY,
+          },
+          {
+            title: "Manage Identifiers",
+            icon: mdiFileLinkOutline,
+            permission: EPermission.SmurfCheckerAdministration,
+            component: "admin-smurfs-manage-identifiers",
+            routeName: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS,
           },
         ],
       },
