@@ -2,6 +2,8 @@ export enum EAdminRouteName {
   LIVE_QUEUE_DATA = "Admin - Live Queue Data",
   BANNED_PLAYERS = "Admin - Banned Players",
   SMURF_CHECKER = "Admin - Smurf Checker",
+  SMURF_CHECKER_QUERY = "Admin - Search Smurfs",
+  SMURF_CHECKER_MANAGE_IDENTIFIERS = "Admin - Manage Identifiers",
   GLOBAL_MUTE = "Admin - Global Mute",
   LOUNGE_MUTE = "Admin - Lounge Mute",
   VIEW_GAME_CHAT = "Admin - View Game Chat",

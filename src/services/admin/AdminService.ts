@@ -1,6 +1,7 @@
 import { API_URL } from "@/main";
 import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
+import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
 export default class AdminService {
   public static async getBannedPlayers(token: string): Promise<BannedPlayersResponse> {
@@ -54,12 +55,29 @@ export default class AdminService {
     return await authorizedFetch("PUT", url, token, JSON.stringify(proxies));
   }
 
+  /**
+   * @deprecated Use getSmurfsForBattletag instead
+   */
   public static async getAltsForBattletag(btag: string, token: string): Promise<string[]> {
     const url = `${API_URL}api/admin/alts/${encodeURIComponent(btag)}`;
 
     const response = await authorizedFetch("GET", url, token);
 
     return await response.json();
+  }
+
+  public static async getSmurfIdentifierTypes(token: string): Promise<string[]> {
+    const url = `${API_URL}api/admin/smurf-detection/possible-identifier-types`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async querySmurfsForIdentifier(identifierType: string, identifier: string, iterationDepth: number, generateExplanation: boolean, token: string): Promise<SmurfDetectionResult> {
+    const generateExplanationString = generateExplanation ? "true" : "false";
+    const url = `${API_URL}api/admin/smurf-detection/query-smurfs?identifierType=${identifierType}&identifier=${encodeURIComponent(identifier)}&iterationDepth=${iterationDepth}&generateExplanation=${generateExplanationString}`;
+    const response = await authorizedFetch("GET", url, token);
+
+    return await response.json() as SmurfDetectionResult;
   }
 
   public static async getGlobalMutes(token: string, searchQuery: string | undefined, nextId: number | null): Promise<GlobalChatBanResponse> {
