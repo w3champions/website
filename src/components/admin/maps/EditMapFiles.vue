@@ -22,7 +22,7 @@
         <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-file-input label="Map file" v-model="file"></v-file-input>
+            <v-file-input label="Map file" truncate-length="70" v-model="file"></v-file-input>
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
