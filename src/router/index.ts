@@ -25,7 +25,6 @@ import TournamentDetail from "@/views/TournamentDetail.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
 import Admin from "@/views/Admin.vue";
-import AdminAlts from "@/components/admin/AdminAlts.vue";
 import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
 import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
@@ -204,7 +203,6 @@ const routes: RouteConfig[] = [
     children: [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
       { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
-      { path: "admin-alts", name: EAdminRouteName.SMURF_CHECKER, component: AdminAlts },
       { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
