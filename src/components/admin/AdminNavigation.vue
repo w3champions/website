@@ -155,13 +155,6 @@ export default defineComponent({
             routeName: EAdminRouteName.BANNED_PLAYERS,
           },
           {
-            title: "Smurf Checker",
-            icon: mdiAccountQuestion,
-            permission: EPermission.Moderation,
-            component: "admin-alts",
-            routeName: EAdminRouteName.SMURF_CHECKER,
-          },
-          {
             title: "Global Mute",
             icon: mdiChatRemove,
             permission: EPermission.Moderation,

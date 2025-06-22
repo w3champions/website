@@ -10,7 +10,6 @@ declare module 'vue' {
     AcceptInvitePanel: typeof import('./src/components/clans/AcceptInvitePanel.vue')['default']
     ActivityPerDayChart: typeof import('./src/components/overall-statistics/ActivityPerDayChart.vue')['default']
     AddPlayerModal: typeof import('./src/components/admin/tournaments/AddPlayerModal.vue')['default']
-    AdminAlts: typeof import('./src/components/admin/AdminAlts.vue')['default']
     AdminAssignPortraits: typeof import('./src/components/admin/AdminAssignPortraits.vue')['default']
     AdminBannedPlayers: typeof import('./src/components/admin/AdminBannedPlayers.vue')['default']
     AdminCheckJwtLifetime: typeof import('./src/components/admin/AdminCheckJwtLifetime.vue')['default']
