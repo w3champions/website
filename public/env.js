@@ -1,7 +1,7 @@
 window._env_ = {
   //* website-backend URL
-  // BASE_URL: "http://localhost:5000/",
-  BASE_URL: "https://website-backend.test.w3champions.com/",
+   BASE_URL: "http://localhost:5000/",
+  // BASE_URL: "https://website-backend.test.w3champions.com/",
   // BASE_URL: "https://website-backend.w3champions.com/",
 
   //* identification-service URL

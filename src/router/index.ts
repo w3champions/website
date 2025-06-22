@@ -9,6 +9,7 @@ import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
 import GettingStarted from "@/views/GettingStarted.vue";
+import SetupGuides from "@/views/SetupGuides.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
@@ -68,6 +69,11 @@ const routes: RouteConfig[] = [
     path: "/getting-started",
     name: "Getting Started",
     component: GettingStarted,
+  },
+  {
+    path: "/setup-guides",
+    name: "Setup Guides",
+    component: SetupGuides,
   },
   {
     path: "/imprint",

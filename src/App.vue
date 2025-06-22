@@ -176,6 +176,7 @@ import {
   mdiAccountTie,
   mdiChartAreaspline,
   mdiClose,
+  mdiCog,
   mdiControllerClassic,
   mdiHelpCircleOutline,
   mdiInvertColors,
@@ -239,6 +240,11 @@ export default defineComponent({
         title: "statistics",
         icon: mdiChartAreaspline,
         to: "OverallStatistics",
+      },
+      {
+        title: "setup_guides",
+        icon: mdiCog,
+        to: "Setup Guides",
       },
       {
         title: "admin",
@@ -388,6 +394,7 @@ export default defineComponent({
       mdiClose,
       mdiAccountCircleOutline,
       mdiAccountCircle,
+      mdiCog,
       mdiInvertColors,
       oauthStore,
       savedLanguage,
