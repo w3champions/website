@@ -48,7 +48,7 @@
               ></div>
               <player-rank-info :player-id="playerId" />
               <div
-                class="country-flag__container ml-1"
+                class="ml-1"
                 v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
               >
                 <country-flag-extended

@@ -8,7 +8,7 @@
               <v-col :align-self="'center'">
                 <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
-                <span class="mr-2" />
+                <span class="mr-2"></span>
                 <!-- add some space between name and season badges -->
                 <div v-for="season in seasonsReversed" :key="season.id" class="ml-1 d-inline-block">
                   <season-badge :season="season" :on-click="selectSeason" />
@@ -44,41 +44,48 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <div class="live-match__container" v-if="ongoingMatch.id" :class="ongoingMatchGameModeClass">
-            <div class="live-match__indicator">
-              Live
-              <span class="circle red blinker"></span>
-              <span class="live-match__duration">{{ getDuration(ongoingMatch) }}</span>
-            </div>
-            <div v-if="!isOngoingMatchFFA">
-              <div class="live-match__team1">
-                <team-match-info
-                  :not-clickable="isOngoingMatchFFA"
-                  :team="getPlayerTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  :left="true"
-                ></team-match-info>
+          <v-container class="pt-0" v-if="ongoingMatch.id">
+            <v-row justify="center">
+              <div class="d-flex justify-center" style="font-size: 0.9rem">
+                <span>Live</span>
+                <span class="live-match__indicator circle blinker"></span>
+                <span class="live-match__duration">{{ getDuration(ongoingMatch) }}</span>
               </div>
-              <div class="live-match__vstext">VS</div>
-              <div class="live-match__team2">
-                <team-match-info
-                  :not-clickable="isOngoingMatchFFA"
-                  :team="getOpponentTeam(ongoingMatch)"
-                  :unfinishedMatch="true"
-                  right="true"
-                ></team-match-info>
+            </v-row>
+            <v-row justify="center">
+              <div class="d-flex justify-center align-center" v-if="!isOngoingMatchFFA">
+                <div class="live-match__team">
+                  <team-match-info
+                    :not-clickable="isOngoingMatchFFA"
+                    :team="getPlayerTeam(ongoingMatch)"
+                    :unfinishedMatch="true"
+                    :left="true"
+                  ></team-match-info>
+                </div>
+                <div class="ml-3 mr-3">
+                  <span>VS</span>
+                </div>
+                <div class="live-match__team">
+                  <team-match-info
+                    :not-clickable="isOngoingMatchFFA"
+                    :team="getOpponentTeam(ongoingMatch)"
+                    :unfinishedMatch="true"
+                    right="true"
+                  ></team-match-info>
+                </div>
               </div>
-            </div>
-            <div v-if="isOngoingMatchFFA" class="live-match__ffa">
-              {{ $t("views_player.playingFFA") }}
-            </div>
-            <span class="live-match__map">
-              {{ mapNameFromMatch(ongoingMatch) }}
-            </span>
-          </div>
-
-          <v-container style="padding-top: 6px">
-            <v-row align="center" justify="center">
+              <div v-else class="live-match__ffa">
+                {{ $t("views_player.playingFFA") }}
+              </div>
+            </v-row>
+            <v-row justify="center">
+              <div class="d-flex justify-center" style="font-size: 0.9rem">
+                <span>
+                  {{ mapNameFromMatch(ongoingMatch) }}
+                </span>
+              </div>
+            </v-row>
+            <v-row justify="center">
               <host-icon
                 v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider"
                 :host="ongoingMatch.serverInfo"
@@ -171,30 +178,6 @@ export default defineComponent({
     const seasonsReversed = computed<Season[]>(() => {
       if (!seasons.value) return [];
       return seasons.value.slice().reverse();
-    });
-
-    const ongoingMatchGameModeClass = computed<string>(() => {
-      if (!ongoingMatch.value.id) return "";
-
-      switch (ongoingMatch.value.gameMode) {
-        case EGameMode.GM_1ON1: {
-          return "one-v-one";
-        }
-        case EGameMode.GM_2ON2_AT:
-        case EGameMode.GM_2ON2: {
-          return "two-v-two-at";
-        }
-        case EGameMode.GM_4ON4: {
-          return "four-v-four";
-        }
-        case EGameMode.GM_FFA:
-        case EGameMode.GM_SC_FFA_4:
-        case EGameMode.GM_SC_OZ: {
-          return "ffa";
-        }
-      }
-
-      return "";
     });
 
     function getDuration(match: Match): string {
@@ -340,7 +323,6 @@ export default defineComponent({
       seasons,
       selectedSeason,
       ongoingMatch,
-      ongoingMatchGameModeClass,
       getDuration,
       isOngoingMatchFFA,
       getPlayerTeam,
@@ -353,11 +335,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.red {
+.live-match__indicator {
   background-color: red;
-  position: absolute;
-  top: 5px;
-  left: 28px;
+  margin-top: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .profileTab {
@@ -375,73 +357,8 @@ export default defineComponent({
   text-transform: none;
 }
 
-.live-match__container {
-  position: relative;
-  max-width: 500px;
-  margin: 20px auto;
-  height: 44px;
-
-  .live-match__indicator {
-    position: absolute;
-    left: calc(50% - 28px);
-    top: -25px;
-    font-size: 13px;
-  }
-
-  .live-match__team1 {
-    position: absolute;
-    left: 0;
-    width: 45%;
-  }
-
-  .live-match__team2 {
-    position: absolute;
-    right: 0;
-    width: 45%;
-  }
-
-  .live-match__vstext {
-    position: absolute;
-    left: calc(50% - 10px);
-    top: calc(50% - 20px);
-  }
-
-  .live-match__ffa {
-    position: absolute;
-    left: calc(50% - 41px);
-  }
-
-  .live-match__map {
-    position: absolute;
-    top: 28px;
-    font-size: 12px;
-    left: calc(50% - 60px);
-    text-align: center;
-    width: 120px;
-  }
-
-  .live-match__duration {
-    position: absolute;
-    left: 44px;
-    width: 70px;
-  }
-
-  &.one-v-one {
-    .live-match__map {
-      top: 40px;
-    }
-  }
-  &.two-v-two-at {
-    height: 95px;
-    .live-match__map {
-      top: 90px;
-    }
-  }
-  &.four-v-four {
-    height: 195px;
-    .live-match__map {
-      top: 190px;
-    }
-  }
+.live-match__team {
+  width: 300px;
 }
+
 </style>

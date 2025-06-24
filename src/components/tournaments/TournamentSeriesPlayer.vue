@@ -5,7 +5,6 @@
         <country-flag-extended
           :location="countryCode"
           :clickable="false"
-          size="small"
         />
       </span>
       <span class="player-name">

@@ -14,7 +14,7 @@
           <template v-slot:activator="{ on }">
             <v-btn tile v-on="on" style="background-color: transparent">
               <div
-                class="country-flag__container"
+                class="mr-2"
                 v-if="selectedCountry.countryCode"
               >
                 <country-flag
@@ -42,7 +42,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title>
-                      <span class="country-flag__container">
+                      <span class="mr-2">
                         <country-flag
                           class="country-flag"
                           :country="item.countryCode"
@@ -303,9 +303,6 @@ export default defineComponent({
 .countries-list {
   max-height: 650px;
   overflow-y: auto;
-}
-.country-flag__container {
-  margin-right: 10px;
 }
 .country-flag {
   margin-bottom: -13px !important;

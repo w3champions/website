@@ -108,7 +108,7 @@
                 (
                 <player-rank-info :player-id="playerId" />
                 <div
-                  class="country-flag__container"
+                  class="d-inline-block"
                   v-if="
                     (item.playersInfo && item.playersInfo[index].countryCode) ||
                     item.playersInfo[index].location
@@ -487,15 +487,6 @@ td.header {
 
 .teammate__container {
   font-size: small;
-}
-
-.country-flag__container {
-  position: relative;
-  display: inline-block;
-}
-
-.country-flag {
-  top: -10px;
 }
 
 .twitch__container {

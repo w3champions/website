@@ -63,4 +63,8 @@ export default defineComponent({
 .clickable {
   cursor: pointer;
 }
+
+.country-flag {
+  font-size: 0.875rem;
+}
 </style>
