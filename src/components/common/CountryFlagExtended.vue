@@ -6,7 +6,7 @@
           v-if="selectedCountryCode.get()"
           class="country-flag"
           :country="selectedCountryCode.get()"
-          size="small"
+          :size="size"
         />
       </span>
     </template>
@@ -31,6 +31,7 @@ export default defineComponent({
     countryCode: { type: String, required: false, default: "" },
     location: { type: String, required: false, default: "" },
     clickable: { type: Boolean, required: false, default: true },
+    size: { type: String, required: false, default: "small" },
   },
   setup(props) {
     const router = useRouter();

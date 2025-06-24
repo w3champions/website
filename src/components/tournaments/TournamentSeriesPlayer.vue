@@ -3,9 +3,9 @@
     <span class="player-slot d-flex align-center" v-bind:class="raceClass" v-bind:style="slotStyle">
       <span class="player-country d-flex justify-center align-center">
         <country-flag-extended
-          class="country-flag"
           :location="countryCode"
           :clickable="false"
+          size="small"
         />
       </span>
       <span class="player-name">

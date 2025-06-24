@@ -115,10 +115,8 @@
                   "
                 >
                   <country-flag-extended
-                    class="country-flag"
                     :countryCode="item.playersInfo[index].countryCode"
                     :location="item.playersInfo[index].location"
-                    size="small"
                   />
                 </div>
                 )
