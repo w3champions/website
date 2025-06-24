@@ -16,20 +16,19 @@
             @click.right="openProfileInNewTab()"
         >
         {{ nameWithoutBtag }}
-        <span class="number-text">({{ currentRating }})</span>
-        <span class="number-text" v-if="mmrChange !== 0" :class="won">
-          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-          <span v-else>{{ mmrChange }}</span>
-        </span>
-      </a>
-    </span>
-      <div class="flag-container" :class="{ 'ml-1': !left }">
+          <span class="number-text">({{ currentRating }})</span>
+          <span class="number-text" v-if="mmrChange !== 0" :class="won">
+            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+            <span v-else>{{ mmrChange }}</span>
+          </span>
+        </a>
+      </span>
+      <span class="d-flex justify-center align-center" v-if="player.countryCode || player.location" style="height: 16px;">
         <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
-            size="small"
         />
-      </div>
+      </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24"/>
     </div>
     <player-icon
@@ -171,14 +170,6 @@ export default defineComponent({
   flex-direction: column;
 }
 
-span > a {
-  display: inline-block;
-}
-
-span > .flag-container {
-  display: inline-block;
-}
-
 .player-info__right {
   justify-content: flex-end;
   text-align: right;
@@ -197,6 +188,7 @@ span > .flag-container {
   .details-column {
     align-items: flex-start;
   }
+
 }
 
 .name-link {
@@ -212,4 +204,5 @@ span > .flag-container {
     max-width: 100%;
   }
 }
+
 </style>
