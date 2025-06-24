@@ -53,7 +53,7 @@
               </div>
             </v-row>
             <v-row justify="center">
-              <div class="d-flex justify-center align-center" v-if="!isOngoingMatchFFA">
+              <div class="d-flex align-center" v-if="!isOngoingMatchFFA">
                 <div class="live-match__team">
                   <team-match-info
                     :not-clickable="isOngoingMatchFFA"
@@ -79,7 +79,7 @@
               </div>
             </v-row>
             <v-row justify="center">
-              <div class="d-flex justify-center" style="font-size: 0.9rem">
+              <div style="font-size: 0.9rem">
                 <span>
                   {{ mapNameFromMatch(ongoingMatch) }}
                 </span>
