@@ -1,40 +1,59 @@
 <template>
-  <v-row class="justify-center">
-    <v-col>
-      <v-container>
-        <v-card tile>
-          <v-card-title class="text-center">
-            {{ $t("views_setupguides.title") }}
-          </v-card-title>
-          <v-tabs v-model="tabsModel.self" vertical class="ml-5">
-            <v-tabs-slider></v-tabs-slider>
-            <v-tab 
-              class="profileTab" 
-              :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }">
-              {{ $t("views_setupguides.launcher_setup") }}
-            </v-tab>
-            <v-tab 
-              class="profileTab" 
-              :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }">
-              {{ $t("views_setupguides.installing_war3") }}
-            </v-tab>
-            <v-card-text>
-              <keep-alive>
-                <router-view></router-view>
-              </keep-alive>
-            </v-card-text>
-          </v-tabs>
-        </v-card>
-      </v-container>
-    </v-col>
-  </v-row>
+  <v-tab-item value="launcher-setup">
+    <v-card-text class="px-16">
+      <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
+      <br />
+      <v-card-text>
+        <v-btn
+          :href="launcherEUrl"
+          target="_blank"
+          class="join-button mt-0 mb-4"
+        >
+          <v-icon>{{ mdiDownload }}</v-icon>
+          <span class="mr-2 hidden-xs-only">Windows</span>
+        </v-btn>
+        <v-btn
+          :href="launcherUrlMac"
+          target="_blank"
+          class="join-button mt-0 mb-4 ml-8"
+        >
+          <v-icon>{{ mdiDownload }}</v-icon>
+          <span class="mr-2 hidden-xs-only">Mac</span>
+        </v-btn>
+      </v-card-text>
+      <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
+      <br />
+      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
+      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
+      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
+      <v-card-text>
+        {{ $t("views_gettingstarted.launcherfeaturestitle") }}
+        <ul>
+          <li>
+            {{ $t("views_gettingstarted.launcherfeaturesbody1") }}
+          </li>
+          <li>
+            {{ $t("views_gettingstarted.launcherfeaturesbody2") }}
+          </li>
+          <li>
+            {{ $t("views_gettingstarted.launcherfeaturesbody3") }}
+          </li>
+          <li>
+            {{ $t("views_gettingstarted.launcherfeaturesbody4") }}
+          </li>
+          <li>
+            {{ $t("views_gettingstarted.launcherfeaturesbody5") }}
+          </li>
+        </ul>
+      </v-card-text>
+    </v-card-text>
+  </v-tab-item>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from "vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { useI18n } from "vue-i18n-bridge";
-import { ESetupGuidesRouteName } from "@/router/types";
 import { 
   mdiDownload, 
   mdiCheckCircle, 
@@ -43,7 +62,7 @@ import {
 } from "@mdi/js";
 
 export default defineComponent({
-  name: "SetupGuides",
+  name: "InstallingWar3",
   setup() {
     const { t } = useI18n();
     
@@ -84,8 +103,7 @@ export default defineComponent({
       mdiLifebuoy,
       mdiChat,
       launcherUrlMac,
-      launcherEUrl,
-      ESetupGuidesRouteName
+      launcherEUrl
     };
   },
 });

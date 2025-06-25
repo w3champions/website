@@ -26,3 +26,8 @@ export enum EStatisticsRouteName {
   WINRATES = "Statistics - Winrates",
   HEROES = "Statistics - Heroes",
 }
+
+export enum ESetupGuidesRouteName {
+  LAUNCHER_SETUP = "Setup Guides - Launcher Setup",
+  INSTALLING_WAR3 = "Setup Guides - Installing Warcraft 3"
+}
