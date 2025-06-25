@@ -153,7 +153,7 @@ import { computed, defineComponent, onMounted } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
-import { EGameMode, Match, PlayerScore, Team } from "@/store/types";
+import { Match, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
