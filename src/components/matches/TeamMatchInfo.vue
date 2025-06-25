@@ -77,6 +77,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
 .team-match-info {
   display: flex;
