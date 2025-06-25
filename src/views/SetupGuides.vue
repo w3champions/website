@@ -6,24 +6,32 @@
           <v-card-title class="text-center">
             {{ $t("views_setupguides.title") }}
           </v-card-title>
-          <v-tabs v-model="tabsModel.self" vertical class="ml-5">
-            <v-tabs-slider></v-tabs-slider>
-            <v-tab 
-              class="profileTab" 
-              :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }">
-              {{ $t("views_setupguides.launcher_setup") }}
-            </v-tab>
-            <v-tab 
-              class="profileTab" 
-              :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }">
-              {{ $t("views_setupguides.installing_war3") }}
-            </v-tab>
-            <v-card-text>
-              <keep-alive>
-                <router-view></router-view>
-              </keep-alive>
-            </v-card-text>
-          </v-tabs>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <v-tabs v-model="tabsModel.self" vertical class="ml-5">
+                <v-tabs-slider></v-tabs-slider>
+                <v-tab 
+                  class="profileTab" 
+                  :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }"
+                  :value="ESetupGuidesRouteName.LAUNCHER_SETUP">
+                  {{ $t("views_setupguides.launcher_setup") }}
+                </v-tab>
+                <v-tab 
+                  class="profileTab" 
+                  :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }"
+                  :value="ESetupGuidesRouteName.INSTALLING_WAR3">
+                  {{ $t("views_setupguides.installing_war3") }}
+                </v-tab>
+              </v-tabs>
+            </v-col>
+            <v-col cols="9">
+              <v-card-text>
+                <keep-alive>
+                  <router-view></router-view>
+                </keep-alive>
+              </v-card-text>
+            </v-col>
+          </v-row>
         </v-card>
       </v-container>
     </v-col>
@@ -31,60 +39,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
-import { LAUNCHER_UPDATE_URL } from "@/main";
-import { useI18n } from "vue-i18n-bridge";
+import { defineComponent, ref, watch } from "vue";
+import { useRoute } from "vue-router/composables";
 import { ESetupGuidesRouteName } from "@/router/types";
-import { 
-  mdiDownload, 
-  mdiCheckCircle, 
-  mdiLifebuoy, 
-  mdiChat 
-} from "@mdi/js";
 
 export default defineComponent({
   name: "SetupGuides",
   setup() {
-    const { t } = useI18n();
-    
-    const tabsModel = ref({ self: "getting-started" });
-    const quickStartStep = ref(1);
-    const settingsPanel = ref([]);
-    const troubleshootingPanel = ref([]);
-    const advancedPanel = ref([]);
+    const route = useRoute();
+    const tabsModel = ref({ self: ESetupGuidesRouteName.LAUNCHER_SETUP });
 
-    const launcherWindowsUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const launcherMacUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const manualDownloadUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const discordUrl = "https://discord.gg/w3champions";
-    const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
-    const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
-
-    const launcherFeatures = computed(() => [
-      t("views_setupguides.feature_auto_update"),
-      t("views_setupguides.feature_map_download"),
-      t("views_setupguides.feature_one_click"),
-      t("views_setupguides.feature_stats_integration"),
-      t("views_setupguides.feature_replay_management")
-    ]);
+    // Sync tab selection with current route
+    watch(() => route.name, (newRouteName) => {
+      if (newRouteName === ESetupGuidesRouteName.LAUNCHER_SETUP) {
+        tabsModel.value.self = ESetupGuidesRouteName.LAUNCHER_SETUP;
+      } else if (newRouteName === ESetupGuidesRouteName.INSTALLING_WAR3) {
+        tabsModel.value.self = ESetupGuidesRouteName.INSTALLING_WAR3;
+      }
+    }, { immediate: true });
 
     return {
       tabsModel,
-      quickStartStep,
-      settingsPanel,
-      troubleshootingPanel,
-      advancedPanel,
-      launcherWindowsUrl,
-      launcherMacUrl,
-      manualDownloadUrl,
-      discordUrl,
-      launcherFeatures,
-      mdiDownload,
-      mdiCheckCircle,
-      mdiLifebuoy,
-      mdiChat,
-      launcherUrlMac,
-      launcherEUrl,
       ESetupGuidesRouteName
     };
   },
@@ -92,42 +67,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.v-stepper {
-  box-shadow: none;
-}
-
 .v-card {
   border-radius: 8px;
-}
-
-.v-expansion-panel-content {
-  padding: 16px 24px;
-}
-
-h3 {
-  margin-bottom: 16px;
-  color: var(--v-primary-base);
-}
-
-h4 {
-  margin-bottom: 12px;
-  font-weight: 600;
-}
-
-code {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Monaco', 'Consolas', monospace;
-}
-
-ul, ol {
-  margin: 12px 0;
-  padding-left: 24px;
-}
-
-li {
-  margin-bottom: 8px;
 }
 
 .launcher-screenshot {

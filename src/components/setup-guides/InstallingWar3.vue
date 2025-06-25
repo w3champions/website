@@ -1,53 +1,51 @@
 <template>
-  <v-tab-item value="launcher-setup">
-    <v-card-text class="px-16">
-      <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
-      <br />
-      <v-card-text>
-        <v-btn
-          :href="launcherEUrl"
-          target="_blank"
-          class="join-button mt-0 mb-4"
-        >
-          <v-icon>{{ mdiDownload }}</v-icon>
-          <span class="mr-2 hidden-xs-only">Windows</span>
-        </v-btn>
-        <v-btn
-          :href="launcherUrlMac"
-          target="_blank"
-          class="join-button mt-0 mb-4 ml-8"
-        >
-          <v-icon>{{ mdiDownload }}</v-icon>
-          <span class="mr-2 hidden-xs-only">Mac</span>
-        </v-btn>
-      </v-card-text>
-      <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
-      <br />
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
-      <v-card-text>
-        {{ $t("views_gettingstarted.launcherfeaturestitle") }}
-        <ul>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody1") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody2") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody3") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody4") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody5") }}
-          </li>
-        </ul>
-      </v-card-text>
+  <v-card-text class="px-16">
+    <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
+    <br />
+    <v-card-text>
+      <v-btn
+        :href="launcherEUrl"
+        target="_blank"
+        class="join-button mt-0 mb-4"
+      >
+        <v-icon>{{ mdiDownload }}</v-icon>
+        <span class="mr-2 hidden-xs-only">Windows</span>
+      </v-btn>
+      <v-btn
+        :href="launcherUrlMac"
+        target="_blank"
+        class="join-button mt-0 mb-4 ml-8"
+      >
+        <v-icon>{{ mdiDownload }}</v-icon>
+        <span class="mr-2 hidden-xs-only">Mac</span>
+      </v-btn>
     </v-card-text>
-  </v-tab-item>
+    <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
+    <br />
+    <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
+    <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
+    <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
+    <v-card-text>
+      {{ $t("views_gettingstarted.launcherfeaturestitle") }}
+      <ul>
+        <li>
+          {{ $t("views_gettingstarted.launcherfeaturesbody1") }}
+        </li>
+        <li>
+          {{ $t("views_gettingstarted.launcherfeaturesbody2") }}
+        </li>
+        <li>
+          {{ $t("views_gettingstarted.launcherfeaturesbody3") }}
+        </li>
+        <li>
+          {{ $t("views_gettingstarted.launcherfeaturesbody4") }}
+        </li>
+        <li>
+          {{ $t("views_gettingstarted.launcherfeaturesbody5") }}
+        </li>
+      </ul>
+    </v-card-text>
+  </v-card-text>
 </template>
 
 <script lang="ts">
@@ -108,7 +106,6 @@ export default defineComponent({
   },
 });
 </script>
-
 <style lang="scss" scoped>
 .v-stepper {
   box-shadow: none;
@@ -149,7 +146,7 @@ li {
 }
 
 .launcher-screenshot {
-  width: 100%;
+  width: 20%;
   margin-bottom: 10px;
 }
 </style>
