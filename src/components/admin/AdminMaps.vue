@@ -110,7 +110,7 @@ export default defineComponent({
         }
         closeEdit();
       } catch(err) {
-        err ? alert(err) : alert("Error trying to save map.");
+        err ? alert(err) : alert("Error trying to select map.");
       }
     }
 
