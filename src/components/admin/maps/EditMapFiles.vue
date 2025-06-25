@@ -3,6 +3,9 @@
     <v-card-title>
       <span class="text-h5">Edit map files</span>
     </v-card-title>
+    <v-row dense justify="center">
+        <div class="text-h6">{{ map.name }} ({{ map.id }})</div>
+    </v-row>
     <v-card-text>
       <v-container>
         <v-data-table
@@ -61,6 +64,7 @@ export default defineComponent({
     const fileName = ref<string>("");
     const file = ref<File>({} as File);
     const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
+    const maxMapFileNameLength = 60; // Very long file names break the Admin Maps UI
 
     function selectMapFile(file: MapFileData) {
       if (confirm(`Are you sure you want to select file with path ${file.filePath}?`)) {
@@ -74,6 +78,9 @@ export default defineComponent({
 
     async function addMapFile() {
       try {
+        if (file.value.name.length > maxMapFileNameLength) {
+          throw new Error(`File name exceeds maximum character length of ${maxMapFileNameLength}.`);
+        }
         const formData = new FormData();
         formData.append("mapId", props.map.id.toString());
         formData.append("mapFile", file.value, file.value.name);
@@ -83,8 +90,8 @@ export default defineComponent({
 
         fileName.value = "";
         file.value = {} as File;
-      } catch {
-        alert("Error trying to create map file");
+      } catch(err) {
+        err ? alert(err) : alert("Error trying to create map file.");
       }
     }
 
@@ -108,5 +115,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>
