@@ -171,6 +171,7 @@ import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router/composables";
+import noop from "lodash/noop";
 
 export default defineComponent({
   name: "RankingsView",
@@ -249,6 +250,30 @@ export default defineComponent({
       return !selectedLeague.value?.order ? 0 : selectedLeague.value?.order;
     });
 
+    // Function to update URL query parameters
+    function updateQueryParams() {
+      const currentQuery = { ...router.currentRoute.query };
+      const newQuery = {
+        ...currentQuery,
+        season: rankingsStore.selectedSeason.id?.toString(),
+        gamemode: rankingsStore.gameMode?.toString(),
+        league: rankingsStore.league?.toString(),
+        gateway: rootStateStore.gateway?.toString(),
+      };
+
+      // Only update if the query has changed
+      const queryChanged = Object.keys(newQuery).some((key) =>
+        newQuery[key as keyof typeof newQuery] !== currentQuery[key]
+      );
+
+      if (queryChanged) {
+        router.replace({
+          name: router.currentRoute.name || "Rankings",
+          query: newQuery
+        }).catch(noop); // Use lodash's noop to handle any potential errors silently
+      }
+    }
+
     async function refreshRankings() {
       await loadOngoingMatches();
       await getRankings();
@@ -297,6 +322,23 @@ export default defineComponent({
       }
     }
 
+    // Watch for changes in store values to update URL
+    watch(() => rankingsStore.selectedSeason, () => {
+      updateQueryParams();
+    });
+
+    watch(() => rankingsStore.gameMode, () => {
+      updateQueryParams();
+    });
+
+    watch(() => rankingsStore.league, () => {
+      updateQueryParams();
+    });
+
+    watch(() => rootStateStore.gateway, () => {
+      updateQueryParams();
+    });
+
     function isDuplicateName(name: string): boolean {
       return searchRanks.value.filter((r) => r.player.name === name).length > 1;
     }
@@ -324,6 +366,7 @@ export default defineComponent({
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
       }
+      updateQueryParams();
     }
 
     async function onGameModeChanged(gameMode: EGameMode) {
@@ -331,6 +374,7 @@ export default defineComponent({
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
       }
+      updateQueryParams();
     }
 
     onMounted(async (): Promise<void> => {
@@ -398,14 +442,29 @@ export default defineComponent({
     }
 
     async function selectSeason(season: Season) {
+      const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       await getLadders();
-      await setLeague(0);
+      
+      // Try to maintain the same league if it exists in the new season
+      let leagueToSelect = 0;
+      if (ladders.value && ladders.value.length > 0) {
+        const sameLeagueExists = ladders.value.some((league) => league.id === previousLeagueId);
+        if (sameLeagueExists) {
+          leagueToSelect = previousLeagueId;
+        } else {
+          leagueToSelect = ladders.value[0].id;
+        }
+      }
+      
+      await setLeague(leagueToSelect);
+      updateQueryParams();
     }
 
     async function setLeague(league: number) {
       rankingsStore.setLeague(league);
       await getRankings();
+      updateQueryParams();
     }
 
     function playerIsRanked(rank: Ranking): boolean {
@@ -444,6 +503,7 @@ export default defineComponent({
       rankings,
       ongoingMatchesMap,
       showRaceDistribution,
+      updateQueryParams,
     };
   },
 });
