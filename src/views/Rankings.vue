@@ -366,7 +366,6 @@ export default defineComponent({
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
       }
-      updateQueryParams();
     }
 
     async function onGameModeChanged(gameMode: EGameMode) {
@@ -374,7 +373,6 @@ export default defineComponent({
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
       }
-      updateQueryParams();
     }
 
     onMounted(async (): Promise<void> => {
@@ -459,13 +457,11 @@ export default defineComponent({
       }
 
       await setLeague(leagueToSelect);
-      updateQueryParams();
     }
 
     async function setLeague(league: number) {
       rankingsStore.setLeague(league);
       await getRankings();
-      updateQueryParams();
     }
 
     function playerIsRanked(rank: Ranking): boolean {
