@@ -382,7 +382,8 @@ export default defineComponent({
 
       await rankingsStore.retrieveSeasons();
 
-      props.season
+      // Check if season is defined (also allow the value 0), otherwise we can use the first season
+      props.season || props.season === 0
         ? rankingsStore.setSeason({ id: props.season })
         : rankingsStore.setSeason(rankingsStore.seasons[0]);
 
@@ -445,7 +446,7 @@ export default defineComponent({
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       await getLadders();
-      
+
       // Try to maintain the same league if it exists in the new season
       let leagueToSelect = 0;
       if (ladders.value && ladders.value.length > 0) {
@@ -456,7 +457,7 @@ export default defineComponent({
           leagueToSelect = ladders.value[0].id;
         }
       }
-      
+
       await setLeague(leagueToSelect);
       updateQueryParams();
     }
@@ -503,7 +504,6 @@ export default defineComponent({
       rankings,
       ongoingMatchesMap,
       showRaceDistribution,
-      updateQueryParams,
     };
   },
 });
