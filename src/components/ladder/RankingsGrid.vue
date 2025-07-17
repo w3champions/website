@@ -46,7 +46,8 @@
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
                 }"
               ></div>
-              <player-rank-info :player-id="playerId" />
+              <player-rank-info :player-id="playerId"
+                :alias="item.playersInfo[index].playerAkaData.name" />
               <div
                 class="ml-1"
                 v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
@@ -158,35 +159,35 @@ export default defineComponent({
   props: {
     rankings: {
       type: Array<Ranking>,
-        required: true,
-      },
-      ongoingMatches: {
-        type: Object as PropType<OngoingMatches>,
+      required: true,
+    },
+    ongoingMatches: {
+      type: Object as PropType<OngoingMatches>,
       required: true,
     },
     selectedRank: {
       type: Object as PropType<Ranking>,
-        required: true,
-      }
-    },
-    setup(props) {
-      const { t } = useI18n();
-      const vuetify = useVuetify();
-      const twitchStore = useTwitchStore();
-      const rankingsStore = useRankingStore();
-      const sortColumn = ref<string>("Rank");
-      const isSortedAsc = ref<boolean>(true);
-      let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
-      const sortedRankings = ref<Ranking[]>([]);
+      required: true,
+    }
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const vuetify = useVuetify();
+    const twitchStore = useTwitchStore();
+    const rankingsStore = useRankingStore();
+    const sortColumn = ref<string>("Rank");
+    const isSortedAsc = ref<boolean>(true);
+    let _lastSortFunction: ((a: Ranking, b: Ranking) => number) | undefined = undefined;
+    const sortedRankings = ref<Ranking[]>([]);
 
-      const rankingsRef = computed<Ranking[]>({
-        get(): Ranking[] {
-          return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
-        },
-        set(val: Ranking[]): void {
-          sortedRankings.value = isSortedAsc.value ? val.toSorted(_lastSortFunction) : val.toSorted(_lastSortFunction).reverse();
-        },
-      });
+    const rankingsRef = computed<Ranking[]>({
+      get(): Ranking[] {
+        return sortedRankings.value.length > 0 ? sortedRankings.value : rankingsStore.rankings;
+      },
+      set(val: Ranking[]): void {
+        sortedRankings.value = isSortedAsc.value ? val.toSorted(_lastSortFunction) : val.toSorted(_lastSortFunction).reverse();
+      },
+    });
 
     const headers = [
       {
@@ -514,6 +515,7 @@ export default defineComponent({
     background-color: lightblue !important;
   }
 }
+
 .theme--dark {
   tr.searchedItem,
   tr.searchedItem:hover {
@@ -532,6 +534,7 @@ export default defineComponent({
     min-width: 10rem;
   }
 }
+
 .rank-icon-container {
   display: flex;
   align-items: center;
