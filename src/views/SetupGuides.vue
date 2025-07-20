@@ -1,33 +1,34 @@
 <template>
-  <v-row class="justify-center">
-    <v-col>
-      <v-container>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
         <v-card tile>
-          <v-card-title class="text-center">
-            {{ $t("views_setupguides.title") }}
+          <v-card-title>
+            <span>{{ $t("views_setupguides.title") }}</span>
           </v-card-title>
-          <v-tabs v-model="tabsModel.self" vertical class="ml-5">
-            <v-tabs-slider></v-tabs-slider>
-            <v-tab 
-              class="profileTab" 
+          <v-tabs>
+            <v-tabs-slider />
+            <v-tab
+              class="profileTab"
+              exact
               :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }">
               {{ $t("views_setupguides.launcher_setup") }}
             </v-tab>
-            <v-tab 
-              class="profileTab" 
+            <v-tab
+              class="profileTab"
               :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }">
               {{ $t("views_setupguides.installing_war3") }}
             </v-tab>
-            <v-card-text>
-              <keep-alive>
-                <router-view></router-view>
-              </keep-alive>
-            </v-card-text>
           </v-tabs>
+          <v-card-text>
+            <keep-alive>
+              <router-view></router-view>
+            </keep-alive>
+          </v-card-text>
         </v-card>
-      </v-container>
-    </v-col>
-  </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">

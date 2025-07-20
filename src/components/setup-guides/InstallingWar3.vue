@@ -1,5 +1,4 @@
 <template>
-  <v-tab-item value="launcher-setup">
     <v-card-text class="px-16">
       <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
       <br />
@@ -47,7 +46,6 @@
         </ul>
       </v-card-text>
     </v-card-text>
-  </v-tab-item>
 </template>
 
 <script lang="ts">

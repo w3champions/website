@@ -73,8 +73,21 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/setup-guides",
-    name: "Setup Guides",
     component: SetupGuides,
+    name: "Setup Guides",
+    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
+    children: [
+      {
+        path: "launcher-setup",
+        component: LauncherSetup,
+        name: ESetupGuidesRouteName.LAUNCHER_SETUP,
+      },
+      {
+        path: "installing-war3",
+        component: InstallingWar3,
+        name: ESetupGuidesRouteName.INSTALLING_WAR3,
+      }
+    ],
   },
   {
     path: "/imprint",
@@ -201,24 +214,6 @@ const routes: RouteConfig[] = [
         name: EStatisticsRouteName.HEROES,
         component: HeroTab,
       },
-    ],
-  },
-  {
-    path: "/SetupGuides",
-    component: SetupGuides,
-    name: "SetupGuides",
-    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
-    children: [
-      {
-        path: "launcher-setup",
-        name: ESetupGuidesRouteName.LAUNCHER_SETUP,
-        component: LauncherSetup,
-      },
-      {
-        path: "installing-war3",
-        name: ESetupGuidesRouteName.INSTALLING_WAR3,
-        component: InstallingWar3,
-      }
     ],
   },
   {
