@@ -76,6 +76,27 @@
                         </v-date-picker>
                       </v-menu>
 
+                      <v-row>
+                        <v-col>
+                          <v-text-field
+                            v-model="reason"
+                            :label="'Reason'"
+                            outlined
+                            dense
+                          />
+                        </v-col>
+                      </v-row>
+
+                      <v-row>
+                        <v-col>
+                          <v-checkbox
+                            v-model="isShadowBan"
+                            :label="'Shadow Ban (user can connect but messages are only visible to them)'"
+                            dense
+                          />
+                        </v-col>
+                      </v-row>
+
                       <v-card-text>
                         Are you sure you want to mute this player?
                       </v-card-text>
@@ -113,6 +134,10 @@
           </v-toolbar>
         </template>
 
+        <template #[`item.isShadowBan`]="{ item }">
+          {{ item.isShadowBan ? 'Yes' : 'No' }}
+        </template>
+
         <template #[`item.actions`]="{ item }">
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
@@ -147,6 +172,8 @@ export default defineComponent({
     const showConfirmation = ref<boolean>(false);
     const battleTag = ref<string>("");
     const endDate = ref<string>("");
+    const reason = ref<string>("");
+    const isShadowBan = ref<boolean>(false);
 
     const loungeMutes = computed<LoungeMuteResponse[]>(() => loungeMuteStore.loungeMutedPlayers);
     const isMuteEndDateSet = computed<boolean>(() => endDate.value != "");
@@ -171,6 +198,8 @@ export default defineComponent({
         battleTag: battleTag.value,
         author: author.value,
         endDate: dateToCurrentTimeDate(endDate.value),
+        reason: reason.value,
+        isShadowBan: isShadowBan.value,
       } as LoungeMute;
 
       await loungeMuteStore.addLoungeMute(mute);
@@ -198,6 +227,8 @@ export default defineComponent({
     function searchCleared(): void {
       showConfirmation.value = false;
       endDate.value = "";
+      reason.value = "";
+      isShadowBan.value = false;
     }
 
     function playerFound(bTag: string): void {
@@ -219,6 +250,8 @@ export default defineComponent({
       { text: "Mute End Date", sortable: true, value: "endDate" },
       { text: "Mute Insert Date", sortable: true, value: "insertDate" },
       { text: "Author", sortable: true, value: "author" },
+      { text: "Reason", sortable: true, value: "reason" },
+      { text: "Shadow Ban", sortable: true, value: "isShadowBan" },
       { text: "Actions", sortable: false, value: "actions" },
     ];
 
@@ -233,6 +266,8 @@ export default defineComponent({
       dateMenu,
       endDate,
       battleTag,
+      reason,
+      isShadowBan,
       isMuteEndDateSet,
       save,
       close,
