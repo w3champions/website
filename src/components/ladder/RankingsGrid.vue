@@ -538,7 +538,8 @@ export default defineComponent({
 .rank-icon-container {
   display: flex;
   align-items: center;
-  width: 50%;
+  /*width: 50%;*/
+  /* fix aliases display */
   margin-left: 0 !important;
   min-height: 39px;
 }
