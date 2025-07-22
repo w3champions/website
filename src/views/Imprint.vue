@@ -40,6 +40,12 @@
                 https://github.com/HatScripts/circle-flags
               </a>
             </p>
+            <h3>VPN and Proxy detection:</h3>
+            <p>
+              <a href="https://getipintel.net/" target="_blank" rel="noopener noreferrer">
+                getipintel.net
+              </a>
+            </p>
           </v-card-text>
           <v-card-text>
             <h3>Disclaimer</h3>
