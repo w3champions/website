@@ -8,7 +8,7 @@
         @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"
         v-on="on"
       >
-        {{ playerId.name }}
+        {{ playerId.name }}<span v-if="alias" class="alias"> ({{ alias }})</span>
       </div>
     </template>
     <div>
@@ -32,6 +32,10 @@ export default defineComponent({
     playerId: {
       type: Object as PropType<PlayerId>,
       required: true,
+    },
+    alias: {
+      type: String,
+      required: false,
     },
   },
   setup() {
@@ -61,6 +65,12 @@ export default defineComponent({
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 7rem;
+  max-width: 10rem;
+}
+
+.alias {
+  font-style: italic;
+  opacity: 0.8;
+  font-size: 0.9em;
 }
 </style>
