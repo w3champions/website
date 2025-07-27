@@ -67,11 +67,6 @@ const routes: RouteConfig[] = [
     component: Faq,
   },
   {
-    path: "/getting-started",
-    name: "Getting Started",
-    component: GettingStarted,
-  },
-  {
     path: "/setup-guides",
     component: SetupGuides,
     name: "Setup Guides",

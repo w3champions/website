@@ -1,49 +1,24 @@
 <template>
     <v-card-text class="px-16">
-      <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
-      <br />
       <v-card-text>
-        <v-btn
-          :href="launcherEUrl"
-          target="_blank"
-          class="join-button mt-0 mb-4"
-        >
-          <v-icon>{{ mdiDownload }}</v-icon>
-          <span class="mr-2 hidden-xs-only">Windows</span>
-        </v-btn>
-        <v-btn
-          :href="launcherUrlMac"
-          target="_blank"
-          class="join-button mt-0 mb-4 ml-8"
-        >
-          <v-icon>{{ mdiDownload }}</v-icon>
-          <span class="mr-2 hidden-xs-only">Mac</span>
-        </v-btn>
-      </v-card-text>
-      <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
-      <br />
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg">
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg">
-      <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg">
-      <v-card-text>
-        {{ $t("views_gettingstarted.launcherfeaturestitle") }}
+        {{ $t("views_gettingstarted.introinstallwar3") }}
         <ul>
           <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody1") }}
+            {{ $t("views_gettingstarted.logoutinstall1") }}
           </li>
           <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody2") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody3") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody4") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.launcherfeaturesbody5") }}
+            {{ $t("views_gettingstarted.logoutinstall2") }}
           </li>
         </ul>
+        <br />
+        <img class="launcher-screenshot" src="/assets/installingWar3/install_unlogged.png">
+        <br />
+        {{ $t("views_gettingstarted.loginbnet") }}
+        <br />
+        {{ $t("views_gettingstarted.playwar3") }}
+        <br />
+        <br />
+        <img class="launcher-screenshot" src="/assets/installingWar3/play_logged.png">
       </v-card-text>
     </v-card-text>
 </template>
@@ -63,8 +38,8 @@ export default defineComponent({
   name: "InstallingWar3",
   setup() {
     const { t } = useI18n();
-    
-    const tabsModel = ref({ self: "getting-started" });
+
+    const tabsModel = ref({ self: "setup-guides" });
     const quickStartStep = ref(1);
     const settingsPanel = ref([]);
     const troubleshootingPanel = ref([]);

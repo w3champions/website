@@ -48,7 +48,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n();
     
-    const tabsModel = ref({ self: "getting-started" });
+    const tabsModel = ref({ self: "setup-guides" });
     const quickStartStep = ref(1);
     const settingsPanel = ref([]);
     const troubleshootingPanel = ref([]);
