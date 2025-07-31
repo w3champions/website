@@ -8,7 +8,6 @@ import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
-import GettingStarted from "@/views/GettingStarted.vue";
 import SetupGuides from "@/views/SetupGuides.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";

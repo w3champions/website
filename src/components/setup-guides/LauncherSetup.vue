@@ -201,16 +201,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref } from "vue";
 import SetupGuides from "@/views/SetupGuides.vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
-import { useI18n } from "vue-i18n-bridge";
-import { 
-  mdiDownload, 
-  mdiCheckCircle, 
-  mdiLifebuoy, 
-  mdiChat 
-} from "@mdi/js";
+import { mdiDownload} from "@mdi/js";
 
 export default defineComponent({
   name: "LauncherSetup",
@@ -218,15 +212,7 @@ export default defineComponent({
     SetupGuides,
   },
   setup() {
-    const { t } = useI18n();
-    
     const tabsModel = ref({ self: "setup-guides" });
-    const quickStartStep = ref(1);
-    const settingsPanel = ref([]);
-    const troubleshootingPanel = ref([]);
-    const advancedPanel = ref([]);
-
-    const discordUrl = "https://discord.gg/w3champions";
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
@@ -234,28 +220,11 @@ export default defineComponent({
     const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
 
-    const launcherFeatures = computed(() => [
-      t("views_setupguides.feature_auto_update"),
-      t("views_setupguides.feature_map_download"),
-      t("views_setupguides.feature_one_click"),
-      t("views_setupguides.feature_stats_integration"),
-      t("views_setupguides.feature_replay_management")
-    ]);
-
     return {
       tabsModel,
-      quickStartStep,
-      settingsPanel,
       ingameAddonLink,
       alertMessage,
-      troubleshootingPanel,
-      advancedPanel,
-      discordUrl,
-      launcherFeatures,
       mdiDownload,
-      mdiCheckCircle,
-      mdiLifebuoy,
-      mdiChat,
       webUiLink,
       mapsLink,
       launcherUrlMac,
