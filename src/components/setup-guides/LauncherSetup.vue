@@ -226,9 +226,6 @@ export default defineComponent({
     const troubleshootingPanel = ref([]);
     const advancedPanel = ref([]);
 
-    const launcherWindowsUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const launcherMacUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const manualDownloadUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
     const discordUrl = "https://discord.gg/w3champions";
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
@@ -253,9 +250,6 @@ export default defineComponent({
       alertMessage,
       troubleshootingPanel,
       advancedPanel,
-      launcherWindowsUrl,
-      launcherMacUrl,
-      manualDownloadUrl,
       discordUrl,
       launcherFeatures,
       mdiDownload,

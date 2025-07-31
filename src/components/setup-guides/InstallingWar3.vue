@@ -45,9 +45,6 @@ export default defineComponent({
     const troubleshootingPanel = ref([]);
     const advancedPanel = ref([]);
 
-    const launcherWindowsUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const launcherMacUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
-    const manualDownloadUrl = "https://github.com/w3champions/w3champions-launcher/releases/latest";
     const discordUrl = "https://discord.gg/w3champions";
     const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
@@ -66,9 +63,6 @@ export default defineComponent({
       settingsPanel,
       troubleshootingPanel,
       advancedPanel,
-      launcherWindowsUrl,
-      launcherMacUrl,
-      manualDownloadUrl,
       discordUrl,
       launcherFeatures,
       mdiDownload,
