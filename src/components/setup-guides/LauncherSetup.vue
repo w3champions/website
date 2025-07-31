@@ -202,28 +202,18 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import SetupGuides from "@/views/SetupGuides.vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
-import { mdiDownload } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { mdiDownload} from "@mdi/js";
 
-class TabsModel {
-  constructor(private router: ReturnType<typeof useRouter>) {}
-  set self (tabsModel: string | (string | null)[]) {
-    this.router.replace({ query: { ...this.router.currentRoute.query, tabsModel } });
-    console.log(this.router.currentRoute.query.tabsModel);
-  }
-  get self() {
-    return this.router.currentRoute.query.tabsModel || "launcher";
-  }
-}
 export default defineComponent({
-  name: "GettingStartedView",
-  components: {},
+  name: "LauncherSetup",
+  components: {
+    SetupGuides,
+  },
   setup() {
-    const router = useRouter();
-    const tabsModel = ref(new TabsModel(router));
-
-    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
+    const tabsModel = ref({ self: "setup-guides" });
+    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
@@ -231,19 +221,18 @@ export default defineComponent({
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
 
     return {
-      mdiDownload,
       tabsModel,
-      alertMessage,
       ingameAddonLink,
+      alertMessage,
+      mdiDownload,
       webUiLink,
       mapsLink,
       launcherUrlMac,
-      launcherEUrl,
+      launcherEUrl
     };
   },
 });
 </script>
-
 <style lang="scss" scoped>
 .important {
   color: red;
