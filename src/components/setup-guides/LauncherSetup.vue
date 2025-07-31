@@ -227,7 +227,7 @@ export default defineComponent({
     const advancedPanel = ref([]);
 
     const discordUrl = "https://discord.gg/w3champions";
-    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on discord!");
+    const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
