@@ -8,7 +8,6 @@ import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
-import GettingStarted from "@/views/GettingStarted.vue";
 import SetupGuides from "@/views/SetupGuides.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";
@@ -69,24 +68,23 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/getting-started",
-    name: "Getting Started",
-    component: GettingStarted,
+    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
   },
   {
     path: "/setup-guides",
-    name: "Setup Guides",
     component: SetupGuides,
+    name: "Setup Guides",
     redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
     children: [
       {
         path: "launcher-setup",
-        name: ESetupGuidesRouteName.LAUNCHER_SETUP,
         component: LauncherSetup,
+        name: ESetupGuidesRouteName.LAUNCHER_SETUP,
       },
       {
         path: "installing-war3",
-        name: ESetupGuidesRouteName.INSTALLING_WAR3,
         component: InstallingWar3,
+        name: ESetupGuidesRouteName.INSTALLING_WAR3,
       }
     ],
   },

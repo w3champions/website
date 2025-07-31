@@ -196,7 +196,7 @@ export default defineComponent({
     }
 
     function goToSetupPage(): void {
-      router.push({ path: "/getting-started" });
+      router.push({ path: "/setup-guides/launcher-setup" });
     }
 
     function goToProfile(rank: Ranking): void {
