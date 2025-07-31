@@ -201,10 +201,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import SetupGuides from "@/views/SetupGuides.vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload} from "@mdi/js";
+import { useRoute, useRouter } from "vue-router/composables";
 
 export default defineComponent({
   name: "LauncherSetup",
@@ -212,13 +213,26 @@ export default defineComponent({
     SetupGuides,
   },
   setup() {
-    const tabsModel = ref({ self: "setup-guides" });
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
     const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
     const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
+    const route = useRoute();
+    const router = useRouter();
+    const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
+
+    watch(() => tabsModel.value.self, (newVal) => {
+      if (route.query.tabsModel !== newVal) {
+        router.replace({
+          query: {
+            ...route.query,
+            tabsModel: newVal
+          }
+        });
+      }
+    });
 
     return {
       tabsModel,
