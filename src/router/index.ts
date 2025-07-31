@@ -67,6 +67,10 @@ const routes: RouteConfig[] = [
     component: Faq,
   },
   {
+    path: "/getting-started",
+    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
+  },
+  {
     path: "/setup-guides",
     component: SetupGuides,
     name: "Setup Guides",
