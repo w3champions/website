@@ -3,20 +3,35 @@
     v-if="team"
     class="team-match-info"
   >
-    <div
-      v-for="(player, index) in team.players"
-      :key="index"
+    <div 
+      v-if="hasTeamRanking"
+      class="team-ranking"
     >
-      <player-match-info
-        :unfinishedMatch="unfinishedMatch"
-        :player="player"
-        :left="left"
-        :big-race-icon="bigRaceIcon"
-        :not-clickable="notClickable"
-        :is-anonymous="isAnonymous"
-        :highlighted="highlightedPlayer === player.battleTag"
-        :show-heroes="showHeroes"
-      />
+      #{{ team.matchRanking + 1 }}
+    </div>
+    <div class="team-content">
+      <div
+        v-for="(player, index) in team.players"
+        :key="index"
+        class="player-row"
+      >
+        <div 
+          v-if="!hasTeamRanking && hasPlayerRanking(player)"
+          class="player-ranking"
+        >
+          #{{ player.matchRanking + 1 }}
+        </div>
+        <player-match-info
+          :unfinishedMatch="unfinishedMatch"
+          :player="player"
+          :left="left"
+          :big-race-icon="bigRaceIcon"
+          :not-clickable="notClickable"
+          :is-anonymous="isAnonymous"
+          :highlighted="highlightedPlayer === player.battleTag"
+          :show-heroes="showHeroes"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -75,13 +90,50 @@ export default defineComponent({
       default: false,
     },
   },
+  computed: {
+    hasTeamRanking(): boolean {
+      return this.team?.matchRanking !== undefined && this.team?.matchRanking !== null;
+    },
+  },
+  methods: {
+    hasPlayerRanking(player: any): boolean {
+      return player.matchRanking !== undefined && player.matchRanking !== null;
+    },
+  },
 });
 </script>
 
 <style lang="scss" scoped>
 .team-match-info {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-ranking {
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 24px;
+}
+
+.team-content {
+  display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
+}
+
+.player-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-ranking {
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 24px;
 }
 </style>
