@@ -16,6 +16,7 @@ export type PlayerInTeam = {
   race: ERaceEnum;
   rndRace: ERaceEnum;
   won: boolean;
+  matchRanking?: number;
   location?: string;
   countryCode?: string;
   twitch?: string | null;
@@ -25,6 +26,7 @@ export type PlayerInTeam = {
 export type Team = {
   players: PlayerInTeam[];
   won?: boolean;
+  matchRanking?: number;
 };
 
 export type Match = {
