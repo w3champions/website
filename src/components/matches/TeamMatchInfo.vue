@@ -124,13 +124,6 @@ export default defineComponent({
   flex: 1;
 }
 
-.player-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
 .player-ranking {
   font-weight: bold;
   font-size: 14px;
