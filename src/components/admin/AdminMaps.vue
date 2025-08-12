@@ -83,13 +83,13 @@ export default defineComponent({
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = map;
+      editedMap.value = Object.assign({}, map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = map;
+      editedMap.value = Object.assign({}, map);
     }
 
     function closeEdit(): void {
@@ -109,6 +109,7 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
+        await mapsManagementStore.loadMaps();
       } catch(err) {
         err ? alert(err) : alert("Error trying to select map.");
       }
