@@ -26,6 +26,10 @@
           <v-col cols="12" sm="6" md="12">
             <v-text-field v-model="mapRef.maxTeams" label="Max Teams"></v-text-field>
           </v-col>
+
+          <v-col cols="12" sm="6" md="12" class="pt-0">
+            <v-checkbox v-model="mapRef.disabled" label="Disable map" dense />
+          </v-col>
         </v-row>
       </v-container>
     </v-card-text>

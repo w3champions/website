@@ -6,6 +6,7 @@
     <v-container>
       <v-card class="pa-md-4">
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+        <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" dense hide-details />
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
         </v-dialog>
@@ -38,7 +39,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
@@ -61,7 +62,15 @@ export default defineComponent({
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
 
-    const maps = computed<Map[]>(() => mapsManagementStore.maps);
+    const adminMapsFilters = ref<AdminMapsFilters>({ hideDisabled: false });
+
+    const maps = computed<Map[]>(() => {
+      if (adminMapsFilters.value.hideDisabled) {
+        return mapsManagementStore.maps.filter((x) => !x.disabled);
+      }
+      return mapsManagementStore.maps;
+    });
+
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     function getMapPath(map: Map): string {
@@ -83,13 +92,13 @@ export default defineComponent({
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = map;
+      editedMap.value = Object.assign({}, map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = map;
+      editedMap.value = Object.assign({}, map);
     }
 
     function closeEdit(): void {
@@ -109,6 +118,7 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
+        await mapsManagementStore.loadMaps();
       } catch(err) {
         err ? alert(err) : alert("Error trying to select map.");
       }
@@ -132,6 +142,7 @@ export default defineComponent({
         category: "",
         maxTeams: 2,
         mappedForces: [],
+        disabled: false,
       };
 
       return map;
@@ -160,6 +171,10 @@ export default defineComponent({
       {
         text: "Category",
         value: "category",
+      },
+      {
+        text: "Disabled",
+        value: "disabled",
       },
       {
         text: "File",
@@ -191,6 +206,7 @@ export default defineComponent({
       getMapPath,
       configureMap,
       configureMapFiles,
+      adminMapsFilters,
     };
   },
 });
