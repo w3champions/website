@@ -20,12 +20,14 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     async createMap(map: Map) {
       const oauthStore = useOauthStore();
       await MapsService.createMap(oauthStore.token, map);
-      await this.loadMaps(this.mapsFilter);
     },
     async updateMap(map: Map) {
       const oauthStore = useOauthStore();
-      await MapsService.updateMap(oauthStore.token, map.id, map);
-      await this.loadMaps(this.mapsFilter);
+      try {
+        await MapsService.updateMap(oauthStore.token, map.id, map);
+      } catch(err) {
+        err ? alert(err) : alert("Error trying to update map.");
+      }
     },
     async loadMapFiles(mapId: number) {
       const oauthStore = useOauthStore();
