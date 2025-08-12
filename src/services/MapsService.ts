@@ -53,6 +53,10 @@ export default class MapsService {
       body: data,
     });
 
+    if (!response.ok) {
+      const msg = await response.json();
+      throw new Error(msg);
+    }
     return await response.json();
   }
 
@@ -82,7 +86,11 @@ export default class MapsService {
       },
     });
 
-    return response.ok ? await response.json() : null;
+    if (!response.ok) {
+      const msg = await response.json();
+      throw new Error(msg);
+    }
+    return await response.json();
   }
 
   public static async getTournamentMaps(): Promise<GetMapsResponse> {

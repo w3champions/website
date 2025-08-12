@@ -19,6 +19,7 @@ export interface Map {
   maxTeams: number;
   mappedForces?: MapForce[];
   gameMap?: GameMap;
+  disabled: boolean;
 }
 
 export interface MapForce {
@@ -69,4 +70,8 @@ export interface MapFileData {
   mapId: number;
   filePath: string;
   metaData: GameMap;
+}
+
+export interface AdminMapsFilters {
+  hideDisabled: boolean;
 }
