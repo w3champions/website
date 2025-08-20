@@ -101,6 +101,10 @@
         </v-list>
       </v-menu>
 
+      <v-btn text tile :to="{ name: 'Rewards' }">
+        <v-icon>{{ mdiTreasureChest }}</v-icon>
+      </v-btn>
+
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text tile v-on="on" class="right-menu">
@@ -180,6 +184,7 @@ import {
   mdiControllerClassic,
   mdiHelpCircleOutline,
   mdiInvertColors,
+  mdiTreasureChest,
   mdiTrophy,
   mdiViewList,
 } from "@mdi/js";
@@ -396,6 +401,7 @@ export default defineComponent({
       mdiAccountCircle,
       mdiCog,
       mdiInvertColors,
+      mdiTreasureChest,
       oauthStore,
       savedLanguage,
       setNavigationDrawerOpen,

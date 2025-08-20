@@ -45,6 +45,8 @@ import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
+import Rewards from "@/views/Rewards.vue";
+import PatreonCallback from "@/views/PatreonCallback.vue";
 import { EAdminRouteName, EStatisticsRouteName, ESetupGuidesRouteName } from "./types";
 
 Vue.use(VueRouter);
@@ -241,6 +243,16 @@ const routes: RouteConfig[] = [
       { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
     ],
+  },
+  {
+    path: "/rewards",
+    name: "Rewards",
+    component: Rewards,
+  },
+  {
+    path: "/patreon/callback",
+    name: "PatreonCallback",
+    component: PatreonCallback,
   },
   {
     path: "/tournaments",
