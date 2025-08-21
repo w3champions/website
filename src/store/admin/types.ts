@@ -158,3 +158,170 @@ export type ReplayMessageScope = {
   type: EChatScope;
   id: number | null;
 };
+
+// Rewards Management Types
+
+export type Reward = {
+  id: string;
+  name: string;
+  description: string;
+  type: RewardType;
+  moduleId: string;
+  parameters: Record<string, any>;
+  duration: RewardDuration | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export enum RewardType {
+  Undefined = 0,
+  Portrait = 1,
+  Badge = 2,
+  Title = 3,
+  Cosmetic = 4,
+  Feature = 5,
+  Other = 6
+}
+
+export type RewardDuration = {
+  type: DurationType;
+  value: number;
+};
+
+export enum DurationType {
+  Permanent = 0,
+  Days = 1,
+  Months = 2,
+  Years = 3
+}
+
+export type RewardAssignment = {
+  id: string;
+  userId: string;
+  rewardId: string;
+  providerId: string;
+  providerReference: string;
+  eventId?: string;
+  status: RewardStatus;
+  assignedAt: string;
+  expiresAt?: string;
+  revokedAt?: string;
+  revokedReason?: string;
+  metadata: Record<string, any>;
+};
+
+export enum RewardStatus {
+  Pending = 0,
+  Active = 1,
+  Expired = 2,
+  Revoked = 3,
+  Failed = 4
+}
+
+export type ProviderConfiguration = {
+  id: string;
+  providerId: string;
+  providerName: string;
+  isActive: boolean;
+  settings: Record<string, string>;
+  productMappings: ProductMapping[];
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type ProductMapping = {
+  id: string;
+  providerProductIds: string[];
+  providerProductName: string;
+  rewardIds: string[];
+  type: ProductMappingType;
+  additionalParameters: Record<string, any>;
+};
+
+export enum ProductMappingType {
+  OneTime = 0,
+  Recurring = 1,
+  Tiered = 2
+}
+
+export type CreateRewardRequest = {
+  name: string;
+  description: string;
+  type: RewardType;
+  moduleId: string;
+  parameters?: Record<string, any>;
+  duration?: RewardDuration;
+};
+
+export type UpdateRewardRequest = {
+  name?: string;
+  description?: string;
+  type?: RewardType;
+  parameters?: Record<string, any>;
+  duration?: RewardDuration;
+  isActive?: boolean;
+};
+
+export type DriftDetectionResult = {
+  success: boolean;
+  timestamp: string;
+  hasDrift: boolean;
+  summary: {
+    missingMembers: number;
+    extraAssignments: number;
+    mismatchedTiers: number;
+    totalPatreonMembers: number;
+    activePatreonMembers: number;
+    totalInternalAssignments: number;
+    uniqueInternalUsers: number;
+  };
+  details: {
+    missingMembers: any[];
+    extraAssignments: any[];
+    mismatchedTiers: any[];
+  };
+};
+
+// New types for enhanced reward management
+
+export interface PatreonAccountLink {
+  id: string;
+  battleTag: string;
+  patreonUserId: string;
+  linkedAt: string;
+  lastSyncAt: string | null;
+}
+
+export interface PaginatedAssignments {
+  assignments: RewardAssignment[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface RewardWithAssignments {
+  reward: Reward;
+  assignments: RewardAssignment[];
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+}
+
+export interface RewardWithAssignmentCounts {
+  reward: Reward;
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+  totalCount: number;
+  sampleAssignments: RewardAssignment[];
+}
+
+export interface PaginatedRewardsWithAssignments {
+  rewards: RewardWithAssignmentCounts[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

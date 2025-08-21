@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, DriftDetectionResult } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -185,5 +185,105 @@ export default class AdminService {
     const url = `${API_URL}api/admin/checkJwtLifetime`;
     const response = await authorizedFetch("GET", url, token);
     return response.ok;
+  }
+
+  // Rewards Management Methods
+
+  public static async getRewards(token: string): Promise<Reward[]> {
+    const url = `${API_URL}api/rewards`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async getReward(rewardId: string, token: string): Promise<Reward> {
+    const url = `${API_URL}api/rewards/${rewardId}`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async createReward(reward: CreateRewardRequest, token: string): Promise<Reward> {
+    const url = `${API_URL}api/rewards`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(reward));
+    return await response.json();
+  }
+
+  public static async updateReward(rewardId: string, reward: UpdateRewardRequest, token: string): Promise<Reward> {
+    const url = `${API_URL}api/rewards/${rewardId}`;
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(reward));
+    return await response.json();
+  }
+
+  public static async deleteReward(rewardId: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/rewards/${rewardId}`;
+    const response = await authorizedFetch("DELETE", url, token);
+    return response.ok;
+  }
+
+  public static async getUserAssignments(userId: string, token: string): Promise<RewardAssignment[]> {
+    const url = `${API_URL}api/rewards/assignments/${userId}`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async getProviderConfigurations(token: string): Promise<ProviderConfiguration[]> {
+    const url = `${API_URL}api/rewards/providers`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async addProductMapping(providerId: string, mapping: ProductMapping, token: string): Promise<ProviderConfiguration> {
+    const url = `${API_URL}api/rewards/providers/${providerId}/mappings`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(mapping));
+    return await response.json();
+  }
+
+  public static async updateProductMapping(providerId: string, mappingId: string, mapping: ProductMapping, token: string): Promise<ProviderConfiguration> {
+    const url = `${API_URL}api/rewards/providers/${providerId}/mappings/${mappingId}`;
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(mapping));
+    return await response.json();
+  }
+
+  public static async removeProductMapping(providerId: string, mappingId: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/rewards/providers/${providerId}/mappings/${mappingId}`;
+    const response = await authorizedFetch("DELETE", url, token);
+    return response.ok;
+  }
+
+  public static async detectPatreonDrift(token: string): Promise<DriftDetectionResult> {
+    const url = `${API_URL}api/rewards/drift-detection/patreon/detect`;
+    const response = await authorizedFetch("POST", url, token);
+    return await response.json();
+  }
+
+  public static async getDriftDetectionStatus(token: string): Promise<any> {
+    const url = `${API_URL}api/rewards/drift-detection/status`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  // New endpoints for Patreon links and enhanced assignments management
+
+  public static async getAllPatreonLinks(token: string): Promise<PatreonAccountLink[]> {
+    const url = `${API_URL}api/rewards/patreon/links`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async deletePatreonLink(battleTag: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/rewards/patreon/links/${encodeURIComponent(battleTag)}`;
+    const response = await authorizedFetch("DELETE", url, token);
+    return response.ok;
+  }
+
+  public static async getAllAssignments(token: string, page: number = 1, pageSize: number = 50): Promise<PaginatedAssignments> {
+    const url = `${API_URL}api/rewards/assignments/all?page=${page}&pageSize=${pageSize}`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async getAssignmentsByReward(rewardId: string, token: string): Promise<RewardAssignment[]> {
+    const url = `${API_URL}api/rewards/${encodeURIComponent(rewardId)}/assignments`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
   }
 }

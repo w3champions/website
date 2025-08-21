@@ -42,7 +42,7 @@ export const useRewardsStore = defineStore("rewards", {
         const clientId = "NQfJXU43KYIBkj6kCMFIaEY-83JuVH9rCJKaleKhm3jDAy-gxRC7bzn4aPo9UJgf";
         const state = Math.random().toString(36).substring(2, 15); // Simple state generation against CSRF
 
-        const patreonAuthUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${PATREON_REDIRECT_URL}&state=${state}&scope=campaigns`;
+        const patreonAuthUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${PATREON_REDIRECT_URL}&state=${state}&scope=identity`;
 
         // Store state for validation (simple localStorage for now)
         localStorage.setItem("patreon_oauth_state", state);

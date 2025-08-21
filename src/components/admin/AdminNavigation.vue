@@ -68,7 +68,8 @@ import {
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument
+  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink, 
+  mdiAccountMultiple, mdiRadar, mdiAccountHeart
 } from "@mdi/js";
 
 export default defineComponent({
@@ -252,6 +253,41 @@ export default defineComponent({
         icon: mdiGift,
         permission: EPermission.Content,
         items: [
+          {
+            title: "Manage Rewards",
+            icon: mdiTrophy,
+            permission: EPermission.Content,
+            component: "admin-rewards",
+            routeName: EAdminRouteName.MANAGE_REWARDS,
+          },
+          {
+            title: "Product Mappings",
+            icon: mdiLink,
+            permission: EPermission.Content,
+            component: "admin-product-mappings",
+            routeName: EAdminRouteName.PRODUCT_MAPPINGS,
+          },
+          {
+            title: "Reward Assignments",
+            icon: mdiAccountMultiple,
+            permission: EPermission.Content,
+            component: "admin-assignments",
+            routeName: EAdminRouteName.REWARD_ASSIGNMENTS,
+          },
+          {
+            title: "Patreon Links",
+            icon: mdiAccountHeart,
+            permission: EPermission.Content,
+            component: "admin-patreon-links",
+            routeName: EAdminRouteName.PATREON_LINKS,
+          },
+          {
+            title: "Drift Detection",
+            icon: mdiRadar,
+            permission: EPermission.Content,
+            component: "admin-drift-detection",
+            routeName: EAdminRouteName.DRIFT_DETECTION,
+          },
           {
             title: "Assign Portraits",
             icon: mdiAccountBoxOutline,
