@@ -231,20 +231,26 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async addProductMapping(providerId: string, mapping: ProductMapping, token: string): Promise<ProviderConfiguration> {
-    const url = `${API_URL}api/rewards/providers/${providerId}/mappings`;
+  public static async getProductMappings(token: string): Promise<ProductMapping[]> {
+    const url = `${API_URL}api/rewards/product-mappings`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async createProductMapping(token: string, mapping: ProductMapping): Promise<ProductMapping> {
+    const url = `${API_URL}api/rewards/product-mappings`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify(mapping));
     return await response.json();
   }
 
-  public static async updateProductMapping(providerId: string, mappingId: string, mapping: ProductMapping, token: string): Promise<ProviderConfiguration> {
-    const url = `${API_URL}api/rewards/providers/${providerId}/mappings/${mappingId}`;
+  public static async updateProductMapping(token: string, mappingId: string, mapping: ProductMapping): Promise<ProductMapping> {
+    const url = `${API_URL}api/rewards/product-mappings/${mappingId}`;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(mapping));
     return await response.json();
   }
 
-  public static async removeProductMapping(providerId: string, mappingId: string, token: string): Promise<boolean> {
-    const url = `${API_URL}api/rewards/providers/${providerId}/mappings/${mappingId}`;
+  public static async deleteProductMapping(token: string, mappingId: string): Promise<boolean> {
+    const url = `${API_URL}api/rewards/product-mappings/${mappingId}`;
     const response = await authorizedFetch("DELETE", url, token);
     return response.ok;
   }

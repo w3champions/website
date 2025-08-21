@@ -232,11 +232,18 @@ export type ProviderConfiguration = {
 
 export type ProductMapping = {
   id: string;
-  providerProductIds: string[];
-  providerProductName: string;
+  productName: string;
+  productProviders: ProductProviderPair[];
   rewardIds: string[];
   type: ProductMappingType;
   additionalParameters: Record<string, any>;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type ProductProviderPair = {
+  providerId: string;
+  productId: string;
 };
 
 export enum ProductMappingType {

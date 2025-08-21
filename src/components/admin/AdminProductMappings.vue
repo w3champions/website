@@ -4,103 +4,83 @@
       Product Mappings
     </v-card-title>
 
-    <v-expansion-panels multiple>
-      <v-expansion-panel
-        v-for="provider in providerConfigs"
-        :key="provider.id"
+    <v-card>
+      <v-data-table
+        :headers="mappingHeaders"
+        :items="productMappings"
+        :items-per-page="10"
+        class="elevation-0"
       >
-        <v-expansion-panel-header>
-          <div class="d-flex align-center">
-            <v-icon class="mr-2">{{ getProviderIcon(provider.providerId) }}</v-icon>
-            <div>
-              <div class="font-weight-bold">{{ provider.providerName }}</div>
-              <div class="text-caption text--secondary">
-                {{ provider.productMappings.length }} mappings
-              </div>
-            </div>
+        <template v-slot:top>
+          <v-toolbar flat color="transparent">
             <v-spacer></v-spacer>
-            <v-chip
-              :color="provider.isActive ? 'success' : 'error'"
+            <v-btn
+              color="primary"
               small
+              @click="createMapping"
             >
-              {{ provider.isActive ? 'Active' : 'Inactive' }}
+              Add Mapping
+            </v-btn>
+          </v-toolbar>
+        </template>
+
+        <template v-slot:item.productName="{ item }">
+          <div class="font-weight-medium">{{ item.productName }}</div>
+        </template>
+
+        <template v-slot:item.productProviders="{ item }">
+          <div>
+            <v-chip
+              v-for="provider in item.productProviders"
+              :key="`${provider.providerId}-${provider.productId}`"
+              small
+              class="mr-1 mb-1"
+              :color="getProviderColor(provider.providerId)"
+            >
+              <v-icon small left>{{ getProviderIcon(provider.providerId) }}</v-icon>
+              {{ provider.productId }}
             </v-chip>
           </div>
-        </v-expansion-panel-header>
+        </template>
 
-        <v-expansion-panel-content>
-          <v-data-table
-            :headers="mappingHeaders"
-            :items="provider.productMappings"
-            :items-per-page="10"
-            class="elevation-0"
+        <template v-slot:item.rewardIds="{ item }">
+          <div>
+            <div v-for="rewardId in item.rewardIds" :key="rewardId" class="mb-1">
+              <div class="font-weight-medium">{{ getRewardName(rewardId) }}</div>
+              <div class="text-caption text--secondary">{{ rewardId }}</div>
+            </div>
+            <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption text--secondary">No rewards assigned</div>
+          </div>
+        </template>
+
+        <template v-slot:item.type="{ item }">
+          <v-chip :color="getMappingTypeColor(item.type)" small>
+            {{ getMappingTypeName(item.type) }}
+          </v-chip>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+            small
+            @click="editMapping(item)"
+            color="primary"
+            class="mr-2"
           >
-            <template v-slot:top>
-              <v-toolbar flat color="transparent">
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="primary"
-                  small
-                  @click="createMapping(provider.providerId)"
-                >
-                  Add Mapping
-                </v-btn>
-              </v-toolbar>
-            </template>
+            {{ mdiPencil }}
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteMapping(item.id)"
+            color="error"
+          >
+            {{ mdiDelete }}
+          </v-icon>
+        </template>
+      </v-data-table>
+    </v-card>
 
-            <template v-slot:item.rewardId="{ item }">
-              <div>
-                <div v-for="rewardId in item.rewardIds" :key="rewardId" class="mb-1">
-                  <div class="font-weight-medium">{{ getRewardName(rewardId) }}</div>
-                  <div class="text-caption text--secondary">{{ rewardId }}</div>
-                </div>
-                <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption text--secondary">No rewards assigned</div>
-              </div>
-            </template>
-
-            <template v-slot:item.type="{ item }">
-              <v-chip :color="getMappingTypeColor(item.type)" small>
-                {{ getMappingTypeName(item.type) }}
-              </v-chip>
-            </template>
-
-            <template v-slot:item.providerProductIds="{ item }">
-              <div>
-                <v-chip
-                  v-for="productId in item.providerProductIds"
-                  :key="productId"
-                  small
-                  class="mr-1 mb-1"
-                >
-                  {{ productId }}
-                </v-chip>
-              </div>
-            </template>
-
-            <template v-slot:item.actions="{ item }">
-              <v-icon
-                small
-                @click="editMapping(provider.providerId, item)"
-                color="primary"
-                class="mr-2"
-              >
-                {{ mdiPencil }}
-              </v-icon>
-              <v-icon
-                small
-                @click="deleteMapping(provider.providerId, item.id)"
-                color="error"
-              >
-                {{ mdiDelete }}
-              </v-icon>
-            </template>
-          </v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-
-    <!-- Add Mapping Dialog -->
-    <v-dialog v-model="mappingDialog" max-width="500px">
+    <!-- Add/Edit Mapping Dialog -->
+    <v-dialog v-model="mappingDialog" max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ isEditMode ? 'Edit Product Mapping' : 'Add Product Mapping' }}</span>
@@ -110,30 +90,61 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-combobox
-                  v-model="newMapping.providerProductIds"
-                  label="Provider Product IDs *"
+                <v-text-field
+                  v-model="newMapping.productName"
+                  label="Product Name *"
                   :rules="[rules.required]"
-                  hint="IDs from the payment provider (e.g., Patreon tier IDs). Press Enter to add multiple IDs."
+                  hint="Human-readable name for the product (e.g., 'Premium Subscription')"
                   persistent-hint
-                  multiple
-                  chips
-                  deletable-chips
                   required
-                ></v-combobox>
+                ></v-text-field>
               </v-col>
             </v-row>
 
             <v-row>
               <v-col cols="12">
-                <v-text-field
-                  v-model="newMapping.providerProductName"
-                  label="Product Name *"
-                  :rules="[rules.required]"
-                  hint="Human-readable name for the product"
-                  persistent-hint
-                  required
-                ></v-text-field>
+                <v-subheader class="px-0">Product Provider Pairs *</v-subheader>
+                <div v-for="(pair, index) in newMapping.productProviders" :key="index" class="mb-3 pa-3 border">
+                  <v-row>
+                    <v-col cols="5">
+                      <v-select
+                        v-model="pair.providerId"
+                        :items="providerOptions"
+                        label="Provider *"
+                        :rules="[rules.required]"
+                        item-text="text"
+                        item-value="value"
+                        required
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="5">
+                      <v-text-field
+                        v-model="pair.productId"
+                        label="Product ID *"
+                        :rules="[rules.required]"
+                        hint="ID from the payment provider"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="2" class="d-flex align-center">
+                      <v-btn
+                        icon
+                        color="error"
+                        @click="removeProductProvider(index)"
+                        :disabled="newMapping.productProviders.length <= 1"
+                      >
+                        <v-icon>{{ mdiDelete }}</v-icon>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </div>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="addProductProvider"
+                >
+                  Add Provider
+                </v-btn>
               </v-col>
             </v-row>
 
@@ -201,17 +212,17 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
-import { ProviderConfiguration, ProductMapping, ProductMappingType, Reward } from '@/store/admin/types';
+import { ProductMapping, ProductMappingType, ProductProviderPair, Reward } from '@/store/admin/types';
 import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
 
 export default defineComponent({
   name: 'AdminProductMappings',
   setup() {
     const oauthStore = useOauthStore();
-    const providerConfigs = ref<ProviderConfiguration[]>([]);
+    const productMappings = ref<ProductMapping[]>([]);
     const rewards = ref<Reward[]>([]);
+    const providers = ref<any[]>([]);
     const mappingDialog = ref(false);
-    const selectedProviderId = ref('');
     const newMapping = ref<Partial<ProductMapping>>({});
     const isEditMode = ref(false);
     const editingMappingId = ref('');
@@ -222,9 +233,9 @@ export default defineComponent({
     const token = computed(() => oauthStore.token);
 
     const mappingHeaders = [
-      { text: 'Product IDs', value: 'providerProductIds', sortable: false },
-      { text: 'Product Name', value: 'providerProductName', sortable: true },
-      { text: 'Reward', value: 'rewardId', sortable: false },
+      { text: 'Product Name', value: 'productName', sortable: true },
+      { text: 'Providers', value: 'productProviders', sortable: false },
+      { text: 'Rewards', value: 'rewardIds', sortable: false },
       { text: 'Type', value: 'type', sortable: true },
       { text: 'Actions', value: 'actions', sortable: false, width: '80px' },
     ];
@@ -244,6 +255,13 @@ export default defineComponent({
       { text: 'Tiered', value: ProductMappingType.Tiered },
     ]);
 
+    const providerOptions = computed(() => 
+      providers.value.map(provider => ({
+        text: provider.providerName,
+        value: provider.providerId,
+      }))
+    );
+
     const rewardOptions = computed(() => 
       rewards.value.map(reward => ({
         text: `${reward.name} (${reward.id})`,
@@ -252,144 +270,148 @@ export default defineComponent({
     );
 
     const isMappingValid = computed(() => {
-      return newMapping.value.providerProductIds &&
-             newMapping.value.providerProductIds.length > 0 &&
-             newMapping.value.providerProductName &&
-             newMapping.value.rewardIds &&
-             newMapping.value.rewardIds.length > 0 &&
-             newMapping.value.type !== undefined;
+      return !!(
+        newMapping.value.productName &&
+        newMapping.value.productProviders &&
+        newMapping.value.productProviders.length > 0 &&
+        newMapping.value.productProviders.every(pp => pp.providerId && pp.productId) &&
+        newMapping.value.rewardIds &&
+        newMapping.value.rewardIds.length > 0 &&
+        newMapping.value.type !== undefined
+      );
     });
 
     const loadData = async () => {
       try {
-        const [configsResult, rewardsResult] = await Promise.all([
-          AdminService.getProviderConfigurations(token.value),
+        const [mappingsResponse, rewardsResponse, providersResponse] = await Promise.all([
+          AdminService.getProductMappings(token.value),
           AdminService.getRewards(token.value),
+          AdminService.getProviderConfigurations(token.value),
         ]);
-        providerConfigs.value = configsResult;
-        rewards.value = rewardsResult;
-      } catch (error) {
-        showSnackbar('Failed to load data', 'error');
-        console.error('Error loading data:', error);
-      }
-    };
 
-    const getProviderIcon = (providerId: string): string => {
-      const icons: Record<string, string> = {
-        patreon: mdiPatreon,
-        kofi: mdiHandHeart,
-      };
-      return icons[providerId.toLowerCase()] || mdiCog;
+        productMappings.value = mappingsResponse;
+        rewards.value = rewardsResponse;
+        providers.value = providersResponse;
+      } catch (error) {
+        console.error('Error loading data:', error);
+        showSnackbar('Error loading data', 'error');
+      }
     };
 
     const getRewardName = (rewardId: string): string => {
       const reward = rewards.value.find(r => r.id === rewardId);
-      return reward?.name || 'Unknown Reward';
+      return reward ? reward.name : rewardId;
+    };
+
+    const getProviderIcon = (providerId: string): string => {
+      switch (providerId.toLowerCase()) {
+        case 'patreon': return mdiPatreon;
+        case 'kofi': return mdiHandHeart;
+        default: return mdiCog;
+      }
+    };
+
+    const getProviderColor = (providerId: string): string => {
+      switch (providerId.toLowerCase()) {
+        case 'patreon': return 'orange';
+        case 'kofi': return 'blue';
+        default: return 'grey';
+      }
     };
 
     const getMappingTypeName = (type: ProductMappingType): string => {
-      return ProductMappingType[type] || 'Unknown';
+      switch (type) {
+        case ProductMappingType.OneTime: return 'One Time';
+        case ProductMappingType.Recurring: return 'Recurring';
+        case ProductMappingType.Tiered: return 'Tiered';
+        default: return 'Unknown';
+      }
     };
 
     const getMappingTypeColor = (type: ProductMappingType): string => {
-      const colors: Record<ProductMappingType, string> = {
-        [ProductMappingType.OneTime]: 'blue',
-        [ProductMappingType.Recurring]: 'green',
-        [ProductMappingType.Tiered]: 'orange',
-      };
-      return colors[type] || 'grey';
+      switch (type) {
+        case ProductMappingType.OneTime: return 'success';
+        case ProductMappingType.Recurring: return 'primary';
+        case ProductMappingType.Tiered: return 'warning';
+        default: return 'grey';
+      }
     };
 
-    // Provider status is now controlled by environment variables, not editable via UI
-
-    const createMapping = (providerId: string) => {
-      selectedProviderId.value = providerId;
-      isEditMode.value = false;
-      editingMappingId.value = '';
+    const createMapping = () => {
       newMapping.value = {
-        id: crypto.randomUUID(),
-        providerProductIds: [],
-        providerProductName: '',
+        productName: '',
+        productProviders: [{ providerId: '', productId: '' }],
         rewardIds: [],
         type: ProductMappingType.OneTime,
         additionalParameters: {},
       };
+      isEditMode.value = false;
       mappingDialog.value = true;
     };
 
-    const editMapping = (providerId: string, mapping: ProductMapping) => {
-      selectedProviderId.value = providerId;
-      isEditMode.value = true;
-      editingMappingId.value = mapping.id;
+    const editMapping = (mapping: ProductMapping) => {
       newMapping.value = {
-        id: mapping.id,
-        providerProductIds: [...mapping.providerProductIds], // Copy array
-        providerProductName: mapping.providerProductName,
-        rewardIds: [...mapping.rewardIds], // Copy array
-        type: mapping.type,
-        additionalParameters: { ...mapping.additionalParameters }, // Copy object
+        ...mapping,
+        productProviders: [...mapping.productProviders],
+        rewardIds: [...mapping.rewardIds],
       };
+      editingMappingId.value = mapping.id;
+      isEditMode.value = true;
       mappingDialog.value = true;
     };
 
-    const saveMappingDialog = async () => {
-      if (!isMappingValid.value) return;
+    const addProductProvider = () => {
+      if (!newMapping.value.productProviders) {
+        newMapping.value.productProviders = [];
+      }
+      newMapping.value.productProviders.push({ providerId: '', productId: '' });
+    };
 
-      try {
-        if (isEditMode.value) {
-          await AdminService.updateProductMapping(
-            selectedProviderId.value,
-            editingMappingId.value,
-            newMapping.value as ProductMapping,
-            token.value
-          );
-          showSnackbar('Product mapping updated successfully');
-        } else {
-          await AdminService.addProductMapping(
-            selectedProviderId.value,
-            newMapping.value as ProductMapping,
-            token.value
-          );
-          showSnackbar('Product mapping added successfully');
-        }
-        closeMappingDialog();
-        await loadData();
-      } catch (error) {
-        const action = isEditMode.value ? 'update' : 'add';
-        showSnackbar(`Failed to ${action} product mapping`, 'error');
-        console.error(`Error ${action}ing mapping:`, error);
+    const removeProductProvider = (index: number) => {
+      if (newMapping.value.productProviders && newMapping.value.productProviders.length > 1) {
+        newMapping.value.productProviders.splice(index, 1);
       }
     };
 
-    const deleteMapping = async (providerId: string, mappingId: string) => {
-      if (confirm('Are you sure you want to delete this mapping?')) {
+    const saveMappingDialog = async () => {
+      try {
+        if (isEditMode.value) {
+          await AdminService.updateProductMapping(token.value, editingMappingId.value, newMapping.value as ProductMapping);
+          showSnackbar('Product mapping updated successfully', 'success');
+        } else {
+          await AdminService.createProductMapping(token.value, newMapping.value as ProductMapping);
+          showSnackbar('Product mapping created successfully', 'success');
+        }
+        
+        closeMappingDialog();
+        await loadData();
+      } catch (error) {
+        console.error('Error saving mapping:', error);
+        showSnackbar('Error saving product mapping', 'error');
+      }
+    };
+
+    const deleteMapping = async (mappingId: string) => {
+      if (confirm('Are you sure you want to delete this product mapping?')) {
         try {
-          await AdminService.removeProductMapping(providerId, mappingId, token.value);
-          showSnackbar('Product mapping deleted successfully');
+          await AdminService.deleteProductMapping(token.value, mappingId);
+          showSnackbar('Product mapping deleted successfully', 'success');
           await loadData();
         } catch (error) {
-          showSnackbar('Failed to delete product mapping', 'error');
           console.error('Error deleting mapping:', error);
+          showSnackbar('Error deleting product mapping', 'error');
         }
       }
     };
 
     const closeMappingDialog = () => {
       mappingDialog.value = false;
-      isEditMode.value = false;
+      newMapping.value = {};
       editingMappingId.value = '';
-      newMapping.value = {
-        id: crypto.randomUUID(),
-        providerProductIds: [],
-        providerProductName: '',
-        rewardIds: [],
-        type: ProductMappingType.OneTime,
-        additionalParameters: {},
-      };
-      selectedProviderId.value = '';
+      isEditMode.value = false;
     };
 
-    const showSnackbar = (message: string, color = 'success') => {
+    const showSnackbar = (message: string, color: string) => {
       snackbarText.value = message;
       snackbarColor.value = color;
       snackbar.value = true;
@@ -400,31 +422,51 @@ export default defineComponent({
     });
 
     return {
-      providerConfigs,
+      // Data
+      productMappings,
       rewards,
+      providers,
       mappingDialog,
       newMapping,
       isEditMode,
+      editingMappingId,
       snackbar,
       snackbarText,
       snackbarColor,
+      
+      // Computed
       mappingHeaders,
       rules,
       mappingTypeOptions,
+      providerOptions,
       rewardOptions,
       isMappingValid,
-      getProviderIcon,
+      
+      // Methods
       getRewardName,
+      getProviderIcon,
+      getProviderColor,
       getMappingTypeName,
       getMappingTypeColor,
       createMapping,
       editMapping,
+      addProductProvider,
+      removeProductProvider,
       saveMappingDialog,
       deleteMapping,
       closeMappingDialog,
+      
+      // Icons
       mdiDelete,
       mdiPencil,
     };
   },
 });
 </script>
+
+<style scoped>
+.border {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+</style>
