@@ -226,7 +226,7 @@ export default class AdminService {
   }
 
   public static async getUserAssignments(userId: string, token: string): Promise<RewardAssignment[]> {
-    const url = `${API_URL}api/rewards/assignments/${userId}`;
+    const url = `${API_URL}api/rewards/assignments/${encodeURIComponent(userId)}`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }

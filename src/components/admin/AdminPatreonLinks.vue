@@ -1,20 +1,62 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="text-h4 mb-4">
+      <v-icon left class="mr-3">{{ mdiAccountHeart }}</v-icon>
       Patreon Account Links
     </v-card-title>
 
-    <v-card flat>
+    <!-- Statistics Summary Cards -->
+    <v-row class="mb-6" v-if="patreonLinks.length > 0">
+      <v-col cols="12" sm="6" md="4">
+        <v-card outlined class="text-center pa-4">
+          <div class="text-h4 primary--text mb-1">{{ getTotalLinks() }}</div>
+          <div class="text-subtitle2 text--secondary">Total Links</div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <v-card outlined class="text-center pa-4">
+          <div class="text-h4 success--text mb-1">{{ getRecentLinks() }}</div>
+          <div class="text-subtitle2 text--secondary">Recent (30 days)</div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <v-card outlined class="text-center pa-4">
+          <div class="text-h4 warning--text mb-1">{{ getStaleLinks() }}</div>
+          <div class="text-subtitle2 text--secondary">Not Synced (7+ days)</div>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Enhanced Search and Filters -->
+    <v-card flat class="mb-4">
       <v-card-text>
         <v-row>
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="searchBattleTag"
-              label="Search by BattleTag"
-              :prepend-icon="mdiMagnify"
-              clearable
-              @update:model-value="filterLinks"
-            ></v-text-field>
+            <player-search
+              ref="playerSearchComponent"
+              :classes="'outlined dense'"
+              :setAutofocus="false"
+              @playerFound="onPlayerFound"
+              @searchCleared="onPlayerSearchCleared"
+            />
+            <div v-if="selectedPlayer" class="mt-2 d-flex align-center">
+              <v-avatar size="24" color="primary" class="mr-2">
+                <v-icon small color="white">{{ mdiAccount }}</v-icon>
+              </v-avatar>
+              <span class="font-weight-medium">{{ selectedPlayer }}</span>
+              <v-btn icon x-small class="ml-2" @click="clearPlayerSelection">
+                <v-icon x-small>{{ mdiClose }}</v-icon>
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-btn
+              outlined
+              @click="clearFilters"
+            >
+              <v-icon left>{{ mdiFilterRemove }}</v-icon>
+              Clear Filters
+            </v-btn>
           </v-col>
           <v-col cols="12" md="3">
             <v-btn
@@ -30,50 +72,83 @@
       </v-card-text>
     </v-card>
 
-    <v-data-table
-      :headers="headers"
-      :items="filteredLinks"
-      :items-per-page="25"
-      :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
-      sort-by="linkedAt"
-      :sort-desc="true"
-      :loading="loading"
-      class="elevation-1"
-    >
-      <template v-slot:item.battleTag="{ item }">
-        <div class="font-weight-medium">{{ item.battleTag }}</div>
-      </template>
+    <!-- Enhanced Data Table -->
+    <v-card class="elevation-2">
+      <v-card-text v-if="loading && patreonLinks.length === 0" class="text-center py-8">
+        <v-skeleton-loader type="table"></v-skeleton-loader>
+        <div class="mt-4 text-subtitle1">Loading Patreon links...</div>
+      </v-card-text>
+      
+      <v-data-table
+        v-else
+        :headers="headers"
+        :items="filteredLinks"
+        :items-per-page="25"
+        :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
+        sort-by="linkedAt"
+        :sort-desc="true"
+        :loading="loading && patreonLinks.length > 0"
+        class="modern-table"
+      >
+        <template v-slot:item.battleTag="{ item }">
+          <div class="d-flex align-center">
+            <v-avatar size="32" class="mr-3" color="primary">
+              <v-icon small color="white">{{ mdiAccount }}</v-icon>
+            </v-avatar>
+            <div class="font-weight-medium">{{ item.battleTag }}</div>
+          </div>
+        </template>
 
-      <template v-slot:item.patreonUserId="{ item }">
-        <div class="text-caption">{{ item.patreonUserId }}</div>
-      </template>
+        <template v-slot:item.patreonUserId="{ item }">
+          <div class="d-flex align-center">
+            <v-icon class="mr-2" color="orange" small>{{ mdiPatreon }}</v-icon>
+            <div class="text-caption font-family-monospace">{{ item.patreonUserId }}</div>
+          </div>
+        </template>
 
-      <template v-slot:item.linkedAt="{ item }">
-        <div>
-          <div>{{ formatDate(item.linkedAt) }}</div>
-          <div class="text-caption text--secondary">{{ formatTime(item.linkedAt) }}</div>
-        </div>
-      </template>
+        <template v-slot:item.linkedAt="{ item }">
+          <div>
+            <div class="font-weight-medium">{{ formatDate(item.linkedAt) }}</div>
+            <div class="text-caption text--secondary">{{ formatTime(item.linkedAt) }}</div>
+          </div>
+        </template>
 
-      <template v-slot:item.lastSyncAt="{ item }">
-        <div>
-          <div>{{ formatDate(item.lastSyncAt) }}</div>
-          <div class="text-caption text--secondary">{{ formatTime(item.lastSyncAt) }}</div>
-        </div>
-      </template>
+        <template v-slot:item.lastSyncAt="{ item }">
+          <div>
+            <div class="font-weight-medium" :class="getSyncStatusClass(item.lastSyncAt)">{{ formatDate(item.lastSyncAt) }}</div>
+            <div class="text-caption text--secondary">{{ formatTime(item.lastSyncAt) }}</div>
+            <v-chip v-if="isStaleSync(item.lastSyncAt)" x-small color="orange" class="mt-1">
+              Stale Sync
+            </v-chip>
+          </div>
+        </template>
 
-      <template v-slot:item.actions="{ item }">
-        <v-btn
-          icon
-          small
-          color="error"
-          @click="confirmDelete(item)"
-          :disabled="deletingLinks.includes(item.battleTag)"
-        >
-          <v-icon small>{{ mdiDelete }}</v-icon>
-        </v-btn>
-      </template>
-    </v-data-table>
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex justify-end">
+            <v-btn
+              icon
+              small
+              color="error"
+              @click="confirmDelete(item)"
+              :disabled="deletingLinks.includes(item.battleTag)"
+              :loading="deletingLinks.includes(item.battleTag)"
+            >
+              <v-icon small>{{ mdiDelete }}</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        
+        <template v-slot:no-data>
+          <div class="text-center py-8">
+            <v-icon size="64" color="grey lighten-2" class="mb-4">{{ mdiAccountSearch }}</v-icon>
+            <div class="text-h6 text--secondary mb-2">No Patreon links found</div>
+            <div class="text-body-2 text--secondary mb-4">
+              {{ selectedPlayer ? 'No Patreon account linked for this user' : 'No Patreon account links exist or try adjusting your search' }}
+            </div>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <!-- Delete Confirmation Dialog -->
     <v-dialog v-model="deleteDialog" max-width="500">
@@ -123,21 +198,32 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import AdminService from "@/services/admin/AdminService";
 import { PatreonAccountLink } from "@/store/admin/types";
-import { mdiMagnify, mdiRefresh, mdiDelete } from "@mdi/js";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import { 
+  mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
+  mdiPatreon, mdiFilterRemove, mdiClose, mdiCheckCircle,
+  mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch
+} from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: "AdminPatreonLinks",
+  components: {
+    PlayerSearch,
+  },
   setup() {
     const oauthStore = useOauthStore();
+    const playerSearchStore = usePlayerSearchStore();
     
     // Data
     const patreonLinks = ref<PatreonAccountLink[]>([]);
     const filteredLinks = ref<PatreonAccountLink[]>([]);
     const loading = ref(false);
-    const searchBattleTag = ref("");
+    const selectedPlayer = ref<string>("");
+    const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
     
     // Delete functionality
     const deleteDialog = ref(false);
@@ -177,11 +263,11 @@ export default defineComponent({
     };
 
     const filterLinks = () => {
-      if (!searchBattleTag.value) {
+      if (!selectedPlayer.value) {
         filteredLinks.value = [...patreonLinks.value];
       } else {
         filteredLinks.value = patreonLinks.value.filter(link =>
-          link.battleTag.toLowerCase().includes(searchBattleTag.value.toLowerCase())
+          link.battleTag.toLowerCase().includes(selectedPlayer.value.toLowerCase())
         );
       }
     };
@@ -237,6 +323,64 @@ export default defineComponent({
       return formatTimestampString(dateString, "HH:mm:ss");
     };
 
+    // New utility functions that we added in template but didn't implement
+    const clearFilters = () => {
+      selectedPlayer.value = '';
+      playerSearchStore.clearPlayerSearch();
+      filterLinks();
+      showSnackbar('Filters cleared', 'info');
+    };
+
+    const onPlayerFound = (battleTag: string) => {
+      selectedPlayer.value = battleTag;
+      filterLinks();
+    };
+
+    const onPlayerSearchCleared = () => {
+      selectedPlayer.value = '';
+      filterLinks();
+    };
+
+    const clearPlayerSelection = () => {
+      selectedPlayer.value = '';
+      playerSearchStore.clearPlayerSearch();
+      filterLinks();
+    };
+
+    // Statistics functions
+    const getTotalLinks = (): number => {
+      return patreonLinks.value.length;
+    };
+
+    const getRecentLinks = (): number => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return patreonLinks.value.filter(link => 
+        new Date(link.linkedAt) >= thirtyDaysAgo
+      ).length;
+    };
+
+    const getStaleLinks = (): number => {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return patreonLinks.value.filter(link => 
+        new Date(link.lastSyncAt) < sevenDaysAgo
+      ).length;
+    };
+
+    const isStaleSync = (lastSyncAt: string): boolean => {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return new Date(lastSyncAt) < sevenDaysAgo;
+    };
+
+    const getSyncStatusClass = (lastSyncAt: string): string => {
+      if (isStaleSync(lastSyncAt)) {
+        return 'warning--text';
+      }
+      return 'text--primary';
+    };
+
     // Lifecycle
     onMounted(() => {
       loadPatreonLinks();
@@ -244,9 +388,11 @@ export default defineComponent({
 
     return {
       // Data
+      patreonLinks,
       filteredLinks,
       loading,
-      searchBattleTag,
+      selectedPlayer,
+      playerSearchComponent,
       deleteDialog,
       selectedLink,
       deleting,
@@ -259,6 +405,15 @@ export default defineComponent({
       // Methods
       loadPatreonLinks,
       filterLinks,
+      clearFilters,
+      onPlayerFound,
+      onPlayerSearchCleared,
+      clearPlayerSelection,
+      getTotalLinks,
+      getRecentLinks,
+      getStaleLinks,
+      isStaleSync,
+      getSyncStatusClass,
       confirmDelete,
       deletePatreonLink,
       formatDate,
@@ -268,6 +423,16 @@ export default defineComponent({
       mdiMagnify,
       mdiRefresh,
       mdiDelete,
+      mdiAccountHeart,
+      mdiAccount,
+      mdiPatreon,
+      mdiFilterRemove,
+      mdiClose,
+      mdiCheckCircle,
+      mdiAlert,
+      mdiAlertCircle,
+      mdiInformation,
+      mdiAccountSearch,
     };
   },
 });
