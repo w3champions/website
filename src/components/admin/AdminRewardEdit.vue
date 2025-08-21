@@ -18,12 +18,21 @@
           </v-col>
           <v-col cols="12" md="6">
             <v-select
-              v-model="localReward.type"
-              :items="rewardTypeItems"
-              label="Reward Type *"
+              v-model="localReward.moduleId"
+              :items="moduleItems"
+              label="Reward Module *"
               :rules="[rules.required]"
+              :loading="loading"
+              @change="onModuleChange"
               required
-            ></v-select>
+            >
+              <template v-slot:item="{ item }">
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.text }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </template>
+            </v-select>
           </v-col>
         </v-row>
 
@@ -40,17 +49,65 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="localReward.moduleId"
-              label="Module ID *"
-              :rules="[rules.required]"
-              hint="e.g., portrait_module, badge_module"
-              persistent-hint
-              required
-            ></v-text-field>
+        <!-- Dynamic Module Parameters -->
+        <v-row v-if="selectedModule && selectedModule.supportsParameters">
+          <v-col cols="12">
+            <v-subheader>Module Parameters</v-subheader>
+            <v-alert 
+              v-if="selectedModule.description" 
+              type="info" 
+              outlined
+              class="mb-4"
+            >
+              {{ selectedModule.description }}
+            </v-alert>
+            
+            <v-row v-for="(paramDef, paramKey) in selectedModule.parameterDefinitions" :key="paramKey">
+              <v-col cols="12" :md="getInputType(paramDef) === 'boolean' ? 12 : 6">
+                
+                <!-- Text/Number inputs -->
+                <v-text-field
+                  v-if="getInputType(paramDef) === 'text' || getInputType(paramDef) === 'number'"
+                  v-model="moduleParameters[paramKey]"
+                  :label="paramDef.name + (paramDef.required ? ' *' : '')"
+                  :type="getInputType(paramDef) === 'number' ? 'number' : 'text'"
+                  :rules="paramDef.required ? [rules.required] : []"
+                  :hint="paramDef.description"
+                  persistent-hint
+                ></v-text-field>
+
+                <!-- Boolean switch -->
+                <v-switch
+                  v-else-if="getInputType(paramDef) === 'boolean'"
+                  v-model="moduleParameters[paramKey]"
+                  :label="paramDef.name + (paramDef.required ? ' *' : '')"
+                  color="success"
+                ></v-switch>
+
+                <!-- Array input (comma-separated) -->
+                <v-text-field
+                  v-else-if="getInputType(paramDef) === 'array'"
+                  v-model="moduleParameters[paramKey]"
+                  :label="paramDef.name + (paramDef.required ? ' *' : '') + ' (comma-separated)'"
+                  :rules="paramDef.required ? [rules.required] : []"
+                  :hint="paramDef.description + ' (e.g., 1,2,3)'"
+                  persistent-hint
+                  @input="(value) => {
+                    if (typeof value === 'string') {
+                      moduleParameters[paramKey] = value.split(',').map(v => {
+                        const num = parseInt(v.trim());
+                        return isNaN(num) ? v.trim() : num;
+                      });
+                    }
+                  }"
+                ></v-text-field>
+
+              </v-col>
+            </v-row>
           </v-col>
+        </v-row>
+
+        <v-row>
           <v-col cols="12" md="6" v-if="isEditing">
             <v-switch
               v-model="localReward.isActive"
@@ -98,20 +155,6 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col cols="12">
-            <v-subheader>Module Parameters (JSON)</v-subheader>
-            <v-textarea
-              v-model="parametersJson"
-              label="Parameters"
-              rows="4"
-              hint="Enter valid JSON for module parameters, e.g., {&quot;portraitId&quot;: 123}"
-              persistent-hint
-              :error-messages="jsonError"
-              @input="validateJson"
-            ></v-textarea>
-          </v-col>
-        </v-row>
       </v-container>
     </v-card-text>
 
@@ -137,8 +180,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from 'vue';
-import { Reward, RewardType, DurationType } from '@/store/admin/types';
+import { computed, defineComponent, PropType, ref, watch, onMounted } from 'vue';
+import { Reward, DurationType, ModuleDefinition, ParameterDefinition } from '@/store/admin/types';
+import { useOauthStore } from '@/store/oauth/store';
+import AdminService from '@/services/admin/AdminService';
 
 export default defineComponent({
   name: 'AdminRewardEdit',
@@ -154,26 +199,32 @@ export default defineComponent({
   },
   emits: ['save', 'cancel'],
   setup(props, { emit }) {
+    const oauthStore = useOauthStore();
     const localReward = ref<Partial<Reward>>({});
     const durationType = ref<'permanent' | 'limited'>('permanent');
     const durationValue = ref<number>(1);
     const durationUnit = ref<DurationType>(DurationType.Days);
-    const parametersJson = ref<string>('{}');
-    const jsonError = ref<string[]>([]);
+    
+    // Module-related refs
+    const availableModules = ref<ModuleDefinition[]>([]);
+    const selectedModule = ref<ModuleDefinition | null>(null);
+    const moduleParameters = ref<Record<string, any>>({});
+    const loading = ref(false);
+
+    const token = computed(() => oauthStore.token);
 
     const rules = {
       required: (value: any) => !!value || 'This field is required',
       positiveNumber: (value: number) => (value > 0) || 'Must be greater than 0',
     };
 
-    const rewardTypeItems = computed(() => [
-      { text: 'Portrait', value: RewardType.Portrait },
-      { text: 'Badge', value: RewardType.Badge },
-      { text: 'Title', value: RewardType.Title },
-      { text: 'Cosmetic', value: RewardType.Cosmetic },
-      { text: 'Feature', value: RewardType.Feature },
-      { text: 'Other', value: RewardType.Other },
-    ]);
+    const moduleItems = computed(() => 
+      availableModules.value.map(module => ({
+        text: module.moduleName,
+        value: module.moduleId,
+        description: module.description
+      }))
+    );
 
     const durationUnitItems = computed(() => [
       { text: 'Days', value: DurationType.Days },
@@ -182,19 +233,69 @@ export default defineComponent({
     ]);
 
     const isValid = computed(() => {
-      return localReward.value.name &&
-             localReward.value.description &&
-             localReward.value.type !== undefined &&
-             localReward.value.moduleId &&
-             (durationType.value === 'permanent' || (durationValue.value > 0 && durationUnit.value !== undefined)) &&
-             jsonError.value.length === 0;
+      const hasRequiredFields = localReward.value.name &&
+                               localReward.value.description &&
+                               localReward.value.moduleId;
+      
+      const hasValidDuration = durationType.value === 'permanent' || 
+                              (durationValue.value > 0 && durationUnit.value !== undefined);
+      
+      // Check if all required module parameters are provided
+      const hasValidParameters = !selectedModule.value || 
+        Object.entries(selectedModule.value.parameterDefinitions || {}).every(([key, def]) => 
+          !def.required || (moduleParameters.value[key] !== undefined && moduleParameters.value[key] !== '')
+        );
+      
+      return hasRequiredFields && hasValidDuration && hasValidParameters;
     });
+
+    // Load available modules
+    const loadModules = async () => {
+      try {
+        loading.value = true;
+        availableModules.value = await AdminService.getAvailableModules(token.value);
+      } catch (error) {
+        console.error('Failed to load modules:', error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // Handle module selection change
+    const onModuleChange = (moduleId: string) => {
+      selectedModule.value = availableModules.value.find(m => m.moduleId === moduleId) || null;
+      localReward.value.moduleId = moduleId;
+      
+      // Initialize parameters with default values
+      moduleParameters.value = {};
+      if (selectedModule.value?.parameterDefinitions) {
+        Object.entries(selectedModule.value.parameterDefinitions).forEach(([key, def]) => {
+          moduleParameters.value[key] = def.defaultValue ?? '';
+        });
+      }
+    };
+
+    // Get input type for parameter
+    const getInputType = (paramDef: ParameterDefinition): string => {
+      switch (paramDef.type.toLowerCase()) {
+        case 'int':
+        case 'number':
+          return 'number';
+        case 'bool':
+        case 'boolean':
+          return 'boolean';
+        case 'int[]':
+        case 'array':
+          return 'array';
+        default:
+          return 'text';
+      }
+    };
 
     const initializeForm = () => {
       localReward.value = {
         name: props.reward.name || '',
         description: props.reward.description || '',
-        type: props.reward.type ?? RewardType.Undefined,
         moduleId: props.reward.moduleId || '',
         parameters: props.reward.parameters || {},
         isActive: props.reward.isActive ?? true,
@@ -212,40 +313,28 @@ export default defineComponent({
         durationUnit.value = DurationType.Days;
       }
 
-      // Initialize parameters JSON
-      parametersJson.value = JSON.stringify(localReward.value.parameters || {}, null, 2);
-    };
-
-    const validateJson = () => {
-      try {
-        JSON.parse(parametersJson.value);
-        jsonError.value = [];
-      } catch (error) {
-        jsonError.value = ['Invalid JSON format'];
+      // Initialize module and parameters
+      if (localReward.value.moduleId) {
+        selectedModule.value = availableModules.value.find(m => m.moduleId === localReward.value.moduleId) || null;
+        moduleParameters.value = { ...localReward.value.parameters };
       }
     };
 
     const save = () => {
       if (!isValid.value) return;
 
-      try {
-        const parameters = JSON.parse(parametersJson.value);
-        
-        const rewardData: Partial<Reward> = {
-          ...localReward.value,
-          parameters,
-          duration: durationType.value === 'permanent' 
-            ? null 
-            : {
-                type: durationUnit.value,
-                value: durationValue.value,
-              },
-        };
+      const rewardData: Partial<Reward> = {
+        ...localReward.value,
+        parameters: moduleParameters.value,
+        duration: durationType.value === 'permanent' 
+          ? null 
+          : {
+              type: durationUnit.value,
+              value: durationValue.value,
+            },
+      };
 
-        emit('save', rewardData);
-      } catch (error) {
-        console.error('Error parsing parameters JSON:', error);
-      }
+      emit('save', rewardData);
     };
 
     const cancel = () => {
@@ -259,21 +348,33 @@ export default defineComponent({
       { immediate: true, deep: true }
     );
 
-    // Validate JSON on initialization
-    watch(parametersJson, validateJson, { immediate: true });
+    // Watch for available modules changes
+    watch(
+      availableModules,
+      () => initializeForm(),
+      { deep: true }
+    );
+
+    // Load modules on component mount
+    onMounted(() => {
+      loadModules();
+    });
 
     return {
       localReward,
       durationType,
       durationValue,
       durationUnit,
-      parametersJson,
-      jsonError,
+      availableModules,
+      selectedModule,
+      moduleParameters,
+      loading,
       rules,
-      rewardTypeItems,
+      moduleItems,
       durationUnitItems,
       isValid,
-      validateJson,
+      onModuleChange,
+      getInputType,
       save,
       cancel,
     };

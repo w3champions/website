@@ -46,9 +46,9 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:item.type="{ item }">
-        <v-chip :color="getRewardTypeColor(item.type)" small>
-          {{ getRewardTypeName(item.type) }}
+      <template v-slot:item.moduleId="{ item }">
+        <v-chip color="primary" small>
+          {{ getModuleName(item.moduleId) }}
         </v-chip>
       </template>
 
@@ -181,7 +181,7 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
-import { Reward, RewardType, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus } from '@/store/admin/types';
+import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from '@/store/admin/types';
 import AdminRewardEdit from './AdminRewardEdit.vue';
 import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountMultiple } from '@mdi/js';
 import { formatTimestampString } from "@/helpers/date-functions";
@@ -194,6 +194,7 @@ export default defineComponent({
   setup() {
     const oauthStore = useOauthStore();
     const rewards = ref<Reward[]>([]);
+    const availableModules = ref<ModuleDefinition[]>([]);
     const tableSearch = ref('');
     const dialog = ref(false);
     const isEditMode = ref(false);
@@ -212,8 +213,7 @@ export default defineComponent({
     const headers = [
       { text: 'Name', value: 'name', sortable: true },
       { text: 'Description', value: 'description', sortable: false },
-      { text: 'Type', value: 'type', sortable: true },
-      { text: 'Module ID', value: 'moduleId', sortable: true },
+      { text: 'Module', value: 'moduleId', sortable: true },
       { text: 'Duration', value: 'duration', sortable: false },
       { text: 'Status', value: 'isActive', sortable: true },
       { text: 'Created', value: 'createdAt', sortable: true },
@@ -237,11 +237,23 @@ export default defineComponent({
       }
     };
 
+    const loadModules = async () => {
+      try {
+        availableModules.value = await AdminService.getAvailableModules(token.value);
+      } catch (error) {
+        console.error('Failed to load modules:', error);
+      }
+    };
+
+    const getModuleName = (moduleId: string): string => {
+      const module = availableModules.value.find(m => m.moduleId === moduleId);
+      return module?.moduleName || moduleId;
+    };
+
     const createNewReward = () => {
       editedReward.value = {
         name: '',
         description: '',
-        type: RewardType.Portrait,
         moduleId: '',
         parameters: {},
         duration: null,
@@ -263,7 +275,6 @@ export default defineComponent({
           const updateData: UpdateRewardRequest = {
             name: rewardData.name,
             description: rewardData.description,
-            type: rewardData.type,
             parameters: rewardData.parameters,
             duration: rewardData.duration,
             isActive: rewardData.isActive,
@@ -274,7 +285,6 @@ export default defineComponent({
           const createData: CreateRewardRequest = {
             name: rewardData.name!,
             description: rewardData.description!,
-            type: rewardData.type!,
             moduleId: rewardData.moduleId!,
             parameters: rewardData.parameters,
             duration: rewardData.duration,
@@ -314,21 +324,6 @@ export default defineComponent({
       snackbar.value = true;
     };
 
-    const getRewardTypeName = (type: RewardType): string => {
-      return RewardType[type] || 'Unknown';
-    };
-
-    const getRewardTypeColor = (type: RewardType): string => {
-      const colors: Record<RewardType, string> = {
-        [RewardType.Portrait]: 'purple',
-        [RewardType.Badge]: 'orange',
-        [RewardType.Title]: 'blue',
-        [RewardType.Cosmetic]: 'pink',
-        [RewardType.Feature]: 'green',
-        [RewardType.Other]: 'grey',
-      };
-      return colors[type] || 'grey';
-    };
 
     const formatDuration = (duration: { type: DurationType; value: number }): string => {
       if (!duration) return 'Permanent';
@@ -400,6 +395,7 @@ export default defineComponent({
 
     onMounted(() => {
       loadRewards();
+      loadModules();
     });
 
     return {
@@ -425,8 +421,7 @@ export default defineComponent({
       getAssignmentCountByStatus,
       getStatusColor,
       getStatusName,
-      getRewardTypeName,
-      getRewardTypeColor,
+      getModuleName,
       formatDuration,
       formatDate,
       formatTime,

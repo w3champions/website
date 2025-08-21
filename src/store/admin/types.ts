@@ -165,7 +165,6 @@ export type Reward = {
   id: string;
   name: string;
   description: string;
-  type: RewardType;
   moduleId: string;
   parameters: Record<string, any>;
   duration: RewardDuration | null;
@@ -174,14 +173,22 @@ export type Reward = {
   updatedAt?: string;
 };
 
-export enum RewardType {
-  Undefined = 0,
-  Portrait = 1,
-  Badge = 2,
-  Title = 3,
-  Cosmetic = 4,
-  Feature = 5,
-  Other = 6
+// Module-related types for dynamic reward configuration
+
+export interface ModuleDefinition {
+  moduleId: string;
+  moduleName: string;
+  description: string;
+  supportsParameters: boolean;
+  parameterDefinitions: Record<string, ParameterDefinition>;
+}
+
+export interface ParameterDefinition {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+  defaultValue?: any;
 }
 
 export type RewardDuration = {
@@ -255,7 +262,6 @@ export enum ProductMappingType {
 export type CreateRewardRequest = {
   name: string;
   description: string;
-  type: RewardType;
   moduleId: string;
   parameters?: Record<string, any>;
   duration?: RewardDuration;
@@ -264,7 +270,6 @@ export type CreateRewardRequest = {
 export type UpdateRewardRequest = {
   name?: string;
   description?: string;
-  type?: RewardType;
   parameters?: Record<string, any>;
   duration?: RewardDuration;
   isActive?: boolean;

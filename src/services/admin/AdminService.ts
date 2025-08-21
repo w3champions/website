@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, DriftDetectionResult } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, DriftDetectionResult, ModuleDefinition } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -191,6 +191,12 @@ export default class AdminService {
 
   public static async getRewards(token: string): Promise<Reward[]> {
     const url = `${API_URL}api/rewards`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async getAvailableModules(token: string): Promise<ModuleDefinition[]> {
+    const url = `${API_URL}api/rewards/modules`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }
