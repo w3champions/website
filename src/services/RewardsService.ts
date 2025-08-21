@@ -13,7 +13,6 @@ export interface UserReward {
   name: string;
   description: string;
   type: string;
-  isActive: boolean;
   assignedAt: string;
   expiresAt?: string;
 }

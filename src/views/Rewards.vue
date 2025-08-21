@@ -83,12 +83,6 @@
                   <v-card-title>{{ reward.name }}</v-card-title>
                   <v-card-text>
                     <p>{{ reward.description }}</p>
-                    <v-chip
-                      :color="reward.isActive ? 'success' : 'grey'"
-                      small
-                    >
-                      {{ reward.isActive ? $t("views_rewards.active") : $t("views_rewards.inactive") }}
-                    </v-chip>
                   </v-card-text>
                 </v-card>
               </v-col>
