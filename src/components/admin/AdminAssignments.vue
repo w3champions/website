@@ -4,15 +4,6 @@
       Reward Assignments
     </v-card-title>
 
-    <!-- Tab Navigation -->
-    <v-tabs v-model="activeTab" class="mb-4">
-      <v-tab>By User</v-tab>
-      <v-tab>By Reward</v-tab>
-    </v-tabs>
-
-    <v-tabs-items v-model="activeTab">
-      <!-- By User Tab -->
-      <v-tab-item>
         <v-card flat>
       <v-card-text>
         <v-row>
@@ -182,201 +173,6 @@
             ></v-select>
           </div>
         </div>
-      </v-tab-item>
-
-      <!-- By Reward Tab -->
-      <v-tab-item>
-        <v-card flat>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="rewardSearch"
-                  label="Search rewards"
-                  :prepend-icon="mdiMagnify"
-                  clearable
-                  @input="filterRewardGroups"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="3">
-                <v-btn
-                  color="primary"
-                  @click="loadAllAssignmentsGrouped"
-                  :loading="loadingGrouped"
-                >
-                  <v-icon left>{{ mdiRefresh }}</v-icon>
-                  Refresh
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-
-        <!-- Reward Groups Display -->
-        <div v-for="group in filteredRewardGroups" :key="group.rewardId" class="mb-4">
-          <v-card class="elevation-2">
-            <v-card-title class="pb-2">
-              <div class="d-flex justify-space-between align-center w-100">
-                <div>
-                  <h4>{{ group.rewardName || group.rewardId }}</h4>
-                  <div class="text-caption text--secondary">ID: {{ group.rewardId }}</div>
-                </div>
-                <div class="d-flex align-center">
-                  <v-chip-group class="mr-3">
-                    <v-chip small color="success" class="mr-2">
-                      Active: {{ group.activeCount }}
-                    </v-chip>
-                    <v-chip small color="warning" class="mr-2">
-                      Expired: {{ group.expiredCount }}
-                    </v-chip>
-                    <v-chip small color="error">
-                      Revoked: {{ group.revokedCount }}
-                    </v-chip>
-                  </v-chip-group>
-                  <v-btn
-                    icon
-                    small
-                    color="info"
-                    @click="viewRewardUsers(group)"
-                    class="mr-2"
-                  >
-                    <v-icon small>{{ mdiAccountGroup }}</v-icon>
-                  </v-btn>
-                </div>
-              </div>
-            </v-card-title>
-
-            <v-expand-transition>
-              <div v-show="expandedGroups.includes(group.rewardId)">
-                <v-divider></v-divider>
-                <v-card-text>
-                  <v-data-table
-                    :headers="groupAssignmentHeaders"
-                    :items="group.assignments"
-                    :items-per-page="10"
-                    :footer-props="{ itemsPerPageOptions: [5, 10, 25] }"
-                    sort-by="assignedAt"
-                    :sort-desc="true"
-                    dense
-                  >
-                    <template v-slot:item.status="{ item }">
-                      <v-chip :color="getStatusColor(item.status)" small>
-                        {{ getStatusName(item.status) }}
-                      </v-chip>
-                    </template>
-
-                    <template v-slot:item.providerId="{ item }">
-                      <v-chip small>
-                        <v-icon left small>{{ getProviderIcon(item.providerId) }}</v-icon>
-                        {{ item.providerId }}
-                      </v-chip>
-                    </template>
-
-                    <template v-slot:item.assignedAt="{ item }">
-                      <div>
-                        <div>{{ formatDate(item.assignedAt) }}</div>
-                        <div class="text-caption text--secondary">{{ formatTime(item.assignedAt) }}</div>
-                      </div>
-                    </template>
-
-                    <template v-slot:item.expiresAt="{ item }">
-                      <div v-if="item.expiresAt">
-                        <div :class="{ 'error--text': isExpired(item.expiresAt) }">
-                          {{ formatDate(item.expiresAt) }}
-                        </div>
-                        <div class="text-caption text--secondary">{{ formatTime(item.expiresAt) }}</div>
-                      </div>
-                      <span v-else class="text--secondary">Never</span>
-                    </template>
-                  </v-data-table>
-                  
-                  <!-- Pagination for individual reward's assignments -->
-                  <div v-if="group._allAssignments.length > group._pageSize" class="text-center pa-2">
-                    <v-pagination
-                      :value="group._currentPage"
-                      :length="Math.ceil(group._allAssignments.length / group._pageSize)"
-                      :total-visible="5"
-                      @input="onRewardAssignmentPageChange(group.rewardId, $event)"
-                      small
-                    ></v-pagination>
-                    <div class="text-caption mt-1">
-                      Showing {{ ((group._currentPage - 1) * group._pageSize) + 1 }} - {{ Math.min(group._currentPage * group._pageSize, group._allAssignments.length) }} 
-                      of {{ group._allAssignments.length }} assignments
-                    </div>
-                    <v-select
-                      :value="group._pageSize"
-                      :items="[5, 10, 25, 50]"
-                      label="Per page"
-                      style="max-width: 100px; margin: 8px auto 0;"
-                      dense
-                      @change="onRewardAssignmentPageSizeChange(group.rewardId, $event)"
-                    ></v-select>
-                  </div>
-                </v-card-text>
-              </div>
-            </v-expand-transition>
-
-            <v-card-actions>
-              <v-btn
-                text
-                @click="toggleGroupExpansion(group.rewardId)"
-                class="ml-auto"
-              >
-                {{ expandedGroups.includes(group.rewardId) ? 'Hide' : 'Show' }} Users ({{ group.assignments.length }})
-                <v-icon right>
-                  {{ expandedGroups.includes(group.rewardId) ? mdiChevronUp : mdiChevronDown }}
-                </v-icon>
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </div>
-
-        <div v-if="loadingGrouped" class="text-center pa-4">
-          <v-progress-circular indeterminate color="primary"></v-progress-circular>
-          <div class="mt-2">Loading assignments...</div>
-        </div>
-
-        <div v-if="!loadingGrouped && filteredRewardGroups.length === 0" class="text-center pa-4 text--secondary">
-          <div v-if="rewardGroups.length === 0">
-            Click "Refresh" to load assignments grouped by reward
-          </div>
-          <div v-else>
-            No rewards match your search criteria
-          </div>
-        </div>
-
-        <!-- Pagination for By Reward Tab -->
-        <div v-if="groupedPaginationData && groupedPaginationData.totalPages > 1" class="text-center pa-4">
-          <v-pagination
-            v-model="groupedCurrentPage"
-            :length="groupedPaginationData.totalPages"
-            :total-visible="7"
-            @input="onGroupedPageChange"
-          ></v-pagination>
-          <div class="text-caption mt-2">
-            Showing {{ ((groupedCurrentPage - 1) * groupedPageSize) + 1 }} - {{ Math.min(groupedCurrentPage * groupedPageSize, groupedPaginationData.totalCount) }} 
-            of {{ groupedPaginationData.totalCount }} rewards
-          </div>
-          <div class="mt-2">
-            <v-select
-              v-model="groupedPageSize"
-              :items="[10, 20, 50]"
-              label="Rewards per page"
-              style="max-width: 150px; margin: 0 auto;"
-              dense
-              @change="onGroupedPageSizeChange"
-            ></v-select>
-          </div>
-        </div>
-
-        <!-- Total count info for By Reward Tab -->
-        <div v-if="groupedPaginationData" class="text-center pa-2">
-          <div class="text-caption">
-            Total: {{ groupedPaginationData.totalCount }} rewards in system
-          </div>
-        </div>
-      </v-tab-item>
-    </v-tabs-items>
 
     <!-- Assignment Details Dialog -->
     <v-dialog v-model="detailsDialog" max-width="600px">
@@ -446,15 +242,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- View Users Dialog -->
-    <reward-users-dialog
-      :visible.sync="usersDialog"
-      :title="`Users with Reward: ${selectedRewardGroup?.rewardName || selectedRewardGroup?.rewardId || 'Reward'}`"
-      :users="dialogRewardUsers"
-      :loading="loadingUsers"
-      :error="usersError"
-      @retry="loadDialogRewardUsers"
-    />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
       {{ snackbarText }}
@@ -467,19 +254,15 @@ import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
 import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from '@/store/admin/types';
-import RewardUsersDialog from './RewardUsersDialog.vue';
 import { 
   mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel, 
-  mdiPatreon, mdiHandHeart, mdiCog, mdiRefresh,
-  mdiChevronUp, mdiChevronDown, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff
+  mdiPatreon, mdiHandHeart, mdiCog, mdiRefresh
 } from '@mdi/js';
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: 'AdminAssignments',
-  components: {
-    RewardUsersDialog,
-  },
+  components: {},
   setup() {
     const oauthStore = useOauthStore();
     const assignments = ref<RewardAssignment[]>([]);
@@ -499,27 +282,6 @@ export default defineComponent({
     const currentPage = ref(1);
     const pageSize = ref(50);
 
-    // New data for grouped view
-    const activeTab = ref(0);
-    const rewardGroups = ref<any[]>([]);
-    const filteredRewardGroups = ref<any[]>([]);
-    const expandedGroups = ref<string[]>([]);
-    const loadingGrouped = ref(false);
-    const rewardSearch = ref('');
-    
-    // Users dialog state
-    const usersDialog = ref(false);
-    const loadingUsers = ref(false);
-    const usersError = ref<string | null>(null);
-    const dialogRewardUsers = ref<RewardAssignment[]>([]);
-    const selectedRewardGroup = ref<any | null>(null);
-
-    // Data for grouped view (frontend pagination)
-    const allRewards = ref<Reward[]>([]);
-    const allAssignments = ref<RewardAssignment[]>([]);
-    const groupedCurrentPage = ref(1);
-    const groupedPageSize = ref(20);
-    const groupedPaginationData = ref<any>(null);
 
     const token = computed(() => oauthStore.token);
 
@@ -533,13 +295,6 @@ export default defineComponent({
       { text: 'Actions', value: 'actions', sortable: false, width: '80px' },
     ];
 
-    const groupAssignmentHeaders = [
-      { text: 'User ID', value: 'userId', sortable: true },
-      { text: 'Provider', value: 'providerId', sortable: true },
-      { text: 'Status', value: 'status', sortable: true },
-      { text: 'Assigned', value: 'assignedAt', sortable: true },
-      { text: 'Expires', value: 'expiresAt', sortable: true },
-    ];
 
     const statusFilterOptions = computed(() => [
       { text: 'Active', value: RewardStatus.Active },
@@ -677,121 +432,9 @@ export default defineComponent({
       snackbar.value = true;
     };
 
-    // Load all data and implement frontend pagination
-    const loadAllAssignmentsGrouped = async () => {
-      loadingGrouped.value = true;
-      try {
-        // Load all rewards and all assignments
-        const [rewardsData, assignmentsData] = await Promise.all([
-          AdminService.getRewards(token.value),
-          AdminService.getAllAssignments(token.value, 1, 10000) // Get all assignments with large page size
-        ]);
-        
-        allRewards.value = rewardsData;
-        allAssignments.value = assignmentsData.assignments;
-        
-        // Group assignments by reward and calculate counts
-        const groupedData = calculateRewardGroups();
-        
-        // Apply frontend pagination
-        const totalRewards = groupedData.length;
-        const startIndex = (groupedCurrentPage.value - 1) * groupedPageSize.value;
-        const endIndex = startIndex + groupedPageSize.value;
-        const paginatedRewards = groupedData.slice(startIndex, endIndex);
-        
-        rewardGroups.value = paginatedRewards;
-        
-        // Set pagination data for UI
-        groupedPaginationData.value = {
-          totalCount: totalRewards,
-          page: groupedCurrentPage.value,
-          pageSize: groupedPageSize.value,
-          totalPages: Math.ceil(totalRewards / groupedPageSize.value)
-        };
-        
-        filterRewardGroups();
-        
-        showSnackbar(
-          `Loaded ${paginatedRewards.length} rewards (page ${groupedCurrentPage.value} of ${groupedPaginationData.value.totalPages}). ` +
-          `Total: ${totalRewards} rewards, ${allAssignments.value.length} total assignments`
-        );
-      } catch (error) {
-        showSnackbar('Failed to load grouped assignments', 'error');
-        console.error('Error loading grouped assignments:', error);
-      } finally {
-        loadingGrouped.value = false;
-      }
-    };
 
-    // Calculate reward groups with assignment counts
-    const calculateRewardGroups = () => {
-      const grouped: Record<string, any> = {};
-      
-      // Initialize groups for all rewards
-      allRewards.value.forEach(reward => {
-        grouped[reward.id] = {
-          rewardId: reward.id,
-          rewardName: reward.name,
-          assignments: [],
-          activeCount: 0,
-          expiredCount: 0,
-          revokedCount: 0,
-          totalCount: 0,
-          _fullReward: reward,
-          _allAssignments: [],
-          _currentPage: 1,
-          _pageSize: 10
-        };
-      });
-      
-      // Add assignments to groups and count statuses
-      allAssignments.value.forEach(assignment => {
-        if (grouped[assignment.rewardId]) {
-          grouped[assignment.rewardId]._allAssignments.push(assignment);
-          grouped[assignment.rewardId].totalCount++;
-          
-          if (assignment.status === RewardStatus.Active) {
-            grouped[assignment.rewardId].activeCount++;
-          } else if (assignment.status === RewardStatus.Expired) {
-            grouped[assignment.rewardId].expiredCount++;
-          } else if (assignment.status === RewardStatus.Revoked) {
-            grouped[assignment.rewardId].revokedCount++;
-          }
-        }
-      });
-      
-      // Set initial page of assignments for each reward
-      Object.values(grouped).forEach((group: any) => {
-        group._allAssignments.sort((a: RewardAssignment, b: RewardAssignment) => 
-          new Date(b.assignedAt).getTime() - new Date(a.assignedAt).getTime()
-        );
-        group.assignments = group._allAssignments.slice(0, group._pageSize);
-      });
-      
-      // Sort by total assignment count (descending)
-      return Object.values(grouped).sort((a: any, b: any) => b.totalCount - a.totalCount);
-    };
 
-    const filterRewardGroups = () => {
-      if (!rewardSearch.value) {
-        filteredRewardGroups.value = [...rewardGroups.value];
-      } else {
-        const search = rewardSearch.value.toLowerCase();
-        filteredRewardGroups.value = rewardGroups.value.filter(group =>
-          group.rewardName.toLowerCase().includes(search) ||
-          group.rewardId.toLowerCase().includes(search)
-        );
-      }
-    };
 
-    const toggleGroupExpansion = (rewardId: string) => {
-      const index = expandedGroups.value.indexOf(rewardId);
-      if (index === -1) {
-        expandedGroups.value.push(rewardId);
-      } else {
-        expandedGroups.value.splice(index, 1);
-      }
-    };
 
     // New method to load all assignments with pagination
     const loadAllAssignments = async () => {
@@ -841,80 +484,11 @@ export default defineComponent({
       }
     };
 
-    const onGroupedPageChange = (page: number) => {
-      groupedCurrentPage.value = page;
-      
-      // Recalculate pagination with current data
-      const groupedData = calculateRewardGroups();
-      const startIndex = (page - 1) * groupedPageSize.value;
-      const endIndex = startIndex + groupedPageSize.value;
-      rewardGroups.value = groupedData.slice(startIndex, endIndex);
-      
-      groupedPaginationData.value.page = page;
-      filterRewardGroups();
-    };
 
-    const onGroupedPageSizeChange = () => {
-      groupedCurrentPage.value = 1;
-      
-      // Recalculate pagination with new page size
-      const groupedData = calculateRewardGroups();
-      const totalRewards = groupedData.length;
-      
-      groupedPaginationData.value = {
-        totalCount: totalRewards,
-        page: 1,
-        pageSize: groupedPageSize.value,
-        totalPages: Math.ceil(totalRewards / groupedPageSize.value)
-      };
-      
-      rewardGroups.value = groupedData.slice(0, groupedPageSize.value);
-      filterRewardGroups();
-    };
 
-    // Handle pagination within a reward's assignment list (frontend pagination)
-    const onRewardAssignmentPageChange = (rewardId: string, page: number) => {
-      const group = rewardGroups.value.find(g => g.rewardId === rewardId);
-      if (!group) return;
-      
-      group._currentPage = page;
-      const startIndex = (page - 1) * group._pageSize;
-      const endIndex = startIndex + group._pageSize;
-      group.assignments = group._allAssignments.slice(startIndex, endIndex);
-    };
 
-    const onRewardAssignmentPageSizeChange = (rewardId: string, pageSize: number) => {
-      const group = rewardGroups.value.find(g => g.rewardId === rewardId);
-      if (!group) return;
-      
-      group._pageSize = pageSize;
-      group._currentPage = 1;
-      group.assignments = group._allAssignments.slice(0, pageSize);
-    };
 
-    const viewRewardUsers = async (rewardGroup: any) => {
-      selectedRewardGroup.value = rewardGroup;
-      usersDialog.value = true;
-      await loadDialogRewardUsers();
-    };
 
-    const loadDialogRewardUsers = async () => {
-      if (!selectedRewardGroup.value) return;
-      
-      loadingUsers.value = true;
-      usersError.value = null;
-      
-      try {
-        const assignments = await AdminService.getAssignmentsByReward(selectedRewardGroup.value.rewardId, token.value);
-        dialogRewardUsers.value = assignments;
-      } catch (error) {
-        console.error('Error loading reward users:', error);
-        usersError.value = 'Failed to load users for this reward';
-        dialogRewardUsers.value = [];
-      } finally {
-        loadingUsers.value = false;
-      }
-    };
 
 
     onMounted(() => {
@@ -933,7 +507,6 @@ export default defineComponent({
       snackbarText,
       snackbarColor,
       headers,
-      groupAssignmentHeaders,
       statusFilterOptions,
       providerFilterOptions,
       
@@ -942,42 +515,11 @@ export default defineComponent({
       currentPage,
       pageSize,
       
-      // New grouped functionality
-      activeTab,
-      rewardGroups,
-      filteredRewardGroups,
-      expandedGroups,
-      loadingGrouped,
-      rewardSearch,
-      groupedCurrentPage,
-      groupedPageSize,
-      groupedPaginationData,
-      allRewards,
-      allAssignments,
-      
-      // Users dialog data
-      usersDialog,
-      loadingUsers,
-      usersError,
-      dialogRewardUsers,
-      selectedRewardGroup,
-      
-      calculateRewardGroups,
-      loadAllAssignmentsGrouped,
-      filterRewardGroups,
-      toggleGroupExpansion,
-      viewRewardUsers,
-      loadDialogRewardUsers,
-      
       searchAssignments,
       clearSearch,
       loadAllAssignments,
       onPageChange,
       onPageSizeChange,
-      onGroupedPageChange,
-      onGroupedPageSizeChange,
-      onRewardAssignmentPageChange,
-      onRewardAssignmentPageSizeChange,
       getRewardName,
       getStatusName,
       getStatusColor,
@@ -993,12 +535,6 @@ export default defineComponent({
       mdiEye,
       mdiCancel,
       mdiRefresh,
-      mdiChevronUp,
-      mdiChevronDown,
-      mdiAccountGroup,
-      mdiClose,
-      mdiAlert,
-      mdiAccountOff,
     };
   },
 });

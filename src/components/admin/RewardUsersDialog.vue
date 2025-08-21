@@ -26,8 +26,8 @@
             <v-col cols="4">
               <v-card outlined>
                 <v-card-text class="text-center">
-                  <div class="text-h4 primary--text">{{ users.length }}</div>
-                  <div class="text-subtitle1">Total Users</div>
+                  <div class="text-h4 primary--text">{{ filteredUsers.length }}</div>
+                  <div class="text-subtitle1">Showing / {{ users.length }} Total</div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -49,9 +49,23 @@
             </v-col>
           </v-row>
 
+          <v-row class="mb-4">
+            <v-col cols="12">
+              <v-text-field
+                v-model="searchQuery"
+                label="Search users..."
+                prepend-icon="mdi-magnify"
+                clearable
+                outlined
+                dense
+                placeholder="Search by User ID, Provider, or Status"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
           <v-data-table
             :headers="headers"
-            :items="users"
+            :items="filteredUsers"
             :items-per-page="10"
             class="elevation-1"
           >
@@ -99,7 +113,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { RewardAssignment, RewardStatus } from '@/store/admin/types';
 import { mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
 
@@ -129,6 +143,8 @@ export default defineComponent({
   },
   emits: ['update:visible', 'retry'],
   setup(props, { emit }) {
+    const searchQuery = ref('');
+    
     const headers = [
       { text: 'User', value: 'userId', sortable: true },
       { text: 'Status', value: 'status', sortable: true },
@@ -137,12 +153,34 @@ export default defineComponent({
       { text: 'Expires', value: 'expiresAt', sortable: true },
     ];
 
+    const getStatusName = (status: RewardStatus | string): string => {
+      if (typeof status === 'number') {
+        return RewardStatus[status] || 'Unknown';
+      }
+      return status || 'Unknown';
+    };
+
+    const filteredUsers = computed(() => {
+      if (!searchQuery.value) {
+        return props.users;
+      }
+      
+      const query = searchQuery.value.toLowerCase();
+      return props.users.filter(user => {
+        return (
+          user.userId.toLowerCase().includes(query) ||
+          user.providerId.toLowerCase().includes(query) ||
+          getStatusName(user.status).toLowerCase().includes(query)
+        );
+      });
+    });
+
     const activeUsersCount = computed(() => {
-      return props.users.filter(user => user.status === RewardStatus.Active).length;
+      return filteredUsers.value.filter(user => user.status === RewardStatus.Active).length;
     });
 
     const expiredUsersCount = computed(() => {
-      return props.users.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
+      return filteredUsers.value.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
     });
 
     const close = () => {
@@ -175,19 +213,14 @@ export default defineComponent({
       }
     };
 
-    const getStatusName = (status: RewardStatus | string): string => {
-      if (typeof status === 'number') {
-        return RewardStatus[status] || 'Unknown';
-      }
-      return status || 'Unknown';
-    };
-
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleString();
     };
 
     return {
+      searchQuery,
       headers,
+      filteredUsers,
       activeUsersCount,
       expiredUsersCount,
       close,

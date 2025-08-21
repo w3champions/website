@@ -63,6 +63,22 @@
         <span v-else class="text--secondary">Permanent</span>
       </template>
 
+      <template v-slot:item.assignmentStats="{ item }">
+        <div class="text-center">
+          <v-chip-group class="d-flex flex-column">
+            <v-chip x-small color="success" class="ma-1">
+              A: {{ item.assignmentStats?.activeCount || 0 }}
+            </v-chip>
+            <v-chip x-small color="warning" class="ma-1">
+              E: {{ item.assignmentStats?.expiredCount || 0 }}
+            </v-chip>
+            <v-chip x-small color="error" class="ma-1">
+              R: {{ item.assignmentStats?.revokedCount || 0 }}
+            </v-chip>
+          </v-chip-group>
+        </div>
+      </template>
+
       <template v-slot:item.actions="{ item }">
         <v-icon
           small
@@ -125,6 +141,7 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const rewards = ref<Reward[]>([]);
     const availableModules = ref<ModuleDefinition[]>([]);
+    const allAssignments = ref<RewardAssignment[]>([]);
     const tableSearch = ref('');
     const dialog = ref(false);
     const isEditMode = ref(false);
@@ -148,6 +165,7 @@ export default defineComponent({
       { text: 'Module', value: 'moduleId', sortable: true },
       { text: 'Duration', value: 'duration', sortable: false },
       { text: 'Status', value: 'isActive', sortable: true },
+      { text: 'Users', value: 'assignmentStats', sortable: false, width: '120px' },
       { text: 'Created', value: 'createdAt', sortable: true },
       { text: 'Actions', value: 'actions', sortable: false, width: '140px' },
     ];
@@ -168,9 +186,37 @@ export default defineComponent({
       return rewardUsers.value.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
     });
 
+    const loadAllAssignments = async () => {
+      try {
+        const assignmentsData = await AdminService.getAllAssignments(token.value, 1, 10000);
+        allAssignments.value = assignmentsData.assignments;
+      } catch (error) {
+        console.error('Error loading all assignments:', error);
+      }
+    };
+
+    const calculateAssignmentStats = (rewardId: string) => {
+      const rewardAssignments = allAssignments.value.filter(a => a.rewardId === rewardId);
+      return {
+        activeCount: rewardAssignments.filter(a => a.status === RewardStatus.Active).length,
+        expiredCount: rewardAssignments.filter(a => a.status === RewardStatus.Expired).length,
+        revokedCount: rewardAssignments.filter(a => a.status === RewardStatus.Revoked).length,
+        totalCount: rewardAssignments.length,
+      };
+    };
+
     const loadRewards = async () => {
       try {
-        rewards.value = await AdminService.getRewards(token.value);
+        const [rewardsData] = await Promise.all([
+          AdminService.getRewards(token.value),
+          loadAllAssignments(),
+        ]);
+        
+        // Add assignment statistics to each reward
+        rewards.value = rewardsData.map(reward => ({
+          ...reward,
+          assignmentStats: calculateAssignmentStats(reward.id),
+        }));
       } catch (error) {
         showSnackbar('Failed to load rewards', 'error');
         console.error('Error loading rewards:', error);
@@ -329,6 +375,7 @@ export default defineComponent({
 
     return {
       rewards,
+      allAssignments,
       tableSearch,
       dialog,
       isEditMode,
