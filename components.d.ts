@@ -128,6 +128,7 @@ declare module 'vue' {
     RemovePlayerModal: typeof import('./src/components/admin/tournaments/RemovePlayerModal.vue')['default']
     ReplayChatMessage: typeof import('./src/components/admin/replays/ReplayChatMessage.vue')['default']
     ReviewProxies: typeof import('./src/components/admin/proxies/reviewProxies.vue')['default']
+    RewardUsersDialog: typeof import('./src/components/admin/RewardUsersDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SeasonBadge: typeof import('./src/components/player/SeasonBadge.vue')['default']

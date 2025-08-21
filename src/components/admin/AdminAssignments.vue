@@ -222,7 +222,7 @@
                   <div class="text-caption text--secondary">ID: {{ group.rewardId }}</div>
                 </div>
                 <div class="d-flex align-center">
-                  <v-chip-group>
+                  <v-chip-group class="mr-3">
                     <v-chip small color="success" class="mr-2">
                       Active: {{ group.activeCount }}
                     </v-chip>
@@ -233,6 +233,15 @@
                       Revoked: {{ group.revokedCount }}
                     </v-chip>
                   </v-chip-group>
+                  <v-btn
+                    icon
+                    small
+                    color="info"
+                    @click="viewRewardUsers(group)"
+                    class="mr-2"
+                  >
+                    <v-icon small>{{ mdiAccountGroup }}</v-icon>
+                  </v-btn>
                 </div>
               </div>
             </v-card-title>
@@ -437,6 +446,16 @@
       </v-card>
     </v-dialog>
 
+    <!-- View Users Dialog -->
+    <reward-users-dialog
+      :visible.sync="usersDialog"
+      :title="`Users with Reward: ${selectedRewardGroup?.rewardName || selectedRewardGroup?.rewardId || 'Reward'}`"
+      :users="dialogRewardUsers"
+      :loading="loadingUsers"
+      :error="usersError"
+      @retry="loadDialogRewardUsers"
+    />
+
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
       {{ snackbarText }}
     </v-snackbar>
@@ -448,15 +467,19 @@ import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
 import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from '@/store/admin/types';
+import RewardUsersDialog from './RewardUsersDialog.vue';
 import { 
   mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel, 
   mdiPatreon, mdiHandHeart, mdiCog, mdiRefresh,
-  mdiChevronUp, mdiChevronDown
+  mdiChevronUp, mdiChevronDown, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff
 } from '@mdi/js';
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: 'AdminAssignments',
+  components: {
+    RewardUsersDialog,
+  },
   setup() {
     const oauthStore = useOauthStore();
     const assignments = ref<RewardAssignment[]>([]);
@@ -483,6 +506,13 @@ export default defineComponent({
     const expandedGroups = ref<string[]>([]);
     const loadingGrouped = ref(false);
     const rewardSearch = ref('');
+    
+    // Users dialog state
+    const usersDialog = ref(false);
+    const loadingUsers = ref(false);
+    const usersError = ref<string | null>(null);
+    const dialogRewardUsers = ref<RewardAssignment[]>([]);
+    const selectedRewardGroup = ref<any | null>(null);
 
     // Data for grouped view (frontend pagination)
     const allRewards = ref<Reward[]>([]);
@@ -521,6 +551,7 @@ export default defineComponent({
       { text: 'Patreon', value: 'patreon' },
       { text: 'Ko-Fi', value: 'kofi' },
     ]);
+
 
     const loadRewards = async () => {
       try {
@@ -861,6 +892,31 @@ export default defineComponent({
       group.assignments = group._allAssignments.slice(0, pageSize);
     };
 
+    const viewRewardUsers = async (rewardGroup: any) => {
+      selectedRewardGroup.value = rewardGroup;
+      usersDialog.value = true;
+      await loadDialogRewardUsers();
+    };
+
+    const loadDialogRewardUsers = async () => {
+      if (!selectedRewardGroup.value) return;
+      
+      loadingUsers.value = true;
+      usersError.value = null;
+      
+      try {
+        const assignments = await AdminService.getAssignmentsByReward(selectedRewardGroup.value.rewardId, token.value);
+        dialogRewardUsers.value = assignments;
+      } catch (error) {
+        console.error('Error loading reward users:', error);
+        usersError.value = 'Failed to load users for this reward';
+        dialogRewardUsers.value = [];
+      } finally {
+        loadingUsers.value = false;
+      }
+    };
+
+
     onMounted(() => {
       loadRewards();
     });
@@ -898,10 +954,20 @@ export default defineComponent({
       groupedPaginationData,
       allRewards,
       allAssignments,
+      
+      // Users dialog data
+      usersDialog,
+      loadingUsers,
+      usersError,
+      dialogRewardUsers,
+      selectedRewardGroup,
+      
       calculateRewardGroups,
       loadAllAssignmentsGrouped,
       filterRewardGroups,
       toggleGroupExpansion,
+      viewRewardUsers,
+      loadDialogRewardUsers,
       
       searchAssignments,
       clearSearch,
@@ -929,6 +995,10 @@ export default defineComponent({
       mdiRefresh,
       mdiChevronUp,
       mdiChevronDown,
+      mdiAccountGroup,
+      mdiClose,
+      mdiAlert,
+      mdiAccountOff,
     };
   },
 });

@@ -62,6 +62,14 @@
         <template v-slot:item.actions="{ item }">
           <v-icon
             small
+            @click="viewUsers(item)"
+            color="info"
+            class="mr-2"
+          >
+            {{ mdiAccountGroup }}
+          </v-icon>
+          <v-icon
+            small
             @click="editMapping(item)"
             color="primary"
             class="mr-2"
@@ -202,6 +210,16 @@
       </v-card>
     </v-dialog>
 
+    <!-- View Users Dialog -->
+    <reward-users-dialog
+      :visible.sync="usersDialog"
+      :title="`Users for Product Mapping: ${selectedMapping?.productName || 'Product Mapping'}`"
+      :users="mappingUsersForDialog"
+      :loading="loadingUsers"
+      :error="usersError"
+      @retry="loadMappingUsers"
+    />
+
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
       {{ snackbarText }}
     </v-snackbar>
@@ -212,11 +230,15 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
-import { ProductMapping, ProductMappingType, ProductProviderPair, Reward } from '@/store/admin/types';
-import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
+import { ProductMapping, ProductMappingType, ProductProviderPair, Reward, ProductMappingUsersResponse, RewardStatus } from '@/store/admin/types';
+import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup, mdiClose, mdiAlert } from '@mdi/js';
+import RewardUsersDialog from './RewardUsersDialog.vue';
 
 export default defineComponent({
   name: 'AdminProductMappings',
+  components: {
+    RewardUsersDialog,
+  },
   setup() {
     const oauthStore = useOauthStore();
     const productMappings = ref<ProductMapping[]>([]);
@@ -229,15 +251,50 @@ export default defineComponent({
     const snackbar = ref(false);
     const snackbarText = ref('');
     const snackbarColor = ref('success');
+    
+    // Users dialog state
+    const usersDialog = ref(false);
+    const loadingUsers = ref(false);
+    const usersError = ref<string | null>(null);
+    const mappingUsers = ref<ProductMappingUsersResponse | null>(null);
+    const selectedMapping = ref<ProductMapping | null>(null);
 
     const token = computed(() => oauthStore.token);
+
+    const mappingUsersForDialog = computed(() => {
+      if (!mappingUsers.value?.users) return [];
+      
+      return mappingUsers.value.users.map(user => ({
+        id: `${user.userId}-${user.providerId}-${user.providerProductId}`,
+        userId: user.userId,
+        rewardId: '', // Not applicable for product mappings
+        status: user.isActive ? RewardStatus.Active : 
+                user.status === 'Expired' ? RewardStatus.Expired : RewardStatus.Revoked,
+        providerId: user.providerId,
+        assignedAt: user.assignedAt,
+        expiresAt: user.expiresAt,
+        metadata: {
+          providerReference: user.providerReference,
+          eventType: user.eventType,
+        }
+      }));
+    });
 
     const mappingHeaders = [
       { text: 'Product Name', value: 'productName', sortable: true },
       { text: 'Providers', value: 'productProviders', sortable: false },
       { text: 'Rewards', value: 'rewardIds', sortable: false },
       { text: 'Type', value: 'type', sortable: true },
-      { text: 'Actions', value: 'actions', sortable: false, width: '80px' },
+      { text: 'Actions', value: 'actions', sortable: false, width: '120px' },
+    ];
+
+    const usersHeaders = [
+      { text: 'User', value: 'userId', sortable: true },
+      { text: 'Provider', value: 'provider', sortable: false },
+      { text: 'Product ID', value: 'providerProductId', sortable: true },
+      { text: 'Status', value: 'status', sortable: true },
+      { text: 'Assigned', value: 'assignedAt', sortable: true },
+      { text: 'Expires', value: 'expiresAt', sortable: true },
     ];
 
     const rules = {
@@ -417,6 +474,30 @@ export default defineComponent({
       snackbar.value = true;
     };
 
+    const viewUsers = async (mapping: ProductMapping) => {
+      selectedMapping.value = mapping;
+      usersDialog.value = true;
+      await loadMappingUsers();
+    };
+
+    const loadMappingUsers = async () => {
+      if (!selectedMapping.value) return;
+      
+      loadingUsers.value = true;
+      usersError.value = null;
+      
+      try {
+        mappingUsers.value = await AdminService.getProductMappingUsers(token.value, selectedMapping.value.id);
+      } catch (error) {
+        console.error('Error loading mapping users:', error);
+        usersError.value = 'Failed to load users for this product mapping';
+        mappingUsers.value = null;
+      } finally {
+        loadingUsers.value = false;
+      }
+    };
+
+
     onMounted(() => {
       loadData();
     });
@@ -434,8 +515,16 @@ export default defineComponent({
       snackbarText,
       snackbarColor,
       
+      // Users dialog data
+      usersDialog,
+      loadingUsers,
+      usersError,
+      mappingUsers,
+      selectedMapping,
+      
       // Computed
       mappingHeaders,
+      mappingUsersForDialog,
       rules,
       mappingTypeOptions,
       providerOptions,
@@ -455,10 +544,13 @@ export default defineComponent({
       saveMappingDialog,
       deleteMapping,
       closeMappingDialog,
+      viewUsers,
+      loadMappingUsers,
       
       // Icons
       mdiDelete,
       mdiPencil,
+      mdiAccountGroup,
     };
   },
 });

@@ -259,6 +259,27 @@ export enum ProductMappingType {
   Tiered = 2
 }
 
+export type ProductMappingUser = {
+  userId: string;
+  providerId: string;
+  providerProductId: string;
+  status: string;
+  assignedAt: string;
+  lastUpdatedAt?: string;
+  expiresAt?: string;
+  isActive: boolean;
+  providerReference?: string;
+  eventType?: string;
+};
+
+export type ProductMappingUsersResponse = {
+  productMappingId: string;
+  productName: string;
+  totalUsers: number;
+  activeUsers: number;
+  users: ProductMappingUser[];
+};
+
 export type CreateRewardRequest = {
   name: string;
   description: string;

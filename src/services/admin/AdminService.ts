@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, DriftDetectionResult, ModuleDefinition } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, ProductMappingUsersResponse, DriftDetectionResult, ModuleDefinition } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -259,6 +259,12 @@ export default class AdminService {
     const url = `${API_URL}api/rewards/product-mappings/${mappingId}`;
     const response = await authorizedFetch("DELETE", url, token);
     return response.ok;
+  }
+
+  public static async getProductMappingUsers(token: string, mappingId: string): Promise<ProductMappingUsersResponse> {
+    const url = `${API_URL}api/rewards/product-mappings/${mappingId}/users`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
   }
 
   public static async detectPatreonDrift(token: string): Promise<DriftDetectionResult> {

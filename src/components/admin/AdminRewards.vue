@@ -12,8 +12,6 @@
       sort-by="createdAt"
       :sort-desc="true"
       :search="tableSearch"
-      show-expand
-      :expanded.sync="expanded"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -66,17 +64,14 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn
-          icon
+        <v-icon
           small
-          color="primary"
-          @click="loadUsersForReward(item)"
-          :loading="loadingAssignments[item.id]"
-          class="mr-1"
-          title="View Users"
+          @click="viewUsers(item)"
+          color="info"
+          class="mr-2"
         >
-          <v-icon small>{{ mdiAccountMultiple }}</v-icon>
-        </v-btn>
+          {{ mdiAccountGroup }}
+        </v-icon>
         <v-icon
           small
           class="mr-2"
@@ -92,84 +87,17 @@
         </v-icon>
       </template>
 
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length" class="pa-4">
-          <div v-if="rewardAssignments[item.id]">
-            <v-row class="mb-3">
-              <v-col cols="12">
-                <h4 class="mb-2">Users with this reward ({{ rewardAssignments[item.id].length }})</h4>
-                <v-chip-group>
-                  <v-chip
-                    small
-                    :color="getStatusColor('Active')"
-                    class="mr-2"
-                  >
-                    Active: {{ getAssignmentCountByStatus(item.id, RewardStatus.Active) }}
-                  </v-chip>
-                  <v-chip
-                    small
-                    :color="getStatusColor('Expired')"
-                    class="mr-2"
-                  >
-                    Expired: {{ getAssignmentCountByStatus(item.id, RewardStatus.Expired) }}
-                  </v-chip>
-                  <v-chip
-                    small
-                    :color="getStatusColor('Revoked')"
-                  >
-                    Revoked: {{ getAssignmentCountByStatus(item.id, RewardStatus.Revoked) }}
-                  </v-chip>
-                </v-chip-group>
-              </v-col>
-            </v-row>
-
-            <v-data-table
-              :headers="assignmentHeaders"
-              :items="rewardAssignments[item.id]"
-              :items-per-page="5"
-              :footer-props="{ itemsPerPageOptions: [5, 10, 25] }"
-              sort-by="assignedAt"
-              :sort-desc="true"
-              dense
-            >
-              <template v-slot:item.status="{ item: assignment }">
-                <v-chip :color="getStatusColor(assignment.status)" small>
-                  {{ getStatusName(assignment.status) }}
-                </v-chip>
-              </template>
-
-              <template v-slot:item.providerId="{ item: assignment }">
-                <v-chip small>
-                  {{ assignment.providerId }}
-                </v-chip>
-              </template>
-
-              <template v-slot:item.assignedAt="{ item: assignment }">
-                <div>
-                  <div>{{ formatDate(assignment.assignedAt) }}</div>
-                  <div class="text-caption text--secondary">{{ formatTime(assignment.assignedAt) }}</div>
-                </div>
-              </template>
-
-              <template v-slot:item.expiresAt="{ item: assignment }">
-                <div v-if="assignment.expiresAt">
-                  <div>{{ formatDate(assignment.expiresAt) }}</div>
-                  <div class="text-caption text--secondary">{{ formatTime(assignment.expiresAt) }}</div>
-                </div>
-                <span v-else class="text--secondary">Permanent</span>
-              </template>
-            </v-data-table>
-          </div>
-          <div v-else-if="loadingAssignments[item.id]" class="text-center pa-4">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>
-            <div class="mt-2">Loading assignments...</div>
-          </div>
-          <div v-else class="text-center pa-4 text--secondary">
-            Click "View Users" to load assignments for this reward
-          </div>
-        </td>
-      </template>
     </v-data-table>
+
+    <!-- View Users Dialog -->
+    <reward-users-dialog
+      :visible.sync="usersDialog"
+      :title="`Users with Reward: ${selectedReward?.name || 'Reward'}`"
+      :users="rewardUsers"
+      :loading="loadingUsers"
+      :error="usersError"
+      @retry="loadRewardUsers"
+    />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
       {{ snackbarText }}
@@ -183,13 +111,15 @@ import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
 import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from '@/store/admin/types';
 import AdminRewardEdit from './AdminRewardEdit.vue';
-import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountMultiple } from '@mdi/js';
+import RewardUsersDialog from './RewardUsersDialog.vue';
+import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: 'AdminRewards',
   components: {
     AdminRewardEdit,
+    RewardUsersDialog,
   },
   setup() {
     const oauthStore = useOauthStore();
@@ -203,10 +133,12 @@ export default defineComponent({
     const snackbarText = ref('');
     const snackbarColor = ref('success');
 
-    // New data for assignments
-    const expanded = ref<any[]>([]);
-    const rewardAssignments = ref<Record<string, RewardAssignment[]>>({});
-    const loadingAssignments = ref<Record<string, boolean>>({});
+    // Users dialog state
+    const usersDialog = ref(false);
+    const loadingUsers = ref(false);
+    const usersError = ref<string | null>(null);
+    const rewardUsers = ref<RewardAssignment[]>([]);
+    const selectedReward = ref<Reward | null>(null);
 
     const token = computed(() => oauthStore.token);
 
@@ -220,13 +152,21 @@ export default defineComponent({
       { text: 'Actions', value: 'actions', sortable: false, width: '140px' },
     ];
 
-    const assignmentHeaders = [
+    const usersHeaders = [
       { text: 'User', value: 'userId', sortable: true },
       { text: 'Status', value: 'status', sortable: true },
       { text: 'Provider', value: 'providerId', sortable: true },
       { text: 'Assigned', value: 'assignedAt', sortable: true },
       { text: 'Expires', value: 'expiresAt', sortable: true },
     ];
+
+    const activeUsersCount = computed(() => {
+      return rewardUsers.value.filter(user => user.status === RewardStatus.Active).length;
+    });
+
+    const expiredUsersCount = computed(() => {
+      return rewardUsers.value.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
+    });
 
     const loadRewards = async () => {
       try {
@@ -332,41 +272,30 @@ export default defineComponent({
     };
 
     // New methods for assignment functionality
-    const loadUsersForReward = async (reward: Reward) => {
-      if (rewardAssignments.value[reward.id]) {
-        // Toggle expansion if data already loaded
-        const currentIndex = expanded.value.findIndex(item => item.id === reward.id);
-        if (currentIndex === -1) {
-          expanded.value.push(reward);
-        } else {
-          expanded.value.splice(currentIndex, 1);
-        }
-        return;
-      }
+    const viewUsers = async (reward: Reward) => {
+      selectedReward.value = reward;
+      usersDialog.value = true;
+      await loadRewardUsers();
+    };
 
-      loadingAssignments.value[reward.id] = true;
+    const loadRewardUsers = async () => {
+      if (!selectedReward.value) return;
+      
+      loadingUsers.value = true;
+      usersError.value = null;
+      
       try {
-        const assignments = await AdminService.getAssignmentsByReward(reward.id, token.value);
-        rewardAssignments.value[reward.id] = assignments;
-        
-        // Expand the row
-        if (!expanded.value.some(item => item.id === reward.id)) {
-          expanded.value.push(reward);
-        }
-        
-        showSnackbar(`Loaded ${assignments.length} assignments for ${reward.name}`);
+        const assignments = await AdminService.getAssignmentsByReward(selectedReward.value.id, token.value);
+        rewardUsers.value = assignments;
       } catch (error) {
-        showSnackbar(`Failed to load assignments for ${reward.name}`, 'error');
-        console.error('Error loading assignments:', error);
+        console.error('Error loading reward users:', error);
+        usersError.value = 'Failed to load users for this reward';
+        rewardUsers.value = [];
       } finally {
-        loadingAssignments.value[reward.id] = false;
+        loadingUsers.value = false;
       }
     };
 
-    const getAssignmentCountByStatus = (rewardId: string, status: RewardStatus): number => {
-      const assignments = rewardAssignments.value[rewardId] || [];
-      return assignments.filter(a => a.status === status).length;
-    };
 
     const getStatusColor = (status: RewardStatus | string): string => {
       // Handle both enum values and string representations
@@ -407,28 +336,39 @@ export default defineComponent({
       snackbar,
       snackbarText,
       snackbarColor,
+      
+      // Users dialog data
+      usersDialog,
+      loadingUsers,
+      usersError,
+      rewardUsers,
+      selectedReward,
+      
+      // Computed
       headers,
-      assignmentHeaders,
-      expanded,
-      rewardAssignments,
-      loadingAssignments,
+      
+      // Methods
       createNewReward,
       editReward,
       saveReward,
       deleteReward,
       closeDialog,
-      loadUsersForReward,
-      getAssignmentCountByStatus,
+      viewUsers,
+      loadRewardUsers,
       getStatusColor,
       getStatusName,
       getModuleName,
       formatDuration,
       formatDate,
       formatTime,
+      
+      // Icons
       mdiMagnify,
       mdiPencil,
       mdiDelete,
-      mdiAccountMultiple,
+      mdiAccountGroup,
+      
+      // Enums
       RewardStatus,
     };
   },
