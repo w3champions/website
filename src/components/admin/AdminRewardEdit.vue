@@ -40,11 +40,9 @@
           <v-col cols="12">
             <v-textarea
               v-model="localReward.description"
-              label="Description *"
-              :rules="[rules.required]"
+              label="Description"
               counter="500"
               rows="3"
-              required
             ></v-textarea>
           </v-col>
         </v-row>
@@ -234,7 +232,6 @@ export default defineComponent({
 
     const isValid = computed(() => {
       const hasRequiredFields = localReward.value.name &&
-                               localReward.value.description &&
                                localReward.value.moduleId;
       
       const hasValidDuration = durationType.value === 'permanent' || 
@@ -295,7 +292,7 @@ export default defineComponent({
     const initializeForm = () => {
       localReward.value = {
         name: props.reward.name || '',
-        description: props.reward.description || '',
+        description: props.reward.description || undefined,
         moduleId: props.reward.moduleId || '',
         parameters: props.reward.parameters || {},
         isActive: props.reward.isActive ?? true,

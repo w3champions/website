@@ -164,7 +164,7 @@ export type ReplayMessageScope = {
 export type Reward = {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   moduleId: string;
   parameters: Record<string, any>;
   duration: RewardDuration | null;
@@ -178,7 +178,7 @@ export type Reward = {
 export interface ModuleDefinition {
   moduleId: string;
   moduleName: string;
-  description: string;
+  description?: string;
   supportsParameters: boolean;
   parameterDefinitions: Record<string, ParameterDefinition>;
 }
@@ -309,7 +309,7 @@ export type ReconciliationAction = {
 
 export type CreateRewardRequest = {
   name: string;
-  description: string;
+  description?: string;
   moduleId: string;
   parameters?: Record<string, any>;
   duration?: RewardDuration;

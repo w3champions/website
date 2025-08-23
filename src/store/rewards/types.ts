@@ -8,7 +8,7 @@ export interface PatreonLinkStatus {
 export interface UserReward {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   type: string;
   isActive: boolean;
   assignedAt: string;

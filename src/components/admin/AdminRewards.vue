@@ -239,7 +239,7 @@ export default defineComponent({
     const createNewReward = () => {
       editedReward.value = {
         name: '',
-        description: '',
+        description: undefined,
         moduleId: '',
         parameters: {},
         duration: null,
@@ -270,7 +270,7 @@ export default defineComponent({
         } else {
           const createData: CreateRewardRequest = {
             name: rewardData.name!,
-            description: rewardData.description!,
+            description: rewardData.description,
             moduleId: rewardData.moduleId!,
             parameters: rewardData.parameters,
             duration: rewardData.duration,
