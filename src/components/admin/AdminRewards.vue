@@ -116,7 +116,7 @@
     />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
-      {{ snackbarText }}
+      <div style="white-space: pre-line;">{{ snackbarText }}</div>
     </v-snackbar>
   </div>
 </template>
@@ -280,8 +280,9 @@ export default defineComponent({
         }
         closeDialog();
         await loadRewards();
-      } catch (error) {
-        showSnackbar('Failed to save reward', 'error');
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || 'Failed to save reward';
+        showSnackbar(errorMessage, 'error');
         console.error('Error saving reward:', error);
       }
     };
@@ -292,8 +293,9 @@ export default defineComponent({
           await AdminService.deleteReward(reward.id, token.value);
           showSnackbar('Reward deleted successfully');
           await loadRewards();
-        } catch (error) {
-          showSnackbar('Failed to delete reward', 'error');
+        } catch (error: any) {
+          const errorMessage = error.response?.data?.error || 'Failed to delete reward';
+          showSnackbar(errorMessage, 'error');
           console.error('Error deleting reward:', error);
         }
       }

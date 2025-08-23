@@ -216,12 +216,28 @@ export default class AdminService {
   public static async updateReward(rewardId: string, reward: UpdateRewardRequest, token: string): Promise<Reward> {
     const url = `${API_URL}api/rewards/${rewardId}`;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(reward));
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      const error = new Error(errorData.error || 'Failed to update reward');
+      (error as any).response = { status: response.status, data: errorData };
+      throw error;
+    }
+    
     return await response.json();
   }
 
   public static async deleteReward(rewardId: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/rewards/${rewardId}`;
     const response = await authorizedFetch("DELETE", url, token);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      const error = new Error(errorData.error || 'Failed to delete reward');
+      (error as any).response = { status: response.status, data: errorData };
+      throw error;
+    }
+    
     return response.ok;
   }
 
