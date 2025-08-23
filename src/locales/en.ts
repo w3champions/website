@@ -358,6 +358,8 @@ const en = {
     your_rewards: "Your Rewards",
     loading_rewards: "Loading rewards...",
     no_rewards: "You don't have any rewards yet. Link your Patreon account to receive rewards!",
+    reward_name: "Reward Name",
+    description: "Description",
     active: "Active",
     inactive: "Inactive",
   },

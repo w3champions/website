@@ -73,20 +73,25 @@
             <div v-else-if="userRewards.length === 0">
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
-            <v-row v-else>
-              <v-col
-                v-for="reward in userRewards"
-                :key="reward.id"
-                cols="12" sm="6" md="4"
-              >
-                <v-card outlined>
-                  <v-card-title>{{ reward.name }}</v-card-title>
-                  <v-card-text>
-                    <p>{{ reward.description }}</p>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
+            <v-simple-table v-else>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
+                    <th class="text-left" style="width: 70%">{{ $t("views_rewards.description") }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="reward in userRewards.slice().sort((a, b) => a.name.localeCompare(b.name))"
+                    :key="reward.id"
+                  >
+                    <td><strong>{{ reward.name }}</strong></td>
+                    <td>{{ reward.description }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
           </v-card-text>
         </v-card>
 
