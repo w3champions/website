@@ -82,7 +82,97 @@ J<template>
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="6" v-if="lastResult && lastResult.hasDrift">
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title class="text-h6">
+            <v-icon left>{{ mdiCog }}</v-icon>
+            Product Mapping Reconciliation
+          </v-card-title>
+          <v-card-text>
+            <div v-if="!reconciliationResult">
+              <p class="text--secondary">No reconciliation has been run yet.</p>
+            </div>
+            <div v-else>
+              <v-row>
+                <v-col cols="6">
+                  <v-card outlined>
+                    <v-card-text class="text-center">
+                      <div class="text-h4" :class="reconciliationResult.totalUsersAffected > 0 ? 'warning--text' : 'success--text'">
+                        {{ reconciliationResult.totalUsersAffected }}
+                      </div>
+                      <div class="text-caption">Users Affected</div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+                <v-col cols="6">
+                  <v-card outlined>
+                    <v-card-text class="text-center">
+                      <div class="text-h4 info--text">{{ reconciliationResult.rewardsAdded + reconciliationResult.rewardsRevoked }}</div>
+                      <div class="text-caption">Total Changes</div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+
+              <v-alert
+                :type="reconciliationResult.totalUsersAffected > 0 ? 'warning' : 'success'"
+                :icon="reconciliationResult.totalUsersAffected > 0 ? mdiAlert : mdiCheckCircle"
+                class="mt-4"
+              >
+                <div class="font-weight-bold">
+                  {{ reconciliationResult.totalUsersAffected > 0 ? 'Reconciliation Needed!' : 'Everything In Sync' }}
+                </div>
+                <div class="text-caption">
+                  {{ reconciliationResult.wasDryRun ? 'Preview Mode' : 'Last executed' }}
+                </div>
+                <div v-if="reconciliationResult.totalUsersAffected > 0" class="mt-2">
+                  <div class="text-caption">
+                    <strong>Actions:</strong>
+                    <span v-if="reconciliationResult.rewardsAdded > 0">{{ reconciliationResult.rewardsAdded }} rewards to add</span>
+                    <span v-if="reconciliationResult.rewardsAdded > 0 && reconciliationResult.rewardsRevoked > 0">, </span>
+                    <span v-if="reconciliationResult.rewardsRevoked > 0">{{ reconciliationResult.rewardsRevoked }} rewards to remove</span>
+                  </div>
+                  <v-btn
+                    small
+                    text
+                    color="primary"
+                    class="mt-2"
+                    @click="showReconciliationDetails = true"
+                  >
+                    <v-icon left small>{{ mdiInformationOutline }}</v-icon>
+                    View Details
+                  </v-btn>
+                </div>
+              </v-alert>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="info"
+              :loading="reconciling"
+              @click="runReconciliationPreview"
+            >
+              <v-icon left>{{ mdiMagnify }}</v-icon>
+              Preview
+            </v-btn>
+            <v-btn
+              color="primary"
+              :loading="reconciling"
+              :disabled="!reconciliationResult || reconciliationResult.totalUsersAffected === 0"
+              @click="runReconciliation"
+            >
+              <v-icon left>{{ mdiSync }}</v-icon>
+              Execute
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Drift Summary Row -->
+    <v-row v-if="lastResult && lastResult.hasDrift">
+      <v-col cols="12">
         <v-card>
           <v-card-title class="text-h6">
             <v-icon left color="warning">{{ mdiAlert }}</v-icon>
@@ -200,6 +290,68 @@ J<template>
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
       {{ snackbarText }}
     </v-snackbar>
+
+    <!-- Reconciliation Details Dialog -->
+    <v-dialog v-model="showReconciliationDetails" max-width="800px">
+      <v-card>
+        <v-card-title>
+          <v-icon left>{{ mdiCog }}</v-icon>
+          Reconciliation Details
+          <v-spacer></v-spacer>
+          <v-btn icon @click="showReconciliationDetails = false">
+            <v-icon>{{ mdiClose }}</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <div v-if="reconciliationResult && reconciliationResult.totalUsersAffected > 0">
+            <v-alert
+              type="info"
+              class="mb-4"
+              dense
+            >
+              This shows all the specific reward changes that would be made during reconciliation.
+            </v-alert>
+            
+            <v-data-table
+              :headers="reconciliationDetailsHeaders"
+              :items="reconciliationDetailsItems"
+              :items-per-page="10"
+              class="elevation-0"
+            >
+              <template v-slot:item.action="{ item }">
+                <v-chip
+                  small
+                  :color="item.action === 'Add' ? 'success' : 'warning'"
+                  :text-color="item.action === 'Add' ? 'white' : 'black'"
+                >
+                  <v-icon left small>
+                    {{ item.action === 'Add' ? mdiPlus : mdiMinus }}
+                  </v-icon>
+                  {{ item.action }}
+                </v-chip>
+              </template>
+              <template v-slot:item.userId="{ item }">
+                <code class="text-caption">{{ item.userId }}</code>
+              </template>
+              <template v-slot:item.rewardId="{ item }">
+                <code class="text-caption">{{ item.rewardId }}</code>
+              </template>
+            </v-data-table>
+          </div>
+          <div v-else>
+            <v-alert type="success" class="mb-4">
+              No reconciliation actions needed. All product mappings are in sync.
+            </v-alert>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="showReconciliationDetails = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -207,10 +359,12 @@ J<template>
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
-import { DriftDetectionResult } from '@/store/admin/types';
+import { DriftDetectionResult, ReconciliationResult } from '@/store/admin/types';
 import { 
   mdiPatreon, mdiAlert, mdiCheckCircle, mdiRefresh, 
-  mdiAccountMinus, mdiAccountPlus, mdiAccountAlert 
+  mdiAccountMinus, mdiAccountPlus, mdiAccountAlert,
+  mdiCog, mdiMagnify, mdiSync, mdiInformationOutline,
+  mdiClose, mdiPlus, mdiMinus
 } from '@mdi/js';
 
 export default defineComponent({
@@ -219,6 +373,9 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const lastResult = ref<DriftDetectionResult | null>(null);
     const detecting = ref(false);
+    const reconciliationResult = ref<ReconciliationResult | null>(null);
+    const reconciling = ref(false);
+    const showReconciliationDetails = ref(false);
     const snackbar = ref(false);
     const snackbarText = ref('');
     const snackbarColor = ref('success');
@@ -246,6 +403,34 @@ export default defineComponent({
       { text: 'Actual Tiers', value: 'actualTiers', sortable: false },
       { text: 'Issue', value: 'issue', sortable: false },
     ];
+
+    const reconciliationDetailsHeaders = [
+      { text: 'Action', value: 'action', sortable: true },
+      { text: 'User ID', value: 'userId', sortable: true },
+      { text: 'Reward ID', value: 'rewardId', sortable: true },
+      { text: 'Product Mapping', value: 'productMapping', sortable: true },
+    ];
+
+    const reconciliationDetailsItems = computed(() => {
+      if (!reconciliationResult.value?.userReconciliations) return [];
+      
+      const items: any[] = [];
+      
+      reconciliationResult.value.userReconciliations.forEach(userRecon => {
+        userRecon.actions.forEach(action => {
+          items.push({
+            action: action.type,
+            userId: userRecon.userId,
+            rewardId: action.rewardId,
+            productMapping: userRecon.productMappingName,
+            success: action.success,
+            error: action.errorMessage
+          });
+        });
+      });
+      
+      return items;
+    });
 
     const runDriftDetection = async () => {
       detecting.value = true;
@@ -290,6 +475,44 @@ export default defineComponent({
       snackbar.value = true;
     };
 
+    const runReconciliationPreview = async () => {
+      reconciling.value = true;
+      try {
+        const result = await AdminService.reconcileAllProductMappings(token.value, true);
+        reconciliationResult.value = result;
+        
+        if (result.success) {
+          showSnackbar(`Preview complete - ${result.totalUsersAffected} users would be affected`, 'info');
+        } else {
+          showSnackbar('Preview failed', 'error');
+        }
+      } catch (error) {
+        showSnackbar('Failed to run reconciliation preview', 'error');
+        console.error('Error running reconciliation preview:', error);
+      } finally {
+        reconciling.value = false;
+      }
+    };
+
+    const runReconciliation = async () => {
+      reconciling.value = true;
+      try {
+        const result = await AdminService.reconcileAllProductMappings(token.value, false);
+        reconciliationResult.value = result;
+        
+        if (result.success) {
+          showSnackbar(`Reconciliation complete - ${result.totalUsersAffected} users affected`, 'success');
+        } else {
+          showSnackbar('Reconciliation failed', 'error');
+        }
+      } catch (error) {
+        showSnackbar('Failed to run reconciliation', 'error');
+        console.error('Error running reconciliation:', error);
+      } finally {
+        reconciling.value = false;
+      }
+    };
+
     onMounted(() => {
       loadStatus();
     });
@@ -297,13 +520,20 @@ export default defineComponent({
     return {
       lastResult,
       detecting,
+      reconciliationResult,
+      reconciling,
+      showReconciliationDetails,
       snackbar,
       snackbarText,
       snackbarColor,
       missingMembersHeaders,
       extraAssignmentsHeaders,
       mismatchedTiersHeaders,
+      reconciliationDetailsHeaders,
+      reconciliationDetailsItems,
       runDriftDetection,
+      runReconciliationPreview,
+      runReconciliation,
       formatDateTime,
       mdiPatreon,
       mdiAlert,
@@ -312,6 +542,13 @@ export default defineComponent({
       mdiAccountMinus,
       mdiAccountPlus,
       mdiAccountAlert,
+      mdiCog,
+      mdiMagnify,
+      mdiSync,
+      mdiInformationOutline,
+      mdiClose,
+      mdiPlus,
+      mdiMinus,
     };
   },
 });

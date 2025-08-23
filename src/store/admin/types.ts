@@ -280,6 +280,33 @@ export type ProductMappingUsersResponse = {
   users: ProductMappingUser[];
 };
 
+export type ReconciliationResult = {
+  success: boolean;
+  totalUsersAffected: number;
+  rewardsAdded: number;
+  rewardsRevoked: number;
+  errors: string[];
+  wasDryRun: boolean;
+  userReconciliations?: UserReconciliationEntry[];
+};
+
+export type UserReconciliationEntry = {
+  userId: string;
+  productMappingId: string;
+  productMappingName: string;
+  actions: ReconciliationAction[];
+  success: boolean;
+  errorMessage?: string;
+};
+
+export type ReconciliationAction = {
+  rewardId: string;
+  type: 'Added' | 'Removed';
+  success: boolean;
+  assignmentId?: string;
+  errorMessage?: string;
+};
+
 export type CreateRewardRequest = {
   name: string;
   description: string;
