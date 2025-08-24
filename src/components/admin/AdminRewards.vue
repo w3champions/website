@@ -50,6 +50,16 @@
         </v-chip>
       </template>
 
+      <template v-slot:item.translatedName="{ item }">
+        <div>
+          <strong>{{ getRewardName(item.displayId) }}</strong>
+          <div v-if="!hasTranslation(item.displayId)" class="text--secondary text-caption">
+            <v-icon small color="warning">mdi-alert</v-icon>
+            No translation
+          </div>
+        </div>
+      </template>
+
       <template v-slot:item.isActive="{ item }">
         <v-chip :color="item.isActive ? 'success' : 'error'" small>
           {{ item.isActive ? 'Active' : 'Inactive' }}
@@ -122,7 +132,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
 import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from '@/store/admin/types';
@@ -138,6 +148,7 @@ export default defineComponent({
     RewardUsersDialog,
   },
   setup() {
+    const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const rewards = ref<Reward[]>([]);
     const availableModules = ref<ModuleDefinition[]>([]);
@@ -160,8 +171,8 @@ export default defineComponent({
     const token = computed(() => oauthStore.token);
 
     const headers = [
-      { text: 'Name', value: 'name', sortable: true },
-      { text: 'Description', value: 'description', sortable: false },
+      { text: 'Display ID', value: 'displayId', sortable: true },
+      { text: 'Translated Name', value: 'translatedName', sortable: false },
       { text: 'Module', value: 'moduleId', sortable: true },
       { text: 'Duration', value: 'duration', sortable: false },
       { text: 'Status', value: 'isActive', sortable: true },
@@ -236,10 +247,30 @@ export default defineComponent({
       return module?.moduleName || moduleId;
     };
 
+    // Translation helper functions
+    const getRewardName = (displayId: string): string => {
+      const key = `rewards.${displayId}.name`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : displayId;
+    };
+
+    const getRewardDescription = (displayId: string): string => {
+      const key = `rewards.${displayId}.description`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : "";
+    };
+
+    const hasTranslation = (displayId: string): boolean => {
+      const nameKey = `rewards.${displayId}.name`;
+      const descKey = `rewards.${displayId}.description`;
+      const nameTranslated = instance?.proxy?.$t(nameKey) as string;
+      const descTranslated = instance?.proxy?.$t(descKey) as string;
+      return nameTranslated !== nameKey || descTranslated !== descKey;
+    };
+
     const createNewReward = () => {
       editedReward.value = {
-        name: '',
-        description: undefined,
+        displayId: '',
         moduleId: '',
         parameters: {},
         duration: null,
@@ -259,8 +290,7 @@ export default defineComponent({
       try {
         if (isEditMode.value && editedReward.value.id) {
           const updateData: UpdateRewardRequest = {
-            name: rewardData.name,
-            description: rewardData.description,
+            displayId: rewardData.displayId,
             parameters: rewardData.parameters,
             duration: rewardData.duration,
             isActive: rewardData.isActive,
@@ -269,8 +299,7 @@ export default defineComponent({
           showSnackbar('Reward updated successfully');
         } else {
           const createData: CreateRewardRequest = {
-            name: rewardData.name!,
-            description: rewardData.description,
+            displayId: rewardData.displayId!,
             moduleId: rewardData.moduleId!,
             parameters: rewardData.parameters,
             duration: rewardData.duration,
@@ -288,7 +317,7 @@ export default defineComponent({
     };
 
     const deleteReward = async (reward: Reward) => {
-      if (confirm(`Are you sure you want to delete "${reward.name}"?`)) {
+      if (confirm(`Are you sure you want to delete "${getRewardName(reward.displayId)}"?`)) {
         try {
           await AdminService.deleteReward(reward.id, token.value);
           showSnackbar('Reward deleted successfully');
@@ -407,6 +436,9 @@ export default defineComponent({
       getStatusColor,
       getStatusName,
       getModuleName,
+      getRewardName,
+      getRewardDescription,
+      hasTranslation,
       formatDuration,
       formatDate,
       formatTime,

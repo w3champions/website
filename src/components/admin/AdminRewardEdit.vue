@@ -9,11 +9,13 @@
         <v-row>
           <v-col cols="12" md="6">
             <v-text-field
-              v-model="localReward.name"
-              label="Reward Name *"
+              v-model="localReward.displayId"
+              label="Display ID *"
               :rules="[rules.required]"
               counter="100"
               required
+              hint="Translation key for the reward (e.g., 'portrait_grubby', 'patreon_tier1')"
+              persistent-hint
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
@@ -36,14 +38,20 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <!-- Translation Preview -->
+        <v-row v-if="localReward.displayId">
           <v-col cols="12">
-            <v-textarea
-              v-model="localReward.description"
-              label="Description"
-              counter="500"
-              rows="3"
-            ></v-textarea>
+            <v-card outlined class="mb-4">
+              <v-card-title class="text-subtitle-1">Translation Preview</v-card-title>
+              <v-card-text>
+                <div><strong>Name:</strong> {{ getRewardName(localReward.displayId) }}</div>
+                <div><strong>Description:</strong> {{ getRewardDescription(localReward.displayId) }}</div>
+                <div v-if="!hasTranslation(localReward.displayId)" class="text--secondary mt-2">
+                  <v-icon small color="warning">mdi-alert</v-icon>
+                  No translation found for display ID "{{ localReward.displayId }}"
+                </div>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
 
@@ -178,7 +186,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch, onMounted } from 'vue';
+import { computed, defineComponent, PropType, ref, watch, onMounted, getCurrentInstance } from 'vue';
 import { Reward, DurationType, ModuleDefinition, ParameterDefinition } from '@/store/admin/types';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
@@ -197,6 +205,7 @@ export default defineComponent({
   },
   emits: ['save', 'cancel'],
   setup(props, { emit }) {
+    const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const localReward = ref<Partial<Reward>>({});
     const durationType = ref<'permanent' | 'limited'>('permanent');
@@ -231,7 +240,7 @@ export default defineComponent({
     ]);
 
     const isValid = computed(() => {
-      const hasRequiredFields = localReward.value.name &&
+      const hasRequiredFields = localReward.value.displayId &&
                                localReward.value.moduleId;
       
       const hasValidDuration = durationType.value === 'permanent' || 
@@ -291,8 +300,7 @@ export default defineComponent({
 
     const initializeForm = () => {
       localReward.value = {
-        name: props.reward.name || '',
-        description: props.reward.description || undefined,
+        displayId: props.reward.displayId || '',
         moduleId: props.reward.moduleId || '',
         parameters: props.reward.parameters || {},
         isActive: props.reward.isActive ?? true,
@@ -357,6 +365,27 @@ export default defineComponent({
       loadModules();
     });
 
+    // Translation helper functions
+    function getRewardName(displayId: string): string {
+      const key = `rewards.${displayId}.name`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : displayId;
+    }
+
+    function getRewardDescription(displayId: string): string {
+      const key = `rewards.${displayId}.description`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : "";
+    }
+
+    function hasTranslation(displayId: string): boolean {
+      const nameKey = `rewards.${displayId}.name`;
+      const descKey = `rewards.${displayId}.description`;
+      const nameTranslated = instance?.proxy?.$t(nameKey) as string;
+      const descTranslated = instance?.proxy?.$t(descKey) as string;
+      return nameTranslated !== nameKey || descTranslated !== descKey;
+    }
+
     return {
       localReward,
       durationType,
@@ -374,6 +403,9 @@ export default defineComponent({
       getInputType,
       save,
       cancel,
+      getRewardName,
+      getRewardDescription,
+      hasTranslation,
     };
   },
 });

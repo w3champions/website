@@ -83,11 +83,11 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="reward in userRewards.slice().sort((a, b) => a.name.localeCompare(b.name))"
+                    v-for="reward in sortedRewards"
                     :key="reward.id"
                   >
-                    <td><strong>{{ reward.name }}</strong></td>
-                    <td>{{ reward.description }}</td>
+                    <td><strong>{{ getRewardName(reward.displayId) }}</strong></td>
+                    <td>{{ getRewardDescription(reward.displayId) }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -113,7 +113,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import SignInDialog from "@/components/common/SignInDialog.vue";
@@ -125,6 +125,7 @@ export default defineComponent({
     SignInDialog,
   },
   setup() {
+    const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const rewardsStore = useRewardsStore();
 
@@ -194,6 +195,28 @@ export default defineComponent({
       }
     });
 
+    function getRewardName(displayId: string): string {
+      const key = `rewards.${displayId}.name`;
+      const translated = instance?.proxy?.$t(key) as string;
+      // Fallback to displayId if translation not found
+      return translated !== key ? translated : displayId;
+    }
+
+    function getRewardDescription(displayId: string): string {
+      const key = `rewards.${displayId}.description`;
+      const translated = instance?.proxy?.$t(key) as string;
+      // Return empty string if no translation
+      return translated !== key ? translated : "";
+    }
+
+    const sortedRewards = computed(() => {
+      return userRewards.value.slice().sort((a, b) => {
+        const nameA = getRewardName(a.displayId);
+        const nameB = getRewardName(b.displayId);
+        return nameA.localeCompare(nameB);
+      });
+    });
+
     return {
       authCode,
       battleTag,
@@ -208,6 +231,9 @@ export default defineComponent({
       isUnlinkingPatreon,
       linkWithPatreon,
       unlinkPatreon,
+      sortedRewards,
+      getRewardName,
+      getRewardDescription,
     };
   },
 });

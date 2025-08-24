@@ -227,7 +227,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import AdminService from '@/services/admin/AdminService';
 import { ProductMapping, ProductMappingType, ProductProviderPair, Reward, ProductMappingUsersResponse, RewardStatus } from '@/store/admin/types';
@@ -240,6 +240,7 @@ export default defineComponent({
     RewardUsersDialog,
   },
   setup() {
+    const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const productMappings = ref<ProductMapping[]>([]);
     const rewards = ref<Reward[]>([]);
@@ -321,7 +322,7 @@ export default defineComponent({
 
     const rewardOptions = computed(() => 
       rewards.value.map(reward => ({
-        text: `${reward.name} (${reward.id})`,
+        text: `${getRewardTranslatedName(reward.displayId)} (${reward.id})`,
         value: reward.id,
       }))
     );
@@ -355,9 +356,16 @@ export default defineComponent({
       }
     };
 
+    // Translation helper functions
+    function getRewardTranslatedName(displayId: string): string {
+      const key = `rewards.${displayId}.name`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : displayId;
+    }
+
     const getRewardName = (rewardId: string): string => {
       const reward = rewards.value.find(r => r.id === rewardId);
-      return reward ? reward.name : rewardId;
+      return reward ? getRewardTranslatedName(reward.displayId) : rewardId;
     };
 
     const getProviderIcon = (providerId: string): string => {

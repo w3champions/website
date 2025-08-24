@@ -364,6 +364,32 @@ const en = {
     inactive: "Inactive",
   },
 
+  rewards: {
+    // Portrait rewards
+    portrait_supporter_bronze: {
+      name: "Bronze Supporter Portrait",
+      description: "Bronze Supporter Portrait"
+    },
+    
+    
+    // Chat color rewards  
+    chat_color_supporter: {
+      name: "Supporter Chat Color",
+      description: "Custom chat color to show your support for W3Champions"
+    },
+    chat_color_grand_supporter: {
+      name: "Grand Supporter Chat Color",
+      description: "Custom chat color to show your support for W3Champions"
+    },
+    
+
+    // Chat icon rewards
+    chat_icon_support_bronze_tier: {
+      name: "Bronze Supporter Icon",
+      description: "Custom chat icon for Bronze Tier Supporters"
+    }
+  },
+
   views_patreon_callback: {
     title: "Patreon Account Linking",
     processing: "Processing your Patreon account linking...",

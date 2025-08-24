@@ -484,7 +484,7 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
 import { useOauthStore } from '@/store/oauth/store';
 import { usePlayerSearchStore } from '@/store/playerSearch/store';
 import AdminService from '@/services/admin/AdminService';
@@ -507,6 +507,7 @@ export default defineComponent({
     PlayerSearch,
   },
   setup() {
+    const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const playerSearchStore = usePlayerSearchStore();
     const assignments = ref<RewardAssignment[]>([]);
@@ -630,9 +631,16 @@ export default defineComponent({
       playerSearchStore.clearPlayerSearch();
     };
 
+    // Translation helper function
+    function getRewardTranslatedName(displayId: string): string {
+      const key = `rewards.${displayId}.name`;
+      const translated = instance?.proxy?.$t(key) as string;
+      return translated !== key ? translated : displayId;
+    }
+
     const getRewardName = (rewardId: string): string => {
       const reward = rewards.value.find(r => r.id === rewardId);
-      return reward?.name || 'Unknown Reward';
+      return reward ? getRewardTranslatedName(reward.displayId) : 'Unknown Reward';
     };
 
     const getStatusName = (status: RewardStatus): string => {
