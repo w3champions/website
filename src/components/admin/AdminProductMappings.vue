@@ -227,15 +227,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
-import { useOauthStore } from '@/store/oauth/store';
-import AdminService from '@/services/admin/AdminService';
-import { ProductMapping, ProductMappingType, ProductProviderPair, Reward, ProductMappingUsersResponse, RewardStatus } from '@/store/admin/types';
-import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup, mdiClose, mdiAlert } from '@mdi/js';
-import RewardUsersDialog from './RewardUsersDialog.vue';
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
+import { useOauthStore } from "@/store/oauth/store";
+import AdminService from "@/services/admin/AdminService";
+import { ProductMapping, ProductMappingType, ProductProviderPair, Reward, ProductMappingUsersResponse, RewardStatus } from "@/store/admin/types";
+import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup, mdiClose, mdiAlert } from "@mdi/js";
+import RewardUsersDialog from "./RewardUsersDialog.vue";
 
 export default defineComponent({
-  name: 'AdminProductMappings',
+  name: "AdminProductMappings",
   components: {
     RewardUsersDialog,
   },
@@ -248,11 +248,11 @@ export default defineComponent({
     const mappingDialog = ref(false);
     const newMapping = ref<Partial<ProductMapping>>({});
     const isEditMode = ref(false);
-    const editingMappingId = ref('');
+    const editingMappingId = ref("");
     const snackbar = ref(false);
-    const snackbarText = ref('');
-    const snackbarColor = ref('success');
-    
+    const snackbarText = ref("");
+    const snackbarColor = ref("success");
+
     // Users dialog state
     const usersDialog = ref(false);
     const loadingUsers = ref(false);
@@ -264,13 +264,13 @@ export default defineComponent({
 
     const mappingUsersForDialog = computed(() => {
       if (!mappingUsers.value?.users) return [];
-      
-      return mappingUsers.value.users.map(user => ({
+
+      return mappingUsers.value.users.map((user) => ({
         id: `${user.userId}-${user.providerId}-${user.providerProductId}`,
         userId: user.userId,
-        rewardId: '', // Not applicable for product mappings
-        status: user.isActive ? RewardStatus.Active : 
-                user.status === 'Expired' ? RewardStatus.Expired : RewardStatus.Revoked,
+        rewardId: "", // Not applicable for product mappings
+        status: user.isActive ? RewardStatus.Active :
+                user.status === "Expired" ? RewardStatus.Expired : RewardStatus.Revoked,
         providerId: user.providerId,
         assignedAt: user.assignedAt,
         expiresAt: user.expiresAt,
@@ -282,46 +282,46 @@ export default defineComponent({
     });
 
     const mappingHeaders = [
-      { text: 'Product Name', value: 'productName', sortable: true },
-      { text: 'Providers', value: 'productProviders', sortable: false },
-      { text: 'Rewards', value: 'rewardIds', sortable: false },
-      { text: 'Type', value: 'type', sortable: true },
-      { text: 'Actions', value: 'actions', sortable: false, width: '120px' },
+      { text: "Product Name", value: "productName", sortable: true },
+      { text: "Providers", value: "productProviders", sortable: false },
+      { text: "Rewards", value: "rewardIds", sortable: false },
+      { text: "Type", value: "type", sortable: true },
+      { text: "Actions", value: "actions", sortable: false, width: "120px" },
     ];
 
     const usersHeaders = [
-      { text: 'User', value: 'userId', sortable: true },
-      { text: 'Provider', value: 'provider', sortable: false },
-      { text: 'Product ID', value: 'providerProductId', sortable: true },
-      { text: 'Status', value: 'status', sortable: true },
-      { text: 'Assigned', value: 'assignedAt', sortable: true },
-      { text: 'Expires', value: 'expiresAt', sortable: true },
+      { text: "User", value: "userId", sortable: true },
+      { text: "Provider", value: "provider", sortable: false },
+      { text: "Product ID", value: "providerProductId", sortable: true },
+      { text: "Status", value: "status", sortable: true },
+      { text: "Assigned", value: "assignedAt", sortable: true },
+      { text: "Expires", value: "expiresAt", sortable: true },
     ];
 
     const rules = {
       required: (value: any) => {
         if (Array.isArray(value)) {
-          return value.length > 0 || 'At least one item is required';
+          return value.length > 0 || "At least one item is required";
         }
-        return !!value || 'This field is required';
+        return !!value || "This field is required";
       },
     };
 
     const mappingTypeOptions = computed(() => [
-      { text: 'One Time', value: ProductMappingType.OneTime },
-      { text: 'Recurring', value: ProductMappingType.Recurring },
-      { text: 'Tiered', value: ProductMappingType.Tiered },
+      { text: "One Time", value: ProductMappingType.OneTime },
+      { text: "Recurring", value: ProductMappingType.Recurring },
+      { text: "Tiered", value: ProductMappingType.Tiered },
     ]);
 
-    const providerOptions = computed(() => 
-      providers.value.map(provider => ({
+    const providerOptions = computed(() =>
+      providers.value.map((provider) => ({
         text: provider.providerName,
         value: provider.providerId,
       }))
     );
 
-    const rewardOptions = computed(() => 
-      rewards.value.map(reward => ({
+    const rewardOptions = computed(() =>
+      rewards.value.map((reward) => ({
         text: `${getRewardTranslatedName(reward.displayId)} (${reward.id})`,
         value: reward.id,
       }))
@@ -332,7 +332,7 @@ export default defineComponent({
         newMapping.value.productName &&
         newMapping.value.productProviders &&
         newMapping.value.productProviders.length > 0 &&
-        newMapping.value.productProviders.every(pp => pp.providerId && pp.productId) &&
+        newMapping.value.productProviders.every((pp) => pp.providerId && pp.productId) &&
         newMapping.value.rewardIds &&
         newMapping.value.rewardIds.length > 0 &&
         newMapping.value.type !== undefined
@@ -351,8 +351,8 @@ export default defineComponent({
         rewards.value = rewardsResponse;
         providers.value = providersResponse;
       } catch (error) {
-        console.error('Error loading data:', error);
-        showSnackbar('Error loading data', 'error');
+        console.error("Error loading data:", error);
+        showSnackbar("Error loading data", "error");
       }
     };
 
@@ -364,48 +364,48 @@ export default defineComponent({
     }
 
     const getRewardName = (rewardId: string): string => {
-      const reward = rewards.value.find(r => r.id === rewardId);
+      const reward = rewards.value.find((r) => r.id === rewardId);
       return reward ? getRewardTranslatedName(reward.displayId) : rewardId;
     };
 
     const getProviderIcon = (providerId: string): string => {
       switch (providerId.toLowerCase()) {
-        case 'patreon': return mdiPatreon;
-        case 'kofi': return mdiHandHeart;
+        case "patreon": return mdiPatreon;
+        case "kofi": return mdiHandHeart;
         default: return mdiCog;
       }
     };
 
     const getProviderColor = (providerId: string): string => {
       switch (providerId.toLowerCase()) {
-        case 'patreon': return 'orange';
-        case 'kofi': return 'blue';
-        default: return 'grey';
+        case "patreon": return "orange";
+        case "kofi": return "blue";
+        default: return "grey";
       }
     };
 
     const getMappingTypeName = (type: ProductMappingType): string => {
       switch (type) {
-        case ProductMappingType.OneTime: return 'One Time';
-        case ProductMappingType.Recurring: return 'Recurring';
-        case ProductMappingType.Tiered: return 'Tiered';
-        default: return 'Unknown';
+        case ProductMappingType.OneTime: return "One Time";
+        case ProductMappingType.Recurring: return "Recurring";
+        case ProductMappingType.Tiered: return "Tiered";
+        default: return "Unknown";
       }
     };
 
     const getMappingTypeColor = (type: ProductMappingType): string => {
       switch (type) {
-        case ProductMappingType.OneTime: return 'success';
-        case ProductMappingType.Recurring: return 'primary';
-        case ProductMappingType.Tiered: return 'warning';
-        default: return 'grey';
+        case ProductMappingType.OneTime: return "success";
+        case ProductMappingType.Recurring: return "primary";
+        case ProductMappingType.Tiered: return "warning";
+        default: return "grey";
       }
     };
 
     const createMapping = () => {
       newMapping.value = {
-        productName: '',
-        productProviders: [{ providerId: '', productId: '' }],
+        productName: "",
+        productProviders: [{ providerId: "", productId: "" }],
         rewardIds: [],
         type: ProductMappingType.OneTime,
         additionalParameters: {},
@@ -429,7 +429,7 @@ export default defineComponent({
       if (!newMapping.value.productProviders) {
         newMapping.value.productProviders = [];
       }
-      newMapping.value.productProviders.push({ providerId: '', productId: '' });
+      newMapping.value.productProviders.push({ providerId: "", productId: "" });
     };
 
     const removeProductProvider = (index: number) => {
@@ -442,29 +442,29 @@ export default defineComponent({
       try {
         if (isEditMode.value) {
           await AdminService.updateProductMapping(token.value, editingMappingId.value, newMapping.value as ProductMapping);
-          showSnackbar('Product mapping updated successfully', 'success');
+          showSnackbar("Product mapping updated successfully", "success");
         } else {
           await AdminService.createProductMapping(token.value, newMapping.value as ProductMapping);
-          showSnackbar('Product mapping created successfully', 'success');
+          showSnackbar("Product mapping created successfully", "success");
         }
-        
+
         closeMappingDialog();
         await loadData();
       } catch (error) {
-        console.error('Error saving mapping:', error);
-        showSnackbar('Error saving product mapping', 'error');
+        console.error("Error saving mapping:", error);
+        showSnackbar("Error saving product mapping", "error");
       }
     };
 
     const deleteMapping = async (mappingId: string) => {
-      if (confirm('Are you sure you want to delete this product mapping?')) {
+      if (confirm("Are you sure you want to delete this product mapping?")) {
         try {
           await AdminService.deleteProductMapping(token.value, mappingId);
-          showSnackbar('Product mapping deleted successfully', 'success');
+          showSnackbar("Product mapping deleted successfully", "success");
           await loadData();
         } catch (error) {
-          console.error('Error deleting mapping:', error);
-          showSnackbar('Error deleting product mapping', 'error');
+          console.error("Error deleting mapping:", error);
+          showSnackbar("Error deleting product mapping", "error");
         }
       }
     };
@@ -472,7 +472,7 @@ export default defineComponent({
     const closeMappingDialog = () => {
       mappingDialog.value = false;
       newMapping.value = {};
-      editingMappingId.value = '';
+      editingMappingId.value = "";
       isEditMode.value = false;
     };
 
@@ -490,15 +490,15 @@ export default defineComponent({
 
     const loadMappingUsers = async () => {
       if (!selectedMapping.value) return;
-      
+
       loadingUsers.value = true;
       usersError.value = null;
-      
+
       try {
         mappingUsers.value = await AdminService.getProductMappingUsers(token.value, selectedMapping.value.id);
       } catch (error) {
-        console.error('Error loading mapping users:', error);
-        usersError.value = 'Failed to load users for this product mapping';
+        console.error("Error loading mapping users:", error);
+        usersError.value = "Failed to load users for this product mapping";
         mappingUsers.value = null;
       } finally {
         loadingUsers.value = false;
@@ -522,14 +522,14 @@ export default defineComponent({
       snackbar,
       snackbarText,
       snackbarColor,
-      
+
       // Users dialog data
       usersDialog,
       loadingUsers,
       usersError,
       mappingUsers,
       selectedMapping,
-      
+
       // Computed
       mappingHeaders,
       mappingUsersForDialog,
@@ -538,7 +538,7 @@ export default defineComponent({
       providerOptions,
       rewardOptions,
       isMappingValid,
-      
+
       // Methods
       getRewardName,
       getProviderIcon,
@@ -554,7 +554,7 @@ export default defineComponent({
       closeMappingDialog,
       viewUsers,
       loadMappingUsers,
-      
+
       // Icons
       mdiDelete,
       mdiPencil,

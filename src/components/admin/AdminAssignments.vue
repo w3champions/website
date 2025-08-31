@@ -147,7 +147,7 @@
         <v-skeleton-loader type="table"></v-skeleton-loader>
         <div class="mt-4 text-subtitle1">Loading assignments...</div>
       </v-card-text>
-      
+
       <v-data-table
         v-else
         :headers="headers"
@@ -207,7 +207,7 @@
               {{ formatDate(item.expiresAt) }}
             </div>
             <div class="text-caption text--secondary">{{ formatTime(item.expiresAt) }}</div>
-            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)" 
+            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)"
                     x-small color="orange" class="mt-1">
               Expires Soon
             </v-chip>
@@ -238,7 +238,7 @@
             </v-btn>
           </div>
         </template>
-        
+
         <template v-slot:no-data>
           <div class="text-center py-8">
             <v-icon size="64" color="grey lighten-2" class="mb-4">{{ mdiDatabaseSearch }}</v-icon>
@@ -263,7 +263,7 @@
         ></v-pagination>
         <div class="d-flex justify-center align-center mt-3">
           <div class="text-body-2 text--secondary mr-4">
-            Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, paginationData.totalCount) }} 
+            Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, paginationData.totalCount) }}
             of {{ paginationData.totalCount.toLocaleString() }} assignments
           </div>
           <v-select
@@ -290,7 +290,7 @@
             <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
         </v-card-title>
-        
+
         <v-card-text class="pt-4">
           <!-- User & Reward Info -->
           <v-row class="mb-4">
@@ -318,7 +318,7 @@
               </v-card>
             </v-col>
           </v-row>
-          
+
           <!-- Status & Provider -->
           <v-row class="mb-4">
             <v-col cols="6">
@@ -340,7 +340,7 @@
               </v-card>
             </v-col>
           </v-row>
-          
+
           <!-- Timeline Information -->
           <v-card outlined class="mb-4">
             <v-card-subtitle class="pb-0">
@@ -358,10 +358,10 @@
                     <div class="text-caption">{{ formatDateTime(selectedAssignment.assignedAt) }}</div>
                   </div>
                 </v-timeline-item>
-                
-                <v-timeline-item 
-                  v-if="selectedAssignment.expiresAt" 
-                  :color="isExpired(selectedAssignment.expiresAt) ? 'warning' : 'info'" 
+
+                <v-timeline-item
+                  v-if="selectedAssignment.expiresAt"
+                  :color="isExpired(selectedAssignment.expiresAt) ? 'warning' : 'info'"
                   small
                 >
                   <template v-slot:icon>
@@ -374,7 +374,7 @@
                     <div class="text-caption">{{ formatDateTime(selectedAssignment.expiresAt) }}</div>
                   </div>
                 </v-timeline-item>
-                
+
                 <v-timeline-item v-if="selectedAssignment.revokedAt" color="error" small>
                   <template v-slot:icon>
                     <v-icon small>{{ mdiCancel }}</v-icon>
@@ -390,7 +390,7 @@
               </v-timeline>
             </v-card-text>
           </v-card>
-          
+
           <!-- Technical Details -->
           <v-expansion-panels v-model="detailsExpansionPanel">
             <v-expansion-panel>
@@ -427,10 +427,10 @@
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
-        
+
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn 
+          <v-btn
             v-if="selectedAssignment.status === 0"
             color="error"
             outlined
@@ -484,25 +484,25 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
-import { useOauthStore } from '@/store/oauth/store';
-import { usePlayerSearchStore } from '@/store/playerSearch/store';
-import AdminService from '@/services/admin/AdminService';
-import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from '@/store/admin/types';
-import PlayerSearch from '@/components/common/PlayerSearch.vue';
-import { 
-  mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel, 
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
+import { useOauthStore } from "@/store/oauth/store";
+import { usePlayerSearchStore } from "@/store/playerSearch/store";
+import AdminService from "@/services/admin/AdminService";
+import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from "@/store/admin/types";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
+import {
+  mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel,
   mdiPatreon, mdiHandHeart, mdiCog, mdiRefresh,
   mdiAccountMultiple, mdiAccount, mdiGift, mdiCheckCircle,
   mdiClockOutline, mdiFilterRemove, mdiDatabaseSearch,
   mdiClipboardText, mdiClose, mdiTimeline, mdiPlus,
   mdiClock, mdiClockAlert, mdiAlert, mdiAlertCircle,
   mdiInformation
-} from '@mdi/js';
+} from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
-  name: 'AdminAssignments',
+  name: "AdminAssignments",
   components: {
     PlayerSearch,
   },
@@ -512,7 +512,7 @@ export default defineComponent({
     const playerSearchStore = usePlayerSearchStore();
     const assignments = ref<RewardAssignment[]>([]);
     const rewards = ref<Reward[]>([]);
-    const selectedPlayer = ref<string>('');
+    const selectedPlayer = ref<string>("");
     const statusFilter = ref<RewardStatus | null>(null);
     const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
     const providerFilter = ref<string | null>(null);
@@ -520,8 +520,8 @@ export default defineComponent({
     const detailsDialog = ref(false);
     const selectedAssignment = ref<RewardAssignment | null>(null);
     const snackbar = ref(false);
-    const snackbarText = ref('');
-    const snackbarColor = ref('success');
+    const snackbarText = ref("");
+    const snackbarColor = ref("success");
     const quickFilter = ref(null);
     const detailsExpansionPanel = ref(null);
 
@@ -534,25 +534,25 @@ export default defineComponent({
     const token = computed(() => oauthStore.token);
 
     const headers = [
-      { text: 'User', value: 'userId', sortable: true, width: '200px' },
-      { text: 'Reward', value: 'rewardId', sortable: false, width: '250px' },
-      { text: 'Provider', value: 'providerId', sortable: true, width: '120px' },
-      { text: 'Status', value: 'status', sortable: true, width: '120px' },
-      { text: 'Assigned', value: 'assignedAt', sortable: true, width: '150px' },
-      { text: 'Expires', value: 'expiresAt', sortable: true, width: '150px' },
-      { text: 'Actions', value: 'actions', sortable: false, width: '100px' },
+      { text: "User", value: "userId", sortable: true, width: "200px" },
+      { text: "Reward", value: "rewardId", sortable: false, width: "250px" },
+      { text: "Provider", value: "providerId", sortable: true, width: "120px" },
+      { text: "Status", value: "status", sortable: true, width: "120px" },
+      { text: "Assigned", value: "assignedAt", sortable: true, width: "150px" },
+      { text: "Expires", value: "expiresAt", sortable: true, width: "150px" },
+      { text: "Actions", value: "actions", sortable: false, width: "100px" },
     ];
 
 
     const statusFilterOptions = computed(() => [
-      { text: 'Active', value: RewardStatus.Active },
-      { text: 'Expired', value: RewardStatus.Expired },
-      { text: 'Revoked', value: RewardStatus.Revoked },
+      { text: "Active", value: RewardStatus.Active },
+      { text: "Expired", value: RewardStatus.Expired },
+      { text: "Revoked", value: RewardStatus.Revoked },
     ]);
 
     const providerFilterOptions = computed(() => [
-      { text: 'Patreon', value: 'patreon' },
-      { text: 'Ko-Fi', value: 'kofi' },
+      { text: "Patreon", value: "patreon" },
+      { text: "Ko-Fi", value: "kofi" },
     ]);
 
 
@@ -560,47 +560,47 @@ export default defineComponent({
       try {
         rewards.value = await AdminService.getRewards(token.value);
       } catch (error) {
-        console.error('Error loading rewards:', error);
+        console.error("Error loading rewards:", error);
       }
     };
 
     const searchAssignments = async () => {
       if (!selectedPlayer.value.trim()) {
-        showSnackbar('Please select a player to search', 'warning');
+        showSnackbar("Please select a player to search", "warning");
         return;
       }
 
       loading.value = true;
       try {
         const result = await AdminService.getUserAssignments(selectedPlayer.value.trim(), token.value);
-        
+
         // Apply filters
         let filteredResults = result;
         if (statusFilter.value !== null) {
-          filteredResults = filteredResults.filter(a => a.status === statusFilter.value);
+          filteredResults = filteredResults.filter((a) => a.status === statusFilter.value);
         }
         if (providerFilter.value) {
-          filteredResults = filteredResults.filter(a => a.providerId === providerFilter.value);
+          filteredResults = filteredResults.filter((a) => a.providerId === providerFilter.value);
         }
-        
+
         assignments.value = filteredResults;
         paginationData.value = null; // Clear pagination for user-specific search
-        
+
         if (result.length === 0) {
-          showSnackbar('No assignments found for this user', 'info');
+          showSnackbar("No assignments found for this user", "info");
         } else {
           showSnackbar(`Found ${filteredResults.length} assignments`);
         }
       } catch (error) {
-        showSnackbar('Failed to search assignments', 'error');
-        console.error('Error searching assignments:', error);
+        showSnackbar("Failed to search assignments", "error");
+        console.error("Error searching assignments:", error);
       } finally {
         loading.value = false;
       }
     };
 
     const clearSearch = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       statusFilter.value = null;
       providerFilter.value = null;
       quickFilter.value = null;
@@ -609,7 +609,7 @@ export default defineComponent({
       currentPage.value = 1;
       // Clear the player search component
       playerSearchStore.clearPlayerSearch();
-      showSnackbar('All filters cleared', 'info');
+      showSnackbar("All filters cleared", "info");
     };
 
     const onPlayerFound = (battleTag: string) => {
@@ -619,13 +619,13 @@ export default defineComponent({
     };
 
     const onPlayerSearchCleared = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       assignments.value = [];
       paginationData.value = null;
     };
 
     const clearPlayerSelection = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       assignments.value = [];
       paginationData.value = null;
       playerSearchStore.clearPlayerSearch();
@@ -639,21 +639,21 @@ export default defineComponent({
     }
 
     const getRewardName = (rewardId: string): string => {
-      const reward = rewards.value.find(r => r.id === rewardId);
-      return reward ? getRewardTranslatedName(reward.displayId) : 'Unknown Reward';
+      const reward = rewards.value.find((r) => r.id === rewardId);
+      return reward ? getRewardTranslatedName(reward.displayId) : "Unknown Reward";
     };
 
     const getStatusName = (status: RewardStatus): string => {
-      return RewardStatus[status] || 'Unknown';
+      return RewardStatus[status] || "Unknown";
     };
 
     const getStatusColor = (status: RewardStatus): string => {
       const colors: Record<RewardStatus, string> = {
-        [RewardStatus.Active]: 'success',
-        [RewardStatus.Expired]: 'warning',
-        [RewardStatus.Revoked]: 'error',
+        [RewardStatus.Active]: "success",
+        [RewardStatus.Expired]: "warning",
+        [RewardStatus.Revoked]: "error",
       };
-      return colors[status] || 'grey';
+      return colors[status] || "grey";
     };
 
     const getProviderIcon = (providerId: string): string => {
@@ -688,9 +688,9 @@ export default defineComponent({
     };
 
     const getExpirationClass = (expiresAt: string): string => {
-      if (isExpired(expiresAt)) return 'error--text';
-      if (isExpiringSoon(expiresAt)) return 'warning--text';
-      return 'text--primary';
+      if (isExpired(expiresAt)) return "error--text";
+      if (isExpiringSoon(expiresAt)) return "warning--text";
+      return "text--primary";
     };
 
     const getStatusIcon = (status: RewardStatus): string => {
@@ -704,16 +704,16 @@ export default defineComponent({
 
     const getProviderColor = (providerId: string): string => {
       const colors: Record<string, string> = {
-        patreon: 'orange',
-        kofi: 'blue',
+        patreon: "orange",
+        kofi: "blue",
       };
-      return colors[providerId.toLowerCase()] || 'primary';
+      return colors[providerId.toLowerCase()] || "primary";
     };
 
     const formatProviderName = (providerId: string): string => {
       const names: Record<string, string> = {
-        patreon: 'Patreon',
-        kofi: 'Ko-Fi',
+        patreon: "Patreon",
+        kofi: "Ko-Fi",
       };
       return names[providerId.toLowerCase()] || providerId;
     };
@@ -725,43 +725,43 @@ export default defineComponent({
 
     const getActiveCount = (): number => {
       const allAssignments = paginationData.value ? [] : assignments.value;
-      return allAssignments.filter(a => a.status === RewardStatus.Active).length;
+      return allAssignments.filter((a) => a.status === RewardStatus.Active).length;
     };
 
     const getExpiredCount = (): number => {
       const allAssignments = paginationData.value ? [] : assignments.value;
-      return allAssignments.filter(a => a.status === RewardStatus.Expired).length;
+      return allAssignments.filter((a) => a.status === RewardStatus.Expired).length;
     };
 
     const getRevokedCount = (): number => {
       const allAssignments = paginationData.value ? [] : assignments.value;
-      return allAssignments.filter(a => a.status === RewardStatus.Revoked).length;
+      return allAssignments.filter((a) => a.status === RewardStatus.Revoked).length;
     };
 
     const applyQuickFilter = (filterType: string) => {
       switch (filterType) {
-        case 'active':
+        case "active":
           statusFilter.value = RewardStatus.Active;
           providerFilter.value = null;
           break;
-        case 'expired':
+        case "expired":
           statusFilter.value = RewardStatus.Expired;
           providerFilter.value = null;
           break;
-        case 'revoked':
+        case "revoked":
           statusFilter.value = RewardStatus.Revoked;
           providerFilter.value = null;
           break;
-        case 'patreon':
-          providerFilter.value = 'patreon';
+        case "patreon":
+          providerFilter.value = "patreon";
           statusFilter.value = null;
           break;
-        case 'kofi':
-          providerFilter.value = 'kofi';
+        case "kofi":
+          providerFilter.value = "kofi";
           statusFilter.value = null;
           break;
       }
-      
+
       if (selectedPlayer.value.trim()) {
         searchAssignments();
       } else {
@@ -776,24 +776,24 @@ export default defineComponent({
 
     const revokeAssignment = async (assignment: RewardAssignment) => {
       if (assignment.status !== RewardStatus.Active) {
-        showSnackbar('Can only revoke active assignments', 'warning');
+        showSnackbar("Can only revoke active assignments", "warning");
         return;
       }
 
-      const reason = prompt('Please enter a reason for revoking this assignment:');
+      const reason = prompt("Please enter a reason for revoking this assignment:");
       if (!reason) return;
 
       try {
         // Note: This would need a backend endpoint to revoke assignments
         // For now, show that it's not implemented
-        showSnackbar('Assignment revocation not implemented yet', 'warning');
+        showSnackbar("Assignment revocation not implemented yet", "warning");
       } catch (error) {
-        showSnackbar('Failed to revoke assignment', 'error');
-        console.error('Error revoking assignment:', error);
+        showSnackbar("Failed to revoke assignment", "error");
+        console.error("Error revoking assignment:", error);
       }
     };
 
-    const showSnackbar = (message: string, color = 'success') => {
+    const showSnackbar = (message: string, color = "success") => {
       snackbarText.value = message;
       snackbarColor.value = color;
       snackbar.value = true;
@@ -808,25 +808,25 @@ export default defineComponent({
       loading.value = true;
       try {
         const assignmentsData = await AdminService.getAllAssignments(token.value, currentPage.value, pageSize.value);
-        
+
         // Apply filters to the loaded data
         let filteredResults = assignmentsData.assignments;
         if (statusFilter.value !== null) {
-          filteredResults = filteredResults.filter(a => a.status === statusFilter.value);
+          filteredResults = filteredResults.filter((a) => a.status === statusFilter.value);
         }
         if (providerFilter.value) {
-          filteredResults = filteredResults.filter(a => a.providerId === providerFilter.value);
+          filteredResults = filteredResults.filter((a) => a.providerId === providerFilter.value);
         }
-        
+
         assignments.value = filteredResults;
         paginationData.value = assignmentsData;
-        
+
         showSnackbar(
           `Loaded ${filteredResults.length} assignments (page ${assignmentsData.page} of ${assignmentsData.totalPages})`
         );
       } catch (error) {
-        showSnackbar('Failed to load assignments', 'error');
-        console.error('Error loading assignments:', error);
+        showSnackbar("Failed to load assignments", "error");
+        console.error("Error loading assignments:", error);
       } finally {
         loading.value = false;
       }
@@ -879,12 +879,12 @@ export default defineComponent({
       headers,
       statusFilterOptions,
       providerFilterOptions,
-      
+
       // Pagination for 'By User' tab
       paginationData,
       currentPage,
       pageSize,
-      
+
       // Methods
       searchAssignments,
       clearSearch,
@@ -914,7 +914,7 @@ export default defineComponent({
       applyQuickFilter,
       viewDetails,
       revokeAssignment,
-      
+
       // Icons
       mdiMagnify,
       mdiDotsVertical,

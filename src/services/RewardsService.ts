@@ -36,7 +36,7 @@ export default class RewardsService {
    * Get Patreon link status for the current user
    */
   public static async getPatreonLinkStatus(token: string): Promise<PatreonLinkStatus> {
-    const url = `${API_URL}api/rewards/patreon/status`;
+    const url = `${API_URL}api/rewards/providers/patreon/status`;
     const response = await authorizedFetch("GET", url, token);
 
     if (!response.ok) {
@@ -50,7 +50,7 @@ export default class RewardsService {
    * Initiate Patreon OAuth flow
    */
   public static async initiatePatreonOAuth(token: string): Promise<PatreonOAuthResponse> {
-    const url = `${API_URL}api/rewards/patreon/oauth/initiate`;
+    const url = `${API_URL}api/rewards/providers/patreon/oauth/initiate`;
     const response = await authorizedFetch("POST", url, token);
 
     if (!response.ok) {
@@ -64,7 +64,7 @@ export default class RewardsService {
    * Complete Patreon OAuth flow with authorization code
    */
   public static async completePatreonOAuth(code: string, state: string, token: string): Promise<PatreonLinkStatus> {
-    const url = `${API_URL}api/rewards/patreon/oauth/callback`;
+    const url = `${API_URL}api/rewards/providers/patreon/oauth/callback`;
     const payload = {
       code,
       state,
@@ -85,7 +85,7 @@ export default class RewardsService {
    * Unlink Patreon account
    */
   public static async unlinkPatreonAccount(token: string): Promise<void> {
-    const url = `${API_URL}api/rewards/patreon/unlink`;
+    const url = `${API_URL}api/rewards/providers/patreon/unlink`;
     const response = await authorizedFetch("DELETE", url, token);
 
     if (!response.ok) {

@@ -3,7 +3,7 @@
     <v-card-title>
       Rewards Management
     </v-card-title>
-    
+
     <v-data-table
       :headers="headers"
       :items="rewards"
@@ -132,17 +132,17 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, getCurrentInstance } from 'vue';
-import { useOauthStore } from '@/store/oauth/store';
-import AdminService from '@/services/admin/AdminService';
-import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from '@/store/admin/types';
-import AdminRewardEdit from './AdminRewardEdit.vue';
-import RewardUsersDialog from './RewardUsersDialog.vue';
-import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
+import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
+import { useOauthStore } from "@/store/oauth/store";
+import AdminService from "@/services/admin/AdminService";
+import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from "@/store/admin/types";
+import AdminRewardEdit from "./AdminRewardEdit.vue";
+import RewardUsersDialog from "./RewardUsersDialog.vue";
+import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
-  name: 'AdminRewards',
+  name: "AdminRewards",
   components: {
     AdminRewardEdit,
     RewardUsersDialog,
@@ -153,13 +153,13 @@ export default defineComponent({
     const rewards = ref<Reward[]>([]);
     const availableModules = ref<ModuleDefinition[]>([]);
     const allAssignments = ref<RewardAssignment[]>([]);
-    const tableSearch = ref('');
+    const tableSearch = ref("");
     const dialog = ref(false);
     const isEditMode = ref(false);
     const editedReward = ref<Partial<Reward>>({});
     const snackbar = ref(false);
-    const snackbarText = ref('');
-    const snackbarColor = ref('success');
+    const snackbarText = ref("");
+    const snackbarColor = ref("success");
 
     // Users dialog state
     const usersDialog = ref(false);
@@ -171,30 +171,30 @@ export default defineComponent({
     const token = computed(() => oauthStore.token);
 
     const headers = [
-      { text: 'Display ID', value: 'displayId', sortable: true },
-      { text: 'Translated Name', value: 'translatedName', sortable: false },
-      { text: 'Module', value: 'moduleId', sortable: true },
-      { text: 'Duration', value: 'duration', sortable: false },
-      { text: 'Status', value: 'isActive', sortable: true },
-      { text: 'Users', value: 'assignmentStats', sortable: false, width: '120px' },
-      { text: 'Created', value: 'createdAt', sortable: true },
-      { text: 'Actions', value: 'actions', sortable: false, width: '140px' },
+      { text: "Display ID", value: "displayId", sortable: true },
+      { text: "Translated Name", value: "translatedName", sortable: false },
+      { text: "Module", value: "moduleId", sortable: true },
+      { text: "Duration", value: "duration", sortable: false },
+      { text: "Status", value: "isActive", sortable: true },
+      { text: "Users", value: "assignmentStats", sortable: false, width: "120px" },
+      { text: "Created", value: "createdAt", sortable: true },
+      { text: "Actions", value: "actions", sortable: false, width: "140px" },
     ];
 
     const usersHeaders = [
-      { text: 'User', value: 'userId', sortable: true },
-      { text: 'Status', value: 'status', sortable: true },
-      { text: 'Provider', value: 'providerId', sortable: true },
-      { text: 'Assigned', value: 'assignedAt', sortable: true },
-      { text: 'Expires', value: 'expiresAt', sortable: true },
+      { text: "User", value: "userId", sortable: true },
+      { text: "Status", value: "status", sortable: true },
+      { text: "Provider", value: "providerId", sortable: true },
+      { text: "Assigned", value: "assignedAt", sortable: true },
+      { text: "Expires", value: "expiresAt", sortable: true },
     ];
 
     const activeUsersCount = computed(() => {
-      return rewardUsers.value.filter(user => user.status === RewardStatus.Active).length;
+      return rewardUsers.value.filter((user) => user.status === RewardStatus.Active).length;
     });
 
     const expiredUsersCount = computed(() => {
-      return rewardUsers.value.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
+      return rewardUsers.value.filter((user) => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
     });
 
     const loadAllAssignments = async () => {
@@ -202,16 +202,16 @@ export default defineComponent({
         const assignmentsData = await AdminService.getAllAssignments(token.value, 1, 10000);
         allAssignments.value = assignmentsData.assignments;
       } catch (error) {
-        console.error('Error loading all assignments:', error);
+        console.error("Error loading all assignments:", error);
       }
     };
 
     const calculateAssignmentStats = (rewardId: string) => {
-      const rewardAssignments = allAssignments.value.filter(a => a.rewardId === rewardId);
+      const rewardAssignments = allAssignments.value.filter((a) => a.rewardId === rewardId);
       return {
-        activeCount: rewardAssignments.filter(a => a.status === RewardStatus.Active).length,
-        expiredCount: rewardAssignments.filter(a => a.status === RewardStatus.Expired).length,
-        revokedCount: rewardAssignments.filter(a => a.status === RewardStatus.Revoked).length,
+        activeCount: rewardAssignments.filter((a) => a.status === RewardStatus.Active).length,
+        expiredCount: rewardAssignments.filter((a) => a.status === RewardStatus.Expired).length,
+        revokedCount: rewardAssignments.filter((a) => a.status === RewardStatus.Revoked).length,
         totalCount: rewardAssignments.length,
       };
     };
@@ -222,15 +222,15 @@ export default defineComponent({
           AdminService.getRewards(token.value),
           loadAllAssignments(),
         ]);
-        
+
         // Add assignment statistics to each reward
-        rewards.value = rewardsData.map(reward => ({
+        rewards.value = rewardsData.map((reward) => ({
           ...reward,
           assignmentStats: calculateAssignmentStats(reward.id),
         }));
       } catch (error) {
-        showSnackbar('Failed to load rewards', 'error');
-        console.error('Error loading rewards:', error);
+        showSnackbar("Failed to load rewards", "error");
+        console.error("Error loading rewards:", error);
       }
     };
 
@@ -238,12 +238,12 @@ export default defineComponent({
       try {
         availableModules.value = await AdminService.getAvailableModules(token.value);
       } catch (error) {
-        console.error('Failed to load modules:', error);
+        console.error("Failed to load modules:", error);
       }
     };
 
     const getModuleName = (moduleId: string): string => {
-      const module = availableModules.value.find(m => m.moduleId === moduleId);
+      const module = availableModules.value.find((m) => m.moduleId === moduleId);
       return module?.moduleName || moduleId;
     };
 
@@ -270,8 +270,8 @@ export default defineComponent({
 
     const createNewReward = () => {
       editedReward.value = {
-        displayId: '',
-        moduleId: '',
+        displayId: "",
+        moduleId: "",
         parameters: {},
         duration: null,
         isActive: true,
@@ -296,7 +296,7 @@ export default defineComponent({
             isActive: rewardData.isActive,
           };
           await AdminService.updateReward(editedReward.value.id, updateData, token.value);
-          showSnackbar('Reward updated successfully');
+          showSnackbar("Reward updated successfully");
         } else {
           const createData: CreateRewardRequest = {
             displayId: rewardData.displayId!,
@@ -305,14 +305,14 @@ export default defineComponent({
             duration: rewardData.duration,
           };
           await AdminService.createReward(createData, token.value);
-          showSnackbar('Reward created successfully');
+          showSnackbar("Reward created successfully");
         }
         closeDialog();
         await loadRewards();
       } catch (error: any) {
-        const errorMessage = error.response?.data?.error || 'Failed to save reward';
-        showSnackbar(errorMessage, 'error');
-        console.error('Error saving reward:', error);
+        const errorMessage = error.response?.data?.error || "Failed to save reward";
+        showSnackbar(errorMessage, "error");
+        console.error("Error saving reward:", error);
       }
     };
 
@@ -320,12 +320,12 @@ export default defineComponent({
       if (confirm(`Are you sure you want to delete "${getRewardName(reward.displayId)}"?`)) {
         try {
           await AdminService.deleteReward(reward.id, token.value);
-          showSnackbar('Reward deleted successfully');
+          showSnackbar("Reward deleted successfully");
           await loadRewards();
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error || 'Failed to delete reward';
-          showSnackbar(errorMessage, 'error');
-          console.error('Error deleting reward:', error);
+          const errorMessage = error.response?.data?.error || "Failed to delete reward";
+          showSnackbar(errorMessage, "error");
+          console.error("Error deleting reward:", error);
         }
       }
     };
@@ -335,7 +335,7 @@ export default defineComponent({
       editedReward.value = {};
     };
 
-    const showSnackbar = (message: string, color = 'success') => {
+    const showSnackbar = (message: string, color = "success") => {
       snackbarText.value = message;
       snackbarColor.value = color;
       snackbar.value = true;
@@ -343,9 +343,9 @@ export default defineComponent({
 
 
     const formatDuration = (duration: { type: DurationType; value: number }): string => {
-      if (!duration) return 'Permanent';
+      if (!duration) return "Permanent";
       const unit = DurationType[duration.type].toLowerCase();
-      return `${duration.value} ${unit}${duration.value !== 1 ? 's' : ''}`;
+      return `${duration.value} ${unit}${duration.value !== 1 ? "s" : ""}`;
     };
 
     // New methods for assignment functionality
@@ -357,16 +357,16 @@ export default defineComponent({
 
     const loadRewardUsers = async () => {
       if (!selectedReward.value) return;
-      
+
       loadingUsers.value = true;
       usersError.value = null;
-      
+
       try {
         const assignments = await AdminService.getAssignmentsByReward(selectedReward.value.id, token.value);
         rewardUsers.value = assignments;
       } catch (error) {
-        console.error('Error loading reward users:', error);
-        usersError.value = 'Failed to load users for this reward';
+        console.error("Error loading reward users:", error);
+        usersError.value = "Failed to load users for this reward";
         rewardUsers.value = [];
       } finally {
         loadingUsers.value = false;
@@ -376,19 +376,19 @@ export default defineComponent({
 
     const getStatusColor = (status: RewardStatus | string): string => {
       // Handle both enum values and string representations
-      const statusValue = typeof status === 'number' ? RewardStatus[status] : status;
+      const statusValue = typeof status === "number" ? RewardStatus[status] : status;
       const colors: Record<string, string> = {
-        'Pending': 'info',
-        'Active': 'success',
-        'Expired': 'warning',
-        'Revoked': 'error',
-        'Failed': 'error',
+        "Pending": "info",
+        "Active": "success",
+        "Expired": "warning",
+        "Revoked": "error",
+        "Failed": "error",
       };
-      return colors[statusValue] || 'grey';
+      return colors[statusValue] || "grey";
     };
 
     const getStatusName = (status: RewardStatus): string => {
-      return RewardStatus[status] || 'Unknown';
+      return RewardStatus[status] || "Unknown";
     };
 
     const formatDate = (dateString: string): string => {
@@ -414,17 +414,17 @@ export default defineComponent({
       snackbar,
       snackbarText,
       snackbarColor,
-      
+
       // Users dialog data
       usersDialog,
       loadingUsers,
       usersError,
       rewardUsers,
       selectedReward,
-      
+
       // Computed
       headers,
-      
+
       // Methods
       createNewReward,
       editReward,
@@ -442,13 +442,13 @@ export default defineComponent({
       formatDuration,
       formatDate,
       formatTime,
-      
+
       // Icons
       mdiMagnify,
       mdiPencil,
       mdiDelete,
       mdiAccountGroup,
-      
+
       // Enums
       RewardStatus,
     };

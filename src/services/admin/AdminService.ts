@@ -216,28 +216,28 @@ export default class AdminService {
   public static async updateReward(rewardId: string, reward: UpdateRewardRequest, token: string): Promise<Reward> {
     const url = `${API_URL}api/rewards/${rewardId}`;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(reward));
-    
+
     if (!response.ok) {
       const errorData = await response.json();
-      const error = new Error(errorData.error || 'Failed to update reward');
+      const error = new Error(errorData.error || "Failed to update reward");
       (error as any).response = { status: response.status, data: errorData };
       throw error;
     }
-    
+
     return await response.json();
   }
 
   public static async deleteReward(rewardId: string, token: string): Promise<boolean> {
     const url = `${API_URL}api/rewards/${rewardId}`;
     const response = await authorizedFetch("DELETE", url, token);
-    
+
     if (!response.ok) {
       const errorData = await response.json();
-      const error = new Error(errorData.error || 'Failed to delete reward');
+      const error = new Error(errorData.error || "Failed to delete reward");
       (error as any).response = { status: response.status, data: errorData };
       throw error;
     }
-    
+
     return response.ok;
   }
 
@@ -283,7 +283,7 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async reconcileAllProductMappings(token: string, dryRun: boolean = true): Promise<ReconciliationResult> {
+  public static async reconcileAllProductMappings(token: string, dryRun = true): Promise<ReconciliationResult> {
     const url = `${API_URL}api/rewards/admin/product-mappings/reconcile-all?dryRun=${dryRun}`;
     const response = await authorizedFetch("POST", url, token);
     return await response.json();
@@ -304,26 +304,34 @@ export default class AdminService {
   // New endpoints for Patreon links and enhanced assignments management
 
   public static async getAllPatreonLinks(token: string): Promise<PatreonAccountLink[]> {
-    const url = `${API_URL}api/rewards/patreon/links`;
+    const url = `${API_URL}api/rewards/admin/patreon/links`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }
 
   public static async deletePatreonLink(battleTag: string, token: string): Promise<boolean> {
-    const url = `${API_URL}api/rewards/patreon/links/${encodeURIComponent(battleTag)}`;
+    const url = `${API_URL}api/rewards/admin/patreon/links/${encodeURIComponent(battleTag)}`;
     const response = await authorizedFetch("DELETE", url, token);
     return response.ok;
   }
 
-  public static async getAllAssignments(token: string, page: number = 1, pageSize: number = 50): Promise<PaginatedAssignments> {
-    const url = `${API_URL}api/rewards/assignments/all?page=${page}&pageSize=${pageSize}`;
+  public static async getAllAssignments(token: string, page = 1, pageSize = 50): Promise<PaginatedAssignments> {
+    const url = `${API_URL}api/rewards/admin/assignments/all?page=${page}&pageSize=${pageSize}`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }
 
   public static async getAssignmentsByReward(rewardId: string, token: string): Promise<RewardAssignment[]> {
-    const url = `${API_URL}api/rewards/${encodeURIComponent(rewardId)}/assignments`;
+    const url = `${API_URL}api/rewards/admin/rewards/${encodeURIComponent(rewardId)}/assignments`;
     const response = await authorizedFetch("GET", url, token);
-    return await response.json();
+    const data = await response.json();
+
+    // Handle new response structure that wraps assignments in an object
+    if (data && data.assignments && Array.isArray(data.assignments)) {
+      return data.assignments;
+    }
+
+    // Fallback for backward compatibility if response is still a direct array
+    return Array.isArray(data) ? data : [];
   }
 }

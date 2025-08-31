@@ -14,7 +14,7 @@
           <v-progress-circular indeterminate color="primary"></v-progress-circular>
           <div class="mt-2">Loading users...</div>
         </div>
-        
+
         <div v-else-if="error" class="error--text text-center pa-4">
           <v-icon color="error" class="mb-2">{{ mdiAlert }}</v-icon>
           <div>{{ error }}</div>
@@ -100,6 +100,14 @@
               <div v-if="item.expiresAt">{{ formatDate(item.expiresAt) }}</div>
               <div v-else class="text--secondary">Permanent</div>
             </template>
+
+            <template v-slot:item.revocationReason="{ item }">
+              <div v-if="getRevocationReason(item)" class="text-caption">
+                <v-icon small color="warning" class="mr-1">mdi-information-outline</v-icon>
+                {{ getRevocationReason(item) }}
+              </div>
+              <div v-else class="text--secondary text-center">—</div>
+            </template>
           </v-data-table>
         </div>
 
@@ -113,12 +121,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
-import { RewardAssignment, RewardStatus } from '@/store/admin/types';
-import { mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from '@mdi/js';
+import { computed, defineComponent, ref } from "vue";
+import { RewardAssignment, RewardStatus } from "@/store/admin/types";
+import { mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from "@mdi/js";
 
 export default defineComponent({
-  name: 'RewardUsersDialog',
+  name: "RewardUsersDialog",
   props: {
     visible: {
       type: Boolean,
@@ -141,32 +149,33 @@ export default defineComponent({
       default: null,
     },
   },
-  emits: ['update:visible', 'retry'],
+  emits: ["update:visible", "retry"],
   setup(props, { emit }) {
-    const searchQuery = ref('');
-    
+    const searchQuery = ref("");
+
     const headers = [
-      { text: 'User', value: 'userId', sortable: true },
-      { text: 'Status', value: 'status', sortable: true },
-      { text: 'Provider', value: 'providerId', sortable: true },
-      { text: 'Assigned', value: 'assignedAt', sortable: true },
-      { text: 'Expires', value: 'expiresAt', sortable: true },
+      { text: "User", value: "userId", sortable: true },
+      { text: "Status", value: "status", sortable: true },
+      { text: "Provider", value: "providerId", sortable: true },
+      { text: "Assigned", value: "assignedAt", sortable: true },
+      { text: "Expires", value: "expiresAt", sortable: true },
+      { text: "Revoked Reason", value: "revocationReason", sortable: false },
     ];
 
     const getStatusName = (status: RewardStatus | string): string => {
-      if (typeof status === 'number') {
-        return RewardStatus[status] || 'Unknown';
+      if (typeof status === "number") {
+        return RewardStatus[status] || "Unknown";
       }
-      return status || 'Unknown';
+      return status || "Unknown";
     };
 
     const filteredUsers = computed(() => {
       if (!searchQuery.value) {
         return props.users;
       }
-      
+
       const query = searchQuery.value.toLowerCase();
-      return props.users.filter(user => {
+      return props.users.filter((user) => {
         return (
           user.userId.toLowerCase().includes(query) ||
           user.providerId.toLowerCase().includes(query) ||
@@ -176,45 +185,50 @@ export default defineComponent({
     });
 
     const activeUsersCount = computed(() => {
-      return filteredUsers.value.filter(user => user.status === RewardStatus.Active).length;
+      return filteredUsers.value.filter((user) => user.status === RewardStatus.Active).length;
     });
 
     const expiredUsersCount = computed(() => {
-      return filteredUsers.value.filter(user => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
+      return filteredUsers.value.filter((user) => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
     });
 
     const close = () => {
-      emit('update:visible', false);
+      emit("update:visible", false);
     };
 
     const getProviderIcon = (providerId: string): string => {
       switch (providerId.toLowerCase()) {
-        case 'patreon': return mdiPatreon;
-        case 'kofi': return mdiHandHeart;
+        case "patreon": return mdiPatreon;
+        case "kofi": return mdiHandHeart;
         default: return mdiCog;
       }
     };
 
     const getProviderColor = (providerId: string): string => {
       switch (providerId.toLowerCase()) {
-        case 'patreon': return 'orange';
-        case 'kofi': return 'blue';
-        default: return 'grey';
+        case "patreon": return "orange";
+        case "kofi": return "blue";
+        default: return "grey";
       }
     };
 
     const getStatusColor = (status: RewardStatus | string): string => {
-      const statusValue = typeof status === 'number' ? RewardStatus[status] : status;
+      const statusValue = typeof status === "number" ? RewardStatus[status] : status;
       switch (statusValue?.toLowerCase()) {
-        case 'active': return 'success';
-        case 'expired': return 'warning';
-        case 'revoked': return 'error';
-        default: return 'grey';
+        case "active": return "success";
+        case "expired": return "warning";
+        case "revoked": return "error";
+        default: return "grey";
       }
     };
 
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleString();
+    };
+
+    const getRevocationReason = (user: RewardAssignment): string => {
+      // Handle both old and new field names for backward compatibility
+      return user.revocationReason || user.revokedReason || "";
     };
 
     return {
@@ -229,6 +243,7 @@ export default defineComponent({
       getStatusColor,
       getStatusName,
       formatDate,
+      getRevocationReason,
       mdiClose,
       mdiAlert,
       mdiAccountOff,

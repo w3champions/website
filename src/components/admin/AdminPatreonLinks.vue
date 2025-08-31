@@ -78,7 +78,7 @@
         <v-skeleton-loader type="table"></v-skeleton-loader>
         <div class="mt-4 text-subtitle1">Loading Patreon links...</div>
       </v-card-text>
-      
+
       <v-data-table
         v-else
         :headers="headers"
@@ -137,7 +137,7 @@
             </v-btn>
           </div>
         </template>
-        
+
         <template v-slot:no-data>
           <div class="text-center py-8">
             <v-icon size="64" color="grey lighten-2" class="mb-4">{{ mdiAccountSearch }}</v-icon>
@@ -202,7 +202,7 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import AdminService from "@/services/admin/AdminService";
 import { PatreonAccountLink } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
-import { 
+import {
   mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
   mdiPatreon, mdiFilterRemove, mdiClose, mdiCheckCircle,
   mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch
@@ -217,20 +217,20 @@ export default defineComponent({
   setup() {
     const oauthStore = useOauthStore();
     const playerSearchStore = usePlayerSearchStore();
-    
+
     // Data
     const patreonLinks = ref<PatreonAccountLink[]>([]);
     const filteredLinks = ref<PatreonAccountLink[]>([]);
     const loading = ref(false);
     const selectedPlayer = ref<string>("");
     const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
-    
+
     // Delete functionality
     const deleteDialog = ref(false);
     const selectedLink = ref<PatreonAccountLink | null>(null);
     const deleting = ref(false);
     const deletingLinks = ref<string[]>([]);
-    
+
     // Snackbar
     const snackbar = ref(false);
     const snackbarMessage = ref("");
@@ -250,9 +250,9 @@ export default defineComponent({
       loading.value = true;
       try {
         const links = await AdminService.getAllPatreonLinks(oauthStore.token);
-        patreonLinks.value = links;
+        patreonLinks.value = links.links;
         filterLinks();
-        
+
         showSnackbar(`Loaded ${links.length} Patreon links`, "success");
       } catch (error) {
         console.error("Error loading Patreon links:", error);
@@ -266,7 +266,7 @@ export default defineComponent({
       if (!selectedPlayer.value) {
         filteredLinks.value = [...patreonLinks.value];
       } else {
-        filteredLinks.value = patreonLinks.value.filter(link =>
+        filteredLinks.value = patreonLinks.value.filter((link) =>
           link.battleTag.toLowerCase().includes(selectedPlayer.value.toLowerCase())
         );
       }
@@ -286,12 +286,12 @@ export default defineComponent({
 
       try {
         const success = await AdminService.deletePatreonLink(battleTag, oauthStore.token);
-        
+
         if (success) {
           // Remove from local data
-          patreonLinks.value = patreonLinks.value.filter(link => link.battleTag !== battleTag);
+          patreonLinks.value = patreonLinks.value.filter((link) => link.battleTag !== battleTag);
           filterLinks();
-          
+
           showSnackbar(`Successfully deleted Patreon link for ${battleTag}`, "success");
         } else {
           showSnackbar("Failed to delete Patreon link", "error");
@@ -301,7 +301,7 @@ export default defineComponent({
         showSnackbar("Failed to delete Patreon link", "error");
       } finally {
         deleting.value = false;
-        deletingLinks.value = deletingLinks.value.filter(bt => bt !== battleTag);
+        deletingLinks.value = deletingLinks.value.filter((bt) => bt !== battleTag);
         deleteDialog.value = false;
         selectedLink.value = null;
       }
@@ -325,10 +325,10 @@ export default defineComponent({
 
     // New utility functions that we added in template but didn't implement
     const clearFilters = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       playerSearchStore.clearPlayerSearch();
       filterLinks();
-      showSnackbar('Filters cleared', 'info');
+      showSnackbar("Filters cleared", "info");
     };
 
     const onPlayerFound = (battleTag: string) => {
@@ -337,12 +337,12 @@ export default defineComponent({
     };
 
     const onPlayerSearchCleared = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       filterLinks();
     };
 
     const clearPlayerSelection = () => {
-      selectedPlayer.value = '';
+      selectedPlayer.value = "";
       playerSearchStore.clearPlayerSearch();
       filterLinks();
     };
@@ -355,7 +355,7 @@ export default defineComponent({
     const getRecentLinks = (): number => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return patreonLinks.value.filter(link => 
+      return patreonLinks.value.filter((link) =>
         new Date(link.linkedAt) >= thirtyDaysAgo
       ).length;
     };
@@ -363,7 +363,7 @@ export default defineComponent({
     const getStaleLinks = (): number => {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      return patreonLinks.value.filter(link => 
+      return patreonLinks.value.filter((link) =>
         new Date(link.lastSyncAt) < sevenDaysAgo
       ).length;
     };
@@ -376,9 +376,9 @@ export default defineComponent({
 
     const getSyncStatusClass = (lastSyncAt: string): string => {
       if (isStaleSync(lastSyncAt)) {
-        return 'warning--text';
+        return "warning--text";
       }
-      return 'text--primary';
+      return "text--primary";
     };
 
     // Lifecycle
@@ -401,7 +401,7 @@ export default defineComponent({
       snackbarMessage,
       snackbarColor,
       headers,
-      
+
       // Methods
       loadPatreonLinks,
       filterLinks,
@@ -418,7 +418,7 @@ export default defineComponent({
       deletePatreonLink,
       formatDate,
       formatTime,
-      
+
       // Icons
       mdiMagnify,
       mdiRefresh,

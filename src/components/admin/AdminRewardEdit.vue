@@ -59,18 +59,18 @@
         <v-row v-if="selectedModule && selectedModule.supportsParameters">
           <v-col cols="12">
             <v-subheader>Module Parameters</v-subheader>
-            <v-alert 
-              v-if="selectedModule.description" 
-              type="info" 
+            <v-alert
+              v-if="selectedModule.description"
+              type="info"
               outlined
               class="mb-4"
             >
               {{ selectedModule.description }}
             </v-alert>
-            
+
             <v-row v-for="(paramDef, paramKey) in selectedModule.parameterDefinitions" :key="paramKey">
               <v-col cols="12" :md="getInputType(paramDef) === 'boolean' ? 12 : 6">
-                
+
                 <!-- Text/Number inputs -->
                 <v-text-field
                   v-if="getInputType(paramDef) === 'text' || getInputType(paramDef) === 'number'"
@@ -186,13 +186,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch, onMounted, getCurrentInstance } from 'vue';
-import { Reward, DurationType, ModuleDefinition, ParameterDefinition } from '@/store/admin/types';
-import { useOauthStore } from '@/store/oauth/store';
-import AdminService from '@/services/admin/AdminService';
+import { computed, defineComponent, PropType, ref, watch, onMounted, getCurrentInstance } from "vue";
+import { Reward, DurationType, ModuleDefinition, ParameterDefinition } from "@/store/admin/types";
+import { useOauthStore } from "@/store/oauth/store";
+import AdminService from "@/services/admin/AdminService";
 
 export default defineComponent({
-  name: 'AdminRewardEdit',
+  name: "AdminRewardEdit",
   props: {
     reward: {
       type: Object as PropType<Partial<Reward>>,
@@ -203,15 +203,15 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['save', 'cancel'],
+  emits: ["save", "cancel"],
   setup(props, { emit }) {
     const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
     const localReward = ref<Partial<Reward>>({});
-    const durationType = ref<'permanent' | 'limited'>('permanent');
+    const durationType = ref<"permanent" | "limited">("permanent");
     const durationValue = ref<number>(1);
     const durationUnit = ref<DurationType>(DurationType.Days);
-    
+
     // Module-related refs
     const availableModules = ref<ModuleDefinition[]>([]);
     const selectedModule = ref<ModuleDefinition | null>(null);
@@ -221,12 +221,12 @@ export default defineComponent({
     const token = computed(() => oauthStore.token);
 
     const rules = {
-      required: (value: any) => !!value || 'This field is required',
-      positiveNumber: (value: number) => (value > 0) || 'Must be greater than 0',
+      required: (value: any) => !!value || "This field is required",
+      positiveNumber: (value: number) => (value > 0) || "Must be greater than 0",
     };
 
-    const moduleItems = computed(() => 
-      availableModules.value.map(module => ({
+    const moduleItems = computed(() =>
+      availableModules.value.map((module) => ({
         text: module.moduleName,
         value: module.moduleId,
         description: module.description
@@ -234,24 +234,24 @@ export default defineComponent({
     );
 
     const durationUnitItems = computed(() => [
-      { text: 'Days', value: DurationType.Days },
-      { text: 'Months', value: DurationType.Months },
-      { text: 'Years', value: DurationType.Years },
+      { text: "Days", value: DurationType.Days },
+      { text: "Months", value: DurationType.Months },
+      { text: "Years", value: DurationType.Years },
     ]);
 
     const isValid = computed(() => {
       const hasRequiredFields = localReward.value.displayId &&
                                localReward.value.moduleId;
-      
-      const hasValidDuration = durationType.value === 'permanent' || 
+
+      const hasValidDuration = durationType.value === "permanent" ||
                               (durationValue.value > 0 && durationUnit.value !== undefined);
-      
+
       // Check if all required module parameters are provided
-      const hasValidParameters = !selectedModule.value || 
-        Object.entries(selectedModule.value.parameterDefinitions || {}).every(([key, def]) => 
-          !def.required || (moduleParameters.value[key] !== undefined && moduleParameters.value[key] !== '')
+      const hasValidParameters = !selectedModule.value ||
+        Object.entries(selectedModule.value.parameterDefinitions || {}).every(([key, def]) =>
+          !def.required || (moduleParameters.value[key] !== undefined && moduleParameters.value[key] !== "")
         );
-      
+
       return hasRequiredFields && hasValidDuration && hasValidParameters;
     });
 
@@ -261,7 +261,7 @@ export default defineComponent({
         loading.value = true;
         availableModules.value = await AdminService.getAvailableModules(token.value);
       } catch (error) {
-        console.error('Failed to load modules:', error);
+        console.error("Failed to load modules:", error);
       } finally {
         loading.value = false;
       }
@@ -269,14 +269,14 @@ export default defineComponent({
 
     // Handle module selection change
     const onModuleChange = (moduleId: string) => {
-      selectedModule.value = availableModules.value.find(m => m.moduleId === moduleId) || null;
+      selectedModule.value = availableModules.value.find((m) => m.moduleId === moduleId) || null;
       localReward.value.moduleId = moduleId;
-      
+
       // Initialize parameters with default values
       moduleParameters.value = {};
       if (selectedModule.value?.parameterDefinitions) {
         Object.entries(selectedModule.value.parameterDefinitions).forEach(([key, def]) => {
-          moduleParameters.value[key] = def.defaultValue ?? '';
+          moduleParameters.value[key] = def.defaultValue ?? "";
         });
       }
     };
@@ -284,24 +284,24 @@ export default defineComponent({
     // Get input type for parameter
     const getInputType = (paramDef: ParameterDefinition): string => {
       switch (paramDef.type.toLowerCase()) {
-        case 'int':
-        case 'number':
-          return 'number';
-        case 'bool':
-        case 'boolean':
-          return 'boolean';
-        case 'int[]':
-        case 'array':
-          return 'array';
+        case "int":
+        case "number":
+          return "number";
+        case "bool":
+        case "boolean":
+          return "boolean";
+        case "int[]":
+        case "array":
+          return "array";
         default:
-          return 'text';
+          return "text";
       }
     };
 
     const initializeForm = () => {
       localReward.value = {
-        displayId: props.reward.displayId || '',
-        moduleId: props.reward.moduleId || '',
+        displayId: props.reward.displayId || "",
+        moduleId: props.reward.moduleId || "",
         parameters: props.reward.parameters || {},
         isActive: props.reward.isActive ?? true,
         duration: props.reward.duration || null,
@@ -309,18 +309,18 @@ export default defineComponent({
 
       // Initialize duration settings
       if (localReward.value.duration) {
-        durationType.value = 'limited';
+        durationType.value = "limited";
         durationValue.value = localReward.value.duration.value;
         durationUnit.value = localReward.value.duration.type;
       } else {
-        durationType.value = 'permanent';
+        durationType.value = "permanent";
         durationValue.value = 1;
         durationUnit.value = DurationType.Days;
       }
 
       // Initialize module and parameters
       if (localReward.value.moduleId) {
-        selectedModule.value = availableModules.value.find(m => m.moduleId === localReward.value.moduleId) || null;
+        selectedModule.value = availableModules.value.find((m) => m.moduleId === localReward.value.moduleId) || null;
         moduleParameters.value = { ...localReward.value.parameters };
       }
     };
@@ -331,19 +331,19 @@ export default defineComponent({
       const rewardData: Partial<Reward> = {
         ...localReward.value,
         parameters: moduleParameters.value,
-        duration: durationType.value === 'permanent' 
-          ? null 
+        duration: durationType.value === "permanent"
+          ? null
           : {
               type: durationUnit.value,
               value: durationValue.value,
             },
       };
 
-      emit('save', rewardData);
+      emit("save", rewardData);
     };
 
     const cancel = () => {
-      emit('cancel');
+      emit("cancel");
     };
 
     // Watch for prop changes

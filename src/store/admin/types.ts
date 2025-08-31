@@ -204,6 +204,7 @@ export enum DurationType {
 
 export type RewardAssignment = {
   id: string;
+  assignmentId?: string; // Alias for id in new API response
   userId: string;
   rewardId: string;
   providerId: string;
@@ -214,7 +215,12 @@ export type RewardAssignment = {
   expiresAt?: string;
   revokedAt?: string;
   revokedReason?: string;
-  metadata: Record<string, any>;
+  revocationReason?: string; // New field name in API response
+  metadata?: Record<string, any>;
+  // Additional reward details included in new response
+  displayId?: string;
+  moduleId?: string;
+  moduleName?: string;
 };
 
 export enum RewardStatus {
@@ -300,7 +306,7 @@ export type UserReconciliationEntry = {
 
 export type ReconciliationAction = {
   rewardId: string;
-  type: 'Added' | 'Removed';
+  type: "Added" | "Removed";
   success: boolean;
   assignmentId?: string;
   errorMessage?: string;
@@ -381,4 +387,73 @@ export interface PaginatedRewardsWithAssignments {
   page: number;
   pageSize: number;
   totalPages: number;
+}
+
+// Provider Integration Types
+
+export interface PatreonStatusResponse {
+  isLinked: boolean;
+  battleTag?: string;
+  patreonUserId?: string;
+  linkedAt?: string;
+  lastSyncAt?: string;
+}
+
+export interface PatreonOAuthResponse {
+  success: boolean;
+  battleTag?: string;
+  patreonUserId?: string;
+  linkedAt?: string;
+  message?: string;
+  error?: string;
+}
+
+export interface UnlinkResponse {
+  success: boolean;
+  battleTag?: string;
+  message?: string;
+}
+
+// Drift Sync Types
+
+export interface DriftSyncResult {
+  success: boolean;
+  wasDryRun: boolean;
+  membersAdded: number;
+  tiersUpdated: number;
+  assignmentsRevoked: number;
+  processedAssociations: string[];
+  errors: string[];
+  startedAt: string;
+  completedAt: string;
+}
+
+// Admin Management Types
+
+export interface RewardManagementSummary {
+  totalRewards: number;
+  activeRewards: number;
+  inactiveRewards: number;
+  totalAssignments: number;
+  activeAssignments: number;
+  expiredAssignments: number;
+  revokedAssignments: number;
+  failedAssignments: number;
+  totalUsers: number;
+  usersWithActiveRewards: number;
+  recentAssignments: RewardAssignment[];
+  problematicAssignments: RewardAssignment[];
+}
+
+export interface ProductMappingReconciliationResult {
+  productMappingId: string;
+  productMappingName: string;
+  success: boolean;
+  usersProcessed: number;
+  rewardsAdded: number;
+  rewardsRevoked: number;
+  errors: string[];
+  userActions: UserReconciliationEntry[];
+  wasDryRun: boolean;
+  processedAt: string;
 }

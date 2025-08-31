@@ -68,7 +68,7 @@ import {
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
-  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink, 
+  mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart
 } from "@mdi/js";
 
