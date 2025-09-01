@@ -340,6 +340,66 @@ const en = {
     stCraftLV201: "FrostCraft",
   },
 
+  views_rewards: {
+    title: "Rewards",
+    account_info: "Account Information",
+    battlenet_account: "Battle.net Account",
+    patreon_status: "Patreon Status",
+    patreon_email: "Patreon Email",
+    linked: "Linked",
+    not_linked: "Not Linked",
+    login_required: "Please log in with your Battle.net account to manage rewards.",
+    login_with_battlenet: "Login with Battle.net",
+    patreon_linking: "Patreon Account Linking",
+    patreon_description: "Link your Patreon account to automatically receive rewards based on your subscription tier.",
+    link_with_patreon: "Link with Patreon",
+    patreon_linked_success: "Your Patreon account has been successfully linked!",
+    unlink_patreon: "Unlink Patreon Account",
+    your_rewards: "Your Rewards",
+    loading_rewards: "Loading rewards...",
+    no_rewards: "You don't have any rewards yet. Link your Patreon account to receive rewards!",
+    reward_name: "Reward Name",
+    description: "Description",
+    active: "Active",
+    inactive: "Inactive",
+  },
+
+  rewards: {
+    // Portrait rewards
+    portrait_supporter_bronze: {
+      name: "Bronze Supporter Portrait",
+      description: "Bronze Supporter Portrait"
+    },
+    
+    
+    // Chat color rewards  
+    chat_color_supporter: {
+      name: "Supporter Chat Color",
+      description: "Custom chat color to show your support for W3Champions"
+    },
+    chat_color_grand_supporter: {
+      name: "Grand Supporter Chat Color",
+      description: "Custom chat color to show your support for W3Champions"
+    },
+    
+
+    // Chat icon rewards
+    chat_icon_support_bronze_tier: {
+      name: "Bronze Supporter Icon",
+      description: "Custom chat icon for Bronze Tier Supporters"
+    }
+  },
+
+  views_patreon_callback: {
+    title: "Patreon Account Linking",
+    processing: "Processing your Patreon account linking...",
+    success_title: "Success!",
+    success_message: "Your Patreon account has been successfully linked to your Battle.net account.",
+    linked_email: "Linked Email",
+    error_title: "Error",
+    go_to_rewards: "Go to Rewards",
+  },
+
   heroNames: {
     allfilter: "All Heroes",
     all: "Any hero selection",
