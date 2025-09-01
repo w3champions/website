@@ -158,3 +158,302 @@ export type ReplayMessageScope = {
   type: EChatScope;
   id: number | null;
 };
+
+// Rewards Management Types
+
+export type Reward = {
+  id: string;
+  displayId: string;
+  moduleId: string;
+  parameters: Record<string, any>;
+  duration: RewardDuration | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+// Module-related types for dynamic reward configuration
+
+export interface ModuleDefinition {
+  moduleId: string;
+  moduleName: string;
+  description?: string;
+  supportsParameters: boolean;
+  parameterDefinitions: Record<string, ParameterDefinition>;
+}
+
+export interface ParameterDefinition {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+  defaultValue?: any;
+}
+
+export type RewardDuration = {
+  type: DurationType;
+  value: number;
+};
+
+export enum DurationType {
+  Permanent = 0,
+  Days = 1,
+  Months = 2,
+  Years = 3
+}
+
+export type RewardAssignment = {
+  id: string;
+  assignmentId?: string; // Alias for id in new API response
+  userId: string;
+  rewardId: string;
+  providerId: string;
+  providerReference: string;
+  eventId?: string;
+  status: RewardStatus;
+  assignedAt: string;
+  expiresAt?: string;
+  revokedAt?: string;
+  revokedReason?: string;
+  revocationReason?: string; // New field name in API response
+  metadata?: Record<string, any>;
+  // Additional reward details included in new response
+  displayId?: string;
+  moduleId?: string;
+  moduleName?: string;
+};
+
+export enum RewardStatus {
+  Pending = 0,
+  Active = 1,
+  Expired = 2,
+  Revoked = 3,
+  Failed = 4
+}
+
+export type ProviderConfiguration = {
+  id: string;
+  providerId: string;
+  providerName: string;
+  isActive: boolean;
+  settings: Record<string, string>;
+  productMappings: ProductMapping[];
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type ProductMapping = {
+  id: string;
+  productName: string;
+  productProviders: ProductProviderPair[];
+  rewardIds: string[];
+  type: ProductMappingType;
+  additionalParameters: Record<string, any>;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type ProductProviderPair = {
+  providerId: string;
+  productId: string;
+};
+
+export enum ProductMappingType {
+  OneTime = 0,
+  Recurring = 1,
+  Tiered = 2
+}
+
+export type ProductMappingUser = {
+  userId: string;
+  providerId: string;
+  providerProductId: string;
+  status: string;
+  assignedAt: string;
+  lastUpdatedAt?: string;
+  expiresAt?: string;
+  isActive: boolean;
+  providerReference?: string;
+  eventType?: string;
+};
+
+export type ProductMappingUsersResponse = {
+  productMappingId: string;
+  productName: string;
+  totalUsers: number;
+  activeUsers: number;
+  users: ProductMappingUser[];
+};
+
+export type ReconciliationResult = {
+  success: boolean;
+  totalUsersAffected: number;
+  rewardsAdded: number;
+  rewardsRevoked: number;
+  errors: string[];
+  wasDryRun: boolean;
+  userReconciliations?: UserReconciliationEntry[];
+};
+
+export type UserReconciliationEntry = {
+  userId: string;
+  productMappingId: string;
+  productMappingName: string;
+  actions: ReconciliationAction[];
+  success: boolean;
+  errorMessage?: string;
+};
+
+export type ReconciliationAction = {
+  rewardId: string;
+  type: "Added" | "Removed";
+  success: boolean;
+  assignmentId?: string;
+  errorMessage?: string;
+};
+
+export type CreateRewardRequest = {
+  displayId: string;
+  moduleId: string;
+  parameters?: Record<string, any>;
+  duration?: RewardDuration;
+};
+
+export type UpdateRewardRequest = {
+  displayId?: string;
+  parameters?: Record<string, any>;
+  duration?: RewardDuration;
+  isActive?: boolean;
+};
+
+export type DriftDetectionResult = {
+  success: boolean;
+  timestamp: string;
+  hasDrift: boolean;
+  summary: {
+    missingMembers: number;
+    extraAssignments: number;
+    mismatchedTiers: number;
+    totalPatreonMembers: number;
+    activePatreonMembers: number;
+    totalInternalAssignments: number;
+    uniqueInternalUsers: number;
+  };
+  details: {
+    missingMembers: any[];
+    extraAssignments: any[];
+    mismatchedTiers: any[];
+  };
+};
+
+// New types for enhanced reward management
+
+export interface PatreonAccountLink {
+  id: string;
+  battleTag: string;
+  patreonUserId: string;
+  linkedAt: string;
+  lastSyncAt: string | null;
+}
+
+export interface PaginatedAssignments {
+  assignments: RewardAssignment[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface RewardWithAssignments {
+  reward: Reward;
+  assignments: RewardAssignment[];
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+}
+
+export interface RewardWithAssignmentCounts {
+  reward: Reward;
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+  totalCount: number;
+  sampleAssignments: RewardAssignment[];
+}
+
+export interface PaginatedRewardsWithAssignments {
+  rewards: RewardWithAssignmentCounts[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// Provider Integration Types
+
+export interface PatreonStatusResponse {
+  isLinked: boolean;
+  battleTag?: string;
+  patreonUserId?: string;
+  linkedAt?: string;
+  lastSyncAt?: string;
+}
+
+export interface PatreonOAuthResponse {
+  success: boolean;
+  battleTag?: string;
+  patreonUserId?: string;
+  linkedAt?: string;
+  message?: string;
+  error?: string;
+}
+
+export interface UnlinkResponse {
+  success: boolean;
+  battleTag?: string;
+  message?: string;
+}
+
+// Drift Sync Types
+
+export interface DriftSyncResult {
+  success: boolean;
+  wasDryRun: boolean;
+  membersAdded: number;
+  tiersUpdated: number;
+  assignmentsRevoked: number;
+  processedAssociations: string[];
+  errors: string[];
+  startedAt: string;
+  completedAt: string;
+}
+
+// Admin Management Types
+
+export interface RewardManagementSummary {
+  totalRewards: number;
+  activeRewards: number;
+  inactiveRewards: number;
+  totalAssignments: number;
+  activeAssignments: number;
+  expiredAssignments: number;
+  revokedAssignments: number;
+  failedAssignments: number;
+  totalUsers: number;
+  usersWithActiveRewards: number;
+  recentAssignments: RewardAssignment[];
+  problematicAssignments: RewardAssignment[];
+}
+
+export interface ProductMappingReconciliationResult {
+  productMappingId: string;
+  productMappingName: string;
+  success: boolean;
+  usersProcessed: number;
+  rewardsAdded: number;
+  rewardsRevoked: number;
+  errors: string[];
+  userActions: UserReconciliationEntry[];
+  wasDryRun: boolean;
+  processedAt: string;
+}

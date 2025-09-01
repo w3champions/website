@@ -9,10 +9,6 @@ window._env_ = {
   // IDENTIFICATION_URL: "https://identification-service.w3champions.com/",
   IDENTIFICATION_URL: "https://identification-service.test.w3champions.com/",
 
-  //* Blizzard oauth redirect URL
-  // REDIRECT_URL: "http://localhost:8080/login",
-  REDIRECT_URL: "https://w3champions.com/login",
-
   //* update-service URL
   LAUNCHER_UPDATE_URL: "https://update-service.test.w3champions.com/api/",
 
