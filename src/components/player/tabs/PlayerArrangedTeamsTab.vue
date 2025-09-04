@@ -26,9 +26,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import { EGameMode } from "@/store/types";
 import { usePlayerStore } from "@/store/player/store";
 import { ModeStat } from "@/store/player/types";
+import { AT_modes } from "@/mixins/GameModesMixin";
 
 export default defineComponent({
   name: "PlayerArrangedTeamsTab",
@@ -41,11 +41,11 @@ export default defineComponent({
 
     const gameModeStatsAt = computed<ModeStat[]>(() => {
       const atStats = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank !== 0
+        (m) => m.rank !== 0 && AT_modes().includes(m.gameMode)
       );
 
       const atStatsUnranked = gameModeStats.value.filter(
-        (m) => m.gameMode === EGameMode.GM_2ON2_AT && m.rank === 0
+        (m) => m.rank === 0 && AT_modes().includes(m.gameMode)
       );
 
       return [
