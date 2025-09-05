@@ -1,11 +1,11 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, ProductMappingUsersResponse, DriftDetectionResult, DriftSyncResult, PatreonAccountLink, PaginatedAssignments, ModuleDefinition, ReconciliationResult } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, ProductMappingUsersResponse, DriftDetectionResult, DriftSyncResult, PatreonAccountLink, PaginatedAssignments, ModuleDefinition, ReconciliationResult, BannedPlayersGetRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
 export default class AdminService {
-  public static async getBannedPlayers(token: string): Promise<BannedPlayersResponse> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
+  public static async getBannedPlayers(token: string, req: BannedPlayersGetRequest): Promise<BannedPlayersResponse> {
+    const url = `${API_URL}api/admin/bannedPlayers?page=${req.page}&itemsPerPage=${req.itemsPerPage}&sortBy=${req.sortBy}&sortDirection=${req.sortDirection}`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }

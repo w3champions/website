@@ -6,11 +6,12 @@
     <v-data-table
       :headers="headers"
       :items="bannedPlayers"
-      :items-per-page="10"
-      :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
-      sort-by="banInsertDate"
-      :sort-desc="true"
+      :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
       :search="tableSearch"
+      :server-items-length="bannedPlayersCount"
+      @page-count="onPageChange"
+      @update:options="onTableOptionsUpdate"
+      :options="bannedPlayersTableOptions"
       class="elevation-1"
     >
 
@@ -166,7 +167,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
-import { BannedPlayer } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -176,6 +177,8 @@ import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { DataOptions } from "vuetify";
+import debounce from "debounce";
 
 type AdminBannedPlayersHeader = {
   text: string;
@@ -203,6 +206,7 @@ export default defineComponent({
     const foundPlayer = ref<string>("");
 
     const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
+    const bannedPlayersCount = computed<number>(() => adminStore.bannedPlayersCount);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
     const isAddDialog = computed<boolean>(() => editedIndex.value === -1);
     const banValidationError = computed<string>(() => adminStore.banValidationError);
@@ -210,6 +214,22 @@ export default defineComponent({
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const formTitle = computed<string>(() => isAddDialog.value ? "New Item" : "Edit Item");
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
+
+    const SEARCH_DELAY = 500;
+    const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
+
+    // const sortableColumns = ["battleTag", "endDate", "banInsertDate", "author"];
+
+    const bannedPlayersTableOptions = ref<DataOptions>({
+      page: 1,
+      itemsPerPage: 10,
+      sortBy: ["banInsertDate"],
+      sortDesc: [true],
+      groupBy: [],
+      groupDesc: [],
+      multiSort: false,
+      mustSort: false,
+    });
 
     const defaultItem = {
       battleTag: "",
@@ -220,6 +240,15 @@ export default defineComponent({
       banInsertDate: "",
       author: "",
     };
+
+    function onPageChange() {
+      console.log("111");
+    }
+
+    async function onTableOptionsUpdate(dataOptions: DataOptions) {
+      bannedPlayersTableOptions.value = dataOptions;
+      await loadBanList();
+    }
 
     // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
     const endDateIsSet = computed<boolean>(() => editedItem.value.endDate.length == 10);
@@ -246,9 +275,18 @@ export default defineComponent({
       return activeModes.concat(bannedInactiveModesForEditedItem);
     });
 
-
     async function loadBanList() {
-      await adminStore.loadBannedPlayers();
+      const bannedPlayersGetRequest = formatBannedPlayersGetRequest();
+      await adminStore.loadBannedPlayers(bannedPlayersGetRequest);
+    }
+
+    function formatBannedPlayersGetRequest(): BannedPlayersGetRequest {
+      return {
+        page: bannedPlayersTableOptions.value.page,
+        itemsPerPage: bannedPlayersTableOptions.value.itemsPerPage,
+        sortBy: bannedPlayersTableOptions.value.sortBy[0],
+        sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
+      };
     }
 
     function editItem(item: BannedPlayer): void {
@@ -300,6 +338,13 @@ export default defineComponent({
       await init();
     });
 
+    watch(tableSearch, onTableSearch);
+
+    async function onTableSearch(): Promise<void> {
+      bannedPlayersTableOptions.value.page = 1;
+      await debouncedLoadBanList();
+    }
+
     function resetDialog(): void {
       nextTick(() => {
         editedItem.value = Object.assign({}, defaultItem);
@@ -331,9 +376,9 @@ export default defineComponent({
       { text: "Ban End Date", value: "endDate", sortable: true, width: "10vw", filterable: false },
       { text: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw", filterable: false },
       { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
-      { text: "IP ban", value: "isIpBan", sortable: true, width: "5vw", filterable: false },
+      { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
       { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban reason", value: "banReason", sortable: true, filterable: false },
+      { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
       { text: "Actions", value: "actions", sortable: false, filterable: false },
     ];
 
@@ -343,6 +388,7 @@ export default defineComponent({
       mdiPencil,
       headers,
       bannedPlayers,
+      bannedPlayersCount,
       tableSearch,
       dialog,
       formTitle,
@@ -360,6 +406,9 @@ export default defineComponent({
       save,
       editItem,
       deleteItem,
+      onPageChange,
+      onTableOptionsUpdate,
+      bannedPlayersTableOptions,
     };
   },
 });
