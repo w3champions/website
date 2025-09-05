@@ -38,7 +38,6 @@
             <div v-if="!patreonLinkStatus">
               <p>{{ $t("views_rewards.patreon_description") }}</p>
               <v-btn
-                color="orange"
                 :loading="isLinkingPatreon"
                 @click="linkWithPatreon"
                 class="mt-2"

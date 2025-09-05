@@ -217,7 +217,7 @@ J<template>
               <v-col cols="4">
                 <v-card outlined color="orange">
                   <v-card-text class="text-center">
-                    <div class="text-h4 orange--text">{{ lastResult.summary.mismatchedTiers }}</div>
+                    <div class="text-h4">{{ lastResult.summary.mismatchedTiers }}</div>
                     <div class="text-caption">Mismatched Tiers</div>
                   </v-card-text>
                 </v-card>
