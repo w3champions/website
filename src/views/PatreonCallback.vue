@@ -40,7 +40,6 @@
 
           <v-card-actions class="justify-center">
             <v-btn
-              color="primary"
               :disabled="isProcessing"
               @click="goToRewards"
             >

@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, ProductMappingUsersResponse, DriftDetectionResult, ModuleDefinition, ReconciliationResult } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, GlobalChatBanResponse, GlobalMute, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, Proxy, ProxySettings, QueueData, ReplayChatLog, SearchedPlayer, Reward, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, ProviderConfiguration, ProductMapping, ProductMappingUsersResponse, DriftDetectionResult, DriftSyncResult, PatreonAccountLink, PaginatedAssignments, ModuleDefinition, ReconciliationResult } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -298,6 +298,20 @@ export default class AdminService {
   public static async getDriftDetectionStatus(token: string): Promise<any> {
     const url = `${API_URL}api/rewards/drift-detection/status`;
     const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async syncPatreonDrift(driftResult: DriftDetectionResult, dryRun: boolean, token: string): Promise<DriftSyncResult> {
+    const url = `${API_URL}api/rewards/drift-detection/patreon/sync?dryRun=${dryRun}`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify({ driftResult }));
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      const error = new Error(errorData.error || "Failed to sync Patreon drift");
+      (error as any).response = { status: response.status, data: errorData };
+      throw error;
+    }
+    
     return await response.json();
   }
 
