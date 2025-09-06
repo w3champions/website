@@ -1,4 +1,4 @@
-import { AdminState, BannedPlayer, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
+import { AdminState, BannedPlayer, BannedPlayersResponse, BannedPlayersGetRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
@@ -8,6 +8,7 @@ export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
     bannedPlayers: [],
+    bannedPlayersCount: 0,
     queuedata: [],
     availableProxies: [],
     proxiesSetForSearchedPlayer: {} as ProxySettings,
@@ -23,16 +24,16 @@ export const useAdminStore = defineStore("admin", {
     showJwtExpiredDialog: false,
   }),
   actions: {
-    async loadBannedPlayers() {
+    async loadBannedPlayers(req: BannedPlayersGetRequest) {
       const oauthStore = useOauthStore();
-      const bannedPlayers = await AdminService.getBannedPlayers(oauthStore.token);
+      const bannedPlayers = await AdminService.getBannedPlayers(oauthStore.token, req);
 
       bannedPlayers.players.forEach((bannedPlayer) => {
         bannedPlayer.endDate = formatTimestampString(bannedPlayer.endDate, "yyyy-MM-dd HH:mm:ss");
         bannedPlayer.banInsertDate = formatTimestampString(bannedPlayer.banInsertDate, "yyyy-MM-dd HH:mm:ss");
       });
 
-      this.SET_BANNED_PLAYERS(bannedPlayers.players);
+      this.SET_BANNED_PLAYERS(bannedPlayers);
     },
     async postBan(bannedPlayer: BannedPlayer) {
       const oauthStore = useOauthStore();
@@ -125,8 +126,9 @@ export const useAdminStore = defineStore("admin", {
         this.SET_SHOW_JWT_EXPIRED_DIALOG(true);
       }
     },
-    SET_BANNED_PLAYERS(bannedPlayers: BannedPlayer[]): void {
-      this.bannedPlayers = bannedPlayers;
+    SET_BANNED_PLAYERS(bannedPlayers: BannedPlayersResponse): void {
+      this.bannedPlayers = bannedPlayers.players;
+      this.bannedPlayersCount = bannedPlayers.total;
     },
     SET_BAN_VALIDATION_ERROR(error: string): void {
       this.banValidationError = error;

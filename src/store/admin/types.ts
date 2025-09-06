@@ -6,6 +6,7 @@ import { EPermission } from "./permission/types";
 export type AdminState = {
   total: number;
   bannedPlayers: BannedPlayer[];
+  bannedPlayersCount: number;
   queuedata: QueueData[];
   availableProxies: Proxy[];
   proxiesSetForSearchedPlayer: ProxySettings;
@@ -49,6 +50,14 @@ export interface BannedPlayer {
   banReason: string;
   banInsertDate: string;
   author: string;
+}
+
+export interface BannedPlayersGetRequest {
+  page: number;
+  itemsPerPage: number;
+  sortBy: string;
+  sortDirection: "desc" | "asc";
+  search: string;
 }
 
 export interface BannedPlayersResponse {
