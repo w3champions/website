@@ -5,7 +5,16 @@ import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
 export default class AdminService {
   public static async getBannedPlayers(token: string, req: BannedPlayersGetRequest): Promise<BannedPlayersResponse> {
-    const url = `${API_URL}api/admin/bannedPlayers?page=${req.page}&itemsPerPage=${req.itemsPerPage}&sortBy=${req.sortBy}&sortDirection=${req.sortDirection}`;
+    let url = `${API_URL}api/admin/bannedPlayers?page=${req.page}&itemsPerPage=${req.itemsPerPage}`;
+
+    if (req.sortBy) {
+      url += `&sortBy=${req.sortBy}`;
+      url += `&sortDirection=${req.sortDirection}`;
+    }
+    if (req.search) {
+      url += `&search=${encodeURIComponent(req.search)}`;
+    }
+
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
   }

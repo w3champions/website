@@ -57,6 +57,7 @@ export interface BannedPlayersGetRequest {
   itemsPerPage: number;
   sortBy: string;
   sortDirection: "desc" | "asc";
+  search: string;
 }
 
 export interface BannedPlayersResponse {

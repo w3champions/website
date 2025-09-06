@@ -9,7 +9,6 @@
       :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
       :search="tableSearch"
       :server-items-length="bannedPlayersCount"
-      @page-count="onPageChange"
       @update:options="onTableOptionsUpdate"
       :options="bannedPlayersTableOptions"
       class="elevation-1"
@@ -207,7 +206,6 @@ export default defineComponent({
 
     const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
     const bannedPlayersCount = computed<number>(() => adminStore.bannedPlayersCount);
-    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
     const isAddDialog = computed<boolean>(() => editedIndex.value === -1);
     const banValidationError = computed<string>(() => adminStore.banValidationError);
     const isValidationError = computed<boolean>(() => adminStore.banValidationError !== "");
@@ -217,8 +215,6 @@ export default defineComponent({
 
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
-
-    // const sortableColumns = ["battleTag", "endDate", "banInsertDate", "author"];
 
     const bannedPlayersTableOptions = ref<DataOptions>({
       page: 1,
@@ -240,10 +236,6 @@ export default defineComponent({
       banInsertDate: "",
       author: "",
     };
-
-    function onPageChange() {
-      console.log("111");
-    }
 
     async function onTableOptionsUpdate(dataOptions: DataOptions) {
       bannedPlayersTableOptions.value = dataOptions;
@@ -286,6 +278,7 @@ export default defineComponent({
         itemsPerPage: bannedPlayersTableOptions.value.itemsPerPage,
         sortBy: bannedPlayersTableOptions.value.sortBy[0],
         sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
+        search: tableSearch.value,
       };
     }
 
@@ -325,11 +318,7 @@ export default defineComponent({
       dialog.value = false;
     }
 
-    watch(isAdmin, init);
-
     async function init(): Promise<void> {
-      if (!isAdmin.value) return;
-      await loadBanList();
       await loadActiveGameModes();
       editedItem.value = Object.assign({}, defaultItem);
     }
@@ -340,9 +329,15 @@ export default defineComponent({
 
     watch(tableSearch, onTableSearch);
 
+    // Fetching the ban list is done automatically when changing the page.
+    // We need to set the page to 1 when searching, otherwise you could be on page 5 for instance when making a more narrow search,
+    // which leaves you with an empty table.
     async function onTableSearch(): Promise<void> {
-      bannedPlayersTableOptions.value.page = 1;
-      await debouncedLoadBanList();
+      if (bannedPlayersTableOptions.value.page === 1) {
+        await debouncedLoadBanList();
+      } else {
+        bannedPlayersTableOptions.value.page = 1;
+      }
     }
 
     function resetDialog(): void {
@@ -406,7 +401,6 @@ export default defineComponent({
       save,
       editItem,
       deleteItem,
-      onPageChange,
       onTableOptionsUpdate,
       bannedPlayersTableOptions,
     };
