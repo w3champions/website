@@ -25,12 +25,6 @@ export default class AdminService {
     return response.ok ? "" : await response.json();
   }
 
-  public static async deleteBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
-    const response = await authorizedFetch("DELETE", url, token, JSON.stringify(bannedPlayer));
-    return response.ok ? "" : (await response.json()).error;
-  }
-
   public static async getQueueData(token: string): Promise<QueueData[] | null> {
     const url = `${API_URL}api/admin/queue-data`;
     const response = await authorizedFetch("GET", url, token);

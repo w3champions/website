@@ -43,10 +43,6 @@ export const useAdminStore = defineStore("admin", {
     resetBanValidationMessage() {
       this.SET_BAN_VALIDATION_ERROR("");
     },
-    async deleteBan(bannedPlayer: BannedPlayer) {
-      const oauthStore = useOauthStore();
-      await AdminService.deleteBan(bannedPlayer, oauthStore.token);
-    },
     async loadQueueData(token: string) {
       const queuedata = await AdminService.getQueueData(token);
       if (queuedata) {

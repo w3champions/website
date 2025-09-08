@@ -37,7 +37,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
+                <span class="text-h5">New Item</span>
               </v-card-title>
 
               <v-card-text>
@@ -45,15 +45,9 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="12" class="pb-0">
                       <player-search
-                        v-if="isAddDialog"
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
                       ></player-search>
-                      <v-text-field
-                        v-else
-                        v-model="editedItem.battleTag"
-                        label="BattleTag"
-                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="py-0">
                       <v-menu
@@ -102,7 +96,7 @@
                           <v-select
                             v-on="on"
                             v-model="editedItem.gameModes"
-                            :items="selectableGameModes"
+                            :items="activeGameModes()"
                             item-text="name"
                             item-value="id"
                             :menu-props="{ maxHeight: '400' }"
@@ -155,17 +149,13 @@
         </td>
         <td v-else>All</td>
       </template>
-      <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
-      </template>
     </v-data-table>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
-import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
 import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -200,17 +190,14 @@ export default defineComponent({
 
     const dialog = ref<boolean>(false);
     const dateMenu = ref<boolean>(false);
-    const editedIndex = ref<number>(-1);
     const tableSearch = ref<string>("");
     const foundPlayer = ref<string>("");
 
     const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
     const bannedPlayersCount = computed<number>(() => adminStore.bannedPlayersCount);
-    const isAddDialog = computed<boolean>(() => editedIndex.value === -1);
     const banValidationError = computed<string>(() => adminStore.banValidationError);
     const isValidationError = computed<boolean>(() => adminStore.banValidationError !== "");
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
-    const formTitle = computed<string>(() => isAddDialog.value ? "New Item" : "Edit Item");
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
 
     const SEARCH_DELAY = 500;
@@ -242,30 +229,9 @@ export default defineComponent({
       await loadBanList();
     }
 
-    // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
-    const endDateIsSet = computed<boolean>(() => editedItem.value.endDate.length == 10);
-
     function getGameModeName(id: EGameMode): TranslateResult {
       return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
     }
-
-    // For a new ban, only allow active game modes to be chosen.
-    // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
-    const selectableGameModes = computed<IGameModeBrief[]>(() => {
-      const bannedModesForEditedItem = editedItem.value.gameModes;
-      const activeModeIds = activeGameModes().map((mode) => mode.id);
-      const bannedInactiveModesForEditedItem = bannedModesForEditedItem
-        .filter((mode) => !activeModeIds.includes(mode))
-        .map((id) => {
-          return {
-            id,
-            name: `gameModes.${EGameMode[id]}`
-          };
-        });
-      const activeModes = activeGameModes();
-
-      return activeModes.concat(bannedInactiveModesForEditedItem);
-    });
 
     async function loadBanList() {
       const bannedPlayersGetRequest = formatBannedPlayersGetRequest();
@@ -282,35 +248,17 @@ export default defineComponent({
       };
     }
 
-    function editItem(item: BannedPlayer): void {
-      editedIndex.value = bannedPlayers.value.indexOf(item);
-      editedItem.value = Object.assign({}, item);
-      dialog.value = true;
-    }
-
-    async function deleteItem(item: BannedPlayer): Promise<void> {
-      confirm("Are you sure you want to delete this item?") && await adminStore.deleteBan(item);
-      await loadBanList();
-    }
-
-
     async function save(): Promise<void> {
       editedItem.value.author = author.value;
-      if (endDateIsSet.value) {
-        editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
-      }
-      if (isAddDialog.value) {
-        editedItem.value.battleTag = foundPlayer.value;
-      }
+      editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
+      editedItem.value.battleTag = foundPlayer.value;
 
       await adminStore.postBan(editedItem.value);
 
       if (!isValidationError.value) {
         close();
         await loadBanList();
-        if (isAddDialog.value) {
-          playerSearchStore.clearPlayerSearch();
-        }
+        playerSearchStore.clearPlayerSearch();
       }
     }
 
@@ -343,7 +291,6 @@ export default defineComponent({
     function resetDialog(): void {
       nextTick(() => {
         editedItem.value = Object.assign({}, defaultItem);
-        editedIndex.value = -1;
       });
       playerSearchStore.clearPlayerSearch();
     }
@@ -374,7 +321,6 @@ export default defineComponent({
       { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
       { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
       { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
-      { text: "Actions", value: "actions", sortable: false, filterable: false },
     ];
 
     return {
@@ -386,21 +332,17 @@ export default defineComponent({
       bannedPlayersCount,
       tableSearch,
       dialog,
-      formTitle,
-      isAddDialog,
       playerFound,
       searchCleared,
       editedItem,
       dateMenu,
-      selectableGameModes,
+      activeGameModes,
       isValidationError,
       banValidationError,
       close,
       isEmpty,
       getGameModeName,
       save,
-      editItem,
-      deleteItem,
       onTableOptionsUpdate,
       bannedPlayersTableOptions,
     };
