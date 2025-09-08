@@ -12,6 +12,7 @@
       @update:options="onTableOptionsUpdate"
       :options="bannedPlayersTableOptions"
       class="elevation-1"
+      item-key="banInsertDate"
     >
 
       <template v-slot:top>
@@ -149,6 +150,9 @@
         </td>
         <td v-else>All</td>
       </template>
+      <template #[`item.actions`]="{ item }">
+        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -175,6 +179,7 @@ type AdminBannedPlayersHeader = {
   sortable: boolean;
   width?: string;
   filterable: boolean;
+  align?: "start" | "center" | "end";
 };
 
 export default defineComponent({
@@ -246,6 +251,16 @@ export default defineComponent({
         sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
         search: tableSearch.value,
       };
+    }
+
+    async function deleteItem(item: BannedPlayer): Promise<void> {
+      if (confirm("Are you sure you want to delete this item?")) {
+        const itemCopy = { ...item };
+        itemCopy.endDate = new Date().toISOString();
+        itemCopy.banReason = "Ban removed";
+        await adminStore.postBan(itemCopy);
+      }
+      await loadBanList();
     }
 
     async function save(): Promise<void> {
@@ -321,6 +336,7 @@ export default defineComponent({
       { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
       { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
       { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
+      { text: "Actions", value: "actions", sortable: false, filterable: false, width: "1vw", align: "center" },
     ];
 
     return {
@@ -343,6 +359,7 @@ export default defineComponent({
       isEmpty,
       getGameModeName,
       save,
+      deleteItem,
       onTableOptionsUpdate,
       bannedPlayersTableOptions,
     };
