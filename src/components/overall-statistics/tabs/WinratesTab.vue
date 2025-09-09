@@ -74,7 +74,7 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 interface WinratesTabHeader {
   text: TranslateResult;
   sortable: boolean;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 }
 
 export default defineComponent({

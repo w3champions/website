@@ -36,7 +36,7 @@ export default defineComponent({
       required: false
     },
   },
-  setup(props, context) {
+  setup(props) {
     let heroList = props.heroes;
     if (props.left && heroList) {
       // must slice to avoid mutating the original array

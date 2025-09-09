@@ -499,7 +499,6 @@ import {
   mdiClock, mdiClockAlert, mdiAlert, mdiAlertCircle,
   mdiInformation
 } from "@mdi/js";
-import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: "AdminAssignments",

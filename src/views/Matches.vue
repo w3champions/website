@@ -56,7 +56,6 @@ import { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
-import { useI18n } from "vue-i18n-bridge";
 
 export default defineComponent({
   name: "MatchesView",
@@ -72,8 +71,6 @@ export default defineComponent({
     HeroSelect,
   },
   setup() {
-    const { t } = useI18n();
-
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
@@ -91,7 +88,7 @@ export default defineComponent({
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
 
     const maps = computed<Array<MapInfo>>(() => {
-      if (!currentSeason.value) { 
+      if (!currentSeason.value) {
         return [];
       }
 

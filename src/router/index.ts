@@ -52,7 +52,7 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
-import { EAdminRouteName, EStatisticsRouteName, ESetupGuidesRouteName } from "./types";
+import { EAdminRouteName, ESetupGuidesRouteName, EStatisticsRouteName } from "./types";
 
 Vue.use(VueRouter);
 
@@ -92,7 +92,7 @@ const routes: RouteConfig[] = [
         path: "installing-war3",
         component: InstallingWar3,
         name: ESetupGuidesRouteName.INSTALLING_WAR3,
-      }
+      },
     ],
   },
   {

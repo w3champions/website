@@ -208,7 +208,7 @@ export enum DurationType {
   Permanent = 0,
   Days = 1,
   Months = 2,
-  Years = 3
+  Years = 3,
 }
 
 export type RewardAssignment = {
@@ -237,7 +237,7 @@ export enum RewardStatus {
   Active = 1,
   Expired = 2,
   Revoked = 3,
-  Failed = 4
+  Failed = 4,
 }
 
 export type ProviderConfiguration = {
@@ -270,7 +270,7 @@ export type ProductProviderPair = {
 export enum ProductMappingType {
   OneTime = 0,
   Recurring = 1,
-  Tiered = 2
+  Tiered = 2,
 }
 
 export type ProductMappingUser = {

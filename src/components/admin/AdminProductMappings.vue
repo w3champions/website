@@ -230,8 +230,8 @@
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { ProductMapping, ProductMappingType, ProductProviderPair, Reward, ProductMappingUsersResponse, RewardStatus } from "@/store/admin/types";
-import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup, mdiClose, mdiAlert } from "@mdi/js";
+import { ProductMapping, ProductMappingType, Reward, ProductMappingUsersResponse, RewardStatus } from "@/store/admin/types";
+import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup } from "@mdi/js";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
 
 export default defineComponent({

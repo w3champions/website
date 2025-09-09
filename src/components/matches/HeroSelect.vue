@@ -33,17 +33,16 @@ import { mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
 
-
 export default defineComponent({
   name: "HeroSelect",
   setup: (_, context) => {
     const { t } = useI18n();
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
+    const selectedHero = ref<HeroFilter>();
 
-    let selectedHero = ref<HeroFilter>();
     const selectedText = computed<TranslateResult>(() => {
-      if (selectedHero === undefined || selectedHero.value === undefined) {
+      if (selectedHero.value === undefined || selectedHero.value === undefined) {
         return t("heroNames.allfilter");
       } else {
         return t(`heroNames.${selectedHero.value.name}`);

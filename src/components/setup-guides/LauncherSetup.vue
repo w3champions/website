@@ -202,16 +202,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import SetupGuides from "@/views/SetupGuides.vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
-import { mdiDownload} from "@mdi/js";
+import { mdiDownload } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router/composables";
 
 export default defineComponent({
   name: "LauncherSetup",
-  components: {
-    SetupGuides,
-  },
+  components: {},
   setup() {
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");

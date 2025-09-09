@@ -144,7 +144,7 @@ export default defineComponent({
       { text: "vs. Random", value: ERaceEnum.RANDOM, align: "right" },
     ];
 
-    const headersWithoutImageAndName = headers.slice(2) as { text: string; value: ERaceEnum; align: 'left' | 'center' | 'right' }[];
+    const headersWithoutImageAndName = headers.slice(2) as { text: string; value: ERaceEnum; align: "left" | "center" | "right" }[];
 
     function getImageForTable(heroId: string): string {
       const src: string = getAsset(`heroes/${heroId}.png`);

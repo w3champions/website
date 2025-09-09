@@ -1,4 +1,4 @@
-import { AdminState, BannedPlayer, BannedPlayersResponse, BannedPlayersGetRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
+import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import { defineStore } from "pinia";
