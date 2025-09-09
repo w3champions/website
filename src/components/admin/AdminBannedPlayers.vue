@@ -258,6 +258,7 @@ export default defineComponent({
         const itemCopy = { ...item };
         itemCopy.endDate = new Date().toISOString();
         itemCopy.banReason = "Ban removed";
+        itemCopy.author = author.value;
         await adminStore.postBan(itemCopy);
       }
       await loadBanList();
