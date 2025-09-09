@@ -1,7 +1,7 @@
 # build stage
 FROM node:20-bullseye as build-stage
 WORKDIR /app
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install --frozen-lockfile
 COPY . .
 RUN npm run build:prod
