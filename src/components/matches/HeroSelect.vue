@@ -15,10 +15,18 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
-          <v-list-item v-for="hero in heroFilters" :key="hero.type" @click="selectHero(hero)">
+          <v-list-item
+            v-for="hero in heroFilters"
+            :key="hero.type"
+            @click="toggleHero(hero)"
+            :class="{ 'primary--text': isSelected(hero) }"
+          >
             <v-list-item-content>
               <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-icon v-if="isSelected(hero)">mdi-check</v-icon>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -41,29 +49,44 @@ export default defineComponent({
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
 
-    let selectedHero = ref<HeroFilter>();
+    const selectedHeroes = ref<number[]>([]);
     const selectedText = computed<TranslateResult>(() => {
-      if (selectedHero === undefined || selectedHero.value === undefined) {
+      if (!selectedHeroes.value.length) {
         return t("heroNames.allfilter");
-      } else {
-        return t(`heroNames.${selectedHero.value.name}`);
       }
+      const count = selectedHeroes.value.length;
+      return count === 1 ? `${count} hero` : `${count} heroes`;
     });
 
     onMounted(async (): Promise<void> => {
       await commonStore.loadHeroFilters();
     });
 
-    const selectHero = (hero: HeroFilter) => {
-      selectedHero.value = hero;
-      context.emit("heroChanged", hero.type);
+    const toggleHero = (hero: HeroFilter) => {
+      if (hero.name === "all") {
+        selectedHeroes.value = [];
+      } else {
+        const idx = selectedHeroes.value.indexOf(hero.type);
+        if (idx >= 0) {
+          selectedHeroes.value.splice(idx, 1);
+        } else {
+          selectedHeroes.value.push(hero.type);
+        }
+      }
+      context.emit("heroChanged", [...selectedHeroes.value]);
+    };
+
+    const isSelected = (hero: HeroFilter): boolean => {
+      if (hero.name === "all") return selectedHeroes.value.length === 0;
+      return selectedHeroes.value.includes(hero.type);
     };
 
     return {
       mdiDramaMasks,
       heroFilters,
-      selectHero,
-      selectedHero,
+      toggleHero,
+      isSelected,
+      selectedHeroes,
       selectedText,
     };
   },

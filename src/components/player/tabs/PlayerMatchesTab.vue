@@ -51,6 +51,9 @@
           />
         </v-col>
         <v-col align-self="center">
+          <hero-select v-if="showHeroSelect" @heroChanged="heroChanged" />
+        </v-col>
+        <v-col align-self="center">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
@@ -69,7 +72,7 @@
       </v-row>
     </v-card-text>
     <matches-grid
-      v-model="matches"
+      v-model="filteredMatches"
       :total-matches="totalMatches"
       :items-per-page="50"
       :always-left-name="battleTag"
@@ -91,6 +94,8 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
+import HeroSelect from "@/components/matches/HeroSelect.vue";
+import { useCommonStore } from "@/store/common/store";
 
 export default defineComponent({
   name: "PlayerMatchesTab",
@@ -98,6 +103,7 @@ export default defineComponent({
     MatchesGrid,
     PlayerSearch,
     HeroIconToggle,
+    HeroSelect,
   },
   props: {
     id: {
@@ -109,9 +115,11 @@ export default defineComponent({
     const { t } = useI18n();
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
+    const commonStore = useCommonStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
     const showHeroIcons = ref<boolean>(true);
+    const selectedHeroFilter = ref<number[]>([]);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
@@ -119,9 +127,13 @@ export default defineComponent({
     const profileMatchesGameMode = computed<EGameMode>(() => playerStore.profileMatchesGameMode);
     const playerRace = computed<ERaceEnum | undefined>(() => playerStore.playerRace);
     const opponentRace = computed<ERaceEnum | undefined>(() => playerStore.opponentRace);
+    const showHeroSelect = computed<boolean>(() =>
+      profileMatchesGameMode.value === EGameMode.GM_1ON1 || profileMatchesGameMode.value === EGameMode.GM_1ON1_TOURNAMENT
+    );
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
+      await commonStore.loadHeroFilters();
     });
 
     async function playerFound(bTag: string): Promise<void> {
@@ -164,6 +176,12 @@ export default defineComponent({
     function setOpponentRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_OPPONENT_RACE(race);
       getMatches();
+    }
+
+    function heroChanged(heroes: number[]): void {
+      playerStore.SET_SELECTED_HEROES(heroes); 
+      getMatches();
+      // selectedHeroFilter.value = heroes;
     }
 
     const totalMatchesAgainstOpponent = computed<number>(() => {
@@ -230,6 +248,41 @@ export default defineComponent({
       await getMatches(page);
     }
 
+    const filteredMatches = computed<Match[]>(() => {
+      if (!matches.value) return [];
+      if (!selectedHeroFilter.value || selectedHeroFilter.value.length === 0) return matches.value;
+
+      const selectedNames = new Set(
+        commonStore.heroFilters
+          .filter((h) => selectedHeroFilter.value.includes(h.type))
+          .map((h) => h.name)
+      );
+
+      if (selectedNames.size === 0) return matches.value.filter((m) => hasAnyHeroInfo(m));
+
+      // AND operator across the match
+      return matches.value.filter((match: Match) => {
+        const heroesInMatch = new Set<string>();
+        match.teams?.forEach((team: Team) =>
+          team.players?.forEach((player: PlayerInTeam) =>
+            player.heroes?.forEach((h) => heroesInMatch.add(h.name))
+          )
+        );
+        // must have some hero info at all
+        if (heroesInMatch.size === 0) return false;
+        for (const name of selectedNames) {
+          if (!heroesInMatch.has(name)) return false;
+        }
+        return true;
+      });
+    });
+
+    function hasAnyHeroInfo(match: Match): boolean {
+      return match.teams?.some((team: Team) =>
+        team.players?.some((player: PlayerInTeam) => Array.isArray(player.heroes) && player.heroes.length > 0)
+      ) ?? false;
+    }
+
     return {
       activeGameModesWithAll,
       profileMatchesGameMode,
@@ -246,10 +299,13 @@ export default defineComponent({
       totalMatchesAgainstOpponent,
       winRateVsOpponent,
       matches,
+      filteredMatches,
       totalMatches,
       battleTag,
       onPageChanged,
       showHeroIcons,
+      showHeroSelect,
+      heroChanged,
     };
   },
 });

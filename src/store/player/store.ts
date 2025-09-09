@@ -19,6 +19,7 @@ export const usePlayerStore = defineStore("player", {
     loadingProfile: false,
     loadingRecentMatches: false,
     loadingMmrRpTimeline: true,
+    loadingPlayerStatsHeroVersusRaceOnMap: false,
     opponentTag: "",
     selectedSeason: {} as Season,
     profileMatchesGameMode: EGameMode.UNDEFINED,
@@ -26,6 +27,7 @@ export const usePlayerStore = defineStore("player", {
     profileStatisticsGameMode: EGameMode.GM_1ON1,
     playerRace: undefined,
     opponentRace: undefined,
+    selectedHeroes: [] as number[],
     ongoingMatch: {} as Match,
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
@@ -85,7 +87,7 @@ export const usePlayerStore = defineStore("player", {
       );
       this.SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(profile);
     },
-    async loadMatches(page?: number) {
+  async loadMatches(page?: number) {
       this.SET_PAGE(page ?? 1);
       this.SET_LOADING_RECENT_MATCHES(true);
       const rootStateStore = useRootStateStore();
@@ -98,6 +100,7 @@ export const usePlayerStore = defineStore("player", {
         this.opponentRace ?? ERaceEnum.TOTAL,
         rootStateStore.gateway,
         this.selectedSeason?.id ?? -1,
+        this.selectedHeroes,
       );
       this.SET_TOTAL_MATCHES(response.count);
       this.SET_MATCHES(response.matches);
@@ -191,6 +194,9 @@ export const usePlayerStore = defineStore("player", {
     },
     SET_OPPONENT_RACE(opponentRace: ERaceEnum): void {
       this.opponentRace = opponentRace;
+    },
+    SET_SELECTED_HEROES(heroes: number[]): void {
+      this.selectedHeroes = heroes;
     },
     SET_ONGOING_MATCH(match: Match): void {
       this.ongoingMatch = match;
