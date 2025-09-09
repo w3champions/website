@@ -125,16 +125,41 @@
 
         <template v-slot:item.actions="{ item }">
           <div class="d-flex justify-end">
-            <v-btn
-              icon
-              small
-              color="error"
-              @click="confirmDelete(item)"
-              :disabled="deletingLinks.includes(item.battleTag)"
-              :loading="deletingLinks.includes(item.battleTag)"
-            >
-              <v-icon small>{{ mdiDelete }}</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  small
+                  color="info"
+                  @click="viewMemberDetails(item)"
+                  :disabled="loadingMemberDetails"
+                  :loading="loadingMemberDetails && selectedMemberBattleTag === item.battleTag"
+                  v-bind="attrs"
+                  v-on="on"
+                  class="mr-1"
+                >
+                  <v-icon small>{{ mdiMagnify }}</v-icon>
+                </v-btn>
+              </template>
+              <span>View details</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  small
+                  color="error"
+                  @click="confirmDelete(item)"
+                  :disabled="deletingLinks.includes(item.battleTag)"
+                  :loading="deletingLinks.includes(item.battleTag)"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon small>{{ mdiDelete }}</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete link</span>
+            </v-tooltip>
           </div>
         </template>
 
@@ -179,6 +204,147 @@
       </v-card>
     </v-dialog>
 
+    <!-- Member Details Dialog -->
+    <v-dialog v-model="memberDetailsDialog" max-width="700">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">
+            <v-icon left>{{ mdiAccountDetails }}</v-icon>
+            Patreon Member Details
+          </span>
+        </v-card-title>
+        <v-card-text v-if="memberDetails">
+          <!-- User Info -->
+          <v-row class="mb-4">
+            <v-col cols="12">
+              <div class="text-subtitle2 text--secondary mb-1">BattleTag</div>
+              <div class="text-body-1 font-weight-medium">{{ memberDetails.battleTag }}</div>
+            </v-col>
+          </v-row>
+
+          <!-- Patreon Status -->
+          <v-divider class="mb-4"></v-divider>
+          <div class="text-subtitle1 font-weight-bold mb-3">Patreon Status</div>
+          
+          <v-row v-if="memberDetails.found">
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3">
+                <div class="text-caption text--secondary">Patron Status</div>
+                <v-chip 
+                  :color="memberDetails.isActivePatron ? 'success' : 'error'"
+                  small
+                  class="mt-1"
+                >
+                  {{ memberDetails.patronStatus || 'Unknown' }}
+                </v-chip>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3">
+                <div class="text-caption text--secondary">Last Charge</div>
+                <div class="text-body-2 mt-1">
+                  <v-chip 
+                    :color="memberDetails.lastChargeStatus === 'Paid' ? 'success' : 'warning'"
+                    small
+                  >
+                    {{ memberDetails.lastChargeStatus || 'N/A' }}
+                  </v-chip>
+                </div>
+                <div v-if="memberDetails.lastChargeDate" class="text-caption mt-1">
+                  {{ formatDate(memberDetails.lastChargeDate) }}
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-alert v-else type="warning" prominent class="mt-3">
+            {{ memberDetails.message || memberDetails.error }}
+          </v-alert>
+
+          <!-- Member Info -->
+          <div v-if="memberDetails.found" class="mt-4">
+            <v-divider class="mb-4"></v-divider>
+            <div class="text-subtitle1 font-weight-bold mb-3">Member Information</div>
+            
+            <v-simple-table dense>
+              <tbody>
+                <tr>
+                  <td class="text--secondary">Patreon User ID</td>
+                  <td class="font-family-monospace">{{ memberDetails.patreonUserId }}</td>
+                </tr>
+                <tr>
+                  <td class="text--secondary">Member ID</td>
+                  <td class="font-family-monospace">{{ memberDetails.patreonMemberId }}</td>
+                </tr>
+                <tr v-if="memberDetails.email">
+                  <td class="text--secondary">Email</td>
+                  <td>{{ memberDetails.email }}</td>
+                </tr>
+                <tr v-if="memberDetails.pledgeRelationshipStart">
+                  <td class="text--secondary">Member Since</td>
+                  <td>{{ formatDate(memberDetails.pledgeRelationshipStart) }}</td>
+                </tr>
+              </tbody>
+            </v-simple-table>
+          </div>
+
+          <!-- Tier Information -->
+          <div v-if="memberDetails.found && memberDetails.entitledTierIds" class="mt-4">
+            <v-divider class="mb-4"></v-divider>
+            <div class="text-subtitle1 font-weight-bold mb-3">Tier Information</div>
+            
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-card outlined class="pa-3">
+                  <div class="text-caption text--secondary mb-2">Patreon Entitled Tiers</div>
+                  <v-chip
+                    v-for="tier in memberDetails.entitledTierIds"
+                    :key="tier"
+                    small
+                    color="orange"
+                    class="mr-1 mb-1"
+                  >
+                    {{ tier }}
+                  </v-chip>
+                  <div v-if="!memberDetails.entitledTierIds.length" class="text-caption">No tiers</div>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-card outlined class="pa-3">
+                  <div class="text-caption text--secondary mb-2">Internal Associations</div>
+                  <div class="text-body-2">
+                    <strong>{{ memberDetails.activeAssociationCount }}</strong> active association(s)
+                  </div>
+                  <v-chip
+                    v-for="tier in memberDetails.activeAssociationTiers"
+                    :key="tier"
+                    small
+                    color="primary"
+                    class="mr-1 mb-1 mt-2"
+                  >
+                    {{ tier }}
+                  </v-chip>
+                  <div v-if="!memberDetails.activeAssociationTiers || !memberDetails.activeAssociationTiers.length" class="text-caption mt-2">No associations</div>
+                </v-card>
+              </v-col>
+            </v-row>
+          </div>
+        </v-card-text>
+        
+        <v-card-text v-else class="text-center py-8">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          <div class="mt-3">Loading member details...</div>
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="memberDetailsDialog = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Success/Error Snackbar -->
     <v-snackbar
       v-model="snackbar"
@@ -205,7 +371,8 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
   mdiPatreon, mdiFilterRemove, mdiClose, mdiCheckCircle,
-  mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch
+  mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch, mdiSync,
+  mdiAccountDetails
 } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
@@ -230,6 +397,12 @@ export default defineComponent({
     const selectedLink = ref<PatreonAccountLink | null>(null);
     const deleting = ref(false);
     const deletingLinks = ref<string[]>([]);
+
+    // Member details functionality
+    const memberDetailsDialog = ref(false);
+    const memberDetails = ref<any>(null);
+    const loadingMemberDetails = ref(false);
+    const selectedMemberBattleTag = ref<string>("");
 
     // Snackbar
     const snackbar = ref(false);
@@ -304,6 +477,29 @@ export default defineComponent({
         deletingLinks.value = deletingLinks.value.filter((bt) => bt !== battleTag);
         deleteDialog.value = false;
         selectedLink.value = null;
+      }
+    };
+
+    const viewMemberDetails = async (link: PatreonAccountLink) => {
+      const battleTag = link.battleTag;
+      selectedMemberBattleTag.value = battleTag;
+      loadingMemberDetails.value = true;
+      memberDetails.value = null;
+      memberDetailsDialog.value = true;
+
+      try {
+        const details = await AdminService.getPatreonMemberDetails(battleTag, oauthStore.token);
+        memberDetails.value = details;
+      } catch (error) {
+        console.error("Error fetching member details:", error);
+        memberDetails.value = {
+          found: false,
+          battleTag: battleTag,
+          error: `Failed to fetch member details: ${error}`
+        };
+        showSnackbar(`Failed to fetch member details: ${error}`, "error");
+      } finally {
+        loadingMemberDetails.value = false;
       }
     };
 
@@ -397,6 +593,10 @@ export default defineComponent({
       selectedLink,
       deleting,
       deletingLinks,
+      memberDetailsDialog,
+      memberDetails,
+      loadingMemberDetails,
+      selectedMemberBattleTag,
       snackbar,
       snackbarMessage,
       snackbarColor,
@@ -416,6 +616,7 @@ export default defineComponent({
       getSyncStatusClass,
       confirmDelete,
       deletePatreonLink,
+      viewMemberDetails,
       formatDate,
       formatTime,
 
@@ -433,6 +634,7 @@ export default defineComponent({
       mdiAlertCircle,
       mdiInformation,
       mdiAccountSearch,
+      mdiAccountDetails,
     };
   },
 });
