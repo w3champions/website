@@ -22,7 +22,7 @@
               :unfinished="unfinished" />
           </v-card-text>
           <matches-grid
-            v-model="filteredMatches"
+            v-model="matches"
             :totalMatches="totalMatches"
             @pageChanged="onPageChanged"
             :itemsPerPage="50"
@@ -56,8 +56,6 @@ import { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
-import { useI18n } from "vue-i18n-bridge";
-import { useCommonStore } from "@/store/common/store";
 
 export default defineComponent({
   name: "MatchesView",
@@ -76,37 +74,9 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
-    const commonStore = useCommonStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
 
     const matches = computed<Match[]>(() => matchStore.matches);
-    const filteredMatches = computed<Match[]>(() => {
-      const selected = matchStore.selectedHeroFilter;
-      if (!selected || selected.length === 0) return matches.value;
-
-      // Build selected hero names set
-      const nameSet = new Set(
-        commonStore.heroFilters
-          .filter((h) => selected.includes(h.type))
-          .map((h) => h.name)
-      );
-
-      if (nameSet.size === 0) return matches.value;
-
-      // AND operator: every selected hero name must appear at least once across the match players
-      return matches.value.filter((m) => {
-        const heroesInMatch = new Set<string>();
-        m.teams?.forEach((t) =>
-          t.players?.forEach((p) =>
-            p.heroes?.forEach((h) => heroesInMatch.add(h.name))
-          )
-        );
-        for (const name of nameSet) {
-          if (!heroesInMatch.has(name)) return false;
-        }
-        return true;
-      });
-    });
     const totalMatches = computed<number>(() => matchStore.totalMatches);
     const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
     const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
@@ -232,7 +202,6 @@ export default defineComponent({
       toggleShowHeroIcons,
       showHeroSelect,
       heroChanged,
-      filteredMatches,
     };
   },
 });
