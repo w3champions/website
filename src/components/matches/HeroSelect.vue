@@ -1,7 +1,12 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent">
+      <v-btn
+        tile
+        v-on="on"
+        :class="{ large: $props.large }"
+        style="background-color: transparent"
+      >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
       </v-btn>
@@ -41,10 +46,15 @@ import { mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
 
-
 export default defineComponent({
   name: "HeroSelect",
-  setup: (_, context) => {
+  props: {
+    large: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup: (props, context) => {
     const { t } = useI18n();
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
@@ -54,8 +64,8 @@ export default defineComponent({
       if (!selectedHeroes.value.length) {
         return t("heroNames.allfilter");
       }
-      const count = selectedHeroes.value.length;
-      return count === 1 ? `${count} hero` : `${count} heroes`;
+      const hero = heroFilters.value.find((h) => h.type === selectedHeroes.value[0]);
+      return hero ? t(`heroNames.${hero.name}`) : t("heroNames.allfilter");
     });
 
     onMounted(async (): Promise<void> => {
@@ -66,12 +76,7 @@ export default defineComponent({
       if (hero.name === "all") {
         selectedHeroes.value = [];
       } else {
-        const idx = selectedHeroes.value.indexOf(hero.type);
-        if (idx >= 0) {
-          selectedHeroes.value.splice(idx, 1);
-        } else {
-          selectedHeroes.value.push(hero.type);
-        }
+        selectedHeroes.value = [hero.type];
       }
       context.emit("heroChanged", [...selectedHeroes.value]);
     };
@@ -93,4 +98,15 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style scoped>
+.large {
+  margin-top: -8px;
+  height: 55px !important;
+  width: 250px !important;
+  border-radius: 4px;
+  border-color: rgb(128, 128, 128) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  box-shadow: none !important;
+}
+</style>
