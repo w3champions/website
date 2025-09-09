@@ -40,7 +40,6 @@ export default defineComponent({
     return {
       heroPicture,
       heroName,
-      heroLevel: props.heroLevel,
     };
   },
 });
