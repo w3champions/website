@@ -332,6 +332,15 @@ export default class AdminService {
     return response.ok;
   }
 
+  public static async getPatreonMemberDetails(battleTag: string, token: string): Promise<any> {
+    const url = `${API_URL}api/rewards/admin/patreon/members/${encodeURIComponent(battleTag)}`;
+    const response = await authorizedFetch("GET", url, token);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch member details: ${response.statusText}`);
+    }
+    return await response.json();
+  }
+
   public static async getAllAssignments(token: string, page = 1, pageSize = 50): Promise<PaginatedAssignments> {
     const url = `${API_URL}api/rewards/admin/assignments/all?page=${page}&pageSize=${pageSize}`;
     const response = await authorizedFetch("GET", url, token);
