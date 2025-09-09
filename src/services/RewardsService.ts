@@ -31,7 +31,6 @@ export interface PatreonOAuthResponse {
 }
 
 export default class RewardsService {
-
   /**
    * Get Patreon link status for the current user
    */
@@ -125,5 +124,4 @@ export default class RewardsService {
 
     return await response.json();
   }
-
 }

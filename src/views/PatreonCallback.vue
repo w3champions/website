@@ -77,7 +77,7 @@ export default defineComponent({
       try {
         // Ensure auth token is loaded from cookies
         await oauthStore.loadAuthCodeToState();
-        
+
         // Check if user is authenticated
         if (!authCode.value) {
           throw new Error("User not authenticated. Please log in first.");
@@ -120,9 +120,10 @@ export default defineComponent({
         // Reload rewards data after successful linking
         await rewardsStore.loadUserRewards(authCode.value);
 
-      } catch (error: any) {
+      } catch (error) {
+        const ex = error as Error;
+        errorMessage.value = ex.message || "An unexpected error occurred";
         console.error("Patreon callback error:", error);
-        errorMessage.value = error.message || "An unexpected error occurred";
         isSuccess.value = false;
       } finally {
         isProcessing.value = false;

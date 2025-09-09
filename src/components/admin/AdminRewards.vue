@@ -138,7 +138,7 @@ import AdminService from "@/services/admin/AdminService";
 import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from "@/store/admin/types";
 import AdminRewardEdit from "./AdminRewardEdit.vue";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
-import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup, mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from "@mdi/js";
+import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
