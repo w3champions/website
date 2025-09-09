@@ -250,9 +250,9 @@ export default defineComponent({
       { text: "Mute End Date", sortable: true, value: "endDate" },
       { text: "Mute Insert Date", sortable: true, value: "insertDate" },
       { text: "Author", sortable: true, value: "author" },
-      { text: "Reason", sortable: true, value: "reason" },
+      { text: "Reason", sortable: true, width: "17vw", value: "reason" },
       { text: "Shadow Ban", sortable: true, value: "isShadowBan" },
-      { text: "Actions", sortable: false, value: "actions" },
+      { text: "Actions", sortable: false, value: "actions", align: "center" },
     ];
 
     return {
@@ -276,3 +276,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.container {
+  max-width: 1300px;
+}
+</style>

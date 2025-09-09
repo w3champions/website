@@ -73,8 +73,6 @@ export default defineComponent({
     HeroSelect,
   },
   setup() {
-    const { t } = useI18n();
-
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
@@ -120,7 +118,7 @@ export default defineComponent({
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
 
     const maps = computed<Array<MapInfo>>(() => {
-      if (!currentSeason.value) { 
+      if (!currentSeason.value) {
         return [];
       }
 

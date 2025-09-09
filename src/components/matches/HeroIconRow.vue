@@ -36,7 +36,7 @@ export default defineComponent({
       required: false
     },
   },
-  setup(props, context) {
+  setup(props) {
     let heroList = props.heroes;
     if (props.left && heroList) {
       // must slice to avoid mutating the original array
@@ -44,7 +44,6 @@ export default defineComponent({
     }
     return {
       heroList,
-      left: props.left,
       firstHeroIndex: props.left && heroList ? heroList.length - 1 : 0,
     };
   }

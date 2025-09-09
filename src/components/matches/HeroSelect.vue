@@ -58,6 +58,7 @@ export default defineComponent({
     const { t } = useI18n();
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
+    const selectedHero = ref<HeroFilter>();
 
     const selectedHeroes = ref<number[]>([]);
     const selectedText = computed<TranslateResult>(() => {

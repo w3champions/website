@@ -40,12 +40,19 @@ import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
 import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
 import AdminStorageAlibaba from "@/components/admin/cloudStorage/AdminStorageAlibaba.vue";
 import AdminStorageS3 from "@/components/admin/cloudStorage/AdminStorageS3.vue";
+import AdminRewards from "@/components/admin/AdminRewards.vue";
+import AdminProductMappings from "@/components/admin/AdminProductMappings.vue";
+import AdminAssignments from "@/components/admin/AdminAssignments.vue";
+import AdminPatreonLinks from "@/components/admin/AdminPatreonLinks.vue";
+import AdminDriftDetection from "@/components/admin/AdminDriftDetection.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
-import { EAdminRouteName, EStatisticsRouteName, ESetupGuidesRouteName } from "./types";
+import Rewards from "@/views/Rewards.vue";
+import PatreonCallback from "@/views/PatreonCallback.vue";
+import { EAdminRouteName, ESetupGuidesRouteName, EStatisticsRouteName } from "./types";
 
 Vue.use(VueRouter);
 
@@ -85,7 +92,7 @@ const routes: RouteConfig[] = [
         path: "installing-war3",
         component: InstallingWar3,
         name: ESetupGuidesRouteName.INSTALLING_WAR3,
-      }
+      },
     ],
   },
   {
@@ -231,6 +238,11 @@ const routes: RouteConfig[] = [
       { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },
       { path: "admin-loading-screen-tips", name: EAdminRouteName.LOADING_SCREEN_TIPS, component: AdminLoadingScreenTips },
       { path: "admin-motd", name: EAdminRouteName.MESSAGE_OF_THE_DAY, component: AdminMotd },
+      { path: "admin-rewards", name: EAdminRouteName.MANAGE_REWARDS, component: AdminRewards },
+      { path: "admin-product-mappings", name: EAdminRouteName.PRODUCT_MAPPINGS, component: AdminProductMappings },
+      { path: "admin-assignments", name: EAdminRouteName.REWARD_ASSIGNMENTS, component: AdminAssignments },
+      { path: "admin-patreon-links", name: EAdminRouteName.PATREON_LINKS, component: AdminPatreonLinks },
+      { path: "admin-drift-detection", name: EAdminRouteName.DRIFT_DETECTION, component: AdminDriftDetection },
       { path: "admin-assign-portraits", name: EAdminRouteName.ASSIGN_PORTRAITS, component: AdminAssignPortraits },
       { path: "admin-manage-portraits", name: EAdminRouteName.MANAGE_PORTRAITS, component: AdminManagePortraits },
       { path: "admin-storage-alibaba", name: EAdminRouteName.MANAGE_ALIBABA_FILES, component: AdminStorageAlibaba },
@@ -241,6 +253,16 @@ const routes: RouteConfig[] = [
       { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
     ],
+  },
+  {
+    path: "/rewards",
+    name: "Rewards",
+    component: Rewards,
+  },
+  {
+    path: "/patreon/callback",
+    name: "PatreonCallback",
+    component: PatreonCallback,
   },
   {
     path: "/tournaments",

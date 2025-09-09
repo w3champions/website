@@ -22,7 +22,6 @@ declare global {
     _env_: {
       BASE_URL: string;
       IDENTIFICATION_URL: string;
-      REDIRECT_URL: string;
       LAUNCHER_UPDATE_URL: string;
       INGAME_STATIC_RESOURCES_URL: string;
       BNET_API_CLIENT_ID: string;
@@ -40,6 +39,7 @@ export const API_URL = _apiUrl;
 export const IDENTIFICATION_URL = _idUrl;
 const getUrl = window.location;
 export const REDIRECT_URL = getUrl.protocol + "//" + getUrl.host + "/login";
+export const PATREON_REDIRECT_URL = getUrl.protocol + "//" + getUrl.host + "/patreon/callback";
 export const LAUNCHER_UPDATE_URL = _launcherUrl;
 export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 export const BNET_API_CLIENT_ID = _bnetApiClientId;

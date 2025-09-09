@@ -25,7 +25,7 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       const oauthStore = useOauthStore();
       try {
         await MapsService.updateMap(oauthStore.token, map.id, map);
-      } catch(err) {
+      } catch (err) {
         err ? alert(err) : alert("Error trying to update map.");
       }
     },

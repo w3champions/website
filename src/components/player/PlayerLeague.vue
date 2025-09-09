@@ -11,8 +11,8 @@
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
-        <span class="text-center pointer" @click="navigateToPartner()">
-          {{ atPartner.name }}
+        <span v-for="(partner, index) in atPartners" :key="partner.battleTag" class="text-center pointer" @click="navigateToPartner(partner)">
+          {{ partner.name }}<span v-if="index < atPartners.length - 1">, </span>
         </span>
         <br v-if="showAtPartner" />
       </div>
@@ -108,7 +108,7 @@ export default defineComponent({
     const battleTag = computed<string>(() => playerStore.battleTag);
     const seasonAndGameModeAndGateway = computed<string>(() => `${selectedSeason.value.id}${gameMode.value}${gateWay.value}`);
 
-    const atPartner = computed<PlayerId>(() => props.modeStat.playerIds.find((id) => battleTag.value !== id.battleTag)!);
+    const atPartners = computed<PlayerId[]>(() => props.modeStat.playerIds.filter((id) => battleTag.value !== id.battleTag));
 
     watch(seasonAndGameModeAndGateway, init, { immediate: true });
 
@@ -129,9 +129,9 @@ export default defineComponent({
       matches.value = playerMatches.matches;
     }
 
-    function navigateToPartner(): void {
+    function navigateToPartner(partner: PlayerId): void {
       router.push({
-        path: getProfileUrl(atPartner.value.battleTag),
+        path: getProfileUrl(partner.battleTag),
       });
     }
 
@@ -191,7 +191,7 @@ export default defineComponent({
       leagueMode,
       leagueName,
       navigateToPartner,
-      atPartner,
+      atPartners,
       isRecentPerformanceVisible,
       lastTenMatchesPerformance,
     };

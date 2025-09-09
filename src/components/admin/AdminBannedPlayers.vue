@@ -6,12 +6,13 @@
     <v-data-table
       :headers="headers"
       :items="bannedPlayers"
-      :items-per-page="10"
-      :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
-      sort-by="banInsertDate"
-      :sort-desc="true"
+      :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
       :search="tableSearch"
+      :server-items-length="bannedPlayersCount"
+      @update:options="onTableOptionsUpdate"
+      :options="bannedPlayersTableOptions"
       class="elevation-1"
+      item-key="banInsertDate"
     >
 
       <template v-slot:top>
@@ -37,7 +38,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
+                <span class="text-h5">New Item</span>
               </v-card-title>
 
               <v-card-text>
@@ -45,15 +46,9 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="12" class="pb-0">
                       <player-search
-                        v-if="isAddDialog"
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
                       ></player-search>
-                      <v-text-field
-                        v-else
-                        v-model="editedItem.battleTag"
-                        label="BattleTag"
-                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="py-0">
                       <v-menu
@@ -102,7 +97,7 @@
                           <v-select
                             v-on="on"
                             v-model="editedItem.gameModes"
-                            :items="selectableGameModes"
+                            :items="activeGameModes()"
                             item-text="name"
                             item-value="id"
                             :menu-props="{ maxHeight: '400' }"
@@ -156,7 +151,6 @@
         <td v-else>All</td>
       </template>
       <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
@@ -165,8 +159,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
-import { activeGameModes, activeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
-import { BannedPlayer } from "@/store/admin/types";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -176,6 +170,8 @@ import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { DataOptions } from "vuetify";
+import debounce from "debounce";
 
 type AdminBannedPlayersHeader = {
   text: string;
@@ -183,6 +179,7 @@ type AdminBannedPlayersHeader = {
   sortable: boolean;
   width?: string;
   filterable: boolean;
+  align?: "start" | "center" | "end";
 };
 
 export default defineComponent({
@@ -198,18 +195,29 @@ export default defineComponent({
 
     const dialog = ref<boolean>(false);
     const dateMenu = ref<boolean>(false);
-    const editedIndex = ref<number>(-1);
     const tableSearch = ref<string>("");
     const foundPlayer = ref<string>("");
 
     const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
-    const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
-    const isAddDialog = computed<boolean>(() => editedIndex.value === -1);
+    const bannedPlayersCount = computed<number>(() => adminStore.bannedPlayersCount);
     const banValidationError = computed<string>(() => adminStore.banValidationError);
     const isValidationError = computed<boolean>(() => adminStore.banValidationError !== "");
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
-    const formTitle = computed<string>(() => isAddDialog.value ? "New Item" : "Edit Item");
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
+
+    const SEARCH_DELAY = 500;
+    const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
+
+    const bannedPlayersTableOptions = ref<DataOptions>({
+      page: 1,
+      itemsPerPage: 10,
+      sortBy: ["banInsertDate"],
+      sortDesc: [true],
+      groupBy: [],
+      groupDesc: [],
+      multiSort: false,
+      mustSort: false,
+    });
 
     const defaultItem = {
       battleTag: "",
@@ -221,65 +229,52 @@ export default defineComponent({
       author: "",
     };
 
-    // When adding a new ban, and when setting a new date on an edited item, endDate will have the format 'yyyy-MM-dd', which is of length 10.
-    const endDateIsSet = computed<boolean>(() => editedItem.value.endDate.length == 10);
+    async function onTableOptionsUpdate(dataOptions: DataOptions) {
+      bannedPlayersTableOptions.value = dataOptions;
+      await loadBanList();
+    }
 
     function getGameModeName(id: EGameMode): TranslateResult {
       return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
     }
 
-    // For a new ban, only allow active game modes to be chosen.
-    // If you're editing a ban, and they are banned from an inactive game mode, add those the list, to allow deselecting them.
-    const selectableGameModes = computed<IGameModeBrief[]>(() => {
-      const bannedModesForEditedItem = editedItem.value.gameModes;
-      const activeModeIds = activeGameModes().map((mode) => mode.id);
-      const bannedInactiveModesForEditedItem = bannedModesForEditedItem
-        .filter((mode) => !activeModeIds.includes(mode))
-        .map((id) => {
-          return {
-            id,
-            name: `gameModes.${EGameMode[id]}`
-          };
-        });
-      const activeModes = activeGameModes();
-
-      return activeModes.concat(bannedInactiveModesForEditedItem);
-    });
-
-
     async function loadBanList() {
-      await adminStore.loadBannedPlayers();
+      const bannedPlayersGetRequest = formatBannedPlayersGetRequest();
+      await adminStore.loadBannedPlayers(bannedPlayersGetRequest);
     }
 
-    function editItem(item: BannedPlayer): void {
-      editedIndex.value = bannedPlayers.value.indexOf(item);
-      editedItem.value = Object.assign({}, item);
-      dialog.value = true;
+    function formatBannedPlayersGetRequest(): BannedPlayersGetRequest {
+      return {
+        page: bannedPlayersTableOptions.value.page,
+        itemsPerPage: bannedPlayersTableOptions.value.itemsPerPage,
+        sortBy: bannedPlayersTableOptions.value.sortBy[0],
+        sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
+        search: tableSearch.value,
+      };
     }
 
     async function deleteItem(item: BannedPlayer): Promise<void> {
-      confirm("Are you sure you want to delete this item?") && await adminStore.deleteBan(item);
+      if (confirm("Are you sure you want to delete this item?")) {
+        const itemCopy = { ...item };
+        itemCopy.endDate = new Date().toISOString();
+        itemCopy.banReason = "Ban removed";
+        itemCopy.author = author.value;
+        await adminStore.postBan(itemCopy);
+      }
       await loadBanList();
     }
 
-
     async function save(): Promise<void> {
       editedItem.value.author = author.value;
-      if (endDateIsSet.value) {
-        editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
-      }
-      if (isAddDialog.value) {
-        editedItem.value.battleTag = foundPlayer.value;
-      }
+      editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
+      editedItem.value.battleTag = foundPlayer.value;
 
       await adminStore.postBan(editedItem.value);
 
       if (!isValidationError.value) {
         close();
         await loadBanList();
-        if (isAddDialog.value) {
-          playerSearchStore.clearPlayerSearch();
-        }
+        playerSearchStore.clearPlayerSearch();
       }
     }
 
@@ -287,11 +282,7 @@ export default defineComponent({
       dialog.value = false;
     }
 
-    watch(isAdmin, init);
-
     async function init(): Promise<void> {
-      if (!isAdmin.value) return;
-      await loadBanList();
       await loadActiveGameModes();
       editedItem.value = Object.assign({}, defaultItem);
     }
@@ -300,10 +291,22 @@ export default defineComponent({
       await init();
     });
 
+    watch(tableSearch, onTableSearch);
+
+    // Fetching the ban list is done automatically when changing the page.
+    // We need to set the page to 1 when searching, otherwise you could be on page 5 for instance when making a more narrow search,
+    // which leaves you with an empty table.
+    async function onTableSearch(): Promise<void> {
+      if (bannedPlayersTableOptions.value.page === 1) {
+        await debouncedLoadBanList();
+      } else {
+        bannedPlayersTableOptions.value.page = 1;
+      }
+    }
+
     function resetDialog(): void {
       nextTick(() => {
         editedItem.value = Object.assign({}, defaultItem);
-        editedIndex.value = -1;
       });
       playerSearchStore.clearPlayerSearch();
     }
@@ -331,10 +334,10 @@ export default defineComponent({
       { text: "Ban End Date", value: "endDate", sortable: true, width: "10vw", filterable: false },
       { text: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw", filterable: false },
       { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
-      { text: "IP ban", value: "isIpBan", sortable: true, width: "5vw", filterable: false },
+      { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
       { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban reason", value: "banReason", sortable: true, filterable: false },
-      { text: "Actions", value: "actions", sortable: false, filterable: false },
+      { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
+      { text: "Actions", value: "actions", sortable: false, filterable: false, width: "1vw", align: "center" },
     ];
 
     return {
@@ -343,23 +346,23 @@ export default defineComponent({
       mdiPencil,
       headers,
       bannedPlayers,
+      bannedPlayersCount,
       tableSearch,
       dialog,
-      formTitle,
-      isAddDialog,
       playerFound,
       searchCleared,
       editedItem,
       dateMenu,
-      selectableGameModes,
+      activeGameModes,
       isValidationError,
       banValidationError,
       close,
       isEmpty,
       getGameModeName,
       save,
-      editItem,
       deleteItem,
+      onTableOptionsUpdate,
+      bannedPlayersTableOptions,
     };
   },
 });

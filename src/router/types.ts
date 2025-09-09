@@ -15,6 +15,11 @@ export enum EAdminRouteName {
   MANAGE_PORTRAITS = "Admin - Manage Portraits",
   MANAGE_ALIBABA_FILES = "Admin - Manage Alibaba Files",
   MANAGE_S3_FILES = "Admin - Manage S3 Files",
+  MANAGE_REWARDS = "Admin - Manage Rewards",
+  PRODUCT_MAPPINGS = "Admin - Product Mappings",
+  REWARD_ASSIGNMENTS = "Admin - Reward Assignments",
+  PATREON_LINKS = "Admin - Patreon Links",
+  DRIFT_DETECTION = "Admin - Drift Detection",
   MANAGE_MAPS = "Admin - Manage Maps",
   MANAGE_TOURNAMENTS = "Admin - Manage Tournaments",
   MANAGE_PERMISSIONS = "Admin - Manage Permissions",
@@ -31,5 +36,5 @@ export enum EStatisticsRouteName {
 
 export enum ESetupGuidesRouteName {
   LAUNCHER_SETUP = "Setup Guides - Launcher Setup",
-  INSTALLING_WAR3 = "Setup Guides - Installing Warcraft 3"
+  INSTALLING_WAR3 = "Setup Guides - Installing Warcraft 3",
 }

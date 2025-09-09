@@ -1,24 +1,11 @@
 <template>
-  <div
-    v-if="team"
-    class="team-match-info"
-  >
-    <div 
-      v-if="hasTeamRanking"
-      class="team-ranking"
-    >
+  <div v-if="team" class="team-match-info">
+    <div v-if="!isNil(team.matchRanking)" class="team-ranking">
       #{{ team.matchRanking + 1 }}
     </div>
     <div class="team-content">
-      <div
-        v-for="(player, index) in team.players"
-        :key="index"
-        class="player-row"
-      >
-        <div 
-          v-if="!hasTeamRanking && hasPlayerRanking(player)"
-          class="player-ranking"
-        >
+      <div v-for="(player, index) in team.players" :key="index" class="player-row">
+        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
           #{{ player.matchRanking + 1 }}
         </div>
         <player-match-info
@@ -40,13 +27,12 @@
 import { defineComponent, PropType } from "vue";
 import { Team } from "@/store/types";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
-import HeroIconRow from "@/components/matches/HeroIconRow.vue";
+import isNil from "lodash/isNil";
 
 export default defineComponent({
   name: "TeamMatchInfo",
   components: {
     PlayerMatchInfo,
-    HeroIconRow,
   },
   props: {
     team: {
@@ -90,15 +76,10 @@ export default defineComponent({
       default: false,
     },
   },
-  computed: {
-    hasTeamRanking(): boolean {
-      return this.team?.matchRanking !== undefined && this.team?.matchRanking !== null;
-    },
-  },
-  methods: {
-    hasPlayerRanking(player: any): boolean {
-      return player.matchRanking !== undefined && player.matchRanking !== null;
-    },
+  setup() {
+    return {
+      isNil,
+    };
   },
 });
 </script>
