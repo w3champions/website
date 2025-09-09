@@ -42,7 +42,7 @@ interface RaceToMapStatHeader {
   text: TranslateResult;
   sortable: boolean;
   width: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 }
 
 export default defineComponent({

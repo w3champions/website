@@ -2,7 +2,6 @@ import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 import { Mmr } from "@/store/match/types";
-import { EHeroes } from "@/store/heroes";
 
 export default class MatchService {
   static pageSize = 50;

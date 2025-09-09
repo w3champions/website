@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import { mdiEye, mdiEyeOff } from "@mdi/js";
 
 export default defineComponent({
-  name: 'HeroIconToggle',
+  name: "HeroIconToggle",
   props: {
     showHeroes: {
       type: Boolean,
@@ -25,11 +25,11 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['update:showHeroes'],
+  emits: ["update:showHeroes"],
   setup(props, { emit }) {
 
     function toggle() {
-      emit('update:showHeroes', !props.showHeroes);
+      emit("update:showHeroes", !props.showHeroes);
     }
 
     return {

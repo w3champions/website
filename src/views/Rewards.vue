@@ -154,8 +154,9 @@ export default defineComponent({
 
       try {
         await rewardsStore.initiatePatreonOAuth();
-      } catch (error: any) {
-        errorMessage.value = error.message || "Failed to initiate Patreon linking";
+      } catch (error) {
+        const ex = error as Error;
+        errorMessage.value = ex.message || "Failed to initiate Patreon linking";
       } finally {
         isLinkingPatreon.value = false;
       }
@@ -170,8 +171,9 @@ export default defineComponent({
       try {
         await rewardsStore.unlinkPatreonAccount(authCode.value);
         successMessage.value = "Patreon account unlinked successfully";
-      } catch (error: any) {
-        errorMessage.value = error.message || "Failed to unlink Patreon account";
+      } catch (error) {
+        const ex = error as Error;
+        errorMessage.value = ex.message || "Failed to unlink Patreon account";
       } finally {
         isUnlinkingPatreon.value = false;
       }
@@ -183,8 +185,9 @@ export default defineComponent({
       try {
         await rewardsStore.loadPatreonLinkStatus(authCode.value);
         await rewardsStore.loadUserRewards(authCode.value);
-      } catch (error: any) {
-        errorMessage.value = error.message || "Failed to load rewards data";
+      } catch (error) {
+        const ex = error as Error;
+        errorMessage.value = ex.message || "Failed to load rewards data";
       }
     }
 

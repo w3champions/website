@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { RewardsState, PatreonLinkStatus } from "./types";
+import { PatreonLinkStatus, RewardsState } from "./types";
 import RewardsService from "@/services/RewardsService";
 import { PATREON_REDIRECT_URL } from "@/main";
 

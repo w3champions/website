@@ -74,7 +74,7 @@ export default defineComponent({
       { text: "vs. Night Elf", value: "ne", align: "right" },
       { text: "vs. Undead", value: "ud", align: "right" },
       { text: "vs. Random", value: "rand", align: "right" },
-    ] satisfies { text: string; value: keyof PlayerHeroStatistic; align: 'left' | 'right' }[];
+    ] satisfies { text: string; value: keyof PlayerHeroStatistic; align: "left" | "right" }[];
 
     const headersWithoutImageAndName = headers.slice(2) as { text: string; value: keyof NumbersByPlayerHeroStatistic }[];
 
