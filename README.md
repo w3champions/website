@@ -3,13 +3,13 @@
 ## Development setup
 
 ```
-yarn install
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 
 ```
-yarn dev
+npm run dev
 ```
 
 #### .env
@@ -18,13 +18,13 @@ When running locally, environmental variables will be taken from [this](https://
 ### Compiles and minifies for production
 This also spins up a web server after the build, so you can check your work after building.
 ```
-yarn serve:dev
+npm run serve:dev
 ```
 
 ### Lints and fixes files
 
 ```
-yarn lint
+npm run lint
 ```
 
 ### Customize configuration
@@ -32,7 +32,7 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
 ## Optional: Setup website backend server (and authenticate as admin)
-By default the website you started using `yarn run serve` will connect to the productive
+By default the website you started using `npm run dev` will connect to the production
 backend of [www.w3champions.com](https://www.w3champions.com/). The API serving the dynamic content
 is available at [website-backend.w3champions.com/api/](https://website-backend.w3champions.com/api/). 
 
@@ -41,8 +41,7 @@ actions you might require a local instance of the website backend:
 
 1) Clone (and fork) the [w3champions/website-backend](https://github.com/w3champions/website-backend)
 2) Follow the [setup instructions](https://github.com/w3champions/website-backend#readme) and spin up your local website backend api server
-3) Run the project (F5) in Visual Studio. This usually opens a browser window with blank page. Copy the URL of the page (e.g. https://localhost:44336/)
-4) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL
+3) Change the `BASE_URL` in the environment configuration [/public/env.js#L4](./public/env.js#L4) to your desired URL
 
 ### Authenticating as Admin
 
