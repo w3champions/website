@@ -1,12 +1,12 @@
 <template>
   <div v-if="team" class="team-match-info">
-    <div v-if="hasTeamRanking" class="team-ranking">
-      #{{ team.matchRanking! + 1 }}
+    <div v-if="!isNil(team.matchRanking)" class="team-ranking">
+      #{{ team.matchRanking + 1 }}
     </div>
     <div class="team-content">
       <div v-for="(player, index) in team.players" :key="index" class="player-row">
-        <div v-if="!hasTeamRanking && hasPlayerRanking(player)" class="player-ranking">
-          #{{ player.matchRanking! + 1 }}
+        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
+          #{{ player.matchRanking + 1 }}
         </div>
         <player-match-info
           :unfinishedMatch="unfinishedMatch"
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { PlayerInTeam, Team } from "@/store/types";
+import { Team } from "@/store/types";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
 import isNil from "lodash/isNil";
 
@@ -76,15 +76,10 @@ export default defineComponent({
       default: false,
     },
   },
-  computed: {
-    hasTeamRanking(): boolean {
-      return !isNil(this.team?.matchRanking);
-    },
-  },
-  methods: {
-    hasPlayerRanking(player: PlayerInTeam): boolean {
-      return !isNil(player.matchRanking);
-    },
+  setup() {
+    return {
+      isNil,
+    };
   },
 });
 </script>
