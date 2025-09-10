@@ -46,8 +46,7 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const isHighlighted = computed(() => {
       if (!props.hero) return false;
-      // Try hero.id, fallback to hero.name if id is not available
-      return playerStore.selectedHeroes.includes((props.hero as any).id ?? (props.hero as any).type ?? (props.hero as any).name);
+      return playerStore.selectedHeroes.includes(props.hero.id ?? -1);
     });
     return {
       firstHeroOrNot,

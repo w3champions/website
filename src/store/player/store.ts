@@ -87,7 +87,7 @@ export const usePlayerStore = defineStore("player", {
       );
       this.SET_PLAYER_STATS_HERO_VERSUS_RACE_ON_MAP(profile);
     },
-  async loadMatches(page?: number) {
+    async loadMatches(page?: number) {
       this.SET_PAGE(page ?? 1);
       this.SET_LOADING_RECENT_MATCHES(true);
       const rootStateStore = useRootStateStore();

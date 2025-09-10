@@ -119,7 +119,6 @@ export default defineComponent({
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
     const showHeroIcons = ref<boolean>(true);
-    const selectedHeroFilter = ref<number[]>([]);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
@@ -176,7 +175,7 @@ export default defineComponent({
     }
 
     function heroChanged(heroes: number[]): void {
-      playerStore.SET_SELECTED_HEROES(heroes); 
+      playerStore.SET_SELECTED_HEROES(heroes);
       getMatches();
     }
 

@@ -20,8 +20,8 @@ export const useMatchStore = defineStore("match", {
     mmr: { min: 0, max: 3000 } as Mmr,
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
-  showHeroIcons: false,
-  selectedHeroFilter: [],
+    showHeroIcons: false,
+    selectedHeroFilter: [],
   }),
   actions: {
     async loadMatches() {
@@ -44,7 +44,7 @@ export const useMatchStore = defineStore("match", {
           await this.loadMatches();
           return;
         }
-    } else {
+      } else {
         response = await MatchService.retrieveMatches(
           this.page - 1,
           rootStateStore.gateway,
