@@ -21,7 +21,7 @@ export const useMatchStore = defineStore("match", {
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
     showHeroIcons: false,
-    selectedHeroFilter: -1,
+    selectedHeroFilter: [],
   }),
   actions: {
     async loadMatches() {
@@ -116,8 +116,8 @@ export const useMatchStore = defineStore("match", {
       this.SET_SHOW_HERO_ICONS(showHeroIcons);
     },
 
-    async setSelectedHeroFilter(hero: number) {
-      this.SET_SELECTED_HERO_FILTER(hero);
+    async setSelectedHeroFilter(heroes: number[]) {
+      this.SET_SELECTED_HERO_FILTER(heroes);
       this.SET_PAGE(1);
       await this.loadMatches();
     },
@@ -164,8 +164,8 @@ export const useMatchStore = defineStore("match", {
     SET_SHOW_HERO_ICONS(showHeroIcons: boolean): void {
       this.showHeroIcons = showHeroIcons;
     },
-    SET_SELECTED_HERO_FILTER(hero: number): void {
-      this.selectedHeroFilter = hero;
+    SET_SELECTED_HERO_FILTER(heroes: number[]): void {
+      this.selectedHeroFilter = heroes;
     },
   },
 });

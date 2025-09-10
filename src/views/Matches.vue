@@ -180,8 +180,8 @@ export default defineComponent({
       matchStore.setShowHeroIcons(showHeroIcons);
     }
 
-    async function heroChanged(hero: number): Promise<void> {
-      await matchStore.setSelectedHeroFilter(hero);
+    async function heroChanged(heroes: number[]): Promise<void> {
+      await matchStore.setSelectedHeroFilter(heroes);
     }
 
     return {
