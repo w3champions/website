@@ -51,6 +51,9 @@
           />
         </v-col>
         <v-col align-self="center">
+          <hero-select @heroChanged="heroChanged" :large="true" />
+        </v-col>
+        <v-col align-self="center">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
@@ -91,6 +94,8 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
+import HeroSelect from "@/components/matches/HeroSelect.vue";
+import { useCommonStore } from "@/store/common/store";
 
 export default defineComponent({
   name: "PlayerMatchesTab",
@@ -98,6 +103,7 @@ export default defineComponent({
     MatchesGrid,
     PlayerSearch,
     HeroIconToggle,
+    HeroSelect,
   },
   props: {
     id: {
@@ -109,6 +115,7 @@ export default defineComponent({
     const { t } = useI18n();
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
+    const commonStore = useCommonStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
     const showHeroIcons = ref<boolean>(true);
@@ -122,6 +129,7 @@ export default defineComponent({
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
+      await commonStore.loadHeroFilters();
     });
 
     async function playerFound(bTag: string): Promise<void> {
@@ -163,6 +171,11 @@ export default defineComponent({
 
     function setOpponentRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_OPPONENT_RACE(race);
+      getMatches();
+    }
+
+    function heroChanged(heroes: number[]): void {
+      playerStore.SET_SELECTED_HEROES(heroes);
       getMatches();
     }
 
@@ -250,6 +263,7 @@ export default defineComponent({
       battleTag,
       onPageChanged,
       showHeroIcons,
+      heroChanged,
     };
   },
 });

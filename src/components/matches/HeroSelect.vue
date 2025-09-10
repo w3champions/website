@@ -1,7 +1,12 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent">
+      <v-btn
+        tile
+        v-on="on"
+        :class="{ large: $props.large }"
+        style="background-color: transparent"
+      >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
       </v-btn>
@@ -15,10 +20,18 @@
         </v-list>
         <v-divider></v-divider>
         <v-list dense max-height="400" class="overflow-y-auto">
-          <v-list-item v-for="hero in heroFilters" :key="hero.type" @click="selectHero(hero)">
+          <v-list-item
+            v-for="hero in heroFilters"
+            :key="hero.type"
+            @click="toggleHero(hero)"
+            :class="{ 'primary--text': isSelected(hero) }"
+          >
             <v-list-item-content>
               <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-icon v-if="isSelected(hero)">mdi-check</v-icon>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -35,38 +48,65 @@ import { HeroFilter } from "@/store/heroes";
 
 export default defineComponent({
   name: "HeroSelect",
-  setup: (_, context) => {
+  props: {
+    large: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup: (props, context) => {
     const { t } = useI18n();
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
-    const selectedHero = ref<HeroFilter>();
 
+    const selectedHeroes = ref<number[]>([]);
     const selectedText = computed<TranslateResult>(() => {
-      if (selectedHero.value === undefined || selectedHero.value === undefined) {
+      if (!selectedHeroes.value.length) {
         return t("heroNames.allfilter");
-      } else {
-        return t(`heroNames.${selectedHero.value.name}`);
       }
+      const hero = heroFilters.value.find((h) => h.type === selectedHeroes.value[0]);
+      return hero ? t(`heroNames.${hero.name}`) : t("heroNames.allfilter");
     });
 
     onMounted(async (): Promise<void> => {
       await commonStore.loadHeroFilters();
     });
 
-    const selectHero = (hero: HeroFilter) => {
-      selectedHero.value = hero;
-      context.emit("heroChanged", hero.type);
+    const toggleHero = (hero: HeroFilter) => {
+      if (hero.name === "all") {
+        selectedHeroes.value = [];
+      } else {
+        selectedHeroes.value = [hero.type];
+      }
+      context.emit("heroChanged", [...selectedHeroes.value]);
+    };
+
+    const isSelected = (hero: HeroFilter): boolean => {
+      if (hero.name === "all") return selectedHeroes.value.length === 0;
+      return selectedHeroes.value.includes(hero.type);
     };
 
     return {
       mdiDramaMasks,
       heroFilters,
-      selectHero,
-      selectedHero,
+      toggleHero,
+      isSelected,
+      selectedHeroes,
       selectedText,
     };
   },
 });
 </script>
 
-<style></style>
+<style scoped>
+.large {
+  margin-top: -8px;
+  height: 55px !important;
+  width: 250px !important;
+  border-radius: 4px;
+  border-color: rgb(128, 128, 128) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  box-shadow: none !important;
+}
+</style>

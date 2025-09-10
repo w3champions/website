@@ -1,6 +1,8 @@
 <template>
   <div v-if="hero">
-    <hero-picture :hero-icon="hero.name" :hero-level="hero.level" :size="size" />
+    <div :class="['hero-icon-highlight-wrapper', { highlighted: isHighlighted }]">
+      <hero-picture :hero-icon="hero.name" :hero-level="hero.level" :size="size" />
+    </div>
     <div v-if="showLevel" class="text-center hero-level-flag" :class="firstHeroOrNot">
       <span>{{ hero.level }}</span>
     </div>
@@ -8,9 +10,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType, ref, computed } from "vue";
 import { Hero } from "@/store/types";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
+import { usePlayerStore } from "@/store/player/store";
 
 export default defineComponent({
   name: "HeroIcon",
@@ -40,9 +43,14 @@ export default defineComponent({
   },
   setup(props) {
     const firstHeroOrNot = ref<string>(props.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second-hero");
-
+    const playerStore = usePlayerStore();
+    const isHighlighted = computed(() => {
+      if (!props.hero) return false;
+      return playerStore.selectedHeroes.includes(props.hero.id ?? -1);
+    });
     return {
       firstHeroOrNot,
+      isHighlighted,
     };
   },
 });
@@ -72,5 +80,16 @@ export default defineComponent({
   font-size: 1.1em;
   margin-left: 17%;
   margin-right: 17%;
+}
+
+.hero-icon-highlight-wrapper {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: border-color 0.2s;
+}
+.hero-icon-highlight-wrapper.highlighted {
+  border-color: gold;
+  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.5);
 }
 </style>

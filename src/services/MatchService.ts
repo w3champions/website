@@ -13,12 +13,14 @@ export default class MatchService {
     map: string,
     mmr: Mmr,
     season: number,
-    hero: number,
+    heroes: number[],
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
-    const heroQuery = hero > 0 ? `&hero=${hero}` : "";
+    const heroQuery = Array.isArray(heroes) && heroes.length > 0
+      ? heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("")
+      : "";
     const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&season=${season}${heroQuery}`;
     const response = await fetch(url);
     return await response.json();
@@ -90,6 +92,7 @@ export default class MatchService {
     opponentRace: ERaceEnum,
     gateway: Gateways,
     season: number,
+    heroes?: number[],
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
     let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
@@ -112,6 +115,11 @@ export default class MatchService {
 
     if (opponentRace !== ERaceEnum.TOTAL) {
       url += `&opponentRace=${opponentRace}`;
+    }
+
+    if (Array.isArray(heroes) && heroes.length > 0) {
+      const heroParams = heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("");
+      url += heroParams;
     }
 
     const response = await fetch(url, {
