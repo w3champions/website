@@ -83,7 +83,6 @@ export default defineComponent({
 }
 
 .hero-icon-highlight-wrapper {
-  display: inline-block;
   border: 1px solid transparent;
   border-radius: 2px;
   transition: border-color 0.2s;
