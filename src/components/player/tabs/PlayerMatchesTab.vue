@@ -51,7 +51,11 @@
           />
         </v-col>
         <v-col align-self="center" cols="12" md="3">
-          <hero-select @heroChanged="heroChanged" :is-player-matches-tab="true" />
+          <hero-select
+            @heroChanged="heroChanged"
+            :is-player-matches-tab="true"
+            :value="filteredHeroes"
+          />
         </v-col>
         <v-col align-self="center">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
@@ -127,6 +131,7 @@ export default defineComponent({
     const profileMatchesGameMode = computed<EGameMode>(() => playerStore.profileMatchesGameMode);
     const playerRace = computed<ERaceEnum | undefined>(() => playerStore.playerRace);
     const opponentRace = computed<ERaceEnum | undefined>(() => playerStore.opponentRace);
+    const filteredHeroes = computed<number[]>(() => playerStore.selectedHeroes);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
@@ -244,7 +249,6 @@ export default defineComponent({
       await getMatches(page);
     }
 
-    const filteredHeroes = computed<number[]>(() => playerStore.selectedHeroes);
     return {
       activeGameModesWithAll,
       profileMatchesGameMode,

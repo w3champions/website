@@ -29,7 +29,7 @@
             :location="player.location"
         />
       </span>
-  <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :filteredHeroes="filteredHeroes"/>
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :filteredHeroes="filteredHeroes"/>
     </div>
     <player-icon
         v-if="left"

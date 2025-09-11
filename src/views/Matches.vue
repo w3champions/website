@@ -17,7 +17,7 @@
             <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
-            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged"></hero-select>
+            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged" :value="filteredHeroes"></hero-select>
             <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
               :unfinished="unfinished" />
           </v-card-text>

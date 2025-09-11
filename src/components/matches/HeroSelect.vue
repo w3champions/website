@@ -53,13 +53,17 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    value: {
+      type: Array as () => number[],
+      default: () => [],
+    },
   },
   setup: (props, context) => {
     const { t } = useI18n();
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
 
-    const selectedHeroes = ref<number[]>([]);
+  const selectedHeroes = ref<number[]>([...props.value]);
     const selectedText = computed<TranslateResult>(() => {
       if (!selectedHeroes.value.length) {
         return t("heroNames.allfilter");
