@@ -154,6 +154,7 @@ declare module 'vue' {
     TournamentsTable: typeof import('./src/components/tournaments/TournamentsTable.vue')['default']
     TournamentView: typeof import('./src/components/tournaments/TournamentView.vue')['default']
     TrovoIcon: typeof import('./src/components/player/TrovoIcon.vue')['default']
+    TurnstileProtected: typeof import('./src/components/common/TurnstileProtected.vue')['default']
     VAlert: typeof import('vuetify/lib')['VAlert']
     VApp: typeof import('vuetify/lib')['VApp']
     VAppBar: typeof import('vuetify/lib')['VAppBar']
