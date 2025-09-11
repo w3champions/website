@@ -50,8 +50,8 @@
             outlined
           />
         </v-col>
-        <v-col align-self="center">
-          <hero-select @heroChanged="heroChanged" :large="true" />
+        <v-col align-self="center" cols="12" md="3">
+          <hero-select @heroChanged="heroChanged" :is-player-matches-tab="true" />
         </v-col>
         <v-col align-self="center">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
