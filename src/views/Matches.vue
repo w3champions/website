@@ -29,6 +29,7 @@
             :unfinished="unfinished"
             :is-player-profile="false"
             :show-heroes="showHeroIcons"
+            :filteredHeroes="filteredHeroes"
           ></matches-grid>
         </v-card>
       </v-col>
@@ -78,6 +79,7 @@ export default defineComponent({
 
     const matches = computed<Match[]>(() => matchStore.matches);
     const totalMatches = computed<number>(() => matchStore.totalMatches);
+    const filteredHeroes = computed<number[]>(() => matchStore.selectedHeroFilter);
     const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
     const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
@@ -159,7 +161,6 @@ export default defineComponent({
 
     onUnmounted((): void => {
       clearInterval(_intervalRefreshHandle);
-      matchStore.SET_SELECTED_HERO_FILTER([]);
     });
 
     function gameModeChanged(gameMode: EGameMode): void {
@@ -198,6 +199,7 @@ export default defineComponent({
       unfinished,
       matches,
       totalMatches,
+      filteredHeroes,
       onPageChanged,
       showHeroIcons,
       toggleShowHeroIcons,

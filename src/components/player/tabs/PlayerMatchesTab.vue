@@ -80,12 +80,13 @@
       @pageChanged="onPageChanged"
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
+      :filteredHeroes="filteredHeroes"
     ></matches-grid>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -130,10 +131,6 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
       await commonStore.loadHeroFilters();
-    });
-
-    onUnmounted((): void => {
-      playerStore.SET_SELECTED_HEROES([]);
     });
 
     async function playerFound(bTag: string): Promise<void> {
@@ -247,6 +244,7 @@ export default defineComponent({
       await getMatches(page);
     }
 
+    const filteredHeroes = computed<number[]>(() => playerStore.selectedHeroes);
     return {
       activeGameModesWithAll,
       profileMatchesGameMode,
@@ -268,6 +266,7 @@ export default defineComponent({
       onPageChanged,
       showHeroIcons,
       heroChanged,
+      filteredHeroes,
     };
   },
 });
