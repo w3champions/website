@@ -18,4 +18,7 @@ window._env_ = {
 
   //* public API client ID for W3Champions
   BNET_API_CLIENT_ID: "d7bd6dd46e2842c8a680866759ad34c2",
+
+  //* Turnstile site key
+  TURNSTILE_SITE_KEY: "0x4AAAAAAB0hhXF_QHDGwhjQ",
 };
