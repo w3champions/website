@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n-bridge";
 import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -130,6 +130,10 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
       await commonStore.loadHeroFilters();
+    });
+
+    onUnmounted((): void => {
+      playerStore.SET_SELECTED_HEROES([]);
     });
 
     async function playerFound(bTag: string): Promise<void> {

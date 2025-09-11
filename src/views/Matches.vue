@@ -159,6 +159,7 @@ export default defineComponent({
 
     onUnmounted((): void => {
       clearInterval(_intervalRefreshHandle);
+      matchStore.SET_SELECTED_HERO_FILTER([]);
     });
 
     function gameModeChanged(gameMode: EGameMode): void {
