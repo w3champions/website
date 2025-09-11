@@ -25,6 +25,7 @@ declare global {
       LAUNCHER_UPDATE_URL: string;
       INGAME_STATIC_RESOURCES_URL: string;
       BNET_API_CLIENT_ID: string;
+      TURNSTILE_SITE_KEY: string;
     };
   }
 }
@@ -34,6 +35,7 @@ const _idUrl = window._env_.IDENTIFICATION_URL;
 const _launcherUrl = window._env_.LAUNCHER_UPDATE_URL;
 const _ingameUrlStaticResourcesUrl = window._env_.INGAME_STATIC_RESOURCES_URL;
 const _bnetApiClientId = window._env_.BNET_API_CLIENT_ID;
+const _turnstileSiteKey = window._env_.TURNSTILE_SITE_KEY;
 
 export const API_URL = _apiUrl;
 export const IDENTIFICATION_URL = _idUrl;
@@ -43,6 +45,7 @@ export const PATREON_REDIRECT_URL = getUrl.protocol + "//" + getUrl.host + "/pat
 export const LAUNCHER_UPDATE_URL = _launcherUrl;
 export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 export const BNET_API_CLIENT_ID = _bnetApiClientId;
+export const TURNSTILE_SITE_KEY = _turnstileSiteKey;
 
 // Kovax comment:
 // This i18n bridge is used instead of the regular i18n to make migration to vue3 easier.
