@@ -104,10 +104,10 @@ export default defineComponent({
     width: 100% !important;
   }
   margin-top: -8px;
-  height: 55px !important;
+  height: 56px !important;
   min-width: 250px !important;
   border-radius: 4px;
-  border-color: rgb(128, 128, 128) !important;
+  border-color: rgb(128, 128, 128, 0.5) !important;
   border-width: 1px !important;
   border-style: solid !important;
   box-shadow: none !important;
