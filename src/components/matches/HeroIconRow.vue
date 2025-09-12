@@ -1,7 +1,13 @@
 <template>
   <v-row no-gutters :class="[show ? 'd-flex' : 'd-none', 'ga-2']">
     <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex">
-      <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" :filteredHeroes="filteredHeroes" />
+      <hero-icon
+        :hero="hero"
+        :firstHero="heroIndex === firstHeroIndex"
+        :show-level="false"
+        :size="size"
+        :isHighlight="filteredHeroes.includes(hero.id ?? -1)"
+      />
     </v-col>
   </v-row>
 </template>
