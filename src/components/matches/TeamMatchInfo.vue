@@ -17,7 +17,7 @@
           :is-anonymous="isAnonymous"
           :highlighted="highlightedPlayer === player.battleTag"
           :show-heroes="showHeroes"
-          :filteredHeroes="filteredHeroes"
+          :selectedHeroes="selectedHeroes"
         />
       </div>
     </div>
@@ -76,7 +76,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    filteredHeroes: {
+    selectedHeroes: {
       type: Array as PropType<number[]>,
       required: false,
       default: () => [],

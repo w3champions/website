@@ -17,7 +17,7 @@
             <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
             <sort-select v-if="unfinished"></sort-select>
             <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
-            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged" :value="filteredHeroes"></hero-select>
+            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged" :selectedHeroes="selectedHeroes"></hero-select>
             <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
               :unfinished="unfinished" />
           </v-card-text>
@@ -29,7 +29,7 @@
             :unfinished="unfinished"
             :is-player-profile="false"
             :show-heroes="showHeroIcons"
-            :filteredHeroes="filteredHeroes"
+            :selectedHeroes="selectedHeroes"
           ></matches-grid>
         </v-card>
       </v-col>
@@ -79,7 +79,7 @@ export default defineComponent({
 
     const matches = computed<Match[]>(() => matchStore.matches);
     const totalMatches = computed<number>(() => matchStore.totalMatches);
-    const filteredHeroes = computed<number[]>(() => matchStore.selectedHeroFilter);
+    const selectedHeroes = computed<number[]>(() => matchStore.selectedHeroFilter);
     const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
     const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
@@ -199,7 +199,7 @@ export default defineComponent({
       unfinished,
       matches,
       totalMatches,
-      filteredHeroes,
+      selectedHeroes,
       onPageChanged,
       showHeroIcons,
       toggleShowHeroIcons,

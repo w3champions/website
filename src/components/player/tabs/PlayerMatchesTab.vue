@@ -54,7 +54,7 @@
           <hero-select
             @heroChanged="heroChanged"
             :is-player-matches-tab="true"
-            :value="filteredHeroes"
+            :selectedHeroes="selectedHeroes"
           />
         </v-col>
         <v-col align-self="center">
@@ -84,7 +84,7 @@
       @pageChanged="onPageChanged"
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
-      :filteredHeroes="filteredHeroes"
+      :selectedHeroes="selectedHeroes"
     ></matches-grid>
   </div>
 </template>
@@ -131,7 +131,7 @@ export default defineComponent({
     const profileMatchesGameMode = computed<EGameMode>(() => playerStore.profileMatchesGameMode);
     const playerRace = computed<ERaceEnum | undefined>(() => playerStore.playerRace);
     const opponentRace = computed<ERaceEnum | undefined>(() => playerStore.opponentRace);
-    const filteredHeroes = computed<number[]>(() => playerStore.selectedHeroes);
+    const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
@@ -270,7 +270,7 @@ export default defineComponent({
       onPageChanged,
       showHeroIcons,
       heroChanged,
-      filteredHeroes,
+      selectedHeroes,
     };
   },
 });

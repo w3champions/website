@@ -29,7 +29,7 @@
             :location="player.location"
         />
       </span>
-      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :filteredHeroes="filteredHeroes"/>
+       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes"/>
     </div>
     <player-icon
         v-if="left"
@@ -94,7 +94,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    filteredHeroes: {
+    selectedHeroes: {
       type: Array as PropType<number[]>,
       required: false,
       default: () => [],

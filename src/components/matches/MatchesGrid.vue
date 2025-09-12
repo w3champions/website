@@ -34,7 +34,7 @@
                       :is-anonymous="true"
                       :highlightedPlayer="alwaysLeftName"
                       :show-heroes="showHeroes"
-                      :filteredHeroes="filteredHeroes"
+                      :selectedHeroes="selectedHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -46,7 +46,7 @@
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
                       :show-heroes="showHeroes"
-                      :filteredHeroes="filteredHeroes"
+                      :selectedHeroes="selectedHeroes"
                     ></team-match-info>
                   </v-col>
                 </v-row>
@@ -64,7 +64,7 @@
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
                     :show-heroes="showHeroes"
-                    :filteredHeroes="filteredHeroes"
+                    :selectedHeroes="selectedHeroes"
                   ></team-match-info>
                 </v-col>
                 <v-col cols="1" align-self="center" class="py-2">
@@ -77,7 +77,7 @@
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
                     :show-heroes="showHeroes"
-                    :filteredHeroes="filteredHeroes"
+                    :selectedHeroes="selectedHeroes"
                   ></team-match-info>
                 </v-col>
               </v-row>
@@ -180,7 +180,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    filteredHeroes: {
+    selectedHeroes: {
       type: Array as PropType<number[]>,
       required: false,
       default: () => [],

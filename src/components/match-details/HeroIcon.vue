@@ -39,7 +39,7 @@ export default defineComponent({
       type: Number,
       required: false,
     },
-    filteredHeroes: {
+    selectedHeroes: {
       type: Array as PropType<number[]>,
       required: false,
       default: () => [],
@@ -49,7 +49,7 @@ export default defineComponent({
     const firstHeroOrNot = ref<string>(props.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second-hero");
     const isHighlighted = computed(() => {
       if (!props.hero) return false;
-      return props.filteredHeroes.includes(props.hero.id ?? -1);
+      return props.selectedHeroes.includes(props.hero.id ?? -1);
     });
     return {
       firstHeroOrNot,
