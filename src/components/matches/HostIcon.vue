@@ -1,8 +1,8 @@
 <template>
   <v-tooltip bottom transition="scroll-y-transition" style="white-space: pre-line">
     <template v-slot:activator="{ on }">
-      <div v-on="on" class="globe">
-        <v-img :src="icon" :max-height="18" :max-width="18"></v-img>
+      <div class="globe" v-on="on">
+        <v-img :src="icon" :max-height="18" :max-width="18" />
       </div>
     </template>
     <span>{{ tooltip }}</span>

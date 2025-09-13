@@ -116,14 +116,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, PropType, ref } from "vue";
-import nodeOverridesCard from "@/components/admin/proxies/nodeOverridesCard.vue";
+import NodeOverridesCard from "@/components/admin/proxies/NodeOverridesCard.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useAdminStore } from "@/store/admin/store";
 
 export default defineComponent({
-  name: "reviewProxies",
+  name: "ReviewProxies",
   components: {
-    nodeOverridesCard
+    NodeOverridesCard,
   },
   props: {
     proxies: {

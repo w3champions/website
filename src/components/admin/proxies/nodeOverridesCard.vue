@@ -37,7 +37,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
 export default defineComponent({
-  name: "nodeOverridesCard",
+  name: "NodeOverridesCard",
   components: {},
   props: {
     automaticNodes: {

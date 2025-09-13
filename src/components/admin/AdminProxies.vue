@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import reviewProxies from "@/components/admin/proxies/reviewProxies.vue";
+import ReviewProxies from "@/components/admin/proxies/ReviewProxies.vue";
 import { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -31,7 +31,7 @@ import { useAdminStore } from "@/store/admin/store";
 export default defineComponent({
   name: "AdminProxies",
   components: {
-    reviewProxies,
+    ReviewProxies,
     PlayerSearch,
   },
   setup() {
