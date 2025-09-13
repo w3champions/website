@@ -102,6 +102,7 @@ export default defineComponent({
           EGameMode.GM_DOTA_5ON5_AT,
           EGameMode.GM_DS_AT,
           EGameMode.GM_CF_AT,
+          EGameMode.GM_MINIDOTA_3ON3_AT,
         ];
       }
 

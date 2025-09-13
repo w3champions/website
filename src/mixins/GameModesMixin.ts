@@ -15,6 +15,7 @@ const AT_EQUIVALENT: { [key: number]: EGameMode } = {
   [EGameMode.GM_DOTA_5ON5]: EGameMode.GM_DOTA_5ON5_AT,
   [EGameMode.GM_DS]: EGameMode.GM_DS_AT,
   [EGameMode.GM_CF]: EGameMode.GM_CF_AT,
+  [EGameMode.GM_MINIDOTA_3ON3]: EGameMode.GM_MINIDOTA_3ON3_AT,
 };
 
 export async function loadActiveGameModes() {
