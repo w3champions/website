@@ -11,12 +11,12 @@
         <div v-if="!loading">
           <v-card-title class="justify-center">Current Message of the Day:</v-card-title>
           <v-card-text class="text-center text-body-1">
-            <v-divider class="mb-4"></v-divider>
+            <v-divider class="mb-4" />
             {{ motd }}
-            <v-divider class="mt-4"></v-divider>
+            <v-divider class="mt-4" />
           </v-card-text>
           <v-card-actions class="ma-3 pa-3">
-            <v-textarea outlined counter label="New Motd:" :rules="rules" v-model="newMotd"></v-textarea>
+            <v-textarea v-model="newMotd" outlined counter label="New Motd:" :rules="rules" />
           </v-card-actions>
           <v-card-actions class="pa-3 ma-3 justify-end">
             <v-btn color="primary" class="w3-race-bg--text" @click="confirmNewMotd">Set New Motd</v-btn>

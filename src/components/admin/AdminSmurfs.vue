@@ -21,12 +21,12 @@
                 style="max-width: 150px;"
               />
               <v-checkbox
+                v-if="canSeeSmurfCheckerQueryExplanation"
                 v-model="generateExplanation"
                 label="Generate explanation"
                 dense
                 class="ml-4"
                 hide-details
-                v-if="canSeeSmurfCheckerQueryExplanation"
               />
             </v-col>
           </v-row>
@@ -58,30 +58,28 @@
                 :items="searchedPlayers"
                 :search-input.sync="search"
                 return-object
-                @click:clear="revertToDefault"
                 autofocus
                 class="flex-grow-1 ml-4 mr-2"
-              ></v-autocomplete>
+                @click:clear="revertToDefault"
+              />
               <v-btn
                 class="ml-5"
-                @click="executeSearch"
                 :disabled="!searchPlayerModel"
+                @click="executeSearch"
               >
                 Search
               </v-btn>
             </v-col>
           </v-row>
-       </v-card-text>
+        </v-card-text>
       </v-card>
-
-
       <v-card v-if="showSmurfResults && smurfResults">
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
           <template>
             <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
-              <div @click="searchSmurfsFromClick(battleTag)" style="cursor: pointer">{{ battleTag }}</div>
-              <v-spacer></v-spacer>
+              <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
+              <v-spacer />
               <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
             </v-list-item>
           </template>

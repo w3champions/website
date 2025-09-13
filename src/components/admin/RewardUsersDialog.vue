@@ -1,9 +1,9 @@
 <template>
-  <v-dialog :value="visible" @input="$emit('update:visible', $event)" max-width="800px">
+  <v-dialog :value="visible" max-width="800px" @input="$emit('update:visible', $event)">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ title }}</span>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn icon @click="close">
           <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>
@@ -11,14 +11,14 @@
 
       <v-card-text>
         <div v-if="loading" class="text-center pa-4">
-          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          <v-progress-circular indeterminate color="primary" />
           <div class="mt-2">Loading users...</div>
         </div>
 
         <div v-else-if="error" class="error--text text-center pa-4">
           <v-icon color="error" class="mb-2">{{ mdiAlert }}</v-icon>
           <div>{{ error }}</div>
-          <v-btn @click="$emit('retry')" color="primary" class="mt-2">Retry</v-btn>
+          <v-btn color="primary" class="mt-2" @click="$emit('retry')">Retry</v-btn>
         </div>
 
         <div v-else-if="users && users.length > 0">
@@ -59,7 +59,7 @@
                 outlined
                 dense
                 placeholder="Search by User ID, Provider, or Status"
-              ></v-text-field>
+              />
             </v-col>
           </v-row>
 

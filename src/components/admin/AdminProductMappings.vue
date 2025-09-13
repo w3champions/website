@@ -13,7 +13,7 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="primary"
               small
@@ -62,24 +62,24 @@
         <template v-slot:item.actions="{ item }">
           <v-icon
             small
-            @click="viewUsers(item)"
             color="info"
             class="mr-2"
+            @click="viewUsers(item)"
           >
             {{ mdiAccountGroup }}
           </v-icon>
           <v-icon
             small
-            @click="editMapping(item)"
             color="primary"
             class="mr-2"
+            @click="editMapping(item)"
           >
             {{ mdiPencil }}
           </v-icon>
           <v-icon
             small
-            @click="deleteMapping(item.id)"
             color="error"
+            @click="deleteMapping(item.id)"
           >
             {{ mdiDelete }}
           </v-icon>
@@ -105,7 +105,7 @@
                   hint="Human-readable name for the product (e.g., 'Premium Subscription')"
                   persistent-hint
                   required
-                ></v-text-field>
+                />
               </v-col>
             </v-row>
 
@@ -123,7 +123,7 @@
                         item-text="text"
                         item-value="value"
                         required
-                      ></v-select>
+                      />
                     </v-col>
                     <v-col cols="5">
                       <v-text-field
@@ -132,14 +132,14 @@
                         :rules="[rules.required]"
                         hint="ID from the payment provider"
                         required
-                      ></v-text-field>
+                      />
                     </v-col>
                     <v-col cols="2" class="d-flex align-center">
                       <v-btn
                         icon
                         color="error"
-                        @click="removeProductProvider(index)"
                         :disabled="newMapping.productProviders.length <= 1"
+                        @click="removeProductProvider(index)"
                       >
                         <v-icon>{{ mdiDelete }}</v-icon>
                       </v-btn>
@@ -171,7 +171,7 @@
                   required
                   hint="Select one or more rewards to assign for this product"
                   persistent-hint
-                ></v-select>
+                />
               </v-col>
             </v-row>
 
@@ -183,14 +183,14 @@
                   label="Mapping Type *"
                   :rules="[rules.required]"
                   required
-                ></v-select>
+                />
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="blue darken-1"
             text

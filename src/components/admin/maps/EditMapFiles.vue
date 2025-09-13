@@ -4,7 +4,7 @@
       <span class="text-h5">Edit map files</span>
     </v-card-title>
     <v-row dense justify="center">
-        <div class="text-h6">{{ map.name }} ({{ map.id }})</div>
+      <div class="text-h6">{{ map.name }} ({{ map.id }})</div>
     </v-row>
     <v-card-text>
       <v-container>
@@ -16,7 +16,7 @@
           :hide-default-footer="true"
           :items-per-page="100"
         >
-          <template #[`item.actions`]="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>
           </template>
         </v-data-table>
@@ -25,11 +25,11 @@
         <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-file-input label="Map file" truncate-length="70" v-model="file"></v-file-input>
+            <v-file-input v-model="file" label="Map file" truncate-length="70" />
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="fileName" label="File name (optional)"></v-text-field>
+            <v-text-field v-model="fileName" label="File name (optional)" />
           </v-col>
         </v-row>
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMapFile()">Add map file</v-btn>
@@ -37,7 +37,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>

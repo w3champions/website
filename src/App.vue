@@ -1,10 +1,10 @@
 <template>
   <v-app class="w3app" :class="getTheme" :dark="isDarkTheme.get()">
     <v-navigation-drawer
+      v-model="navigationDrawerOpen"
       temporary
       absolute
       transition="slide-x-transition"
-      v-model="navigationDrawerOpen"
     >
       <v-list dense>
         <v-list-item>
@@ -22,8 +22,8 @@
       <v-list dense nav>
         <v-list-item
           v-for="item in items"
-          :key="item.title"
           v-show="isNavItemVisible(item)"
+          :key="item.title"
           link
           :to="{ name: item.to }"
         >
@@ -41,10 +41,7 @@
 
     <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
       <!-- toggle button for drawer menu, only for lower than lg -->
-     <v-app-bar-nav-icon
-       @click="setNavigationDrawerOpen(true)"
-       class="d-lg-none"
-     ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
       <v-toolbar-title class="pa-0">
         <router-link :to="{ name: 'Home' }">
           <brand-logo
@@ -54,7 +51,7 @@
           />
         </router-link>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <!-- alternative menu for lg+ only -->
       <span class="d-none d-lg-flex">
@@ -77,11 +74,9 @@
 
       <global-search />
 
-      <v-btn text tile @click="loginOrGoToProfile" v-if="!authCode">
+      <v-btn v-if="!authCode" text tile @click="loginOrGoToProfile">
         <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
-        <sign-in-dialog
-          v-model="showSignInDialog"
-        ></sign-in-dialog>
+        <sign-in-dialog v-model="showSignInDialog" />
       </v-btn>
 
       <v-menu v-if="authCode">
@@ -107,7 +102,7 @@
 
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" class="right-menu">
+          <v-btn text tile class="right-menu" v-on="on">
             <v-icon>{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
@@ -129,11 +124,8 @@
 
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on" style="margin-top: 2px">
-            <locale-icon
-              :locale="savedLocale.get()"
-              :showTwoLetterCode="false"
-            ></locale-icon>
+          <v-btn text tile style="margin-top: 2px" v-on="on">
+            <locale-icon :locale="savedLocale.get()" :showTwoLetterCode="false" />
           </v-btn>
         </template>
         <v-list class="locale-selector">
@@ -142,7 +134,7 @@
             :key="lang"
             @click="savedLocale.set(lang)"
           >
-            <locale-icon :locale="lang"></locale-icon>
+            <locale-icon :locale="lang" />
           </v-list-item>
         </v-list>
       </v-menu>

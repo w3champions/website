@@ -6,7 +6,7 @@
     </v-card-title>
 
     <!-- Statistics Summary Cards -->
-    <v-row class="mb-6" v-if="patreonLinks.length > 0">
+    <v-row v-if="patreonLinks.length > 0" class="mb-6">
       <v-col cols="12" sm="6" md="4">
         <v-card outlined class="text-center pa-4">
           <div class="text-h4 primary--text mb-1">{{ getTotalLinks() }}</div>
@@ -61,8 +61,8 @@
           <v-col cols="12" md="3">
             <v-btn
               color="primary"
-              @click="loadPatreonLinks"
               :loading="loading"
+              @click="loadPatreonLinks"
             >
               <v-icon left>{{ mdiRefresh }}</v-icon>
               Refresh
@@ -75,7 +75,7 @@
     <!-- Enhanced Data Table -->
     <v-card class="elevation-2">
       <v-card-text v-if="loading && patreonLinks.length === 0" class="text-center py-8">
-        <v-skeleton-loader type="table"></v-skeleton-loader>
+        <v-skeleton-loader type="table" />
         <div class="mt-4 text-subtitle1">Loading Patreon links...</div>
       </v-card-text>
 
@@ -131,12 +131,12 @@
                   icon
                   small
                   color="info"
-                  @click="viewMemberDetails(item)"
+                  class="mr-1"
                   :disabled="loadingMemberDetails"
                   :loading="loadingMemberDetails && selectedMemberBattleTag === item.battleTag"
                   v-bind="attrs"
                   v-on="on"
-                  class="mr-1"
+                  @click="viewMemberDetails(item)"
                 >
                   <v-icon small>{{ mdiMagnify }}</v-icon>
                 </v-btn>
@@ -149,10 +149,10 @@
                   icon
                   small
                   color="error"
-                  @click="confirmDelete(item)"
                   :disabled="deletingLinks.includes(item.battleTag)"
                   :loading="deletingLinks.includes(item.battleTag)"
                   v-bind="attrs"
+                  @click="confirmDelete(item)"
                   v-on="on"
                 >
                   <v-icon small>{{ mdiDelete }}</v-icon>
@@ -183,13 +183,13 @@
         </v-card-title>
         <v-card-text>
           Are you sure you want to delete the Patreon link for <strong>{{ selectedLink?.battleTag }}</strong>?
-          <br><br>
+          <br />
           <v-alert type="warning" dense>
             This will revoke all active Patreon rewards for this user and cannot be undone.
           </v-alert>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn text @click="deleteDialog = false">
             Cancel
           </v-btn>
@@ -223,14 +223,14 @@
           </v-row>
 
           <!-- Patreon Status -->
-          <v-divider class="mb-4"></v-divider>
+          <v-divider class="mb-4" />
           <div class="text-subtitle1 font-weight-bold mb-3">Patreon Status</div>
-          
+
           <v-row v-if="memberDetails.found">
             <v-col cols="12" md="6">
               <v-card outlined class="pa-3">
                 <div class="text-caption text--secondary">Patron Status</div>
-                <v-chip 
+                <v-chip
                   :color="memberDetails.isActivePatron ? 'success' : 'error'"
                   small
                   class="mt-1"
@@ -243,7 +243,7 @@
               <v-card outlined class="pa-3">
                 <div class="text-caption text--secondary">Last Charge</div>
                 <div class="text-body-2 mt-1">
-                  <v-chip 
+                  <v-chip
                     :color="memberDetails.lastChargeStatus === 'Paid' ? 'success' : 'warning'"
                     small
                   >
@@ -263,9 +263,9 @@
 
           <!-- Member Info -->
           <div v-if="memberDetails.found" class="mt-4">
-            <v-divider class="mb-4"></v-divider>
+            <v-divider class="mb-4" />
             <div class="text-subtitle1 font-weight-bold mb-3">Member Information</div>
-            
+
             <v-simple-table dense>
               <tbody>
                 <tr>
@@ -290,9 +290,9 @@
 
           <!-- Tier Information -->
           <div v-if="memberDetails.found && memberDetails.entitledTierIds" class="mt-4">
-            <v-divider class="mb-4"></v-divider>
+            <v-divider class="mb-4" />
             <div class="text-subtitle1 font-weight-bold mb-3">Tier Information</div>
-            
+
             <v-row>
               <v-col cols="12" md="6">
                 <v-card outlined class="pa-3">
@@ -330,14 +330,14 @@
             </v-row>
           </div>
         </v-card-text>
-        
+
         <v-card-text v-else class="text-center py-8">
-          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          <v-progress-circular indeterminate color="primary" />
           <div class="mt-3">Loading member details...</div>
         </v-card-text>
-        
+
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn text @click="memberDetailsDialog = false">
             Close
           </v-btn>
@@ -371,8 +371,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
   mdiPatreon, mdiFilterRemove, mdiClose, mdiCheckCircle,
-  mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch, mdiSync,
-  mdiAccountDetails
+  mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch, mdiAccountDetails
 } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
 
