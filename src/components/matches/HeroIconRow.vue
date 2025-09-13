@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters :class="[show ? 'd-flex' : 'd-none', 'ga-2']">
     <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex">
-      <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" />
+      <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" :selectedHeroes="selectedHeroes" />
     </v-col>
   </v-row>
 </template>
@@ -34,6 +34,11 @@ export default defineComponent({
     size: {
       type: Number,
       required: false
+    },
+    selectedHeroes: {
+      type: Array as PropType<number[]>,
+      required: false,
+      default: () => [],
     },
   },
   setup(props) {
