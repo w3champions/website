@@ -8,7 +8,7 @@
       :mobile-breakpoint="400"
       :hidden="stats.length === 0"
     >
-      <template v-slot:body>
+      <template #:body>
         <tbody>
           <tr v-for="item in sortedStats" :key="item.mapName || item.map">
             <td>{{ item.mapName || item.map }}</td>

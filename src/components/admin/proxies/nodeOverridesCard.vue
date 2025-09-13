@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-row>
-      <v-card-title class="mx-0" v-if="isAutomaticNode">
+      <v-card-title v-if="isAutomaticNode" class="mx-0">
         Auto Node Overrides
       </v-card-title>
-      <v-card-title class="mx-0" v-else>Node Overrides</v-card-title>
+      <v-card-title v-else class="mx-0">Node Overrides</v-card-title>
     </v-row>
 
     <v-row v-if="isLoaded">
@@ -18,10 +18,10 @@
         <v-chip
           v-for="(proxy, index) in availableProxies"
           :key="index"
-          @click="updateProxies(proxy.id)"
           :input-value="showAsChecked(index)"
           label
           small
+          @click="updateProxies(proxy.id)"
         >
           {{ $t(`proxies.${sanitizeString(proxy.id)}`) }}
         </v-chip>

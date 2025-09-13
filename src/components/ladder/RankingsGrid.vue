@@ -4,11 +4,11 @@
       <thead>
         <tr>
           <td
-            class="header"
-            v-bind:class="{ clickable: header.sortFunction !== undefined }"
             v-for="header in headers"
             :key="header.name"
-            v-bind:style="{
+            class="header"
+            :class="{ clickable: header.sortFunction !== undefined }"
+            :style="{
               width: header.width,
               'min-width': header.minWidth,
             }"
@@ -24,8 +24,8 @@
       </thead>
       <tbody>
         <tr
-          :id="`listitem_${item.rankNumber}`"
           v-for="item in rankingsRef"
+          :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag(),
@@ -34,10 +34,10 @@
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td class="d-md-flex">
             <div
-              class="rank-icon-container my-1"
-              v-bind:class="{ 'ml-md-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag + '_' + item.race"
+              class="rank-icon-container my-1"
+              :class="{ 'ml-md-3': index > 0 }"
             >
               <div
                 class="player-avatar mr-1 alignRight race-icon"
@@ -46,11 +46,10 @@
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
                 }"
               ></div>
-              <player-rank-info :player-id="playerId"
-                :alias="item.playersInfo[index].playerAkaData.name" />
+              <player-rank-info :player-id="playerId" :alias="item.playersInfo[index].playerAkaData.name" />
               <div
-                class="ml-1"
                 v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
+                class="ml-1"
               >
                 <country-flag-extended
                   :countryCode="item.playersInfo[index].countryCode"
@@ -58,15 +57,15 @@
                   size="small"
                 />
               </div>
-              <div class="twitch__container" v-if="isTwitchLive(item, index)">
+              <div v-if="isTwitchLive(item, index)" class="twitch__container">
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #:activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <v-btn
                         icon
-                        v-on="on"
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
+                        v-on="on"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"
@@ -95,11 +94,11 @@
                 </v-tooltip>
               </div>
               <span
-                style="position: relative"
                 v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
+                style="position: relative"
               >
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template #:activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <sword-icon class="swords blinker" />
                     </span>
@@ -113,7 +112,7 @@
             </div>
           </td>
           <td class="number-text text-end">
-            <level-progress :rp="item.rankingPoints"></level-progress>
+            <level-progress :rp="item.rankingPoints" />
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">

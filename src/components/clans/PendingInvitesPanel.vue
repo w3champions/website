@@ -6,7 +6,7 @@
     <v-card-subtitle v-if="hasNoPendingInvites">
       {{ $t("components_clans_pendinginvitespanel.nonepending") }}
     </v-card-subtitle>
-    <table class="custom-table" v-if="!hasNoPendingInvites">
+    <table v-if="!hasNoPendingInvites" class="custom-table">
       <tr v-for="member in playersClan.pendingInvites" :key="member">
         <td>
           <v-row class="justify-space-between align-center ma-0">

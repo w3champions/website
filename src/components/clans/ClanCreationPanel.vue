@@ -12,17 +12,17 @@
       <v-col cols="6">
         <v-text-field
           :v-model="clanNameToCreate"
-          @change="changeInsertedClanName"
           :rules="[mustBeBetween(3, 30, ' ')]"
           :label="$t(`components_clans_clancreationpanel.clanname`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
+          @change="changeInsertedClanName"
         />
         <v-text-field
           :v-model="clanAbbreviationToCreate"
-          @change="changeInsertedClanAbbreviation"
           :rules="[mustBeBetween(2, 5, '')]"
           :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
+          @change="changeInsertedClanAbbreviation"
         />
       </v-col>
     </v-row>

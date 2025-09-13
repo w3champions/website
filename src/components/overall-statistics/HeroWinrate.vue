@@ -22,10 +22,8 @@
       </v-col>
     </v-row>
     <h2 class="justify-center text-center mt-4">
-      <span :class="winrateClass" v-if="wins !== 0 && losses !== 0">
-        {{
-          wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%"
-        }}
+      <span v-if="wins !== 0 && losses !== 0" :class="winrateClass">
+        {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       </span>
       <br />
       <span class="won">{{ wins }}</span>
@@ -43,10 +41,10 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 
 export default defineComponent({
   name: "HeroWinrate",
-  components: {},
-  props: {
+  components: {
     HeroPictureSelect,
   },
+  props: {},
   setup() {
     const overallStatsStore = useOverallStatsStore();
 

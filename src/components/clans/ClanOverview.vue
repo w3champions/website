@@ -44,9 +44,9 @@
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
+                    <template #:activator="{ on }">
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -66,9 +66,9 @@
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)" />
+                    <template #:activator="{ on }">
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -96,9 +96,9 @@
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)" />
+                    <template #:activator="{ on }">
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>

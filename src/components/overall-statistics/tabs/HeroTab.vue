@@ -16,18 +16,18 @@
             :items="gameModes"
             item-text="name"
             item-value="id"
-            @change="setSelectedHeroesPlayedMode"
             :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
             outlined
+            @change="setSelectedHeroesPlayedMode"
           />
           <v-select
             v-model="selectedHeroesPlayedPick"
             :items="picks"
             item-text="pickName"
             item-value="pickId"
-            @change="setSelectedHeroesPlayedPick"
             :label="$t(`components_overall-statistics_tabs_herotab.pick`)"
             outlined
+            @change="setSelectedHeroesPlayedPick"
           />
         </v-card-text>
       </v-col>

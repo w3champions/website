@@ -4,17 +4,17 @@
       v-if="heroesOfWinner.length !== 3"
       :cols="heroesOfWinner.length <= 1 ? 2 : 1"
     />
-    <v-col cols="1" v-if="heroesOfWinner.length === 3">
+    <v-col v-if="heroesOfWinner.length === 3" cols="1">
       <hero-icon :hero="heroesOfWinner[2]" />
     </v-col>
-    <v-col cols="1" v-if="heroesOfWinner.length >= 2">
+    <v-col v-if="heroesOfWinner.length >= 2" cols="1">
       <hero-icon :hero="heroesOfWinner[1]" />
     </v-col>
     <v-col cols="1">
       <hero-icon
+        v-if="heroesOfWinner.length >= 1"
         :first-hero="true"
         :hero="heroesOfWinner[0]"
-        v-if="heroesOfWinner.length >= 1"
       />
     </v-col>
     <v-col cols="2">
@@ -43,10 +43,10 @@
     <v-col cols="1">
       <hero-icon :first-hero="true" :hero="heroesOfLoser[0]" />
     </v-col>
-    <v-col cols="1" v-if="heroesOfLoser.length >= 2">
+    <v-col v-if="heroesOfLoser.length >= 2" cols="1">
       <hero-icon :hero="heroesOfLoser[1]" />
     </v-col>
-    <v-col cols="1" v-if="heroesOfLoser.length === 3">
+    <v-col v-if="heroesOfLoser.length === 3" cols="1">
       <hero-icon :hero="heroesOfLoser[2]" />
     </v-col>
     <v-col

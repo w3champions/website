@@ -1,8 +1,8 @@
 <template>
-    <div>
-      {{ $t("components_player_tabs_playerstatistictab.playergamelengthaveragelabel") }} {{ selectedOpponentRaceName }}: {{ averageAgainstRace }}
-      <bar-chart class="player-game-length" :chart-data="playerGameLengthChartData" />
-    </div>
+  <div>
+    {{ $t("components_player_tabs_playerstatistictab.playergamelengthaveragelabel") }} {{ selectedOpponentRaceName }}: {{ averageAgainstRace }}
+    <bar-chart class="player-game-length" :chart-data="playerGameLengthChartData" />
+  </div>
 </template>
 
 <script lang="ts">

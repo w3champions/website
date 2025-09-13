@@ -1,5 +1,5 @@
 <template>
-  <div class="bracket-series" v-bind:style="style">
+  <div class="bracket-series" :style="style">
     <tournament-series-player
       :side="'top'"
       :player="topPlayer"

@@ -2,7 +2,7 @@
   <v-row>
     <v-col>
       <v-dialog v-model="dialogOpen" max-width="700">
-        <template v-slot:activator="{ on }">
+        <template #:activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
             <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now)</v-btn>
           </v-row>
@@ -28,7 +28,7 @@
                       v-model="portraitId"
                       :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                       label="Portrait Id"
-                    ></v-text-field>
+                    />
                   </v-container>
                 </v-row>
 
@@ -41,7 +41,7 @@
               <v-row class="mb-5">
                 <v-container>
                   <v-row class="justify-center">
-                    <v-btn class="primary w3-race-bg--text" @click="confirmDialog" :disabled="!valid">Confirm</v-btn>
+                    <v-btn class="primary w3-race-bg--text" :disabled="!valid" @click="confirmDialog">Confirm</v-btn>
                   </v-row>
                 </v-container>
               </v-row>

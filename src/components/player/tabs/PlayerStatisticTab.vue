@@ -14,13 +14,13 @@
       <v-col cols="md-3">
         <v-card-text>
           <v-select
+            v-model="selectedPatch"
             :items="patches"
             item-text="patchVersion"
             item-value="patch"
-            v-model="selectedPatch"
-            @change="setSelectedPatch"
             label="Select Patch"
             outlined
+            @change="setSelectedPatch"
           />
         </v-card-text>
       </v-col>
@@ -38,18 +38,18 @@
       <v-col cols="12" md="2">
         <v-card-text>
           <v-select
+            v-model="selectedGameMode"
             :items="activeGameModes()"
             item-text="name"
             item-value="id"
-            v-model="selectedGameMode"
             label="Select Mode"
             outlined
           />
           <v-select
+            v-model="selectedRace"
             :items="races()"
             item-text="raceName"
             item-value="raceId"
-            v-model="selectedRace"
             label="Select Race"
             outlined
           />
