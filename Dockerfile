@@ -1,10 +1,10 @@
 # build stage
 FROM node:20-bullseye as build-stage
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile
 COPY . .
-RUN yarn run build:prod
+RUN npm run build:prod
 
 # production stage
 FROM nginx:stable-alpine as production-stage
