@@ -3,7 +3,7 @@
     <v-card-title>Chat Log</v-card-title>
     <v-card-text>
       <v-row>
-        <v-col align="left">
+        <v-col>
           <v-switch v-model="openGameDetail" :label="`Show Game Detail`"></v-switch>
         </v-col>
         <v-col>

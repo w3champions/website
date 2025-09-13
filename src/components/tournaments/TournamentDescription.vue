@@ -28,14 +28,14 @@
       <div>Players must have a ping of <b>{{ floNodeMaxPing }}</b> or less to <b>{{ floNode.name }}</b>.</div>
     </div>
     <div v-if="matcherinoUrl">
-      <a v-bind:href="matcherinoUrl">Donate to the prize pool</a>
+      <a :href="matcherinoUrl">Donate to the prize pool</a>
     </div>
-    <div class="mt-2" v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled">
+    <div v-if="statusInit || statusRegistration || statusMatchGeneration || statusCanceled" class="mt-2">
       <div v-if="statusInit">Registration didn't start yet.</div>
       <div v-else-if="statusRegistration">Registration is open.</div>
       <div v-else-if="statusMatchGeneration">Generating bracket.</div>
       <div v-else-if="statusCanceled">The tournament was canceled.</div>
-      <div class="mt-2" v-if="tournament.players.length > 0">Registered players list: {{ registeredPlayers }}</div>
+      <div v-if="tournament.players.length > 0" class="mt-2">Registered players list: {{ registeredPlayers }}</div>
     </div>
   </div>
 </template>

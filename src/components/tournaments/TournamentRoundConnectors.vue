@@ -1,6 +1,6 @@
 <template>
-  <div v-bind:style="containerStyle">
-    <div v-for="index in (seriesCount / 2)" v-bind:key="`top-${index}`">
+  <div :style="containerStyle">
+    <div v-for="index in (seriesCount / 2)" :key="`top-${index}`">
       <template>
         <tournament-round-connector
           :index="index - 1"

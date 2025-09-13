@@ -1,41 +1,41 @@
 <template>
   <div class="player-info" :class="textClass">
     <player-icon
-        v-if="!left"
-        :race="race"
-        :rndRace="rndRace"
-        :big="bigRaceIcon"
+      v-if="!left"
+      :race="race"
+      :rndRace="rndRace"
+      :big="bigRaceIcon"
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
         <a
-            class="name-link"
-            :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-            @click="notClickable ? null : goToPlayer()"
-            @click.middle="openProfileInNewTab()"
-            @click.right="openProfileInNewTab()"
+          class="name-link"
+          :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+          @click="notClickable ? null : goToPlayer()"
+          @click.middle="openProfileInNewTab()"
+          @click.right="openProfileInNewTab()"
         >
-        {{ nameWithoutBtag }}
+          {{ nameWithoutBtag }}
           <span class="number-text">({{ currentRating }})</span>
-          <span class="number-text" v-if="mmrChange !== 0" :class="won">
+          <span v-if="mmrChange !== 0" class="number-text" :class="won">
             <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
             <span v-else>{{ mmrChange }}</span>
           </span>
         </a>
       </span>
-      <span class="d-flex justify-center align-center" v-if="player.countryCode || player.location" style="height: 16px;">
+      <span v-if="player.countryCode || player.location" class="d-flex justify-center align-center" style="height: 16px;">
         <country-flag-extended
-            :countryCode="player.countryCode"
-            :location="player.location"
+          :countryCode="player.countryCode"
+          :location="player.location"
         />
       </span>
-       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes"/>
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
     </div>
     <player-icon
-        v-if="left"
-        :race="race"
-        :rndRace="rndRace"
-        :big="bigRaceIcon"
+      v-if="left"
+      :race="race"
+      :rndRace="rndRace"
+      :big="bigRaceIcon"
     />
   </div>
 </template>

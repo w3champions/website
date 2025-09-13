@@ -4,7 +4,7 @@
       <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
       <v-card-text>
         <v-expansion-panels tile>
-          <v-expansion-panel tile v-for="(faq, i) in faqs" :key="i">
+          <v-expansion-panel v-for="(faq, i) in faqs" :key="i" tile>
             <v-expansion-panel-header>
               <div v-html="faq.question"></div>
             </v-expansion-panel-header>

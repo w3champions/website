@@ -1,26 +1,26 @@
 <template>
-    <v-card-text class="px-16">
-      <v-card-text>
-        {{ $t("views_gettingstarted.introinstallwar3") }}
-        <ul>
-          <li>
-            {{ $t("views_gettingstarted.logoutinstall1") }}
-          </li>
-          <li>
-            {{ $t("views_gettingstarted.logoutinstall2") }}
-          </li>
-        </ul>
-        <br />
-        <img class="launcher-screenshot" src="/assets/installingWar3/install_unlogged.png">
-        <br />
-        {{ $t("views_gettingstarted.loginbnet") }}
-        <br />
-        {{ $t("views_gettingstarted.playwar3") }}
-        <br />
-        <br />
-        <img class="launcher-screenshot" src="/assets/installingWar3/play_logged.png">
-      </v-card-text>
+  <v-card-text class="px-16">
+    <v-card-text>
+      {{ $t("views_gettingstarted.introinstallwar3") }}
+      <ul>
+        <li>
+          {{ $t("views_gettingstarted.logoutinstall1") }}
+        </li>
+        <li>
+          {{ $t("views_gettingstarted.logoutinstall2") }}
+        </li>
+      </ul>
+      <br />
+      <img class="launcher-screenshot" src="/assets/installingWar3/install_unlogged.png" />
+      <br />
+      {{ $t("views_gettingstarted.loginbnet") }}
+      <br />
+      {{ $t("views_gettingstarted.playwar3") }}
+      <br />
+      <br />
+      <img class="launcher-screenshot" src="/assets/installingWar3/play_logged.png" />
     </v-card-text>
+  </v-card-text>
 </template>
 
 <script lang="ts">

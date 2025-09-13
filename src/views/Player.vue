@@ -17,10 +17,10 @@
               <v-col :cols="12" :sm="'auto'">
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
-                  <v-menu offset-x v-if="!!seasons && seasons.length > 0">
-                    <template v-slot:activator="{ on }">
-                      <v-btn tile v-on="on" class="ma-2 transparent">
-                        <span class="pa-0" v-if="selectedSeason">
+                  <v-menu v-if="!!seasons && seasons.length > 0" offset-x>
+                    <template #:activator="{ on }">
+                      <v-btn tile class="ma-2 transparent" v-on="on">
+                        <span v-if="selectedSeason" class="pa-0">
                           {{ $t("views_rankings.season") }}
                           {{ selectedSeason.id }}
                         </span>
@@ -44,7 +44,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-container class="pt-0" v-if="ongoingMatch.id">
+          <v-container v-if="ongoingMatch.id" class="pt-0">
             <v-row justify="center">
               <div class="d-flex justify-center" style="font-size: 0.9rem">
                 <span>Live</span>
@@ -53,14 +53,14 @@
               </div>
             </v-row>
             <v-row justify="center">
-              <div class="d-flex align-center" v-if="!isOngoingMatchFFA">
+              <div v-if="!isOngoingMatchFFA" class="d-flex align-center">
                 <div class="live-match__team">
                   <team-match-info
                     :not-clickable="isOngoingMatchFFA"
                     :team="getPlayerTeam(ongoingMatch)"
                     :unfinishedMatch="true"
                     :left="true"
-                  ></team-match-info>
+                  />
                 </div>
                 <div class="ml-3 mr-3">
                   <span>VS</span>
@@ -71,7 +71,7 @@
                     :team="getOpponentTeam(ongoingMatch)"
                     :unfinishedMatch="true"
                     right="true"
-                  ></team-match-info>
+                  />
                 </div>
               </div>
               <div v-else class="live-match__ffa">
@@ -89,12 +89,12 @@
               <host-icon
                 v-if="ongoingMatch.serverInfo && ongoingMatch.serverInfo.provider"
                 :host="ongoingMatch.serverInfo"
-              ></host-icon>
+              />
             </v-row>
           </v-container>
 
           <v-tabs v-model="tabsModel">
-            <v-tabs-slider></v-tabs-slider>
+            <v-tabs-slider />
             <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
@@ -111,7 +111,7 @@
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
-          <router-view></router-view>
+          <router-view />
         </v-card>
       </v-col>
     </v-row>

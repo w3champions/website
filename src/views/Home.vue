@@ -11,8 +11,8 @@
             <v-col class="text-center">
               <v-btn
                 height="76px"
-                @click="goToSetupPage"
                 class="join-button my-7 px-11"
+                @click="goToSetupPage"
               >
                 {{ $t("views_home.join_button") }}
               </v-btn>
@@ -82,7 +82,7 @@
             <div v-for="mode in activeGameModes" :key="mode.id">
               <div v-if="mode.id === 1 || mode.id === 2 || mode.id === 4">
                 <b class="mode">{{ mode.name }}</b>
-                <copy-button :copyText="mapNamesAsString(mode.id)" tooltipText="maptooltip"></copy-button>
+                <copy-button :copyText="mapNamesAsString(mode.id)" tooltipText="maptooltip" />
                 <ul><li v-for="map in mode.maps" :key="map.id">{{ map.name }}</li></ul>
               </div>
             </div>
