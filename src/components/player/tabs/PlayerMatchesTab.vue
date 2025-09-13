@@ -7,10 +7,10 @@
         </v-col>
         <v-col cols="12" md="5">
           <player-search
+            :setAutofocus="false"
             @playerFound="playerFound"
             @searchCleared="searchCleared"
-            :setAutofocus="false"
-          ></player-search>
+          />
         </v-col>
       </v-row>
       <v-row>
@@ -20,10 +20,10 @@
             :items="activeGameModesWithAll()"
             item-text="name"
             item-value="id"
-            @change="setSelectedGameModeForSearch"
             :value="profileMatchesGameMode"
             label="Mode"
             outlined
+            @change="setSelectedGameModeForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
@@ -32,10 +32,10 @@
             :items="races"
             item-text="raceName"
             item-value="raceId"
-            @change="setPlayerRaceForSearch"
             :value="playerRace"
             label="Player Race"
             outlined
+            @change="setPlayerRaceForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
@@ -44,17 +44,17 @@
             :items="races"
             item-text="raceName"
             item-value="raceId"
-            @change="setOpponentRaceForSearch"
             :value="opponentRace"
             label="Opponent Race"
             outlined
+            @change="setOpponentRaceForSearch"
           />
         </v-col>
         <v-col align-self="center" cols="12" md="3">
           <hero-select
-            @heroChanged="heroChanged"
             :is-player-matches-tab="true"
             :selectedHeroes="selectedHeroes"
+            @heroChanged="heroChanged"
           />
         </v-col>
         <v-col align-self="center">
@@ -81,11 +81,11 @@
       :items-per-page="50"
       :always-left-name="battleTag"
       only-show-enemy
-      @pageChanged="onPageChanged"
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
       :selectedHeroes="selectedHeroes"
-    ></matches-grid>
+      @pageChanged="onPageChanged"
+    />
   </div>
 </template>
 
