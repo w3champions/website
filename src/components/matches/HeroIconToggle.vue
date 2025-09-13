@@ -1,6 +1,6 @@
 <template>
   <div v-if="!unfinished" style="margin-left: auto;">
-    <v-btn tile class="ml-4" @click="toggle" style="background-color: transparent; align-items: center;">
+    <v-btn tile class="ml-4" style="background-color: transparent; align-items: center;" @click="toggle">
       <v-icon left>{{ showHeroes ? mdiEyeOff : mdiEye }}</v-icon>
       {{ showHeroes ? $t('components_matches_matchesgrid.hideHeroIcons') :
         $t('components_matches_matchesgrid.showHeroIcons') }}

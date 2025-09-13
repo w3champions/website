@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" style="background-color: transparent">
+      <v-btn tile style="background-color: transparent" v-on="on">
         <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
         {{ currentSort.name }}
       </v-btn>
@@ -13,7 +13,7 @@
             <v-list-item-title>{{ $t("components_matches_sortselect.sortmatchesby") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-divider></v-divider>
+        <v-divider />
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item v-for="sort in sortings" :key="sort.mode" @click="currentSort = sort">
             <v-list-item-content>

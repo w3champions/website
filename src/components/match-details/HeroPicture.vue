@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-img v-on="on" :src="heroPicture" :width="size" :aspect-ratio="1 / 1"></v-img>
+      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-on="on" />
     </template>
     <div>{{ heroName }} ({{ $t("common.level") }} {{ heroLevel }})</div>
   </v-tooltip>
@@ -23,7 +23,7 @@ export default defineComponent({
     },
     heroLevel: {
       type: Number,
-      required: false,
+      required: true,
     },
     size: {
       type: Number,

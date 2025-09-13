@@ -5,10 +5,10 @@
         <v-btn
           class="ma-2"
           icon
-          @click="downloadReplay"
           outlined
           :loading="downloading"
           :disabled="downloading"
+          @click="downloadReplay"
         >
           <v-icon :max-height="18" :max-width="18">{{ mdiDownload }}</v-icon>
         </v-btn>

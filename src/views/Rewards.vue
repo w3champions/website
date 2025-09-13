@@ -73,7 +73,7 @@
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
             <v-simple-table v-else>
-              <template #:default>
+              <template v-slot:default>
                 <thead>
                   <tr>
                     <th class="text-left" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>

@@ -8,27 +8,27 @@
             :items="maps"
             item-text="mapName"
             item-value="mapId"
-            @change="setSelectedMap"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
             outlined
+            @change="setSelectedMap"
           />
           <v-select
             v-model="selectedMmr"
             :items="mmrs"
             item-text="league"
             item-value="mmr"
-            @change="setSelectedMmr"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
             outlined
+            @change="setSelectedMmr"
           />
           <v-select
+            v-model="selectedPatch"
             :items="patches"
             item-text="patchVersion"
             item-value="patch"
-            v-model="selectedPatch"
-            @change="setSelectedPatch"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
             outlined
+            @change="setSelectedPatch"
           />
         </v-card-text>
       </v-col>

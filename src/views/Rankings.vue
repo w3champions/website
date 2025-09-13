@@ -11,7 +11,7 @@
           @gameModeChanged="onGameModeChanged"
         />
         <v-menu offset-x>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn tile class="transparent" v-on="on">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
@@ -68,7 +68,7 @@
             In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
             but for now in Vue 2 we can't use TypeScript in templates.
           -->
-          <template #:item="{ item }">
+          <template v-slot:item="{ item }">
             <template v-if="item?.player === undefined">
               <v-list-item-content>{{ item }}</v-list-item-content>
             </template>
@@ -101,7 +101,7 @@
         </v-autocomplete>
       </v-card-title>
       <v-menu offset-x>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn tile class="ma-4 transparent" v-on="on">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}

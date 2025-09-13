@@ -1,9 +1,9 @@
 <template>
   <div
     class="LadderSummaryShowcase-card mt-1"
-    @click="isRanked && !smallMode ? navigateToLeague() : null"
     :title="isRanked && !smallMode ? 'Go to League Rankings' : undefined"
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
+    @click="isRanked && !smallMode ? navigateToLeague() : null"
   >
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
@@ -29,18 +29,18 @@
     </div>
     <div>
       <img class="LadderSummaryShowcase-divider" src="/assets/profiles/profile-ladders-divider.png" />
-      <div class="text-center" v-if="isRanked && !smallMode">
+      <div v-if="isRanked && !smallMode" class="text-center">
         <span>
           MMR:
           <span class="number-text">{{ modeStat.mmr }}</span>
         </span>
         <span class="ml-2" style="font-size: 13px">
           <v-col>
-            <level-progress :rp="modeStat.rankingPoints"></level-progress>
+            <level-progress :rp="modeStat.rankingPoints" />
           </v-col>
         </span>
       </div>
-      <div class="text-center" v-if="!isRanked && !smallMode">
+      <div v-if="!isRanked && !smallMode" class="text-center">
         <span>{{ $t("components_player_playerleague.placementsplayed") }}</span>
       </div>
     </div>

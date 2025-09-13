@@ -18,7 +18,7 @@
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
                   <v-menu v-if="!!seasons && seasons.length > 0" offset-x>
-                    <template #:activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <v-btn tile class="ma-2 transparent" v-on="on">
                         <span v-if="selectedSeason" class="pa-0">
                           {{ $t("views_rankings.season") }}

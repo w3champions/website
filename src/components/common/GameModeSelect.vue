@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+      <v-btn tile class="transparent" v-on="on">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName() }}
       </v-btn>
@@ -15,7 +15,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-divider></v-divider>
+        <v-divider />
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="mode in gameModes()"

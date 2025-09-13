@@ -21,39 +21,39 @@
           <v-col>{{ $t("components_match-details_playerperformanceonmatch.largestarmy") }}</v-col>
         </v-row>
       </v-col>
-      <v-col :order="1" cols="1"></v-col>
+      <v-col :order="1" cols="1" />
       <v-col
         class="col-md-auto"
         :order="left ? 3 : 0"
         :style="{ 'text-align': alignText }"
       >
         <v-row dense>
-          <v-col :class="unitsKilledComparison" >
+          <v-col :class="unitsKilledComparison">
             <number-display :object="unitScore" value="unitsKilled" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="unitsProducedComparison" >
+          <v-col :class="unitsProducedComparison">
             <number-display :object="unitScore" value="unitsProduced" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="goldComparison" >
+          <v-col :class="goldComparison">
             <number-display :object="resourceScore" value="goldCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="woodComparison" >
+          <v-col :class="woodComparison">
             <number-display :object="resourceScore" value="lumberCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="upkeepComparison" >
+          <v-col :class="upkeepComparison">
             <number-display :object="resourceScore" value="goldUpkeepLost" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="armyComparison" >
+          <v-col :class="armyComparison">
             <number-display
               :object="unitScore"
               value="largestArmy"

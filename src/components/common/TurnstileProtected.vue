@@ -8,11 +8,11 @@
       <v-alert type="error" dense>
         {{ errorMessage }}
       </v-alert>
-      <v-btn @click="retry" small class="mt-2">
+      <v-btn small class="mt-2" @click="retry">
         {{ $t("common.retry") || "Retry" }}
       </v-btn>
     </div>
-    <slot v-else :token="token" :getToken="getToken" />
+    <slot v-else :token="token" :getToken="getToken"></slot>
   </div>
 </template>
 

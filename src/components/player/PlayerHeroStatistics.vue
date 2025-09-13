@@ -1,6 +1,6 @@
 <template>
   <v-tabs v-model="selectedTab">
-    <v-tabs-slider></v-tabs-slider>
+    <v-tabs-slider />
     <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
       <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
@@ -12,7 +12,7 @@
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
-            <player-hero-statistics-table :hero-statistics="heroUsages"></player-hero-statistics-table>
+            <player-hero-statistics-table :hero-statistics="heroUsages" />
           </v-col>
         </v-row>
       </v-card-text>

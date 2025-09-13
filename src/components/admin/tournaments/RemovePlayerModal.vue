@@ -8,8 +8,8 @@
         <v-row>
           <v-col cols="12" sm="6" md="12">
             <v-select
-              :items="players"
               v-model="battleTag"
+              :items="players"
               item-text="battleTag"
               item-value="battleTag"
               label="Player"
@@ -19,11 +19,11 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t("views_admin.cancel") }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || battleTag.length === 0">
+      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || battleTag.length === 0" @click="save">
         {{ $t("views_admin.save") }}
       </v-btn>
     </v-card-actions>

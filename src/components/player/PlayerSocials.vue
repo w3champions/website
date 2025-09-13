@@ -2,7 +2,7 @@
   <v-row>
     <v-col v-if="userProfile.twitch != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             :href="'https:///twitch.tv/' + userProfile.twitch"
@@ -18,7 +18,7 @@
     </v-col>
     <v-col v-if="userProfile.youtube != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             :href="'https:///youtube.com/' + userProfile.youtube"
@@ -33,7 +33,7 @@
     </v-col>
     <v-col v-if="userProfile.twitter != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             :href="'https:///twitter.com/' + userProfile.twitter"
@@ -48,7 +48,7 @@
     </v-col>
     <v-col v-if="!!userProfile.trovo" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             :href="'https://trovo.live/' + userProfile.trovo"
@@ -64,7 +64,7 @@
     <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
     <!-- <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showW3info && w3infoId != 0" class="socialIcon">
         <v-tooltip bottom>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn
               icon
               v-on="on"
@@ -79,7 +79,7 @@
       </v-col>
       <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showLiquipedia && liquipediaString != ''" class="socialIcon">
         <v-tooltip bottom>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn
               icon
               v-on="on"
