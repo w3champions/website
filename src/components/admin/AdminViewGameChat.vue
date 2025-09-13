@@ -8,7 +8,7 @@
         <v-container class="mt-5">
           <v-row>
             <v-col></v-col>
-            <v-col cols="6" align="center">
+            <v-col cols="6">
               <v-text-field v-model="matchId" solo outlined clearable placeholder="Game ID" autofocus></v-text-field>
             </v-col>
             <v-col>

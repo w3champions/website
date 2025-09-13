@@ -11,16 +11,16 @@
             :items="activeGameModesWithAll()"
             item-text="name"
             item-value="id"
-            @change="setSelectedGamesPerDayMode"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
             hide-details
+            @change="setSelectedGamesPerDayMode"
           />
           <v-switch
             v-model="normalizedGamesPerDay"
-            @change="setNormalizedGamesPerDay"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
-          ></v-switch>
+            @change="setNormalizedGamesPerDay"
+          />
           <div v-if="normalizedGamesPerDay">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
             <br />
@@ -59,18 +59,18 @@
             :items="activeGameModes()"
             item-text="name"
             item-value="id"
-            @change="setSelectedModeForMaps"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
+            @change="setSelectedModeForMaps"
           />
           <v-select
             v-model="selectedSeasonForMaps"
             :items="seasons"
             item-text="id"
             item-value="id"
-            @change="setSelectedSeasonForMaps"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             outlined
+            @change="setSelectedSeasonForMaps"
           />
         </v-card-text>
       </v-col>
@@ -95,9 +95,9 @@
             :items="activeGameModes()"
             item-text="name"
             item-value="id"
-            @change="setSelectedPopularHourMode"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
+            @change="setSelectedPopularHourMode"
           />
         </v-card-text>
         <div style="padding: 15px; font-size: 14px">
@@ -122,9 +122,9 @@
             :items="activeGameModes()"
             item-text="name"
             item-value="id"
-            @change="setSelectedLengthMode"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             outlined
+            @change="setSelectedLengthMode"
           />
         </v-card-text>
       </v-col>
@@ -147,36 +147,36 @@
             :items="raceOptions"
             item-text="name"
             item-value="id"
-            @change="setSelectedMatchupRace1"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             outlined
+            @change="setSelectedMatchupRace1"
           />
           <v-select
             v-model="selectedMatchupRace2"
             :items="raceOptions"
             item-text="name"
             item-value="id"
-            @change="setSelectedMatchupRace2"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             outlined
+            @change="setSelectedMatchupRace2"
           />
           <v-select
             v-model="selectedMatchupMmr"
             :items="matchupMmrOptions"
             item-text="name"
             item-value="id"
-            @change="setSelectedMatchupMmr"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmmr`)"
             outlined
+            @change="setSelectedMatchupMmr"
           />
           <v-select
             v-model="selectedMatchupSeason"
             :items="seasonsForMatchup"
             item-text="name"
             item-value="id"
-            @change="setMatchupLengthSeason"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             outlined
+            @change="setMatchupLengthSeason"
           />
         </v-card-text>
       </v-col>

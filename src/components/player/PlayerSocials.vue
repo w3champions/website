@@ -1,14 +1,14 @@
 <template>
   <v-row>
-    <v-col cols="2" v-if="userProfile.twitch != ''" class="socialIcon">
+    <v-col v-if="userProfile.twitch != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+        <template #:activator="{ on }">
           <v-btn
             icon
-            v-on="on"
             :href="'https:///twitch.tv/' + userProfile.twitch"
             target="_blank"
             class="twitchIcon"
+            v-on="on"
           >
             <v-icon color="purple accent-4">{{ mdiTwitch }}</v-icon>
           </v-btn>
@@ -16,14 +16,14 @@
         <span>{{ userProfile.twitch }}</span>
       </v-tooltip>
     </v-col>
-    <v-col cols="2" v-if="userProfile.youtube != ''" class="socialIcon">
+    <v-col v-if="userProfile.youtube != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+        <template #:activator="{ on }">
           <v-btn
             icon
-            v-on="on"
             :href="'https:///youtube.com/' + userProfile.youtube"
             target="_blank"
+            v-on="on"
           >
             <v-icon color="red darken-2">{{ mdiYoutube }}</v-icon>
           </v-btn>
@@ -31,14 +31,14 @@
         <span>{{ userProfile.youtube }}</span>
       </v-tooltip>
     </v-col>
-    <v-col cols="2" v-if="userProfile.twitter != ''" class="socialIcon">
+    <v-col v-if="userProfile.twitter != ''" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+        <template #:activator="{ on }">
           <v-btn
             icon
-            v-on="on"
             :href="'https:///twitter.com/' + userProfile.twitter"
             target="_blank"
+            v-on="on"
           >
             <v-icon color="blue darken-2">{{ mdiTwitter }}</v-icon>
           </v-btn>
@@ -46,14 +46,14 @@
         <span>{{ userProfile.twitter }}</span>
       </v-tooltip>
     </v-col>
-    <v-col cols="2" v-if="!!userProfile.trovo" class="socialIcon">
+    <v-col v-if="!!userProfile.trovo" cols="2" class="socialIcon">
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
+        <template #:activator="{ on }">
           <v-btn
             icon
-            v-on="on"
             :href="'https://trovo.live/' + userProfile.trovo"
             target="_blank"
+            v-on="on"
           >
             <v-icon color="green darken-3">$trovo</v-icon>
           </v-btn>
@@ -64,7 +64,7 @@
     <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
     <!-- <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showW3info && w3infoId != 0" class="socialIcon">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #:activator="{ on }">
             <v-btn
               icon
               v-on="on"
@@ -79,7 +79,7 @@
       </v-col>
       <v-col cols="2" v-if="hasAnAlias && userProfile.aliasSettings.showLiquipedia && liquipediaString != ''" class="socialIcon">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template #:activator="{ on }">
             <v-btn
               icon
               v-on="on"

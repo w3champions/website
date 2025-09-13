@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
-      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate></v-progress-circular>
+      <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate />
     </v-card-text>
     <v-card-text v-else-if="loadProfileError" style="min-height: 500px" class="text-center">
       <v-row class="mt-4 filter-none">
         <v-col>
           <v-card-title class="justify-center">
-            {{loadProfileError}}
+            {{ loadProfileError }}
           </v-card-title>
         </v-col>
       </v-row>
@@ -21,8 +21,8 @@
         </v-col>
         <v-col md="12" lg="9">
           <v-row v-if="!isBetaSeason">
-            <v-col cols="12" md="4" v-for="gameModeStat in topGameModeStats" :key="gameModeStat.gameMode">
-              <player-league :modeStat="gameModeStat"></player-league>
+            <v-col v-for="gameModeStat in topGameModeStats" :key="gameModeStat.gameMode" cols="12" md="4">
+              <player-league :modeStat="gameModeStat" />
             </v-col>
           </v-row>
           <v-row v-if="isBetaSeason">
@@ -32,16 +32,16 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-row class="filter-none" v-if="!isBetaSeason">
+          <v-row v-if="!isBetaSeason" class="filter-none">
             <v-col cols="12" md="4">
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
               <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
-                <template v-slot:item.race="{ item }">
-                  <span><race-icon v-bind:race="item.race" /></span>
+                <template #:item.race="{ item }">
+                  <span><race-icon :race="item.race" /></span>
                 </template>
-                <template v-slot:item.wins="{ item }">
+                <template #:item.wins="{ item }">
                   <span class="number-text">
                     <span class="won">{{ item.wins }}</span>
                     -

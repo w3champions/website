@@ -21,11 +21,11 @@
             <td>
               <div
                 v-if="isFfa(item.gameMode)"
-                @click="goToMatchDetailPage(item)"
-                class="my-3"
                 :class="{ clickable: !unfinished }"
+                class="my-3"
+                @click="goToMatchDetailPage(item)"
               >
-                <v-row justify="center" v-if="alwaysLeftName">
+                <v-row v-if="alwaysLeftName" justify="center">
                   <v-col offset="4" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
@@ -35,10 +35,10 @@
                       :highlightedPlayer="alwaysLeftName"
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
-                    ></team-match-info>
+                    />
                   </v-col>
                 </v-row>
-                <v-row justify="center" v-for="(team, index) in getOpponentTeams(item)" :key="index">
+                <v-row v-for="(team, index) in getOpponentTeams(item)" :key="index" justify="center">
                   <v-col offset="4" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
@@ -47,14 +47,14 @@
                       :is-anonymous="true"
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
-                    ></team-match-info>
+                    />
                   </v-col>
                 </v-row>
               </div>
               <v-row
                 v-if="!isFfa(item.gameMode)"
-                @click="goToMatchDetailPage(item)"
                 :class="{ clickable: !unfinished }"
+                @click="goToMatchDetailPage(item)"
               >
                 <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
@@ -65,11 +65,11 @@
                     :highlightedPlayer="nameIfNonSolo(item)"
                     :show-heroes="showHeroes"
                     :selectedHeroes="selectedHeroes"
-                  ></team-match-info>
+                  />
                 </v-col>
                 <v-col cols="1" align-self="center" class="py-2">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo"></host-icon>
+                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
                 </v-col>
                 <v-col cols="5.5" class="team-match-info-container" align-self="center">
                   <team-match-info
@@ -78,7 +78,7 @@
                     :unfinishedMatch="unfinished"
                     :show-heroes="showHeroes"
                     :selectedHeroes="selectedHeroes"
-                  ></team-match-info>
+                  />
                 </v-col>
               </v-row>
             </td>
@@ -93,11 +93,11 @@
             <td class="text-right">
               <div class="d-flex flex-column text-right align-end">
                 <span class="number-text">{{ getDuration(item) }}</span>
-                <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }" />
+                <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }"></div>
               </div>
             </td>
             <td v-if="showReplayDownload(item)" class="text-center">
-              <download-replay-icon :gameId="item.id"></download-replay-icon>
+              <download-replay-icon :gameId="item.id" />
             </td>
           </tr>
           <tr v-if="!matches || matches.length == 0">
@@ -113,7 +113,7 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged"></v-pagination>
+      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged" />
     </div>
   </div>
 </template>

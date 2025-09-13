@@ -16,16 +16,16 @@
                   v-if="match.serverInfo && match.serverInfo.provider"
                   :host="match.serverInfo"
                   style="padding-right: 0px"
-                ></host-icon>
+                />
               </v-col>
-              <v-col cols="4" v-if="!matchIsFFA" align-self="center">
+              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
                 <team-match-info
                   :big-race-icon="true"
                   :left="true"
                   :team="match.teams[0]"
                 />
               </v-col>
-              <v-col cols="1" class="text-center" align-self="center" >
+              <v-col cols="1" class="text-center" align-self="center">
                 <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
               <v-col v-if="!matchIsFFA" cols="4" align-self="center">
@@ -55,7 +55,7 @@
               </v-col>
               <v-col cols="1" />
               <div class="subicon">
-                <download-replay-icon :gameId="matchId"/>
+                <download-replay-icon :gameId="matchId" />
               </div>
             </v-row>
           </v-card-title>
@@ -69,7 +69,7 @@
           <div v-if="isCompleteGame">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
-              v-bind:key="index"
+              :key="index"
               :heroes-of-winner="scoresOfWinners[index]?.heroes"
               :heroes-of-loser="scoresOfLosers[index]?.heroes"
               :scores-of-winner="scoresOfWinners[index]?.heroScore"
@@ -89,9 +89,10 @@
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
           </v-row>
-          <v-row  v-if="isCompleteGame && !matchIsFFA" class="justify-center">
+          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
             <v-col cols="5" class="mr-7">
-              <player-performance-on-match class="mt-4"
+              <player-performance-on-match
+                class="mt-4"
                 :unit-score="scoresOfWinners.map((h) => h.unitScore)"
                 :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
                 :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
@@ -100,7 +101,8 @@
               />
             </v-col>
             <v-col cols="5" class="ml-7">
-              <player-performance-on-match class="mt-4"
+              <player-performance-on-match
+                class="mt-4"
                 :unit-score="scoresOfLosers.map((h) => h.unitScore)"
                 :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
                 :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
@@ -108,10 +110,10 @@
               />
             </v-col>
           </v-row>
-          <v-row class="mb-3" v-if="isCompleteGame && matchIsFFA">
+          <v-row v-if="isCompleteGame && matchIsFFA" class="mb-3">
             <v-col cols="2" />
             <v-col>
-              <v-row dense v-for="(label, index) in rowLabels" :key="label">
+              <v-row v-for="(label, index) in rowLabels" :key="label" dense>
                 <v-col>
                   {{ label }}
                 </v-col>

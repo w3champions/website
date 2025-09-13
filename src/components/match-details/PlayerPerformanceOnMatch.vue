@@ -1,59 +1,59 @@
 <template>
   <div>
     <v-row dense :class="left ? 'justify-end' : 'justify-start'">
-      <v-col :order="left ? 1 : 3" class="col-md-auto">
+      <v-col :order="left ? 1 : 3" class="col-md-auto" :style="{ 'text-align': alignText }">
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.unitskilled") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.unitskilled") }}</v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.unitsproduced") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.unitsproduced") }}</v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.goldmined") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.goldmined") }}</v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.lumbermined") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.lumbermined") }}</v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.upkeeplost") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.upkeeplost") }}</v-col>
         </v-row>
         <v-row dense>
-          <v-col :align="alignText">{{ $t("components_match-details_playerperformanceonmatch.largestarmy") }}</v-col>
+          <v-col>{{ $t("components_match-details_playerperformanceonmatch.largestarmy") }}</v-col>
         </v-row>
       </v-col>
       <v-col :order="1" cols="1"></v-col>
       <v-col
         class="col-md-auto"
         :order="left ? 3 : 0"
-        :align="left ? 'left' : 'right'"
+        :style="{ 'text-align': alignText }"
       >
         <v-row dense>
-          <v-col :class="unitsKilledComparison" :align="alignText">
+          <v-col :class="unitsKilledComparison" >
             <number-display :object="unitScore" value="unitsKilled" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="unitsProducedComparison" :align="alignText">
+          <v-col :class="unitsProducedComparison" >
             <number-display :object="unitScore" value="unitsProduced" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="goldComparison" :align="alignText">
+          <v-col :class="goldComparison" >
             <number-display :object="resourceScore" value="goldCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="woodComparison" :align="alignText">
+          <v-col :class="woodComparison" >
             <number-display :object="resourceScore" value="lumberCollected" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="upkeepComparison" :align="alignText">
+          <v-col :class="upkeepComparison" >
             <number-display :object="resourceScore" value="goldUpkeepLost" />
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col :class="armyComparison" :align="alignText">
+          <v-col :class="armyComparison" >
             <number-display
               :object="unitScore"
               value="largestArmy"

@@ -1,16 +1,12 @@
 <template>
   <div class="custom-table-wrapper elevation-1">
-    <table
-      class="custom-table"
-      v-for="countryRank in rankings"
-      :key="countryRank.league"
-    >
+    <table v-for="countryRank in rankings" :key="countryRank.league" class="custom-table">
       <thead>
         <tr>
           <td
+            v-if="leagueMap.get(countryRank.league)"
             colspan="100%"
             class="text-uppercase font-weight-bold"
-            v-if="leagueMap.get(countryRank.league)"
           >
             <league-icon :league="leagueMap.get(countryRank.league)?.order" />
             <div class="d-inline-block ml-2 my-4">
@@ -27,9 +23,9 @@
       <thead>
         <tr>
           <td
-            class="header"
             v-for="(header, index) in headers"
             :key="index"
+            class="header"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -41,25 +37,19 @@
       </thead>
       <tbody>
         <tr
-          :id="`listitem_${item.rankNumber}`"
           v-for="item in countryRank.ranks"
+          :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td>
             <div
-              class="d-inline-block rank-icon-container"
-              v-bind:class="{ 'ml-3': index > 0 }"
               v-for="(playerId, index) in item.player.playerIds"
               :key="playerId.battleTag + '_' + item.race"
+              class="d-inline-block rank-icon-container"
+              :class="{ 'ml-3': index > 0 }"
             >
-              <div
-                v-if="
-                  item.playersInfo &&
-                  (item.playersInfo[index].countryCode ||
-                    item.playersInfo[index].location) === selectedCountry
-                "
-              >
+              <div v-if="item.playersInfo && (item.playersInfo[index].countryCode || item.playersInfo[index].location) === selectedCountry">
                 <div
                   class="player-avatar mr-1 alignRight race-icon"
                   :title="getTitleRace(item, index).toString()"
@@ -67,15 +57,15 @@
                 ></div>
 
                 <player-rank-info :player-id="playerId" />
-                <div class="twitch__container" v-if="isTwitchLive(item)">
+                <div v-if="isTwitchLive(item)" class="twitch__container">
                   <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
+                    <template #:activator="{ on }">
                       <span style="display: inline" class="pointer" v-on="on">
                         <v-btn
                           icon
-                          v-on="on"
                           :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
                           target="_blank"
+                          v-on="on"
                         >
                           <v-icon
                             v-if="!isCurrentlyLive(item.player.playerIds)"
@@ -108,11 +98,8 @@
                 (
                 <player-rank-info :player-id="playerId" />
                 <div
+                  v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
                   class="d-inline-block"
-                  v-if="
-                    (item.playersInfo && item.playersInfo[index].countryCode) ||
-                    item.playersInfo[index].location
-                  "
                 >
                   <country-flag-extended
                     :countryCode="item.playersInfo[index].countryCode"
@@ -123,11 +110,11 @@
               </div>
             </div>
             <span
-              style="position: relative"
               v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
+              style="position: relative"
             >
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template #:activator="{ on }">
                   <span style="display: inline" class="pointer" v-on="on">
                     <sword-icon class="swords blinker" />
                   </span>
@@ -140,7 +127,7 @@
             </span>
           </td>
           <td class="number-text text-end">
-            <level-progress :rp="item.rankingPoints"></level-progress>
+            <level-progress :rp="item.rankingPoints" />
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
@@ -154,10 +141,7 @@
         </tr>
       </tbody>
     </table>
-    <table
-      class="custom-table"
-      v-if="!rankings || rankings.length === 0"
-    >
+    <table v-if="!rankings || rankings.length === 0" class="custom-table">
       <tbody>
         <tr>
           <td colspan="100%" class="text-center">
