@@ -2,16 +2,16 @@
   <v-dialog v-model="show" max-width="500">
     <v-card>
       <v-card-title class="justify-center">Select Your Gateway</v-card-title>
-      <p class="d-flex justify-center" v-if="isAdminPanel">Your token has expired. Please log in again.</p>
+      <p v-if="isAdminPanel" class="d-flex justify-center">Your token has expired. Please log in again.</p>
       <v-container>
         <v-row
-          class="pa-2"
           v-for="gateway in gateways"
           :key="gateway.id"
+          class="pa-2"
           justify="center"
           align="center"
         >
-          <v-btn @click="signIn(gateway)" block x-large>
+          <v-btn block x-large @click="signIn(gateway)">
             <v-col cols="2" align-self="center">
               <v-img
                 min-width="32"
@@ -19,7 +19,7 @@
                 min-height="32"
                 max-height="48"
                 :src="`/assets/flags/${gateway.id}.svg`"
-              ></v-img>
+              />
             </v-col>
             <v-col cols="2" align-self="center">
               {{ gateway.name }}
@@ -28,9 +28,9 @@
         </v-row>
 
         <v-row class="mt-4 mb-1">
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn @click.stop="show = false">Close</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
     </v-card>

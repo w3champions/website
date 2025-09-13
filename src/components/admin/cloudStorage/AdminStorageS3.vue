@@ -22,9 +22,9 @@
                 v-model="tableSearch"
                 label="Search"
                 :prepend-icon="mdiMagnify"
-              ></v-text-field>
+              />
             </template>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -50,17 +50,17 @@
                           :prepend-icon="mdiCamera"
                           accept="image/*"
                           label="Select an image"
-                        ></v-file-input>
+                        />
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn text @click="close" :disabled="isUploadingFile">
+                  <v-spacer />
+                  <v-btn text :disabled="isUploadingFile" @click="close">
                     {{ $t(`views_admin.cancel`) }}
                   </v-btn>
-                  <v-btn color="primary" class="w3-race-bg--text" @click="uploadFile" :disabled="isUploadingFile">
+                  <v-btn color="primary" class="w3-race-bg--text" :disabled="isUploadingFile" @click="uploadFile">
                     {{ isUploadingFile ? "Uploading..." : "Upload" }}
                   </v-btn>
                 </v-card-actions>
@@ -68,7 +68,7 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
           <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
         </template>

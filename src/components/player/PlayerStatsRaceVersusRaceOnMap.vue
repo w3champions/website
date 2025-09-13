@@ -1,6 +1,6 @@
 <template>
-  <v-tabs v-model="selectedTab" v-if="!isStatsEmpty">
-    <v-tabs-slider></v-tabs-slider>
+  <v-tabs v-if="!isStatsEmpty" v-model="selectedTab">
+    <v-tabs-slider />
     <v-tab v-for="stat of sortedStats" :key="stat.race" :href="`#tab-${stat.race}`">
       <span v-if="stat.race === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}

@@ -14,7 +14,7 @@
       item-key="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
-      <template #:top>
+      <template v-slot:top>
         <v-toolbar flat color="transparent">
           <template>
             <v-text-field
@@ -25,7 +25,7 @@
           </template>
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
-            <template #:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -55,7 +55,7 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="editedItem.endDate"
                             readonly
@@ -92,7 +92,7 @@
 
                     <v-col class="py-0">
                       <v-tooltip top>
-                        <template #:activator="{ on }">
+                        <template v-slot:activator="{ on }">
                           <v-select
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"
@@ -143,13 +143,13 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.gameModesText`]="{ item }">
+      <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
           <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
         </td>
         <td v-else>All</td>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:#[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>

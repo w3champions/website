@@ -28,7 +28,7 @@
                       v-model="portraitId"
                       :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                       label="Portrait Id"
-                    ></v-text-field>
+                    />
                   </v-container>
                 </v-row>
 
@@ -41,7 +41,7 @@
               <v-row class="mb-5">
                 <v-container>
                   <v-row class="justify-center">
-                    <v-btn class="primary w3-race-bg--text" @click="confirmDialog" :disabled="!valid">Confirm</v-btn>
+                    <v-btn class="primary w3-race-bg--text" :disabled="!valid" @click="confirmDialog">Confirm</v-btn>
                   </v-row>
                 </v-container>
               </v-row>

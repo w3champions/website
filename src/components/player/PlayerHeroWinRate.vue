@@ -1,6 +1,6 @@
 <template>
   <v-tabs v-model="selectedTab">
-    <v-tabs-slider></v-tabs-slider>
+    <v-tabs-slider />
     <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
       <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
@@ -28,7 +28,7 @@
                       <td v-html="item.name"></td>
                       <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
                         <template v-slot:activator="{ on }">
-                          <td v-on="on" :class="[...getWinRateClass(item, header.value), 'text-right']" v-html="item[header.value]"></td>
+                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on" v-html="item[header.value]"></td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">
                           <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
@@ -49,7 +49,7 @@
                 :length="pageLength"
                 :prev-icon="mdiMenuLeft"
                 :next-icon="mdiMenuRight"
-              ></v-pagination>
+              />
             </div>
           </v-col>
         </v-row>

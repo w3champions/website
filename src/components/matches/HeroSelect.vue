@@ -3,9 +3,9 @@
     <template v-slot:activator="{ on }">
       <v-btn
         tile
-        v-on="on"
         :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
         style="background-color: transparent"
+        v-on="on"
       >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
@@ -18,13 +18,13 @@
             <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
           </v-list-item-content>
         </v-list>
-        <v-divider></v-divider>
+        <v-divider />
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="hero in heroFilters"
             :key="hero.type"
-            @click="toggleHero(hero)"
             :class="{ 'primary--text': isSelected(hero) }"
+            @click="toggleHero(hero)"
           >
             <v-list-item-content>
               <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
@@ -95,7 +95,6 @@ export default defineComponent({
       heroFilters,
       toggleHero,
       isSelected,
-      selectedHeroes,
       selectedText,
     };
   },

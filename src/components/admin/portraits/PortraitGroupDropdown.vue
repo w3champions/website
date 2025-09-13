@@ -23,7 +23,7 @@
                   :isAssigned="false"
                   :isInert="true"
                   class="pa-1"
-                ></assign-portrait>
+                />
               </v-col>
             </v-row>
           </v-tooltip>

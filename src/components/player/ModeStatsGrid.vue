@@ -1,7 +1,7 @@
 <template>
   <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
     <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
-      <v-tooltip top v-bind:key="h.text">
+      <v-tooltip :key="h.text" top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ header.text }}</span>
         </template>
@@ -32,7 +32,7 @@
             </div>
           </td>
           <td class="number-text text-center cell" style="min-width: 100px">
-            <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints"></level-progress>
+            <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
             <div v-else>-</div>
           </td>
         </tr>

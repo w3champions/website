@@ -6,7 +6,7 @@
     <br />
     <v-card-text>
       <v-row>
-        <v-col class="mb-10" cols="12" md="3" v-for="atPartner in gameModeStatsAt" :key="atPartner.id">
+        <v-col v-for="atPartner in gameModeStatsAt" :key="atPartner.id" class="mb-10" cols="12" md="3">
           <player-league :mode-stat="atPartner" :show-at-partner="true" />
         </v-col>
       </v-row>

@@ -13,7 +13,7 @@ import { useI18n } from "vue-i18n-bridge";
 import { ChartData } from "chart.js";
 
 export default defineComponent({
-  name: "PlayerGameLengthStats",
+  name: "MatchupLengthBarChart",
   components: {
     BarChart,
   },

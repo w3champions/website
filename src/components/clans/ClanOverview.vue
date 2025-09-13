@@ -45,8 +45,8 @@
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" />
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -67,8 +67,8 @@
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(shaman)" />
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -97,8 +97,8 @@
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
                     <template v-slot:activator="{ on }">
-                      <div v-on="on" style="display: inline">
-                        <league-icon v-on="on" class="ml-4 mb-1" :league="getLeagueOrder(member)" />
+                      <div style="display: inline" v-on="on">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-on="on" />
                       </div>
                     </template>
                     <div>1 vs 1</div>

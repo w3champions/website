@@ -6,13 +6,13 @@
       </v-card-title>
       <v-container>
         <v-row>
-          <v-img :src="`/assets/socials/QR/${name}_QR.png`"></v-img>
+          <v-img :src="`/assets/socials/QR/${name}_QR.png`" />
         </v-row>
 
         <v-row class="mt-2">
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn @click.stop="show = false">Close</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
     </v-card>

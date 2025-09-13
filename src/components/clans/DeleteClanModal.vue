@@ -4,7 +4,7 @@
       <v-col class="text-end">
         <v-dialog v-model="dialog" max-width="400px">
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" outlined color="error">
+            <v-btn outlined color="error" v-on="on">
               {{ $t("components_clans_deleteclanmodal.delete") }} {{ clanName }}
             </v-btn>
           </template>

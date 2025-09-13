@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
-        <v-tabs-slider></v-tabs-slider>
+        <v-tabs-slider />
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
@@ -19,8 +19,8 @@
           />
           <v-select
             v-if="isEdit"
-            :items="states"
             v-model="state"
+            :items="states"
             item-text="name"
             item-value="id"
             label="State"
@@ -29,24 +29,17 @@
             :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
-            <v-date-picker
-              v-model="startDate"
-              landscape
-            ></v-date-picker>
-            <v-time-picker
-              v-model="startTime"
-              landscape
-              format="24hr"
-            ></v-time-picker>
+            <v-date-picker v-model="startDate" landscape />
+            <v-time-picker v-model="startTime" landscape format="24hr" />
           </div>
           <div class="mt-4">
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
-            <v-col cols="4" class="py-0" v-for="map in mapOptions" v-bind:key="map.id">
+            <v-col v-for="map in mapOptions" :key="map.id" cols="4" class="py-0">
               <v-checkbox
-                :multiple="true"
                 v-model="mapPool"
+                :multiple="true"
                 :label="map.name"
                 :value="map.id"
                 :dense="true"
@@ -102,9 +95,9 @@
           <v-row>
             <v-col cols="2">
               <v-select
+                v-model="mode"
                 :items="gameModes"
                 :disabled="true"
-                v-model="mode"
                 item-text="name"
                 item-value="id"
                 label="Game Mode"
@@ -114,9 +107,9 @@
             </v-col>
             <v-col cols="4">
               <v-select
+                v-model="format"
                 :items="formats"
                 :disabled="true"
-                v-model="format"
                 item-text="name"
                 item-value="id"
                 label="Format"
@@ -128,16 +121,16 @@
           <v-row>
             <v-col cols="3">
               <v-select
-                :items="[2, 4, 8, 16, 32, 64]"
                 v-model="maxPlayers"
+                :items="[2, 4, 8, 16, 32, 64]"
                 label="Max Players"
                 outlined
               />
             </v-col>
             <v-col cols="3">
               <v-select
-                :items="enabledFloNodes"
                 v-model="floNode"
+                :items="enabledFloNodes"
                 label="Flo Node"
                 item-text="name"
                 return-object
@@ -147,8 +140,8 @@
             </v-col>
             <v-col cols="3">
               <v-select
-                :items="[100, 200, 300, 400]"
                 v-model="floNodeMaxPing"
+                :items="[100, 200, 300, 400]"
                 label="Flo Node Max Ping"
                 outlined
                 :disabled="floNode === null"
@@ -163,7 +156,7 @@
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || !formValid">
+      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || !formValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

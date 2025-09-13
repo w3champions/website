@@ -2,13 +2,13 @@
   <v-tooltip v-if="renderIcon" top style="white-space: pre-line">
     <template v-slot:activator="{ on }">
       <img
-        v-on="on"
-        :src="renderIcon"
-        :title="enumToString.toString()"
         class="race-icon"
         height="24px"
         width="auto"
         :alt="enumToString.toString()"
+        :src="renderIcon"
+        :title="enumToString.toString()"
+        v-on="on"
       />
     </template>
     <span>{{ enumToString }}</span>
