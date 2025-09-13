@@ -9,7 +9,7 @@
   },
   "excludes": [
     "**/node_modules",
-    "**/yarn.lock",
+    "**/package-lock.json",
     "**/*.js",
     "src/locales/data.ts",
     "components.d.ts",
