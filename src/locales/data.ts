@@ -522,6 +522,9 @@ const data = {
       GM_DOTA_5ON5: "Dota 5v5",
       GM_DOTA_5ON5_AT: "Dota 5v5 AT",
       GM_WARHAMMER_1ON1: "Warhammer 1v1",
+      GM_RISK_EUROPE_1ON1: "Risk Europe 1v1",
+      GM_MINIDOTA_3ON3: "MiniDota 3v3",
+      GM_MINIDOTA_3ON3_AT: "MiniDota 3v3 AT",
     },
     gatewayNames: {
       Europe: "Europe",
