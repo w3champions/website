@@ -63,6 +63,10 @@ module.exports = {
       "multiline": {
         "max": 1
       }
-    }]
+    }],
+    "vue/v-bind-style": ["error", "shorthand"],
+    // "vue/attribute-hyphenation": ["warn", "never"]
+    "vue/attribute-hyphenation": ["off"],
+    "vue/singleline-html-element-content-newline": ["off"]
   },
 };
