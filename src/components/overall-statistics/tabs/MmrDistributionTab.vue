@@ -18,9 +18,9 @@
             :items="activeGameModes()"
             item-text="name"
             item-value="id"
-            @change="gameModeChanged"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
             outlined
+            @change="gameModeChanged"
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded">
@@ -40,7 +40,7 @@
       </v-col>
       <v-col cols="md-10">
         <div class="text-center my-auto">
-          <v-progress-circular indeterminate v-if="loadingData"></v-progress-circular>
+          <v-progress-circular v-if="loadingData" indeterminate />
         </div>
         <mmr-distribution-chart
           v-if="!loadingData"

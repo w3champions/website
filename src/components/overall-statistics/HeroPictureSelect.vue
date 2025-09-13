@@ -1,17 +1,15 @@
 <template>
   <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
+      <template #:activator="{ on }">
         <div v-on="on">
           <v-card-text
             class="hero-picture-select"
             :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
-            @click="
-              () => {
-                if (isEnabledForChange) openDialog();
-              }
-            "
             :style="{ 'background-image': 'url(' + heroPicture + ')' }"
+            @click="() => {
+              if (isEnabledForChange) openDialog();
+            }"
           />
         </div>
       </template>
@@ -23,19 +21,19 @@
     <v-dialog v-model="dialogOpened" max-width="300px">
       <v-card class="pa-1">
         <v-row
-          no-gutters
-          :justify="'space-between'"
           v-for="heroPickPerRace in possibleHeroPickRows"
           :key="heroPickPerRace.map((h) => h.heroId).join('_')"
+          no-gutters
+          :justify="'space-between'"
         >
           <v-col
-            :cols="3"
             v-for="heroPickSelection in heroPickPerRace"
             :key="heroPickSelection.heroId"
+            :cols="3"
           >
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <div v-on="on" class="ma-1">
+              <template #:activator="{ on }">
+                <div class="ma-1" v-on="on">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
