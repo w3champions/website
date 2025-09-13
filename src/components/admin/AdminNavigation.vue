@@ -11,8 +11,8 @@
     <v-list dense nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
-          :key="index"
           v-if="!item.items || item.items.length === 0"
+          :key="index"
           :to="{ name: item.routeName }"
         >
           <v-list-item-icon>
@@ -25,10 +25,10 @@
         </v-list-item>
 
         <v-list-group
-          :key="index"
           v-if="item.items && item.items.length > 0"
+          :key="index"
           :value="false"
-          v-bind:prepend-icon="item.icon"
+          :prepend-icon="item.icon"
           no-action
         >
           <template v-slot:activator>
@@ -38,9 +38,9 @@
           </template>
 
           <v-list-item
-            class="ml-0 pl-6"
             v-for="(subItem, i) in item.items"
             :key="i"
+            class="ml-0 pl-6"
             :to="{ name: subItem.routeName }"
           >
             <v-list-item-icon>

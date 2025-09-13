@@ -12,8 +12,8 @@
       <template v-slot:top>
         <v-toolbar flat color="transparent">
           <v-toolbar-title>News for Launcher</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-dialog max-width="1185" v-model="dialog" @click:outside="closeNews">
+          <v-spacer />
+          <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -167,7 +167,7 @@
               </v-card-text>
 
               <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn text @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
@@ -179,12 +179,11 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
-
   </div>
 </template>
 

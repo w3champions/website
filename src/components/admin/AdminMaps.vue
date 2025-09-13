@@ -8,14 +8,14 @@
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
         <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" dense hide-details />
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
-          <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap"></edit-map>
+          <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
         </v-dialog>
 
         <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
-          <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected"></edit-map-files>
+          <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-text-field label="Search" v-model="search"></v-text-field>
+        <v-text-field v-model="search" label="Search" />
         <v-data-table
           :headers="headers"
           :items="maps"
@@ -24,10 +24,10 @@
           :search="search"
           class="elevation-1"
         >
-          <template #[`item.path`]="{ item }">
+          <template v-slot:[`item.path`]="{ item }">
             {{ getMapPath(item) }}
           </template>
-          <template #[`item.actions`]="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <v-icon small class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
             <v-icon small class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
           </template>

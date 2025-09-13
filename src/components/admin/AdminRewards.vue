@@ -20,8 +20,8 @@
             v-model="tableSearch"
             label="Search rewards"
             :prepend-icon="mdiMagnify"
-          ></v-text-field>
-          <v-spacer></v-spacer>
+          />
+          <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -92,9 +92,9 @@
       <template v-slot:item.actions="{ item }">
         <v-icon
           small
-          @click="viewUsers(item)"
           color="info"
           class="mr-2"
+          @click="viewUsers(item)"
         >
           {{ mdiAccountGroup }}
         </v-icon>
@@ -112,7 +112,6 @@
           {{ mdiDelete }}
         </v-icon>
       </template>
-
     </v-data-table>
 
     <!-- View Users Dialog -->

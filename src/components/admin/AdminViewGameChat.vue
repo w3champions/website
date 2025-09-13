@@ -7,15 +7,15 @@
       <v-card>
         <v-container class="mt-5">
           <v-row>
-            <v-col></v-col>
+            <v-col />
             <v-col cols="6">
-              <v-text-field v-model="matchId" solo outlined clearable placeholder="Game ID" autofocus></v-text-field>
+              <v-text-field v-model="matchId" solo outlined clearable placeholder="Game ID" autofocus />
             </v-col>
             <v-col>
               <v-dialog v-model="dialog" width="1500">
                 >
                 <template v-slot:activator="{ on }">
-                  <v-btn x-large v-on="on" class="primary w3-race-bg--text" @click="openConfirmation">Load</v-btn>
+                  <v-btn x-large class="primary w3-race-bg--text" v-on="on" @click="openConfirmation">Load</v-btn>
                 </template>
 
                 <v-card>
@@ -28,19 +28,18 @@
                       <v-btn x-large color="error w3-race-bg--text" @click="dialog = false">Cancel</v-btn>
                       <v-spacer />
                     </v-card-actions>
-                    <match-detail-view :matchId="matchId"></match-detail-view>
+                    <match-detail-view :matchId="matchId" />
                   </v-container>
                 </v-card>
               </v-dialog>
             </v-col>
-            <v-col></v-col>
+            <v-col />
           </v-row>
         </v-container>
 
-        <admin-replay-chat-log v-if="acceptedGame" :matchId="matchId"></admin-replay-chat-log>
+        <admin-replay-chat-log v-if="acceptedGame" :matchId="matchId" />
       </v-card>
     </v-container>
-
   </div>
 </template>
 

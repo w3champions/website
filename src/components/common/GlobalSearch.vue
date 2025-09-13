@@ -1,10 +1,10 @@
 <template>
   <v-menu
+    v-model="menuOpened"
     content-class="global-search"
     bottom
     offset-y
     transition="slide-y-transition"
-    v-model="menuOpened"
     :nudge-bottom="18"
     :nudge-width="300"
     :close-on-content-click="false"

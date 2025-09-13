@@ -55,6 +55,7 @@ module.exports = {
         "normal": "never",
         "component": "always"
       },
+      "svg": "always",
     }],
     "vue/max-attributes-per-line": ["error", {
       "singleline": {

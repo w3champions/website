@@ -11,7 +11,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -31,17 +31,17 @@
               <v-card-text>
                 <v-container>
                   <v-textarea
+                    v-model="editedTipItem.message"
                     auto-grow
                     filled
                     rows="1"
-                    v-model="editedTipItem.message"
                     label="Message"
                   />
                 </v-container>
               </v-card-text>
 
               <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn text @click="closeTips">Cancel</v-btn>
                 <v-btn
                   color="primary"
@@ -56,7 +56,7 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
         <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
       </template>

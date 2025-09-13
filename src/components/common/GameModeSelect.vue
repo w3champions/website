@@ -46,10 +46,12 @@ export default defineComponent({
     gameMode: {
       type: Number as PropType<EGameMode>,
       required: false,
+      default: EGameMode.UNDEFINED,
     },
     disabledModes: {
       type: Array<EGameMode>,
       required: false,
+      default: [],
     }
   },
   setup: (props, context) => {
