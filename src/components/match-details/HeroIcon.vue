@@ -13,7 +13,6 @@
 import { defineComponent, PropType, ref, computed } from "vue";
 import { Hero } from "@/store/types";
 import HeroPicture from "@/components/match-details/HeroPicture.vue";
-import { usePlayerStore } from "@/store/player/store";
 
 export default defineComponent({
   name: "HeroIcon",
@@ -39,14 +38,18 @@ export default defineComponent({
     size: {
       type: Number,
       required: false,
-    }
+    },
+    selectedHeroes: {
+      type: Array as PropType<number[]>,
+      required: false,
+      default: () => [],
+    },
   },
   setup(props) {
     const firstHeroOrNot = ref<string>(props.firstHero ? "hero-level-flag-first-hero" : "hero-level-flag-second-hero");
-    const playerStore = usePlayerStore();
     const isHighlighted = computed(() => {
       if (!props.hero) return false;
-      return playerStore.selectedHeroes.includes(props.hero.id ?? -1);
+      return props.selectedHeroes.includes(props.hero.id ?? -1);
     });
     return {
       firstHeroOrNot,
@@ -83,7 +86,6 @@ export default defineComponent({
 }
 
 .hero-icon-highlight-wrapper {
-  display: inline-block;
   border: 1px solid transparent;
   border-radius: 2px;
   transition: border-color 0.2s;

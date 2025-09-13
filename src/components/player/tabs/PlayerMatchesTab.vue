@@ -50,8 +50,12 @@
             outlined
           />
         </v-col>
-        <v-col align-self="center">
-          <hero-select @heroChanged="heroChanged" :large="true" />
+        <v-col align-self="center" cols="12" md="3">
+          <hero-select
+            @heroChanged="heroChanged"
+            :is-player-matches-tab="true"
+            :selectedHeroes="selectedHeroes"
+          />
         </v-col>
         <v-col align-self="center">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
@@ -80,6 +84,7 @@
       @pageChanged="onPageChanged"
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
+      :selectedHeroes="selectedHeroes"
     ></matches-grid>
   </div>
 </template>
@@ -126,6 +131,7 @@ export default defineComponent({
     const profileMatchesGameMode = computed<EGameMode>(() => playerStore.profileMatchesGameMode);
     const playerRace = computed<ERaceEnum | undefined>(() => playerStore.playerRace);
     const opponentRace = computed<ERaceEnum | undefined>(() => playerStore.opponentRace);
+    const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
@@ -264,6 +270,7 @@ export default defineComponent({
       onPageChanged,
       showHeroIcons,
       heroChanged,
+      selectedHeroes,
     };
   },
 });

@@ -4,7 +4,7 @@
       <v-btn
         tile
         v-on="on"
-        :class="{ large: $props.large }"
+        :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
         style="background-color: transparent"
       >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
@@ -49,9 +49,13 @@ import { HeroFilter } from "@/store/heroes";
 export default defineComponent({
   name: "HeroSelect",
   props: {
-    large: {
+    isPlayerMatchesTab: {
       type: Boolean,
       default: false,
+    },
+    selectedHeroes: {
+      type: Array<number>,
+      default: [],
     },
   },
   setup: (props, context) => {
@@ -59,7 +63,7 @@ export default defineComponent({
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
 
-    const selectedHeroes = ref<number[]>([]);
+    const selectedHeroes = ref<number[]>([...props.selectedHeroes]);
     const selectedText = computed<TranslateResult>(() => {
       if (!selectedHeroes.value.length) {
         return t("heroNames.allfilter");
@@ -99,14 +103,20 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.large {
+.is-player-matches-tab {
+  @media (max-width: 960px) {
+    width: 100% !important;
+  }
   margin-top: -8px;
-  height: 55px !important;
-  width: 250px !important;
+  height: 56px !important;
+  min-width: 250px !important;
   border-radius: 4px;
-  border-color: rgb(128, 128, 128) !important;
+  border-color: rgb(128, 128, 128, 0.5) !important;
   border-width: 1px !important;
   border-style: solid !important;
   box-shadow: none !important;
+}
+.is-player-matches-tab.theme--dark {
+  color: #ffffff;
 }
 </style>
