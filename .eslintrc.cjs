@@ -11,9 +11,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:vue/essential",
     "plugin:vuetify/recommended",
-    // "plugin:vuetify/recommended",
     "@vue/typescript/recommended",
-    // "@vue/typescript/recommended",
     "plugin:lodash/recommended",
   ],
   rules: {
