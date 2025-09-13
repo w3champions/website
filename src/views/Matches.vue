@@ -8,29 +8,24 @@
           </v-card-title>
           <v-card-text class="d-flex align-center">
             <matches-status-select />
-            <game-mode-select
-              :disabledModes="disabledGameModes"
-              :gameMode="gameMode"
-              @gameModeChanged="gameModeChanged"
-            ></game-mode-select>
-            <map-select @mapChanged="mapChanged" :mapInfo="maps" :map="map"></map-select>
-            <mmr-select v-if="unfinished" @mmrChanged="mmrChanged" :mmr="mmr"></mmr-select>
-            <sort-select v-if="unfinished"></sort-select>
-            <season-select v-if="!unfinished" @seasonSelected="selectSeason"></season-select>
-            <hero-select v-if="!unfinished && showHeroSelect" @heroChanged="heroChanged" :selectedHeroes="selectedHeroes"></hero-select>
-            <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="toggleShowHeroIcons"
-              :unfinished="unfinished" />
+            <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
+            <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
+            <mmr-select v-if="unfinished" :mmr="mmr" @mmrChanged="mmrChanged" />
+            <sort-select v-if="unfinished" />
+            <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
+            <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
+            <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
           </v-card-text>
           <matches-grid
             v-model="matches"
             :totalMatches="totalMatches"
-            @pageChanged="onPageChanged"
             :itemsPerPage="50"
             :unfinished="unfinished"
             :is-player-profile="false"
             :show-heroes="showHeroIcons"
             :selectedHeroes="selectedHeroes"
-          ></matches-grid>
+            @pageChanged="onPageChanged"
+          />
         </v-card>
       </v-col>
     </v-row>

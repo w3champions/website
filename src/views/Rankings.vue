@@ -3,16 +3,16 @@
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
         <gateway-select
-          @gatewayChanged="onGatewayChanged"
           v-if="isGatewayNeeded"
+          @gatewayChanged="onGatewayChanged"
         />
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
-        ></game-mode-select>
+        />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" class="transparent">
+          <template #:activator="{ on }">
+            <v-btn tile class="transparent" v-on="on">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{
@@ -29,7 +29,7 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list>
-              <v-divider></v-divider>
+              <v-divider />
               <v-list dense max-height="400" class="leagues-list overflow-y-auto">
                 <v-list-item
                   v-for="item in ladders"
@@ -48,7 +48,7 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-autocomplete
           v-model="searchModel"
           :append-icon="mdiMagnify"
@@ -68,7 +68,7 @@
             In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
             but for now in Vue 2 we can't use TypeScript in templates.
           -->
-          <template v-slot:item="{ item }">
+          <template #:item="{ item }">
             <template v-if="item?.player === undefined">
               <v-list-item-content>{{ item }}</v-list-item-content>
             </template>
@@ -101,8 +101,8 @@
         </v-autocomplete>
       </v-card-title>
       <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-          <v-btn tile v-on="on" class="ma-4 transparent">
+        <template #:activator="{ on }">
+          <v-btn tile class="ma-4 transparent" v-on="on">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
@@ -139,14 +139,12 @@
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
           :selectedRank="searchModel"
-        ></rankings-grid>
+        />
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
             <div class="mt-10">
               <h3 class="pl-5">{{ $t("views_rankings.racedist") }}</h3>
-              <rankings-race-distribution
-                :rankings="rankings"
-              ></rankings-race-distribution>
+              <rankings-race-distribution :rankings="rankings" />
             </div>
           </v-col>
         </v-row>

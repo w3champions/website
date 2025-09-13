@@ -8,21 +8,16 @@
           </v-card-title>
           <v-tabs>
             <v-tabs-slider />
-            <v-tab
-              class="profileTab"
-              exact
-              :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }">
+            <v-tab class="profileTab" exact :to="{ name: ESetupGuidesRouteName.LAUNCHER_SETUP }">
               {{ $t("views_setupguides.launcher_setup") }}
             </v-tab>
-            <v-tab
-              class="profileTab"
-              :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }">
+            <v-tab class="profileTab" :to="{ name: ESetupGuidesRouteName.INSTALLING_WAR3 }">
               {{ $t("views_setupguides.installing_war3") }}
             </v-tab>
           </v-tabs>
           <v-card-text>
             <keep-alive>
-              <router-view></router-view>
+              <router-view />
             </keep-alive>
           </v-card-text>
         </v-card>

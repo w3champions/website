@@ -39,8 +39,8 @@
               <p>{{ $t("views_rewards.patreon_description") }}</p>
               <v-btn
                 :loading="isLinkingPatreon"
-                @click="linkWithPatreon"
                 class="mt-2"
+                @click="linkWithPatreon"
               >
                 <v-icon left>mdi-patreon</v-icon>
                 {{ $t("views_rewards.link_with_patreon") }}
@@ -52,8 +52,8 @@
                 color="error"
                 text
                 :loading="isUnlinkingPatreon"
-                @click="unlinkPatreon"
                 class="mt-2"
+                @click="unlinkPatreon"
               >
                 {{ $t("views_rewards.unlink_patreon") }}
               </v-btn>
@@ -66,14 +66,14 @@
           <v-card-title>{{ $t("views_rewards.your_rewards") }}</v-card-title>
           <v-card-text>
             <div v-if="isLoadingRewards">
-              <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              <v-progress-circular indeterminate color="primary" />
               {{ $t("views_rewards.loading_rewards") }}
             </div>
             <div v-else-if="userRewards.length === 0">
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
             <v-simple-table v-else>
-              <template v-slot:default>
+              <template #:default>
                 <thead>
                   <tr>
                     <th class="text-left" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
@@ -107,7 +107,7 @@
     </v-row>
 
     <!-- Sign In Dialog -->
-    <sign-in-dialog v-model="showSignIn"></sign-in-dialog>
+    <sign-in-dialog v-model="showSignIn" />
   </v-container>
 </template>
 

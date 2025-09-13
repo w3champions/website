@@ -3,19 +3,19 @@
     <v-card class="mt-2 search-bar-container" tile>
       <v-card-title class="search-bar">
         <gateway-select
-          @gatewayChanged="onGatewayChanged"
           v-if="isGatewayNeeded"
+          @gatewayChanged="onGatewayChanged"
         />
         <game-mode-select
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
-        ></game-mode-select>
+        />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile v-on="on" style="background-color: transparent">
+          <template #:activator="{ on }">
+            <v-btn tile style="background-color: transparent" v-on="on">
               <div
-                class="mr-2"
                 v-if="selectedCountry.countryCode"
+                class="mr-2"
               >
                 <country-flag
                   class="country-flag"
@@ -33,7 +33,7 @@
                   <v-list-item-title>Select a country:</v-list-item-title>
                 </v-list-item-content>
               </v-list>
-              <v-divider></v-divider>
+              <v-divider />
               <v-list dense max-height="400" class="countries-list overflow-y-auto">
                 <v-list-item
                   v-for="item in countries"
@@ -57,14 +57,14 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
+          <template #:activator="{ on }">
             <v-btn
               tile
-              v-on="on"
               class="ma-4"
               style="background-color: transparent"
+              v-on="on"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
               <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
@@ -98,12 +98,9 @@
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
           :selectedCountry="selectedCountry.countryCode"
-        ></country-rankings-grid>
+        />
         <div class="text-center my-5">
-          <v-progress-circular
-            indeterminate
-            v-if="isLoading"
-          ></v-progress-circular>
+          <v-progress-circular v-if="isLoading" indeterminate />
         </div>
         <div></div>
       </v-card-text>

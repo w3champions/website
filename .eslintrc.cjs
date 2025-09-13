@@ -67,6 +67,7 @@ module.exports = {
     "vue/v-bind-style": ["error", "shorthand"],
     // "vue/attribute-hyphenation": ["warn", "never"]
     "vue/attribute-hyphenation": ["off"],
-    "vue/singleline-html-element-content-newline": ["off"]
+    "vue/singleline-html-element-content-newline": ["off"],
+    "vue/no-v-html": ["off"]
   },
 };
