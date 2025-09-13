@@ -158,6 +158,9 @@ export default defineComponent({
         case EGameMode.GM_RISK_EUROPE_1ON1:
           return "rgb(237, 198, 41)";
 
+        case EGameMode.GM_MINIDOTA_3ON3:
+          return "rgb(135, 0, 237)";
+
         default:
           return "rgb(54, 162, 235)";
       }
@@ -218,6 +221,9 @@ export default defineComponent({
 
         case EGameMode.GM_RISK_EUROPE_1ON1:
           return 1;
+
+        case EGameMode.GM_MINIDOTA_3ON3:
+          return 3;
 
         default:
           return 1;

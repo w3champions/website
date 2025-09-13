@@ -45,6 +45,8 @@ const en = {
     GM_CF: "Castle Fight 3v3",
     GM_CF_AT: "Castle Fight 3v3 AT",
     GM_RISK_EUROPE_1ON1: "Risk Europe 1v1",
+    GM_MINIDOTA_3ON3: "MiniDota 3v3",
+    GM_MINIDOTA_3ON3_AT: "MiniDota 3v3 AT",
   },
 
   gatewayNames: {
