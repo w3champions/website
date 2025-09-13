@@ -5,10 +5,10 @@
     </v-card-title>
     <v-container>
       <player-search
+        classes="ml-5 mr-5"
         @searchCleared="searchCleared"
         @playerFound="playerFound"
-        classes="ml-5 mr-5"
-      ></player-search>
+      />
 
       <v-card v-if="showPlayersPortraits">
         <v-container>
@@ -20,7 +20,7 @@
               <v-row v-if="assignmentsChanged" class="justify-end">
                 <v-dialog v-model="assignDialogOpen" transition="fade-transition" max-width="1000">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn x-large v-bind="attrs" v-on="on" class="primary w3-race-bg--text">Assign</v-btn>
+                    <v-btn x-large v-bind="attrs" class="primary w3-race-bg--text" v-on="on">Assign</v-btn>
                   </template>
 
                   <!-- Confirmation dialog -->
@@ -49,7 +49,7 @@
                             <v-card-actions>
                               <v-row no-gutters>
                                 <v-col v-for="portraitId in confirmAddedPortraits" :key="portraitId" cols="1">
-                                  <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
+                                  <assign-portrait :portraitId="portraitId" class="pa-1" />
                                 </v-col>
                               </v-row>
                             </v-card-actions>
@@ -59,7 +59,7 @@
                                   v-model="mouseoverText"
                                   :rules="[rules.required, rules.min]"
                                   label="Mouseover tooltip"
-                                ></v-text-field>
+                                />
                                 <v-spacer />
                               </v-row>
                             </v-card-actions>
@@ -78,7 +78,7 @@
                             <v-card-actions>
                               <v-row no-gutters>
                                 <v-col v-for="portraitId in confirmRemovedPortraits" :key="portraitId" cols="1">
-                                  <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
+                                  <assign-portrait :portraitId="portraitId" class="pa-1" />
                                 </v-col>
                               </v-row>
                             </v-card-actions>
@@ -105,27 +105,24 @@
           <!-- To Be Assigned -->
           <v-col class="mt-2 mb-2">
             <v-row>
-              <v-col></v-col>
+              <v-col />
               <v-col>
                 <v-card-title class="justify-center">To Be Assigned</v-card-title>
               </v-col>
               <v-col>
                 <v-spacer />
-                <portrait-group-dropdown
-                  class="d-flex justify-end"
-                  @add-group-of-portraits="assignGroupPortraits"
-                ></portrait-group-dropdown>
+                <portrait-group-dropdown class="d-flex justify-end" @add-group-of-portraits="assignGroupPortraits" />
               </v-col>
             </v-row>
 
             <v-row v-if="hasSpecialPortraitsAssigned" no-gutters :justify="'start'">
-              <v-col align-self="stretch" v-for="portraitId in assignedPortraitsModel" :key="portraitId" cols="2" md="1">
+              <v-col v-for="portraitId in assignedPortraitsModel" :key="portraitId" align-self="stretch" cols="2" md="1">
                 <assign-portrait
                   :portraitId="portraitId"
                   :isAssigned="true"
-                  @portrait-deselected="removeAssignedPortrait"
                   class="pa-1"
-                ></assign-portrait>
+                  @portrait-deselected="removeAssignedPortrait"
+                />
               </v-col>
             </v-row>
             <v-row v-else class="ma-2 pa-2">
@@ -140,7 +137,7 @@
 
             <v-row v-if="hasSpecialPortraits" no-gutters :justify="'start'">
               <v-col v-for="portraitId in searchedPlayerPortraits" :key="portraitId" cols="2" md="1">
-                <assign-portrait :portraitId="portraitId" class="pa-1"></assign-portrait>
+                <assign-portrait :portraitId="portraitId" class="pa-1" />
               </v-col>
             </v-row>
             <v-row v-else class="ma-2 pa-2">
@@ -150,10 +147,7 @@
           <v-divider />
 
           <!-- Available -->
-          <available-portraits-gallery
-            :selectable="true"
-            @portrait-selected="assignThisPortrait"
-          ></available-portraits-gallery>
+          <available-portraits-gallery :selectable="true" @portrait-selected="assignThisPortrait" />
         </v-container>
       </v-card>
     </v-container>

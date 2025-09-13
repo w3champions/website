@@ -6,11 +6,11 @@
       <v-col class="text-end">
         <v-dialog v-model="invitePlayerDialog" max-width="600px">
           <template v-slot:activator="{ on }">
-            <v-btn :disabled="isChieftain" v-on="on" outlined color="error">
+            <v-btn :disabled="isChieftain" outlined color="error" v-on="on">
               {{ $t("components_clans_leaveclanmodal.leaveclan") }}
               {{ clanName }}
             </v-btn>
-            <v-card-subtitle class="pr-0" v-if="isChieftain">
+            <v-card-subtitle v-if="isChieftain" class="pr-0">
               {{ $t("components_clans_leaveclanmodal.promotefirst") }}
             </v-card-subtitle>
           </template>

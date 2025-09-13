@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+      <v-btn tile class="transparent" v-on="on">
         <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>
         {{ $t(gateway.name) }}
       </v-btn>

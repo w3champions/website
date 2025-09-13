@@ -14,7 +14,7 @@
           </v-btn>
         </v-col>
       </v-row>
-        <p class="font-weight-bold mt-3">{{ logFileName + ".log" }}</p>
+      <p class="font-weight-bold mt-3">{{ logFileName + ".log" }}</p>
       <v-row>
         <v-col>
           <div v-for="(line, index) in logContent" :key="index" class="mb-1">{{ line }}</div>

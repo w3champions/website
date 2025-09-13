@@ -16,7 +16,7 @@
               required
               hint="Translation key for the reward (e.g., 'portrait_grubby', 'patreon_tier1')"
               persistent-hint
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" md="6">
             <v-select
@@ -25,8 +25,8 @@
               label="Reward Module *"
               :rules="[rules.required]"
               :loading="loading"
-              @change="onModuleChange"
               required
+              @change="onModuleChange"
             >
               <template v-slot:item="{ item }">
                 <v-list-item-content>
@@ -70,7 +70,6 @@
 
             <v-row v-for="(paramDef, paramKey) in selectedModule.parameterDefinitions" :key="paramKey">
               <v-col cols="12" :md="getInputType(paramDef) === 'boolean' ? 12 : 6">
-
                 <!-- Text/Number inputs -->
                 <v-text-field
                   v-if="getInputType(paramDef) === 'text' || getInputType(paramDef) === 'number'"
@@ -80,7 +79,7 @@
                   :rules="paramDef.required ? [rules.required] : []"
                   :hint="paramDef.description"
                   persistent-hint
-                ></v-text-field>
+                />
 
                 <!-- Boolean switch -->
                 <v-switch
@@ -88,7 +87,7 @@
                   v-model="moduleParameters[paramKey]"
                   :label="paramDef.name + (paramDef.required ? ' *' : '')"
                   color="success"
-                ></v-switch>
+                />
 
                 <!-- Array input (comma-separated) -->
                 <v-text-field
@@ -106,20 +105,19 @@
                       });
                     }
                   }"
-                ></v-text-field>
-
+                />
               </v-col>
             </v-row>
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col cols="12" md="6" v-if="isEditing">
+          <v-col v-if="isEditing" cols="12" md="6">
             <v-switch
               v-model="localReward.isActive"
               label="Active"
               color="success"
-            ></v-switch>
+            />
           </v-col>
         </v-row>
 
@@ -127,14 +125,8 @@
           <v-col cols="12">
             <v-subheader>Duration Settings</v-subheader>
             <v-radio-group v-model="durationType" row>
-              <v-radio
-                label="Permanent"
-                value="permanent"
-              ></v-radio>
-              <v-radio
-                label="Time Limited"
-                value="limited"
-              ></v-radio>
+              <v-radio label="Permanent" value="permanent" />
+              <v-radio label="Time Limited" value="limited" />
             </v-radio-group>
 
             <div v-if="durationType === 'limited'">
@@ -146,7 +138,7 @@
                     type="number"
                     :rules="[rules.required, rules.positiveNumber]"
                     min="1"
-                  ></v-text-field>
+                  />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-select
@@ -154,18 +146,17 @@
                     :items="durationUnitItems"
                     label="Duration Unit"
                     :rules="[rules.required]"
-                  ></v-select>
+                  />
                 </v-col>
               </v-row>
             </div>
           </v-col>
         </v-row>
-
       </v-container>
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="blue darken-1"
         text

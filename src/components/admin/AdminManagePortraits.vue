@@ -14,7 +14,7 @@
         <v-btn class="secondary w3-race-bg--text" :disabled="true">Add New Portrait (Coming Soon)</v-btn>
       </v-row>
       <v-row class="ma-1 pa-1">
-        <new-portrait-definition-dialog></new-portrait-definition-dialog>
+        <new-portrait-definition-dialog />
       </v-row>
 
       <v-dialog v-model="editDialogOpen" max-width="650">
@@ -35,7 +35,7 @@
             </v-row>
             <v-row class="justify-center">
               <v-card-actions>
-                <portrait-group-combobox @groups-changed="updateGroupModel" :portraitId="editPortraitId" />
+                <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
               </v-card-actions>
             </v-row>
             <v-row class="justify-center">

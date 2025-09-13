@@ -38,6 +38,7 @@ export default defineComponent({
     size: {
       type: Number,
       required: false,
+      default: 128,
     },
     selectedHeroes: {
       type: Array as PropType<number[]>,

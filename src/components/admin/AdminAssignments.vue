@@ -63,7 +63,7 @@
               outlined
               dense
               clearable
-            ></v-select>
+            />
           </v-col>
           <v-col cols="12" md="3">
             <v-select
@@ -73,7 +73,7 @@
               outlined
               dense
               clearable
-            ></v-select>
+            />
           </v-col>
         </v-row>
 
@@ -274,7 +274,7 @@
             dense
             outlined
             @change="onPageSizeChange"
-          ></v-select>
+          />
         </div>
       </v-card-text>
     </v-card>

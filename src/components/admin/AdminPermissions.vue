@@ -11,7 +11,7 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -34,22 +34,22 @@
                     <v-row>
                       <player-search
                         v-if="isAddDialog"
-                        @playerFound="playerFound"
                         class="mx-5"
-                      ></player-search>
+                        @playerFound="playerFound"
+                      />
                       <v-text-field
                         v-else
                         v-model="editedItem.battleTag"
                         label="BattleTag"
                         class="mx-5"
-                      ></v-text-field>
+                      />
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="12" md="12" class="px-5 pb-0">
                         <v-text-field
                           v-model="editedItem.description"
                           :label="'Description'"
-                        ></v-text-field>
+                        />
                       </v-col>
                       <v-col class="py-0">
                         <template>
@@ -58,12 +58,12 @@
                             <v-checkbox
                               v-for="permission in availablePermissions"
                               :key="permission.value"
-                              :multiple="true"
                               v-model="editedItem.permissions"
+                              :multiple="true"
                               :label="permission.name"
                               :value="permission.value"
-                              :dense=true
-                            ></v-checkbox>
+                              :dense="true"
+                            />
                           </v-col>
                         </template>
                       </v-col>
@@ -97,12 +97,12 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template #[`item.permissionName`]="{ item }">
-        <td>
-          <div v-for="id in item.permissions" :key="id">{{ getPermissionName(id) }}</div>
-        </td>
-      </template>
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.permissionName`]="{ item }">
+          <td>
+            <div v-for="id in item.permissions" :key="id">{{ getPermissionName(id) }}</div>
+          </td>
+        </template>
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
