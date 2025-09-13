@@ -68,6 +68,7 @@ module.exports = {
     // "vue/attribute-hyphenation": ["warn", "never"]
     "vue/attribute-hyphenation": ["off"],
     "vue/singleline-html-element-content-newline": ["off"],
-    "vue/no-v-html": ["off"]
+    "vue/no-v-html": ["off"],
+    "vue/no-lone-template": ["off"],
   },
 };

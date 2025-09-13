@@ -9,24 +9,23 @@
       :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
       :search="tableSearch"
       :server-items-length="bannedPlayersCount"
-      @update:options="onTableOptionsUpdate"
       :options="bannedPlayersTableOptions"
       class="elevation-1"
       item-key="banInsertDate"
+      @update:options="onTableOptionsUpdate"
     >
-
-      <template v-slot:top>
+      <template #:top>
         <v-toolbar flat color="transparent">
           <template>
             <v-text-field
               v-model="tableSearch"
               label="Search ban"
               :prepend-icon="mdiMagnify"
-            ></v-text-field>
+            />
           </template>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
+            <template #:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -48,7 +47,7 @@
                       <player-search
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
-                      ></player-search>
+                      />
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="py-0">
                       <v-menu
@@ -93,9 +92,8 @@
 
                     <v-col class="py-0">
                       <v-tooltip top>
-                        <template v-slot:activator="{ on }">
+                        <template #:activator="{ on }">
                           <v-select
-                            v-on="on"
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"
                             item-text="name"
@@ -104,7 +102,8 @@
                             :label="$t(`views_admin.gameMode`)"
                             multiple
                             hint="Which game modes to ban from?"
-                          ></v-select>
+                            v-on="on"
+                          />
                         </template>
                         <span>
                           To ban from all game modes, leave this field blank
@@ -116,7 +115,7 @@
                       <v-text-field
                         v-model="editedItem.banReason"
                         :label="$t(`views_admin.banreason`)"
-                      ></v-text-field>
+                      />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -132,7 +131,7 @@
               </v-alert>
 
               <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn text @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>

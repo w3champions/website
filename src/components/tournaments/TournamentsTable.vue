@@ -1,13 +1,13 @@
 <template>
   <v-data-table
+    class="elevation-1"
     :headers="headers"
     :items="tournaments"
     :disable-pagination="true"
     :items-per-page="-1"
     :item-style="itemStyle"
-    class="elevation-1"
-    @click:row="onRowClick"
     :hide-default-footer="true"
+    @click:row="onRowClick"
   >
     <template #[`item.startDateTime`]="{ item }">
       {{ formatDate(item) }}
