@@ -22,9 +22,7 @@
       <!-- nodeOverrides -->
       <v-col class="px-0">
         <v-card class="px-1 m-1">
-          <node-overrides-card
-            :passedOverrides="initProxySettings.nodeOverrides"
-          ></node-overrides-card>
+          <node-overrides-card :passedOverrides="initProxySettings.nodeOverrides" />
         </v-card>
       </v-col>
 
@@ -34,13 +32,13 @@
           <node-overrides-card
             :passedOverrides="initProxySettings.automaticNodeOverrides"
             :automaticNodes="true"
-          ></node-overrides-card>
+          />
         </v-card>
       </v-col>
     </v-row>
 
     <v-row v-if="isProxyModified">
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-dialog v-model="dialog" width="600">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">Update Proxies</v-btn>
@@ -61,14 +59,14 @@
             <!-- Show selected nodes container -->
             <v-container class="mb-4">
               <v-row v-if="newNodeOverrides(false).length > 0">
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-card-subtitle class="font-weight-bold">
                   Node Overrides:
                 </v-card-subtitle>
-                <v-spacer></v-spacer>
+                <v-spacer />
 
                 <template>
-                  <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(false)" :key="node">
+                  <v-container v-for="node in newNodeOverrides(false)" :key="node" class="py-0 my-0 justify-center">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>
@@ -77,14 +75,14 @@
               </v-row>
 
               <v-row v-if="newNodeOverrides(true).length > 0">
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-card-subtitle class="font-weight-bold">
                   Auto Node Overrides:
                 </v-card-subtitle>
-                <v-spacer></v-spacer>
+                <v-spacer />
 
                 <template>
-                  <v-container class="py-0 my-0 justify-center" v-for="node in newNodeOverrides(true)" :key="node">
+                  <v-container v-for="node in newNodeOverrides(true)" :key="node" class="py-0 my-0 justify-center">
                     <v-card-text class="py-0 my-0">
                       {{ $t(`proxies.${sanitizeString(node)}`) }}
                     </v-card-text>
@@ -111,7 +109,7 @@
           </v-container>
         </v-card>
       </v-dialog>
-      <v-spacer></v-spacer>
+      <v-spacer />
     </v-row>
   </v-container>
 </template>

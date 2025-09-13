@@ -2,11 +2,11 @@
   <v-dialog v-model="dialog" max-width="600px">
     <template v-slot:activator="{ on }">
       <v-btn
-        @click="dialog = true"
         class="ma-0"
         outlined
-        v-on="on"
         color="primary"
+        v-on="on"
+        @click="dialog = true"
       >
         <v-icon left>{{ mdiPencil }}</v-icon>
         <span>{{ $t("components_clans_inviteplayermodal.inviteplayer") }}</span>
@@ -18,13 +18,13 @@
       </v-card-title>
       <v-card-text>
         <player-search
+          classes="ml-5 mr-5"
           @searchCleared="searchCleared"
           @playerFound="playerFound"
-          classes="ml-5 mr-5"
-        ></player-search>
+        />
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="blue darken-1"
           text

@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
-    :class="classes"
     v-model="playerSearchModel"
+    :class="classes"
     :append-icon="mdiMagnify"
     label="Search BattleTag"
     clearable
@@ -11,7 +11,7 @@
     :no-data-text="noDataText"
     :loading="isLoading"
     :autofocus="setAutofocus ? true : false"
-  ></v-autocomplete>
+  />
 </template>
 
 <script lang="ts">

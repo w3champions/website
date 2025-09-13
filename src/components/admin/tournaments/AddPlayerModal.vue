@@ -7,14 +7,14 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="battleTag" label="Battletag" autofocus></v-text-field>
+            <v-text-field v-model="battleTag" label="Battletag" autofocus />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12" sm="6" md="12">
             <v-select
-              :items="races()"
               v-model="race"
+              :items="races()"
               item-text="raceName"
               item-value="raceId"
               label="Race"
@@ -25,11 +25,11 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn text @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" @click="save" :disabled="saving || battleTag.length === 0">
+      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || battleTag.length === 0" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

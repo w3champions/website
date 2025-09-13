@@ -13,7 +13,7 @@
       outlined
       style="padding-bottom: 0px"
     >
-      <v-img src="/assets/socials/Patreon_button.png" alt="Patreon"/>
+      <v-img src="/assets/socials/Patreon_button.png" alt="Patreon" />
     </v-card>
 
     <!-- PAYPAL -->
@@ -24,31 +24,31 @@
       tile
       outlined
     >
-      <v-img src="/assets/socials/PayPal_button.png" alt="Paypal"/>
+      <v-img src="/assets/socials/PayPal_button.png" alt="Paypal" />
     </v-card>
 
     <!-- CRYPTOCURRENCIES -->
     <v-card
       v-for="(crypto) in cryptos"
-      v-bind:key="crypto.coin"
+      :key="crypto.coin"
       class="support-subcard"
       tile
       outlined
       @click.stop="crypto.dialog = true"
     >
-      <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name"></v-img>
+      <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name" />
       <crypto-dialog
         v-model="crypto.dialog"
         :crypto="crypto.coin"
         :cryptoName="crypto.name"
         :cryptoAddress="crypto.address"
-      ></crypto-dialog>
+      />
     </v-card>
 
     <!-- Alternates -->
     <v-card
       v-for="(alternate) in alternates"
-      v-bind:key="alternate.name"
+      :key="alternate.name"
       class="support-subcard"
       tile
       outlined
@@ -57,8 +57,8 @@
       <alternate-payments-dialog
         v-model="alternate.dialog"
         :name="alternate.name"
-      ></alternate-payments-dialog>
-      <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name"></v-img>
+      />
+      <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name" />
     </v-card>
   </v-card>
 </template>

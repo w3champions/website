@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
     <template v-slot:activator="{ on }">
-      <v-btn tile v-on="on" class="transparent">
+      <v-btn tile class="transparent" v-on="on">
         <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
       </v-btn>
@@ -19,7 +19,7 @@
           class="pt-7"
           style="min-width: 300px"
           @change="selectMmr"
-        ></v-range-slider>
+        />
       </v-card-text>
     </v-card>
   </v-menu>

@@ -55,7 +55,7 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="editedItem.endDate"
                             readonly
@@ -143,13 +143,13 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template #[`item.gameModesText`]="{ item }">
+      <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
           <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
         </td>
         <td v-else>All</td>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template v-slot:#[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>

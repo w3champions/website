@@ -13,7 +13,7 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -35,10 +35,10 @@
                   <v-container>
                     <v-row>
                       <player-search
+                        classes="ml-5 mr-5"
                         @searchCleared="searchCleared"
                         @playerFound="playerFound"
-                        classes="ml-5 mr-5"
-                      ></player-search>
+                      />
                     </v-row>
                     <v-row v-if="showConfirmation" class="ma-2">
                       <v-menu
@@ -46,7 +46,7 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template #activator="{ on, attrs }">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="endDate"
                             readonly
@@ -102,7 +102,7 @@
                       </v-card-text>
                       <v-card-title>
                         {{ battleTag }}
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                       </v-card-title>
                     </v-row>
 
@@ -134,16 +134,15 @@
           </v-toolbar>
         </template>
 
-        <template #[`item.isShadowBan`]="{ item }">
+        <template v-slot:[`item.isShadowBan`]="{ item }">
           {{ item.isShadowBan ? 'Yes' : 'No' }}
         </template>
 
-        <template #[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
-
   </div>
 </template>
 
