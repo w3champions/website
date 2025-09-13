@@ -1,14 +1,14 @@
 <template>
   <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
-    <template v-for="h in headers" #:[`header.${h.text}`]="{ header }">
+    <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
       <v-tooltip :key="h.text" top>
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <span v-on="on">{{ header.text }}</span>
         </template>
         <span style="white-space: pre-line">{{ header.tooltip }}</span>
       </v-tooltip>
     </template>
-    <template #:body="{ items }">
+    <template v-slot:body="{ items }">
       <tbody>
         <tr v-for="item in items" :key="item.id">
           <td class="cell d-flex justify-center align-center">

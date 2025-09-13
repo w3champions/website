@@ -1,6 +1,6 @@
 <template>
   <v-tooltip v-if="season" top>
-    <template #:activator="{ on }">
+    <template v-slot:activator="{ on }">
       <div
         :class="['season-badge', 'pointer']"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"

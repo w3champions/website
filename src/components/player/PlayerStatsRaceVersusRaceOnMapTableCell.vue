@@ -1,6 +1,6 @@
 <template>
   <v-tooltip top>
-    <template #:activator="{ on }">
+    <template v-slot:activator="{ on }">
       <td class="number-text text-right" :class="toWinClass" v-on="on">
         {{ toWinText }}
       </td>

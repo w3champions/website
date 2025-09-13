@@ -1,7 +1,7 @@
 <template>
   <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
     <v-tooltip top>
-      <template #:activator="{ on }">
+      <template v-slot:activator="{ on }">
         <div v-on="on">
           <v-card-text
             class="hero-picture-select"
@@ -32,7 +32,7 @@
             :cols="3"
           >
             <v-tooltip top>
-              <template #:activator="{ on }">
+              <template v-slot:activator="{ on }">
                 <div class="ma-1" v-on="on">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div

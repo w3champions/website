@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-x>
-    <template #:activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn tile style="background-color: transparent" v-on="on">
         <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
         {{ currentSort.name }}

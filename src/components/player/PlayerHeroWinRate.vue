@@ -14,7 +14,7 @@
           <v-col cols="md-12">
             <div>
               <v-simple-table>
-                <template #:default>
+                <template v-slot:default>
                   <thead>
                     <tr>
                       <th v-for="header in headers" :key="header.value" :class="`text-${header.align}`">
@@ -27,7 +27,7 @@
                       <td v-html="item.image"></td>
                       <td v-html="item.name"></td>
                       <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-                        <template #:activator="{ on }">
+                        <template v-slot:activator="{ on }">
                           <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on" v-html="item[header.value]"></td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">

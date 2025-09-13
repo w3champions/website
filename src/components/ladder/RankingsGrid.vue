@@ -59,7 +59,7 @@
               </div>
               <div v-if="isTwitchLive(item, index)" class="twitch__container">
                 <v-tooltip bottom>
-                  <template #:activator="{ on }">
+                  <template v-slot:activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <v-btn
                         icon
@@ -98,7 +98,7 @@
                 style="position: relative"
               >
                 <v-tooltip bottom>
-                  <template #:activator="{ on }">
+                  <template v-slot:activator="{ on }">
                     <span style="display: inline" class="pointer" v-on="on">
                       <sword-icon class="swords blinker" />
                     </span>

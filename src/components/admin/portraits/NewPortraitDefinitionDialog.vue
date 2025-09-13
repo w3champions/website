@@ -2,7 +2,7 @@
   <v-row>
     <v-col>
       <v-dialog v-model="dialogOpen" max-width="700">
-        <template #:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-row class="justify-center ma-0 pa-0">
             <v-btn class="primary w3-race-bg--text" v-on="on">Create New PortraitDefinition (For Now)</v-btn>
           </v-row>

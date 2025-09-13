@@ -40,7 +40,7 @@
             :items="raceWinrate"
             :mobile-breakpoint="400"
           >
-            <template #:body="{ items }">
+            <template v-slot:body="{ items }">
               <tbody>
                 <tr v-for="item in items" :key="item.race">
                   <td>{{ $t("races." + raceEnums[item.race]) }}</td>

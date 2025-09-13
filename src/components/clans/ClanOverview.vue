@@ -44,7 +44,7 @@
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template #:activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div style="display: inline" v-on="on">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-on="on" />
                       </div>
@@ -66,7 +66,7 @@
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template #:activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div style="display: inline" v-on="on">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-on="on" />
                       </div>
@@ -96,7 +96,7 @@
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template #:activator="{ on }">
+                    <template v-slot:activator="{ on }">
                       <div style="display: inline" v-on="on">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-on="on" />
                       </div>

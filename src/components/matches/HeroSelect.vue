@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-x>
-    <template #:activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn
         tile
         :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
