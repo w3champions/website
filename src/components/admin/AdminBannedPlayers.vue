@@ -14,7 +14,7 @@
       item-key="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
-      <template #:top>
+      <template v-slot:top>
         <v-toolbar flat color="transparent">
           <template>
             <v-text-field
@@ -25,7 +25,7 @@
           </template>
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
-            <template #:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
@@ -92,7 +92,7 @@
 
                     <v-col class="py-0">
                       <v-tooltip top>
-                        <template #:activator="{ on }">
+                        <template v-slot:activator="{ on }">
                           <v-select
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"

@@ -38,10 +38,10 @@
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
               <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
-                <template #:item.race="{ item }">
+                <template v-slot:item.race="{ item }">
                   <span><race-icon :race="item.race" /></span>
                 </template>
-                <template #:item.wins="{ item }">
+                <template v-slot:item.wins="{ item }">
                   <span class="number-text">
                     <span class="won">{{ item.wins }}</span>
                     -

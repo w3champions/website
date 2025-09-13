@@ -11,7 +11,7 @@
           @gameModeChanged="onGameModeChanged"
         />
         <v-menu offset-x>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn tile style="background-color: transparent" v-on="on">
               <div
                 v-if="selectedCountry.countryCode"
@@ -59,7 +59,7 @@
         </v-menu>
         <v-spacer />
         <v-menu offset-x>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-btn
               tile
               class="ma-4"

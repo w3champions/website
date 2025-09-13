@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-x>
-    <template #:activator="{ on }">
+    <template v-slot:activator="{ on }">
       <v-btn tile style="background-color: transparent" v-on="on">
         <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon>
         {{ selectedTournamentText }}

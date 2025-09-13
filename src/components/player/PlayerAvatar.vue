@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="5" md="12">
         <v-tooltip top :disabled="!avatarDescription">
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <v-card-text
               style="cursor: pointer"
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
@@ -16,7 +16,7 @@
         </v-tooltip>
 
         <v-tooltip bottom>
-          <template #:activator="{ on }">
+          <template v-slot:activator="{ on }">
             <div
               class="country__container clickable"
               v-on="on"
@@ -49,7 +49,7 @@
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
           <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
             <v-tooltip top>
-              <template #:activator="{ on }">
+              <template v-slot:activator="{ on }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
@@ -76,7 +76,7 @@
           </v-card-text>
           <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
             <v-tooltip top>
-              <template #:activator="{ on }">
+              <template v-slot:activator="{ on }">
                 <v-card-text
                   :class="getCorrectClasses(raceToAvatar(race), number)"
                   :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
@@ -94,7 +94,7 @@
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
           <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
             <v-tooltip top>
-              <template #:activator="{ on }">
+              <template v-slot:activator="{ on }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :class="{ pointer: isLoggedInPlayer }"
@@ -159,7 +159,7 @@
       <v-row v-if="isLoggedInPlayer">
         <v-col>
           <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
-            <template #:activator="{ on }">
+            <template v-slot:activator="{ on }">
               <v-btn
                 small
                 class="ma-0"
@@ -271,12 +271,12 @@
                         item-text="country"
                         :return-object="false"
                       >
-                        <template #:item="{ item }">
+                        <template v-slot:item="{ item }">
                           <country-flag :country="item.countryCode" size="normal" />
                           {{ item.country }}
                           <v-spacer />
                         </template>
-                        <template #:selection="{ item }">
+                        <template v-slot:selection="{ item }">
                           <country-flag :country="item.countryCode" size="normal" />
                           <span class="pr-2">{{ item.country }}</span>
                         </template>
