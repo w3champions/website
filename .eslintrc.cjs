@@ -9,7 +9,7 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "plugin:vue/essential",
+    "plugin:vue/recommended",
     "plugin:vuetify/recommended",
     "@vue/typescript/recommended",
     "plugin:lodash/recommended",
@@ -26,6 +26,8 @@ module.exports = {
     "quotes": "off",
     "semi": "off",
     "space-infix-ops": "off",
+
+    // Typescript-eslint rules
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/comma-dangle": ["warn", "only-multiline"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -35,13 +37,32 @@ module.exports = {
     "@typescript-eslint/quotes": ["warn", "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
     "@typescript-eslint/semi": "warn",
     "@typescript-eslint/space-infix-ops": "warn",
-    "vue/no-v-text-v-html-on-component": "warn",
-    "vue/valid-v-slot": ["error", { allowModifiers: true }],
+
+    // Lodash rules
     "lodash/import-scope": ["warn", "method"],
     "lodash/prefer-constant": "off",
     "lodash/prefer-lodash-method": "off",
     "lodash/prefer-lodash-typecheck": "off",
     "lodash/prefer-matches": "off",
     "lodash/prop-shorthand": "off",
+
+    // Vue rules
+    "vue/no-v-text-v-html-on-component": "warn",
+    "vue/valid-v-slot": ["error", { allowModifiers: true }],
+    "vue/html-self-closing": ["error", {
+      "html": {
+        "void": "always",
+        "normal": "never",
+        "component": "always"
+      },
+    }],
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": {
+        "max": 10
+      },
+      "multiline": {
+        "max": 1
+      }
+    }]
   },
 };
