@@ -13,7 +13,8 @@
     "**/*.js",
     "src/locales/data.ts",
     "components.d.ts",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "scripts/key.ts"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.88.10.wasm"

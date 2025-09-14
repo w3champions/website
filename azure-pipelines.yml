@@ -38,6 +38,23 @@ steps:
         **/*.token.yml => *.yml
         **/*.ts.token => *.ts
 
+  - task: Npm@1
+    displayName: install
+    inputs:
+      command: 'install'
+
+  - task: Npm@1
+    displayName: dprint
+    inputs:
+      command: 'custom'
+      customCommand: 'run dprint'
+
+  - task: Npm@1
+    displayName: eslint
+    inputs:
+      command: 'custom'
+      customCommand: 'run lint'
+
   - task: Docker@2
     inputs:
       containerRegistry: "official-docker-modmoto"
