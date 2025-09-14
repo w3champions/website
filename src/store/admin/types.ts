@@ -174,6 +174,7 @@ export type Reward = {
   id: string;
   displayId: string;
   moduleId: string;
+  // eslint-disable-next-line
   parameters: Record<string, any>;
   duration: RewardDuration | null;
   isActive: boolean;
@@ -196,6 +197,7 @@ export interface ParameterDefinition {
   type: string;
   required: boolean;
   description: string;
+  // eslint-disable-next-line
   defaultValue?: any;
 }
 
@@ -225,7 +227,7 @@ export type RewardAssignment = {
   revokedAt?: string;
   revokedReason?: string;
   revocationReason?: string; // New field name in API response
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | undefined>;
   // Additional reward details included in new response
   displayId?: string;
   moduleId?: string;
@@ -257,6 +259,7 @@ export type ProductMapping = {
   productProviders: ProductProviderPair[];
   rewardIds: string[];
   type: ProductMappingType;
+  // eslint-disable-next-line
   additionalParameters: Record<string, any>;
   createdAt: string;
   updatedAt?: string;
@@ -324,14 +327,16 @@ export type ReconciliationAction = {
 export type CreateRewardRequest = {
   displayId: string;
   moduleId: string;
+  // eslint-disable-next-line
   parameters?: Record<string, any>;
-  duration?: RewardDuration;
+  duration: RewardDuration | null;
 };
 
 export type UpdateRewardRequest = {
   displayId?: string;
+  // eslint-disable-next-line
   parameters?: Record<string, any>;
-  duration?: RewardDuration;
+  duration: RewardDuration | null;
   isActive?: boolean;
 };
 
@@ -349,8 +354,11 @@ export type DriftDetectionResult = {
     uniqueInternalUsers: number;
   };
   details: {
+    // eslint-disable-next-line
     missingMembers: any[];
+    // eslint-disable-next-line
     extraAssignments: any[];
+    // eslint-disable-next-line
     mismatchedTiers: any[];
   };
 };

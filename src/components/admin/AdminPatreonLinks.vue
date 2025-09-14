@@ -399,7 +399,10 @@ export default defineComponent({
 
     // Member details functionality
     const memberDetailsDialog = ref(false);
+
+    // eslint-disable-next-line
     const memberDetails = ref<any>(null);
+
     const loadingMemberDetails = ref(false);
     const selectedMemberBattleTag = ref<string>("");
 
@@ -421,11 +424,11 @@ export default defineComponent({
     const loadPatreonLinks = async () => {
       loading.value = true;
       try {
-        const links = await AdminService.getAllPatreonLinks(oauthStore.token);
-        patreonLinks.value = links.links;
+        const response = await AdminService.getAllPatreonLinks(oauthStore.token);
+        patreonLinks.value = response.links;
         filterLinks();
 
-        showSnackbar(`Loaded ${links.length} Patreon links`, "success");
+        showSnackbar(`Loaded ${response.totalLinks} Patreon links`, "success");
       } catch (error) {
         console.error("Error loading Patreon links:", error);
         showSnackbar("Failed to load Patreon links", "error");
@@ -558,9 +561,10 @@ export default defineComponent({
     const getStaleLinks = (): number => {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      return patreonLinks.value.filter((link) =>
-        new Date(link.lastSyncAt) < sevenDaysAgo
-      ).length;
+      return patreonLinks.value.filter((link) => {
+        if (!link.lastSyncAt) return true;
+        return new Date(link.lastSyncAt) < sevenDaysAgo;
+      }).length;
     };
 
     const isStaleSync = (lastSyncAt: string): boolean => {

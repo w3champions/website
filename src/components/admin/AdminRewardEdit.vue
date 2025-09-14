@@ -97,7 +97,7 @@
                   :rules="paramDef.required ? [rules.required] : []"
                   :hint="paramDef.description + ' (e.g., 1,2,3)'"
                   persistent-hint
-                  @input="(value) => {
+                  @input="(value: string) => {
                     if (typeof value === 'string') {
                       moduleParameters[paramKey] = value.split(',').map(v => {
                         const num = parseInt(v.trim());
@@ -206,13 +206,16 @@ export default defineComponent({
     // Module-related refs
     const availableModules = ref<ModuleDefinition[]>([]);
     const selectedModule = ref<ModuleDefinition | null>(null);
+
+    // eslint-disable-next-line
     const moduleParameters = ref<Record<string, any>>({});
+
     const loading = ref(false);
 
     const token = computed(() => oauthStore.token);
 
     const rules = {
-      required: (value: any) => !!value || "This field is required",
+      required: (value: string | string[] | number) => !!value || "This field is required",
       positiveNumber: (value: number) => (value > 0) || "Must be greater than 0",
     };
 
