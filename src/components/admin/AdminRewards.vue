@@ -312,8 +312,10 @@ export default defineComponent({
         }
         closeDialog();
         await loadRewards();
-      } catch (error) {
-        const errorMessage = "Failed to save reward";
+
+      // eslint-disable-next-line
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || "Failed to save reward";
         showSnackbar(errorMessage, "error");
         console.error("Error saving reward:", error);
       }
@@ -325,8 +327,10 @@ export default defineComponent({
           await AdminService.deleteReward(reward.id, token.value);
           showSnackbar("Reward deleted successfully");
           await loadRewards();
-        } catch (error) {
-          const errorMessage = "Failed to delete reward";
+
+        // eslint-disable-next-line
+        } catch (error: any) {
+          const errorMessage = error.response?.data?.error || "Failed to delete reward";
           showSnackbar(errorMessage, "error");
           console.error("Error deleting reward:", error);
         }

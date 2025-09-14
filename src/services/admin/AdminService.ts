@@ -223,7 +223,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to update reward");
-      // (error as any).response = { status: response.status, data: errorData };
+
+      // eslint-disable-next-line
+      (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
@@ -237,7 +240,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to delete reward");
-      // (error as any).response = { status: response.status, data: errorData };
+
+      // eslint-disable-next-line
+      (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
@@ -312,7 +318,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to sync Patreon drift");
-      // (error as any).response = { status: response.status, data: errorData };
+
+      // eslint-disable-next-line
+      (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
