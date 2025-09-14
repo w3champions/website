@@ -117,7 +117,7 @@
     <!-- View Users Dialog -->
     <reward-users-dialog
       :visible.sync="usersDialog"
-      :title="`Users with Reward: ${selectedReward?.name || 'Reward'}`"
+      :title="`Users with Reward: ${selectedReward && getRewardName(selectedReward.displayId) || 'Unknown'}`"
       :users="rewardUsers"
       :loading="loadingUsers"
       :error="usersError"
@@ -163,7 +163,7 @@ export default defineComponent({
     // Users dialog state
     const usersDialog = ref(false);
     const loadingUsers = ref(false);
-    const usersError = ref<string | null>(null);
+    const usersError = ref<string | undefined>(undefined);
     const rewardUsers = ref<RewardAssignment[]>([]);
     const selectedReward = ref<Reward | null>(null);
 
@@ -180,21 +180,21 @@ export default defineComponent({
       { text: "Actions", value: "actions", sortable: false, width: "140px" },
     ];
 
-    const usersHeaders = [
-      { text: "User", value: "userId", sortable: true },
-      { text: "Status", value: "status", sortable: true },
-      { text: "Provider", value: "providerId", sortable: true },
-      { text: "Assigned", value: "assignedAt", sortable: true },
-      { text: "Expires", value: "expiresAt", sortable: true },
-    ];
+    // const usersHeaders = [
+    //   { text: "User", value: "userId", sortable: true },
+    //   { text: "Status", value: "status", sortable: true },
+    //   { text: "Provider", value: "providerId", sortable: true },
+    //   { text: "Assigned", value: "assignedAt", sortable: true },
+    //   { text: "Expires", value: "expiresAt", sortable: true },
+    // ];
 
-    const activeUsersCount = computed(() => {
-      return rewardUsers.value.filter((user) => user.status === RewardStatus.Active).length;
-    });
+    // const activeUsersCount = computed(() => {
+    //   return rewardUsers.value.filter((user) => user.status === RewardStatus.Active).length;
+    // });
 
-    const expiredUsersCount = computed(() => {
-      return rewardUsers.value.filter((user) => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
-    });
+    // const expiredUsersCount = computed(() => {
+    //   return rewardUsers.value.filter((user) => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
+    // });
 
     const loadAllAssignments = async () => {
       try {
@@ -267,16 +267,20 @@ export default defineComponent({
       return nameTranslated !== nameKey || descTranslated !== descKey;
     };
 
-    const createNewReward = () => {
-      editedReward.value = {
+    const createNewReward = (): void => {
+      editedReward.value = createDefaultReward();
+      isEditMode.value = false;
+      dialog.value = true;
+    };
+
+    const createDefaultReward = (): Partial<Reward> => {
+      return {
         displayId: "",
         moduleId: "",
         parameters: {},
         duration: null,
         isActive: true,
       };
-      isEditMode.value = false;
-      dialog.value = true;
     };
 
     const editReward = (reward: Reward) => {
@@ -291,7 +295,7 @@ export default defineComponent({
           const updateData: UpdateRewardRequest = {
             displayId: rewardData.displayId,
             parameters: rewardData.parameters,
-            duration: rewardData.duration,
+            duration: rewardData.duration!,
             isActive: rewardData.isActive,
           };
           await AdminService.updateReward(editedReward.value.id, updateData, token.value);
@@ -301,13 +305,15 @@ export default defineComponent({
             displayId: rewardData.displayId!,
             moduleId: rewardData.moduleId!,
             parameters: rewardData.parameters,
-            duration: rewardData.duration,
+            duration: rewardData.duration!,
           };
           await AdminService.createReward(createData, token.value);
           showSnackbar("Reward created successfully");
         }
         closeDialog();
         await loadRewards();
+
+      // eslint-disable-next-line
       } catch (error: any) {
         const errorMessage = error.response?.data?.error || "Failed to save reward";
         showSnackbar(errorMessage, "error");
@@ -321,6 +327,8 @@ export default defineComponent({
           await AdminService.deleteReward(reward.id, token.value);
           showSnackbar("Reward deleted successfully");
           await loadRewards();
+
+        // eslint-disable-next-line
         } catch (error: any) {
           const errorMessage = error.response?.data?.error || "Failed to delete reward";
           showSnackbar(errorMessage, "error");
@@ -340,7 +348,6 @@ export default defineComponent({
       snackbar.value = true;
     };
 
-
     const formatDuration = (duration: { type: DurationType; value: number }): string => {
       if (!duration) return "Permanent";
       const unit = DurationType[duration.type].toLowerCase();
@@ -358,7 +365,7 @@ export default defineComponent({
       if (!selectedReward.value) return;
 
       loadingUsers.value = true;
-      usersError.value = null;
+      usersError.value = undefined;
 
       try {
         const assignments = await AdminService.getAssignmentsByReward(selectedReward.value.id, token.value);

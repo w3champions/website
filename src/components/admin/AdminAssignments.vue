@@ -626,9 +626,11 @@ export default defineComponent({
 
     const getStatusColor = (status: RewardStatus): string => {
       const colors: Record<RewardStatus, string> = {
+        [RewardStatus.Pending]: "grey",
         [RewardStatus.Active]: "success",
         [RewardStatus.Expired]: "warning",
         [RewardStatus.Revoked]: "error",
+        [RewardStatus.Failed]: "grey",
       };
       return colors[status] || "grey";
     };
@@ -672,9 +674,11 @@ export default defineComponent({
 
     const getStatusIcon = (status: RewardStatus): string => {
       const icons: Record<RewardStatus, string> = {
+        [RewardStatus.Pending]: mdiCog,
         [RewardStatus.Active]: mdiCheckCircle,
         [RewardStatus.Expired]: mdiClockAlert,
         [RewardStatus.Revoked]: mdiCancel,
+        [RewardStatus.Failed]: mdiCog,
       };
       return icons[status] || mdiCog;
     };

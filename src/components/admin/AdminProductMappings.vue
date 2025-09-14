@@ -138,7 +138,7 @@
                       <v-btn
                         icon
                         color="error"
-                        :disabled="newMapping.productProviders.length <= 1"
+                        :disabled="isNil(newMapping.productProviders) || newMapping.productProviders.length <= 1"
                         @click="removeProductProvider(index)"
                       >
                         <v-icon>{{ mdiDelete }}</v-icon>
@@ -230,9 +230,10 @@
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { ProductMapping, ProductMappingType, Reward, ProductMappingUsersResponse, RewardStatus } from "@/store/admin/types";
+import { ProductMapping, ProductMappingType, Reward, ProductMappingUsersResponse, RewardStatus, ProviderConfiguration } from "@/store/admin/types";
 import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup } from "@mdi/js";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
+import isNil from "lodash/isNil";
 
 export default defineComponent({
   name: "AdminProductMappings",
@@ -244,7 +245,7 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const productMappings = ref<ProductMapping[]>([]);
     const rewards = ref<Reward[]>([]);
-    const providers = ref<any[]>([]);
+    const providers = ref<ProviderConfiguration[]>([]);
     const mappingDialog = ref(false);
     const newMapping = ref<Partial<ProductMapping>>({});
     const isEditMode = ref(false);
@@ -256,7 +257,7 @@ export default defineComponent({
     // Users dialog state
     const usersDialog = ref(false);
     const loadingUsers = ref(false);
-    const usersError = ref<string | null>(null);
+    const usersError = ref<string | undefined>(undefined);
     const mappingUsers = ref<ProductMappingUsersResponse | null>(null);
     const selectedMapping = ref<ProductMapping | null>(null);
 
@@ -277,7 +278,8 @@ export default defineComponent({
         metadata: {
           providerReference: user.providerReference,
           eventType: user.eventType,
-        }
+        },
+        providerReference: "",
       }));
     });
 
@@ -289,17 +291,17 @@ export default defineComponent({
       { text: "Actions", value: "actions", sortable: false, width: "120px" },
     ];
 
-    const usersHeaders = [
-      { text: "User", value: "userId", sortable: true },
-      { text: "Provider", value: "provider", sortable: false },
-      { text: "Product ID", value: "providerProductId", sortable: true },
-      { text: "Status", value: "status", sortable: true },
-      { text: "Assigned", value: "assignedAt", sortable: true },
-      { text: "Expires", value: "expiresAt", sortable: true },
-    ];
+    // const usersHeaders = [
+    //   { text: "User", value: "userId", sortable: true },
+    //   { text: "Provider", value: "provider", sortable: false },
+    //   { text: "Product ID", value: "providerProductId", sortable: true },
+    //   { text: "Status", value: "status", sortable: true },
+    //   { text: "Assigned", value: "assignedAt", sortable: true },
+    //   { text: "Expires", value: "expiresAt", sortable: true },
+    // ];
 
     const rules = {
-      required: (value: any) => {
+      required: (value: string | string[] | number) => {
         if (Array.isArray(value)) {
           return value.length > 0 || "At least one item is required";
         }
@@ -492,7 +494,7 @@ export default defineComponent({
       if (!selectedMapping.value) return;
 
       loadingUsers.value = true;
-      usersError.value = null;
+      usersError.value = undefined;
 
       try {
         mappingUsers.value = await AdminService.getProductMappingUsers(token.value, selectedMapping.value.id);
@@ -554,6 +556,7 @@ export default defineComponent({
       closeMappingDialog,
       viewUsers,
       loadMappingUsers,
+      isNil,
 
       // Icons
       mdiDelete,

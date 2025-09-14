@@ -223,7 +223,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to update reward");
+
+      // eslint-disable-next-line
       (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
@@ -237,7 +240,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to delete reward");
+
+      // eslint-disable-next-line
       (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
@@ -298,6 +304,7 @@ export default class AdminService {
     return await response.json();
   }
 
+  // eslint-disable-next-line
   public static async getDriftDetectionStatus(token: string): Promise<any> {
     const url = `${API_URL}api/rewards/drift-detection/status`;
     const response = await authorizedFetch("GET", url, token);
@@ -311,7 +318,10 @@ export default class AdminService {
     if (!response.ok) {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to sync Patreon drift");
+
+      // eslint-disable-next-line
       (error as any).response = { status: response.status, data: errorData };
+
       throw error;
     }
 
@@ -320,7 +330,7 @@ export default class AdminService {
 
   // New endpoints for Patreon links and enhanced assignments management
 
-  public static async getAllPatreonLinks(token: string): Promise<PatreonAccountLink[]> {
+  public static async getAllPatreonLinks(token: string): Promise<{ links: PatreonAccountLink[]; totalLinks: number }> {
     const url = `${API_URL}api/rewards/admin/patreon/links`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
@@ -332,6 +342,7 @@ export default class AdminService {
     return response.ok;
   }
 
+  // eslint-disable-next-line
   public static async getPatreonMemberDetails(battleTag: string, token: string): Promise<any> {
     const url = `${API_URL}api/rewards/admin/patreon/members/${encodeURIComponent(battleTag)}`;
     const response = await authorizedFetch("GET", url, token);
