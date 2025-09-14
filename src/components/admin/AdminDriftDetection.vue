@@ -69,7 +69,7 @@ J<template>
             </div>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="info"
               :loading="syncing"
@@ -165,7 +165,7 @@ J<template>
             </div>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="info"
               :loading="reconciling"
@@ -406,7 +406,7 @@ J<template>
         <v-card-title>
           <v-icon left>{{ mdiCog }}</v-icon>
           Reconciliation Details
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn icon @click="showReconciliationDetails = false">
             <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
@@ -454,7 +454,7 @@ J<template>
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn @click="showReconciliationDetails = false">
             Close
           </v-btn>
@@ -522,7 +522,6 @@ export default defineComponent({
       { text: "Reward ID", value: "rewardId", sortable: true },
       { text: "Product Mapping", value: "productMapping", sortable: true },
     ];
-
 
     const reconciliationDetailsItems = computed(() => {
       if (!reconciliationResult.value?.userReconciliations) return [];
@@ -671,7 +670,6 @@ export default defineComponent({
         syncing.value = false;
       }
     };
-
 
     onMounted(() => {
       loadStatus();
