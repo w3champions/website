@@ -97,14 +97,7 @@
                   :rules="paramDef.required ? [rules.required] : []"
                   :hint="paramDef.description + ' (e.g., 1,2,3)'"
                   persistent-hint
-                  @input="(value: string) => {
-                    if (typeof value === 'string') {
-                      moduleParameters[paramKey] = value.split(',').map(v => {
-                        const num = parseInt(v.trim());
-                        return isNaN(num) ? v.trim() : num;
-                      });
-                    }
-                  }"
+                  @input="(value) => onInput(value, paramKey)"
                 />
               </v-col>
             </v-row>
@@ -380,6 +373,15 @@ export default defineComponent({
       return nameTranslated !== nameKey || descTranslated !== descKey;
     }
 
+    function onInput(value: string, paramKey: string) {
+      if (typeof value === "string") {
+        moduleParameters.value[paramKey] = value.split(",").map((v) => {
+          const num = parseInt(v.trim());
+          return isNaN(num) ? v.trim() : num;
+        });
+      }
+    }
+
     return {
       localReward,
       durationType,
@@ -400,6 +402,7 @@ export default defineComponent({
       getRewardName,
       getRewardDescription,
       hasTranslation,
+      onInput,
     };
   },
 });
