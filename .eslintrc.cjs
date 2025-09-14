@@ -67,7 +67,7 @@ module.exports = {
     }],
     "vue/v-bind-style": ["error", "shorthand"],
     "vue/v-slot-style": ["error", "longform"],
-    // "vue/attribute-hyphenation": ["warn", "never"]
+    // "vue/attribute-hyphenation": ["warn", "always"],
     "vue/attribute-hyphenation": ["off"],
     "vue/singleline-html-element-content-newline": ["off"],
     "vue/no-v-html": ["off"],

@@ -6,7 +6,7 @@
     </v-card-title>
 
     <!-- Statistics Summary Cards -->
-    <v-row class="mb-6" v-if="assignments.length > 0 || paginationData">
+    <v-row v-if="assignments.length > 0 || paginationData" class="mb-6">
       <v-col cols="12" sm="6" md="3">
         <v-card outlined class="text-center pa-4">
           <div class="text-h4 primary--text mb-1">{{ getTotalCount() }}</div>
@@ -110,9 +110,9 @@
           <v-col cols="auto">
             <v-btn
               color="primary"
-              @click="searchAssignments"
               :loading="loading"
               :disabled="!selectedPlayer"
+              @click="searchAssignments"
             >
               <v-icon left>{{ mdiMagnify }}</v-icon>
               Search
@@ -130,8 +130,8 @@
           <v-col cols="auto">
             <v-btn
               color="secondary"
-              @click="loadAllAssignments"
               :loading="loading"
+              @click="loadAllAssignments"
             >
               <v-icon left>{{ mdiRefresh }}</v-icon>
               Load All Assignments
@@ -144,7 +144,7 @@
     <!-- Enhanced Data Table -->
     <v-card class="elevation-2">
       <v-card-text v-if="loading && assignments.length === 0" class="text-center py-8">
-        <v-skeleton-loader type="table"></v-skeleton-loader>
+        <v-skeleton-loader type="table" />
         <div class="mt-4 text-subtitle1">Loading assignments...</div>
       </v-card-text>
 
@@ -207,8 +207,7 @@
               {{ formatDate(item.expiresAt) }}
             </div>
             <div class="text-caption text--secondary">{{ formatTime(item.expiresAt) }}</div>
-            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)"
-                    x-small color="orange" class="mt-1">
+            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)" x-small color="orange" class="mt-1">
               Expires Soon
             </v-chip>
           </div>
@@ -221,18 +220,18 @@
               icon
               small
               color="primary"
-              @click="viewDetails(item)"
               class="mr-1"
+              @click="viewDetails(item)"
             >
               <v-icon small>{{ mdiEye }}</v-icon>
             </v-btn>
             <v-btn
+              v-if="item.status === 0"
               icon
               small
               color="error"
-              @click="revokeAssignment(item)"
               :disabled="item.status !== 0"
-              v-if="item.status === 0"
+              @click="revokeAssignment(item)"
             >
               <v-icon small>{{ mdiCancel }}</v-icon>
             </v-btn>
@@ -258,9 +257,9 @@
           v-model="currentPage"
           :length="paginationData.totalPages"
           :total-visible="7"
-          @input="onPageChange"
           color="primary"
-        ></v-pagination>
+          @input="onPageChange"
+        />
         <div class="d-flex justify-center align-center mt-3">
           <div class="text-body-2 text--secondary mr-4">
             Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, paginationData.totalCount) }}
@@ -285,7 +284,7 @@
         <v-card-title class="text-h5 primary white--text">
           <v-icon left color="white">{{ mdiClipboardText }}</v-icon>
           Assignment Details
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn icon color="white" @click="detailsDialog = false">
             <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
@@ -429,7 +428,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             v-if="selectedAssignment.status === 0"
             color="error"
@@ -448,10 +447,10 @@
 
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000" top>
-      <v-icon left v-if="snackbarColor === 'success'">{{ mdiCheckCircle }}</v-icon>
-      <v-icon left v-if="snackbarColor === 'error'">{{ mdiAlert }}</v-icon>
-      <v-icon left v-if="snackbarColor === 'warning'">{{ mdiAlertCircle }}</v-icon>
-      <v-icon left v-if="snackbarColor === 'info'">{{ mdiInformation }}</v-icon>
+      <v-icon v-if="snackbarColor === 'success'" left>{{ mdiCheckCircle }}</v-icon>
+      <v-icon v-if="snackbarColor === 'error'" left>{{ mdiAlert }}</v-icon>
+      <v-icon v-if="snackbarColor === 'warning'" left>{{ mdiAlertCircle }}</v-icon>
+      <v-icon v-if="snackbarColor === 'info'" left>{{ mdiInformation }}</v-icon>
       {{ snackbarText }}
       <template v-slot:action="{ attrs }">
         <v-btn text v-bind="attrs" @click="snackbar = false">
@@ -461,27 +460,6 @@
     </v-snackbar>
   </div>
 </template>
-
-<style scoped>
-.modern-table >>> .v-data-table__wrapper {
-  border-radius: 8px;
-}
-
-.modern-table >>> th {
-  background-color: var(--v-primary-lighten5) !important;
-  color: var(--v-primary-darken2) !important;
-  font-weight: 600 !important;
-}
-
-.modern-table >>> tr:hover {
-  background-color: var(--v-primary-lighten5) !important;
-}
-
-.font-family-monospace {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-  font-size: 0.875rem;
-}
-</style>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
@@ -936,7 +914,31 @@ export default defineComponent({
       mdiAlert,
       mdiAlertCircle,
       mdiInformation,
+      mdiPatreon,
+      mdiHandHeart,
+      mdiCog,
     };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.modern-table >>> .v-data-table__wrapper {
+  border-radius: 8px;
+}
+
+.modern-table >>> th {
+  background-color: var(--v-primary-lighten5) !important;
+  color: var(--v-primary-darken2) !important;
+  font-weight: 600 !important;
+}
+
+.modern-table >>> tr:hover {
+  background-color: var(--v-primary-lighten5) !important;
+}
+
+.font-family-monospace {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 0.875rem;
+}
+</style>
