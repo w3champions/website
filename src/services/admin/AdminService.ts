@@ -224,6 +224,7 @@ export default class AdminService {
       const errorData = await response.json();
       const error = new Error(errorData.error || "Failed to update reward");
 
+      // eslint-disable-next-line
       (error as any).response = { status: response.status, data: errorData };
 
       throw error;
