@@ -268,19 +268,15 @@ export default defineComponent({
     };
 
     const createNewReward = (): void => {
-      editedReward.value = createDefaultReward();
-      isEditMode.value = false;
-      dialog.value = true;
-    };
-
-    const createDefaultReward = (): Partial<Reward> => {
-      return {
+      editedReward.value = {
         displayId: "",
         moduleId: "",
         parameters: {},
         duration: null,
         isActive: true,
       };
+      isEditMode.value = false;
+      dialog.value = true;
     };
 
     const editReward = (reward: Reward) => {
