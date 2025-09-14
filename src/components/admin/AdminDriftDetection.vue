@@ -526,6 +526,7 @@ export default defineComponent({
     const reconciliationDetailsItems = computed(() => {
       if (!reconciliationResult.value?.userReconciliations) return [];
 
+      // eslint-disable-next-line
       const items: any[] = [];
 
       reconciliationResult.value.userReconciliations.forEach((userRecon) => {

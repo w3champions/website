@@ -137,8 +137,8 @@ export default defineComponent({
       required: true,
     },
     users: {
-      type: Array as () => RewardAssignment[],
-      default: () => [],
+      type: Array<RewardAssignment>,
+      default: [],
     },
     loading: {
       type: Boolean,
@@ -146,7 +146,8 @@ export default defineComponent({
     },
     error: {
       type: String,
-      default: null,
+      required: false,
+      default: undefined,
     },
   },
   emits: ["update:visible", "retry"],
