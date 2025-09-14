@@ -321,7 +321,7 @@ export default class AdminService {
 
   // New endpoints for Patreon links and enhanced assignments management
 
-  public static async getAllPatreonLinks(token: string): Promise<{links: PatreonAccountLink[]; totalLinks: number }> {
+  public static async getAllPatreonLinks(token: string): Promise<{ links: PatreonAccountLink[]; totalLinks: number }> {
     const url = `${API_URL}api/rewards/admin/patreon/links`;
     const response = await authorizedFetch("GET", url, token);
     return await response.json();
