@@ -37,6 +37,7 @@ module.exports = {
     "@typescript-eslint/quotes": ["warn", "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
     "@typescript-eslint/semi": "warn",
     "@typescript-eslint/space-infix-ops": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
 
     // Lodash rules
     "lodash/import-scope": ["warn", "method"],
