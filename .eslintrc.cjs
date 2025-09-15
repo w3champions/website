@@ -72,7 +72,7 @@ module.exports = {
     "vue/attribute-hyphenation": ["off"],
     "vue/singleline-html-element-content-newline": ["off"],
     "vue/no-v-html": ["off"],
-    "vue/no-lone-template": ["off"],
+    "vue/no-lone-template": ["warn"],
 
     // Vue rules for Vue 3 migration
     "vue/no-deprecated-delete-set": "warn",

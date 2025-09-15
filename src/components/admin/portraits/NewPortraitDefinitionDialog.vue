@@ -8,46 +8,44 @@
           </v-row>
         </template>
 
-        <template>
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-card>
-              <v-container>
-                <v-row>
-                  <v-col>
-                    <v-card-title class="justify-center">Add New PortraitDefinition</v-card-title>
-                  </v-col>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-card>
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-card-title class="justify-center">Add New PortraitDefinition</v-card-title>
+                </v-col>
 
-                  <v-btn icon @click="dialogOpen = false">
-                    <v-icon>{{ mdiClose }}</v-icon>
-                  </v-btn>
-                </v-row>
+                <v-btn icon @click="dialogOpen = false">
+                  <v-icon>{{ mdiClose }}</v-icon>
+                </v-btn>
+              </v-row>
 
-                <v-row>
-                  <v-container class="ml-3 mr-3">
-                    <v-text-field
-                      v-model="portraitId"
-                      :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
-                      label="Portrait Id"
-                    />
-                  </v-container>
-                </v-row>
-
-                <v-row>
-                  <v-container class="ml-3 mr-3">
-                    <portrait-group-combobox :portraitId="portraitId" />
-                  </v-container>
-                </v-row>
-              </v-container>
-              <v-row class="mb-5">
-                <v-container>
-                  <v-row class="justify-center">
-                    <v-btn class="primary w3-race-bg--text" :disabled="!valid" @click="confirmDialog">Confirm</v-btn>
-                  </v-row>
+              <v-row>
+                <v-container class="ml-3 mr-3">
+                  <v-text-field
+                    v-model="portraitId"
+                    :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
+                    label="Portrait Id"
+                  />
                 </v-container>
               </v-row>
-            </v-card>
-          </v-form>
-        </template>
+
+              <v-row>
+                <v-container class="ml-3 mr-3">
+                  <portrait-group-combobox :portraitId="portraitId" />
+                </v-container>
+              </v-row>
+            </v-container>
+            <v-row class="mb-5">
+              <v-container>
+                <v-row class="justify-center">
+                  <v-btn class="primary w3-race-bg--text" :disabled="!valid" @click="confirmDialog">Confirm</v-btn>
+                </v-row>
+              </v-container>
+            </v-row>
+          </v-card>
+        </v-form>
       </v-dialog>
     </v-col>
   </v-row>

@@ -24,78 +24,76 @@
                   </template>
 
                   <!-- Confirmation dialog -->
-                  <template>
-                    <v-card>
-                      <v-container>
-                        <v-row>
-                          <v-col>
-                            <v-card-title class="justify-center">Confirm Portrait Assignments</v-card-title>
-                          </v-col>
+                  <v-card>
+                    <v-container>
+                      <v-row>
+                        <v-col>
+                          <v-card-title class="justify-center">Confirm Portrait Assignments</v-card-title>
+                        </v-col>
 
-                          <v-btn icon @click="assignDialogOpen = false">
-                            <v-icon>{{ mdiClose }}</v-icon>
-                          </v-btn>
-                        </v-row>
+                        <v-btn icon @click="assignDialogOpen = false">
+                          <v-icon>{{ mdiClose }}</v-icon>
+                        </v-btn>
+                      </v-row>
 
-                        <!-- The following portraits will be ADDED: -->
-                        <v-row v-if="confirmAddedPortraits.length > 0">
-                          <v-container>
-                            <v-card-subtitle class="text-h6">
-                              The following portraits will be
-                              <strong>ADDED</strong>
-                              for
-                              <strong>{{ foundPlayer }}:</strong>
-                            </v-card-subtitle>
-                            <v-card-actions>
-                              <v-row no-gutters>
-                                <v-col v-for="portraitId in confirmAddedPortraits" :key="portraitId" cols="1">
-                                  <assign-portrait :portraitId="portraitId" class="pa-1" />
-                                </v-col>
-                              </v-row>
-                            </v-card-actions>
-                            <v-card-actions>
-                              <v-row class="ma-1 pa-1">
-                                <v-text-field
-                                  v-model="mouseoverText"
-                                  :rules="[rules.required, rules.min]"
-                                  label="Mouseover tooltip"
-                                />
-                                <v-spacer />
-                              </v-row>
-                            </v-card-actions>
-                          </v-container>
-                        </v-row>
+                      <!-- The following portraits will be ADDED: -->
+                      <v-row v-if="confirmAddedPortraits.length > 0">
+                        <v-container>
+                          <v-card-subtitle class="text-h6">
+                            The following portraits will be
+                            <strong>ADDED</strong>
+                            for
+                            <strong>{{ foundPlayer }}:</strong>
+                          </v-card-subtitle>
+                          <v-card-actions>
+                            <v-row no-gutters>
+                              <v-col v-for="portraitId in confirmAddedPortraits" :key="portraitId" cols="1">
+                                <assign-portrait :portraitId="portraitId" class="pa-1" />
+                              </v-col>
+                            </v-row>
+                          </v-card-actions>
+                          <v-card-actions>
+                            <v-row class="ma-1 pa-1">
+                              <v-text-field
+                                v-model="mouseoverText"
+                                :rules="[rules.required, rules.min]"
+                                label="Mouseover tooltip"
+                              />
+                              <v-spacer />
+                            </v-row>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
 
-                        <!-- The following portraits will be REMOVED: -->
-                        <v-row v-if="confirmRemovedPortraits.length > 0">
-                          <v-container>
-                            <v-card-subtitle class="text-h6">
-                              The following portraits will be
-                              <strong>REMOVED</strong>
-                              for
-                              <strong>{{ foundPlayer }}:</strong>
-                            </v-card-subtitle>
-                            <v-card-actions>
-                              <v-row no-gutters>
-                                <v-col v-for="portraitId in confirmRemovedPortraits" :key="portraitId" cols="1">
-                                  <assign-portrait :portraitId="portraitId" class="pa-1" />
-                                </v-col>
-                              </v-row>
-                            </v-card-actions>
-                          </v-container>
-                        </v-row>
+                      <!-- The following portraits will be REMOVED: -->
+                      <v-row v-if="confirmRemovedPortraits.length > 0">
+                        <v-container>
+                          <v-card-subtitle class="text-h6">
+                            The following portraits will be
+                            <strong>REMOVED</strong>
+                            for
+                            <strong>{{ foundPlayer }}:</strong>
+                          </v-card-subtitle>
+                          <v-card-actions>
+                            <v-row no-gutters>
+                              <v-col v-for="portraitId in confirmRemovedPortraits" :key="portraitId" cols="1">
+                                <assign-portrait :portraitId="portraitId" class="pa-1" />
+                              </v-col>
+                            </v-row>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
 
-                        <v-row>
-                          <v-spacer />
-                          <v-container>
-                            <v-card-actions class="justify-end">
-                              <v-btn class="primary w3-race-bg--text" x-large @click="confirmDialog">Confirm</v-btn>
-                            </v-card-actions>
-                          </v-container>
-                        </v-row>
-                      </v-container>
-                    </v-card>
-                  </template>
+                      <v-row>
+                        <v-spacer />
+                        <v-container>
+                          <v-card-actions class="justify-end">
+                            <v-btn class="primary w3-race-bg--text" x-large @click="confirmDialog">Confirm</v-btn>
+                          </v-card-actions>
+                        </v-container>
+                      </v-row>
+                    </v-container>
+                  </v-card>
                 </v-dialog>
               </v-row>
             </v-col>

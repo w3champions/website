@@ -4,17 +4,15 @@
       {{ round.name }}
     </div>
     <div :style="matchesStyle">
-      <template>
-        <tournament-series
-          v-for="(s, index) in series"
-          :key="s.id"
-          :series="s"
-          :seriesIndex="index"
-          :playerHeight="playerHeight"
-          :verticalSpace="verticalSpace"
-          :roundWidth="roundWidth"
-        />
-      </template>
+      <tournament-series
+        v-for="(s, index) in series"
+        :key="s.id"
+        :series="s"
+        :seriesIndex="index"
+        :playerHeight="playerHeight"
+        :verticalSpace="verticalSpace"
+        :roundWidth="roundWidth"
+      />
     </div>
   </div>
 </template>

@@ -6,31 +6,27 @@
     <v-container>
       <v-card>
         <v-expansion-panels tile multiple>
-          <template>
-            <v-expansion-panel
-              v-for="(mode, index) in gameModes"
-              :key="index"
-              tile
-            >
-              <v-expansion-panel-header>
-                {{ mode.name }}
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <template>
-                  <div v-if="getPlayerDataInGamemode(mode.id) != null">
-                    <v-data-table
-                      :headers="headers"
-                      :items="getPlayerDataInGamemode(mode.id)"
-                      :items-per-page="-1"
-                      :disable-pagination="true"
-                      :hide-default-footer="true"
-                    />
-                  </div>
-                  <div v-else>No Data found.</div>
-                </template>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </template>
+          <v-expansion-panel
+            v-for="(mode, index) in gameModes"
+            :key="index"
+            tile
+          >
+            <v-expansion-panel-header>
+              {{ mode.name }}
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <div v-if="getPlayerDataInGamemode(mode.id) != null">
+                <v-data-table
+                  :headers="headers"
+                  :items="getPlayerDataInGamemode(mode.id)"
+                  :items-per-page="-1"
+                  :disable-pagination="true"
+                  :hide-default-footer="true"
+                />
+              </div>
+              <div v-else>No Data found.</div>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-expansion-panels>
       </v-card>
     </v-container>

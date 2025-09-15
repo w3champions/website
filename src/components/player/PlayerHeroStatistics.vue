@@ -65,8 +65,7 @@ export default defineComponent({
     );
 
     function getImageForTable(heroId: string): string {
-      const src: string = getAsset(`heroes/${heroId}.png`);
-      return `<img class="mt-1" src="${src}" height="40" width="40" />`;
+      return getAsset(`heroes/${heroId}.png`);
     }
 
     const heroUsages = computed<PlayerHeroStatistic[]>(() => {
