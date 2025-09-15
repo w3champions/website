@@ -24,11 +24,13 @@
                   </thead>
                   <tbody>
                     <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-                      <td v-html="item.image"></td>
-                      <td v-html="item.name"></td>
+                      <td>
+                        <img class="mt-1" :src="item.image" height="40" width="40" />
+                      </td>
+                      <td>{{ item.name }}</td>
                       <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
                         <template v-slot:activator="{ on }">
-                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on" v-html="item[header.value]"></td>
+                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on">{{ item[header.value] }}</td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">
                           <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
@@ -147,8 +149,7 @@ export default defineComponent({
     const headersWithoutImageAndName = headers.slice(2) as { text: string; value: ERaceEnum; align: "left" | "center" | "right" }[];
 
     function getImageForTable(heroId: string): string {
-      const src: string = getAsset(`heroes/${heroId}.png`);
-      return `<img class="mt-1" src="${src}" height="40" width="40" />`;
+      return getAsset(`heroes/${heroId}.png`);
     }
 
     function heroWinRates(): PlayerHeroWinRateForStatisticsTab[] {

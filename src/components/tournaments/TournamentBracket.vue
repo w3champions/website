@@ -3,25 +3,23 @@
     <h3 class="mt-3">Bracket</h3>
     <div class="d-flex pa-2" :style="style">
       <div v-for="(round, roundIndex) in rounds" :key="`matches-${roundIndex}`" class="d-flex">
-        <template>
-          <tournament-round-matches
-            :round="round"
-            :roundWidth="roundWidth"
-            :playerHeight="playerHeight"
-            :roundNameHeight="roundNameHeight"
-            :verticalSpace="roundDimensions[roundIndex].verticalSpace"
-            :marginTop="roundDimensions[roundIndex].marginTop"
-          />
-          <tournament-round-connectors
-            v-if="roundIndex + 1 < rounds.length"
-            :seriesCount="round.series.length"
-            :connectorWidth="connectorWidth"
-            :playerHeight="playerHeight"
-            :roundNameHeight="roundNameHeight"
-            :verticalSpace="roundDimensions[roundIndex].verticalSpace"
-            :marginTop="roundDimensions[roundIndex].marginTop"
-          />
-        </template>
+        <tournament-round-matches
+          :round="round"
+          :roundWidth="roundWidth"
+          :playerHeight="playerHeight"
+          :roundNameHeight="roundNameHeight"
+          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+          :marginTop="roundDimensions[roundIndex].marginTop"
+        />
+        <tournament-round-connectors
+          v-if="roundIndex + 1 < rounds.length"
+          :seriesCount="round.series.length"
+          :connectorWidth="connectorWidth"
+          :playerHeight="playerHeight"
+          :roundNameHeight="roundNameHeight"
+          :verticalSpace="roundDimensions[roundIndex].verticalSpace"
+          :marginTop="roundDimensions[roundIndex].marginTop"
+        />
       </div>
     </div>
   </div>

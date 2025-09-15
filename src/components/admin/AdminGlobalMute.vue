@@ -14,14 +14,12 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <template>
-              <v-text-field
-                v-model="searchQuery"
-                label="Search mute"
-                :prepend-icon="mdiMagnify"
-                @keydown.enter="loadMutes"
-              />
-            </template>
+            <v-text-field
+              v-model="searchQuery"
+              label="Search mute"
+              :prepend-icon="mdiMagnify"
+              @keydown.enter="loadMutes"
+            />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">

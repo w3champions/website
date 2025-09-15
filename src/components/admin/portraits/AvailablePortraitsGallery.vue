@@ -3,7 +3,7 @@
     <v-card-title class="justify-center">Special Portraits</v-card-title>
     <v-row no-gutters :justify="'start'">
       <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-        <assign-portrait :portraitId="portraitId" class="pa-1" :selectable="selectable" v-on="$listeners" />
+        <assign-portrait :portraitId="portraitId" class="pa-1" :selectable="selectable" @portrait-selected="portraitSelected" />
       </v-col>
     </v-row>
   </v-col>
@@ -27,7 +27,7 @@ export default defineComponent({
       default: true,
     },
   },
-  setup() {
+  setup(_props, context) {
     const oauthStore = useOauthStore();
     const playerManagement = usePlayerManagementStore();
     const allSpecialPortraits = ref<number[]>([]);
@@ -46,12 +46,17 @@ export default defineComponent({
       );
     }
 
+    function portraitSelected(portraitId: number): void {
+      context.emit("portrait-selected", portraitId);
+    }
+
     onMounted(async (): Promise<void> => {
       await init();
     });
 
     return {
       allSpecialPortraits,
+      portraitSelected,
     };
   },
 });

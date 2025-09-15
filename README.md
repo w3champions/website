@@ -9,7 +9,7 @@ npm install
 ### Compiles and hot-reloads for development
 
 ```
-npm run dev
+npm start
 ```
 
 #### .env
@@ -32,7 +32,7 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
 ## Optional: Setup website backend server (and authenticate as admin)
-By default the website you started using `npm run dev` will connect to the production
+By default the website you started using `npm start` will connect to the production
 backend of [www.w3champions.com](https://www.w3champions.com/). The API serving the dynamic content
 is available at [website-backend.w3champions.com/api/](https://website-backend.w3champions.com/api/). 
 

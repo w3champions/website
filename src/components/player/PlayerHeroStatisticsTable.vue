@@ -15,11 +15,13 @@
         </thead>
         <tbody class="player-hero-statistics-table__body">
           <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-            <td v-html="item.image"></td>
-            <td v-html="item.name"></td>
+            <td>
+              <img class="mt-1" :src="item.image" height="40" width="40" />
+            </td>
+            <td>{{ item.name }}</td>
             <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
               <template v-slot:activator="{ on }">
-                <td class="text-right" v-on="on" v-html="item[header.value]"></td>
+                <td class="text-right" v-on="on">{{ item[header.value] }}</td>
               </template>
               <div v-if="item.numbers_by_race[header.value]">
                 {{ $t("components_player_playeravatar.games") }} {{ item.numbers_by_race[header.value].number }}

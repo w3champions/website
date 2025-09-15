@@ -15,7 +15,7 @@
 import { computed, defineComponent, PropType, StyleValue } from "vue";
 
 export default defineComponent({
-  name: "TournamentRoundConnectors",
+  name: "TournamentRoundConnector",
   components: {},
   props: {
     index: { type: Number, required: true },

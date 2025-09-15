@@ -6,7 +6,7 @@
         <v-expansion-panels tile>
           <v-expansion-panel v-for="(faq, i) in faqs" :key="i" tile>
             <v-expansion-panel-header>
-              <div v-html="faq.question"></div>
+              <div>{{ faq.question }}</div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <div v-html="faq.answer"></div>

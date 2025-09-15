@@ -76,90 +76,86 @@
       <v-card v-if="showSmurfResults && smurfResults">
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
-          <template>
-            <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
-              <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
-              <v-spacer />
-              <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
-            </v-list-item>
-          </template>
+          <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
+            <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
+            <v-spacer />
+            <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+          </v-list-item>
         </v-list>
       </v-card>
 
       <v-card v-if="canSeeSmurfCheckerQueryExplanation && generateExplanation && smurfResults?.explanation && smurfResults.explanation.length > 0">
         <v-card-title>Explanation:</v-card-title>
         <v-list>
-          <template>
-            <v-expansion-panels multiple>
-              <v-expansion-panel
-                v-for="step in smurfResults.explanation"
-                :key="step.iteration"
-              >
-                <!-- Header shows iteration number, identifierType, and how many groups -->
-                <v-expansion-panel-header>
-                  <div class="d-flex justify-space-between align-center" style="width: 100%">
-                    <div>
-                      <strong>Iteration {{ step.iteration }}</strong> —
-                      {{ step.identifierType }}
-                    </div>
-                    <div>Groups: {{ step.identifierGroups.length }}</div>
+          <v-expansion-panels multiple>
+            <v-expansion-panel
+              v-for="step in smurfResults.explanation"
+              :key="step.iteration"
+            >
+              <!-- Header shows iteration number, identifierType, and how many groups -->
+              <v-expansion-panel-header>
+                <div class="d-flex justify-space-between align-center" style="width: 100%">
+                  <div>
+                    <strong>Iteration {{ step.iteration }}</strong> —
+                    {{ step.identifierType }}
                   </div>
-                </v-expansion-panel-header>
+                  <div>Groups: {{ step.identifierGroups.length }}</div>
+                </div>
+              </v-expansion-panel-header>
 
-                <v-expansion-panel-content>
-                  <!-- Show filteredIdentifiers as chips or comma-separated -->
-                  <v-row class="mb-3">
-                    <v-col cols="12">
-                      <strong>Filtered Identifiers:</strong>
-                      <v-chip-group
-                        v-if="step.filteredIdentifiers.length"
-                        column
-                        class="mt-1"
-                      >
-                        <v-chip
-                          v-for="filteredIdentifier in step.filteredIdentifiers"
-                          :key="filteredIdentifier"
-                          small
-                        >
-                          {{ filteredIdentifier }}
-                        </v-chip>
-                      </v-chip-group>
-                      <span v-else>None</span>
-                    </v-col>
-                  </v-row>
-
-                  <v-expansion-panels>
-                    <v-expansion-panel
-                      v-for="group in step.identifierGroups"
-                      :key="group.identifier"
+              <v-expansion-panel-content>
+                <!-- Show filteredIdentifiers as chips or comma-separated -->
+                <v-row class="mb-3">
+                  <v-col cols="12">
+                    <strong>Filtered Identifiers:</strong>
+                    <v-chip-group
+                      v-if="step.filteredIdentifiers.length"
+                      column
+                      class="mt-1"
                     >
-                      <v-expansion-panel-header>
-                        <!-- Display the identifier and a summary of login counts to show significant identifiers -->
-                        <div class="d-flex justify-space-between align-center" style="width: 100%">
-                          <div>
-                            <strong>{{ step.identifierType }}:</strong> {{ group.identifier }}
-                          </div>
-                          <div>
-                            From: {{ totalLogins(group.fromBattleTags) }}
-                            &nbsp;|&nbsp;
-                            To: {{ totalLogins(group.toBattleTags) }}
-                          </div>
-                        </div>
-                      </v-expansion-panel-header>
+                      <v-chip
+                        v-for="filteredIdentifier in step.filteredIdentifiers"
+                        :key="filteredIdentifier"
+                        small
+                      >
+                        {{ filteredIdentifier }}
+                      </v-chip>
+                    </v-chip-group>
+                    <span v-else>None</span>
+                  </v-col>
+                </v-row>
 
-                      <v-expansion-panel-content>
-                        <!-- Two side-by-side lists or tables for from vs. to -->
-                        <v-row>
-                          <SmurfBattleTagDetailsTable title="From BattleTags" :data="group.fromBattleTags" />
-                          <SmurfBattleTagDetailsTable title="To BattleTags" :data="group.toBattleTags" />
-                        </v-row>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </template>
+                <v-expansion-panels>
+                  <v-expansion-panel
+                    v-for="group in step.identifierGroups"
+                    :key="group.identifier"
+                  >
+                    <v-expansion-panel-header>
+                      <!-- Display the identifier and a summary of login counts to show significant identifiers -->
+                      <div class="d-flex justify-space-between align-center" style="width: 100%">
+                        <div>
+                          <strong>{{ step.identifierType }}:</strong> {{ group.identifier }}
+                        </div>
+                        <div>
+                          From: {{ totalLogins(group.fromBattleTags) }}
+                          &nbsp;|&nbsp;
+                          To: {{ totalLogins(group.toBattleTags) }}
+                        </div>
+                      </div>
+                    </v-expansion-panel-header>
+
+                    <v-expansion-panel-content>
+                      <!-- Two side-by-side lists or tables for from vs. to -->
+                      <v-row>
+                        <SmurfBattleTagDetailsTable title="From BattleTags" :data="group.fromBattleTags" />
+                        <SmurfBattleTagDetailsTable title="To BattleTags" :data="group.toBattleTags" />
+                      </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-list>
       </v-card>
     </v-container>
