@@ -51,21 +51,17 @@
                           :label="'Description'"
                         />
                       </v-col>
-                      <v-col class="py-0">
-                        <template>
-                          <v-col>
-                            <b>Permissions</b>
-                            <v-checkbox
-                              v-for="permission in availablePermissions"
-                              :key="permission.value"
-                              v-model="editedItem.permissions"
-                              :multiple="true"
-                              :label="permission.name"
-                              :value="permission.value"
-                              :dense="true"
-                            />
-                          </v-col>
-                        </template>
+                      <v-col class="px-5 py-0">
+                        <b>Permissions</b>
+                        <v-checkbox
+                          v-for="permission in availablePermissions"
+                          :key="permission.value"
+                          v-model="editedItem.permissions"
+                          :multiple="true"
+                          :label="permission.name"
+                          :value="permission.value"
+                          :dense="true"
+                        />
                       </v-col>
                     </v-row>
                     <v-alert v-model="isValidationError" type="warning" dense class="ml-4 mr-4">

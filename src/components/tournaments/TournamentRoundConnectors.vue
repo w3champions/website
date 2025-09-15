@@ -1,20 +1,18 @@
 <template>
   <div :style="containerStyle">
     <div v-for="index in (seriesCount / 2)" :key="`top-${index}`">
-      <template>
-        <tournament-round-connector
-          :index="index - 1"
-          :side="'top'"
-          :playerHeight="playerHeight"
-          :verticalSpace="verticalSpace"
-        />
-        <tournament-round-connector
-          :index="index - 1"
-          :side="'bottom'"
-          :playerHeight="playerHeight"
-          :verticalSpace="verticalSpace"
-        />
-      </template>
+      <tournament-round-connector
+        :index="index - 1"
+        :side="'top'"
+        :playerHeight="playerHeight"
+        :verticalSpace="verticalSpace"
+      />
+      <tournament-round-connector
+        :index="index - 1"
+        :side="'bottom'"
+        :playerHeight="playerHeight"
+        :verticalSpace="verticalSpace"
+      />
     </div>
   </div>
 </template>

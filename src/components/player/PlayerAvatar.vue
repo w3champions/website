@@ -155,163 +155,161 @@
         <div>{{ savedMessageValue ? savedMessageValue : "-" }}</div>
       </v-col>
     </v-row>
-    <template>
-      <v-row v-if="isLoggedInPlayer">
-        <v-col>
-          <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                small
-                class="ma-0"
-                outlined
-                color="primary"
-                v-on="on"
-                @click="personalSettingsDialogOpened = true"
-              >
-                <v-icon left>{{ mdiPencil }}</v-icon>
-                {{ $t("components_player_playeravatar.edit") }}
+    <v-row v-if="isLoggedInPlayer">
+      <v-col>
+        <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              small
+              class="ma-0"
+              outlined
+              color="primary"
+              v-on="on"
+              @click="personalSettingsDialogOpened = true"
+            >
+              <v-icon left>{{ mdiPencil }}</v-icon>
+              {{ $t("components_player_playeravatar.edit") }}
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">
+                {{ $t("components_player_playeravatar.userprofile") }}
+              </span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-text-field
+                    v-model="userProfile.twitch"
+                    :prepend-icon="mdiTwitch"
+                    color="purple accent-4"
+                    dense
+                    clearable
+                    single-line
+                    shaped
+                    prefix="https://twitch.tv/"
+                    :hint="$t('components_player_playeravatar.entertwitchname')"
+                  />
+                  <v-text-field
+                    v-model="userProfile.youtube"
+                    :prepend-icon="mdiYoutube"
+                    color="red darken-2"
+                    dense
+                    clearable
+                    single-line
+                    shaped
+                    :hint="$t('components_player_playeravatar.enterytname')"
+                    prefix="https://www.youtube.com/"
+                  />
+                  <v-text-field
+                    v-model="userProfile.twitter"
+                    :prepend-icon="mdiTwitter"
+                    color="blue darken-2"
+                    dense
+                    clearable
+                    single-line
+                    shaped
+                    :hint="$t('components_player_playeravatar.entertwittername')"
+                    prefix="https://www.twitter.com/"
+                  />
+                  <v-text-field
+                    v-model="userProfile.trovo"
+                    prepend-icon="$trovo"
+                    color="green darken-3"
+                    dense
+                    clearable
+                    single-line
+                    shaped
+                    :hint="$t('components_player_playeravatar.entertrovoname')"
+                    prefix="https://trovo.live/"
+                  />
+                  <v-text-field
+                    v-model="userProfile.homePage"
+                    :prepend-icon="mdiHome"
+                    color="blue darken-2"
+                    dense
+                    :rules="[rules.maxLength(50)]"
+                    single-line
+                    clearable
+                    shaped
+                    :hint="$t('components_player_playeravatar.entercustomhp')"
+                    label="Homepage"
+                  />
+                  <v-container>
+                    <v-checkbox
+                      v-model="userProfile.aliasSettings.showAka"
+                      dense
+                      class="alias-checkbox"
+                      :prepend-icon="mdiAccountCheck"
+                      :label="$t('components_player_playeravatar.showalias')"
+                    />
+                    <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
+                    <!-- <v-checkbox dense class="alias-checkbox"
+                      prepend-icon="$w3info"
+                      v-model="userProfile.aliasSettings.showW3info"
+                      :label="`Show Warcraft3.info Profile Link`"
+                    />
+                    <v-checkbox dense class="alias-checkbox"
+                      prepend-icon="$liquipedia"
+                      v-model="userProfile.aliasSettings.showLiquipedia"
+                      :label="`Show Liquipedia Page Link`"
+                    /> -->
+                  </v-container>
+                </v-row>
+                <v-row no-gutters class="countryInput">
+                  <v-col md="12">
+                    <v-autocomplete
+                      v-model="selectedCountry"
+                      :prepend-icon="mdiFlag"
+                      clearable
+                      :item-value="countryCode"
+                      :items="countries"
+                      :filter="countryFilter"
+                      :label="$t('components_player_playeravatar.selectcountry')"
+                      item-text="country"
+                      :return-object="false"
+                    >
+                      <template v-slot:item="{ item }">
+                        <country-flag :country="item.countryCode" size="normal" />
+                        {{ item.country }}
+                        <v-spacer />
+                      </template>
+                      <template v-slot:selection="{ item }">
+                        <country-flag :country="item.countryCode" size="normal" />
+                        <span class="pr-2">{{ item.country }}</span>
+                      </template>
+                    </v-autocomplete>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-textarea
+                      v-model="userProfile.about"
+                      outlined
+                      name="input-7-1"
+                      label="About"
+                      clearable
+                      :rules="[rules.maxLength(300)]"
+                      :hint="$t('components_player_playeravatar.aboutdesc')"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn color="blue darken-1" text @click="resetUserProfile">
+                {{ $t("components_player_playeravatar.close") }}
               </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="text-h5">
-                  {{ $t("components_player_playeravatar.userprofile") }}
-                </span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-text-field
-                      v-model="userProfile.twitch"
-                      :prepend-icon="mdiTwitch"
-                      color="purple accent-4"
-                      dense
-                      clearable
-                      single-line
-                      shaped
-                      prefix="https://twitch.tv/"
-                      :hint="$t('components_player_playeravatar.entertwitchname')"
-                    />
-                    <v-text-field
-                      v-model="userProfile.youtube"
-                      :prepend-icon="mdiYoutube"
-                      color="red darken-2"
-                      dense
-                      clearable
-                      single-line
-                      shaped
-                      :hint="$t('components_player_playeravatar.enterytname')"
-                      prefix="https://www.youtube.com/"
-                    />
-                    <v-text-field
-                      v-model="userProfile.twitter"
-                      :prepend-icon="mdiTwitter"
-                      color="blue darken-2"
-                      dense
-                      clearable
-                      single-line
-                      shaped
-                      :hint="$t('components_player_playeravatar.entertwittername')"
-                      prefix="https://www.twitter.com/"
-                    />
-                    <v-text-field
-                      v-model="userProfile.trovo"
-                      prepend-icon="$trovo"
-                      color="green darken-3"
-                      dense
-                      clearable
-                      single-line
-                      shaped
-                      :hint="$t('components_player_playeravatar.entertrovoname')"
-                      prefix="https://trovo.live/"
-                    />
-                    <v-text-field
-                      v-model="userProfile.homePage"
-                      :prepend-icon="mdiHome"
-                      color="blue darken-2"
-                      dense
-                      :rules="[rules.maxLength(50)]"
-                      single-line
-                      clearable
-                      shaped
-                      :hint="$t('components_player_playeravatar.entercustomhp')"
-                      label="Homepage"
-                    />
-                    <v-container>
-                      <v-checkbox
-                        v-model="userProfile.aliasSettings.showAka"
-                        dense
-                        class="alias-checkbox"
-                        :prepend-icon="mdiAccountCheck"
-                        :label="$t('components_player_playeravatar.showalias')"
-                      />
-                      <!-- THIS FEATURE IS WAITING ON BETTER ICONS - DO NOT USE UNTIL NEW ICONS -->
-                      <!-- <v-checkbox dense class="alias-checkbox"
-                        prepend-icon="$w3info"
-                        v-model="userProfile.aliasSettings.showW3info"
-                        :label="`Show Warcraft3.info Profile Link`"
-                      />
-                      <v-checkbox dense class="alias-checkbox"
-                        prepend-icon="$liquipedia"
-                        v-model="userProfile.aliasSettings.showLiquipedia"
-                        :label="`Show Liquipedia Page Link`"
-                      /> -->
-                    </v-container>
-                  </v-row>
-                  <v-row no-gutters class="countryInput">
-                    <v-col md="12">
-                      <v-autocomplete
-                        v-model="selectedCountry"
-                        :prepend-icon="mdiFlag"
-                        clearable
-                        :item-value="countryCode"
-                        :items="countries"
-                        :filter="countryFilter"
-                        :label="$t('components_player_playeravatar.selectcountry')"
-                        item-text="country"
-                        :return-object="false"
-                      >
-                        <template v-slot:item="{ item }">
-                          <country-flag :country="item.countryCode" size="normal" />
-                          {{ item.country }}
-                          <v-spacer />
-                        </template>
-                        <template v-slot:selection="{ item }">
-                          <country-flag :country="item.countryCode" size="normal" />
-                          <span class="pr-2">{{ item.country }}</span>
-                        </template>
-                      </v-autocomplete>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-textarea
-                        v-model="userProfile.about"
-                        outlined
-                        name="input-7-1"
-                        label="About"
-                        clearable
-                        :rules="[rules.maxLength(300)]"
-                        :hint="$t('components_player_playeravatar.aboutdesc')"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="blue darken-1" text @click="resetUserProfile">
-                  {{ $t("components_player_playeravatar.close") }}
-                </v-btn>
-                <v-btn color="blue darken-1" text @click="saveUserProfile">
-                  {{ $t("components_player_playeravatar.save") }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-col>
-      </v-row>
-    </template>
+              <v-btn color="blue darken-1" text @click="saveUserProfile">
+                {{ $t("components_player_playeravatar.save") }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

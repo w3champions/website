@@ -16,13 +16,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
-          <template>
-            <v-text-field
-              v-model="tableSearch"
-              label="Search ban"
-              :prepend-icon="mdiMagnify"
-            />
-          </template>
+          <v-text-field v-model="tableSearch" label="Search ban" :prepend-icon="mdiMagnify" />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
@@ -149,7 +143,7 @@
         </td>
         <td v-else>All</td>
       </template>
-      <template v-slot:#[`item.actions`]="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>

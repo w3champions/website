@@ -72,6 +72,16 @@ module.exports = {
     "vue/attribute-hyphenation": ["off"],
     "vue/singleline-html-element-content-newline": ["off"],
     "vue/no-v-html": ["off"],
-    "vue/no-lone-template": ["off"],
+    "vue/no-lone-template": ["warn"],
+
+    // Vue rules for Vue 3 migration
+    "vue/no-deprecated-delete-set": "warn",
+    "vue/no-deprecated-dollar-listeners-api": "warn",
+    "vue/no-deprecated-model-definition": "warn",
+    "vue/no-deprecated-props-default-this": "warn",
+    "vue/no-deprecated-slot-attribute": "warn",
+    "vue/prefer-import-from-vue": "warn",
+    // "vue/no-deprecated-v-bind-sync": "warn",
+    // "vue/no-v-for-template-key-on-child": "warn",
   },
 };
