@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "npm run dev",
     "dev": "vite -d --host 0.0.0.0",
     "serve:prod": "npm run build:prod && http-server ./dist",
     "build:prod": "npm run generate-locales && rimraf ./dist && vite build",
