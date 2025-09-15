@@ -1,6 +1,6 @@
 <template>
   <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
-    <template v-for="h in headers" v-slot:[`header.${h.text}`]="{ header }">
+    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ header }">
       <v-tooltip :key="h.text" top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ header.text }}</span>
@@ -57,6 +57,7 @@ interface ModeStatsGridHeader {
   align: string;
   sortable: boolean;
   tooltip: TranslateResult;
+  value: string;
 }
 
 export default defineComponent({
@@ -125,24 +126,28 @@ export default defineComponent({
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mode"),
+        value: "mode",
       },
       {
         text: t("components_player_modestatsgrid.winloss"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.winloss"),
+        value: "winloss",
       },
       {
         text: t("components_player_modestatsgrid.mmr"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mmr"),
+        value: "mmr",
       },
       {
         text: t("components_player_modestatsgrid.level"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.leveldesc"),
+        value: "level",
       },
     ];
 
