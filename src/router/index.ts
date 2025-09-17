@@ -48,6 +48,7 @@ import AdminDriftDetection from "@/components/admin/AdminDriftDetection.vue";
 import AdminMaps from "@/components/admin/AdminMaps.vue";
 import AdminTournaments from "@/components/admin/AdminTournaments.vue";
 import AdminPermissions from "@/components/admin/AdminPermissions.vue";
+import AdminApiTokens from "@/components/admin/AdminApiTokens.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import Rewards from "@/views/Rewards.vue";
@@ -250,6 +251,7 @@ const routes: RouteConfig[] = [
       { path: "admin-maps", name: EAdminRouteName.MANAGE_MAPS, component: AdminMaps },
       { path: "admin-tournaments", name: EAdminRouteName.MANAGE_TOURNAMENTS, component: AdminTournaments },
       { path: "admin-permissions", name: EAdminRouteName.MANAGE_PERMISSIONS, component: AdminPermissions },
+      { path: "admin-api-tokens", name: EAdminRouteName.MANAGE_API_TOKENS, component: AdminApiTokens },
       { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
     ],
