@@ -69,7 +69,7 @@ import {
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
-  mdiAccountMultiple, mdiRadar, mdiAccountHeart
+  mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi
 } from "@mdi/js";
 
 export default defineComponent({
@@ -357,6 +357,13 @@ export default defineComponent({
             permission: EPermission.Permissions,
             component: "admin-permissions",
             routeName: EAdminRouteName.MANAGE_PERMISSIONS,
+          },
+          {
+            title: "API Tokens",
+            icon: mdiApi,
+            permission: EPermission.Permissions,
+            component: "admin-api-tokens",
+            routeName: EAdminRouteName.MANAGE_API_TOKENS,
           },
         ],
       },
