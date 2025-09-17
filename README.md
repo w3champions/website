@@ -24,7 +24,7 @@ npm run serve:dev
 ### Lints and fixes files
 
 ```
-npm run lint
+npm run lint:fix
 ```
 
 ### Customize configuration

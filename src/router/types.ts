@@ -25,6 +25,7 @@ export enum EAdminRouteName {
   MANAGE_PERMISSIONS = "Admin - Manage Permissions",
   VIEW_SERVER_LOGS = "Admin - View Server Logs",
   SERVER_LOG = "Admin - Server Log",
+  MANAGE_API_TOKENS = "Admin - Manage API Tokens",
 }
 
 export enum EStatisticsRouteName {
