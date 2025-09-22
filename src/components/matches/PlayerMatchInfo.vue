@@ -16,7 +16,7 @@
           @click.right="openProfileInNewTab()"
         >
           {{ nameWithoutBtag }}
-          <span class="number-text">({{ currentRating }})</span>
+          <span class="number-text">({{ currentRating }}<span v-if="quantilePercentage !== null">|{{ quantilePercentage }}%</span>)</span>
           <span v-if="mmrChange !== 0" class="number-text" :class="won">
             <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
             <span v-else>{{ mmrChange }}</span>
@@ -43,6 +43,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from "vue";
 import { useRouter } from "vue-router/composables";
+import isNil from "lodash/isNil";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
@@ -128,6 +129,13 @@ export default defineComponent({
       return 0;
     });
 
+    const quantilePercentage = computed<number | null>(() => {
+      if (!isNil(props.player.oldMmrQuantile)) {
+        return Math.round(props.player.oldMmrQuantile * 1000) / 10;
+      }
+      return null;
+    });
+
     function openProfileInNewTab() {
       if (!showPlayerInfo.value) return;
 
@@ -155,6 +163,7 @@ export default defineComponent({
       textClass,
       nameWithoutBtag,
       mmrChange,
+      quantilePercentage,
       openProfileInNewTab,
       goToPlayer,
     };
