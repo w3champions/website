@@ -8,6 +8,7 @@ export type DataTableOptions = {
 
 export type PlayerInTeam = {
   oldMmr: number;
+  oldMmrQuantile?: number;
   currentMmr: number;
   battleTag: string;
   inviteName?: string;
