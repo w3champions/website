@@ -28,7 +28,12 @@
               {{ item.rank !== 0 ? item.mmr : "-" }}
             </div>
             <div v-if="item.rank !== 0" class="sub-value">
-              {{ getTopPercent(item) }}
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <span v-on="on">{{ $t("common.top") }} {{ getTopPercent(item) }}%</span>
+                </template>
+                <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: getTopPercent(item) }) }}</span>
+              </v-tooltip>
             </div>
           </td>
           <td class="number-text text-center cell" style="min-width: 100px">
@@ -111,13 +116,7 @@ export default defineComponent({
         return "";
       }
       const quantilePerc = modeStat.quantile * 100;
-      const topPerc = 100 - quantilePerc;
-
-      if (topPerc > 90) {
-        return "";
-      }
-
-      return `${t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
+      return quantilePerc.toFixed(1);
     }
 
     const headers: ModeStatsGridHeader[] = [
