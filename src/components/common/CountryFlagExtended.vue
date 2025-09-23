@@ -66,5 +66,6 @@ export default defineComponent({
 
 .country-flag {
   font-size: 0.875rem;
+  vertical-align: middle;
 }
 </style>
