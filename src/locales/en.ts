@@ -499,9 +499,6 @@ const en = {
     showHeroIcons: "Show Heroes",
     hideHeroIcons: "Hide Heroes",
   },
-  components_matches_playermatchinfo: {
-    quantileTooltip: "Performing better than {percentage}% of players",
-  },
 
   proxies: {
     eu_east3_via_eu_central2: "EU East 3 via EU Central 2",
