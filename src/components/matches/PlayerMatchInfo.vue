@@ -16,8 +16,13 @@
           @click.right="openProfileInNewTab()"
         >
           {{ nameWithoutBtag }}
-          <span class="number-text">({{ currentRating }}<span v-if="quantilePercentage !== null">|{{ quantilePercentage }}%</span>)</span>
-          <span v-if="mmrChange !== 0" class="number-text" :class="won">
+          <span class="number-text rating-text">(<v-tooltip v-if="quantilePercentage !== null" top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">{{ quantilePercentage }}% · </span>
+            </template>
+            <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: quantilePercentage }) }}</span>
+          </v-tooltip>{{ currentRating }})</span>
+          <span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
             <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
             <span v-else>{{ mmrChange }}</span>
           </span>
@@ -129,9 +134,10 @@ export default defineComponent({
       return 0;
     });
 
-    const quantilePercentage = computed<number | null>(() => {
+    const quantilePercentage = computed<string | null>(() => {
       if (!isNil(props.player.oldMmrQuantile)) {
-        return Math.round(props.player.oldMmrQuantile * 1000) / 10;
+        const percentage = Math.round(props.player.oldMmrQuantile * 1000) / 10;
+        return percentage.toFixed(1);
       }
       return null;
     });
@@ -217,6 +223,10 @@ export default defineComponent({
   .name-link {
     max-width: 100%;
   }
+}
+
+.rating-text {
+  font-size: 0.875em;
 }
 
 </style>
