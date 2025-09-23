@@ -25,7 +25,7 @@
           {{ nameWithoutBtag }}
         </a>
 
-        <span v-if="left && (player.countryCode || player.location)" class="" >
+        <span v-if="left && (player.countryCode || player.location)">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
@@ -35,7 +35,7 @@
       <span class="mmr-line truncated-text">
         <span class="number-text rating-text"><v-tooltip v-if="quantilePercentage !== null" top>
           <template v-slot:activator="{ on }">
-            <span v-on="on" class="top-percentage-text">Top {{ quantilePercentage }}% · </span>
+            <span class="top-percentage-text" v-on="on">Top {{ quantilePercentage }}% · </span>
           </template>
           <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: quantilePercentage }) }}</span>
         </v-tooltip>MMR {{ currentRating }}</span>
