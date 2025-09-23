@@ -33,12 +33,7 @@
         </span>
       </span>
       <span class="mmr-line truncated-text">
-        <span class="number-text rating-text"><v-tooltip v-if="quantilePercentage !== null" top>
-          <template v-slot:activator="{ on }">
-            <span class="top-percentage-text" v-on="on">Top {{ quantilePercentage }}% · </span>
-          </template>
-          <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: quantilePercentage }) }}</span>
-        </v-tooltip>MMR {{ currentRating }}</span>
+        <span class="number-text rating-text"><span v-if="topPercentage !== null" class="top-percentage-text">{{ $t("common.top") }} {{ topPercentage }}% · </span>MMR {{ currentRating }}</span>
         <span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
           <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
           <span v-else>{{ mmrChange }}</span>
@@ -144,9 +139,9 @@ export default defineComponent({
       return 0;
     });
 
-    const quantilePercentage = computed<string | null>(() => {
+    const topPercentage = computed<string | null>(() => {
       if (!isNil(props.player.oldMmrQuantile)) {
-        const percentage = Math.round(props.player.oldMmrQuantile * 1000) / 10;
+        const percentage = 100 - Math.round(props.player.oldMmrQuantile * 1000) / 10;
         return percentage.toFixed(1);
       }
       return null;
@@ -179,7 +174,7 @@ export default defineComponent({
       textClass,
       nameWithoutBtag,
       mmrChange,
-      quantilePercentage,
+      topPercentage,
       openProfileInNewTab,
       goToPlayer,
     };
