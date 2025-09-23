@@ -111,13 +111,8 @@ export default defineComponent({
         return "";
       }
       const quantilePerc = modeStat.quantile * 100;
-      const topPerc = 100 - quantilePerc;
 
-      if (topPerc > 90) {
-        return "";
-      }
-
-      return `${t("common.top")} ${Math.max(topPerc, 0.1).toFixed(1)}%`;
+      return `${t("common.top")} ${Math.max(quantilePerc, 0.1).toFixed(1)}%`;
     }
 
     const headers: ModeStatsGridHeader[] = [
