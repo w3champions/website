@@ -8,31 +8,41 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
+
+        <span v-if="!left && (player.countryCode || player.location)" class="" style="height: 12px;">
+          <country-flag-extended
+            :countryCode="player.countryCode"
+            :location="player.location"
+          />
+        </span>
         <a
-          class="name-link"
+          class="truncated-text"
           :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
           @click="notClickable ? null : goToPlayer()"
           @click.middle="openProfileInNewTab()"
           @click.right="openProfileInNewTab()"
         >
           {{ nameWithoutBtag }}
-          <span class="number-text rating-text">(<v-tooltip v-if="quantilePercentage !== null" top>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">{{ quantilePercentage }}% · </span>
-            </template>
-            <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: quantilePercentage }) }}</span>
-          </v-tooltip>{{ currentRating }})</span>
-          <span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
-            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-            <span v-else>{{ mmrChange }}</span>
-          </span>
         </a>
+
+        <span v-if="left && (player.countryCode || player.location)" class="" >
+          <country-flag-extended
+            :countryCode="player.countryCode"
+            :location="player.location"
+          />
+        </span>
       </span>
-      <span v-if="player.countryCode || player.location" class="d-flex justify-center align-center" style="height: 16px;">
-        <country-flag-extended
-          :countryCode="player.countryCode"
-          :location="player.location"
-        />
+      <span class="mmr-line truncated-text">
+        <span class="number-text rating-text"><v-tooltip v-if="quantilePercentage !== null" top>
+          <template v-slot:activator="{ on }">
+            <span v-on="on" class="top-percentage-text">Top {{ quantilePercentage }}% · </span>
+          </template>
+          <span>{{ $t("components_matches_playermatchinfo.quantileTooltip", { percentage: quantilePercentage }) }}</span>
+        </v-tooltip>MMR {{ currentRating }}</span>
+        <span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+          <span v-else>{{ mmrChange }}</span>
+        </span>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
     </div>
@@ -211,22 +221,31 @@ export default defineComponent({
 
 }
 
-.name-link {
+.truncated-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;
   max-width: 150px;
 }
 
 @media (min-width: 960px) {
-  .name-link {
+  .truncated-text {
     max-width: 100%;
   }
 }
 
 .rating-text {
-  font-size: 0.875em;
+  font-size: 0.925em;
+}
+
+.mmr-line {
+  margin-top: -3px
+}
+
+@media (max-width: 959px) {
+  .top-percentage-text {
+    display: none;
+  }
 }
 
 </style>

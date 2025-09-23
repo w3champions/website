@@ -54,6 +54,7 @@
               <v-row
                 v-if="!isFfa(item.gameMode)"
                 :class="{ clickable: !unfinished }"
+                class="no-wrap"
                 @click="goToMatchDetailPage(item)"
               >
                 <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
@@ -374,5 +375,9 @@ export default defineComponent({
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;
+}
+
+.no-wrap {
+  flex-wrap: nowrap !important;
 }
 </style>
