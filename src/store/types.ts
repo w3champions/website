@@ -22,6 +22,16 @@ export type PlayerInTeam = {
   countryCode?: string;
   twitch?: string | null;
   heroes: Hero[];
+  ranking?: Ranking;
+};
+
+export type Ranking = {
+  rp: number;
+  rank: number;
+  division?: number;
+  leagueId?: number;
+  leagueOrder?: number;
+  progress?: number;
 };
 
 export type Team = {
