@@ -22,7 +22,15 @@
           @click.middle="openProfileInNewTab()"
           @click.right="openProfileInNewTab()"
         >
-          {{ nameWithoutBtag }}
+          {{ nameWithoutBtag }} (<v-tooltip v-if="topPercentage !== null" top>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on">{{ currentRating }}</span>
+            </template>
+            <span>{{ $t("common.top") }} {{ topPercentage }}%</span>
+          </v-tooltip><span v-else>{{ currentRating }}</span>)<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
+            <span v-else>{{ mmrChange }}</span>
+          </span>
         </a>
 
         <span v-if="left && (player.countryCode || player.location)">
@@ -32,12 +40,8 @@
           />
         </span>
       </span>
-      <span class="mmr-line truncated-text">
-        <span class="number-text rating-text"><span v-if="topPercentage !== null" class="top-percentage-text">{{ $t("common.top") }} {{ topPercentage }}% · </span>MMR {{ currentRating }}</span>
-        <span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
-          <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-          <span v-else>{{ mmrChange }}</span>
-        </span>
+      <span class="secondary-line truncated-text">
+        <span class="number-text ranking-text"><span v-if="leagueName !== null" class="league-ranking-text">{{ leagueName }} {{ leagueDivision }} #{{ leagueRank }}</span></span>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
     </div>
@@ -130,6 +134,8 @@ export default defineComponent({
     const textClass = ref<string>(props.left ? "player-info__right" : "player-info__left");
     const nameWithoutBtag = ref<string>(props.player.name);
     const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
+    const leagueDivision = ref<number | null>(props.player.ranking?.division || null);
+    const leagueRank = ref<number | null>(props.player.ranking?.rank || null);
 
     const mmrChange = computed<number>(() => {
       if (props.player.oldMmr && props.player.currentMmr) {
@@ -146,6 +152,31 @@ export default defineComponent({
       }
       return null;
     });
+
+    const leagueName = computed<string | null>(() => {
+        switch (props.player.ranking?.leagueOrder) {
+          case 0:
+            return "Grand Master";
+          case 1:
+            return "Master";
+          case 2:
+            return "Adept";
+          case 3:
+            return "Diamond";
+          case 4:
+            return "Platinum";
+          case 5:
+            return "Gold";
+          case 6:
+            return "Silver";
+          case 7:
+            return "Bronze";
+          case 8:
+            return "Grass";
+          default:
+            return null;
+        }
+      });
 
     function openProfileInNewTab() {
       if (!showPlayerInfo.value) return;
@@ -175,6 +206,9 @@ export default defineComponent({
       nameWithoutBtag,
       mmrChange,
       topPercentage,
+      leagueName,
+      leagueDivision,
+      leagueRank,
       openProfileInNewTab,
       goToPlayer,
     };
@@ -229,11 +263,11 @@ export default defineComponent({
   }
 }
 
-.rating-text {
+.ranking-text {
   font-size: 0.925em;
 }
 
-.mmr-line {
+.secondary-line {
   margin-top: -3px
 }
 
