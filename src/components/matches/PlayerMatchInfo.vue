@@ -41,7 +41,7 @@
         </span>
       </span>
       <span class="secondary-line truncated-text">
-        <span class="number-text ranking-text"><span v-if="leagueName !== null" class="league-ranking-text">{{ leagueName }} {{ leagueDivision }} #{{ leagueRank }}</span></span>
+        <span class="number-text ranking-text"><span v-if="leagueName !== null" class="league-ranking-text">{{ leagueName }} <span v-if="leagueDivision !== null">{{ leagueDivision }}</span><span v-else>#{{ leagueRank }}</span></span></span>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
     </div>
