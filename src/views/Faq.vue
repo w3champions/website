@@ -2,24 +2,36 @@
   <v-container>
     <v-card tile>
       <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
-      <v-card-text>
-        <v-expansion-panels tile>
-          <v-expansion-panel v-for="(faq, i) in faqs" :key="i" tile>
-            <v-expansion-panel-header>
-              <div>{{ faq.question }}</div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <div v-html="faq.answer"></div>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-card-text>
+      <v-tabs>
+        <v-tab :class="{ 'v-tab--active': tab === 0 }" @click="navigateToFaq">{{ $t("views_app.faq") }}</v-tab>
+        <v-tab :class="{ 'v-tab--active': tab === 1 }" @click="navigateToSetupGuides">{{ $t("views_setupguides.title") }}</v-tab>
+      </v-tabs>
+      
+      <div v-if="tab === 0">
+        <v-card-text>
+          <v-expansion-panels tile>
+            <v-expansion-panel v-for="(faq, i) in faqs" :key="i" tile>
+              <v-expansion-panel-header>
+                <div>{{ faq.question }}</div>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <div v-html="faq.answer"></div>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-card-text>
+      </div>
+      
+      <div v-if="tab === 1">
+        <router-view />
+      </div>
     </v-card>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router/composables";
 import { API_URL } from "@/main";
 
 interface Faq {
@@ -31,7 +43,30 @@ export default defineComponent({
   name: "FaqView",
   components: {},
   setup() {
+    const route = useRoute();
+    const router = useRouter();
     const faqs = ref<Faq[]>([]);
+    const tab = ref(0);
+
+    const updateTabFromRoute = () => {
+      if (route.path.includes('/faq/setup-guides')) {
+        tab.value = 1; // Setup Guides tab
+      } else {
+        tab.value = 0; // FAQ tab
+      }
+    };
+
+    const navigateToFaq = () => {
+      if (route.path !== '/faq') {
+        router.push('/faq');
+      }
+    };
+
+    const navigateToSetupGuides = () => {
+      if (!route.path.includes('/faq/setup-guides')) {
+        router.push('/faq/setup-guides');
+      }
+    };
 
     onMounted(async (): Promise<void> => {
       if (API_URL.includes("test")) {
@@ -39,7 +74,12 @@ export default defineComponent({
       } else {
         await setNewsContent("prod");
       }
+
+      updateTabFromRoute();
     });
+
+    // Watch for route changes
+    watch(() => route.path, updateTabFromRoute);
 
     async function setNewsContent(stage: string) {
       const mdNewsResponse = await fetch(
@@ -50,6 +90,9 @@ export default defineComponent({
 
     return {
       faqs,
+      tab,
+      navigateToFaq,
+      navigateToSetupGuides,
     };
   },
 });

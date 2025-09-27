@@ -8,12 +8,12 @@ import Imprint from "@/views/Imprint.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
-import SetupGuides from "@/views/SetupGuides.vue";
 import Faq from "@/views/Faq.vue";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
 import LauncherSetup from "@/components/setup-guides/LauncherSetup.vue";
 import InstallingWar3 from "@/components/setup-guides/InstallingWar3.vue";
+import SetupGuidesContainer from "@/components/SetupGuidesContainer.vue";
 import PlayerArrangedTeamsTab from "@/components/player/tabs/PlayerArrangedTeamsTab.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import ClanOverview from "@/components/clans/ClanOverview.vue";
@@ -53,7 +53,7 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
-import { EAdminRouteName, ESetupGuidesRouteName, EStatisticsRouteName } from "./types";
+import { EAdminRouteName, EStatisticsRouteName } from "./types";
 
 Vue.use(VueRouter);
 
@@ -71,30 +71,49 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/faq",
-    name: "FAQ",
     component: Faq,
+    children: [
+      {
+        path: "",
+        name: "FAQ",
+      },
+      {
+        path: "setup-guides",
+        component: SetupGuidesContainer,
+        children: [
+          {
+            path: "",
+            redirect: "launcher-setup",
+          },
+          {
+            path: "launcher-setup",
+            name: "Launcher Setup",
+            component: LauncherSetup,
+          },
+          {
+            path: "installing-war3",
+            name: "Installing War3",
+            component: InstallingWar3,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "/getting-started",
-    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
+    redirect: "/faq/setup-guides",
   },
   {
     path: "/setup-guides",
-    component: SetupGuides,
-    name: "Setup Guides",
-    redirect: { name: ESetupGuidesRouteName.LAUNCHER_SETUP },
-    children: [
-      {
-        path: "launcher-setup",
-        component: LauncherSetup,
-        name: ESetupGuidesRouteName.LAUNCHER_SETUP,
-      },
-      {
-        path: "installing-war3",
-        component: InstallingWar3,
-        name: ESetupGuidesRouteName.INSTALLING_WAR3,
-      },
-    ],
+    redirect: "/faq/setup-guides",
+  },
+  {
+    path: "/setup-guides/launcher-setup",
+    redirect: "/faq/setup-guides/launcher-setup",
+  },
+  {
+    path: "/setup-guides/installing-war3",
+    redirect: "/faq/setup-guides/installing-war3",
   },
   {
     path: "/imprint",

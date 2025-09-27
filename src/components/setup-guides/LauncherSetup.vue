@@ -2,10 +2,10 @@
   <v-row class="justify-center">
     <v-col>
       <v-container>
-        <v-card tile>
-          <v-card-title class="text-center">
-            {{ $t("views_gettingstarted.howtoinstall") }}
-          </v-card-title>
+        <div>
+          <div class="text-center mb-4">
+            <h2>{{ $t("views_gettingstarted.howtoinstall") }}</h2>
+          </div>
           <v-tabs v-model="tabsModel.self" vertical class="ml-5">
             <v-tabs-slider />
             <v-tab class="profileTab" :href="`#launcher`">
@@ -19,7 +19,7 @@
             </v-tab>
             <v-tabs-items :value="tabsModel.self" touchless>
               <v-tab-item value="launcher">
-                <v-card-text class="px-16">
+                <v-card-text class="pt-0 px-8">
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
                   <v-card-text>
@@ -68,8 +68,8 @@
                 </v-card-text>
               </v-tab-item>
               <v-tab-item value="windows-setup">
-                <v-card-text class="px-16">
-                  <v-alert outlined type="warning" prominent border="left">
+                <v-card-text class="pt-0 px-8">
+                  <v-alert outlined type="info" prominent border="left">
                     {{ alertMessage }}
                   </v-alert>
                   <h3 class="mt-10">
@@ -117,8 +117,8 @@
                 </v-card-text>
               </v-tab-item>
               <v-tab-item value="mac-setup">
-                <v-card-text class="px-16">
-                  <v-alert outlined type="warning" prominent border="left">
+                <v-card-text class="pt-0 px-8">
+                  <v-alert outlined type="info" prominent border="left">
                     {{ alertMessage }}
                   </v-alert>
                   <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
@@ -194,7 +194,7 @@
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
-        </v-card>
+        </div>
       </v-container>
     </v-col>
   </v-row>

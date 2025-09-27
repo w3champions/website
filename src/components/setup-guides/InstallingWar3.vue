@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="px-16">
+  <v-card-text class="px-8">
     <v-card-text>
       {{ $t("views_gettingstarted.introinstallwar3") }}
       <ul>

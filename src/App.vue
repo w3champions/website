@@ -239,11 +239,6 @@ export default defineComponent({
         to: "OverallStatistics",
       },
       {
-        title: "setup_guides",
-        icon: mdiCog,
-        to: "Setup Guides",
-      },
-      {
         title: "admin",
         icon: mdiAccountTie,
         to: "Admin",
