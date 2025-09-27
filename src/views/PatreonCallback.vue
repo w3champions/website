@@ -57,6 +57,7 @@ import { defineComponent, onMounted, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router/composables";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
+import { EMainRouteName } from "@/router/types";
 
 export default defineComponent({
   name: "PatreonCallback",
@@ -131,7 +132,7 @@ export default defineComponent({
     }
 
     function goToRewards() {
-      router.push({ name: "Rewards" });
+      router.push({ name: EMainRouteName.REWARDS });
     }
 
     onMounted(() => {

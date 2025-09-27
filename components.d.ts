@@ -134,6 +134,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SeasonBadge: typeof import('./src/components/player/SeasonBadge.vue')['default']
     SeasonSelect: typeof import('./src/components/common/SeasonSelect.vue')['default']
+    SetupGuidesContainer: typeof import('./src/components/SetupGuidesContainer.vue')['default']
     SignInDialog: typeof import('./src/components/common/SignInDialog.vue')['default']
     SmurfBattleTagDetailsTable: typeof import('./src/components/admin/smurf-detection/SmurfBattleTagDetailsTable.vue')['default']
     SocialBox: typeof import('./src/components/common/SocialBox.vue')['default']

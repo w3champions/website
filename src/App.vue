@@ -9,7 +9,7 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <router-link :to="{ name: 'Home' }">
+            <router-link :to="{ name: EMainRouteName.HOME }">
               <brand-logo :is-dark-theme="isDarkTheme.get()" />
             </router-link>
           </v-list-item-content>
@@ -43,7 +43,7 @@
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
       <v-toolbar-title class="pa-0">
-        <router-link :to="{ name: 'Home' }">
+        <router-link :to="{ name: EMainRouteName.HOME }">
           <brand-logo
             :is-dark-theme="isDarkTheme.get()"
             style="max-height: 30px"
@@ -96,7 +96,7 @@
         </v-list>
       </v-menu>
 
-      <v-btn text tile :to="{ name: 'Rewards' }">
+      <v-btn text tile :to="{ name: EMainRouteName.REWARDS }">
         <v-icon>{{ mdiTreasureChest }}</v-icon>
       </v-btn>
 
@@ -181,6 +181,7 @@ import {
   mdiViewList,
 } from "@mdi/js";
 import { battleTagToName } from "./helpers/profile";
+import { EMainRouteName } from "@/router/types";
 
 export type ItemType = {
   title: string;
@@ -221,37 +222,32 @@ export default defineComponent({
       {
         title: "tournaments",
         icon: mdiTrophy,
-        to: "Tournaments",
+        to: EMainRouteName.TOURNAMENTS,
       },
       {
         title: "rankings",
         icon: mdiViewList,
-        to: "Rankings",
+        to: EMainRouteName.RANKINGS,
       },
       {
         title: "matches",
         icon: mdiControllerClassic,
-        to: "Matches",
+        to: EMainRouteName.MATCHES,
       },
       {
         title: "statistics",
         icon: mdiChartAreaspline,
-        to: "OverallStatistics",
-      },
-      {
-        title: "setup_guides",
-        icon: mdiCog,
-        to: "Setup Guides",
+        to: EMainRouteName.OVERALL_STATISTICS,
       },
       {
         title: "admin",
         icon: mdiAccountTie,
-        to: "Admin",
+        to: EMainRouteName.ADMIN,
       },
       {
         title: "faq",
         icon: mdiHelpCircleOutline,
-        to: "FAQ",
+        to: EMainRouteName.FAQ,
         class: "d-none d-md-flex",
       },
     ];
@@ -415,6 +411,7 @@ export default defineComponent({
       activeLanguages,
       getTheme,
       setTheme,
+      EMainRouteName,
     };
   },
 });
