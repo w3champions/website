@@ -1,24 +1,18 @@
 <template>
-  <v-card-text class="px-16">
-    <v-card-text>
-      {{ $t("views_gettingstarted.introinstallwar3") }}
-      <ul>
-        <li>
-          {{ $t("views_gettingstarted.logoutinstall1") }}
-        </li>
-        <li>
-          {{ $t("views_gettingstarted.logoutinstall2") }}
-        </li>
-      </ul>
-      <br />
-      <img class="launcher-screenshot" src="/assets/installingWar3/install_unlogged.png" />
-      <br />
-      {{ $t("views_gettingstarted.loginbnet") }}
-      <br />
-      {{ $t("views_gettingstarted.playwar3") }}
-      <br />
-      <br />
-      <img class="launcher-screenshot" src="/assets/installingWar3/play_logged.png" />
+  <v-card-text class="px-4">
+    <v-card-text class="">
+      {{ $t("views_gettingstarted.installwar3intro") }}
+      <ol>
+        <li>{{ $t("views_gettingstarted.installwar3step1") }}</li>
+        <li>{{ $t("views_gettingstarted.installwar3step2") }}</li>
+        <img class="launcher-screenshot" src="/assets/installingWar3/log_out.png" />
+        <li>{{ $t("views_gettingstarted.installwar3step3") }}</li>
+        <li>{{ $t("views_gettingstarted.installwar3step4") }}</li>
+        <img class="launcher-screenshot" src="/assets/installingWar3/continue_without_logging_in.png" />
+        <li>{{ $t("views_gettingstarted.installwar3step5") }}</li>
+        <li>{{ $t("views_gettingstarted.installwar3step6") }}</li>
+        <li>{{ $t("views_gettingstarted.installwar3step7") }}</li>
+      </ol>
     </v-card-text>
   </v-card-text>
 </template>
@@ -74,7 +68,6 @@ li {
 }
 
 .launcher-screenshot {
-  width: 100%;
   margin-bottom: 10px;
 }
 </style>
