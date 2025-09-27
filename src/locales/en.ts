@@ -50,6 +50,7 @@ const en = {
   },
 
   gatewayNames: {
+    Global: "Global",
     Europe: "Europe",
     America: "America",
     China: "China",
