@@ -79,7 +79,7 @@ export default defineComponent({
           {
             label: String(t("components_overall-statistics_gamelengthchart.amountofgames")),
             data: games.value,
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            backgroundColor: "rgba(54, 162, 235, 0.5)",
             borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1,
           },
