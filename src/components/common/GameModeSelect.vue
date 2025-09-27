@@ -51,7 +51,7 @@ export default defineComponent({
     disabledModes: {
       type: Array<EGameMode>,
       required: false,
-      default: [],
+      default: () => [],
     }
   },
   setup: (props, context) => {
