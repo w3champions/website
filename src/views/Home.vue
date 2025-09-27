@@ -156,6 +156,7 @@ import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRouter } from "vue-router/composables";
+import { ESetupGuideRouteName } from "@/router/types";
 
 export default defineComponent({
   name: "HomeView",
@@ -196,7 +197,7 @@ export default defineComponent({
     }
 
     function goToSetupPage(): void {
-      router.push({ path: "/setup-guides/launcher-setup" });
+      router.push({ name: ESetupGuideRouteName.LAUNCHER_SETUP });
     }
 
     function goToProfile(rank: Ranking): void {

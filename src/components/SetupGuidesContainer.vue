@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router/composables";
+import { ESetupGuideRouteName } from "@/router/types";
 
 export default defineComponent({
   name: "SetupGuidesContainer",
@@ -27,7 +28,7 @@ export default defineComponent({
     const activeTab = ref(0);
 
     const updateActiveTab = () => {
-      if (route.path.includes('/installing-war3')) {
+      if (route.name === ESetupGuideRouteName.INSTALLING_WAR3) {
         activeTab.value = 1;
       } else {
         activeTab.value = 0;
@@ -41,11 +42,11 @@ export default defineComponent({
     watch(() => route.path, updateActiveTab);
 
     const navigateToLauncher = () => {
-      router.push('/faq/setup-guides/launcher-setup');
+      router.push({ name: ESetupGuideRouteName.LAUNCHER_SETUP });
     };
 
     const navigateToInstalling = () => {
-      router.push('/faq/setup-guides/installing-war3');
+      router.push({ name: ESetupGuideRouteName.INSTALLING_WAR3 });
     };
 
     return {

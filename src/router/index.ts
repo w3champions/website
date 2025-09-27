@@ -53,19 +53,19 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
-import { EAdminRouteName, EStatisticsRouteName } from "./types";
+import { EAdminRouteName, EStatisticsRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName } from "./types";
 
 Vue.use(VueRouter);
 
 const routes: RouteConfig[] = [
   {
     path: "/",
-    name: "Home",
+    name: EMainRouteName.HOME,
     component: Home,
   },
   {
     path: "/login",
-    name: "Login",
+    name: EMainRouteName.LOGIN,
     component: Login,
     props: (route: { query: { code: string } }) => ({ code: route.query.code }),
   },
@@ -75,7 +75,7 @@ const routes: RouteConfig[] = [
     children: [
       {
         path: "",
-        name: "FAQ",
+        name: EMainRouteName.FAQ,
       },
       {
         path: "setup-guides",
@@ -87,12 +87,12 @@ const routes: RouteConfig[] = [
           },
           {
             path: "launcher-setup",
-            name: "Launcher Setup",
+            name: ESetupGuideRouteName.LAUNCHER_SETUP,
             component: LauncherSetup,
           },
           {
             path: "installing-war3",
-            name: "Installing War3",
+            name: ESetupGuideRouteName.INSTALLING_WAR3,
             component: InstallingWar3,
           },
         ],
@@ -117,12 +117,12 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/imprint",
-    name: "Imprint",
+    name: EMainRouteName.IMPRINT,
     component: Imprint,
   },
   {
     path: "/rankings",
-    name: "Rankings",
+    name: EMainRouteName.RANKINGS,
     props: (route: {
       query: {
         season: string;
@@ -142,7 +142,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/countries",
-    name: "Country Rankings",
+    name: EMainRouteName.COUNTRY_RANKINGS,
     props: (route: {
       query: {
         season: string;
@@ -175,29 +175,29 @@ const routes: RouteConfig[] = [
     children: [
       {
         path: "",
-        name: "Player Profile",
+        name: EPlayerRouteName.PLAYER_PROFILE,
         props: true,
         component: PlayerProfileTab,
       },
       {
         path: "matches",
-        name: "Player Profile - Matches",
+        name: EPlayerRouteName.PLAYER_PROFILE_MATCHES,
         props: true,
         component: PlayerMatchesTab,
       },
       {
         path: "at-teams",
-        name: "Player Profile - Teams",
+        name: EPlayerRouteName.PLAYER_PROFILE_TEAMS,
         component: PlayerArrangedTeamsTab,
       },
       {
         path: "statistics",
-        name: "Player Profile - Statistics",
+        name: EPlayerRouteName.PLAYER_PROFILE_STATISTICS,
         component: PlayerStatisticTab,
       },
       {
         path: "clan",
-        name: "Player Profile - Clan",
+        name: EPlayerRouteName.PLAYER_PROFILE_CLAN,
         props: true,
         component: ClanOverview,
       },
@@ -205,19 +205,19 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/match/:matchId",
-    name: "Match",
+    name: EMainRouteName.MATCH,
     props: true,
     component: MatchDetail,
   },
   {
     path: "/matches",
-    name: "Matches",
+    name: EMainRouteName.MATCHES,
     component: Matches,
   },
   {
     path: "/OverallStatistics",
     component: OverallStatistics,
-    name: "OverallStatistics",
+    name: EMainRouteName.OVERALL_STATISTICS,
     redirect: { name: EStatisticsRouteName.PLAYER_ACTIVITY },
     children: [
       {
@@ -244,7 +244,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/admin",
-    name: "Admin",
+    name: EMainRouteName.ADMIN,
     component: Admin,
     children: [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
@@ -277,22 +277,22 @@ const routes: RouteConfig[] = [
   },
   {
     path: "/rewards",
-    name: "Rewards",
+    name: EMainRouteName.REWARDS,
     component: Rewards,
   },
   {
     path: "/patreon/callback",
-    name: "PatreonCallback",
+    name: EMainRouteName.PATREON_CALLBACK,
     component: PatreonCallback,
   },
   {
     path: "/tournaments",
-    name: "Tournaments",
+    name: EMainRouteName.TOURNAMENTS,
     component: TournamentsList,
   },
   {
     path: "/tournaments/:tournamentId",
-    name: "Tournament",
+    name: EMainRouteName.TOURNAMENT,
     props: true,
     component: TournamentDetail,
   },

@@ -34,3 +34,33 @@ export enum EStatisticsRouteName {
   WINRATES = "Statistics - Winrates",
   HEROES = "Statistics - Heroes",
 }
+
+export enum EMainRouteName {
+  HOME = "Home",
+  LOGIN = "Login",
+  FAQ = "FAQ",
+  IMPRINT = "Imprint",
+  RANKINGS = "Rankings",
+  COUNTRY_RANKINGS = "Country Rankings",
+  MATCH = "Match",
+  MATCHES = "Matches",
+  OVERALL_STATISTICS = "OverallStatistics",
+  ADMIN = "Admin",
+  REWARDS = "Rewards",
+  PATREON_CALLBACK = "PatreonCallback",
+  TOURNAMENTS = "Tournaments",
+  TOURNAMENT = "Tournament",
+}
+
+export enum EPlayerRouteName {
+  PLAYER_PROFILE = "Player Profile",
+  PLAYER_PROFILE_MATCHES = "Player Profile - Matches",
+  PLAYER_PROFILE_TEAMS = "Player Profile - Teams",
+  PLAYER_PROFILE_STATISTICS = "Player Profile - Statistics",
+  PLAYER_PROFILE_CLAN = "Player Profile - Clan",
+}
+
+export enum ESetupGuideRouteName {
+  LAUNCHER_SETUP = "Launcher Setup",
+  INSTALLING_WAR3 = "Installing War3",
+}

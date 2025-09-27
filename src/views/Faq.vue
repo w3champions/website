@@ -33,6 +33,7 @@
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router/composables";
 import { API_URL } from "@/main";
+import { EMainRouteName, ESetupGuideRouteName } from "@/router/types";
 
 interface Faq {
   question: string;
@@ -49,7 +50,7 @@ export default defineComponent({
     const tab = ref(0);
 
     const updateTabFromRoute = () => {
-      if (route.path.includes('/faq/setup-guides')) {
+      if (route.name === ESetupGuideRouteName.LAUNCHER_SETUP || route.name === ESetupGuideRouteName.INSTALLING_WAR3) {
         tab.value = 1; // Setup Guides tab
       } else {
         tab.value = 0; // FAQ tab
@@ -57,14 +58,14 @@ export default defineComponent({
     };
 
     const navigateToFaq = () => {
-      if (route.path !== '/faq') {
-        router.push('/faq');
+      if (route.name !== EMainRouteName.FAQ) {
+        router.push({ name: EMainRouteName.FAQ });
       }
     };
 
     const navigateToSetupGuides = () => {
-      if (!route.path.includes('/faq/setup-guides')) {
-        router.push('/faq/setup-guides');
+      if (route.name !== ESetupGuideRouteName.LAUNCHER_SETUP && route.name !== ESetupGuideRouteName.INSTALLING_WAR3) {
+        router.push({ name: ESetupGuideRouteName.LAUNCHER_SETUP });
       }
     };
 
