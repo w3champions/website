@@ -2,9 +2,9 @@
   <v-container>
     <v-card tile>
       <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
-      <v-tabs>
-        <v-tab :class="{ 'v-tab--active': tab === 0 }" @click="navigateToFaq">{{ $t("views_app.faq") }}</v-tab>
-        <v-tab :class="{ 'v-tab--active': tab === 1 }" @click="navigateToSetupGuides">{{ $t("views_setupguides.title") }}</v-tab>
+      <v-tabs v-model="tab">
+        <v-tab @click="navigateToFaq">{{ $t("views_app.faq") }}</v-tab>
+        <v-tab @click="navigateToSetupGuides">{{ $t("views_setupguides.title") }}</v-tab>
       </v-tabs>
       
       <div v-if="tab === 0">
