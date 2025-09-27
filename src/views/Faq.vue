@@ -6,7 +6,7 @@
         <v-tab @click="navigateToFaq">{{ $t("views_app.faq") }}</v-tab>
         <v-tab @click="navigateToSetupGuides">{{ $t("views_setupguides.title") }}</v-tab>
       </v-tabs>
-      
+
       <div v-if="tab === 0">
         <v-card-text>
           <v-expansion-panels tile>
@@ -21,7 +21,7 @@
           </v-expansion-panels>
         </v-card-text>
       </div>
-      
+
       <div v-if="tab === 1">
         <router-view />
       </div>

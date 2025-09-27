@@ -53,7 +53,7 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
-import { EAdminRouteName, EStatisticsRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName } from "./types";
+import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
 
 Vue.use(VueRouter);
 
