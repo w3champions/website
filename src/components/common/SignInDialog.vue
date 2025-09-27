@@ -18,7 +18,7 @@
                 max-width="48"
                 min-height="32"
                 max-height="48"
-                :src="`/assets/flags/${gateway.id}.svg`"
+                :src="gateway.image"
               />
             </v-col>
             <v-col cols="2" align-self="center">
@@ -64,13 +64,15 @@ export default defineComponent({
     const gateways = [
       {
         id: BnetOAuthRegion.eu,
-        name: t("gatewayNames.Europe"),
+        name: t("gatewayNames.Global"),
         uri: "https://eu.battle.net",
+        image: "/assets/flags/global.svg",
       },
       {
         id: BnetOAuthRegion.cn,
         name: t("gatewayNames.China"),
         uri: "https://www.battlenet.com.cn",
+        image: "/assets/flags/cn.svg",
       },
     ];
 
