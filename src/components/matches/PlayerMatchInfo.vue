@@ -9,39 +9,45 @@
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
 
-        <span v-if="!left && (player.countryCode || player.location)" class="" style="height: 12px;">
+        <span v-if="!left && (player.countryCode || player.location)">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
           />
         </span>
-        <a
-          class="truncated-text"
-          :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-          @click="notClickable ? null : goToPlayer()"
-          @click.middle="openProfileInNewTab()"
-          @click.right="openProfileInNewTab()"
-        >
-          {{ nameWithoutBtag }} (<v-tooltip v-if="topPercentage !== null" top>
-            <template v-slot:activator="{ on, attrs }">
-              <span v-bind="attrs" v-on="on">{{ currentRating }}</span>
-            </template>
-            <span>{{ $t("common.top") }} {{ topPercentage }}%</span>
-          </v-tooltip><span v-else>{{ currentRating }}</span>)<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
-            <span v-if="mmrChange > 0">+{{ mmrChange }}</span>
-            <span v-else>{{ mmrChange }}</span>
-          </span>
-        </a>
-
-        <span v-if="left && (player.countryCode || player.location)">
+        <v-tooltip top transition="none">
+          <template v-slot:activator="{ on, attrs }">
+            <a
+              class="truncated-text"
+              :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+              v-bind="attrs"
+              v-on="on"
+              @click="notClickable ? null : goToPlayer()"
+              @click.middle="openProfileInNewTab()"
+              @click.right="openProfileInNewTab()"
+            >
+              {{ nameWithoutBtag }} ({{ currentRating }})<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+                <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
+              </span>
+            </a>
+          </template>
+          <div>
+            <div>MMR: {{ currentRating }}<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+              <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
+            </span></div>
+            <div v-if="topPercentage !== null">Top: {{ topPercentage }}%</div>
+            <div class="d-flex align-center">
+              <img v-if="leagueName !== null" :src="`/assets/leagueIcons/${player.ranking?.leagueOrder}.png`" style="width: 16px; height: 16px; margin-right: 4px;" />
+              <span>{{ leagueName !== null ? leagueName + ' ' + (leagueDivision !== null ? leagueDivision : '#' + leagueRank) : $t('views_rankings.unranked') }}</span>
+            </div>
+          </div>
+        </v-tooltip>
+        <span v-if="left && (player.countryCode || player.location)" class="ml-1">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
           />
         </span>
-      </span>
-      <span class="secondary-line truncated-text">
-        <span class="number-text ranking-text"><span v-if="leagueName !== null" class="league-ranking-text">{{ leagueName }} <span v-if="leagueDivision !== null">{{ leagueDivision }}</span><span v-else>#{{ leagueRank }}</span></span></span>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
     </div>
