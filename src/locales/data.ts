@@ -529,6 +529,7 @@ const data = {
       GM_MINIDOTA_3ON3_AT: "MiniDota 3v3 AT",
     },
     gatewayNames: {
+      Global: "Global",
       Europe: "Europe",
       America: "America",
     },
@@ -1051,6 +1052,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "Глобальный",
       Europe: "Европа",
       America: "Америка",
     },
@@ -1507,6 +1509,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "글로벌",
       Europe: "유럽",
       America: "북미",
     },
@@ -2025,6 +2028,7 @@ const data = {
       GM_DOTA_5ON5_AT: "Dota 5v5 AT",
     },
     gatewayNames: {
+      Global: "全球",
       Europe: "欧洲",
       America: "美洲",
     },
@@ -2485,6 +2489,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "Global",
       Europe: "Europa",
       America: "Amerika",
     },
@@ -3034,6 +3039,7 @@ const data = {
       GM_FROSTCRAFT_4ON4: "Frostcraft 4v4",
     },
     gatewayNames: {
+      Global: "Globalna",
       Europe: "Europa",
       America: "Ameryka",
     },
@@ -3555,6 +3561,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "Глобальний",
       Europe: "Європа",
       America: "Америка",
     },
@@ -4074,6 +4081,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "Global",
       Europe: "Europa",
       America: "América",
     },
@@ -4604,6 +4612,7 @@ const data = {
       GM_FFA: "FFA",
     },
     gatewayNames: {
+      Global: "Global",
       Europe: "Europe",
       America: "Amérique",
     },
@@ -5168,6 +5177,7 @@ const data = {
       GM_PTR_1ON1: "1 na 1 sa PTR balansiranjem",
     },
     gatewayNames: {
+      Global: "Globalno",
       Europe: "Evropa",
       America: "Amerika",
     },
