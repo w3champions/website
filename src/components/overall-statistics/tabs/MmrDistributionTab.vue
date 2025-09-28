@@ -99,27 +99,36 @@ export default defineComponent({
         selectedSeasonRef.value = season;
         loadingData.value = true;
         if (verifiedBtag.value) {
-          await player.loadProfile({
-            battleTag: verifiedBtag.value,
-            freshLogin: false,
-          });
-          await player.loadGameModeStats({
-            battleTag: verifiedBtag.value,
-            season: season.id,
-          });
+          try {
+            await player.loadProfile({
+              battleTag: verifiedBtag.value,
+              freshLogin: false,
+            });
+            await player.loadGameModeStats({
+              battleTag: verifiedBtag.value,
+              season: season.id,
+            });
+          } catch (error) {
+            console.warn('Failed to load profile for season change:', error);
+          }
         }
         updateMMRDistribution();
       },
     });
 
     async function updateMMRDistribution() {
-      const payload: SeasonGameModeGateWayForMMR = {
-        season: selectedSeasonRef.value.id,
-        gameMode: selectedGameMode.value,
-        gateWay: selectedGateWay.value,
-      };
-      await overallStatsStore.loadMmrDistribution(payload);
-      loadingData.value = false;
+      try {
+        const payload: SeasonGameModeGateWayForMMR = {
+          season: selectedSeasonRef.value.id,
+          gameMode: selectedGameMode.value,
+          gateWay: selectedGateWay.value,
+        };
+        await overallStatsStore.loadMmrDistribution(payload);
+      } catch (error) {
+        console.warn('Failed to load MMR distribution:', error);
+      } finally {
+        loadingData.value = false;
+      }
     }
 
     function gameModeChanged(gameMode: EGameMode) {
@@ -137,6 +146,25 @@ export default defineComponent({
     async function init() {
       await loadActiveGameModes();
       await rankingsStore.retrieveSeasons();
+      
+      // If user is logged in and has a verified battle tag, ensure their profile is loaded
+      if (authCode.value && verifiedBtag.value) {
+        const needsProfileLoad = !player.battleTag || player.battleTag !== verifiedBtag.value;
+        if (needsProfileLoad) {
+          try {
+            await player.loadProfile({
+              battleTag: verifiedBtag.value,
+              freshLogin: false,
+            });
+            if (player.battleTag === verifiedBtag.value) {
+              await player.loadGameModeStats({});
+            }
+          } catch (error) {
+            console.warn('Failed to load user profile for MMR tab:', error);
+          }
+        }
+      }
+      
       selectedSeason.value = seasons.value[0];
     }
 

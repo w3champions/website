@@ -45,6 +45,7 @@ export const usePlayerStore = defineStore("player", {
           params.freshLogin ? oauthStore.token : null,
         );
         this.SET_PROFILE(profile);
+        this.SET_BATTLE_TAG(params.battleTag);
         this.SET_LOAD_PROFILE_ERROR(undefined);
         this.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
       } catch (err) {

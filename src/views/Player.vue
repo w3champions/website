@@ -254,8 +254,6 @@ export default defineComponent({
         stopLoadingMatches();
       }
 
-      playerStore.SET_BATTLE_TAG(battleTag.value);
-
       _intervalRefreshHandle = setInterval(async () => {
         await playerStore.loadOngoingPlayerMatch(battleTag.value);
       }, AppConstants.ongoingMatchesRefreshInterval);

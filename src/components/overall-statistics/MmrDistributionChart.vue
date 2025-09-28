@@ -15,6 +15,7 @@ import clamp from "lodash/clamp";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import { usePlayerStore } from "@/store/player/store";
+import { useOauthStore } from "@/store/oauth/store";
 import { ModeStat } from "@/store/player/types";
 
 export default defineComponent({
@@ -38,7 +39,14 @@ export default defineComponent({
   },
   setup(props) {
     const playerStore = usePlayerStore();
+    const oauthStore = useOauthStore();
     const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
+
+    const isLoggedInUserProfile = computed<boolean>(() => {
+      const isLoggedIn = Boolean(oauthStore.token);
+      const isOwnProfile = playerStore.battleTag === oauthStore.blizzardVerifiedBtag;
+      return isLoggedIn && isOwnProfile;
+    });
 
     const colors = computed(() => {
       const colors: string[] = [];
@@ -149,7 +157,8 @@ export default defineComponent({
     });
 
     const mmrDistributionChartOptions = computed<ChartOptions>(() => {
-      const annotations: { [key: string]: AnnotationOptions } = mmrGroupOfLoggedInPlayer.value
+      const isValidMMR = mmrGroupOfLoggedInPlayer.value > 0 && isLoggedInUserProfile.value;
+      const annotations: { [key: string]: AnnotationOptions } = isValidMMR
         ? {
           x: {
             type: "line",
