@@ -271,13 +271,13 @@
                       :return-object="false"
                     >
                       <template v-slot:item="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" />
+                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
                         {{ item.country }}
                         <v-spacer />
                       </template>
                       <template v-slot:selection="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" />
-                        <span class="pr-2">{{ item.country }}</span>
+                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
+                        {{ item.country }}
                       </template>
                     </v-autocomplete>
                   </v-col>
