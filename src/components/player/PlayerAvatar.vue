@@ -412,8 +412,8 @@ export default defineComponent({
       return countries.value.find((c) => c.countryCode === code)?.country || "";
     };
 
-    const displayCountry = computed(() => props.isLoggedInPlayer ? selectedCountry.value : personalSetting.value.country || getCountryName(displayCountryCode.value));
-    const displayCountryCode = computed(() => props.isLoggedInPlayer ? selectedCountryCode.value : personalSetting.value.location || personalSetting.value.countryCode || "");
+    const displayCountryCode = computed(() => personalSetting.value.countryCode || "");
+    const displayCountry = computed(() => personalSetting.value.country || getCountryName(displayCountryCode.value));
 
     const userProfile = computed<ProfilePlayerSocials>(() => {
       return {
