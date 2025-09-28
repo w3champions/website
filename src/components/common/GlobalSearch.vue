@@ -9,8 +9,8 @@
     :nudge-width="300"
     :close-on-content-click="false"
   >
-    <template v-slot:activator="{ on }">
-      <v-btn text tile v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn text tile v-bind="props">
         <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
@@ -32,24 +32,26 @@
           item-text="battleTag"
           item-value="battleTag"
         >
-          <template v-slot:item="data">
-            <v-list-item-avatar>
-              <img :src="getPlayerAvatarUrl(data.item)" />
-            </v-list-item-avatar>
-            <v-list-item-content>
+          <template v-slot:item="{ props, item }">
+            <v-list-item v-bind="props">
+              <template v-slot:prepend>
+                <v-avatar>
+                  <img :src="getPlayerAvatarUrl(item.raw)" />
+                </v-avatar>
+              </template>
               <v-list-item-title>
-                {{ data.item.battleTag }}
+                {{ item.raw.battleTag }}
               </v-list-item-title>
               <v-list-item-subtitle>
                 <div
-                  v-for="season in data.item.seasons"
+                  v-for="season in item.raw.seasons"
                   :key="season.id"
                   class="mr-1 mt-1 d-inline-block"
                 >
                   <season-badge :season="season" />
                 </div>
               </v-list-item-subtitle>
-            </v-list-item-content>
+            </v-list-item>
           </template>
           <template v-slot:append-item>
             <div v-intersect="endIntersect"></div>
@@ -67,9 +69,9 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchInfo } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { mdiMagnify } from "@mdi/js";
-import { Intersect } from "vuetify/lib";
+import { Intersect } from "vuetify/directives";
 
 export default defineComponent({
   name: "GlobalSearch",

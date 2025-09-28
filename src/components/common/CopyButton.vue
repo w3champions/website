@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn small v-bind="attrs" :aria-label="$t(`components_common_copybutton.${tooltipText}`)" v-on="on" @click="copy">
+    <template v-slot:activator="{ props }">
+      <v-btn small v-bind="props" :aria-label="$t(`components_common_copybutton.${tooltipText}`)" @click="copy">
         <v-icon>{{ mdiContentCopy }}</v-icon>
       </v-btn>
     </template>

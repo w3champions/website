@@ -11,8 +11,8 @@
           @gameModeChanged="onGameModeChanged"
         />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile style="background-color: transparent" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn tile style="background-color: transparent" v-bind="props">
               <div
                 v-if="selectedCountry.countryCode"
                 class="mr-2"
@@ -29,9 +29,7 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Select a country:</v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>Select a country:</v-list-item-title>
               </v-list>
               <v-divider />
               <v-list dense max-height="400" class="countries-list overflow-y-auto">
@@ -40,18 +38,16 @@
                   :key="item.countryCode"
                   @click="selectCountry(item.countryCode)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <span class="mr-2">
-                        <country-flag
-                          class="country-flag"
-                          :country="item.countryCode"
-                          size="normal"
-                        />
-                      </span>
-                      {{ item.country }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>
+                    <span class="mr-2">
+                      <country-flag
+                        class="country-flag"
+                        :country="item.countryCode"
+                        size="normal"
+                      />
+                    </span>
+                    {{ item.country }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -59,12 +55,12 @@
         </v-menu>
         <v-spacer />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-btn
               tile
               class="ma-4"
               style="background-color: transparent"
-              v-on="on"
+              v-bind="props"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
               <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
@@ -73,9 +69,7 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
-                  <v-list-item-title>Previous seasons:</v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>Previous seasons:</v-list-item-title>
               </v-list>
               <v-list dense max-height="400" class="overflow-y-auto">
                 <v-list-item
@@ -83,9 +77,7 @@
                   :key="item.id"
                   @click="selectSeason(item)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>Season {{ item.id }}</v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -109,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { computed, defineAsyncComponent, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { CountryRanking, CountryType, Gateways, Season } from "@/store/ranking/types";
 import { EGameMode, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
@@ -121,10 +113,10 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 // Lazy load.
-const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
+const CountryFlag = defineAsyncComponent(() => import("vue-country-flag-next"));
 
 export default defineComponent({
   name: "CountryRankingsView",

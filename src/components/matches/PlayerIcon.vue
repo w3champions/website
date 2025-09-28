@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
-      <span :class="classes" v-on="on"></span>
+    <template v-slot:activator="{ props }">
+      <span :class="classes" v-bind="props"></span>
     </template>
     <span>{{ (isRandom ? `${$t("races.RANDOM")} -> ` : "") + $t(`races.${raceName}`) }}</span>
   </v-tooltip>

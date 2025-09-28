@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <span :class="{ 'clickable': clickable }" v-on="on" @click="clickable && goToCountryRankings()">
+    <template v-slot:activator="{ props }">
+      <span :class="{ 'clickable': clickable }" v-bind="props" @click="clickable && goToCountryRankings()">
         <country-flag
           v-if="selectedCountryCode.get()"
           class="country-flag"
@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, defineAsyncComponent } from "vue";
 import { CountriesByCode } from "@/store/countries";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 // Lazy load.
-const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
+const CountryFlag = defineAsyncComponent(() => import("vue-country-flag-next"));
 
 export default defineComponent({
   name: "CountryFlagExtended",

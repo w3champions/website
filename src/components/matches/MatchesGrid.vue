@@ -121,15 +121,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, StyleValue, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
-import { mapNameFromMatch } from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { TranslateResult } from "vue-i18n";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { usePlayerStore } from "@/store/player/store";
@@ -150,7 +150,7 @@ export default defineComponent({
     DownloadReplayIcon,
   },
   props: {
-    value: {
+    modelValue: {
       type: Array<Match>,
       required: true,
     },
@@ -195,7 +195,7 @@ export default defineComponent({
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
     const isFfa = (gameMode: EGameMode) => GAME_MODES_FFA.includes(gameMode);
 
-    const matches = computed<Match[]>(() => props.value);
+    const matches = computed<Match[]>(() => props.modelValue);
 
     const currentMatchesLowRange = computed<number>(() => {
       if (props.totalMatches === 0) return 0;
@@ -371,7 +371,7 @@ export default defineComponent({
 }
 
 .duration-bar {
-  background-color: var(--v-primary-base);
+  background-color: var(--v-theme-primary);
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;

@@ -2,7 +2,6 @@
   <div class="pt-4">
     <div class="px-0">
       <v-tabs v-model="activeTab">
-        <v-tabs-slider />
         <v-tab class="profileTab" @click="navigateToLauncher">
           {{ $t("views_setupguides.launcher_setup") }}
         </v-tab>
@@ -17,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router/composables";
+import { useRoute, useRouter } from "vue-router";
 import { ESetupGuideRouteName } from "@/router/types";
 
 export default defineComponent({

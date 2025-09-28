@@ -18,8 +18,8 @@
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
                   <v-menu v-if="!!seasons && seasons.length > 0" offset-x>
-                    <template v-slot:activator="{ on }">
-                      <v-btn tile class="ma-2 transparent" v-on="on">
+                    <template v-slot:activator="{ props }">
+                      <v-btn tile class="ma-2 transparent" v-bind="props">
                         <span v-if="selectedSeason" class="pa-0">
                           {{ $t("views_rankings.season") }}
                           {{ selectedSeason.id }}
@@ -29,13 +29,11 @@
 
                     <v-card>
                       <v-list>
-                        <v-subheader>
+                        <v-list-subheader>
                           {{ $t("views_player.prevseasons") }}
-                        </v-subheader>
+                        </v-list-subheader>
                         <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
-                          <v-list-item-content>
-                            <v-list-item-title>{{ $t("views_rankings.season") }} {{ item.id }}</v-list-item-title>
-                          </v-list-item-content>
+                          <v-list-item-title>{{ $t("views_rankings.season") }} {{ item.id }}</v-list-item-title>
                         </v-list-item>
                       </v-list>
                     </v-card>
@@ -94,7 +92,6 @@
           </v-container>
 
           <v-tabs v-model="tabsModel">
-            <v-tabs-slider />
             <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
@@ -128,7 +125,7 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
-import { mapNameFromMatch } from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
 import { GAME_MODES_FFA } from "@/store/constants";
 
@@ -297,7 +294,7 @@ export default defineComponent({
   background-color: #f5f5f5;
 }
 
-.theme--dark {
+.v-theme--dark {
   .profileTab {
     background-color: #2f2f2f;
   }

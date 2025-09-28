@@ -332,13 +332,13 @@ J<template>
       <v-col cols="12">
         <v-expansion-panels multiple>
           <v-expansion-panel v-if="lastResult.details.missingMembers.length > 0">
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               <div>
                 <v-icon class="mr-2" color="error">{{ mdiAccountMinus }}</v-icon>
                 Missing Members ({{ lastResult.details.missingMembers.length }})
               </div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-data-table
                 :headers="missingMembersHeaders"
                 :items="lastResult.details.missingMembers"
@@ -356,41 +356,41 @@ J<template>
                   </v-chip>
                 </template>
               </v-data-table>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <v-expansion-panel v-if="lastResult.details.extraAssignments.length > 0">
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               <div>
                 <v-icon class="mr-2" color="warning">{{ mdiAccountPlus }}</v-icon>
                 Extra Assignments ({{ lastResult.details.extraAssignments.length }})
               </div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-data-table
                 :headers="extraAssignmentsHeaders"
                 :items="lastResult.details.extraAssignments"
                 :items-per-page="10"
                 class="elevation-0"
               />
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
 
           <v-expansion-panel v-if="lastResult.details.mismatchedTiers.length > 0">
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               <div>
                 <v-icon class="mr-2" color="orange">{{ mdiAccountAlert }}</v-icon>
                 Mismatched Tiers ({{ lastResult.details.mismatchedTiers.length }})
               </div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-data-table
                 :headers="mismatchedTiersHeaders"
                 :items="lastResult.details.mismatchedTiers"
                 :items-per-page="10"
                 class="elevation-0"
               />
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>

@@ -11,10 +11,10 @@
             :key="index"
             tile
           >
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               {{ mode.name }}
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <div v-if="getPlayerDataInGamemode(mode.id) != null">
                 <v-data-table
                   :headers="headers"
@@ -25,7 +25,7 @@
                 />
               </div>
               <div v-else>No Data found.</div>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-card>
@@ -36,7 +36,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
-import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";

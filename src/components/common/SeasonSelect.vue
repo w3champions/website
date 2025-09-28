@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn tile class="transparent" v-bind="props">
         {{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }}
         <v-icon class="mr-1">mdi-chevron-right</v-icon>
       </v-btn>
@@ -9,15 +9,11 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("components_common_seasonselect.prevseasons") }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t("components_common_seasonselect.prevseasons") }}</v-list-item-title>
         </v-list>
         <v-list dense max-height="400" class="overflow-y-auto">
           <v-list-item v-for="season in seasons" :key="season.id" @click="selectSeason(season)">
-            <v-list-item-content>
-              <v-list-item-title>{{ $t("components_common_seasonselect.season") }} {{ season.id }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ $t("components_common_seasonselect.season") }} {{ season.id }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>

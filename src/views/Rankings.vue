@@ -11,8 +11,8 @@
           @gameModeChanged="onGameModeChanged"
         />
         <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile class="transparent" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn tile class="transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{
@@ -23,11 +23,11 @@
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
+                <v-list-item>
                   <v-list-item-title>
                     {{ $t("views_rankings.selectleague") }}
                   </v-list-item-title>
-                </v-list-item-content>
+                </v-list-item>
               </v-list>
               <v-divider />
               <v-list dense max-height="400" class="leagues-list overflow-y-auto">
@@ -36,13 +36,11 @@
                   :key="item.id"
                   @click="setLeague(item.id)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <league-icon :league="listLeagueIcon(item)" />
-                      {{ item.name }}
-                      {{ item.division !== 0 ? item.division : null }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>
+                    <league-icon :league="listLeagueIcon(item)" />
+                    {{ item.name }}
+                    {{ item.division !== 0 ? item.division : null }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -69,40 +67,38 @@
             but for now in Vue 2 we can't use TypeScript in templates.
           -->
           <template v-slot:item="{ item }">
-            <template v-if="item?.player === undefined">
-              <v-list-item-content>{{ item }}</v-list-item-content>
+            <template v-if="item?.raw?.player === undefined">
+              {{ item.raw }}
             </template>
             <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(item.player.name)">
-                    {{ item.player.name }}
-                  </span>
-                  <span v-if="isDuplicateName(item.player.name)">
-                    {{ item.player.playerIds.map((p) => p.battleTag).join(" & ") }}
-                  </span>
-                  <span v-if="item.player.gameMode === EGameMode.GM_1ON1 && item.player.race">
-                    ({{ $t(`racesShort.${ERaceEnum[item.player.race]}`) }})
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(item)">
-                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
-                  {{ $t(`common.losses`) }}
-                  {{ item.player.losses }} |
-                  {{ $t(`common.total`) }}
-                  {{ item.player.games }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle v-else>
-                  {{ $t(`views_rankings.unranked`) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
+              <v-list-item-title>
+                <span v-if="!isDuplicateName(item.raw.player.name)">
+                  {{ item.raw.player.name }}
+                </span>
+                <span v-if="isDuplicateName(item.raw.player.name)">
+                  {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
+                </span>
+                <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
+                  ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
+                </span>
+              </v-list-item-title>
+              <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
+                {{ $t(`common.losses`) }}
+                {{ item.raw.player.losses }} |
+                {{ $t(`common.total`) }}
+                {{ item.raw.player.games }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle v-else>
+                {{ $t(`views_rankings.unranked`) }}
+              </v-list-item-subtitle>
             </template>
           </template>
         </v-autocomplete>
       </v-card-title>
       <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-          <v-btn tile class="ma-4 transparent" v-on="on">
+        <template v-slot:activator="{ props }">
+          <v-btn tile class="ma-4 transparent" v-bind="props">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
@@ -112,11 +108,9 @@
         <v-card>
           <v-card-text>
             <v-list>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t("views_rankings.prevseasons") }}
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title>
+                {{ $t("views_rankings.prevseasons") }}
+              </v-list-item-title>
             </v-list>
             <v-list dense max-height="400" class="overflow-y-auto">
               <v-list-item
@@ -124,11 +118,9 @@
                 :key="item.id"
                 @click="selectSeason(item)"
               >
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.season") }} {{ item.id }}
-                  </v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>
+                  {{ $t("views_rankings.season") }} {{ item.id }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -168,7 +160,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import noop from "lodash/noop";
 
 export default defineComponent({
@@ -250,7 +242,7 @@ export default defineComponent({
 
     // Function to update URL query parameters
     function updateQueryParams() {
-      const currentQuery = { ...router.currentRoute.query };
+      const currentQuery = { ...router.currentRoute.value.query };
       const newQuery = {
         ...currentQuery,
         season: rankingsStore.selectedSeason.id?.toString(),
@@ -266,7 +258,7 @@ export default defineComponent({
 
       if (queryChanged) {
         router.replace({
-          name: router.currentRoute.name || "Rankings",
+          name: router.currentRoute.value.name || "Rankings",
           query: newQuery
         }).catch(noop); // Use lodash's noop to handle any potential errors silently
       }

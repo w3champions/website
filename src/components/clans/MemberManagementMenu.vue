@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn tile class="transparent" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiPencil }}</v-icon>
       </v-btn>
     </template>
@@ -12,9 +12,7 @@
           :key="a.name"
           @click="invoke(a.action)"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ a.name }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ a.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

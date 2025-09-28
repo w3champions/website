@@ -59,13 +59,13 @@
               </div>
               <div v-if="isTwitchLive(item, index)" class="twitch__container">
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
+                  <template v-slot:activator="{ props }">
+                    <span style="display: inline" class="pointer" v-bind="props">
                       <v-btn
                         icon
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
-                        v-on="on"
+                        v-bind="props"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"
@@ -98,8 +98,8 @@
                 style="position: relative"
               >
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
+                  <template v-slot:activator="{ props }">
+                    <span style="display: inline" class="pointer" v-bind="props">
                       <sword-icon class="swords blinker" />
                     </span>
                   </template>
@@ -142,7 +142,7 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
 import { useVuetify } from "@/plugins/vuetify";
 
@@ -508,14 +508,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.theme--light {
+.v-theme--light {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: lightblue !important;
   }
 }
 
-.theme--dark {
+.v-theme--dark {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: #310e6f !important;

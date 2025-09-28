@@ -72,7 +72,7 @@ import { computed, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",

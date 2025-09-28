@@ -33,7 +33,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiDelete } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({

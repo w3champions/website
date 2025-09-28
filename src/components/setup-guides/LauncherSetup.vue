@@ -6,7 +6,6 @@
           {{ $t("views_gettingstarted.howtoinstall") }}
         </v-card-title>
         <v-tabs v-model="tabsModel.self" vertical class="ml-4">
-          <v-tabs-slider />
           <v-tab class="profileTab" :href="`#launcher`">
             {{ $t("views_gettingstarted.launcher") }}
           </v-tab>
@@ -16,8 +15,8 @@
           <v-tab class="profileTab" :href="`#mac-setup`">
             {{ $t("views_gettingstarted.manualmac") }}
           </v-tab>
-          <v-tabs-items :value="tabsModel.self" touchless>
-            <v-tab-item value="launcher">
+          <v-window :value="tabsModel.self" touchless>
+            <v-window-item value="launcher">
               <v-card-text class="pt-0 px-8">
                 <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                 <br />
@@ -65,10 +64,10 @@
                   </ul>
                 </v-card-text>
               </v-card-text>
-            </v-tab-item>
-            <v-tab-item value="windows-setup">
+            </v-window-item>
+            <v-window-item value="windows-setup">
               <v-card-text class="pt-0 px-8">
-                <v-alert outlined type="info" prominent border="left">
+                <v-alert outlined type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
                 <h3 class="mt-10">
@@ -114,10 +113,10 @@
                   <br />
                 </p>
               </v-card-text>
-            </v-tab-item>
-            <v-tab-item value="mac-setup">
+            </v-window-item>
+            <v-window-item value="mac-setup">
               <v-card-text class="pt-0 px-8">
-                <v-alert outlined type="info" prominent border="left">
+                <v-alert outlined type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
                 <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
@@ -190,8 +189,8 @@
                   <iframe src="https://www.youtube.com/embed/8s53BHfKPLs" frameborder="0" allowfullscreen></iframe>
                 </div>
               </v-card-text>
-            </v-tab-item>
-          </v-tabs-items>
+            </v-window-item>
+          </v-window>
         </v-tabs>
       </v-container>
     </v-col>
@@ -202,7 +201,7 @@
 import { defineComponent, ref, watch } from "vue";
 import { LAUNCHER_UPDATE_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
-import { useRoute, useRouter } from "vue-router/composables";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "LauncherSetup",

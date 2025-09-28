@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom transition="scroll-y-transition" style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
-      <div class="globe" v-on="on">
+    <template v-slot:activator="{ props }">
+      <div class="globe" v-bind="props">
         <v-img :src="icon" :max-height="18" :max-width="18" />
       </div>
     </template>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { computed, PropType, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";

@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from "vue";
 import { PlayerId } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "PlayerRankInfo",

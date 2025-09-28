@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-x :close-on-content-click="false" @input="onMenuToggled">
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn tile class="transparent" v-bind="props">
         <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
       </v-btn>
@@ -81,7 +81,7 @@ export default defineComponent({
   font-size: 15px;
 }
 
-::v-deep(.theme--dark .v-slider__thumb-label) {
+::v-deep(.v-theme--dark .v-slider__thumb-label) {
   color: black;
 }
 </style>

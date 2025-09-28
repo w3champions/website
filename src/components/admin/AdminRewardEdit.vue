@@ -29,10 +29,8 @@
               @change="onModuleChange"
             >
               <template v-slot:item="{ item }">
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.text }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title>{{ item.raw.text }}</v-list-item-title>
+                <v-list-item-subtitle>{{ item.raw.description }}</v-list-item-subtitle>
               </template>
             </v-select>
           </v-col>
@@ -58,7 +56,7 @@
         <!-- Dynamic Module Parameters -->
         <v-row v-if="selectedModule && selectedModule.supportsParameters">
           <v-col cols="12">
-            <v-subheader>Module Parameters</v-subheader>
+            <v-list-subheader>Module Parameters</v-list-subheader>
             <v-alert
               v-if="selectedModule.description"
               type="info"
@@ -116,7 +114,7 @@
 
         <v-row>
           <v-col cols="12">
-            <v-subheader>Duration Settings</v-subheader>
+            <v-list-subheader>Duration Settings</v-list-subheader>
             <v-radio-group v-model="durationType" row>
               <v-radio label="Permanent" value="permanent" />
               <v-radio label="Time Limited" value="limited" />

@@ -93,7 +93,7 @@
               :key="step.iteration"
             >
               <!-- Header shows iteration number, identifierType, and how many groups -->
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 <div class="d-flex justify-space-between align-center" style="width: 100%">
                   <div>
                     <strong>Iteration {{ step.iteration }}</strong> —
@@ -101,9 +101,9 @@
                   </div>
                   <div>Groups: {{ step.identifierGroups.length }}</div>
                 </div>
-              </v-expansion-panel-header>
+              </v-expansion-panel-title>
 
-              <v-expansion-panel-content>
+              <v-expansion-panel-text>
                 <!-- Show filteredIdentifiers as chips or comma-separated -->
                 <v-row class="mb-3">
                   <v-col cols="12">
@@ -130,7 +130,7 @@
                     v-for="group in step.identifierGroups"
                     :key="group.identifier"
                   >
-                    <v-expansion-panel-header>
+                    <v-expansion-panel-title>
                       <!-- Display the identifier and a summary of login counts to show significant identifiers -->
                       <div class="d-flex justify-space-between align-center" style="width: 100%">
                         <div>
@@ -142,18 +142,18 @@
                           To: {{ totalLogins(group.toBattleTags) }}
                         </div>
                       </div>
-                    </v-expansion-panel-header>
+                    </v-expansion-panel-title>
 
-                    <v-expansion-panel-content>
+                    <v-expansion-panel-text>
                       <!-- Two side-by-side lists or tables for from vs. to -->
                       <v-row>
                         <SmurfBattleTagDetailsTable title="From BattleTags" :data="group.fromBattleTags" />
                         <SmurfBattleTagDetailsTable title="To BattleTags" :data="group.toBattleTags" />
                       </v-row>
-                    </v-expansion-panel-content>
+                    </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
-              </v-expansion-panel-content>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-list>
@@ -168,7 +168,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
 import { useOauthStore } from "@/store/oauth/store";

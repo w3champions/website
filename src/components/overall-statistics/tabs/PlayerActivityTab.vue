@@ -193,7 +193,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { GameDay, GameDayPerMode, GameLength, MapCount, MmrRangeValues, PopularHours } from "@/store/overallStats/types";
-import { activeGameModes, activeGameModesWithAll, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, activeGameModesWithAll, loadActiveGameModes } from "@/composables/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import MatchupLengthBarChart from "@/components/overall-statistics/MatchupLengthBarChart.vue";
 import AmountPerDayChart from "@/components/overall-statistics/AmountPerDayChart.vue";

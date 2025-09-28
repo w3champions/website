@@ -19,12 +19,11 @@
           <v-text-field v-model="tableSearch" label="Search ban" :prepend-icon="mdiMagnify" />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
               </v-btn>
@@ -49,13 +48,12 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props }">
                           <v-text-field
                             v-model="editedItem.endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker
@@ -86,7 +84,7 @@
 
                     <v-col class="py-0">
                       <v-tooltip top>
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                           <v-select
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"
@@ -95,8 +93,8 @@
                             :menu-props="{ maxHeight: '400' }"
                             :label="$t(`views_admin.gameMode`)"
                             multiple
+                            v-bind="props"
                             hint="Which game modes to ban from?"
-                            v-on="on"
                           />
                         </template>
                         <span>
@@ -152,7 +150,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
-import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -162,8 +160,7 @@ import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
-import { DataOptions } from "vuetify";
+import { TranslateResult, useI18n } from "vue-i18n";
 import debounce from "debounce";
 
 type AdminBannedPlayersHeader = {
@@ -201,7 +198,7 @@ export default defineComponent({
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
 
-    const bannedPlayersTableOptions = ref<DataOptions>({
+    const bannedPlayersTableOptions = ref<any>({
       page: 1,
       itemsPerPage: 10,
       sortBy: ["banInsertDate"],
@@ -222,7 +219,7 @@ export default defineComponent({
       author: "",
     };
 
-    async function onTableOptionsUpdate(dataOptions: DataOptions) {
+    async function onTableOptionsUpdate(dataOptions: any) {
       bannedPlayersTableOptions.value = dataOptions;
       await loadBanList();
     }

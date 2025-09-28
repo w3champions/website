@@ -14,12 +14,11 @@
           <v-toolbar-title>News for Launcher</v-toolbar-title>
           <v-spacer />
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
               </v-btn>
@@ -211,7 +210,7 @@ import {
   mdiRedo,
   mdiUndo,
 } from "@mdi/js";
-import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Editor, EditorContent } from "@tiptap/vue-3";
 import { Document } from "@tiptap/extension-document";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Text } from "@tiptap/extension-text";

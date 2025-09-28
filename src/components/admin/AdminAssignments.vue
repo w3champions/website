@@ -393,14 +393,14 @@
           <!-- Technical Details -->
           <v-expansion-panels v-model="detailsExpansionPanel">
             <v-expansion-panel>
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 <div class="d-flex align-center">
                   <v-icon class="mr-2">{{ mdiCog }}</v-icon>
                   Technical Details
                 </div>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-simple-table dense>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-table dense>
                   <tbody>
                     <tr>
                       <td class="font-weight-bold" style="width: 40%;">Assignment ID:</td>
@@ -421,8 +421,8 @@
                       </td>
                     </tr>
                   </tbody>
-                </v-simple-table>
-              </v-expansion-panel-content>
+                </v-table>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
@@ -932,13 +932,13 @@ export default defineComponent({
 }
 
 .modern-table >>> th {
-  background-color: var(--v-primary-lighten5) !important;
-  color: var(--v-primary-darken2) !important;
+  background-color: var(--v-theme-primary-lighten5) !important;
+  color: var(--v-theme-primary-darken2) !important;
   font-weight: 600 !important;
 }
 
 .modern-table >>> tr:hover {
-  background-color: var(--v-primary-lighten5) !important;
+  background-color: var(--v-theme-primary-lighten5) !important;
 }
 
 .font-family-monospace {

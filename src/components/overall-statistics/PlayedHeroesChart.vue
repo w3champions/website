@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import map from "lodash/map";
 import round from "lodash/round";
 import sumBy from "lodash/sumBy";

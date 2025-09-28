@@ -111,7 +111,7 @@
 
             <v-row>
               <v-col cols="12">
-                <v-subheader class="px-0">Product Provider Pairs *</v-subheader>
+                <v-list-subheader class="px-0">Product Provider Pairs *</v-list-subheader>
                 <div v-for="(pair, index) in newMapping.productProviders" :key="index" class="mb-3 pa-3 border">
                   <v-row>
                     <v-col cols="5">

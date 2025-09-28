@@ -1,6 +1,5 @@
 <template>
   <v-tabs v-model="selectedTab">
-    <v-tabs-slider />
     <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
       <span v-if="race.raceId === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
@@ -8,12 +7,13 @@
       <race-icon v-else :race="race.raceId" />
     </v-tab>
 
-    <v-tab-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
+    <v-window v-model="selectedTab">
+    <v-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
             <div>
-              <v-simple-table>
+              <v-table>
                 <template v-slot:default>
                   <thead>
                     <tr>
@@ -29,8 +29,8 @@
                       </td>
                       <td>{{ item.name }}</td>
                       <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-                        <template v-slot:activator="{ on }">
-                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on">{{ item[header.value] }}</td>
+                        <template v-slot:activator="{ props }">
+                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
                         </template>
                         <div v-if="item.numbers_by_race[header.value]">
                           <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
@@ -43,7 +43,7 @@
                     </tr>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
 
               <v-pagination
                 v-if="pageLength > 1"
@@ -56,13 +56,14 @@
           </v-col>
         </v-row>
       </v-card-text>
-    </v-tab-item>
+    </v-window-item>
+    </v-window>
   </v-tabs>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap } from "@/store/player/types";

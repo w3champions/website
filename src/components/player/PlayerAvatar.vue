@@ -3,23 +3,23 @@
     <v-row>
       <v-col cols="5" md="12">
         <v-tooltip top :disabled="!avatarDescription">
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-card-text
               style="cursor: pointer"
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
               class="player-avatar text-center"
               @click.stop="iconsDialogOpened = true"
-              v-on="on"
+              v-bind="props"
             />
           </template>
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <div
               class="country__container clickable"
-              v-on="on"
+              v-bind="props"
               @click="goToCountryRankings()"
             >
               <country-flag
@@ -49,12 +49,12 @@
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
           <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
                   @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
-                  v-on="on"
+                  v-bind="props"
                 />
               </template>
               <span>Starter</span>
@@ -76,12 +76,12 @@
           </v-card-text>
           <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-card-text
                   :class="getCorrectClasses(raceToAvatar(race), number)"
                   :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
                   @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
-                  v-on="on"
+                  v-bind="props"
                 />
               </template>
               <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
@@ -94,7 +94,7 @@
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
           <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :class="{ pointer: isLoggedInPlayer }"
@@ -103,7 +103,7 @@
                     ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
                     : null
                   "
-                  v-on="on"
+                  v-bind="props"
                 />
               </template>
               <span>{{ specialPicture.description }}</span>
@@ -158,13 +158,13 @@
     <v-row v-if="isLoggedInPlayer">
       <v-col>
         <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-btn
               small
               class="ma-0"
               outlined
               color="primary"
-              v-on="on"
+              v-bind="props"
               @click="personalSettingsDialogOpened = true"
             >
               <v-icon left>{{ mdiPencil }}</v-icon>
@@ -314,8 +314,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { computed, defineAsyncComponent, defineComponent, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
@@ -325,11 +325,11 @@ import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { usePlayerStore } from "@/store/player/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.
-const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
+const CountryFlag = defineAsyncComponent(() => import( "vue-country-flag-next"));
 
 export default defineComponent({
   name: "PlayerAvatar",

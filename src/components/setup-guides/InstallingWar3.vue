@@ -43,7 +43,7 @@ export default defineComponent({
 
 h3 {
   margin-bottom: 16px;
-  color: var(--v-primary-base);
+  color: var(--v-theme-primary);
 }
 
 h4 {

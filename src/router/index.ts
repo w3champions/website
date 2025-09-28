@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueRouter, { Route, RouteConfig } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import TournamentsList from "@/views/TournamentsList.vue";
@@ -55,9 +54,7 @@ import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
 import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
 
-Vue.use(VueRouter);
-
-const routes: RouteConfig[] = [
+const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: EMainRouteName.HOME,
@@ -76,6 +73,7 @@ const routes: RouteConfig[] = [
       {
         path: "",
         name: EMainRouteName.FAQ,
+        component: Faq,
       },
       {
         path: "setup-guides",
@@ -298,15 +296,15 @@ const routes: RouteConfig[] = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
+const router = createRouter({
+  history: createWebHistory(),
   routes,
 });
 
 const documentTitle = (pageName: string | null | undefined) => pageName ? `${pageName} | W3Champions` : "W3Champions";
 
-router.afterEach((to: Route) => {
-  document.title = documentTitle(to.name);
+router.afterEach((to: RouteLocationNormalized) => {
+  document.title = documentTitle(to.name as string);
 });
 
 export default router;

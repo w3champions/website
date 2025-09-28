@@ -1,6 +1,5 @@
 <template>
   <v-tabs v-if="!isStatsEmpty" v-model="selectedTab">
-    <v-tabs-slider />
     <v-tab v-for="stat of sortedStats" :key="stat.race" :href="`#tab-${stat.race}`">
       <span v-if="stat.race === ERaceEnum.TOTAL">
         {{ $t("common.allraces") }}
@@ -8,7 +7,8 @@
       <race-icon v-else :race="stat.race" />
     </v-tab>
 
-    <v-tab-item v-for="stat of sortedStats" :key="stat.race" :value="'tab-' + stat.race">
+    <v-window v-model="selectedTab">
+    <v-window-item v-for="stat of sortedStats" :key="stat.race" :value="'tab-' + stat.race">
       <v-card-text>
         <v-row>
           <v-col cols="md-12">
@@ -16,7 +16,8 @@
           </v-col>
         </v-row>
       </v-card-text>
-    </v-tab-item>
+    </v-window-item>
+    </v-window>
   </v-tabs>
   <v-card-text v-else>
     {{ $t("components_player_tabs_playerstatistictab.playerhasnomatches") }}

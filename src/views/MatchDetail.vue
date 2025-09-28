@@ -158,7 +158,7 @@ import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vu
 import { Match, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
-import { mapNameFromMatch } from "@/mixins/MatchMixin";
+import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";

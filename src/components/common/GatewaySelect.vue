@@ -1,24 +1,22 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
+    <template v-slot:activator="{ props }">
+      <v-btn tile class="transparent" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>
         {{ $t(gateway.name) }}
       </v-btn>
     </template>
     <v-card>
       <v-list>
-        <v-subheader>
+        <v-list-subheader>
           {{ $t("components_common_gatewayselect.selectgateway") }}
-        </v-subheader>
+        </v-list-subheader>
         <v-list-item
           v-for="gw in gateways"
           :key="gw.id"
           @click="gateway = gw"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ $t(gw.name) }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t(gw.name) }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

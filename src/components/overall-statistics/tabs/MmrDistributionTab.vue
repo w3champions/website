@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";

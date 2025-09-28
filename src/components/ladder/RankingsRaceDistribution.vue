@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import RaceIcon from "@/components/player/RaceIcon.vue";
 import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -41,9 +40,6 @@ type RankingsRaceDistributionData = {
 
 export default defineComponent({
   name: "RankingsRaceDistribution",
-  components: {
-    RaceIcon,
-  },
   props: {
     rankings: {
       type: Array<Ranking>,

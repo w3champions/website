@@ -14,8 +14,8 @@
             <v-col>
               <v-dialog v-model="dialog" width="1500">
                 >
-                <template v-slot:activator="{ on }">
-                  <v-btn x-large class="primary w3-race-bg--text" v-on="on" @click="openConfirmation">Load</v-btn>
+                <template v-slot:activator="{ props }">
+                  <v-btn x-large class="primary w3-race-bg--text" v-bind="props" @click="openConfirmation">Load</v-btn>
                 </template>
 
                 <v-card>

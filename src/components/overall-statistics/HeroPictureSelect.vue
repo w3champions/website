@@ -1,8 +1,8 @@
 <template>
-  <v-card-text :class="{ 'pa-1': $vuetify.breakpoint.xsOnly }">
+  <v-card-text :class="{ 'pa-1': xs }">
     <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <div v-on="on">
+      <template v-slot:activator="{ props }">
+        <div v-bind="props">
           <v-card-text
             class="hero-picture-select"
             :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
@@ -32,8 +32,8 @@
             :cols="3"
           >
             <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <div class="ma-1" v-on="on">
+              <template v-slot:activator="{ props }">
+                <div class="ma-1" v-bind="props">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
@@ -60,7 +60,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
+import { useDisplay } from "vuetify";
 import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
@@ -79,6 +80,7 @@ export default defineComponent({
   },
   setup(props) {
     const { t } = useI18n();
+    const { xs } = useDisplay();
     const overallStatsStore = useOverallStatsStore();
 
     const dialogOpened = ref<boolean>(false);
@@ -263,6 +265,7 @@ export default defineComponent({
     ];
 
     return {
+      xs,
       isEnabledForChange,
       openDialog,
       heroPicture,
@@ -300,11 +303,11 @@ export default defineComponent({
   filter: alpha(opacity=50);
 }
 
-.theme--light .hero-level-flag {
+.v-theme--light .hero-level-flag {
   background: rgba(52, 122, 154, 0.5);
 }
 
-.theme--dark .hero-level-flag {
+.v-theme--dark .hero-level-flag {
   background: rgba(50, 194, 165, 0.4);
 }
 

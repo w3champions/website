@@ -1,11 +1,11 @@
 <template>
   <v-menu offset-x>
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-btn
         tile
         :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
         style="background-color: transparent"
-        v-on="on"
+        v-bind="props"
       >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
@@ -14,9 +14,7 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
         </v-list>
         <v-divider />
         <v-list dense max-height="400" class="overflow-y-auto">
@@ -26,9 +24,7 @@
             :class="{ 'primary--text': isSelected(hero) }"
             @click="toggleHero(hero)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             <v-list-item-action>
               <v-icon v-if="isSelected(hero)">mdi-check</v-icon>
             </v-list-item-action>
@@ -41,7 +37,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { TranslateResult, useI18n } from "vue-i18n";
 import { mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
@@ -115,7 +111,7 @@ export default defineComponent({
   border-style: solid !important;
   box-shadow: none !important;
 }
-.is-player-matches-tab.theme--dark {
+.is-player-matches-tab.v-theme--dark {
   color: #ffffff;
 }
 </style>

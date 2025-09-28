@@ -145,8 +145,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { useI18n } from "vue-i18n";
+import { activeGameModes, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
 import { PlayerMmrRpTimeline, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";

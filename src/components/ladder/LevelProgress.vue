@@ -42,17 +42,17 @@ export default defineComponent({
   }
 
   ::v-deep(.v-progress-linear__determinate) {
-    background-image: linear-gradient(white 0%, var(--v-primary-base) 40%, var(--v-primary-base) 60%, white 100%);
+    background-image: linear-gradient(white 0%, var(--v-theme-primary) 40%, var(--v-theme-primary) 60%, white 100%);
   }
 
-  &.theme--dark {
+  .v-theme--dark & {
     background-color: black !important;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.7);
     text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 
     ::v-deep(.v-progress-linear__determinate) {
-      background-image: linear-gradient(black, var(--v-primary-base), black);
+      background-image: linear-gradient(black, var(--v-theme-primary), black);
     }
   }
 }

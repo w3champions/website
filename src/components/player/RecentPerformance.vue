@@ -79,8 +79,8 @@ export default defineComponent({
       height: 4px;
       background: linear-gradient(
         to left,
-        color-mix(in srgb, var(--v-primary-base) 70%, transparent) 70%,
-        color-mix(in srgb, var(--v-primary-base) 20%, transparent)
+        color-mix(in srgb, var(--v-theme-primary) 70%, transparent) 70%,
+        color-mix(in srgb, var(--v-theme-primary) 20%, transparent)
       );
       pointer-events: none;
       border-radius: 4px;

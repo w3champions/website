@@ -170,7 +170,7 @@ import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "CountryRankingsGrid",

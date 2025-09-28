@@ -1,10 +1,10 @@
 .hide-footer {
-  .v-data-footer__select {
+  .v-data-table-footer__select {
     display: none !important;
   }
 }
 
-.v-card__title {
+.v-card-title {
   font-family: "Friz Quadrata Std Medium" !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
@@ -113,11 +113,11 @@ h3 {
   overflow-y: hidden;
 }
 
-.v-text-field__prefix {
+.v-field__prefix {
   padding-right: 0px !important;
 }
 
-.v-card__title {
+.v-card-title {
   filter: blur(0) !important;
 }
 

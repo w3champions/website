@@ -7,7 +7,6 @@
             <span>{{ $t("views_statistics.w3cstats") }}</span>
           </v-card-title>
           <v-tabs>
-            <v-tabs-slider />
             <v-tab
               class="profileTab"
               exact

@@ -1,11 +1,11 @@
 <template>
   <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
-    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ header }">
+    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ column }">
       <v-tooltip :key="h.text" top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{ header.text }}</span>
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">{{ column.title }}</span>
         </template>
-        <span style="white-space: pre-line">{{ header.tooltip }}</span>
+        <span style="white-space: pre-line">{{ h.tooltip }}</span>
       </v-tooltip>
     </template>
     <template v-slot:body="{ items }">
@@ -43,9 +43,9 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
-import { AT_modes } from "@/mixins/GameModesMixin";
+import { AT_modes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
@@ -163,7 +163,7 @@ export default defineComponent({
   text-align: center;
 }
 
-.theme--light {
+.v-theme--light {
   .sub-value {
     border-top: 2px solid rgb(205, 205, 205);
   }

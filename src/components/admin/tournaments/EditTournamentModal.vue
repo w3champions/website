@@ -5,12 +5,11 @@
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
-        <v-tabs-slider />
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tabsModel">
-        <v-tab-item :transition="false">
+      <v-window v-model="tabsModel">
+        <v-window-item :transition="false">
           <v-text-field
             v-model="name"
             label="Name"
@@ -47,8 +46,8 @@
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-        <v-tab-item :transition="false">
+        </v-window-item>
+        <v-window-item :transition="false">
           <v-row class="mt-0">
             <v-col cols="4">
               <v-text-field
@@ -148,8 +147,8 @@
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-window-item>
+      </v-window>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />

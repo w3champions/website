@@ -1,11 +1,9 @@
 <template>
   <v-navigation-drawer permanent>
     <v-list-item>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("views_admin.adminpage") }}
-        </v-list-item-title>
-      </v-list-item-content>
+      <v-list-item-title>
+        {{ $t("views_admin.adminpage") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list dense nav>
@@ -15,13 +13,10 @@
           :key="index"
           :to="{ name: item.routeName }"
         >
-          <v-list-item-icon>
+          <template v-slot:prepend>
             <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+          </template>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
 
         <v-list-group
@@ -32,9 +27,7 @@
           no-action
         >
           <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </template>
 
           <v-list-item
@@ -43,10 +36,9 @@
             class="ml-0 pl-6"
             :to="{ name: subItem.routeName }"
           >
-            <v-list-item-icon>
+            <template v-slot:prepend>
               <v-icon>{{ subItem.icon || mdiAccountTie }}</v-icon>
-            </v-list-item-icon>
-
+            </template>
             <v-list-item-title>{{ subItem.title }}</v-list-item-title>
           </v-list-item>
         </v-list-group>
@@ -61,7 +53,7 @@ import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,

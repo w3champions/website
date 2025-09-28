@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, computed } from "vue";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import { EMainRouteName } from "@/router/types";

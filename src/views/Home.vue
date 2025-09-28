@@ -22,8 +22,6 @@
             <v-carousel
               v-model="model"
               :show-arrows="false"
-              :dark="$vuetify.theme.dark"
-              :light="!$vuetify.theme.dark"
               height="350px"
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
@@ -155,7 +153,7 @@ import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useRankingStore } from "@/store/ranking/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { ESetupGuideRouteName } from "@/router/types";
 
 export default defineComponent({

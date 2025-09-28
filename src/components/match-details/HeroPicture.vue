@@ -11,7 +11,7 @@
 import { defineComponent, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "HeroPicture",

@@ -1,21 +1,32 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
-import VueI18n from "vue-i18n";
-import { castToVueI18n, createI18n } from "vue-i18n-bridge";
+import { createI18n } from "vue-i18n";
 import languages from "@/locales/languages";
 import VueCookies from "vue-cookies";
-import { createPinia, PiniaVuePlugin } from "pinia";
+import { createPinia } from "pinia";
+import "vuetify/styles";
+import "@/scss/main.scss";
 
-Vue.use(VueCookies);
-Vue.use(VueI18n, { bridge: true });
-
-// Only accessible after this initialisation!
 const pinia = createPinia();
-Vue.use(PiniaVuePlugin);
 
-Vue.config.productionTip = false;
+const i18n = createI18n({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: languages,
+});
+
+const app = createApp(App);
+
+app.use(VueCookies);
+app.use(i18n);
+app.use(pinia);
+app.use(router);
+app.use(vuetify);
+
+app.mount("#app");
 
 declare global {
   interface Window {
@@ -46,28 +57,3 @@ export const LAUNCHER_UPDATE_URL = _launcherUrl;
 export const INGAME_STATIC_RESOURCES_URL = _ingameUrlStaticResourcesUrl;
 export const BNET_API_CLIENT_ID = _bnetApiClientId;
 export const TURNSTILE_SITE_KEY = _turnstileSiteKey;
-
-// Kovax comment:
-// This i18n bridge is used instead of the regular i18n to make migration to vue3 easier.
-// Code taken from here: https://vue-i18n.intlify.dev/guide/migration/vue2.html
-// And here: https://www.npmjs.com/package/vue-i18n-bridge
-// When it is time to migrate to vue 3, we will remove the vue-i18n-bridge package and upgrade vue-i18n to version 9 or more, which has vue 3 support (only).
-// Also check out this link for more info on how to use with the composition api: https://vue-i18n.intlify.dev/guide/advanced/composition
-
-// `createI18n` options is almost same vue-i18n-next (vue-i18n@v9.x) API
-const i18n = castToVueI18n(createI18n({
-  legacy: false,
-  locale: "en",
-  fallbackLocale: "en",
-  messages: languages,
-}, VueI18n));
-
-Vue.use(i18n);
-
-new Vue({
-  i18n,
-  router,
-  vuetify,
-  pinia,
-  render: (h) => h(App),
-}).$mount("#app");

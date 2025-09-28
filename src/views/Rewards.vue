@@ -72,7 +72,7 @@
             <div v-else-if="userRewards.length === 0">
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
-            <v-simple-table v-else>
+            <v-table v-else>
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -90,7 +90,7 @@
                   </tr>
                 </tbody>
               </template>
-            </v-simple-table>
+            </v-table>
           </v-card-text>
         </v-card>
 

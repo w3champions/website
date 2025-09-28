@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import { EGameMode, EPick } from "@/store/types";

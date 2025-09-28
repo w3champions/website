@@ -16,12 +16,11 @@
           />
         </span>
         <v-tooltip top transition="none">
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props }">
             <a
               class="truncated-text"
               :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-              v-bind="attrs"
-              v-on="on"
+              v-bind="props"
               @click="notClickable ? null : goToPlayer()"
               @click.middle="openProfileInNewTab()"
               @click.right="openProfileInNewTab()"
@@ -62,7 +61,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from "vue";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import isNil from "lodash/isNil";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";

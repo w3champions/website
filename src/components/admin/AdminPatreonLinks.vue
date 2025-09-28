@@ -126,7 +126,7 @@
         <template v-slot:item.actions="{ item }">
           <div class="d-flex justify-end">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   icon
                   small
@@ -134,8 +134,7 @@
                   class="mr-1"
                   :disabled="loadingMemberDetails"
                   :loading="loadingMemberDetails && selectedMemberBattleTag === item.battleTag"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                   @click="viewMemberDetails(item)"
                 >
                   <v-icon small>{{ mdiMagnify }}</v-icon>
@@ -144,16 +143,16 @@
               <span>View details</span>
             </v-tooltip>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   icon
                   small
                   color="error"
                   :disabled="deletingLinks.includes(item.battleTag)"
                   :loading="deletingLinks.includes(item.battleTag)"
-                  v-bind="attrs"
+                  v-bind="props"
                   @click="confirmDelete(item)"
-                  v-on="on"
+                >
                 >
                   <v-icon small>{{ mdiDelete }}</v-icon>
                 </v-btn>
@@ -266,7 +265,7 @@
             <v-divider class="mb-4" />
             <div class="text-subtitle1 font-weight-bold mb-3">Member Information</div>
 
-            <v-simple-table dense>
+            <v-table dense>
               <tbody>
                 <tr>
                   <td class="text--secondary">Patreon User ID</td>
@@ -285,7 +284,7 @@
                   <td>{{ formatDate(memberDetails.pledgeRelationshipStart) }}</td>
                 </tr>
               </tbody>
-            </v-simple-table>
+            </v-table>
           </div>
 
           <!-- Tier Information -->
