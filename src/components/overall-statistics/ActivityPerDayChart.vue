@@ -97,7 +97,7 @@ export default defineComponent({
             borderColor: mapColor(c.gameMode),
             borderWidth: 1.5,
             tension: 0.4, // Smooth line.
-            cubicInterpolationMode: 'monotone',
+            cubicInterpolationMode: "monotone",
           } satisfies ChartDataset<"line">)),
       };
     });

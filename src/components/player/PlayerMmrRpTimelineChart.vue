@@ -73,7 +73,7 @@ export default defineComponent({
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
             tension: 0.4, // Smooth line.
-            cubicInterpolationMode: 'monotone',
+            cubicInterpolationMode: "monotone",
           },
           {
             yAxisID: "y1",
@@ -87,7 +87,7 @@ export default defineComponent({
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
             tension: 0.4, // Smooth line.
-            cubicInterpolationMode: 'monotone',
+            cubicInterpolationMode: "monotone",
           },
         ],
       };
