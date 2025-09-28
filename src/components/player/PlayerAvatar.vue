@@ -23,14 +23,14 @@
               @click="goToCountryRankings()"
             >
               <country-flag
-                v-if="selectedCountryCode != ''"
+                v-if="displayCountryCode != ''"
                 class="player-country"
-                :country="selectedCountryCode"
+                :country="displayCountryCode"
                 size="normal"
               />
             </div>
           </template>
-          <span>{{ selectedCountry }}</span>
+          <span>{{ displayCountry }}</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -271,13 +271,13 @@
                       :return-object="false"
                     >
                       <template v-slot:item="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" />
+                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
                         {{ item.country }}
                         <v-spacer />
                       </template>
                       <template v-slot:selection="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" />
-                        <span class="pr-2">{{ item.country }}</span>
+                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
+                        {{ item.country }}
                       </template>
                     </v-autocomplete>
                   </v-col>
@@ -407,6 +407,13 @@ export default defineComponent({
 
     const selectedCountry = ref<string>("");
     const selectedCountryCode = ref<string>("");
+
+    const getCountryName = (code: string) => {
+      return countries.value.find((c) => c.countryCode === code)?.country || "";
+    };
+
+    const displayCountryCode = computed(() => personalSetting.value.countryCode || personalSetting.value.location || "");
+    const displayCountry = computed(() => personalSetting.value.country || getCountryName(displayCountryCode.value));
 
     const userProfile = computed<ProfilePlayerSocials>(() => {
       return {
@@ -542,7 +549,7 @@ export default defineComponent({
     }
 
     function goToCountryRankings(): void {
-      router.push(`/Countries?country=${selectedCountryCode.value}`);
+      router.push(`/Countries?country=${displayCountryCode.value}`);
     }
 
     onMounted((): void => {
@@ -609,6 +616,8 @@ export default defineComponent({
       goToCountryRankings,
       selectedCountryCode,
       selectedCountry,
+      displayCountry,
+      displayCountryCode,
       userProfile,
       useClassicIcons,
       starterPicNumbers,
