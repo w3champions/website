@@ -72,8 +72,8 @@ export default defineComponent({
             pointStyle: "circle",
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
-            pointHitRadius: 6,
             tension: 0.4, // Smooth line.
+            cubicInterpolationMode: "monotone",
           },
           {
             yAxisID: "y1",
@@ -86,8 +86,8 @@ export default defineComponent({
             pointStyle: "circle",
             pointRadius: 1.2,
             pointBorderWidth: 1.8,
-            pointHitRadius: 6,
             tension: 0.4, // Smooth line.
+            cubicInterpolationMode: "monotone",
           },
         ],
       };

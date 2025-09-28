@@ -61,11 +61,11 @@ export const defaultOptions = (): ChartOptions => {
         // mode: "index",
         position: "nearest",
         callbacks: {
-          label: (tooltipItem: { label: string; formattedValue: string }) => {
-            return `${tooltipItem.label} - ${tooltipItem.formattedValue}`;
+          label: (tooltipItem) => {
+            return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}`;
           },
-          title: () => {
-            return "";
+          title: (tooltipItems) => {
+            return tooltipItems[0]?.label || "";
           },
         },
       },
@@ -78,6 +78,7 @@ export const defaultOptions = (): ChartOptions => {
     elements: {
       point: {
         radius: 1.2,
+        hitRadius: 12,
       },
     },
   };

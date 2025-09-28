@@ -58,9 +58,9 @@ export default defineComponent({
           i === props.mmrDistribution.top25PercentIndex ||
           i === props.mmrDistribution.top50PercentIndex
         ) {
-          colors.push("rgb(66,23,63, 0.7)");
+          colors.push("rgb(120, 45, 160, 0.8)");
         } else {
-          colors.push("rgba(54, 162, 235, 0.2)");
+          colors.push("rgba(54, 162, 235, 0.5)");
         }
       }
       return colors;
@@ -150,7 +150,6 @@ export default defineComponent({
             data: cumulativeSumData.value,
             borderColor: "rgb(60,208,88)",
             fill: false,
-            pointHitRadius: 6,
           },
         ],
       };
