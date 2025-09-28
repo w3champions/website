@@ -23,14 +23,14 @@
               @click="goToCountryRankings()"
             >
               <country-flag
-                v-if="selectedCountryCode != ''"
+                v-if="displayCountryCode != ''"
                 class="player-country"
-                :country="selectedCountryCode"
+                :country="displayCountryCode"
                 size="normal"
               />
             </div>
           </template>
-          <span>{{ selectedCountry }}</span>
+          <span>{{ displayCountry }}</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -408,6 +408,13 @@ export default defineComponent({
     const selectedCountry = ref<string>("");
     const selectedCountryCode = ref<string>("");
 
+    const getCountryName = (code: string) => {
+      return countries.value.find(c => c.countryCode === code)?.country || "";
+    };
+
+    const displayCountry = computed(() => props.isLoggedInPlayer ? selectedCountry.value : personalSetting.value.country || getCountryName(displayCountryCode.value));
+    const displayCountryCode = computed(() => props.isLoggedInPlayer ? selectedCountryCode.value : personalSetting.value.location || personalSetting.value.countryCode || "");
+
     const userProfile = computed<ProfilePlayerSocials>(() => {
       return {
         twitch: twitch.value,
@@ -542,7 +549,7 @@ export default defineComponent({
     }
 
     function goToCountryRankings(): void {
-      router.push(`/Countries?country=${selectedCountryCode.value}`);
+      router.push(`/Countries?country=${displayCountryCode.value}`);
     }
 
     onMounted((): void => {
@@ -609,6 +616,8 @@ export default defineComponent({
       goToCountryRankings,
       selectedCountryCode,
       selectedCountry,
+      displayCountry,
+      displayCountryCode,
       userProfile,
       useClassicIcons,
       starterPicNumbers,
