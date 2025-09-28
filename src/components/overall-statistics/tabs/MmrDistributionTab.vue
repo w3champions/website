@@ -109,7 +109,7 @@ export default defineComponent({
               season: season.id,
             });
           } catch (error) {
-            console.warn('Failed to load profile for season change:', error);
+            console.warn("Failed to load profile for season change:", error);
           }
         }
         updateMMRDistribution();
@@ -125,7 +125,7 @@ export default defineComponent({
         };
         await overallStatsStore.loadMmrDistribution(payload);
       } catch (error) {
-        console.warn('Failed to load MMR distribution:', error);
+        console.warn("Failed to load MMR distribution:", error);
       } finally {
         loadingData.value = false;
       }
@@ -146,7 +146,7 @@ export default defineComponent({
     async function init() {
       await loadActiveGameModes();
       await rankingsStore.retrieveSeasons();
-      
+
       // If user is logged in and has a verified battle tag, ensure their profile is loaded
       if (authCode.value && verifiedBtag.value) {
         const needsProfileLoad = !player.battleTag || player.battleTag !== verifiedBtag.value;
@@ -160,11 +160,11 @@ export default defineComponent({
               await player.loadGameModeStats({});
             }
           } catch (error) {
-            console.warn('Failed to load user profile for MMR tab:', error);
+            console.warn("Failed to load user profile for MMR tab:", error);
           }
         }
       }
-      
+
       selectedSeason.value = seasons.value[0];
     }
 

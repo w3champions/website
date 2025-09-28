@@ -121,7 +121,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { PlayerProfile } from "@/store/player/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
+import { Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -130,7 +130,6 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
-import { useRankingStore } from "@/store/ranking/store";
 import { GAME_MODES_FFA } from "@/store/constants";
 
 export default defineComponent({
@@ -154,7 +153,6 @@ export default defineComponent({
   },
   setup(props) {
     const playerStore = usePlayerStore();
-    const rankingsStore = useRankingStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
 

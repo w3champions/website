@@ -409,7 +409,7 @@ export default defineComponent({
     const selectedCountryCode = ref<string>("");
 
     const getCountryName = (code: string) => {
-      return countries.value.find(c => c.countryCode === code)?.country || "";
+      return countries.value.find((c) => c.countryCode === code)?.country || "";
     };
 
     const displayCountry = computed(() => props.isLoggedInPlayer ? selectedCountry.value : personalSetting.value.country || getCountryName(displayCountryCode.value));
