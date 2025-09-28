@@ -121,7 +121,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { PlayerProfile } from "@/store/player/types";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
+import { Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
@@ -130,7 +130,6 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
-import { useRankingStore } from "@/store/ranking/store";
 import { GAME_MODES_FFA } from "@/store/constants";
 
 export default defineComponent({
@@ -154,7 +153,6 @@ export default defineComponent({
   },
   setup(props) {
     const playerStore = usePlayerStore();
-    const rankingsStore = useRankingStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
 
@@ -215,9 +213,9 @@ export default defineComponent({
 
     async function selectSeason(season: Season): Promise<void> {
       playerStore.SET_SELECTED_SEASON(season);
-      await loadAllDataForSelectedSeason();
+      await playerStore.loadAllDataForSelectedSeason();
       // This requires loadGameModeStats and loadRaceStats to be called first
-      await initMmrRpTimeline();
+      await playerStore.initMmrRpTimeline();
     }
 
     function gatewayChanged() {
@@ -254,8 +252,6 @@ export default defineComponent({
         stopLoadingMatches();
       }
 
-      playerStore.SET_BATTLE_TAG(battleTag.value);
-
       _intervalRefreshHandle = setInterval(async () => {
         await playerStore.loadOngoingPlayerMatch(battleTag.value);
       }, AppConstants.ongoingMatchesRefreshInterval);
@@ -264,53 +260,8 @@ export default defineComponent({
 
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
-      await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
-      await loadAllDataForSelectedSeason();
-      await initMmrRpTimeline();
+      await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
       window.scrollTo(0, 0);
-    }
-
-    async function loadAllDataForSelectedSeason() {
-      await Promise.all([
-        playerStore.loadGameModeStats({}),
-        playerStore.loadRaceStats(),
-        playerStore.loadMatches(1),
-        playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerGameLengths(),
-        rankingsStore.retrieveActiveGameModes(),
-      ]);
-    }
-
-    async function initMmrRpTimeline() {
-      // Make a lookup table for active game modes
-      const activeGameModesMap = rankingsStore.activeModes.reduce((acc, mode) => {
-        acc[mode.id] = true;
-        return acc;
-      }, {} as Record<number, boolean>);
-
-      let maxMode = EGameMode.GM_1ON1;
-      let maxModeGames = 0;
-      playerStore.gameModeStats.forEach((m) => {
-        if (!activeGameModesMap[m.gameMode]) return;
-        if (m.games > maxModeGames) {
-          maxModeGames = m.games;
-          maxMode = m.gameMode;
-        }
-      });
-      playerStore.SET_PROFILE_STATISTICS_GAME_MODE(maxMode);
-
-      let maxRace = ERaceEnum.HUMAN;
-      let maxRaceGames = 0;
-      playerStore.raceStats.forEach((r) => {
-        if (r.games > maxRaceGames) {
-          maxRaceGames = r.games;
-          maxRace = r.race;
-        }
-      });
-      playerStore.SET_PROFILE_STATISTICS_RACE(maxRace);
-
-      await playerStore.loadPlayerMmrRpTimeline();
     }
 
     return {
