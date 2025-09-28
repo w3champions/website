@@ -3,6 +3,8 @@ import { EGameMode, ERaceEnum, Match } from "../types";
 import { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import ProfileService from "@/services/ProfileService";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
@@ -37,7 +39,6 @@ export const usePlayerStore = defineStore("player", {
   } as PlayerState),
   actions: {
     async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
-      this.SET_LOADING_PROFILE(true);
       const oauthStore = useOauthStore();
       try {
         const profile = await ProfileService.retrieveProfile(
@@ -52,7 +53,6 @@ export const usePlayerStore = defineStore("player", {
         const ex = err as Error;
         this.SET_LOAD_PROFILE_ERROR(ex.message);
       }
-      this.SET_LOADING_PROFILE(false);
     },
     async loadGameModeStats(params: { battleTag?: string; season?: number }) {
       const rootStateStore = useRootStateStore();
@@ -141,6 +141,63 @@ export const usePlayerStore = defineStore("player", {
         this.selectedSeason?.id ?? -1,
       );
       this.SET_PLAYER_GAME_LENGTH_STATS(playerGameLengthStats);
+    },
+    async loadAllDataForSelectedSeason() {
+      const rankingsStore = useRankingStore();
+      await Promise.all([
+        this.loadGameModeStats({}),
+        this.loadRaceStats(),
+        this.loadMatches(1),
+        this.loadPlayerStatsRaceVersusRaceOnMap(this.battleTag),
+        this.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag),
+        this.loadPlayerGameLengths(),
+        rankingsStore.retrieveActiveGameModes(),
+      ]);
+    },
+    async initMmrRpTimeline() {
+      const rankingsStore = useRankingStore();
+      // Make a lookup table for active game modes
+      const activeGameModesMap = rankingsStore.activeModes.reduce((acc, mode) => {
+        acc[mode.id] = true;
+        return acc;
+      }, {} as Record<number, boolean>);
+
+      let maxMode = EGameMode.GM_1ON1;
+      let maxModeGames = 0;
+      this.gameModeStats.forEach((m) => {
+        if (!activeGameModesMap[m.gameMode]) return;
+        if (m.games > maxModeGames) {
+          maxModeGames = m.games;
+          maxMode = m.gameMode;
+        }
+      });
+      this.SET_PROFILE_STATISTICS_GAME_MODE(maxMode);
+
+      let maxRace = ERaceEnum.HUMAN;
+      let maxRaceGames = 0;
+      this.raceStats.forEach((r) => {
+        if (r.games > maxRaceGames) {
+          maxRaceGames = r.games;
+          maxRace = r.race;
+        }
+      });
+      this.SET_PROFILE_STATISTICS_RACE(maxRace);
+
+      await this.loadPlayerMmrRpTimeline();
+    },
+    async loadFullProfile(params: { battleTag: string; freshLogin: boolean }) {
+      this.SET_LOADING_PROFILE(true);
+      this.SET_PROFILE({} as PlayerProfile); // clear old data
+      try {
+        await this.loadProfile(params);
+        await this.loadAllDataForSelectedSeason();
+        await this.initMmrRpTimeline();
+        const personalSettingsStore = usePersonalSettingsStore();
+        await personalSettingsStore.loadPersonalSetting();
+      } catch (err) {
+        // error already handled in loadProfile
+      }
+      this.SET_LOADING_PROFILE(false);
     },
     SET_PROFILE(profile: PlayerProfile): void {
       this.playerProfile = profile;

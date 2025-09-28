@@ -215,9 +215,9 @@ export default defineComponent({
 
     async function selectSeason(season: Season): Promise<void> {
       playerStore.SET_SELECTED_SEASON(season);
-      await loadAllDataForSelectedSeason();
+      await playerStore.loadAllDataForSelectedSeason();
       // This requires loadGameModeStats and loadRaceStats to be called first
-      await initMmrRpTimeline();
+      await playerStore.initMmrRpTimeline();
     }
 
     function gatewayChanged() {
@@ -262,53 +262,8 @@ export default defineComponent({
 
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
-      await playerStore.loadProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
-      await loadAllDataForSelectedSeason();
-      await initMmrRpTimeline();
+      await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
       window.scrollTo(0, 0);
-    }
-
-    async function loadAllDataForSelectedSeason() {
-      await Promise.all([
-        playerStore.loadGameModeStats({}),
-        playerStore.loadRaceStats(),
-        playerStore.loadMatches(1),
-        playerStore.loadPlayerStatsRaceVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerStatsHeroVersusRaceOnMap(battleTag.value),
-        playerStore.loadPlayerGameLengths(),
-        rankingsStore.retrieveActiveGameModes(),
-      ]);
-    }
-
-    async function initMmrRpTimeline() {
-      // Make a lookup table for active game modes
-      const activeGameModesMap = rankingsStore.activeModes.reduce((acc, mode) => {
-        acc[mode.id] = true;
-        return acc;
-      }, {} as Record<number, boolean>);
-
-      let maxMode = EGameMode.GM_1ON1;
-      let maxModeGames = 0;
-      playerStore.gameModeStats.forEach((m) => {
-        if (!activeGameModesMap[m.gameMode]) return;
-        if (m.games > maxModeGames) {
-          maxModeGames = m.games;
-          maxMode = m.gameMode;
-        }
-      });
-      playerStore.SET_PROFILE_STATISTICS_GAME_MODE(maxMode);
-
-      let maxRace = ERaceEnum.HUMAN;
-      let maxRaceGames = 0;
-      playerStore.raceStats.forEach((r) => {
-        if (r.games > maxRaceGames) {
-          maxRaceGames = r.games;
-          maxRace = r.race;
-        }
-      });
-      playerStore.SET_PROFILE_STATISTICS_RACE(maxRace);
-
-      await playerStore.loadPlayerMmrRpTimeline();
     }
 
     return {
