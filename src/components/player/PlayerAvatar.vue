@@ -412,7 +412,7 @@ export default defineComponent({
       return countries.value.find((c) => c.countryCode === code)?.country || "";
     };
 
-    const displayCountryCode = computed(() => personalSetting.value.countryCode || "");
+    const displayCountryCode = computed(() => personalSetting.value.countryCode || personalSetting.value.location || "");
     const displayCountry = computed(() => personalSetting.value.country || getCountryName(displayCountryCode.value));
 
     const userProfile = computed<ProfilePlayerSocials>(() => {
