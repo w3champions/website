@@ -218,3 +218,9 @@ h3 {
     overflow-y: auto;
   }
 }
+
+@media (min-width: 1904px) {
+  .v-container {
+    max-width: 1185px;
+  }
+}

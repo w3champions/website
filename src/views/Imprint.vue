@@ -95,9 +95,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.v-card__title, .v-card__text {
-  filter: blur(0) !important;
-}
-</style>

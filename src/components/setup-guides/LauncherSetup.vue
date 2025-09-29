@@ -2,20 +2,22 @@
   <v-row class="justify-center">
     <v-col>
       <v-container>
-        <v-card-title class="text-center">
+        <v-card-title>
           {{ $t("views_gettingstarted.howtoinstall") }}
         </v-card-title>
-        <v-tabs v-model="tabsModel.self" vertical class="ml-4">
-          <v-tab class="profileTab" :href="`#launcher`">
-            {{ $t("views_gettingstarted.launcher") }}
-          </v-tab>
-          <v-tab class="profileTab" :href="`#windows-setup`">
-            {{ $t("views_gettingstarted.manualwin") }}
-          </v-tab>
-          <v-tab class="profileTab" :href="`#mac-setup`">
-            {{ $t("views_gettingstarted.manualmac") }}
-          </v-tab>
-          <v-window :value="tabsModel.self" touchless>
+        <div class="d-flex flex-row">
+          <v-tabs v-model="tabsModel.self" direction="vertical" class="ml-4">
+            <v-tab class="profileTab" value="launcher">
+              {{ $t("views_gettingstarted.launcher") }}
+            </v-tab>
+            <v-tab class="profileTab" value="windows-setup">
+              {{ $t("views_gettingstarted.manualwin") }}
+            </v-tab>
+            <v-tab class="profileTab" value="mac-setup">
+              {{ $t("views_gettingstarted.manualmac") }}
+            </v-tab>
+          </v-tabs>
+          <v-window :model-value="tabsModel.self">
             <v-window-item value="launcher">
               <v-card-text class="pt-0 px-8">
                 <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
@@ -27,7 +29,7 @@
                     class="join-button mt-0 mb-4"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">Windows</span>
+                    <span class="mr-2 hidden-xs">Windows</span>
                   </v-btn>
                   <v-btn
                     :href="launcherUrlMac"
@@ -35,7 +37,7 @@
                     class="join-button mt-0 mb-4 ml-8"
                   >
                     <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs-only">Mac</span>
+                    <span class="mr-2 hidden-xs">Mac</span>
                   </v-btn>
                 </v-card-text>
                 <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
@@ -67,7 +69,7 @@
             </v-window-item>
             <v-window-item value="windows-setup">
               <v-card-text class="pt-0 px-8">
-                <v-alert outlined type="info" prominent border="start">
+                <v-alert variant="outlined" type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
                 <h3 class="mt-10">
@@ -81,10 +83,10 @@
                   color="primary"
                   :href="ingameAddonLink"
                   target="_blank"
-                  outlined
+                  variant="outlined"
                 >
                   <v-icon>{{ mdiDownload }}</v-icon>
-                  <span class="mr-2 hidden-xs-only">
+                  <span class="mr-2 hidden-xs">
                     {{ $t("views_gettingstarted.manualwinbody2") }}
                   </span>
                 </v-btn>
@@ -116,7 +118,7 @@
             </v-window-item>
             <v-window-item value="mac-setup">
               <v-card-text class="pt-0 px-8">
-                <v-alert outlined type="info" prominent border="start">
+                <v-alert variant="outlined" type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
                 <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
@@ -126,10 +128,10 @@
                   color="primary"
                   :href="webUiLink"
                   target="_blank"
-                  outlined
+                  variant="outlined"
                 >
                   <v-icon>{{ mdiDownload }}</v-icon>
-                  <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualmacbody2") }}</span>
+                  <span class="mr-2 hidden-xs">{{ $t("views_gettingstarted.manualmacbody2") }}</span>
                 </v-btn>
                 <p class="mt-2">
                   {{ $t("views_gettingstarted.manualmacbody3") }}
@@ -147,10 +149,10 @@
                   color="primary"
                   :href="mapsLink"
                   target="_blank"
-                  outlined
+                  variant="outlined"
                 >
                   <v-icon>{{ mdiDownload }}</v-icon>
-                  <span class="mr-2 hidden-xs-only">{{ $t("views_gettingstarted.manualmacbody8") }}</span>
+                  <span class="mr-2 hidden-xs">{{ $t("views_gettingstarted.manualmacbody8") }}</span>
                 </v-btn>
                 <p class="mt-2">
                   {{ $t("views_gettingstarted.manualmacbody9") }}
@@ -191,7 +193,7 @@
               </v-card-text>
             </v-window-item>
           </v-window>
-        </v-tabs>
+        </div>
       </v-container>
     </v-col>
   </v-row>
@@ -242,17 +244,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.important {
-  color: red;
-  font-weight: bold;
-}
-
-.important-dark {
-  color: black;
-  font-weight: bold;
-}
-
-.v-tab--active::before {
+.v-tab--selected::after {
   opacity: 0.12 !important;
 }
 

@@ -4,7 +4,7 @@
       <v-col cols="12" md="8">
         <v-card tile>
           <br />
-          <v-card-title class="justify-center">
+          <v-card-title class="d-flex justify-center">
             {{ $t("views_home.w3c_motto") }}
           </v-card-title>
           <v-row class="justify-center">

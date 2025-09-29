@@ -17,11 +17,8 @@
   }
 
   &.v-application {
-    .v-card__title, h3 {
-      font-family: "Friz Quadrata Std Medium";
+    .v-card-title, h3 {
       color: rgb(255, 212, 40);
-      letter-spacing: 1.56px;
-      text-transform: uppercase;
       text-shadow: rgb(0, 0, 0) 0px 3px 1px;
     }
 
