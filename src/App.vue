@@ -6,7 +6,7 @@
       absolute
       transition="slide-x-transition"
     >
-      <v-list dense>
+      <v-list density="compact">
         <v-list-item>
           <router-link :to="{ name: EMainRouteName.HOME }">
             <brand-logo :is-dark-theme="isDarkTheme.get()" />
@@ -17,7 +17,7 @@
         </v-list-item>
       </v-list>
       <v-divider />
-      <v-list dense nav>
+      <v-list density="compact" nav>
         <v-list-item
           v-for="item in items"
           v-show="isNavItemVisible(item)"
@@ -26,7 +26,7 @@
           :to="{ name: item.to }"
         >
           <template v-slot:prepend>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon size="x-large">{{ item.icon }}</v-icon>
           </template>
           <v-list-item-title>
             {{ $t(`views_app.${item.title}`) }}
@@ -35,10 +35,10 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" app>
+    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" class="pr-3">
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
-      <v-toolbar-title class="pa-0">
+      <v-toolbar-title style="margin-inline-start: 16px">
         <router-link :to="{ name: EMainRouteName.HOME }">
           <brand-logo
             :is-dark-theme="isDarkTheme.get()"
@@ -55,7 +55,7 @@
           v-for="item in items"
           v-show="isNavItemVisible(item)"
           :key="item.title"
-          text
+          variant="text"
           tile
           :to="{ name: item.to }"
           :class="item.class"
@@ -63,23 +63,23 @@
           <span class="mr-2">
             {{ $t(`views_app.${item.title}`) }}
           </span>
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon size="x-large">{{ item.icon }}</v-icon>
         </v-btn>
         <v-divider vertical />
       </span>
 
       <global-search />
 
-      <v-btn v-if="!authCode" text tile @click="loginOrGoToProfile">
-        <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
+      <v-btn v-if="!authCode" variant="text" tile @click="loginOrGoToProfile">
+        <v-icon v-if="!authCode" class="mr-2" size="x-large">{{ mdiAccountCircleOutline }}</v-icon>
         <sign-in-dialog :value="showSignInDialog" @update:value="showSignInDialog = $event" />
       </v-btn>
 
       <v-menu v-if="authCode">
         <template v-slot:activator="{ props }">
-          <v-btn text tile v-bind="props">
+          <v-btn variant="text" tile v-bind="props">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
-            <v-icon>{{ mdiAccountCircle }}</v-icon>
+            <v-icon size="x-large">{{ mdiAccountCircle }}</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -92,14 +92,14 @@
         </v-list>
       </v-menu>
 
-      <v-btn text tile :to="{ name: EMainRouteName.REWARDS }">
-        <v-icon>{{ mdiTreasureChest }}</v-icon>
+      <v-btn variant="text" tile :to="{ name: EMainRouteName.REWARDS }">
+        <v-icon size="x-large">{{ mdiTreasureChest }}</v-icon>
       </v-btn>
 
       <v-menu offset-y>
         <template v-slot:activator="{ props }">
-          <v-btn text tile class="right-menu" v-bind="props">
-            <v-icon>{{ mdiInvertColors }}</v-icon>
+          <v-btn variant="text" tile class="right-menu" v-bind="props">
+            <v-icon size="x-large">{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
         <v-list max-height="400" class="theme-selector overflow-y-auto">
@@ -120,7 +120,7 @@
 
       <v-menu offset-y>
         <template v-slot:activator="{ props }">
-          <v-btn text tile style="margin-top: 2px" v-bind="props">
+          <v-btn variant="text" tile style="margin-top: 2px" v-bind="props">
             <locale-icon :locale="savedLocale.get()" :showTwoLetterCode="false" />
           </v-btn>
         </template>
@@ -141,7 +141,7 @@
     </v-main>
     <v-footer padless class>
       <v-row justify="center" no-gutters>
-        <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
+        <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
     </v-footer>
   </v-app>
@@ -298,7 +298,7 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.change(isDarkTheme.get() ? 'dark' : 'light');
+      vuetify.theme.change(isDarkTheme.get() ? "dark" : "light");
       setThemeColors();
       rootStateStore.SET_DARK_MODE(isDarkTheme.get());
     }

@@ -2,16 +2,16 @@
   <v-menu
     v-model="menuOpened"
     content-class="global-search"
-    bottom
+    location="bottom"
     offset-y
     transition="slide-y-transition"
-    :nudge-bottom="18"
+    :offset="18"
     :nudge-width="300"
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ props }">
-      <v-btn text tile v-bind="props">
-        <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
+      <v-btn variant="text" tile v-bind="props">
+        <v-icon size="x-large" class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -25,11 +25,11 @@
           autofocus
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           return-object
-          :search-input.sync="search"
+          :search.sync="search"
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
-          item-text="battleTag"
+          item-title="battleTag"
           item-value="battleTag"
         >
           <template v-slot:item="{ props, item }">
