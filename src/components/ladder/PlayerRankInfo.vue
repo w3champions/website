@@ -1,12 +1,12 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
       <div
         style="display: inline"
         class="pointer player-name"
+        v-bind="props"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"
-        v-on="on"
       >
         {{ playerId.name }}<span v-if="alias" class="alias"> ({{ alias }})</span>
       </div>

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="mt-2 pb-2 pr-4">
+    <v-card class="pb-2 pr-4">
       <v-card-title>Tournaments</v-card-title>
       <v-card-text>
         <div class="mb-4">

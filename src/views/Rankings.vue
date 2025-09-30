@@ -1,104 +1,109 @@
 <template>
   <v-container>
-    <v-card class="mt-2 search-bar-container" tile>
-      <v-card-title class="search-bar">
-        <gateway-select
-          v-if="isGatewayNeeded"
-          @gatewayChanged="onGatewayChanged"
-        />
-        <game-mode-select
-          :gameMode="selectedGameMode"
-          @gameModeChanged="onGameModeChanged"
-        />
-        <v-menu offset-x>
-          <template v-slot:activator="{ props }">
-            <v-btn tile class="transparent" v-bind="props">
-              <league-icon :league="selectedLeagueOrder" />
-              {{ selectedLeagueName }}
-              {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
-              }}
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.selectleague") }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-              <v-divider />
-              <v-list dense max-height="400" class="leagues-list overflow-y-auto">
-                <v-list-item
-                  v-for="item in ladders"
-                  :key="item.id"
-                  @click="setLeague(item.id)"
-                >
-                  <v-list-item-title>
-                    <league-icon :league="listLeagueIcon(item)" />
-                    {{ item.name }}
-                    {{ item.division !== 0 ? item.division : null }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
-        <v-spacer />
-        <v-autocomplete
-          v-model="searchModel"
-          :append-icon="mdiMagnify"
-          label="Search"
-          single-line
-          clearable
-          :items="searchRanks"
-          :loading="isLoading"
-          :search-input.sync="search"
-          :no-data-text="noDataText"
-          item-text="player.name"
-          item-value="player.id"
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          return-object
-        >
-          <!--
-            In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
-            but for now in Vue 2 we can't use TypeScript in templates.
-          -->
-          <template v-slot:item="{ item }">
-            <template v-if="item?.raw?.player === undefined">
-              {{ item.raw }}
-            </template>
-            <template v-else>
-              <v-list-item-title>
-                <span v-if="!isDuplicateName(item.raw.player.name)">
-                  {{ item.raw.player.name }}
-                </span>
-                <span v-if="isDuplicateName(item.raw.player.name)">
-                  {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
-                </span>
-                <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
-                  ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
-                {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
-                {{ $t(`common.losses`) }}
-                {{ item.raw.player.losses }} |
-                {{ $t(`common.total`) }}
-                {{ item.raw.player.games }}
-              </v-list-item-subtitle>
-              <v-list-item-subtitle v-else>
-                {{ $t(`views_rankings.unranked`) }}
-              </v-list-item-subtitle>
-            </template>
-          </template>
-        </v-autocomplete>
+    <v-card tile>
+      <v-card-title>
+        {{ $t("views_app.rankings") }}
       </v-card-title>
-      <v-menu offset-x>
+      <v-card>
+        <v-card-text class="pt-2 d-flex">
+          <gateway-select
+            v-if="isGatewayNeeded"
+            @gatewayChanged="onGatewayChanged"
+          />
+          <game-mode-select
+            :gameMode="selectedGameMode"
+            @gameModeChanged="onGameModeChanged"
+          />
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn tile class="bg-transparent" v-bind="props">
+                <league-icon :league="selectedLeagueOrder" />
+                {{ selectedLeagueName }}
+                {{
+                  selectedLeague.division !== 0 ? selectedLeague.division : null
+                }}
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-text>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title>
+                      {{ $t("views_rankings.selectleague") }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+                <v-divider />
+                <v-list density="compact" max-height="400" class="leagues-list overflow-y-auto">
+                  <v-list-item
+                    v-for="item in ladders"
+                    :key="item.id"
+                    @click="setLeague(item.id)"
+                  >
+                    <v-list-item-title>
+                      <league-icon :league="listLeagueIcon(item)" />
+                      {{ item.name }}
+                      {{ item.division !== 0 ? item.division : null }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-menu>
+          <v-spacer />
+          <v-autocomplete
+            v-model="searchModel"
+            :append-icon="mdiMagnify"
+            label="Search"
+            single-line
+            clearable
+            :items="searchRanks"
+            :loading="isLoading"
+            :search.sync="search"
+            :no-data-text="noDataText"
+            item-title="player.name"
+            item-value="player.id"
+            :placeholder="$t(`views_rankings.searchPlaceholder`)"
+            return-object
+          >
+            <!--
+              In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
+              but for now in Vue 2 we can't use TypeScript in templates.
+            -->
+            <template v-slot:item="{ item }">
+              <template v-if="item?.raw?.player === undefined">
+                {{ item.raw }}
+              </template>
+              <template v-else>
+                <v-list-item-title>
+                  <span v-if="!isDuplicateName(item.raw.player.name)">
+                    {{ item.raw.player.name }}
+                  </span>
+                  <span v-if="isDuplicateName(item.raw.player.name)">
+                    {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
+                  </span>
+                  <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
+                    ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
+                  </span>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                  {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
+                  {{ $t(`common.losses`) }}
+                  {{ item.raw.player.losses }} |
+                  {{ $t(`common.total`) }}
+                  {{ item.raw.player.games }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>
+                  {{ $t(`views_rankings.unranked`) }}
+                </v-list-item-subtitle>
+              </template>
+            </template>
+          </v-autocomplete>
+        </v-card-text>
+      </v-card>
+      <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn tile class="ma-4 transparent" v-bind="props">
+          <v-btn tile class="ma-4 bg-transparent" v-bind="props">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
@@ -112,7 +117,7 @@
                 {{ $t("views_rankings.prevseasons") }}
               </v-list-item-title>
             </v-list>
-            <v-list dense max-height="400" class="overflow-y-auto">
+            <v-list density="compact" max-height="400" class="overflow-y-auto">
               <v-list-item
                 v-for="item in seasons"
                 :key="item.id"

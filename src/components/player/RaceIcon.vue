@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip v-if="renderIcon" top style="white-space: pre-line">
+  <v-tooltip v-if="renderIcon" location="top" style="white-space: pre-line">
     <template v-slot:activator="{ props }">
       <img
         class="race-icon"

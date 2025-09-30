@@ -42,22 +42,6 @@
   filter: blur(0) !important;
 }
 
-header.v-app-bar--is-scrolled + main {
-  .search-bar-container {
-    overflow: unset !important;
-
-    .search-bar {
-      position: sticky;
-      top: 64px;
-      z-index: 10;
-    }
-  }
-}
-
-.float-clear {
-  clear: both;
-}
-
 .circle {
   border-radius: 50%;
   width: 10px;

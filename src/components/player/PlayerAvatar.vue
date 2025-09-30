@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-tooltip top :disabled="!avatarDescription">
+        <v-tooltip location="top" :disabled="!avatarDescription">
           <template v-slot:activator="{ props }">
             <v-card-text
               style="cursor: pointer"
@@ -15,7 +15,7 @@
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <div
               class="country__container clickable"
@@ -48,13 +48,13 @@
         <v-row class="pb-3" align="center" justify="center">
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
           <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
-            <v-tooltip top>
+            <v-tooltip location="top">
               <template v-slot:activator="{ props }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
-                  @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
                   v-bind="props"
+                  @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
                 />
               </template>
               <span>Starter</span>
@@ -75,13 +75,13 @@
             {{ enumToString(race) }}
           </v-card-text>
           <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
-            <v-tooltip top>
+            <v-tooltip location="top">
               <template v-slot:activator="{ props }">
                 <v-card-text
                   :class="getCorrectClasses(raceToAvatar(race), number)"
                   :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
-                  @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
                   v-bind="props"
+                  @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
                 />
               </template>
               <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
@@ -93,17 +93,17 @@
         <v-row v-if="specialPictures.length > 0" class="pb-3" align="center" justify="center">
           <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
           <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
-            <v-tooltip top>
+            <v-tooltip location="top">
               <template v-slot:activator="{ props }">
                 <v-card-text
                   class="player-avatar-choosing"
                   :class="{ pointer: isLoggedInPlayer }"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
+                  v-bind="props"
                   @click="isLoggedInPlayer
                     ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
                     : null
                   "
-                  v-bind="props"
                 />
               </template>
               <span>{{ specialPicture.description }}</span>
@@ -160,14 +160,14 @@
         <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
           <template v-slot:activator="{ props }">
             <v-btn
-              small
+              size="small"
               class="ma-0"
-              outlined
+              variant="outlined"
               color="primary"
               v-bind="props"
               @click="personalSettingsDialogOpened = true"
             >
-              <v-icon left>{{ mdiPencil }}</v-icon>
+              <v-icon start size="medium">{{ mdiPencil }}</v-icon>
               {{ $t("components_player_playeravatar.edit") }}
             </v-btn>
           </template>
@@ -183,63 +183,57 @@
                   <v-text-field
                     v-model="userProfile.twitch"
                     :prepend-icon="mdiTwitch"
-                    color="purple accent-4"
-                    dense
+                    color="purple-accent-4"
+                    density="compact"
                     clearable
                     single-line
-                    shaped
                     prefix="https://twitch.tv/"
                     :hint="$t('components_player_playeravatar.entertwitchname')"
                   />
                   <v-text-field
                     v-model="userProfile.youtube"
                     :prepend-icon="mdiYoutube"
-                    color="red darken-2"
-                    dense
+                    color="red-darken-2"
+                    density="compact"
                     clearable
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.enterytname')"
                     prefix="https://www.youtube.com/"
                   />
                   <v-text-field
                     v-model="userProfile.twitter"
                     :prepend-icon="mdiTwitter"
-                    color="blue darken-2"
-                    dense
+                    color="blue-darken-2"
+                    density="compact"
                     clearable
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.entertwittername')"
                     prefix="https://www.twitter.com/"
                   />
                   <v-text-field
                     v-model="userProfile.trovo"
                     prepend-icon="$trovo"
-                    color="green darken-3"
-                    dense
+                    color="green-darken-3"
+                    density="compact"
                     clearable
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.entertrovoname')"
                     prefix="https://trovo.live/"
                   />
                   <v-text-field
                     v-model="userProfile.homePage"
                     :prepend-icon="mdiHome"
-                    color="blue darken-2"
-                    dense
+                    color="blue-darken-2"
+                    density="compact"
                     :rules="[rules.maxLength(50)]"
                     single-line
                     clearable
-                    shaped
                     :hint="$t('components_player_playeravatar.entercustomhp')"
                     label="Homepage"
                   />
                   <v-container>
                     <v-checkbox
                       v-model="userProfile.aliasSettings.showAka"
-                      dense
                       class="alias-checkbox"
                       :prepend-icon="mdiAccountCheck"
                       :label="$t('components_player_playeravatar.showalias')"
@@ -286,7 +280,7 @@
                   <v-col>
                     <v-textarea
                       v-model="userProfile.about"
-                      outlined
+                      variant="outlined"
                       name="input-7-1"
                       label="About"
                       clearable
@@ -299,10 +293,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="resetUserProfile">
+              <v-btn color="blue-darken-1" variant="text" @click="resetUserProfile">
                 {{ $t("components_player_playeravatar.close") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="saveUserProfile">
+              <v-btn color="blue-darken-1" variant="text" @click="saveUserProfile">
                 {{ $t("components_player_playeravatar.save") }}
               </v-btn>
             </v-card-actions>

@@ -113,9 +113,9 @@
               v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
               style="position: relative"
             >
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <span style="display: inline" class="pointer" v-on="on">
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <span style="display: inline" class="pointer" v-bind="props">
                     <sword-icon class="swords blinker" />
                   </span>
                 </template>

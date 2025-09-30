@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-card class="mt-2 search-bar-container" tile>
-      <v-card-title class="search-bar">
+    <v-card class="mt-2" tile>
+      <v-card-title>
         <gateway-select
           v-if="isGatewayNeeded"
           @gatewayChanged="onGatewayChanged"

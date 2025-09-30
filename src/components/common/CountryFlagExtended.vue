@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip location="top">
     <template v-slot:activator="{ props }">
       <span :class="{ 'clickable': clickable }" v-bind="props" @click="clickable && goToCountryRankings()">
         <country-flag
