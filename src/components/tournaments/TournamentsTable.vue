@@ -5,7 +5,7 @@
     :items="tournaments"
     :disable-pagination="true"
     :items-per-page="-1"
-    :item-style="itemStyle"
+    :row-props="itemStyle"
     :hide-default-footer="true"
     @click:row="onRowClick"
   >
@@ -29,11 +29,7 @@ import { defineComponent, StyleValue } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { TournamentStateLabel } from "@/helpers/tournaments";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
-
-interface TournamentsTableHeader {
-  text: string;
-  value: string;
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "TournamentsTable",
@@ -58,25 +54,25 @@ export default defineComponent({
       };
     };
 
-    const headers: TournamentsTableHeader[] = [
-      {
-        text: "Tournament Name",
+    const headers: DataTableHeader[] = [
+            {
+        title: "Tournament Name",
         value: "name",
       },
       {
-        text: "Date / Time",
+        title: "Date / Time",
         value: "startDateTime",
       },
       {
-        text: "Status",
+        title: "Status",
         value: "state",
       },
       {
-        text: "Player Count",
+        title: "Player Count",
         value: "playerCount",
       },
       {
-        text: "Winner",
+        title: "Winner",
         value: "winner",
       },
     ];
