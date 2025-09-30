@@ -139,7 +139,7 @@
     <v-main>
       <router-view />
     </v-main>
-    <v-footer padless class>
+    <v-footer class="pa-0 flex-0-0">
       <v-row justify="center" no-gutters>
         <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
