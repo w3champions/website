@@ -109,3 +109,11 @@ header.v-app-bar--is-scrolled + main {
   text-shadow: none;
   color: black;
 }
+
+p {
+  margin-bottom: 16px;
+}
+
+ul, ol {
+    padding-left: 24px;
+}

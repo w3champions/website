@@ -22,7 +22,8 @@
             <v-carousel
               v-model="model"
               :show-arrows="false"
-              height="350px"
+              height="400px"
+              hide-delimiter-background
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
                 <v-card-title>
