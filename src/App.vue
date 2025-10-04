@@ -72,7 +72,7 @@
 
       <v-btn v-if="!authCode" variant="text" tile @click="loginOrGoToProfile">
         <v-icon v-if="!authCode" class="mr-2" size="x-large">{{ mdiAccountCircleOutline }}</v-icon>
-        <sign-in-dialog :value="showSignInDialog" @update:value="showSignInDialog = $event" />
+        <sign-in-dialog :value="showSignInDialog" @toggle-dialog="toggleSignInDialog" />
       </v-btn>
 
       <v-menu v-if="authCode">
@@ -353,6 +353,10 @@ export default defineComponent({
       }
     }
 
+    const toggleSignInDialog = (val: boolean) => {
+      showSignInDialog.value = val;
+    };
+
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
@@ -404,6 +408,7 @@ export default defineComponent({
       getTheme,
       setTheme,
       EMainRouteName,
+      toggleSignInDialog,
     };
   },
 });

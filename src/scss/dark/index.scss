@@ -16,7 +16,7 @@
     }
   }
 
-  &.v-application {
+  &.v-application, &.v-overlay {
     .v-card-title, h3 {
       color: rgb(255, 212, 40);
       text-shadow: rgb(0, 0, 0) 0px 3px 1px;
