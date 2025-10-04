@@ -2,7 +2,7 @@
 
 // #1976d2 blue
 
-.v-theme--light.v-application {
+.v-application.human {
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 
   background: url("/assets/backgrounds/human.jpg") no-repeat !important;
@@ -12,11 +12,11 @@
   justify-content: center !important;
 
   .won {
-    color: var(--v-success-darken1) !important;
+    color: rgb(var(--v-theme-won)) !important;
   }
   
   .lost {
-    color: var(--v-error-darken1) !important;
+    color: rgb(var(--v-theme-lost)) !important;
   }
 
   .v-data-table,

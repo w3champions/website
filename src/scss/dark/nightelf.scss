@@ -1,6 +1,6 @@
 @import "../shared/index.scss";
 
-.v-theme--dark.v-application.nightelf {
+.v-application.nightelf {
   --w3-bg-glass: rgba(13, 7, 24, 0.9);
 
   background: url("/assets/backgrounds/nightelf.jpg") no-repeat !important;
@@ -8,4 +8,13 @@
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
+
+  .won {
+    color: rgb(var(--v-theme-success)) !important;
+    // color: #4caf50 !important;
+  }
+
+  .lost {
+    color: rgb(var(--v-theme-error)) !important;
+  }
 }

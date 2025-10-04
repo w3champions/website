@@ -1,6 +1,6 @@
 @import "../shared/index.scss";
 
-.v-theme--dark.v-application {
+.v-application.undead {
   --w3-bg-glass: rgba(0, 0, 0, 0.9);
 
   background: url("/assets/backgrounds/undead.jpg") no-repeat !important;
@@ -8,6 +8,14 @@
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
+
+  .won {
+    color: rgb(var(--v-theme-success)) !important;
+  }
+
+  .lost {
+    color: rgb(var(--v-theme-error)) !important;
+  }
 
   .v-data-table,
   .custom-table {

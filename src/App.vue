@@ -160,6 +160,7 @@ import languages from "@/locales/languages";
 import { vuetify } from "@/plugins/vuetify";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
+import { useTheme } from "vuetify";
 
 import {
   mdiAccountCircle,
@@ -199,6 +200,7 @@ export default defineComponent({
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
+    const theme = useTheme();
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -298,9 +300,10 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.change(isDarkTheme.get() ? "dark" : "light");
-      setThemeColors();
-      rootStateStore.SET_DARK_MODE(isDarkTheme.get());
+      // vuetify.theme.change(isDarkTheme.get() ? "dark" : "light");
+      // setThemeColors();
+      // rootStateStore.SET_DARK_MODE(isDarkTheme.get());
+      theme.change(val);
     }
 
     const themeColors = ({
@@ -345,13 +348,13 @@ export default defineComponent({
       return true;
     }
 
-    function setThemeColors() {
-      const themeName = isDarkTheme.get() ? "dark" : "light";
-      const currentTheme = vuetify.theme.themes.value[themeName];
-      if (currentTheme && currentTheme.colors) {
-        Object.assign(currentTheme.colors, themeColors.get());
-      }
-    }
+    // function setThemeColors() {
+    //   const themeName = isDarkTheme.get() ? "dark" : "light";
+    //   const currentTheme = vuetify.theme.themes.value[themeName];
+    //   if (currentTheme && currentTheme.colors) {
+    //     Object.assign(currentTheme.colors, themeColors.get());
+    //   }
+    // }
 
     const toggleSignInDialog = (val: boolean) => {
       showSignInDialog.value = val;
@@ -376,7 +379,7 @@ export default defineComponent({
       if (t && t.length > 0) {
         setTheme(t);
       }
-      setThemeColors();
+      // setThemeColors();
     });
 
     return {

@@ -3,7 +3,7 @@
 // #c12b12 orc red
 // #5c2604 orc brown
 
-.v-theme--light.v-application.orc {
+.v-application.orc {
   --w3-bg-glass: rgba(199, 186, 161, 0.9);
 
   background: url("/assets/backgrounds/orc.jpg") no-repeat !important;
@@ -13,10 +13,10 @@
   justify-content: center !important;
 
   .won {
-    color: var(--v-success-darken2) !important;
+    color: var(text-green-darken-2) !important;
   }
   
   .lost {
-    color: var(--v-error-darken2) !important;
+    color: rgb(var(text-error-darken-2)) !important;
   }
 }

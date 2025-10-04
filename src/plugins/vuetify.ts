@@ -5,13 +5,21 @@ import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 import TrovoIcon from "@/components/player/TrovoIcon.vue";
 import LiquipediaIcon from "@/components/player/LiquipediaIcon.vue";
 import W3infoIcon from "@/components/player/W3infoIcon.vue";
+import { human } from "./human";
+import { orc } from "./orc";
+import { nightelf } from "./nightelf";
+import { undead } from "./undead";
 
 export const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: "light",
+    defaultTheme: "orc",
     themes: {
+      human: human,
+      orc: orc,
+      nightelf: nightelf,
+      undead: undead,
       light: {
         dark: false,
         colors: {
