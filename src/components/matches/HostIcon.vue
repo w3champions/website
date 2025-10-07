@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip bottom transition="scroll-y-transition" style="white-space: pre-line">
+  <v-tooltip location="bottom" style="white-space: pre-line">
     <template v-slot:activator="{ props }">
       <div class="globe" v-bind="props">
         <v-img :src="icon" :width="18" :height="18" />
