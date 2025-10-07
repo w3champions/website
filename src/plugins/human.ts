@@ -19,7 +19,7 @@ export const human = {
     // "bottom-navigation": "var(--v-w3-race-bg-base)",
     // "text-primary": "var(--v-w3-race-bg-base)",
     "text-secondary": "rgba(0, 0, 0, 0.75)",
-    won: colors.green.darken1,
+    won: "#2d9437",
     lost: colors.red.darken1,
   },
 };
