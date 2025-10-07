@@ -8,8 +8,8 @@
               style="cursor: pointer"
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
               class="player-avatar text-center"
-              @click.stop="iconsDialogOpened = true"
               v-bind="props"
+              @click.stop="iconsDialogOpened = true"
             />
           </template>
           <span>{{ avatarDescription }}</span>
@@ -251,27 +251,23 @@
                     /> -->
                   </v-container>
                 </v-row>
-                <v-row no-gutters class="countryInput">
+                <v-row no-gutters>
                   <v-col md="12">
                     <v-autocomplete
                       v-model="selectedCountry"
                       :prepend-icon="mdiFlag"
                       clearable
                       :item-value="countryCode"
+                      item-title="country"
                       :items="countries"
-                      :filter="countryFilter"
                       :label="$t('components_player_playeravatar.selectcountry')"
-                      item-text="country"
-                      :return-object="false"
                     >
-                      <template v-slot:item="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
-                        {{ item.country }}
-                        <v-spacer />
-                      </template>
-                      <template v-slot:selection="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
-                        {{ item.country }}
+                      <template v-slot:item="{ props, item }">
+                        <v-list-item v-bind="props" :title="item.raw.country">
+                          <template v-slot:prepend>
+                            <country-flag :country="item.raw.countryCode" size="normal" class="ma-0" />
+                          </template>
+                        </v-list-item>
                       </template>
                     </v-autocomplete>
                   </v-col>
@@ -422,12 +418,6 @@ export default defineComponent({
       } satisfies ProfilePlayerSocials;
     });
 
-    function countryFilter(item: CountryType, queryText: string): boolean {
-      const textOne = item.country.toLowerCase();
-      const searchText = queryText.toLowerCase();
-      return textOne.includes(searchText);
-    }
-
     async function resetUserProfile(): Promise<void> {
       // userProfile.value = {
       //   twitch: twitch.value,
@@ -547,6 +537,7 @@ export default defineComponent({
     }
 
     onMounted((): void => {
+      populateCountriesForDropdown();
       init();
     });
 
@@ -560,35 +551,35 @@ export default defineComponent({
       }
     );
 
-    async function init() {
-      await personalSettingsStore.loadPersonalSetting();
-
-      useClassicIcons.value = personalSetting.value?.profilePicture?.isClassic ?? false;
-
-      // populate countries dropdown for combobox
+    const populateCountriesForDropdown = (): void => {
       enumKeys(ECountries).map((key) => {
         const country = {
           country: key,
           countryCode: ECountries[key],
         };
-
-        if (countryCode.value && countryCode.value == country.countryCode) {
-          selectedCountry.value = country.country;
-          selectedCountryCode.value = country.countryCode;
-        }
-
         countries.value.push(country);
       });
+    };
+
+    async function init() {
+      await personalSettingsStore.loadPersonalSetting();
+
+      useClassicIcons.value = personalSetting.value?.profilePicture?.isClassic ?? false;
+
+      if (countryCode.value) {
+        const foundCountry = countries.value.find((c) => c.countryCode === countryCode.value);
+        if (foundCountry) {
+          selectedCountry.value = foundCountry.country;
+          selectedCountryCode.value = foundCountry.countryCode;
+        }
+      }
 
       if (!selectedCountryCode.value && personalSetting.value?.location) {
-        selectedCountryCode.value = personalSetting.value.location;
-
-        enumKeys(ECountries).map((key) => {
-          const element = ECountries[key] as string;
-          if (element == selectedCountryCode.value) {
-            selectedCountry.value = key;
-          }
-        });
+        const foundCountry = countries.value.find((c) => c.countryCode === personalSetting.value.location);
+        if (foundCountry) {
+          selectedCountry.value = foundCountry.country;
+          selectedCountryCode.value = foundCountry.countryCode;
+        }
       }
     }
 
@@ -630,7 +621,6 @@ export default defineComponent({
       savedMessageValue,
       countryCode,
       countries,
-      countryFilter,
       rules,
       resetUserProfile,
       saveUserProfile,
@@ -641,10 +631,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.countryInput {
-  margin-left: -11px;
-}
-
 .player-country {
   position: absolute;
   border-color: white;
