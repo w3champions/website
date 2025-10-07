@@ -1,5 +1,5 @@
 <template>
-  <v-progress-linear class="level-progress" :value="progressToNextLevel" height="25">
+  <v-progress-linear class="level-progress" :model-value="progressToNextLevel" height="25" color="level-progress-gradient">
     <strong>{{ levelNumber }}</strong>
   </v-progress-linear>
 </template>
@@ -30,29 +30,25 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .level-progress {
-  background-color: white !important;
+  background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.75);
   border-radius: 3px;
   min-width: 100px;
   max-width: 200px;
   text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 
-  ::v-deep(.v-progress-linear__background) {
-    opacity: 0 !important;
+  :deep(.bg-level-progress-gradient) {
+    background-image: linear-gradient(white 0%, rgb(var(--v-theme-primary)) 40%, rgb(var(--v-theme-primary)) 60%, white 100%);
   }
 
-  ::v-deep(.v-progress-linear__determinate) {
-    background-image: linear-gradient(white 0%, var(--v-theme-primary) 40%, var(--v-theme-primary) 60%, white 100%);
-  }
-
-  .v-theme--dark & {
-    background-color: black !important;
+  .v-theme--nightelf &, .v-theme--undead & {
+    background-color: black;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.7);
     text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 
-    ::v-deep(.v-progress-linear__determinate) {
-      background-image: linear-gradient(black, var(--v-theme-primary), black);
+    :deep(.bg-level-progress-gradient) {
+      background-image: linear-gradient(black, rgb(var(--v-theme-primary)), black);
     }
   }
 }
