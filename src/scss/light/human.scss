@@ -2,22 +2,18 @@
 
 // #1976d2 blue
 
-.v-theme--light.v-application {
+.v-application.human {
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
+
+  .won {
+    color: rgb(var(--v-theme-success-darken-1)) !important;
+  }
 
   background: url("/assets/backgrounds/human.jpg") no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
-
-  .won {
-    color: var(--v-success-darken1) !important;
-  }
-  
-  .lost {
-    color: var(--v-error-darken1) !important;
-  }
 
   .v-data-table,
   .custom-table {
@@ -28,5 +24,13 @@
 
   .v-expansion-panel {
     background-color: transparent !important;
+  }
+
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
   }
 }

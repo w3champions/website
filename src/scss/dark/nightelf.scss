@@ -1,6 +1,6 @@
 @import "../shared/index.scss";
 
-.v-theme--dark.v-application.nightelf {
+.v-application.nightelf {
   --w3-bg-glass: rgba(13, 7, 24, 0.9);
 
   background: url("/assets/backgrounds/nightelf.jpg") no-repeat !important;
@@ -8,4 +8,22 @@
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
+
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-btn.join-button {
+    text-shadow: none;
+    color: rgb(var(--v-theme-black));
+  }
+
+  .v-card-title, h3 {
+    color: rgb(255, 212, 40);
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px;
+  }
 }

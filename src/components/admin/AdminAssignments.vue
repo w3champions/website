@@ -931,15 +931,15 @@ export default defineComponent({
   border-radius: 8px;
 }
 
-.modern-table >>> th {
-  background-color: var(--v-theme-primary-lighten5) !important;
-  color: var(--v-theme-primary-darken2) !important;
-  font-weight: 600 !important;
-}
+// .modern-table >>> th {
+//   background-color: var(--v-theme-primary-lighten5) !important;
+//   color: var(--v-theme-primary-darken2) !important;
+//   font-weight: 600 !important;
+// }
 
-.modern-table >>> tr:hover {
-  background-color: var(--v-theme-primary-lighten5) !important;
-}
+// .modern-table >>> tr:hover {
+//   background-color: var(--v-theme-primary-lighten5) !important;
+// }
 
 .font-family-monospace {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;

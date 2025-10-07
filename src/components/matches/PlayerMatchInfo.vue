@@ -18,7 +18,7 @@
         <v-tooltip top transition="none">
           <template v-slot:activator="{ props }">
             <a
-              class="truncated-text"
+              class="truncated-text text-primary"
               :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
               v-bind="props"
               @click="notClickable ? null : goToPlayer()"

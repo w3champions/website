@@ -16,7 +16,7 @@
   text-transform: uppercase !important;
 }
 
-.v-application {
+.v-application, .v-btn.v-tab {
   font-family: "Inter Variable" !important;
 }
 
@@ -200,15 +200,6 @@ h3 {
   overflow-y: hidden;
 }
 
-// Set cursor to 'pointer' instead of 'text' in dropdown menus.
-.v-select {
-  .v-select__selections {
-    input {
-      cursor: pointer;
-    }
-  }
-}
-
 .v-carousel {
   .v-window__container {
     height: 350px;
@@ -216,6 +207,9 @@ h3 {
   }
   .v-window-item .v-responsive__content {
     overflow-y: auto;
+  }
+  .v-carousel__controls {
+    background: rgba(0, 0, 0, 0.3);
   }
 }
 

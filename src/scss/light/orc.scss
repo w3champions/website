@@ -3,8 +3,12 @@
 // #c12b12 orc red
 // #5c2604 orc brown
 
-.v-theme--light.v-application.orc {
+.v-application.orc {
   --w3-bg-glass: rgba(199, 186, 161, 0.9);
+
+  .won {
+    color: rgb(var(--v-theme-success-darken-2)) !important;
+  }
 
   background: url("/assets/backgrounds/orc.jpg") no-repeat !important;
   background-attachment: fixed !important;
@@ -12,11 +16,11 @@
   align-items: center !important;
   justify-content: center !important;
 
-  .won {
-    color: var(--v-success-darken2) !important;
+  .v-card {
+    background-color: var(--w3-bg-glass);
   }
-  
-  .lost {
-    color: var(--v-error-darken2) !important;
+
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
   }
 }

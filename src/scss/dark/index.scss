@@ -1,13 +1,25 @@
 @import "./undead.scss";
 @import "./nightelf.scss";
 
-.v-theme--dark {
+.v-theme--nightelf, .v-theme--undead {
   .won {
-    color: var(--v-success-base) !important;
+    color: rgb(var(--v-theme-success)) !important;
   }
-  
+
   .lost {
-    color: var(--v-error-base) !important;
+    color: rgb(var(--v-theme-lost)) !important;
+  }
+
+  .v-btn {
+    color: rgb(var(--v-theme-primary));
+
+    &.v-tab {
+      color: rgba(var(--v-theme-white), 0.6);
+
+      &.v-tab--selected {
+        color: rgb(var(--v-theme-primary));
+      }
+    }
   }
 
   .custom-table {
@@ -20,10 +32,6 @@
     .v-card-title, h3 {
       color: rgb(255, 212, 40);
       text-shadow: rgb(0, 0, 0) 0px 3px 1px;
-    }
-
-    .v-btn {
-      color: rgb(255, 212, 40);
     }
 
     .v-tooltip__content {
