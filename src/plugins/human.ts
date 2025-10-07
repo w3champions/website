@@ -18,8 +18,7 @@ export const human = {
     // "navigation-drawer": "var(--w3-bg-glass)",
     // "bottom-navigation": "var(--v-w3-race-bg-base)",
     // "text-primary": "var(--v-w3-race-bg-base)",
-    "text-secondary": "rgba(0, 0, 0, 0.75)",
-    won: "#2d9437",
+    success: "#4caf50",
     lost: colors.red.darken1,
   },
 };

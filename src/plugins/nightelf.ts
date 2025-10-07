@@ -17,6 +17,7 @@ export const nightelf = {
     // "app-bar": "var(--w3-bg-glass)",
     // "navigation-drawer": "var(--w3-bg-glass)",
     // "bottom-navigation": "var(--v-w3-race-bg-base)",
+    success: "#4caf50",
     lost: colors.red.accent2,
   },
 };
