@@ -19,4 +19,12 @@
   .lost {
     color: rgb(var(text-error-darken-2)) !important;
   }
+
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
+  }
 }

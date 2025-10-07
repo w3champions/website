@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container class="pa-0">
+    <v-row class="ma-0">
       <v-col cols="12" md="8">
         <v-card tile>
           <br />
@@ -92,7 +92,7 @@
 
       <v-col cols="12" md="4">
         <v-row>
-          <v-col cols="12" class="no-padding">
+          <v-col cols="12">
             <social-box />
             <support-box />
             <partner-box />
@@ -225,10 +225,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.no-padding {
-  padding-top: 0;
-}
-
 .v-btn.join-button {
   letter-spacing: 0 !important;
   font-family: inherit !important;

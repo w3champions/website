@@ -17,6 +17,28 @@
     color: rgb(var(--v-theme-error)) !important;
   }
 
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+  
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-btn {
+    color: rgb(255, 212, 40);
+  }
+
+  .v-btn.join-button {
+    text-shadow: none;
+    color: rgb(var(--v-theme-black));
+  }
+
+  .v-card-title, h3 {
+    color: rgb(255, 212, 40);
+    text-shadow: rgb(0, 0, 0) 0px 3px 1px;
+  }
+
   .v-data-table,
   .custom-table {
     tr:hover {

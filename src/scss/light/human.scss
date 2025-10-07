@@ -29,4 +29,12 @@
   .v-expansion-panel {
     background-color: transparent !important;
   }
+
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .v-toolbar {
+    background-color: var(--w3-bg-glass);
+  }
 }

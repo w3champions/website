@@ -1,9 +1,9 @@
+import colors from "vuetify/util/colors";
+
 export const undead = {
   dark: true,
   colors: {
     primary: "#ffd428",
-    "primary-lighten5": "#e3f2fd",
-    "primary-darken2": "#1565c0",
     secondary: "#424242",
     accent: "#82B1FF",
     error: "#FF5252",
@@ -11,13 +11,15 @@ export const undead = {
     success: "#4CAF50",
     warning: "#FFC107",
     gold: "#FFD428",
+    black: colors.shades.black,
+    title: "#FFD428",
     background: "#121212",
     surface: "#1e1e1e",
     "w3-race-bg": "#e9e9e9",
-    card: "var(--w3-bg-glass)",
-    toolbar: "var(--v-w3-race-bg-base)",
-    "app-bar": "var(--w3-bg-glass)",
-    "navigation-drawer": "var(--w3-bg-glass)",
-    "bottom-navigation": "var(--v-w3-race-bg-base)",
+    // card: "var(--w3-bg-glass)",
+    // toolbar: "var(--v-w3-race-bg-base)",
+    // "app-bar": "var(--w3-bg-glass)",
+    // "navigation-drawer": "var(--w3-bg-glass)",
+    // "bottom-navigation": "var(--v-w3-race-bg-base)",
   },
 };
