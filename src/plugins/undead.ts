@@ -12,6 +12,7 @@ export const undead = {
     warning: "#FFC107",
     gold: "#FFD428",
     black: colors.shades.black,
+    white: colors.shades.white,
     title: "#FFD428",
     background: "#121212",
     surface: "#1e1e1e",

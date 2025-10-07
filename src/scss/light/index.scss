@@ -8,6 +8,16 @@
     }
   }
 
+  .v-btn {
+    &.v-tab {
+      color: rgba(var(--v-theme-black), 0.54);
+
+      &.v-tab--selected {
+        color: rgb(var(--v-theme-primary));
+      }
+    }
+  }
+
   .v-overlay__content {
     background-color: rgb(var(--v-theme-w3-race-bg-lighten-1));
     color: rgb(var(--v-theme-secondary-darken1));

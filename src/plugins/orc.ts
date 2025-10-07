@@ -12,6 +12,7 @@ export const orc = {
     warning: "#FFC107",
     gold: "#FFD428",
     black: colors.shades.black,
+    white: colors.shades.white,
     title: colors.shades.black,
     // background: "var(--w3-bg-glass)",
     // surface: "var(--v-w3-race-bg-base)",
