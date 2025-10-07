@@ -15,7 +15,7 @@ export const undead = {
     title: "#FFD428",
     background: "#121212",
     surface: "#1e1e1e",
-    "w3-race-bg": "#e9e9e9",
+    "w3-race-bg": colors.shades.black,
     // card: "var(--w3-bg-glass)",
     // toolbar: "var(--v-w3-race-bg-base)",
     // "app-bar": "var(--w3-bg-glass)",

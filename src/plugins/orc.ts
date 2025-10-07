@@ -15,7 +15,7 @@ export const orc = {
     title: colors.shades.black,
     // background: "var(--w3-bg-glass)",
     // surface: "var(--v-w3-race-bg-base)",
-    "w3-race-bg": "#e9e9e9",
+    "w3-race-bg": "#c7baa1",
     // card: "var(--w3-bg-glass)",
     // toolbar: "var(--v-w3-race-bg-base)",
     // "app-bar": "var(--w3-bg-glass)",
