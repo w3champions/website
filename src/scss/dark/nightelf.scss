@@ -9,15 +9,6 @@
   align-items: center !important;
   justify-content: center !important;
 
-  .won {
-    color: rgb(var(--v-theme-success)) !important;
-    // color: #4caf50 !important;
-  }
-
-  .lost {
-    color: rgb(var(--v-theme-error)) !important;
-  }
-
   .v-card {
     background-color: var(--w3-bg-glass);
   }

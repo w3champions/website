@@ -5,11 +5,6 @@ export const undead = {
   colors: {
     primary: "#ffd428",
     secondary: "#424242",
-    accent: "#82B1FF",
-    error: "#FF5252",
-    info: "#2196F3",
-    success: "#4CAF50",
-    warning: "#FFC107",
     gold: "#FFD428",
     black: colors.shades.black,
     white: colors.shades.white,
@@ -22,5 +17,6 @@ export const undead = {
     // "app-bar": "var(--w3-bg-glass)",
     // "navigation-drawer": "var(--w3-bg-glass)",
     // "bottom-navigation": "var(--v-w3-race-bg-base)",
+    lost: colors.red.accent2,
   },
 };

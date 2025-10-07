@@ -2,6 +2,14 @@
 @import "./orc.scss";
 
 .v-theme--human, .v-theme--orc {
+  .won {
+    color: rgb(var(--v-theme-won)) !important;
+  }
+
+  .lost {
+    color: rgb(var(--v-theme-lost)) !important;
+  }
+
   .custom-table {
     td {
       border-bottom: thin solid rgba(0, 0, 0, 0.12);

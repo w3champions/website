@@ -5,11 +5,6 @@ export const orc = {
   colors: {
     primary: "#5c2604",
     secondary: "#424242",
-    accent: "#82B1FF",
-    error: "#FF5252",
-    info: "#2196F3",
-    success: "#4CAF50",
-    warning: "#FFC107",
     gold: "#FFD428",
     black: colors.shades.black,
     white: colors.shades.white,
@@ -24,5 +19,7 @@ export const orc = {
     // "bottom-navigation": "var(--v-w3-race-bg-base)",
     // "text-primary": "var(--v-w3-race-bg-base)",
     "text-secondary": "rgba(0, 0, 0, 0.75)",
+    won: "#00791e",
+    lost: colors.red.darken2,
   },
 };
