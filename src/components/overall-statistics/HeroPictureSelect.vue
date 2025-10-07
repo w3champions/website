@@ -1,6 +1,6 @@
 <template>
   <v-card-text :class="{ 'pa-1': xs }">
-    <v-tooltip top>
+    <v-tooltip location="top">
       <template v-slot:activator="{ props }">
         <div v-bind="props">
           <v-card-text
@@ -31,7 +31,7 @@
             :key="heroPickSelection.heroId"
             :cols="3"
           >
-            <v-tooltip top>
+            <v-tooltip location="top">
               <template v-slot:activator="{ props }">
                 <div class="ma-1" v-bind="props">
                   <v-responsive :aspect-ratio="1 / 1">

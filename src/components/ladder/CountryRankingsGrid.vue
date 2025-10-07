@@ -58,25 +58,27 @@
 
                 <player-rank-info :player-id="playerId" />
                 <div v-if="isTwitchLive(item)" class="twitch__container">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <span style="display: inline" class="pointer" v-on="on">
+                  <v-tooltip location="bottom">
+                    <template v-slot:activator="{ props }">
+                      <span style="display: inline" class="pointer">
                         <v-btn
                           icon
                           :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
                           target="_blank"
-                          v-on="on"
+                          v-bind="props"
+                          class="bg-transparent"
+                          variant="flat"
                         >
                           <v-icon
                             v-if="!isCurrentlyLive(item.player.playerIds)"
-                            color="purple accent-4"
+                            color="purple-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>
                           <v-icon
                             v-if="isCurrentlyLive(item.player.playerIds)"
                             class="blinker"
-                            color="red accent-4"
+                            color="red-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>

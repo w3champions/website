@@ -66,6 +66,8 @@
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
                         v-bind="props"
+                        class="bg-transparent"
+                        variant="flat"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"

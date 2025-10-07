@@ -659,15 +659,6 @@ export default defineComponent({
   max-width: 120px;
 }
 
-.socialIcon {
-  padding-top: 0px;
-  padding-left: 2px;
-}
-
-.twitchIcon {
-  margin-top: 2px;
-}
-
 @media (min-width: 960px) {
   .player-avatar {
     height: 185px !important;

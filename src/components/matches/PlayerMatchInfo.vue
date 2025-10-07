@@ -15,7 +15,7 @@
             :location="player.location"
           />
         </span>
-        <v-tooltip top transition="none">
+        <v-tooltip location="top" transition="none">
           <template v-slot:activator="{ props }">
             <a
               class="truncated-text text-primary"

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip v-if="season" top>
+  <v-tooltip v-if="season" location="top">
     <template v-slot:activator="{ props }">
       <div
         :class="['season-badge', 'pointer']"

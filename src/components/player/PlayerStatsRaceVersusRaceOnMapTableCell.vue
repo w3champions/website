@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip location="top">
     <template v-slot:activator="{ props }">
       <td class="number-text text-right" :class="toWinClass" v-bind="props">
         {{ toWinText }}

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top style="white-space: pre-line">
+  <v-tooltip location="top" style="white-space: pre-line">
     <template v-slot:activator="{ props }">
       <span :class="classes" v-bind="props"></span>
     </template>

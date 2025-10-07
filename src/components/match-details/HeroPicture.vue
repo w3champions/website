@@ -1,7 +1,7 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-on="on" />
+  <v-tooltip location="top">
+    <template v-slot:activator="{ props }">
+      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-bind="props" />
     </template>
     <div>{{ heroName }} ({{ $t("common.level") }} {{ heroLevel }})</div>
   </v-tooltip>

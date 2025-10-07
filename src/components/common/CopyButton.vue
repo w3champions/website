@@ -1,8 +1,8 @@
 <template>
-  <v-tooltip top>
+  <v-tooltip location="top">
     <template v-slot:activator="{ props }">
-      <v-btn small v-bind="props" :aria-label="$t(`components_common_copybutton.${tooltipText}`)" @click="copy">
-        <v-icon>{{ mdiContentCopy }}</v-icon>
+      <v-btn size="small" class="bg-transparent" v-bind="props" :aria-label="$t(`components_common_copybutton.${tooltipText}`)" @click="copy">
+        <v-icon size="x-large">{{ mdiContentCopy }}</v-icon>
       </v-btn>
     </template>
     <span>{{ $t(`components_common_copybutton.${tooltipText}`) }}</span>

@@ -29,37 +29,32 @@
       >
         <v-row dense>
           <v-col :class="unitsKilledComparison">
-            <number-display :object="unitScore" value="unitsKilled" />
+            <number-display :object="unitScore" value="unitsKilled" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="unitsProducedComparison">
-            <number-display :object="unitScore" value="unitsProduced" />
+            <number-display :object="unitScore" value="unitsProduced" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="goldComparison">
-            <number-display :object="resourceScore" value="goldCollected" />
+            <number-display :object="resourceScore" value="goldCollected" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="woodComparison">
-            <number-display :object="resourceScore" value="lumberCollected" />
+            <number-display :object="resourceScore" value="lumberCollected" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="upkeepComparison">
-            <number-display :object="resourceScore" value="goldUpkeepLost" />
+            <number-display :object="resourceScore" value="goldUpkeepLost" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="armyComparison">
-            <number-display
-              :object="unitScore"
-              value="largestArmy"
-              :delimiter="AddValuesDelimiter.SLASH"
-              :align="alignText"
-            />
+            <number-display :object="unitScore" value="largestArmy" :delimiter="AddValuesDelimiter.SLASH" :align="alignText" />
           </v-col>
         </v-row>
       </v-col>
