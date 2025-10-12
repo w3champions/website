@@ -5,7 +5,8 @@
     </v-card-title>
     <v-container>
       <v-card class="pa-md-4">
-        <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+        <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+        <v-btn color="secondary" class="mb-2 w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
         <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" dense hide-details />
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
@@ -13,6 +14,10 @@
 
         <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
+        </v-dialog>
+
+        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px">
+          <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
         <v-text-field v-model="search" label="Search" />
@@ -42,6 +47,7 @@ import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
+import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiFile, mdiPencil } from "@mdi/js";
@@ -51,6 +57,7 @@ export default defineComponent({
   components: {
     EditMap,
     EditMapFiles,
+    BulkMapUpload,
   },
   setup() {
     const oauthStore = useOauthStore();
@@ -61,6 +68,7 @@ export default defineComponent({
     const isEditOpen = ref<boolean>(false);
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
+    const isBulkUploadOpen = ref<boolean>(false);
 
     const adminMapsFilters = ref<AdminMapsFilters>({ hideDisabled: false });
 
@@ -108,6 +116,19 @@ export default defineComponent({
 
     function closeEditFiles(): void {
       isEditFilesOpen.value = false;
+    }
+
+    function openBulkUpload(): void {
+      isBulkUploadOpen.value = true;
+    }
+
+    function closeBulkUpload(): void {
+      isBulkUploadOpen.value = false;
+    }
+
+    async function handleBulkUploadCompleted(count: number): Promise<void> {
+      alert(`Successfully selected ${count} maps!`);
+      closeBulkUpload();
     }
 
     async function saveMap(map: Map): Promise<void> {
@@ -207,6 +228,10 @@ export default defineComponent({
       configureMap,
       configureMapFiles,
       adminMapsFilters,
+      isBulkUploadOpen,
+      openBulkUpload,
+      closeBulkUpload,
+      handleBulkUploadCompleted,
     };
   },
 });

@@ -46,6 +46,7 @@ declare module 'vue' {
     AvailablePortraitsGallery: typeof import('./src/components/admin/portraits/AvailablePortraitsGallery.vue')['default']
     BarChart: typeof import('./src/components/overall-statistics/BarChart.vue')['default']
     BrandLogo: typeof import('./src/components/common/BrandLogo.vue')['default']
+    BulkMapUpload: typeof import('./src/components/admin/maps/BulkMapUpload.vue')['default']
     ClanCreationPanel: typeof import('./src/components/clans/ClanCreationPanel.vue')['default']
     ClanOverview: typeof import('./src/components/clans/ClanOverview.vue')['default']
     ClanRoleIcon: typeof import('./src/components/clans/ClanRoleIcon.vue')['default']
