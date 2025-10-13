@@ -12,8 +12,8 @@
         <v-alert type="info" outlined class="mb-4">
           <div class="text-subtitle-2 mb-2">Instructions:</div>
           <ul class="ml-4">
-            <li>Select multiple .w3m files</li>
-            <li>Filenames must be in format: <code>{map_id}_{name}.w3m</code></li>
+            <li>Select multiple .w3m or .w3x files</li>
+            <li>Filenames must be in format: <code>{map_id}_{name}.w3m</code> or <code>{map_id}_{name}.w3x</code></li>
             <li>Example: <code>5529_twisted_meadows.w3m</code> (map_id = 5529)</li>
             <li>Maps with the specified IDs must already exist in the system</li>
           </ul>
@@ -21,9 +21,9 @@
 
         <v-file-input
           v-model="files"
-          label="Select map files (.w3m)"
+          label="Select map files (.w3m, .w3x)"
           multiple
-          accept=".w3m"
+          accept=".w3m,.w3x"
           truncate-length="50"
           :disabled="uploading || selecting"
           chips
@@ -160,7 +160,7 @@ export default defineComponent({
     ];
 
     function extractMapIdFromFilename(filename: string): number | null {
-      // Extract map ID from format: {map_id}_{name}.w3m
+      // Extract map ID from format: {map_id}_{name}.w3m or {map_id}_{name}.w3x
       const match = filename.match(/^(\d+)_/);
       if (match) {
         return parseInt(match[1], 10);
@@ -197,7 +197,7 @@ export default defineComponent({
             fileName: file.name,
             mapId: -1,
             status: "error",
-            message: "Invalid filename format. Expected: {map_id}_{name}.w3m",
+            message: "Invalid filename format. Expected: {map_id}_{name}.w3m or {map_id}_{name}.w3x",
           });
           continue;
         }
@@ -244,7 +244,7 @@ export default defineComponent({
 
           // Find the newly uploaded file
           const mapFileData = mapsManagementStore.mapFiles.find(
-            (mf) => mf.filePath.includes(file.name) || mf.filePath.endsWith(file.name.replace(/\.w3m$/, ""))
+            (mf) => mf.filePath.includes(file.name) || mf.filePath.endsWith(file.name.replace(/\.(w3m|w3x)$/, ""))
           );
 
           if (!mapFileData) {
