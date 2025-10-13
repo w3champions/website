@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AcceptInvitePanel: typeof import('./src/components/clans/AcceptInvitePanel.vue')['default']
     ActivityPerDayChart: typeof import('./src/components/overall-statistics/ActivityPerDayChart.vue')['default']
+    AddNewPortraitDialog: typeof import('./src/components/admin/portraits/AddNewPortraitDialog.vue')['default']
     AddPlayerModal: typeof import('./src/components/admin/tournaments/AddPlayerModal.vue')['default']
     AdminApiTokens: typeof import('./src/components/admin/AdminApiTokens.vue')['default']
     AdminAssignments: typeof import('./src/components/admin/AdminAssignments.vue')['default']
