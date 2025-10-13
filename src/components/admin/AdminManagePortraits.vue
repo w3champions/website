@@ -11,7 +11,7 @@
         </v-card-text>
       </v-row>
       <v-row class="justify-center ma-1 pa-1">
-        <v-btn class="secondary w3-race-bg--text" :disabled="true">Add New Portrait (Coming Soon)</v-btn>
+        <add-new-portrait-dialog />
       </v-row>
       <v-row class="ma-1 pa-1">
         <new-portrait-definition-dialog />
@@ -85,6 +85,7 @@
 import { defineComponent, ref } from "vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
+import AddNewPortraitDialog from "./portraits/AddNewPortraitDialog.vue";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupCombobox from "./portraits/PortraitGroupCombobox.vue";
 import { PortraitDefinitionDTO } from "@/store/admin/types";
@@ -95,6 +96,7 @@ export default defineComponent({
   components: {
     AvailablePortraitsGallery,
     NewPortraitDefinitionDialog,
+    AddNewPortraitDialog,
     AssignPortrait,
     PortraitGroupCombobox,
   },
