@@ -20,7 +20,7 @@
       >
         {{ player.name }}
       </router-link>
-      <span class="streamed-match-player-info__mmr">({{ player.oldMmr }})</span>
+      <span class="streamed-match-player-info__mmr">({{ player.oldMmr ?? '?' }})</span>
     </div>
   </div>
 </template>
