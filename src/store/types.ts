@@ -7,13 +7,13 @@ export type DataTableOptions = {
 };
 
 export type PlayerInTeam = {
-  oldMmr: number;
+  oldMmr?: number;
   oldMmrQuantile?: number;
-  currentMmr: number;
+  currentMmr?: number;
   battleTag: string;
   inviteName?: string;
   name: string;
-  mmrGain: number;
+  mmrGain?: number;
   race: ERaceEnum;
   rndRace: ERaceEnum;
   won: boolean;
@@ -78,12 +78,12 @@ export type MatchDetail = {
 
 export interface Player {
   race: number;
-  oldMmr: number;
-  currentMmr: number;
+  oldMmr?: number;
+  currentMmr?: number;
   battleTag: string;
   name: string;
   id: string;
-  mmrGain: number;
+  mmrGain?: number;
   won: boolean;
 }
 
