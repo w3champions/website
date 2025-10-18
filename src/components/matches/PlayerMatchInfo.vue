@@ -35,7 +35,7 @@
             <div v-if="currentRating !== null">MMR: {{ currentRating }}<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
               <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
             </span></div>
-            <div v-else>MMR: ?</div>
+            <div v-else>MMR: {{ $t("components_matches_playermatchinfo.calibrating") }}</div>
             <div v-if="topPercentage !== null">Top: {{ topPercentage }}%</div>
             <div class="d-flex align-center">
               <img v-if="leagueName !== null" :src="`/assets/leagueIcons/${player.ranking?.leagueOrder}.png`" style="width: 16px; height: 16px; margin-right: 4px;" />
