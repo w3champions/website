@@ -75,7 +75,9 @@ export default defineComponent({
         (match) =>
           sumBy(
             match.teams.flatMap((team) =>
-              team.players.map((player) => player.oldMmr)
+              team.players
+                .filter((player) => player.oldMmr != null)
+                .map((player) => player.oldMmr!)
             )
           ),
         ["desc"]
