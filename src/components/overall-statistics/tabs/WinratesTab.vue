@@ -6,29 +6,29 @@
           <v-select
             v-model="selectedMap"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
-            outlined
-            @change="setSelectedMap"
+            variant="outlined"
+            @update:model-value="setSelectedMap"
           />
           <v-select
             v-model="selectedMmr"
             :items="mmrs"
-            item-text="league"
+            item-title="league"
             item-value="mmr"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
-            outlined
-            @change="setSelectedMmr"
+            variant="outlined"
+            @update:model-value="setSelectedMmr"
           />
           <v-select
             v-model="selectedPatch"
             :items="patches"
-            item-text="patchVersion"
+            item-title="patchVersion"
             item-value="patch"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
-            outlined
-            @change="setSelectedPatch"
+            variant="outlined"
+            @update:model-value="setSelectedPatch"
           />
         </v-card-text>
       </v-col>
@@ -41,19 +41,17 @@
             :mobile-breakpoint="400"
           >
             <template v-slot:body="{ items }">
-              <tbody>
-                <tr v-for="item in items" :key="item.race">
-                  <td>{{ $t("races." + raceEnums[item.race]) }}</td>
-                  <player-stats-race-versus-race-on-map-table-cell
-                    v-for="(winloss, index) in item.winLosses"
-                    :key="index"
-                    :stats="winloss"
-                    :compareRace="item.race"
-                    :winThreshold="0.51"
-                    :lossThreshold="0.49"
-                  />
-                </tr>
-              </tbody>
+              <tr v-for="item in items" :key="item.race">
+                <td>{{ $t("races." + raceEnums[item.race]) }}</td>
+                <player-stats-race-versus-race-on-map-table-cell
+                  v-for="(winloss, index) in item.winLosses"
+                  :key="index"
+                  :stats="winloss"
+                  :compareRace="item.race"
+                  :winThreshold="0.51"
+                  :lossThreshold="0.49"
+                />
+              </tr>
             </template>
           </v-data-table>
         </v-card-text>
@@ -70,12 +68,7 @@ import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerS
 import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-
-interface WinratesTabHeader {
-  text: TranslateResult;
-  sortable: boolean;
-  align?: "left" | "center" | "right";
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "WinratesTab",
@@ -91,35 +84,35 @@ export default defineComponent({
     const selectedMap = ref<TranslateResult>(t("common.overall"));
     const statsPerRaceAndMap = computed<StatsPerWinrate[]>(() => overallStatsStore.statsPerMapAndRace);
 
-    const headers: WinratesTabHeader[] = [
+    const headers: DataTableHeader[] = [
       {
-        text: "",
+        title: "",
         sortable: false,
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vshu"),
+        title: t("components_overall-statistics_tabs_winratestab.vshu"),
         sortable: false,
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsorc"),
+        title: t("components_overall-statistics_tabs_winratestab.vsorc"),
         sortable: false,
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsne"),
+        title: t("components_overall-statistics_tabs_winratestab.vsne"),
         sortable: false,
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsud"),
+        title: t("components_overall-statistics_tabs_winratestab.vsud"),
         sortable: false,
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_tabs_winratestab.vsrdm"),
+        title: t("components_overall-statistics_tabs_winratestab.vsrdm"),
         sortable: false,
-        align: "right",
+        align: "end",
       },
     ];
 
