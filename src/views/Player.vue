@@ -13,7 +13,7 @@
                 <moderation-status-badges
                   v-if="hasModerationPermission && !loadingModerationStatus && profile.battleTag"
                   :battle-tag="profile.battleTag"
-                  :compact="false"
+                  :compact="true"
                   class="ml-3"
                 />
                 <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
