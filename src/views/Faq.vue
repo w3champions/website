@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-3">
     <v-card tile>
       <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
       <v-tabs v-model="tab">
