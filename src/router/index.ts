@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized } from "vue-router";
+import { createRouter, createWebHistory, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import TournamentsList from "@/views/TournamentsList.vue";
