@@ -90,7 +90,7 @@
 
         <div v-if="uploadedFiles.length > 0" class="mt-4">
           <div class="text-h6 mb-3">Ready to Select ({{ uploadedFiles.length }} files)</div>
-          <v-simple-table dense>
+          <v-table density="compact">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -107,7 +107,7 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table>
+          </v-table>
         </div>
       </v-container>
     </v-card-text>

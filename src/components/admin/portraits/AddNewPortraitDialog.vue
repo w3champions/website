@@ -94,7 +94,7 @@
 
         <div v-if="uploadProgress.length > 0">
           <div class="text-h6 mb-3">Upload Progress</div>
-          <v-simple-table dense>
+          <v-table density="compact">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -115,7 +115,7 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table>
+          </v-table>
         </div>
       </v-container>
 
