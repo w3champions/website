@@ -146,7 +146,8 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
-import { useVuetify } from "@/plugins/vuetify";
+import { useGoTo } from 'vuetify';
+import { InternalGoToOptions } from "vuetify/lib/composables/goto";
 
 export default defineComponent({
   name: "RankingsGrid",
@@ -168,12 +169,13 @@ export default defineComponent({
     },
     selectedRank: {
       type: Object as PropType<Ranking>,
-      required: true,
+      required: false,
+      default: {},
     }
   },
   setup(props) {
     const { t } = useI18n();
-    const vuetify = useVuetify();
+    const goTo = useGoTo();
     const twitchStore = useTwitchStore();
     const rankingsStore = useRankingStore();
     const sortColumn = ref<string>("Rank");
@@ -353,15 +355,19 @@ export default defineComponent({
       return props.selectedRank.player.id;
     }
 
+    const goToOptions: Partial<Partial<InternalGoToOptions>> = {
+      duration: 500,
+      easing: "easeInOutCubic",
+      offset: window.innerHeight -150,
+    }
+
     function goToRank(rank: Ranking): void {
       setTimeout(() => {
         const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
 
         if (!listItemOfPlayer) return;
 
-        vuetify.goTo(listItemOfPlayer, {
-          offset: window.innerHeight - 150,
-        });
+        goTo(listItemOfPlayer, goToOptions)
       }, 500);
     }
 

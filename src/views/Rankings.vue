@@ -18,9 +18,7 @@
             <v-btn tile class="bg-transparent text-title" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
-              {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
-              }}
+              {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
             </v-btn>
           </template>
           <v-card>
@@ -33,7 +31,7 @@
                 </v-list-item>
               </v-list>
               <v-divider />
-              <v-list density="compact" max-height="400" class="leagues-list overflow-y-auto">
+              <v-list density="compact" max-height="400" class="overflow-y-auto" style="max-height: 650px">
                 <v-list-item
                   v-for="item in ladders"
                   :key="item.id"
@@ -51,50 +49,58 @@
         </v-menu>
         <v-spacer />
         <v-autocomplete
-          v-model="searchModel"
-          :append-icon="mdiMagnify"
+          v-model="selected"
+          v-model:search="search"
+          class="cursor-text"
+          menu-icon=""
+          :append-inner-icon="mdiMagnify"
           label="Search"
+          :items="searchRanks"
           single-line
           clearable
-          :items="searchRanks"
           :loading="isLoading"
-          :search.sync="search"
           :no-data-text="noDataText"
           item-title="player.name"
           item-value="player.id"
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
+          bg-color="transparent"
+          hide-details
+          glow
           return-object
+          autocomplete="off"
         >
           <!--
             In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
             but for now in Vue 2 we can't use TypeScript in templates.
           -->
-          <template v-slot:item="{ item }">
+          <template v-slot:item="{ props, item }">
             <template v-if="item?.raw?.player === undefined">
               {{ item.raw }}
             </template>
             <template v-else>
-              <v-list-item-title>
-                <span v-if="!isDuplicateName(item.raw.player.name)">
-                  {{ item.raw.player.name }}
-                </span>
-                <span v-if="isDuplicateName(item.raw.player.name)">
-                  {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
-                </span>
-                <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
-                  ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
-                </span>
-              </v-list-item-title>
-              <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
-                {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
-                {{ $t(`common.losses`) }}
-                {{ item.raw.player.losses }} |
-                {{ $t(`common.total`) }}
-                {{ item.raw.player.games }}
-              </v-list-item-subtitle>
-              <v-list-item-subtitle v-else>
-                {{ $t(`views_rankings.unranked`) }}
-              </v-list-item-subtitle>
+              <v-list-item>
+                <v-list-item-title v-bind="props">
+                  <span v-if="!isDuplicateName(item.raw.player.name)">
+                    {{ item.raw.player.name }}
+                  </span>
+                  <span v-if="isDuplicateName(item.raw.player.name)">
+                    {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
+                  </span>
+                  <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
+                    ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
+                  </span>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                  {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
+                  {{ $t(`common.losses`) }}
+                  {{ item.raw.player.losses }} |
+                  {{ $t(`common.total`) }}
+                  {{ item.raw.player.games }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>
+                  {{ $t(`views_rankings.unranked`) }}
+                </v-list-item-subtitle>
+              </v-list-item>
             </template>
           </template>
         </v-autocomplete>
@@ -133,7 +139,7 @@
         <rankings-grid
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
-          :selectedRank="searchModel"
+          :selectedRank="selected"
         />
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
@@ -199,7 +205,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    // @Prop({ default: "" })
     const router = useRouter();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
@@ -208,7 +213,7 @@ export default defineComponent({
     let searchTimer: NodeJS.Timeout;
 
     const search = ref<string>("");
-    const searchModel = ref<Ranking>({} as Ranking);
+    const selected = ref<Ranking | null>(null);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
@@ -281,8 +286,8 @@ export default defineComponent({
       await rankingsStore.retrieveLeagueConstellation();
     }
 
-    watch(searchModel, onSearchModelChanged);
-    function onSearchModelChanged(rank: Ranking): void {
+    watch(selected, onSelected);
+    function onSelected(rank: Ranking): void {
       if (!rank) return;
 
       if (!playerIsRanked(rank)) {
@@ -297,18 +302,18 @@ export default defineComponent({
       isLoading.value = false;
     }
 
+    const searchDebounced = (newValue: string, timeout = 500) => {
+      clearTimeout(searchTimer);
+      isLoading.value = true;
+      searchTimer = setTimeout(() => {
+        rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
+      }, timeout);
+    };
+
     watch(search, onSearchChanged);
     function onSearchChanged(newValue: string) {
-      const searchDebounced = (timeout = 500) => {
-        clearTimeout(searchTimer);
-        isLoading.value = true;
-        searchTimer = setTimeout(() => {
-          rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
-        }, timeout);
-      };
-
       if (newValue && newValue.length > 2) {
-        searchDebounced();
+        searchDebounced(newValue);
       } else {
         rankingsStore.clearSearch();
         isLoading.value = false;
@@ -399,7 +404,7 @@ export default defineComponent({
 
       if (props.playerId) {
         const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
-        searchModel.value = selectedPlayer ?? ({} as Ranking);
+        selected.value = selectedPlayer ?? ({} as Ranking);
       }
 
       _intervalRefreshHandle = setInterval(async () => {
@@ -480,7 +485,7 @@ export default defineComponent({
       setLeague,
       listLeagueIcon,
       ladders,
-      searchModel,
+      selected,
       searchRanks,
       isLoading,
       search,
@@ -497,9 +502,6 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
-.leagues-list {
-  max-height: 650px;
-  overflow-y: auto;
-}
 </style>
