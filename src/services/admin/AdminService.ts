@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateRewardRequest } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -370,5 +370,20 @@ export default class AdminService {
 
     // Fallback for backward compatibility if response is still a direct array
     return Array.isArray(data) ? data : [];
+  }
+
+  // Batch moderation status methods
+  public static async getBannedPlayersByBattleTags(battleTags: string[], token: string): Promise<BannedPlayer[]> {
+    const url = `${API_URL}api/admin/bannedPlayers/batch`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify({ battleTags }));
+    const data = await response.json();
+    return data.players || [];
+  }
+
+  public static async getGlobalMutesByBattleTags(battleTags: string[], token: string): Promise<GloballyMutedPlayer[]> {
+    const url = `${API_URL}api/admin/globalChatBans/batch`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify({ battleTags }));
+    const data = await response.json();
+    return data.globalChatBans || [];
   }
 }

@@ -2,6 +2,7 @@ import { PlayerOverview } from "@/store/ranking/types";
 import { EChatScope } from "../common/types";
 import { EColors } from "../types";
 import { EPermission } from "./permission/types";
+import { LoungeMuteResponse } from "./loungeMute/types";
 
 export type AdminState = {
   total: number;
@@ -17,6 +18,7 @@ export type AdminState = {
   mutesNextId: number | null;
   banValidationError: string;
   showJwtExpiredDialog: boolean;
+  battleTagModerationStatus: BattleTagModerationMap;
 };
 
 export type AdminPlayerManagementState = {
@@ -474,3 +476,12 @@ export interface ProductMappingReconciliationResult {
   wasDryRun: boolean;
   processedAt: string;
 }
+
+// Moderation Status Types
+export interface ModerationStatus {
+  ban?: BannedPlayer;
+  globalMute?: GloballyMutedPlayer;
+  loungeMute?: LoungeMuteResponse;
+}
+
+export type BattleTagModerationMap = Record<string, ModerationStatus>;
