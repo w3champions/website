@@ -10,7 +10,10 @@
       </thead>
       <tbody>
         <tr v-for="stat in data" :key="stat.battleTag">
-          <td>{{ stat.battleTag }}</td>
+          <td>
+            {{ stat.battleTag }}
+            <moderation-status-badges :battle-tag="stat.battleTag" :compact="true" class="ml-1" />
+          </td>
           <td class="text-right">{{ stat.numberOfLogins }}</td>
         </tr>
       </tbody>
@@ -21,9 +24,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
+import ModerationStatusBadges from "./ModerationStatusBadges.vue";
 
 export default defineComponent({
   name: "SmurfBattleTagDetailsTable",
+  components: {
+    ModerationStatusBadges,
+  },
   props: {
     title: {
       type: String,

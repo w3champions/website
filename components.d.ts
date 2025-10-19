@@ -93,6 +93,7 @@ declare module 'vue' {
     MmrDistributionChart: typeof import('./src/components/overall-statistics/MmrDistributionChart.vue')['default']
     MmrDistributionTab: typeof import('./src/components/overall-statistics/tabs/MmrDistributionTab.vue')['default']
     MmrSelect: typeof import('./src/components/common/MmrSelect.vue')['default']
+    ModerationStatusBadges: typeof import('./src/components/admin/smurf-detection/ModerationStatusBadges.vue')['default']
     ModeStatsGrid: typeof import('./src/components/player/ModeStatsGrid.vue')['default']
     NewPortraitDefinitionDialog: typeof import('./src/components/admin/portraits/NewPortraitDefinitionDialog.vue')['default']
     NodeOverridesCard: typeof import('./src/components/admin/proxies/NodeOverridesCard.vue')['default']
