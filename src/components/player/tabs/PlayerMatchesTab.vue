@@ -18,36 +18,36 @@
           <v-select
             class="over-chart-select-box"
             :items="activeGameModesWithAll()"
-            item-text="name"
+            item-title="name"
             item-value="id"
-            :value="profileMatchesGameMode"
+            :model-value="profileMatchesGameMode"
             label="Mode"
-            outlined
-            @change="setSelectedGameModeForSearch"
+            variant="outlined"
+            @update:model-value="setSelectedGameModeForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="player-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="playerRace"
+            :model-value="playerRace"
             label="Player Race"
-            outlined
-            @change="setPlayerRaceForSearch"
+            variant="outlined"
+            @update:model-value="setPlayerRaceForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="opponent-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="opponentRace"
+            :model-value="opponentRace"
             label="Opponent Race"
-            outlined
-            @change="setOpponentRaceForSearch"
+            variant="outlined"
+            @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
         <v-col align-self="center" cols="12" md="3">

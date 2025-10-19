@@ -1,16 +1,15 @@
 <template>
   <div v-if="hasModerationPermission" class="d-inline-flex align-center">
     <!-- Ban badge -->
-    <v-tooltip v-if="moderationStatus?.ban" top>
-      <template v-slot:activator="{ on }">
+    <v-tooltip v-if="moderationStatus?.ban" location="top">
+      <template v-slot:activator="{ props }">
         <v-chip
-          :x-small="compact"
-          :small="!compact"
+          :size="compact ? 'x-small' : 'small'"
           :color="isBanExpired(moderationStatus.ban.endDate) ? 'grey' : 'error'"
           :class="{ 'mr-1': !compact || hasMultipleBadges }"
-          v-on="on"
+          v-bind="props"
         >
-          <v-icon :x-small="compact" :small="!compact" :left="!compact">{{ mdiCancel }}</v-icon>
+          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiCancel }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Banned{{ isBanExpired(moderationStatus.ban.endDate) ? ' (Expired)' : '' }}
           </span>
@@ -20,23 +19,22 @@
         <div><strong>Reason:</strong> {{ moderationStatus.ban.banReason }}</div>
         <div><strong>Until:</strong> {{ moderationStatus.ban.endDate }}</div>
         <div><strong>By:</strong> {{ moderationStatus.ban.author }}</div>
-        <div v-if="isBanExpired(moderationStatus.ban.endDate)" class="warning--text">
+        <div v-if="isBanExpired(moderationStatus.ban.endDate)" class="text-warning">
           <strong>Status:</strong> Expired
         </div>
       </div>
     </v-tooltip>
 
     <!-- Global mute badge -->
-    <v-tooltip v-if="moderationStatus?.globalMute" top>
-      <template v-slot:activator="{ on }">
+    <v-tooltip v-if="moderationStatus?.globalMute" location="top">
+      <template v-slot:activator="{ props }">
         <v-chip
-          :x-small="compact"
-          :small="!compact"
+          :size="compact ? 'x-small' : 'small'"
           :color="isMuteExpired(moderationStatus.globalMute.expiresAt) ? 'grey' : 'warning'"
           :class="{ 'mr-1': !compact || hasMultipleBadges }"
-          v-on="on"
+          v-bind="props"
         >
-          <v-icon :x-small="compact" :small="!compact" :left="!compact">{{ mdiVolumeOff }}</v-icon>
+          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiVolumeOff }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Global Mute{{ isMuteExpired(moderationStatus.globalMute.expiresAt) ? ' (Expired)' : '' }}
           </span>
@@ -45,22 +43,21 @@
       <div>
         <div><strong>Expires:</strong> {{ moderationStatus.globalMute.expiresAt || 'Never' }}</div>
         <div><strong>By:</strong> {{ moderationStatus.globalMute.author }}</div>
-        <div v-if="isMuteExpired(moderationStatus.globalMute.expiresAt)" class="warning--text">
+        <div v-if="isMuteExpired(moderationStatus.globalMute.expiresAt)" class="text-warning">
           <strong>Status:</strong> Expired
         </div>
       </div>
     </v-tooltip>
 
     <!-- Lounge mute badge -->
-    <v-tooltip v-if="moderationStatus?.loungeMute" top>
-      <template v-slot:activator="{ on }">
+    <v-tooltip v-if="moderationStatus?.loungeMute" location="top">
+      <template v-slot:activator="{ props }">
         <v-chip
-          :x-small="compact"
-          :small="!compact"
+          :size="compact ? 'x-small' : 'small'"
           :color="isMuteExpired(moderationStatus.loungeMute.endDate) ? 'grey' : 'orange'"
-          v-on="on"
+          v-bind="props"
         >
-          <v-icon :x-small="compact" :small="!compact" :left="!compact">{{ mdiMessageOff }}</v-icon>
+          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiMessageOff }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Lounge{{ moderationStatus.loungeMute.isShadowBan ? ' Shadow' : '' }}{{ isMuteExpired(moderationStatus.loungeMute.endDate) ? ' (Expired)' : '' }}
           </span>
@@ -70,7 +67,7 @@
         <div><strong>Reason:</strong> {{ moderationStatus.loungeMute.reason }}</div>
         <div><strong>Until:</strong> {{ moderationStatus.loungeMute.endDate }}</div>
         <div><strong>By:</strong> {{ moderationStatus.loungeMute.author }}</div>
-        <div v-if="isMuteExpired(moderationStatus.loungeMute.endDate)" class="warning--text">
+        <div v-if="isMuteExpired(moderationStatus.loungeMute.endDate)" class="text-warning">
           <strong>Status:</strong> Expired
         </div>
       </div>

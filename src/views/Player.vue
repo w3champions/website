@@ -27,9 +27,9 @@
               <v-col :cols="12" :sm="'auto'">
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
-                  <v-menu v-if="!!seasons && seasons.length > 0" offset-x>
+                  <v-menu v-if="!!seasons && seasons.length > 0">
                     <template v-slot:activator="{ props }">
-                      <v-btn tile class="ma-2 transparent" v-bind="props">
+                      <v-btn tile class="ma-2 bg-transparent" v-bind="props">
                         <span v-if="selectedSeason" class="pa-0">
                           {{ $t("views_rankings.season") }}
                           {{ selectedSeason.id }}
