@@ -7,6 +7,9 @@
     :items-per-page="-1"
     :row-props="itemStyle"
     :hide-default-footer="true"
+    :header-props="{
+      class: 'font-weight-bold',
+    }"
     @click:row="onRowClick"
   >
     <template v-slot:[`item.startDateTime`]="{ item }">
@@ -58,22 +61,27 @@ export default defineComponent({
             {
         title: "Tournament Name",
         value: "name",
+        sortable: true,
       },
       {
         title: "Date / Time",
         value: "startDateTime",
+        sortable: true,
       },
       {
         title: "Status",
         value: "state",
+        sortable: true,
       },
       {
         title: "Player Count",
         value: "playerCount",
+        sortable: true,
       },
       {
         title: "Winner",
         value: "winner",
+        sortable: true,
       },
     ];
 
