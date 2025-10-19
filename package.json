@@ -54,7 +54,7 @@
     "vue-country-flag-next": "^2.3.2",
     "vue-i18n": "^9.5.0",
     "vue-router": "^4.2.0",
-    "vuetify": "^3.5.0"
+    "vuetify": "^3.10.5"
   },
   "devDependencies": {
     "@types/google-spreadsheet": "^3.3.0",
