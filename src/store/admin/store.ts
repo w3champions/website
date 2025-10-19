@@ -1,6 +1,7 @@
-import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
+import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BattleTagModerationMap, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
+import ModerationService from "@/services/admin/ModerationService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
 import { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
@@ -22,6 +23,7 @@ export const useAdminStore = defineStore("admin", {
     mutesNextId: null,
     banValidationError: "",
     showJwtExpiredDialog: false,
+    battleTagModerationStatus: {} as BattleTagModerationMap,
   }),
   actions: {
     async loadBannedPlayers(req: BannedPlayersGetRequest) {
@@ -150,6 +152,35 @@ export const useAdminStore = defineStore("admin", {
     SET_PROXY_MODIFIED(val: boolean): void {
       this.proxyModified = val;
     },
+    async loadModerationStatusForBattleTags(battleTags: string[]): Promise<void> {
+      if (battleTags.length === 0) return;
+
+      const oauthStore = useOauthStore();
+
+      // Fetch all three types in parallel
+      const [bannedPlayers, globalMutes, loungeMutes] = await Promise.all([
+        AdminService.getBannedPlayersByBattleTags(battleTags, oauthStore.token),
+        AdminService.getGlobalMutesByBattleTags(battleTags, oauthStore.token),
+        ModerationService.getLoungeMutesByBattleTags(battleTags, oauthStore.token),
+      ]);
+
+      // Build lookup map with case-insensitive matching
+      const statusMap: BattleTagModerationMap = {};
+
+      for (const bTag of battleTags) {
+        const ban = bannedPlayers.find((b) => b.battleTag.toLowerCase() === bTag.toLowerCase());
+        const globalMute = globalMutes.find((m) => m.battleTag.toLowerCase() === bTag.toLowerCase());
+        const loungeMute = loungeMutes.find((m) => m.battleTag.toLowerCase() === bTag.toLowerCase());
+
+        statusMap[bTag] = {
+          ban: ban,
+          globalMute: globalMute,
+          loungeMute: loungeMute,
+        };
+      }
+
+      this.SET_BATTLETAG_MODERATION_STATUS(statusMap);
+    },
     SET_MUTED_PLAYERS(mutedPlayers: GloballyMutedPlayer[]): void {
       this.globallyMutedPlayers = mutedPlayers;
     },
@@ -158,6 +189,9 @@ export const useAdminStore = defineStore("admin", {
     },
     SET_SHOW_JWT_EXPIRED_DIALOG(value: boolean): void {
       this.showJwtExpiredDialog = value;
+    },
+    SET_BATTLETAG_MODERATION_STATUS(map: BattleTagModerationMap): void {
+      this.battleTagModerationStatus = map;
     },
   },
 });

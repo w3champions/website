@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AcceptInvitePanel: typeof import('./src/components/clans/AcceptInvitePanel.vue')['default']
     ActivityPerDayChart: typeof import('./src/components/overall-statistics/ActivityPerDayChart.vue')['default']
+    AddNewPortraitDialog: typeof import('./src/components/admin/portraits/AddNewPortraitDialog.vue')['default']
     AddPlayerModal: typeof import('./src/components/admin/tournaments/AddPlayerModal.vue')['default']
     AdminApiTokens: typeof import('./src/components/admin/AdminApiTokens.vue')['default']
     AdminAssignments: typeof import('./src/components/admin/AdminAssignments.vue')['default']
@@ -46,6 +47,7 @@ declare module 'vue' {
     AvailablePortraitsGallery: typeof import('./src/components/admin/portraits/AvailablePortraitsGallery.vue')['default']
     BarChart: typeof import('./src/components/overall-statistics/BarChart.vue')['default']
     BrandLogo: typeof import('./src/components/common/BrandLogo.vue')['default']
+    BulkMapUpload: typeof import('./src/components/admin/maps/BulkMapUpload.vue')['default']
     ClanCreationPanel: typeof import('./src/components/clans/ClanCreationPanel.vue')['default']
     ClanOverview: typeof import('./src/components/clans/ClanOverview.vue')['default']
     ClanRoleIcon: typeof import('./src/components/clans/ClanRoleIcon.vue')['default']
@@ -91,6 +93,7 @@ declare module 'vue' {
     MmrDistributionChart: typeof import('./src/components/overall-statistics/MmrDistributionChart.vue')['default']
     MmrDistributionTab: typeof import('./src/components/overall-statistics/tabs/MmrDistributionTab.vue')['default']
     MmrSelect: typeof import('./src/components/common/MmrSelect.vue')['default']
+    ModerationStatusBadges: typeof import('./src/components/admin/smurf-detection/ModerationStatusBadges.vue')['default']
     ModeStatsGrid: typeof import('./src/components/player/ModeStatsGrid.vue')['default']
     NewPortraitDefinitionDialog: typeof import('./src/components/admin/portraits/NewPortraitDefinitionDialog.vue')['default']
     NodeOverridesCard: typeof import('./src/components/admin/proxies/NodeOverridesCard.vue')['default']

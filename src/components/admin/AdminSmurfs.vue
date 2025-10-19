@@ -78,6 +78,17 @@
         <v-list>
           <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
             <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
+
+            <!-- Moderation status badges -->
+            <moderation-status-badges
+              v-if="hasModerationPermission && !loadingModerationStatus"
+              :battle-tag="battleTag"
+              :compact="false"
+              class="ml-3"
+            />
+
+            <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
+
             <v-spacer />
             <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
           </v-list-item>
@@ -171,6 +182,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { useRouter } from "vue-router";
 import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
+import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
 
@@ -178,6 +190,7 @@ export default defineComponent({
   name: "AdminSmurfs",
   components: {
     SmurfBattleTagDetailsTable,
+    ModerationStatusBadges,
   },
   setup() {
     const router = useRouter();
@@ -195,10 +208,12 @@ export default defineComponent({
     const searchDepth = ref<number>(1);
     const selectedIdentifierType = ref<string>("battleTag");
     const availableIdentifierTypes = ref<string[]>(["battleTag"]);
+    const loadingModerationStatus = ref<boolean>(false);
 
     const searchedPlayers = computed<string[]>(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
     const permissions = computed<string[]>(() => oauthStore.permissions);
     const canSeeSmurfCheckerQueryExplanation = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQueryExplanation]));
+    const hasModerationPermission = computed(() => permissions.value.includes(EPermission[EPermission.Moderation]));
 
     function goToProfile(alt: string): void {
       router.push({
@@ -232,6 +247,16 @@ export default defineComponent({
 
       if ((smurfResults.value != null || undefined) && smurfResults.value.connectedBattleTags.length > 0) {
         showSmurfResults.value = true;
+
+        // Load moderation data if user has permission
+        if (hasModerationPermission.value) {
+          loadingModerationStatus.value = true;
+          try {
+            await adminStore.loadModerationStatusForBattleTags(smurfResults.value.connectedBattleTags);
+          } finally {
+            loadingModerationStatus.value = false;
+          }
+        }
       } else {
         showSmurfResults.value = false;
       }
@@ -272,6 +297,8 @@ export default defineComponent({
       showExplanation,
       totalLogins,
       canSeeSmurfCheckerQueryExplanation,
+      hasModerationPermission,
+      loadingModerationStatus,
     };
   },
 });

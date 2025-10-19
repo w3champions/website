@@ -25,15 +25,16 @@
               @click.middle="openProfileInNewTab()"
               @click.right="openProfileInNewTab()"
             >
-              {{ nameWithoutBtag }} ({{ currentRating }})<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+              {{ nameWithoutBtag }}<span v-if="currentRating !== null"> ({{ currentRating }})<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
                 <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
-              </span>
+              </span></span>
             </a>
           </template>
           <div>
-            <div>MMR: {{ currentRating }}<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
+            <div v-if="currentRating !== null">MMR: {{ currentRating }}<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
               <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
             </span></div>
+            <div v-else>MMR: {{ $t("components_matches_playermatchinfo.calibrating") }}</div>
             <div v-if="topPercentage !== null">Top: {{ topPercentage }}%</div>
             <div class="d-flex align-center">
               <img v-if="leagueName !== null" :src="`/assets/leagueIcons/${player.ranking?.leagueOrder}.png`" style="width: 16px; height: 16px; margin-right: 4px;" />
@@ -135,7 +136,7 @@ export default defineComponent({
 
     const race = ref<ERaceEnum>(props.player.race);
     const rndRace = ref<ERaceEnum>(props.player.rndRace);
-    const currentRating = ref<number>(Math.floor(props.player.oldMmr));
+    const currentRating = ref<number | null>(props.player.oldMmr != null ? Math.floor(props.player.oldMmr) : null);
     const textClass = ref<string>(props.left ? "player-info__right" : "player-info__left");
     const nameWithoutBtag = ref<string>(props.player.name);
     const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));

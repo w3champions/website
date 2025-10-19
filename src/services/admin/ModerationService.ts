@@ -26,4 +26,10 @@ export default class ModerationService {
 
     return response.status;
   }
+
+  public static async getLoungeMutesByBattleTags(battleTags: string[], token: string): Promise<LoungeMuteResponse[]> {
+    const url = `${API_URL}api/moderation/loungeMute/batch?authorization=${token}`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify({ battleTags }));
+    return await response.json();
+  }
 }

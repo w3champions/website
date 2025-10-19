@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
+import { computed, defineComponent, onMounted, ref, getCurrentInstance, watch } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import SignInDialog from "@/components/common/SignInDialog.vue";
@@ -193,6 +193,13 @@ export default defineComponent({
 
     onMounted(() => {
       if (authCode.value) {
+        loadRewardsData();
+      }
+    });
+
+    // Watch for authCode changes to handle direct page visits
+    watch(authCode, (newAuthCode) => {
+      if (newAuthCode) {
         loadRewardsData();
       }
     });

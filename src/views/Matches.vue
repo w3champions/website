@@ -10,7 +10,7 @@
             <matches-status-select />
             <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
             <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
-            <mmr-select v-if="unfinished" :mmr="mmr" @mmrChanged="mmrChanged" />
+            <mmr-select :mmr="mmr" @mmrChanged="mmrChanged" />
             <sort-select v-if="unfinished" />
             <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
             <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
