@@ -67,7 +67,6 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
@@ -80,12 +79,7 @@ import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { ModeStat, RaceStat } from "@/store/player/types";
 import { Season } from "@/store/ranking/types";
-
-interface PlayerProfileTabRaceHeader {
-  text: TranslateResult;
-  sortable: boolean;
-  value: string;
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "PlayerProfileTab",
@@ -171,14 +165,14 @@ export default defineComponent({
       );
     });
 
-    const raceHeaders: PlayerProfileTabRaceHeader[] = [
+    const raceHeaders: DataTableHeader[] = [
       {
-        text: t("components_player_tabs_playerprofiletab.race"),
+        title: t("components_player_tabs_playerprofiletab.race"),
         sortable: false,
         value: "race",
       },
       {
-        text: t("components_player_tabs_playerprofiletab.winloss"),
+        title: t("components_player_tabs_playerprofiletab.winloss"),
         sortable: false,
         value: "wins",
       },
