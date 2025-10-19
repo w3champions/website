@@ -8,6 +8,16 @@
               <v-col :align-self="'center'">
                 <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
                 <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
+
+                <!-- Moderation status badges -->
+                <moderation-status-badges
+                  v-if="hasModerationPermission && !loadingModerationStatus && profile.battleTag"
+                  :battle-tag="profile.battleTag"
+                  :compact="true"
+                  class="ml-3"
+                />
+                <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
+
                 <span class="mr-2"></span>
                 <!-- add some space between name and season badges -->
                 <div v-for="season in seasonsReversed" :key="season.id" class="ml-1 d-inline-block">
@@ -128,8 +138,12 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
+import ModerationStatusBadges from "@/components/admin/smurf-detection/ModerationStatusBadges.vue";
 import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
+import { useAdminStore } from "@/store/admin/store";
+import { useOauthStore } from "@/store/oauth/store";
+import { EPermission } from "@/store/admin/permission/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 
 export default defineComponent({
@@ -139,6 +153,7 @@ export default defineComponent({
     GatewaySelect,
     TeamMatchInfo,
     HostIcon,
+    ModerationStatusBadges,
   },
   props: {
     id: {
@@ -153,14 +168,19 @@ export default defineComponent({
   },
   setup(props) {
     const playerStore = usePlayerStore();
+    const adminStore = useAdminStore();
+    const oauthStore = useOauthStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
+    const loadingModerationStatus = ref<boolean>(false);
 
     const seasons = computed<Season[]>(() => playerStore.playerProfile.participatedInSeasons);
     const profile = computed<PlayerProfile>(() => playerStore.playerProfile);
     const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const ongoingMatch = computed<Match>(() => playerStore.ongoingMatch);
+    const permissions = computed<string[]>(() => oauthStore.permissions);
+    const hasModerationPermission = computed(() => permissions.value.includes(EPermission[EPermission.Moderation]));
 
     const isOngoingMatchFFA = computed<boolean>(() => {
       return ongoingMatch.value && GAME_MODES_FFA.includes(ongoingMatch.value.gameMode);
@@ -261,6 +281,17 @@ export default defineComponent({
       if (profile.value && battleTag.value === profile.value.battleTag) return;
 
       await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
+
+      // Load moderation data if user has permission
+      if (hasModerationPermission.value) {
+        loadingModerationStatus.value = true;
+        try {
+          await adminStore.loadModerationStatusForBattleTags([battleTag.value]);
+        } finally {
+          loadingModerationStatus.value = false;
+        }
+      }
+
       window.scrollTo(0, 0);
     }
 
@@ -280,6 +311,8 @@ export default defineComponent({
       getOpponentTeam,
       tabsModel,
       battleTag,
+      hasModerationPermission,
+      loadingModerationStatus,
     };
   },
 });
