@@ -1,5 +1,5 @@
 <template>
-  <v-container class="profile">
+  <v-container>
     <v-row>
       <v-col cols="12">
         <v-card tile>
@@ -342,4 +342,7 @@ export default defineComponent({
   width: 300px;
 }
 
+:deep(.v-tabs .v-slide-group__content) {
+  border-bottom: 1px solid #cdcdcd;
+}
 </style>

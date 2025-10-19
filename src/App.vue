@@ -426,14 +426,6 @@ export default defineComponent({
     -0.5px 0.5px 0.5px black, -0.5px -0.5px 0.5px black;
 }
 
-.profile {
-  .v-tabs {
-    .v-tabs-bar__content {
-      border-bottom: 1px solid #cdcdcd !important;
-    }
-  }
-}
-
 .button-margin {
   margin-right: 10px;
   top: 9px;

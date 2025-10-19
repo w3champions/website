@@ -1,5 +1,5 @@
 <template>
-  <v-container class="profile">
+  <v-container class="pa-3">
     <v-row>
       <v-col cols="12">
         <v-card tile>
@@ -89,3 +89,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-tabs .v-slide-group__content) {
+  border-bottom: 1px solid #cdcdcd;
+}
+</style>

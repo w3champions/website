@@ -1,5 +1,5 @@
 <template>
-  <v-container class="profile">
+  <v-container>
     <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
