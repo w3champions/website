@@ -43,10 +43,10 @@
                   <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -65,10 +65,10 @@
                   <span class="pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -95,10 +95,10 @@
                   <span class="pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>

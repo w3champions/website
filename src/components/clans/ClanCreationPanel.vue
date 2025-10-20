@@ -36,9 +36,9 @@
     <v-alert
       v-model="isValidationError"
       type="warning"
-      dense
+      density="compact"
       class="ml-4 mr-4"
-      dismissible
+      closable
     >
       {{ clanValidationError }}
     </v-alert>
