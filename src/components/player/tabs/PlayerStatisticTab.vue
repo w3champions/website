@@ -158,6 +158,11 @@ import { usePlayerStore } from "@/store/player/store";
 import { Season } from "@/store/ranking/types";
 import isEmpty from "lodash/isEmpty";
 
+interface mapNameAndId {
+  mapName: string;
+  mapId: string;
+}
+
 export default defineComponent({
   name: "PlayerStatisticTab",
   components: {
@@ -240,8 +245,8 @@ export default defineComponent({
         .filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
     });
 
-    const maps = computed<{ mapName: string; mapId: string }[]>(() => {
-      const maps = [{ mapName: "Overall", mapId: "Overall" }];
+    const maps = computed<mapNameAndId[]>(() => {
+      const maps: mapNameAndId[] = [];
       const mapsList: string[] = [];
       playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
         heroItemList.stats.map((stats) => {

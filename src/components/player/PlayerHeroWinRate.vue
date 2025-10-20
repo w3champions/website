@@ -1,64 +1,67 @@
 <template>
-  <v-tabs v-model="selectedTab">
-    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
-      <span v-if="race.raceId === ERaceEnum.TOTAL">
-        {{ $t("common.allraces") }}
-      </span>
-      <race-icon v-else :race="race.raceId" />
-    </v-tab>
+  <div>
+    <v-tabs v-model="selectedTab">
+      <v-tab v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <span v-if="race.raceId === ERaceEnum.TOTAL">
+          {{ $t("common.allraces") }}
+        </span>
+        <race-icon v-else :race="race.raceId" />
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="selectedTab">
+      <v-tabs-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <v-card-text>
+          <v-row>
+            <v-col cols="md-12">
+              <div>
+                <v-data-table
+                  hide-default-footer
+                >
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th v-for="header in headers" :key="header.value" :class="`text-${header.align}`">
+                          {{ header.text }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
+                        <td>
+                          <img class="mt-1" :src="item.image" height="40" width="40" />
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top">
+                          <template v-slot:activator="{ props }">
+                            <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
+                          </template>
+                          <div v-if="item.numbers_by_race[header.value]">
+                            <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
+                            -
+                            <span class="number-text lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
+                            &nbsp;&nbsp;
+                            {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
+                          </div>
+                        </v-tooltip>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-data-table>
 
-    <v-window v-model="selectedTab">
-    <v-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
-      <v-card-text>
-        <v-row>
-          <v-col cols="md-12">
-            <div>
-              <v-table>
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th v-for="header in headers" :key="header.value" :class="`text-${header.align}`">
-                        {{ header.text }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-                      <td>
-                        <img class="mt-1" :src="item.image" height="40" width="40" />
-                      </td>
-                      <td>{{ item.name }}</td>
-                      <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-                        <template v-slot:activator="{ props }">
-                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
-                        </template>
-                        <div v-if="item.numbers_by_race[header.value]">
-                          <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
-                          -
-                          <span class="number-text lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
-                          &nbsp;&nbsp;
-                          {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
-                        </div>
-                      </v-tooltip>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-table>
-
-              <v-pagination
-                v-if="pageLength > 1"
-                v-model="page"
-                :length="pageLength"
-                :prev-icon="mdiMenuLeft"
-                :next-icon="mdiMenuRight"
-              />
-            </div>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-window-item>
-    </v-window>
-  </v-tabs>
+                <v-pagination
+                  v-if="pageLength > 1"
+                  v-model="page"
+                  :length="pageLength"
+                  :prev-icon="mdiMenuLeft"
+                  :next-icon="mdiMenuRight"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </div>
 </template>
 
 <script lang="ts">
@@ -108,7 +111,7 @@ export default defineComponent({
     const pageLength = computed(() => Math.ceil(heroWinRates().length / paginationSize));
     const heroStatsCurrentPage = computed(() => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
 
-    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+    const selectedTab = ref<string>("");
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
         (newData: RaceWinsOnMap[]) => {
