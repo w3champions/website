@@ -219,6 +219,8 @@ declare module 'vue' {
     VTab: typeof import('vuetify/components')['VTab']
     VTable: typeof import('vuetify/components')['VTable']
     VTabs: typeof import('vuetify/components')['VTabs']
+    VTabsWindow: typeof import('vuetify/components')['VTabsWindow']
+    VTabsWindowItem: typeof import('vuetify/components')['VTabsWindowItem']
     VTextarea: typeof import('vuetify/components')['VTextarea']
     VTextField: typeof import('vuetify/components')['VTextField']
     VTimeline: typeof import('vuetify/components')['VTimeline']
