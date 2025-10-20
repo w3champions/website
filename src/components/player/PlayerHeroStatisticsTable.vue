@@ -1,6 +1,8 @@
 <template>
   <div class="player-hero-statistics-table">
-    <v-table>
+    <v-data-table
+      hide-default-footer
+    >
       <template v-slot:default>
         <thead>
           <tr>
@@ -19,7 +21,7 @@
               <img class="mt-1" :src="item.image" height="40" width="40" />
             </td>
             <td>{{ item.name }}</td>
-            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
+            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top">
               <template v-slot:activator="{ props }">
                 <td class="text-right" v-bind="props">{{ item[header.value] }}</td>
               </template>
@@ -32,7 +34,7 @@
           </tr>
         </tbody>
       </template>
-    </v-table>
+    </v-data-table>
 
     <v-pagination
       v-if="pageLength > 1"

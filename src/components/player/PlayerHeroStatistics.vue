@@ -1,24 +1,25 @@
 <template>
-  <v-tabs v-model="selectedTab">
-    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
-      <span v-if="race.raceId === ERaceEnum.TOTAL">
-        {{ $t("common.allraces") }}
-      </span>
-      <race-icon v-else :race="race.raceId" />
-    </v-tab>
-
-    <v-window v-model="selectedTab">
-    <v-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
-      <v-card-text>
-        <v-row>
-          <v-col cols="md-12">
-            <player-hero-statistics-table :hero-statistics="heroUsages" />
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-window-item>
-    </v-window>
-  </v-tabs>
+  <div>
+    <v-tabs v-model="selectedTab">
+      <v-tab v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <span v-if="race.raceId === ERaceEnum.TOTAL">
+          {{ $t("common.allraces") }}
+        </span>
+        <race-icon v-else :race="race.raceId" />
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="selectedTab">
+      <v-tabs-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <v-card-text>
+          <v-row>
+            <v-col cols="md-12">
+              <player-hero-statistics-table :hero-statistics="heroUsages" />
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </div>
 </template>
 
 <script lang="ts">
@@ -57,7 +58,7 @@ export default defineComponent({
 
     const selectedRace = computed<number>(() => Number(selectedTab.value.split("-")[1]));
 
-    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+    const selectedTab = ref<string>("");
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
         (newData: RaceWinsOnMap[]) => {
