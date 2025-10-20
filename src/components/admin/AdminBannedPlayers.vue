@@ -3,15 +3,14 @@
     <v-card-title>
       Banned Players
     </v-card-title>
-    <v-data-table
+    <v-data-table-server
       :headers="headers"
       :items="bannedPlayers"
-      :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
+      :items-per-page-options="[10, 25, 50, 100]"
       :search="tableSearch"
-      :server-items-length="bannedPlayersCount"
+      :items-length="bannedPlayersCount"
       :options="bannedPlayersTableOptions"
-      class="elevation-1"
-      item-key="banInsertDate"
+      item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:top>
@@ -63,7 +62,7 @@
                         >
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               editedItem.endDate = '';
                               dateMenu = false;
@@ -83,12 +82,12 @@
                     </v-col>
 
                     <v-col class="py-0">
-                      <v-tooltip top>
+                      <v-tooltip location="top">
                         <template v-slot:activator="{ props }">
                           <v-select
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"
-                            item-text="name"
+                            item-title="name"
                             item-value="id"
                             :menu-props="{ maxHeight: '400' }"
                             :label="$t(`views_admin.gameMode`)"
@@ -116,7 +115,7 @@
               <v-alert
                 v-model="isValidationError"
                 type="warning"
-                dense
+                density="compact"
                 class="ml-4 mr-4"
               >
                 {{ banValidationError }}
@@ -124,7 +123,7 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="close">
+                <v-btn variant="text" @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
                 <v-btn color="primary" class="w3-race-bg--text" @click="save">
@@ -137,14 +136,14 @@
       </template>
       <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
-          <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
+          <div v-for="(id, index) in item.gameModes" :key="`${id}-${index}`">{{ getGameModeName(id) }}</div>
         </td>
         <td v-else>All</td>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </div>
 </template>
 
@@ -162,14 +161,15 @@ import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
 import { TranslateResult, useI18n } from "vue-i18n";
 import debounce from "debounce";
+import { DataTableHeader } from "vuetify";
+import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort";
 
-type AdminBannedPlayersHeader = {
-  text: string;
-  value: string;
-  sortable: boolean;
-  width?: string;
-  filterable: boolean;
-  align?: "start" | "center" | "end";
+type VuetifyTableUpdateOptions = {
+  page: number;
+  itemsPerPage: number;
+  sortBy: Array<SortItem>;
+  groupBy: Array<string>;
+  search: string;
 };
 
 export default defineComponent({
@@ -198,15 +198,13 @@ export default defineComponent({
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
 
-    const bannedPlayersTableOptions = ref<any>({
+    // https://vuetifyjs.com/en/api/v-data-table-server/
+    const bannedPlayersTableOptions = ref<VuetifyTableUpdateOptions>({
       page: 1,
       itemsPerPage: 10,
-      sortBy: ["banInsertDate"],
-      sortDesc: [true],
+      sortBy: [{ key: "banInsertDate", order: "desc" }],
       groupBy: [],
-      groupDesc: [],
-      multiSort: false,
-      mustSort: false,
+      search: "",
     });
 
     const defaultItem = {
@@ -219,9 +217,11 @@ export default defineComponent({
       author: "",
     };
 
-    async function onTableOptionsUpdate(dataOptions: any) {
+    // TODO: Only debounce the request when you're searching, not when you're doing something else,
+    // like changing the sort key, sort order or page.
+    async function onTableOptionsUpdate(dataOptions: VuetifyTableUpdateOptions) {
       bannedPlayersTableOptions.value = dataOptions;
-      await loadBanList();
+      await debouncedLoadBanList();
     }
 
     function getGameModeName(id: EGameMode): TranslateResult {
@@ -237,8 +237,8 @@ export default defineComponent({
       return {
         page: bannedPlayersTableOptions.value.page,
         itemsPerPage: bannedPlayersTableOptions.value.itemsPerPage,
-        sortBy: bannedPlayersTableOptions.value.sortBy[0],
-        sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
+        sortBy: bannedPlayersTableOptions.value.sortBy[0]?.key,
+        sortDirection: bannedPlayersTableOptions.value.sortBy[0]?.order,
         search: tableSearch.value,
       };
     }
@@ -281,18 +281,18 @@ export default defineComponent({
       await init();
     });
 
-    watch(tableSearch, onTableSearch);
+    // watch(tableSearch, onTableSearch);
 
     // Fetching the ban list is done automatically when changing the page.
     // We need to set the page to 1 when searching, otherwise you could be on page 5 for instance when making a more narrow search,
     // which leaves you with an empty table.
-    async function onTableSearch(): Promise<void> {
-      if (bannedPlayersTableOptions.value.page === 1) {
-        await debouncedLoadBanList();
-      } else {
-        bannedPlayersTableOptions.value.page = 1;
-      }
-    }
+    // async function onTableSearch(): Promise<void> {
+    //   if (bannedPlayersTableOptions.value.page === 1) {
+    //     await debouncedLoadBanList();
+    //   } else {
+    //     bannedPlayersTableOptions.value.page = 1;
+    //   }
+    // }
 
     function resetDialog(): void {
       nextTick(() => {
@@ -319,15 +319,15 @@ export default defineComponent({
       foundPlayer.value = "";
     }
 
-    const headers: AdminBannedPlayersHeader[] = [
-      { text: "BattleTag", value: "battleTag", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban End Date", value: "endDate", sortable: true, width: "10vw", filterable: false },
-      { text: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw", filterable: false },
-      { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
-      { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
-      { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
-      { text: "Actions", value: "actions", sortable: false, filterable: false, width: "1vw", align: "center" },
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", value: "battleTag", sortable: true, width: "10vw" },
+      { title: "Ban End Date", value: "endDate", sortable: true, width: "10vw" },
+      { title: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw" },
+      { title: "Game modes", value: "gameModesText", sortable: false, width: "10vw" },
+      { title: "IP ban", value: "isIpBan", sortable: false, width: "5vw" },
+      { title: "Author", value: "author", sortable: true, width: "10vw" },
+      { title: "Ban reason", value: "banReason", sortable: false },
+      { title: "Actions", value: "actions", sortable: false, width: "1vw", align: "center" },
     ];
 
     return {

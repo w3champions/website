@@ -181,6 +181,7 @@ declare module 'vue' {
     VCombobox: typeof import('vuetify/components')['VCombobox']
     VContainer: typeof import('vuetify/components')['VContainer']
     VDataTable: typeof import('vuetify/components')['VDataTable']
+    VDataTableServer: typeof import('vuetify/components')['VDataTableServer']
     VDatePicker: typeof import('vuetify/components')['VDatePicker']
     VDialog: typeof import('vuetify/components')['VDialog']
     VDivider: typeof import('vuetify/components')['VDivider']

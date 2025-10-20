@@ -58,7 +58,7 @@ export interface BannedPlayersGetRequest {
   page: number;
   itemsPerPage: number;
   sortBy: string;
-  sortDirection: "desc" | "asc";
+  sortDirection: boolean | "asc" | "desc" | undefined;
   search: string;
 }
 
