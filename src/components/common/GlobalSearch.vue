@@ -6,7 +6,7 @@
     offset-y
     transition="slide-y-transition"
     :offset="18"
-    :nudge-width="300"
+    :width="365"
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ props }">
@@ -18,39 +18,36 @@
       <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
         <v-autocomplete
           v-model="searchModel"
-          :append-icon="mdiMagnify"
+          :append-inner-icon="mdiMagnify"
+          menu-icon=""
           label="Search"
           single-line
           clearable
           autofocus
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          return-object
-          :search.sync="search"
+          v-model:search="search"
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
           item-title="battleTag"
           item-value="battleTag"
+          :placeholder="$t(`views_rankings.searchPlaceholder`)"
+          bg-color="transparent"
+          glow
+          return-object
+          autocomplete="off"
         >
           <template v-slot:item="{ props, item }">
-            <v-list-item v-bind="props">
-              <template v-slot:prepend>
-                <v-avatar>
-                  <img :src="getPlayerAvatarUrl(item.raw)" />
-                </v-avatar>
-              </template>
-              <v-list-item-title>
-                {{ item.raw.battleTag }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <div
-                  v-for="season in item.raw.seasons"
-                  :key="season.id"
-                  class="mr-1 mt-1 d-inline-block"
-                >
-                  <season-badge :season="season" />
-                </div>
-              </v-list-item-subtitle>
+            <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)">
+              <div v-bind="props">
+                <v-list-item-title>
+                  {{ item.raw.battleTag }}
+                </v-list-item-title>
+                <v-list-item-title>
+                  <div v-for="season in item.raw.seasons" :key="season.id" class="mr-1 mt-1 d-inline-block">
+                    <season-badge :season="season" />
+                  </div>
+                </v-list-item-title>
+              </div>
             </v-list-item>
           </template>
           <template v-slot:append-item>
@@ -83,7 +80,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const searchModel = ref<PlayerSearchInfo>({} as PlayerSearchInfo);
+    const searchModel = ref<PlayerSearchInfo | null>(null);
     const search = ref<string>("");
     const isLoading = ref<boolean>(false);
     const menuOpened = ref<boolean>(false);
