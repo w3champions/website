@@ -6,41 +6,37 @@
       </v-list-item-title>
     </v-list-item>
 
-    <v-list dense nav>
+    <v-list density="compact" nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
           v-if="!item.items || item.items.length === 0"
-          :key="index"
+          :key="`listItem-${index}`"
+          :prepend-icon="item.icon || mdiAccountTie"
           :to="{ name: item.routeName }"
-        >
-          <template v-slot:prepend>
-            <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
-          </template>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
-
+          :title="item.title"
+        />
         <v-list-group
           v-if="item.items && item.items.length > 0"
-          :key="index"
-          :value="false"
-          :prepend-icon="item.icon"
-          no-action
+          :key="`listGroup-${index}`"
+          :value="item.title"
         >
-          <template v-slot:activator>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              :prepend-icon="item.icon"
+            >
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
           </template>
 
           <v-list-item
-            v-for="(subItem, i) in item.items"
-            :key="i"
-            class="ml-0 pl-6"
+            v-for="(subItem, subIndex) in item.items"
+            :key="`subItem-${subIndex}-${index}`"
+            :prepend-icon="subItem.icon || mdiAccountTie"
             :to="{ name: subItem.routeName }"
-          >
-            <template v-slot:prepend>
-              <v-icon>{{ subItem.icon || mdiAccountTie }}</v-icon>
-            </template>
-            <v-list-item-title>{{ subItem.title }}</v-list-item-title>
-          </v-list-item>
+            :title="subItem.title"
+            :value="subItem.title"
+          />
         </v-list-group>
       </template>
     </v-list>

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid style="height: 100%">
+  <v-container fluid class="pa-3">
     <admin-check-jwt-lifetime />
     <div v-if="isAdmin" class="admin-page-wrapper">
       <admin-navigation />
@@ -34,7 +34,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.admin-page-wrapper {
+// Added 'NOT-USED' to remove this styling for now, because it looks better without it, but it still doesn't look good.
+.admin-page-wrapper-NOT-USED {
   height: 100%;
   display: grid;
   grid-template-columns: 256px auto;
