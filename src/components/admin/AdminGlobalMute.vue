@@ -9,8 +9,7 @@
         :items-per-page="-1"
         :items="globallyMutedPlayers"
         hide-default-footer
-        sort-by="id"
-        :sort-desc="true"
+        :sort-by="[{ key: 'id', order: 'desc' }]"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
@@ -22,12 +21,11 @@
             />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -53,19 +51,18 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props }">
                           <v-text-field
                             v-model="banExpiry"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               banExpiry = '';
                               dateMenu = false;
@@ -121,7 +118,7 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
       <v-row class="ma-2">
@@ -143,6 +140,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify, mdiDelete } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -221,34 +219,34 @@ export default defineComponent({
       }
     }
 
-    const headers = [
+    const headers: DataTableHeader[] = [
       {
-        text: "Flo Ban Id",
+        title: "Flo Ban Id",
         sortable: true,
         value: "id",
       },
       {
-        text: "BattleTag",
+        title: "BattleTag",
         sortable: true,
         value: "battleTag",
       },
       {
-        text: "Ban Insert Date",
+        title: "Ban Insert Date",
         sortable: true,
         value: "createdAt",
       },
       {
-        text: "Ban Expiry Date",
+        title: "Ban Expiry Date",
         sortable: true,
         value: "expiresAt",
       },
       {
-        text: "Author",
+        title: "Author",
         sortable: true,
         value: "author",
       },
       {
-        text: "Actions",
+        title: "Actions",
         sortable: false,
         value: "actions",
       },
