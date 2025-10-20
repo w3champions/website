@@ -125,7 +125,7 @@ declare module 'vue' {
     PortraitGroupCombobox: typeof import('./src/components/admin/portraits/PortraitGroupCombobox.vue')['default']
     PortraitGroupDropdown: typeof import('./src/components/admin/portraits/PortraitGroupDropdown.vue')['default']
     RaceIcon: typeof import('./src/components/player/RaceIcon.vue')['default']
-    RaceToMapStat: typeof import('./src/components/overall-statistics/RaceToMapStat.vue')['default']
+    RaceToMapStat: typeof import('./src/components/player/RaceToMapStat.vue')['default']
     RankingsGrid: typeof import('./src/components/ladder/RankingsGrid.vue')['default']
     RankingsRaceDistribution: typeof import('./src/components/ladder/RankingsRaceDistribution.vue')['default']
     RecentPerformance: typeof import('./src/components/player/RecentPerformance.vue')['default']

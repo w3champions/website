@@ -28,7 +28,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
 import { RaceWinsOnMap } from "@/store/player/types";
-import RaceToMapStat from "@/components/overall-statistics/RaceToMapStat.vue";
+import RaceToMapStat from "@/components/player/RaceToMapStat.vue";
 import { ERaceEnum } from "@/store/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import isEmpty from "lodash/isEmpty";
