@@ -8,19 +8,17 @@
         :headers="headers"
         :items-per-page="-1"
         :items="loungeMutes"
-        sort-by="insertDate"
-        :sort-desc="true"
+        :sort-by="[{ key: 'insertDate', order: 'desc' }]"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -46,19 +44,18 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props }">
                           <v-text-field
                             v-model="endDate"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker v-model="endDate" no-title scrollable max="2099-01-01">
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               endDate = '';
                               dateMenu = false;
@@ -81,8 +78,8 @@
                           <v-text-field
                             v-model="reason"
                             :label="'Reason'"
-                            outlined
-                            dense
+                            variant="outlined"
+                            density="compact"
                           />
                         </v-col>
                       </v-row>
@@ -92,7 +89,6 @@
                           <v-checkbox
                             v-model="isShadowBan"
                             :label="'Shadow Ban (user can connect but messages are only visible to them)'"
-                            dense
                           />
                         </v-col>
                       </v-row>
@@ -139,7 +135,7 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -155,6 +151,7 @@ import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminLoungeMute",
@@ -244,14 +241,14 @@ export default defineComponent({
       }
     }
 
-    const headers = [
-      { text: "BattleTag", sortable: true, value: "battleTag" },
-      { text: "Mute End Date", sortable: true, value: "endDate" },
-      { text: "Mute Insert Date", sortable: true, value: "insertDate" },
-      { text: "Author", sortable: true, value: "author" },
-      { text: "Reason", sortable: true, width: "17vw", value: "reason" },
-      { text: "Shadow Ban", sortable: true, value: "isShadowBan" },
-      { text: "Actions", sortable: false, value: "actions", align: "center" },
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", sortable: true, value: "battleTag" },
+      { title: "Mute End Date", sortable: true, value: "endDate" },
+      { title: "Mute Insert Date", sortable: true, value: "insertDate" },
+      { title: "Author", sortable: true, value: "author" },
+      { title: "Reason", sortable: true, width: "17vw", value: "reason" },
+      { title: "Shadow Ban", sortable: true, value: "isShadowBan" },
+      { title: "Actions", sortable: false, value: "actions", align: "center" },
     ];
 
     return {
