@@ -16,8 +16,7 @@
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
             <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
+                class="mb-2 bg-primary w3-race-bg--text"
                 v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
@@ -31,7 +30,7 @@
               <v-card-text>
                 <v-text-field
                   v-model="editedNewsItem.date"
-                  filled
+                  variant="filled"
                   :label="$t(`views_admin.headline`)"
                 />
                 <div class="editor">
@@ -167,10 +166,10 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="closeNews">
+                <v-btn variant="text" @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="saveNews">
+                <v-btn class="bg-primary w3-race-bg--text" @click="saveNews">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>
@@ -179,8 +178,8 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
