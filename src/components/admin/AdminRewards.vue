@@ -9,8 +9,7 @@
       :items="rewards"
       :items-per-page="10"
       :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
-      sort-by="createdAt"
-      :sort-desc="true"
+      :sort-by="[{ key: 'createdAt', order: 'desc' }]"
       :search="tableSearch"
       class="elevation-1"
     >
@@ -23,12 +22,10 @@
           />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                class="mb-2 bg-primary w3-race-bg--text"
+                v-bind="props"
                 @click="createNewReward"
               >
                 Create Reward
@@ -45,7 +42,7 @@
       </template>
 
       <template v-slot:item.moduleId="{ item }">
-        <v-chip color="primary" small>
+        <v-chip class="bg-primary" size="small">
           {{ getModuleName(item.moduleId) }}
         </v-chip>
       </template>
@@ -54,14 +51,14 @@
         <div>
           <strong>{{ getRewardName(item.displayId) }}</strong>
           <div v-if="!hasTranslation(item.displayId)" class="text--secondary text-caption">
-            <v-icon small color="warning">mdi-alert</v-icon>
+            <v-icon size="small" color="warning">mdi-alert</v-icon>
             No translation
           </div>
         </div>
       </template>
 
       <template v-slot:item.isActive="{ item }">
-        <v-chip :color="item.isActive ? 'success' : 'error'" small>
+        <v-chip size="small" :class="item.isActive ? 'bg-success' : 'bg-error'">
           {{ item.isActive ? 'Active' : 'Inactive' }}
         </v-chip>
       </template>
@@ -76,13 +73,13 @@
       <template v-slot:item.assignmentStats="{ item }">
         <div class="text-center">
           <v-chip-group class="d-flex flex-column">
-            <v-chip x-small color="success" class="ma-1">
+            <v-chip size="x-small" class="ma-1 bg-success">
               A: {{ item.assignmentStats?.activeCount || 0 }}
             </v-chip>
-            <v-chip x-small color="warning" class="ma-1">
+            <v-chip size="x-small" class="ma-1 bg-warning">
               E: {{ item.assignmentStats?.expiredCount || 0 }}
             </v-chip>
-            <v-chip x-small color="error" class="ma-1">
+            <v-chip size="x-small" class="ma-1 bg-error">
               R: {{ item.assignmentStats?.revokedCount || 0 }}
             </v-chip>
           </v-chip-group>
@@ -91,7 +88,7 @@
 
       <template v-slot:item.actions="{ item }">
         <v-icon
-          small
+          size="small"
           color="info"
           class="mr-2"
           @click="viewUsers(item)"
@@ -99,14 +96,14 @@
           {{ mdiAccountGroup }}
         </v-icon>
         <v-icon
-          small
+          size="small"
           class="mr-2"
           @click="editReward(item)"
         >
           {{ mdiPencil }}
         </v-icon>
         <v-icon
-          small
+          size="small"
           @click="deleteReward(item)"
         >
           {{ mdiDelete }}
@@ -134,11 +131,12 @@
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition } from "@/store/admin/types";
+import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardAssignment, RewardStatus, ModuleDefinition, RewardAssignmentStats } from "@/store/admin/types";
 import AdminRewardEdit from "./AdminRewardEdit.vue";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
 import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminRewards",
@@ -169,15 +167,15 @@ export default defineComponent({
 
     const token = computed(() => oauthStore.token);
 
-    const headers = [
-      { text: "Display ID", value: "displayId", sortable: true },
-      { text: "Translated Name", value: "translatedName", sortable: false },
-      { text: "Module", value: "moduleId", sortable: true },
-      { text: "Duration", value: "duration", sortable: false },
-      { text: "Status", value: "isActive", sortable: true },
-      { text: "Users", value: "assignmentStats", sortable: false, width: "120px" },
-      { text: "Created", value: "createdAt", sortable: true },
-      { text: "Actions", value: "actions", sortable: false, width: "140px" },
+    const headers: DataTableHeader[] = [
+      { title: "Display ID", value: "displayId", sortable: true },
+      { title: "Translated Name", value: "translatedName", sortable: false },
+      { title: "Module", value: "moduleId", sortable: true },
+      { title: "Duration", value: "duration", sortable: false },
+      { title: "Status", value: "isActive", sortable: true },
+      { title: "Users", value: "assignmentStats", sortable: false, width: "120px" },
+      { title: "Created", value: "createdAt", sortable: true },
+      { title: "Actions", value: "actions", sortable: false, width: "140px" },
     ];
 
     // const usersHeaders = [
@@ -196,7 +194,7 @@ export default defineComponent({
     //   return rewardUsers.value.filter((user) => user.status === RewardStatus.Expired || user.status === RewardStatus.Revoked).length;
     // });
 
-    const loadAllAssignments = async () => {
+    const loadAllAssignments = async (): Promise<void> => {
       try {
         const assignmentsData = await AdminService.getAllAssignments(token.value, 1, 10000);
         allAssignments.value = assignmentsData.assignments;
@@ -205,7 +203,7 @@ export default defineComponent({
       }
     };
 
-    const calculateAssignmentStats = (rewardId: string) => {
+    const calculateAssignmentStats = (rewardId: string): RewardAssignmentStats => {
       const rewardAssignments = allAssignments.value.filter((a) => a.rewardId === rewardId);
       return {
         activeCount: rewardAssignments.filter((a) => a.status === RewardStatus.Active).length,
@@ -215,7 +213,7 @@ export default defineComponent({
       };
     };
 
-    const loadRewards = async () => {
+    const loadRewards = async (): Promise<void> => {
       try {
         const [rewardsData] = await Promise.all([
           AdminService.getRewards(token.value),
@@ -233,7 +231,7 @@ export default defineComponent({
       }
     };
 
-    const loadModules = async () => {
+    const loadModules = async (): Promise<void> => {
       try {
         availableModules.value = await AdminService.getAvailableModules(token.value);
       } catch (error) {
@@ -279,13 +277,13 @@ export default defineComponent({
       dialog.value = true;
     };
 
-    const editReward = (reward: Reward) => {
+    const editReward = (reward: Reward): void => {
       editedReward.value = { ...reward };
       isEditMode.value = true;
       dialog.value = true;
     };
 
-    const saveReward = async (rewardData: Partial<Reward>) => {
+    const saveReward = async (rewardData: Partial<Reward>): Promise<void> => {
       try {
         if (isEditMode.value && editedReward.value.id) {
           const updateData: UpdateRewardRequest = {
@@ -317,7 +315,7 @@ export default defineComponent({
       }
     };
 
-    const deleteReward = async (reward: Reward) => {
+    const deleteReward = async (reward: Reward): Promise<void> => {
       if (confirm(`Are you sure you want to delete "${getRewardName(reward.displayId)}"?`)) {
         try {
           await AdminService.deleteReward(reward.id, token.value);
@@ -333,12 +331,12 @@ export default defineComponent({
       }
     };
 
-    const closeDialog = () => {
+    const closeDialog = (): void => {
       dialog.value = false;
       editedReward.value = {};
     };
 
-    const showSnackbar = (message: string, color = "success") => {
+    const showSnackbar = (message: string, color = "success"): void => {
       snackbarText.value = message;
       snackbarColor.value = color;
       snackbar.value = true;
@@ -351,13 +349,13 @@ export default defineComponent({
     };
 
     // New methods for assignment functionality
-    const viewUsers = async (reward: Reward) => {
+    const viewUsers = async (reward: Reward): Promise<void> => {
       selectedReward.value = reward;
       usersDialog.value = true;
       await loadRewardUsers();
     };
 
-    const loadRewardUsers = async () => {
+    const loadRewardUsers = async (): Promise<void> => {
       if (!selectedReward.value) return;
 
       loadingUsers.value = true;

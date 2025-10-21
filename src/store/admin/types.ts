@@ -182,6 +182,14 @@ export type Reward = {
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
+  assignmentStats?: RewardAssignmentStats;
+};
+
+export type RewardAssignmentStats = {
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+  totalCount: number;
 };
 
 // Module-related types for dynamic reward configuration
