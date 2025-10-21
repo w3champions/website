@@ -10,7 +10,7 @@
       href="https://discord.gg/uJmQxG2"
       target="_blank"
       tile
-      outlined
+      border
       style="padding-bottom: 0px"
     >
       <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
@@ -26,7 +26,7 @@
       href="https://twitter.com/W3ChampionsTeam"
       target="_blank"
       tile
-      outlined
+      border
     >
       <v-img src="/assets/socials/Twitter_button.png" alt="Twitter" />
     </v-card>

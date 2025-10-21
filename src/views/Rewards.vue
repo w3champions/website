@@ -12,7 +12,7 @@
                 <strong>{{ $t("views_rewards.patreon_status") }}:</strong>
                 <v-chip
                   :color="patreonLinkStatus ? 'success' : 'grey'"
-                  small
+                  size="small"
                   class="ml-2"
                 >
                   {{ patreonLinkStatus ? $t("views_rewards.linked") : $t("views_rewards.not_linked") }}
@@ -42,7 +42,7 @@
                 class="mt-2"
                 @click="linkWithPatreon"
               >
-                <v-icon left>mdi-patreon</v-icon>
+                <v-icon start>mdi-patreon</v-icon>
                 {{ $t("views_rewards.link_with_patreon") }}
               </v-btn>
             </div>
@@ -50,7 +50,7 @@
               <p>{{ $t("views_rewards.patreon_linked_success") }}</p>
               <v-btn
                 color="error"
-                text
+                variant="text"
                 :loading="isUnlinkingPatreon"
                 class="mt-2"
                 @click="unlinkPatreon"
@@ -95,19 +95,19 @@
         </v-card>
 
         <!-- Error Messages -->
-        <v-alert v-if="errorMessage" type="error" dismissible @input="errorMessage = ''">
+        <v-alert v-if="errorMessage" type="error" closable @update:model-value="errorMessage = ''">
           {{ errorMessage }}
         </v-alert>
 
         <!-- Success Messages -->
-        <v-alert v-if="successMessage" type="success" dismissible @input="successMessage = ''">
+        <v-alert v-if="successMessage" type="success" closable @update:model-value="successMessage = ''">
           {{ successMessage }}
         </v-alert>
       </v-col>
     </v-row>
 
     <!-- Sign In Dialog -->
-    <sign-in-dialog v-model="showSignIn" />
+    <sign-in-dialog :value="showSignIn" />
   </v-container>
 </template>
 

@@ -10,7 +10,7 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu offset-x>
+        <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn tile style="background-color: transparent" v-bind="props">
               <div
@@ -32,7 +32,7 @@
                 <v-list-item-title>Select a country:</v-list-item-title>
               </v-list>
               <v-divider />
-              <v-list dense max-height="400" class="countries-list overflow-y-auto">
+              <v-list density="compact" max-height="400" class="countries-list overflow-y-auto">
                 <v-list-item
                   v-for="item in countries"
                   :key="item.countryCode"
@@ -54,7 +54,7 @@
           </v-card>
         </v-menu>
         <v-spacer />
-        <v-menu offset-x>
+        <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn
               tile
@@ -71,7 +71,7 @@
               <v-list>
                 <v-list-item-title>Previous seasons:</v-list-item-title>
               </v-list>
-              <v-list dense max-height="400" class="overflow-y-auto">
+              <v-list density="compact" max-height="400" class="overflow-y-auto">
                 <v-list-item
                   v-for="item in seasons"
                   :key="item.id"

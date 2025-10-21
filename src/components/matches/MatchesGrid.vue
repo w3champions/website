@@ -114,7 +114,7 @@
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
       </div>
-      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @input="onPageChanged" />
+      <v-pagination v-model="page" :length="getTotalPages" total-visible="8" @update:model-value="onPageChanged" />
     </div>
   </div>
 </template>

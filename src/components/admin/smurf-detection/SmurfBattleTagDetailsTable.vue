@@ -1,7 +1,7 @@
 <template>
   <v-col cols="6">
     <h3 class="text-subtitle-2">{{ title }}</h3>
-    <v-table dense>
+    <v-table density="compact">
       <thead>
         <tr>
           <th>BattleTag</th>

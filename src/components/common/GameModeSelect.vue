@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-x>
+  <v-menu>
     <template v-slot:activator="{ props }">
       <v-btn tile class="bg-transparent text-title" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
@@ -16,7 +16,7 @@
           </v-list-item>
         </v-list>
         <v-divider />
-        <v-list dense max-height="400" class="overflow-y-auto">
+        <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="mode in gameModes()"
             :key="mode.id"

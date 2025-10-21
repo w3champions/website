@@ -10,10 +10,10 @@
             <v-text-field v-model="mapRef.name" label="Name" autofocus />
           </v-col>
 
-          <v-tooltip v-if="isAddDialog" left>
-            <template v-slot:activator="{ on, attrs }">
+          <v-tooltip v-if="isAddDialog" location="left">
+            <template v-slot:activator="{ props }">
               <v-col cols="12" sm="6" md="12">
-                <v-text-field v-model="mapId" label="Id" v-bind="attrs" v-on="on" />
+                <v-text-field v-model="mapId" label="Id" v-bind="props" />
               </v-col>
             </template>
             <span>Leave blank to auto assign an Id</span>
@@ -28,7 +28,7 @@
           </v-col>
 
           <v-col cols="12" sm="6" md="12" class="pt-0">
-            <v-checkbox v-model="mapRef.disabled" label="Disable map" dense />
+            <v-checkbox v-model="mapRef.disabled" label="Disable map" />
           </v-col>
         </v-row>
       </v-container>
@@ -36,7 +36,7 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
       <v-btn color="primary" class="w3-race-bg--text" @click="save">

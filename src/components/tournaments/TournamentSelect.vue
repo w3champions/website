@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-x>
+  <v-menu>
     <template v-slot:activator="{ props }">
       <v-btn tile style="background-color: transparent" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon>
@@ -9,22 +9,18 @@
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t("components_tournaments_tournamentselect.selecttourney") }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            {{ $t("components_tournaments_tournamentselect.selecttourney") }}
+          </v-list-item-title>
         </v-list>
         <v-divider />
-        <v-list dense max-height="400" class="overflow-y-auto">
+        <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="tournament in tournaments"
             :key="tournament.id"
             @click="selectTournament(tournament)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ tournament.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ tournament.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
