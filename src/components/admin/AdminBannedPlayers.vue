@@ -20,8 +20,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
+                class="bg-primary mb-2 w3-race-bg--text"
                 v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
@@ -49,16 +48,18 @@
                       >
                         <template v-slot:activator="{ props }">
                           <v-text-field
-                            v-model="editedItem.endDate"
+                            v-model="selectedDateString"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="props"
                           />
                         </template>
                         <v-date-picker
-                          v-model="editedItem.endDate"
-                          no-title
-                          scrollable
+                          v-model="selectedDate"
+                          first-day-of-week="1"
+                          hide-header
+                          show-adjacent-months
+                          @update:modelValue="setSelectedDateString"
                         >
                           <v-spacer />
                           <v-btn
@@ -71,8 +72,7 @@
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
                           <v-btn
-                            color="primary"
-                            class="w3-race-bg--text"
+                            class="bg-primary w3-race-bg--text"
                             @click="dateMenu = false"
                           >
                             {{ $t(`views_admin.ok`) }}
@@ -158,7 +158,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
-import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
 import { TranslateResult, useI18n } from "vue-i18n";
 import debounce from "debounce";
 import { DataTableHeader } from "vuetify";
@@ -194,6 +194,8 @@ export default defineComponent({
     const isValidationError = computed<boolean>(() => adminStore.banValidationError !== "");
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
+    const selectedDate = ref<Date>();
+    const selectedDateString = ref<string>("");
 
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
@@ -256,7 +258,7 @@ export default defineComponent({
 
     async function save(): Promise<void> {
       editedItem.value.author = author.value;
-      editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
+      editedItem.value.endDate = dateToCurrentTimeDate(selectedDateString.value);
       editedItem.value.battleTag = foundPlayer.value;
 
       await adminStore.postBan(editedItem.value);
@@ -308,6 +310,8 @@ export default defineComponent({
         adminStore.resetBanValidationMessage();
         resetDialog();
         playerSearchStore.clearPlayerSearch();
+        foundPlayer.value = "";
+        selectedDateString.value = "";
       }
     }
 
@@ -329,6 +333,10 @@ export default defineComponent({
       { title: "Ban reason", value: "banReason", sortable: false },
       { title: "Actions", value: "actions", sortable: false, width: "1vw", align: "center" },
     ];
+
+    const setSelectedDateString = (date: Date) => {
+      selectedDateString.value = formatTimestampString(date, "yyyy-MM-dd");
+    };
 
     return {
       mdiDelete,
@@ -353,6 +361,9 @@ export default defineComponent({
       deleteItem,
       onTableOptionsUpdate,
       bannedPlayersTableOptions,
+      selectedDate,
+      selectedDateString,
+      setSelectedDateString,
     };
   },
 });
