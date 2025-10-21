@@ -15,16 +15,15 @@
                 v-model="searchDepth"
                 :items="[1, 2, 3, 4, 5]"
                 label="Search depth"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
-                style="max-width: 150px;"
+                width="150"
               />
               <v-checkbox
                 v-if="canSeeSmurfCheckerQueryExplanation"
                 v-model="generateExplanation"
                 label="Generate explanation"
-                dense
                 class="ml-4"
                 hide-details
               />
@@ -42,8 +41,8 @@
                 v-model="selectedIdentifierType"
                 :items="availableIdentifierTypes"
                 label="Identifier Type"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
                 disabled
                 style="max-width: 150px;"
@@ -51,19 +50,20 @@
               <!-- Autocomplete Btag search -->
               <v-autocomplete
                 v-model="searchPlayerModel"
-                :append-icon="mdiMagnify"
+                v-model:search="search"
+                menu-icon=""
+                :append-inner-icon="mdiMagnify"
                 label="Search..."
                 clearable
-                placeholder=" "
                 :items="searchedPlayers"
-                :search-input.sync="search"
+                bg-color="transparent"
                 return-object
                 autofocus
-                class="flex-grow-1 ml-4 mr-2"
+                glow
+                class="ml-4 mr-4"
                 @click:clear="revertToDefault"
               />
               <v-btn
-                class="ml-5"
                 :disabled="!searchPlayerModel"
                 @click="executeSearch"
               >
@@ -77,20 +77,22 @@
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
           <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
-            <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
+            <div class="d-flex align-center">
+              <div class="cursor-pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
 
-            <!-- Moderation status badges -->
-            <moderation-status-badges
-              v-if="hasModerationPermission && !loadingModerationStatus"
-              :battle-tag="battleTag"
-              :compact="false"
-              class="ml-3"
-            />
+              <!-- Moderation status badges -->
+              <moderation-status-badges
+                v-if="hasModerationPermission && !loadingModerationStatus"
+                :battle-tag="battleTag"
+                :compact="false"
+                class="ml-3"
+              />
 
-            <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
+              <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
-            <v-spacer />
-            <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+              <v-spacer />
+              <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+            </div>
           </v-list-item>
         </v-list>
       </v-card>
@@ -127,7 +129,7 @@
                       <v-chip
                         v-for="filteredIdentifier in step.filteredIdentifiers"
                         :key="filteredIdentifier"
-                        small
+                        size="small"
                       >
                         {{ filteredIdentifier }}
                       </v-chip>
