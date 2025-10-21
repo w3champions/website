@@ -5,11 +5,11 @@
     </v-card-title>
     <v-card-text>
       <v-container>
-        <v-alert v-if="error" type="error" dismissible @input="error = ''">
+        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
           {{ error }}
         </v-alert>
 
-        <v-alert type="info" outlined class="mb-4">
+        <v-alert type="info" variant="outlined" class="mb-4">
           <div class="text-subtitle-2 mb-2">Instructions:</div>
           <ul class="ml-4">
             <li>Select multiple .w3m or .w3x files</li>
@@ -53,7 +53,7 @@
             </v-btn>
             <v-btn
               :disabled="uploading || selecting"
-              text
+              variant="text"
               @click="reset"
             >
               Reset
@@ -70,17 +70,17 @@
             :items="uploadProgress"
             :items-per-page="-1"
             hide-default-footer
-            dense
+            density="compact"
           >
             <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getStatusColor(item.status)" small>
+              <v-chip :color="getStatusColor(item.status)" size="small">
                 {{ item.status }}
               </v-chip>
             </template>
             <template v-slot:[`item.fileName`]="{ item }">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <span v-bind="attrs" v-on="on">{{ item.fileName }}</span>
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">{{ item.fileName }}</span>
                 </template>
                 <span>{{ item.fileName }}</span>
               </v-tooltip>
@@ -114,7 +114,7 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn :disabled="uploading || selecting" text @click="cancel">
+      <v-btn :disabled="uploading || selecting" variant="text" @click="cancel">
         Close
       </v-btn>
     </v-card-actions>

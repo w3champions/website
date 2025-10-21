@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-menu bottom>
+    <v-menu location="bottom">
       <template v-slot:activator="{ props }">
-        <v-btn color="primary w3-race-bg--text" dark v-bind="props">
+        <v-btn color="primary w3-race-bg--text" v-bind="props">
           Select Portrait Groups
           <v-icon>{{ mdiChevronDown }}</v-icon>
         </v-btn>
@@ -10,7 +10,7 @@
 
       <v-list max-height="400" class="overflow-y-auto">
         <v-list-item v-for="group in groupNames" :key="group">
-          <v-tooltip left max-width="500" min-width="500">
+          <v-tooltip location="left" max-width="500" min-width="500">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" @click="addPortraitGroup(group)">
                 {{ group }}

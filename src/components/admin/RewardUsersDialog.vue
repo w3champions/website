@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="800px" @input="$emit('update:visible', $event)">
+  <v-dialog :model-value="visible" max-width="800px" @update:model-value="$emit('update:visible', $event)">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ title }}</span>
@@ -15,7 +15,7 @@
           <div class="mt-2">Loading users...</div>
         </div>
 
-        <div v-else-if="error" class="error--text text-center pa-4">
+        <div v-else-if="error" class="text-error text-center pa-4">
           <v-icon color="error" class="mb-2">{{ mdiAlert }}</v-icon>
           <div>{{ error }}</div>
           <v-btn color="primary" class="mt-2" @click="$emit('retry')">Retry</v-btn>
@@ -24,25 +24,25 @@
         <div v-else-if="users && users.length > 0">
           <v-row class="mb-4">
             <v-col cols="4">
-              <v-card outlined>
+              <v-card border>
                 <v-card-text class="text-center">
-                  <div class="text-h4 primary--text">{{ filteredUsers.length }}</div>
+                  <div class="text-h4 text-primary">{{ filteredUsers.length }}</div>
                   <div class="text-subtitle1">Showing / {{ users.length }} Total</div>
                 </v-card-text>
               </v-card>
             </v-col>
             <v-col cols="4">
-              <v-card outlined>
+              <v-card border>
                 <v-card-text class="text-center">
-                  <div class="text-h4 success--text">{{ activeUsersCount }}</div>
+                  <div class="text-h4 text-success">{{ activeUsersCount }}</div>
                   <div class="text-subtitle1">Active</div>
                 </v-card-text>
               </v-card>
             </v-col>
             <v-col cols="4">
-              <v-card outlined>
+              <v-card border>
                 <v-card-text class="text-center">
-                  <div class="text-h4 error--text">{{ expiredUsersCount }}</div>
+                  <div class="text-h4 text-error">{{ expiredUsersCount }}</div>
                   <div class="text-subtitle1">Expired/Revoked</div>
                 </v-card-text>
               </v-card>
@@ -56,8 +56,8 @@
                 label="Search users..."
                 prepend-icon="mdi-magnify"
                 clearable
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 placeholder="Search by User ID, Provider, or Status"
               />
             </v-col>
@@ -75,17 +75,17 @@
 
             <template v-slot:item.providerId="{ item }">
               <v-chip
-                small
+                size="small"
                 :color="getProviderColor(item.providerId)"
               >
-                <v-icon small left>{{ getProviderIcon(item.providerId) }}</v-icon>
+                <v-icon size="small" start>{{ getProviderIcon(item.providerId) }}</v-icon>
                 {{ item.providerId }}
               </v-chip>
             </template>
 
             <template v-slot:item.status="{ item }">
               <v-chip
-                small
+                size="small"
                 :color="getStatusColor(item.status)"
               >
                 {{ getStatusName(item.status) }}
@@ -103,7 +103,7 @@
 
             <template v-slot:item.revocationReason="{ item }">
               <div v-if="getRevocationReason(item)" class="text-caption">
-                <v-icon small color="warning" class="mr-1">mdi-information-outline</v-icon>
+                <v-icon size="small" color="warning" class="mr-1">mdi-information-outline</v-icon>
                 {{ getRevocationReason(item) }}
               </div>
               <div v-else class="text--secondary text-center">—</div>
