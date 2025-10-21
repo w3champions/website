@@ -79,7 +79,6 @@
                   {{ $t("views_gettingstarted.manualwinbody1") }}
                 </p>
                 <v-btn
-                  class="w3-background"
                   color="primary"
                   :href="ingameAddonLink"
                   target="_blank"
@@ -124,7 +123,6 @@
                 <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
                 <p>{{ $t("views_gettingstarted.manualmacbody1") }}</p>
                 <v-btn
-                  class="w3-background"
                   color="primary"
                   :href="webUiLink"
                   target="_blank"
@@ -145,7 +143,6 @@
                 </p>
                 <p>{{ $t("views_gettingstarted.manualmacbody7") }}</p>
                 <v-btn
-                  class="w3-background"
                   color="primary"
                   :href="mapsLink"
                   target="_blank"
