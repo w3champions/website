@@ -452,8 +452,8 @@
       <v-icon v-if="snackbarColor === 'warning'" start>{{ mdiAlertCircle }}</v-icon>
       <v-icon v-if="snackbarColor === 'info'" start>{{ mdiInformation }}</v-icon>
       {{ snackbarText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn variant="text" v-bind="attrs" @click="snackbar = false">
+      <template v-slot:actions="{ isActive }">
+        <v-btn variant="text" v-bind="isActive" @click="snackbar = false">
           <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>
       </template>

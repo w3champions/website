@@ -1,27 +1,27 @@
 <template>
   <div>
     <v-card-title class="text-h4 mb-4">
-      <v-icon left class="mr-3">{{ mdiAccountHeart }}</v-icon>
+      <v-icon start class="mr-3">{{ mdiAccountHeart }}</v-icon>
       Patreon Account Links
     </v-card-title>
 
     <!-- Statistics Summary Cards -->
     <v-row v-if="patreonLinks.length > 0" class="mb-6">
       <v-col cols="12" sm="6" md="4">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 primary--text mb-1">{{ getTotalLinks() }}</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-primary mb-1">{{ getTotalLinks() }}</div>
           <div class="text-subtitle2 text--secondary">Total Links</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 success--text mb-1">{{ getRecentLinks() }}</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-success mb-1">{{ getRecentLinks() }}</div>
           <div class="text-subtitle2 text--secondary">Recent (30 days)</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 warning--text mb-1">{{ getStaleLinks() }}</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-warning mb-1">{{ getStaleLinks() }}</div>
           <div class="text-subtitle2 text--secondary">Not Synced (7+ days)</div>
         </v-card>
       </v-col>
@@ -41,20 +41,20 @@
             />
             <div v-if="selectedPlayer" class="mt-2 d-flex align-center">
               <v-avatar size="24" color="primary" class="mr-2">
-                <v-icon small color="white">{{ mdiAccount }}</v-icon>
+                <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
               </v-avatar>
               <span class="font-weight-medium">{{ selectedPlayer }}</span>
-              <v-btn icon x-small class="ml-2" @click="clearPlayerSelection">
-                <v-icon x-small>{{ mdiClose }}</v-icon>
+              <v-btn icon size="x-small" class="ml-2" @click="clearPlayerSelection">
+                <v-icon size="x-small">{{ mdiClose }}</v-icon>
               </v-btn>
             </div>
           </v-col>
           <v-col cols="12" md="3">
             <v-btn
-              outlined
+              variant="outlined"
               @click="clearFilters"
             >
-              <v-icon left>{{ mdiFilterRemove }}</v-icon>
+              <v-icon start>{{ mdiFilterRemove }}</v-icon>
               Clear Filters
             </v-btn>
           </v-col>
@@ -64,7 +64,7 @@
               :loading="loading"
               @click="loadPatreonLinks"
             >
-              <v-icon left>{{ mdiRefresh }}</v-icon>
+              <v-icon start>{{ mdiRefresh }}</v-icon>
               Refresh
             </v-btn>
           </v-col>
@@ -85,15 +85,14 @@
         :items="filteredLinks"
         :items-per-page="25"
         :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
-        sort-by="linkedAt"
-        :sort-desc="true"
+        :sort-by="[{ key: 'linkedAt', order: 'desc' }]"
         :loading="loading && patreonLinks.length > 0"
         class="modern-table"
       >
         <template v-slot:item.battleTag="{ item }">
           <div class="d-flex align-center">
             <v-avatar size="32" class="mr-3" color="primary">
-              <v-icon small color="white">{{ mdiAccount }}</v-icon>
+              <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
             </v-avatar>
             <div class="font-weight-medium">{{ item.battleTag }}</div>
           </div>
@@ -101,7 +100,7 @@
 
         <template v-slot:item.patreonUserId="{ item }">
           <div class="d-flex align-center">
-            <v-icon class="mr-2" color="orange" small>{{ mdiPatreon }}</v-icon>
+            <v-icon class="mr-2" color="orange" size="small">{{ mdiPatreon }}</v-icon>
             <div class="text-caption font-family-monospace">{{ item.patreonUserId }}</div>
           </div>
         </template>
@@ -117,7 +116,7 @@
           <div>
             <div class="font-weight-medium" :class="getSyncStatusClass(item.lastSyncAt)">{{ formatDate(item.lastSyncAt) }}</div>
             <div class="text-caption text--secondary">{{ formatTime(item.lastSyncAt) }}</div>
-            <v-chip v-if="isStaleSync(item.lastSyncAt)" x-small color="orange" class="mt-1">
+            <v-chip v-if="isStaleSync(item.lastSyncAt)" size="x-small" color="orange" class="mt-1">
               Stale Sync
             </v-chip>
           </div>
@@ -125,36 +124,36 @@
 
         <template v-slot:item.actions="{ item }">
           <div class="d-flex justify-end">
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-btn
                   icon
-                  small
+                  size="large"
                   color="info"
-                  class="mr-1"
+                  variant="plain"
                   :disabled="loadingMemberDetails"
                   :loading="loadingMemberDetails && selectedMemberBattleTag === item.battleTag"
                   v-bind="props"
                   @click="viewMemberDetails(item)"
                 >
-                  <v-icon small>{{ mdiMagnify }}</v-icon>
+                  <v-icon size="small">{{ mdiMagnify }}</v-icon>
                 </v-btn>
               </template>
               <span>View details</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-btn
                   icon
-                  small
+                  size="large"
                   color="error"
+                  variant="plain"
                   :disabled="deletingLinks.includes(item.battleTag)"
                   :loading="deletingLinks.includes(item.battleTag)"
                   v-bind="props"
                   @click="confirmDelete(item)"
                 >
-                >
-                  <v-icon small>{{ mdiDelete }}</v-icon>
+                  <v-icon size="small">{{ mdiDelete }}</v-icon>
                 </v-btn>
               </template>
               <span>Delete link</span>
@@ -164,7 +163,7 @@
 
         <template v-slot:no-data>
           <div class="text-center py-8">
-            <v-icon size="64" color="grey lighten-2" class="mb-4">{{ mdiAccountSearch }}</v-icon>
+            <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ mdiAccountSearch }}</v-icon>
             <div class="text-h6 text--secondary mb-2">No Patreon links found</div>
             <div class="text-body-2 text--secondary mb-4">
               {{ selectedPlayer ? 'No Patreon account linked for this user' : 'No Patreon account links exist or try adjusting your search' }}
@@ -183,13 +182,13 @@
         <v-card-text>
           Are you sure you want to delete the Patreon link for <strong>{{ selectedLink?.battleTag }}</strong>?
           <br />
-          <v-alert type="warning" dense>
+          <v-alert type="warning" density="compact">
             This will revoke all active Patreon rewards for this user and cannot be undone.
           </v-alert>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="deleteDialog = false">
+          <v-btn variant="text" @click="deleteDialog = false">
             Cancel
           </v-btn>
           <v-btn
@@ -208,7 +207,7 @@
       <v-card>
         <v-card-title>
           <span class="text-h5">
-            <v-icon left>{{ mdiAccountDetails }}</v-icon>
+            <v-icon start>{{ mdiAccountDetails }}</v-icon>
             Patreon Member Details
           </span>
         </v-card-title>
@@ -227,11 +226,11 @@
 
           <v-row v-if="memberDetails.found">
             <v-col cols="12" md="6">
-              <v-card outlined class="pa-3">
+              <v-card border class="pa-3">
                 <div class="text-caption text--secondary">Patron Status</div>
                 <v-chip
                   :color="memberDetails.isActivePatron ? 'success' : 'error'"
-                  small
+                  size="small"
                   class="mt-1"
                 >
                   {{ memberDetails.patronStatus || 'Unknown' }}
@@ -239,12 +238,12 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-card outlined class="pa-3">
+              <v-card border class="pa-3">
                 <div class="text-caption text--secondary">Last Charge</div>
                 <div class="text-body-2 mt-1">
                   <v-chip
                     :color="memberDetails.lastChargeStatus === 'Paid' ? 'success' : 'warning'"
-                    small
+                    size="small"
                   >
                     {{ memberDetails.lastChargeStatus || 'N/A' }}
                   </v-chip>
@@ -265,7 +264,7 @@
             <v-divider class="mb-4" />
             <div class="text-subtitle1 font-weight-bold mb-3">Member Information</div>
 
-            <v-table dense>
+            <v-table density="compact">
               <tbody>
                 <tr>
                   <td class="text--secondary">Patreon User ID</td>
@@ -294,12 +293,12 @@
 
             <v-row>
               <v-col cols="12" md="6">
-                <v-card outlined class="pa-3">
+                <v-card border class="pa-3">
                   <div class="text-caption text--secondary mb-2">Patreon Entitled Tiers</div>
                   <v-chip
                     v-for="tier in memberDetails.entitledTierIds"
                     :key="tier"
-                    small
+                    size="small"
                     color="orange"
                     class="mr-1 mb-1"
                   >
@@ -309,7 +308,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" md="6">
-                <v-card outlined class="pa-3">
+                <v-card border class="pa-3">
                   <div class="text-caption text--secondary mb-2">Internal Associations</div>
                   <div class="text-body-2">
                     <strong>{{ memberDetails.activeAssociationCount }}</strong> active association(s)
@@ -317,7 +316,7 @@
                   <v-chip
                     v-for="tier in memberDetails.activeAssociationTiers"
                     :key="tier"
-                    small
+                    size="small"
                     color="primary"
                     class="mr-1 mb-1 mt-2"
                   >
@@ -337,7 +336,7 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="memberDetailsDialog = false">
+          <v-btn variant="text" @click="memberDetailsDialog = false">
             Close
           </v-btn>
         </v-card-actions>
@@ -351,8 +350,8 @@
       timeout="5000"
     >
       {{ snackbarMessage }}
-      <template v-slot:action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="snackbar = false">
+      <template v-slot:actions="{ isActive }">
+        <v-btn variant="text" v-bind="isActive" @click="snackbar = false">
           Close
         </v-btn>
       </template>
@@ -373,6 +372,7 @@ import {
   mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch, mdiAccountDetails
 } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminPatreonLinks",
@@ -411,12 +411,12 @@ export default defineComponent({
     const snackbarColor = ref("success");
 
     // Table headers
-    const headers = [
-      { text: "BattleTag", value: "battleTag", width: "25%" },
-      { text: "Patreon User ID", value: "patreonUserId", width: "30%" },
-      { text: "Linked At", value: "linkedAt", width: "20%" },
-      { text: "Last Sync", value: "lastSyncAt", width: "20%" },
-      { text: "Actions", value: "actions", sortable: false, width: "5%" }
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", value: "battleTag", width: "25%" },
+      { title: "Patreon User ID", value: "patreonUserId", width: "30%" },
+      { title: "Linked At", value: "linkedAt", width: "20%" },
+      { title: "Last Sync", value: "lastSyncAt", width: "20%" },
+      { title: "Actions", value: "actions", sortable: false, width: "5%" }
     ];
 
     // Methods
@@ -436,7 +436,7 @@ export default defineComponent({
       }
     };
 
-    const filterLinks = () => {
+    const filterLinks = (): void => {
       if (!selectedPlayer.value) {
         filteredLinks.value = [...patreonLinks.value];
       } else {
@@ -446,12 +446,12 @@ export default defineComponent({
       }
     };
 
-    const confirmDelete = (link: PatreonAccountLink) => {
+    const confirmDelete = (link: PatreonAccountLink): void => {
       selectedLink.value = link;
       deleteDialog.value = true;
     };
 
-    const deletePatreonLink = async () => {
+    const deletePatreonLink = async (): Promise<void> => {
       if (!selectedLink.value) return;
 
       const battleTag = selectedLink.value.battleTag;
@@ -481,7 +481,7 @@ export default defineComponent({
       }
     };
 
-    const viewMemberDetails = async (link: PatreonAccountLink) => {
+    const viewMemberDetails = async (link: PatreonAccountLink): Promise<void> => {
       const battleTag = link.battleTag;
       selectedMemberBattleTag.value = battleTag;
       loadingMemberDetails.value = true;
@@ -504,18 +504,18 @@ export default defineComponent({
       }
     };
 
-    const showSnackbar = (message: string, color: string) => {
+    const showSnackbar = (message: string, color: string): void => {
       snackbarMessage.value = message;
       snackbarColor.value = color;
       snackbar.value = true;
     };
 
-    const formatDate = (dateString: string | null) => {
+    const formatDate = (dateString: string | null): string => {
       if (!dateString) return "—";
       return formatTimestampString(dateString, "yyyy-MM-dd");
     };
 
-    const formatTime = (dateString: string | null) => {
+    const formatTime = (dateString: string | null): string => {
       if (!dateString) return "—";
       return formatTimestampString(dateString, "HH:mm:ss");
     };
