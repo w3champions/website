@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="dialogOpen" max-width="800">
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-row class="justify-center ma-0 pa-0">
-        <v-btn class="primary w3-race-bg--text" v-on="on">Add New Portrait</v-btn>
+        <v-btn class="bg-primary w3-race-bg--text" v-bind="props">Add New Portrait</v-btn>
       </v-row>
     </template>
 
@@ -17,11 +17,11 @@
           </v-btn>
         </v-row>
 
-        <v-alert v-if="error" type="error" dismissible @input="error = ''">
+        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
           {{ error }}
         </v-alert>
 
-        <v-alert v-if="success" type="success" dismissible @input="success = ''">
+        <v-alert v-if="success" type="success" closable @update:model-value="success = ''">
           {{ success }}
         </v-alert>
 
@@ -41,7 +41,7 @@
               :disabled="uploading"
               @click="calculateNextPortraitId"
             >
-              <v-icon left>{{ mdiRefresh }}</v-icon>
+              <v-icon start>{{ mdiRefresh }}</v-icon>
               Refresh
             </v-btn>
           </v-col>
@@ -60,7 +60,7 @@
         <!-- File Upload Section -->
         <v-row>
           <v-col>
-            <v-alert type="info" outlined dense>
+            <v-alert type="info" variant="outlined" density="compact">
               <div class="text-subtitle-2 mb-1">Instructions:</div>
               <ul class="ml-4">
                 <li>Select one or multiple JPG files to upload</li>
@@ -107,7 +107,7 @@
                 <tr v-for="(progress, index) in uploadProgress" :key="index">
                   <td>{{ progress.step }}</td>
                   <td>
-                    <v-chip :color="getStatusColor(progress.status)" small>
+                    <v-chip :color="getStatusColor(progress.status)" size="small">
                       {{ progress.status }}
                     </v-chip>
                   </td>
@@ -121,7 +121,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn text :disabled="uploading" @click="close">
+        <v-btn variant="text" :disabled="uploading" @click="close">
           Close
         </v-btn>
         <v-btn

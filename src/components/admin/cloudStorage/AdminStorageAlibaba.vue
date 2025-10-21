@@ -9,23 +9,20 @@
         :items-per-page="10"
         :footer-props="{ itemsPerPageOptions: [10, 100, -1] }"
         :items="files"
-        sort-by="lastModified"
-        :sort-desc="true"
+        :sort-by="[{ key: 'lastModified', order: 'desc' }]"
         :search="tableSearch"
         :loading="isLoadingFiles"
         loading-text="Loading... Please wait"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-text-field v-model="tableSearch" label="Search" :prepend-icon="mdiMagnify" />
+            <v-text-field v-model="tableSearch" variant="underlined" label="Search" :prepend-icon="mdiMagnify" />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  color="primary"
-                  class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  class="mb-2 bg-primary w3-race-bg--text"
+                  v-bind="props"
                 >
                   Upload Image
                 </v-btn>
@@ -51,10 +48,10 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn text :disabled="isUploadingFile" @click="close">
+                  <v-btn variant="text" :disabled="isUploadingFile" @click="close">
                     {{ $t(`views_admin.cancel`) }}
                   </v-btn>
-                  <v-btn color="primary" class="w3-race-bg--text" :disabled="isUploadingFile" @click="uploadFile">
+                  <v-btn class="bg-primary w3-race-bg--text" :disabled="isUploadingFile" @click="uploadFile">
                     {{ isUploadingFile ? "Uploading..." : "Upload" }}
                   </v-btn>
                 </v-card-actions>
@@ -63,14 +60,14 @@
           </v-toolbar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
-          <v-icon small @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>
+          <v-icon size="small" @click="deleteFile(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
-      <v-snackbar v-model="isValidationMessageVisible" top :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
+      <v-snackbar v-model="isValidationMessageVisible" location="top" :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
         {{ validationMessage.message }}
-        <template v-slot:action="{ attrs }">
-          <v-btn color="black" text v-bind="attrs" @click="resetValidationMessage">
+        <template v-slot:actions="{ isActive }">
+          <v-btn color="black" variant="text" v-bind="isActive" @click="resetValidationMessage">
             Close
           </v-btn>
         </template>
@@ -85,6 +82,7 @@ import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify } from "@mdi/js";
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminStorageAlibaba",
@@ -153,11 +151,11 @@ export default defineComponent({
       await init();
     });
 
-    const headers = [
-      { text: "Name", sortable: true, value: "name" },
-      { text: "Size (KB)", sortable: true, value: "size", filterable: false },
-      { text: "Last Modified", sortable: true, value: "lastModified" },
-      { text: "Actions", sortable: false, value: "actions" },
+    const headers: DataTableHeader[] = [
+      { title: "Name", sortable: true, value: "name" },
+      { title: "Size (KB)", sortable: true, value: "size" },
+      { title: "Last Modified", sortable: true, value: "lastModified" },
+      { title: "Actions", sortable: false, value: "actions" },
     ];
 
     return {
