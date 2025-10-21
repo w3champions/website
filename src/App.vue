@@ -96,7 +96,7 @@
         <v-icon size="x-large">{{ mdiTreasureChest }}</v-icon>
       </v-btn>
 
-      <v-menu offset-y>
+      <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn variant="text" tile class="right-menu" v-bind="props">
             <v-icon size="x-large">{{ mdiInvertColors }}</v-icon>
@@ -118,7 +118,7 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-y>
+      <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn variant="text" tile style="margin-top: 2px" v-bind="props">
             <locale-icon :locale="savedLocale.get()" :showTwoLetterCode="false" />
@@ -157,7 +157,6 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { vuetify } from "@/plugins/vuetify";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
 import { useTheme } from "vuetify";
@@ -306,32 +305,32 @@ export default defineComponent({
       theme.change(val);
     }
 
-    const themeColors = ({
-      get: () => {
-        switch (getTheme.value) {
-          case "nightelf":
-            return {
-              primary: "#ffd428",
-              "w3-race-bg": "#0d0718",
-            };
-          case "undead":
-            return {
-              primary: "#ffd428",
-              "w3-race-bg": "#000",
-            };
-          case "orc":
-            return {
-              primary: "#5c2604",
-              "w3-race-bg": "#c7baa1",
-            };
-          default:
-            return {
-              primary: "#1976d2",
-              "w3-race-bg": "#e9e9e9",
-            };
-        }
-      },
-    });
+    // const themeColors = ({
+    //   get: () => {
+    //     switch (getTheme.value) {
+    //       case "nightelf":
+    //         return {
+    //           primary: "#ffd428",
+    //           "w3-race-bg": "#0d0718",
+    //         };
+    //       case "undead":
+    //         return {
+    //           primary: "#ffd428",
+    //           "w3-race-bg": "#000",
+    //         };
+    //       case "orc":
+    //         return {
+    //           primary: "#5c2604",
+    //           "w3-race-bg": "#c7baa1",
+    //         };
+    //       default:
+    //         return {
+    //           primary: "#1976d2",
+    //           "w3-race-bg": "#e9e9e9",
+    //         };
+    //     }
+    //   },
+    // });
 
     const isDarkTheme = ({
       get: () => {

@@ -71,7 +71,7 @@ export default defineComponent({
       if (!val || val.length < 3) {
         searchedPlayers.value = [];
         return;
-      };
+      }
       isLoading.value = true;
       debouncedSearch(val);
     }
@@ -79,7 +79,7 @@ export default defineComponent({
     const clearSearch = (): void => {
       context.emit("searchCleared");
       isLoading.value = false;
-    }
+    };
 
     const noDataText = computed<string>(() =>
       (!input.value || input.value.length < 3)

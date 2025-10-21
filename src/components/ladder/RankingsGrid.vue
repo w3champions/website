@@ -146,7 +146,7 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
-import { useGoTo } from 'vuetify';
+import { useGoTo } from "vuetify";
 import { InternalGoToOptions } from "vuetify/lib/composables/goto";
 
 export default defineComponent({
@@ -170,7 +170,9 @@ export default defineComponent({
     selectedRank: {
       type: Object as PropType<Ranking>,
       required: false,
-      default: {},
+      default() {
+        return {};
+      },
     }
   },
   setup(props) {
@@ -358,8 +360,8 @@ export default defineComponent({
     const goToOptions: Partial<Partial<InternalGoToOptions>> = {
       duration: 500,
       easing: "easeInOutCubic",
-      offset: window.innerHeight -150,
-    }
+      offset: window.innerHeight - 150,
+    };
 
     function goToRank(rank: Ranking): void {
       setTimeout(() => {
@@ -367,7 +369,7 @@ export default defineComponent({
 
         if (!listItemOfPlayer) return;
 
-        goTo(listItemOfPlayer, goToOptions)
+        goTo(listItemOfPlayer, goToOptions);
       }, 500);
     }
 

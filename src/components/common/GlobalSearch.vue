@@ -3,7 +3,6 @@
     v-model="menuOpened"
     content-class="global-search"
     location="bottom"
-    offset-y
     transition="slide-y-transition"
     :offset="18"
     :width="365"
@@ -18,13 +17,13 @@
       <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
         <v-autocomplete
           v-model="searchModel"
+          v-model:search="search"
           :append-inner-icon="mdiMagnify"
           menu-icon=""
           label="Search"
           single-line
           clearable
           autofocus
-          v-model:search="search"
           :no-data-text="noDataText"
           :loading="isLoading"
           :items="players"
@@ -177,7 +176,6 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss" scoped>
