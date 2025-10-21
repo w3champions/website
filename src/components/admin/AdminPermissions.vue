@@ -13,12 +13,10 @@
           <v-toolbar flat color="transparent">
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  color="primary"
-                  class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  class="mb-2 bg-primary w3-race-bg--text"
+                  v-bind="props"
                 >
                   Add Admin
                 </v-btn>
@@ -31,10 +29,10 @@
 
                 <v-card-text>
                   <v-container>
-                    <v-row>
+                    <v-row class="w-100">
                       <player-search
                         v-if="isAddDialog"
-                        class="mx-5"
+                        class="w-100 ml-5"
                         @playerFound="playerFound"
                       />
                       <v-text-field
@@ -42,6 +40,7 @@
                         v-model="editedItem.battleTag"
                         label="BattleTag"
                         class="mx-5"
+                        variant="underlined"
                       />
                     </v-row>
                     <v-row>
@@ -49,6 +48,7 @@
                         <v-text-field
                           v-model="editedItem.description"
                           :label="'Description'"
+                          variant="underlined"
                         />
                       </v-col>
                       <v-col class="px-5 py-0">
@@ -60,18 +60,17 @@
                           :multiple="true"
                           :label="permission.name"
                           :value="permission.value"
-                          :dense="true"
+                          hide-details
                         />
                       </v-col>
                     </v-row>
-                    <v-alert v-model="isValidationError" type="warning" dense class="ml-4 mr-4">
+                    <v-alert v-model="isValidationError" type="warning" density="compact" class="ml-4 mr-4">
                       {{ validationError }}
                     </v-alert>
                     <v-row>
                       <v-col>
                         <v-btn
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary w3-race-bg--text"
                           @click="save"
                         >
                           {{ $t(`views_admin.ok`) }}
@@ -79,8 +78,7 @@
                       </v-col>
                       <v-col class="text-right">
                         <v-btn
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary w3-race-bg--text"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}
@@ -99,8 +97,8 @@
           </td>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -115,6 +113,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { usePermissionStore } from "@/store/admin/permission/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminPermissions",
@@ -241,12 +240,12 @@ export default defineComponent({
       return EPermission[id];
     }
 
-    const headers = [
-      { text: "BattleTag", sortable: true, value: "battleTag" },
-      { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
-      { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
-      { text: "Author", sortable: true, filterable: false, value: "author" },
-      { text: "Actions", sortable: false, value: "actions" },
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", sortable: true, value: "battleTag" },
+      { title: "Description", sortable: true, value: "description", width: "12vw" },
+      { title: "Permissions", sortable: true, value: "permissionName" },
+      { title: "Author", sortable: true, value: "author" },
+      { title: "Actions", sortable: false, value: "actions" },
     ];
 
     return {
