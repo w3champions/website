@@ -8,7 +8,7 @@ J<template>
       <v-col cols="12" md="6">
         <v-card>
           <v-card-title class="text-h6">
-            <v-icon left>{{ mdiPatreon }}</v-icon>
+            <v-icon start>{{ mdiPatreon }}</v-icon>
             Patreon Drift Detection
           </v-card-title>
           <v-card-text>
@@ -18,17 +18,17 @@ J<template>
             <div v-else>
               <v-row>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4 success--text">{{ lastResult.summary.totalPatreonMembers }}</div>
+                      <div class="text-h4 text-success">{{ lastResult.summary.totalPatreonMembers }}</div>
                       <div class="text-caption">Total Patreon Members</div>
                     </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4 info--text">{{ lastResult.summary.activePatreonMembers }}</div>
+                      <div class="text-h4 text-info">{{ lastResult.summary.activePatreonMembers }}</div>
                       <div class="text-caption">Active Members</div>
                     </v-card-text>
                   </v-card>
@@ -37,17 +37,17 @@ J<template>
 
               <v-row>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4 warning--text">{{ lastResult.summary.totalInternalAssignments }}</div>
+                      <div class="text-h4 text-warning">{{ lastResult.summary.totalInternalAssignments }}</div>
                       <div class="text-caption">Internal Assignments</div>
                     </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4 primary--text">{{ lastResult.summary.uniqueInternalUsers }}</div>
+                      <div class="text-h4 text-primary">{{ lastResult.summary.uniqueInternalUsers }}</div>
                       <div class="text-caption">Unique Users</div>
                     </v-card-text>
                   </v-card>
@@ -71,29 +71,29 @@ J<template>
           <v-card-actions>
             <v-spacer />
             <v-btn
-              color="info"
+              class="bg-primary"
               :loading="syncing"
               :disabled="!lastResult || !lastResult.hasDrift"
               @click="runDriftSyncPreview"
             >
-              <v-icon left>{{ mdiMagnify }}</v-icon>
+              <v-icon start>{{ mdiMagnify }}</v-icon>
               Preview Sync
             </v-btn>
             <v-btn
-              color="warning"
+              class="bg-warning"
               :loading="syncing"
               :disabled="!lastResult || !lastResult.hasDrift || !syncResult || syncResult.errors.length > 0"
               @click="runDriftSync"
             >
-              <v-icon left>{{ mdiSync }}</v-icon>
+              <v-icon start>{{ mdiSync }}</v-icon>
               Execute Sync
             </v-btn>
             <v-btn
-              color="primary"
+              class="bg-primary"
               :loading="detecting"
               @click="runDriftDetection"
             >
-              <v-icon left>{{ mdiRefresh }}</v-icon>
+              <v-icon start>{{ mdiRefresh }}</v-icon>
               Run Detection
             </v-btn>
           </v-card-actions>
@@ -103,7 +103,7 @@ J<template>
       <v-col cols="12" md="6">
         <v-card>
           <v-card-title class="text-h6">
-            <v-icon left>{{ mdiCog }}</v-icon>
+            <v-icon start>{{ mdiCog }}</v-icon>
             Product Mapping Reconciliation
           </v-card-title>
           <v-card-text>
@@ -113,7 +113,7 @@ J<template>
             <div v-else>
               <v-row>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
                       <div class="text-h4" :class="reconciliationResult.totalUsersAffected > 0 ? 'warning--text' : 'success--text'">
                         {{ reconciliationResult.totalUsersAffected }}
@@ -123,9 +123,9 @@ J<template>
                   </v-card>
                 </v-col>
                 <v-col cols="6">
-                  <v-card outlined>
+                  <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4 info--text">{{ reconciliationResult.rewardsAdded + reconciliationResult.rewardsRevoked }}</div>
+                      <div class="text-h4 text-info">{{ reconciliationResult.rewardsAdded + reconciliationResult.rewardsRevoked }}</div>
                       <div class="text-caption">Total Changes</div>
                     </v-card-text>
                   </v-card>
@@ -151,13 +151,13 @@ J<template>
                     <span v-if="reconciliationResult.rewardsRevoked > 0">{{ reconciliationResult.rewardsRevoked }} rewards to remove</span>
                   </div>
                   <v-btn
-                    small
-                    text
+                    size="small"
+                    variant="text"
                     color="primary"
                     class="mt-2"
                     @click="showReconciliationDetails = true"
                   >
-                    <v-icon left small>{{ mdiInformationOutline }}</v-icon>
+                    <v-icon start size="small">{{ mdiInformationOutline }}</v-icon>
                     View Details
                   </v-btn>
                 </div>
@@ -167,20 +167,20 @@ J<template>
           <v-card-actions>
             <v-spacer />
             <v-btn
-              color="info"
+              class="bg-primary"
               :loading="reconciling"
               @click="runReconciliationPreview"
             >
-              <v-icon left>{{ mdiMagnify }}</v-icon>
+              <v-icon start>{{ mdiMagnify }}</v-icon>
               Preview
             </v-btn>
             <v-btn
-              color="primary"
+              class="bg-warning"
               :loading="reconciling"
               :disabled="!reconciliationResult || reconciliationResult.totalUsersAffected === 0"
               @click="runReconciliation"
             >
-              <v-icon left>{{ mdiSync }}</v-icon>
+              <v-icon start>{{ mdiSync }}</v-icon>
               Execute
             </v-btn>
           </v-card-actions>
@@ -193,29 +193,29 @@ J<template>
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h6">
-            <v-icon left color="warning">{{ mdiAlert }}</v-icon>
+            <v-icon start color="warning">{{ mdiAlert }}</v-icon>
             Drift Summary
           </v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="4">
-                <v-card outlined color="error">
+                <v-card border color="error">
                   <v-card-text class="text-center">
-                    <div class="text-h4 error--text">{{ lastResult.summary.missingMembers }}</div>
+                    <div class="text-h4 text-error">{{ lastResult.summary.missingMembers }}</div>
                     <div class="text-caption">Missing Members</div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="4">
-                <v-card outlined color="warning">
+                <v-card border color="warning">
                   <v-card-text class="text-center">
-                    <div class="text-h4 warning--text">{{ lastResult.summary.extraAssignments }}</div>
+                    <div class="text-h4 text-warning">{{ lastResult.summary.extraAssignments }}</div>
                     <div class="text-caption">Extra Assignments</div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="4">
-                <v-card outlined color="orange">
+                <v-card border color="orange">
                   <v-card-text class="text-center">
                     <div class="text-h4">{{ lastResult.summary.mismatchedTiers }}</div>
                     <div class="text-caption">Mismatched Tiers</div>
@@ -227,7 +227,7 @@ J<template>
             <v-alert
               type="info"
               class="mt-4"
-              dense
+              density="compact"
             >
               <strong>Note:</strong> Drift detection compares Patreon member data with internal reward assignments.
             </v-alert>
@@ -241,7 +241,7 @@ J<template>
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h6">
-            <v-icon left :color="syncResult.success ? 'success' : 'error'">{{ syncResult.success ? mdiCheckCircle : mdiAlert }}</v-icon>
+            <v-icon start :color="syncResult.success ? 'success' : 'error'">{{ syncResult.success ? mdiCheckCircle : mdiAlert }}</v-icon>
             Sync Results
           </v-card-title>
           <v-card-text>
@@ -260,33 +260,33 @@ J<template>
 
             <v-row v-if="syncResult.success">
               <v-col cols="3">
-                <v-card outlined>
+                <v-card border>
                   <v-card-text class="text-center">
-                    <div class="text-h4 success--text">{{ syncResult.membersAdded }}</div>
+                    <div class="text-h4 text-success">{{ syncResult.membersAdded }}</div>
                     <div class="text-caption">Members Added</div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="3">
-                <v-card outlined>
+                <v-card border>
                   <v-card-text class="text-center">
-                    <div class="text-h4 info--text">{{ syncResult.tiersUpdated }}</div>
+                    <div class="text-h4 text-info">{{ syncResult.tiersUpdated }}</div>
                     <div class="text-caption">Tiers Updated</div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="3">
-                <v-card outlined>
+                <v-card border>
                   <v-card-text class="text-center">
-                    <div class="text-h4 warning--text">{{ syncResult.assignmentsRevoked }}</div>
+                    <div class="text-h4 text-warning">{{ syncResult.assignmentsRevoked }}</div>
                     <div class="text-caption">Assignments Revoked</div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="3">
-                <v-card outlined>
+                <v-card border>
                   <v-card-text class="text-center">
-                    <div class="text-h4 primary--text">{{ syncResult.processedAssociations.length }}</div>
+                    <div class="text-h4 text-primary">{{ syncResult.processedAssociations.length }}</div>
                     <div class="text-caption">Associations Processed</div>
                   </v-card-text>
                 </v-card>
@@ -297,23 +297,23 @@ J<template>
               <v-alert type="error" class="mb-2">
                 <strong>{{ syncResult.errors.length }} Error(s) Occurred:</strong>
               </v-alert>
-              <div v-for="(error, index) in syncResult.errors" :key="index" class="text-caption error--text mb-1">
+              <div v-for="(error, index) in syncResult.errors" :key="index" class="text-caption text-error mb-1">
                 • {{ error }}
               </div>
             </div>
 
             <div v-if="syncResult.processedAssociations.length > 0" class="mt-4">
               <v-btn
-                small
-                text
+                size="small"
+                variant="text"
                 color="primary"
                 @click="showSyncDetails = !showSyncDetails"
               >
-                <v-icon left small>{{ mdiInformationOutline }}</v-icon>
+                <v-icon start size="small">{{ mdiInformationOutline }}</v-icon>
                 {{ showSyncDetails ? 'Hide' : 'Show' }} Processed Details
               </v-btn>
 
-              <v-card v-if="showSyncDetails" outlined class="mt-2 pa-3">
+              <v-card v-if="showSyncDetails" border class="mt-2 pa-3">
                 <div class="text-subtitle2 mb-2">Processed Associations ({{ syncResult.processedAssociations.length }}):</div>
                 <div class="text-body-2">
                   <div v-for="(association, index) in syncResult.processedAssociations" :key="index" class="mb-1">
@@ -349,7 +349,7 @@ J<template>
                   <v-chip
                     v-for="tierId in item.entitledTierIds"
                     :key="tierId"
-                    small
+                    size="small"
                     class="mr-1"
                   >
                     {{ tierId }}
@@ -404,7 +404,7 @@ J<template>
     <v-dialog v-model="showReconciliationDetails" max-width="800px">
       <v-card>
         <v-card-title>
-          <v-icon left>{{ mdiCog }}</v-icon>
+          <v-icon start>{{ mdiCog }}</v-icon>
           Reconciliation Details
           <v-spacer />
           <v-btn icon @click="showReconciliationDetails = false">
@@ -416,7 +416,7 @@ J<template>
             <v-alert
               type="info"
               class="mb-4"
-              dense
+              density="compact"
             >
               This shows all the specific reward changes that would be made during reconciliation.
             </v-alert>
@@ -429,11 +429,10 @@ J<template>
             >
               <template v-slot:item.action="{ item }">
                 <v-chip
-                  small
+                  size="small"
                   :color="item.action === 'Add' ? 'success' : 'warning'"
-                  :text-color="item.action === 'Add' ? 'white' : 'black'"
                 >
-                  <v-icon left small>
+                  <v-icon start size="small">
                     {{ item.action === 'Add' ? mdiPlus : mdiMinus }}
                   </v-icon>
                   {{ item.action }}
@@ -475,6 +474,7 @@ import {
   mdiCog, mdiMagnify, mdiSync, mdiInformationOutline,
   mdiClose, mdiPlus, mdiMinus
 } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminDriftDetection",
@@ -494,33 +494,33 @@ export default defineComponent({
 
     const token = computed(() => oauthStore.token);
 
-    const missingMembersHeaders = [
-      { text: "Patreon Member ID", value: "patreonMemberId", sortable: true },
-      { text: "Email", value: "email", sortable: true },
-      { text: "Patron Status", value: "patronStatus", sortable: true },
-      { text: "Entitled Tiers", value: "entitledTierIds", sortable: false },
-      { text: "Reason", value: "reason", sortable: false },
+    const missingMembersHeaders: DataTableHeader[] = [
+      { title: "Patreon Member ID", value: "patreonMemberId", sortable: true },
+      { title: "Email", value: "email", sortable: true },
+      { title: "Patron Status", value: "patronStatus", sortable: true },
+      { title: "Entitled Tiers", value: "entitledTierIds", sortable: false },
+      { title: "Reason", value: "reason", sortable: false },
     ];
 
-    const extraAssignmentsHeaders = [
-      { text: "User ID", value: "userId", sortable: true },
-      { text: "Reward ID", value: "rewardId", sortable: true },
-      { text: "Provider", value: "providerId", sortable: true },
-      { text: "Status", value: "status", sortable: true },
+    const extraAssignmentsHeaders: DataTableHeader[] = [
+      { title: "User ID", value: "userId", sortable: true },
+      { title: "Reward ID", value: "rewardId", sortable: true },
+      { title: "Provider", value: "providerId", sortable: true },
+      { title: "Status", value: "status", sortable: true },
     ];
 
-    const mismatchedTiersHeaders = [
-      { text: "User ID", value: "userId", sortable: true },
-      { text: "Expected Tiers", value: "expectedTiers", sortable: false },
-      { text: "Actual Tiers", value: "actualTiers", sortable: false },
-      { text: "Issue", value: "issue", sortable: false },
+    const mismatchedTiersHeaders: DataTableHeader[] = [
+      { title: "User ID", value: "userId", sortable: true },
+      { title: "Expected Tiers", key: "expectedTiers", value: (item) => `${item.expectedTiers.join(", ")}`, sortable: false },
+      { title: "Actual Tiers", key: "actualTiers", value: (item) => `${item.actualTiers.join(", ")}`, sortable: false },
+      { title: "Issue", value: "issue", sortable: false },
     ];
 
-    const reconciliationDetailsHeaders = [
-      { text: "Action", value: "action", sortable: true },
-      { text: "User ID", value: "userId", sortable: true },
-      { text: "Reward ID", value: "rewardId", sortable: true },
-      { text: "Product Mapping", value: "productMapping", sortable: true },
+    const reconciliationDetailsHeaders: DataTableHeader[] = [
+      { title: "Action", value: "action", sortable: true },
+      { title: "User ID", value: "userId", sortable: true },
+      { title: "Reward ID", value: "rewardId", sortable: true },
+      { title: "Product Mapping", value: "productMapping", sortable: true },
     ];
 
     const reconciliationDetailsItems = computed(() => {
