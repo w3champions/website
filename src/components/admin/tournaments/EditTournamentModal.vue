@@ -20,7 +20,7 @@
             v-if="isEdit"
             v-model="state"
             :items="states"
-            item-text="name"
+            item-title="name"
             item-value="id"
             label="State"
             hide-details
@@ -41,7 +41,6 @@
                 :multiple="true"
                 :label="map.name"
                 :value="map.id"
-                :dense="true"
                 hide-details
               />
             </v-col>
@@ -97,7 +96,7 @@
                 v-model="mode"
                 :items="gameModes"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Game Mode"
                 hide-details
@@ -109,7 +108,7 @@
                 v-model="format"
                 :items="formats"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Format"
                 hide-details
@@ -123,7 +122,7 @@
                 v-model="maxPlayers"
                 :items="[2, 4, 8, 16, 32, 64]"
                 label="Max Players"
-                outlined
+                variant="outlined"
               />
             </v-col>
             <v-col cols="3">
@@ -131,10 +130,10 @@
                 v-model="floNode"
                 :items="enabledFloNodes"
                 label="Flo Node"
-                item-text="name"
+                item-title="name"
                 return-object
-                outlined
-                @change="setFloNode"
+                variant="outlined"
+                @update:model-value="setFloNode"
               />
             </v-col>
             <v-col cols="3">
@@ -142,7 +141,7 @@
                 v-model="floNodeMaxPing"
                 :items="[100, 200, 300, 400]"
                 label="Flo Node Max Ping"
-                outlined
+                variant="outlined"
                 :disabled="floNode === null"
               />
             </v-col>
@@ -152,10 +151,10 @@
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || !formValid" @click="save">
+      <v-btn class="bg-primary w3-race-bg--text" :disabled="saving || !formValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>
