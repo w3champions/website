@@ -20,10 +20,11 @@
           :key="`listGroup-${index}`"
           :value="item.title"
         >
-          <template v-slot:activator="{ props }">
+          <template v-slot:activator="{ props, isOpen }">
             <v-list-item
               v-bind="props"
               :prepend-icon="item.icon"
+              :class="isOpen && 'text-primary'"
             >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
@@ -36,6 +37,7 @@
             :to="{ name: subItem.routeName }"
             :title="subItem.title"
             :value="subItem.title"
+            color="primary"
           />
         </v-list-group>
       </template>
