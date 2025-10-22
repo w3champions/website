@@ -15,7 +15,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
-          <v-text-field v-model="tableSearch" label="Search ban" :prepend-icon="mdiMagnify" />
+          <v-text-field v-model="tableSearch" label="Search ban" variant="underlined" :prepend-icon="mdiMagnify" />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
@@ -50,6 +50,7 @@
                           <v-text-field
                             v-model="selectedDateString"
                             readonly
+                            variant="underlined"
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="props"
                           />
@@ -94,6 +95,7 @@
                             multiple
                             v-bind="props"
                             hint="Which game modes to ban from?"
+                            variant="underlined"
                           />
                         </template>
                         <span>
@@ -105,6 +107,7 @@
                     <v-col cols="12" sm="12" md="12" class="pb-0">
                       <v-text-field
                         v-model="editedItem.banReason"
+                        variant="underlined"
                         :label="$t(`views_admin.banreason`)"
                       />
                     </v-col>
@@ -126,7 +129,7 @@
                 <v-btn variant="text" @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="save">
+                <v-btn class="bg-primary w3-race-bg--text" @click="save">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>

@@ -17,14 +17,14 @@
               v-model="searchQuery"
               label="Search mute"
               :prepend-icon="mdiMagnify"
+              variant="underlined"
               @keydown.enter="loadMutes"
             />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn
-                  color="primary"
-                  class="mb-2 w3-race-bg--text"
+                  class="mb-2 bg-primary w3-race-bg--text"
                   v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
