@@ -371,7 +371,7 @@ export default defineComponent({
 }
 
 .duration-bar {
-  background-color: var(--v-theme-primary);
+  background-color: rgb(var(--v-theme-primary));
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;

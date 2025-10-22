@@ -42,9 +42,9 @@
                 </v-card-text>
                 <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                 <br />
-                <img class="launcher-screenshot" src="/assets/gettingStarted/launcher1.jpg" />
-                <img class="launcher-screenshot" src="/assets/gettingStarted/launcher2.jpg" />
-                <img class="launcher-screenshot" src="/assets/gettingStarted/launcher3.jpg" />
+                <img class="mb-3 w-100" src="/assets/gettingStarted/launcher1.jpg" />
+                <img class="mb-3 w-100" src="/assets/gettingStarted/launcher2.jpg" />
+                <img class="mb-3 w-100" src="/assets/gettingStarted/launcher3.jpg" />
                 <v-card-text>
                   {{ $t("views_gettingstarted.launcherfeaturestitle") }}
                   <ul>
@@ -258,10 +258,5 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-.launcher-screenshot {
-  width: 100%;
-  margin-bottom: 10px;
 }
 </style>
