@@ -155,7 +155,6 @@
         :items-per-page="-1"
         :sort-by="[{ key: 'assignedAt', order: 'desc' }]"
         :loading="loading && assignments.length > 0"
-        class="modern-table"
         hide-default-footer
       >
         <template v-slot:item.userId="{ item }">
@@ -914,20 +913,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.modern-table >>> .v-data-table__wrapper {
-  border-radius: 8px;
-}
-
-// .modern-table >>> th {
-//   background-color: var(--v-theme-primary-lighten5) !important;
-//   color: var(--v-theme-primary-darken2) !important;
-//   font-weight: 600 !important;
-// }
-
-// .modern-table >>> tr:hover {
-//   background-color: var(--v-theme-primary-lighten5) !important;
-// }
-
 .font-family-monospace {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 0.875rem;
