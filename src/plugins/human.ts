@@ -9,7 +9,7 @@ export const human = {
     gold: "#FFD428",
     black: colors.shades.black,
     white: colors.shades.white,
-    title: colors.shades.black,
+    "black-gold": colors.shades.black,
     background: "green",
     // background: "var(--w3-bg-glass)",
     // surface: "var(--v-w3-race-bg-base)",

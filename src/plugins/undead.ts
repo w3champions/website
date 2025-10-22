@@ -8,7 +8,7 @@ export const undead = {
     gold: "#FFD428",
     black: colors.shades.black,
     white: colors.shades.white,
-    title: "#FFD428",
+    "black-gold": "#FFD428",
     background: "#121212",
     // surface: "#1e1e1e",
     surface: "rgba(0, 0, 0, 0.9)",
