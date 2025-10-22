@@ -25,11 +25,11 @@
         <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-file-input v-model="file" label="Map file" truncate-length="70" />
+            <v-file-input v-model="file" label="Map file" truncate-length="70" variant="underlined" />
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="fileName" label="File name (optional)" />
+            <v-text-field v-model="fileName" label="File name (optional)" variant="underlined" />
           </v-col>
         </v-row>
         <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMapFile()">Add map file</v-btn>

@@ -5,9 +5,11 @@
     </v-card-title>
     <v-container>
       <v-card class="pa-md-4">
-        <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
-        <v-btn color="secondary" class="mb-2 w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
-        <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
+        <div class="d-flex align-center">
+          <v-btn color="primary" class="mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+          <v-btn color="secondary" class="w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
+          <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
+        </div>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
         </v-dialog>
@@ -20,7 +22,7 @@
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <v-text-field v-model="search" label="Search" />
+        <v-text-field v-model="search" label="Search" variant="underlined" />
         <v-data-table
           :headers="headers"
           :items="maps"
