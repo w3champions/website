@@ -4,7 +4,7 @@
       class="streamed-match-player-info__twitch"
       :style="{ order: alignRight ? 3 : 1 }"
     >
-      <v-btn v-if="player.twitch" icon :href="twitchLink" target="_blank">
+      <v-btn v-if="player.twitch" start icon :href="twitchLink" target="_blank" variant="flat" class="bg-transparent" height="13">
         <v-icon color="purple-accent-4">{{ mdiTwitch }}</v-icon>
       </v-btn>
     </div>
