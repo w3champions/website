@@ -6,10 +6,12 @@
         <v-chip
           :size="compact ? 'x-small' : 'small'"
           :color="isBanExpired(moderationStatus.ban.endDate) ? 'grey' : 'error'"
+          class="px-3"
           :class="{ 'mr-1': !compact || hasMultipleBadges }"
           v-bind="props"
+          variant="flat"
         >
-          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiCancel }}</v-icon>
+          <v-icon size="default" :start="!compact">{{ mdiCancel }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Banned{{ isBanExpired(moderationStatus.ban.endDate) ? ' (Expired)' : '' }}
           </span>
@@ -31,10 +33,12 @@
         <v-chip
           :size="compact ? 'x-small' : 'small'"
           :color="isMuteExpired(moderationStatus.globalMute.expiresAt) ? 'grey' : 'warning'"
+          class="px-3"
           :class="{ 'mr-1': !compact || hasMultipleBadges }"
           v-bind="props"
+          variant="flat"
         >
-          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiVolumeOff }}</v-icon>
+          <v-icon size="default" :start="!compact">{{ mdiVolumeOff }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Global Mute{{ isMuteExpired(moderationStatus.globalMute.expiresAt) ? ' (Expired)' : '' }}
           </span>
@@ -55,9 +59,11 @@
         <v-chip
           :size="compact ? 'x-small' : 'small'"
           :color="isMuteExpired(moderationStatus.loungeMute.endDate) ? 'grey' : 'orange'"
+          class="px-3"
           v-bind="props"
+          variant="flat"
         >
-          <v-icon :size="compact ? 'x-small' : 'small'" :start="!compact">{{ mdiMessageOff }}</v-icon>
+          <v-icon size="default" :start="!compact">{{ mdiMessageOff }}</v-icon>
           <span v-if="!compact" class="ml-1">
             Lounge{{ moderationStatus.loungeMute.isShadowBan ? ' Shadow' : '' }}{{ isMuteExpired(moderationStatus.loungeMute.endDate) ? ' (Expired)' : '' }}
           </span>
