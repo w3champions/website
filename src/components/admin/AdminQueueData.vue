@@ -41,6 +41,7 @@ import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -103,49 +104,49 @@ export default defineComponent({
       clearInterval(_intervalRefreshHandle);
     });
 
-    const headers = [
+    const headers: DataTableHeader[] = [
       {
-        text: "Battletag",
+        title: "Battletag",
         value: "battleTag",
         sortable: false,
       },
       {
-        text: "MMR",
+        title: "MMR",
         value: "mmr",
         sortable: true,
       },
       {
-        text: "RD",
+        title: "RD",
         value: "rd",
         sortable: true,
       },
       {
-        text: "Quantile",
+        title: "Quantile",
         value: "quantile",
         sortable: true,
       },
       {
-        text: "Activity Quantile",
+        title: "Activity Quantile",
         value: "activityQuantile",
         sortable: true,
       },
       {
-        text: "Queue Time",
+        title: "Queue Time",
         value: "queueTime",
         sortable: true,
       },
       {
-        text: "Flo Connected",
+        title: "Flo Connected",
         value: "isFloConnected",
         sortable: true,
       },
       {
-        text: "Location",
+        title: "Location",
         value: "location",
         sortable: false,
       },
       {
-        text: "Server Option",
+        title: "Server Option",
         value: "serverOption",
         sortable: true,
       },
