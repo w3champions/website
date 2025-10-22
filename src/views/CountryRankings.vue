@@ -10,7 +10,7 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu>
+        <v-menu location="right">
           <template v-slot:activator="{ props }">
             <v-btn tile style="background-color: transparent" v-bind="props">
               <div
@@ -54,7 +54,7 @@
           </v-card>
         </v-menu>
         <v-spacer />
-        <v-menu>
+        <v-menu location="right">
           <template v-slot:activator="{ props }">
             <v-btn
               tile

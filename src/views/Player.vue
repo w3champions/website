@@ -27,7 +27,7 @@
               <v-col :cols="12" :sm="'auto'">
                 <div class="ml-3">
                   <gateway-select @gatewayChanged="gatewayChanged" />
-                  <v-menu v-if="!!seasons && seasons.length > 0">
+                  <v-menu v-if="!!seasons && seasons.length > 0" location="right">
                     <template v-slot:activator="{ props }">
                       <v-btn tile class="ma-2 bg-transparent" v-bind="props">
                         <span v-if="selectedSeason" class="pa-0">

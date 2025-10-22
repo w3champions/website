@@ -1,5 +1,5 @@
 <template>
-  <v-menu>
+  <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn tile class="bg-transparent text-title" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiEarth }}</v-icon>

@@ -1,5 +1,5 @@
 <template>
-  <v-menu :close-on-content-click="false" @update:model-value="onMenuToggled">
+  <v-menu location="right" :close-on-content-click="false" @update:model-value="onMenuToggled">
     <template v-slot:activator="{ props }">
       <v-btn tile class="bg-transparent text-title" v-bind="props">
         <v-icon class="mr-1">{{ mdiChevronTripleUp }}</v-icon>

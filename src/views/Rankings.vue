@@ -13,7 +13,7 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu>
+        <v-menu location="right">
           <template v-slot:activator="{ props }">
             <v-btn tile class="bg-transparent text-title" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
@@ -105,7 +105,7 @@
           </template>
         </v-autocomplete>
       </v-card-text>
-      <v-menu>
+      <v-menu location="right">
         <template v-slot:activator="{ props }">
           <v-btn tile class="ma-4 bg-transparent text-title" v-bind="props">
             <h2 class="pa-0">

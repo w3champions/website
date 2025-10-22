@@ -121,7 +121,6 @@
             v-model="dateMenu"
             :close-on-content-click="false"
             transition="scale-transition"
-            min-width="auto"
           >
             <template v-slot:activator="{ props }">
               <v-text-field
@@ -135,6 +134,9 @@
             </template>
             <v-date-picker
               v-model="tokenForm.expiresAt"
+              first-day-of-week="1"
+              hide-header
+              show-adjacent-months
               @input="dateMenu = false"
             />
           </v-menu>

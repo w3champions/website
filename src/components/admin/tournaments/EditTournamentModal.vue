@@ -28,8 +28,18 @@
             :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
-            <v-date-picker v-model="startDate" landscape />
-            <v-time-picker v-model="startTime" landscape format="24hr" />
+            <v-date-picker
+              v-model="startDate"
+              landscape
+              first-day-of-week="1"
+              hide-header
+              show-adjacent-months
+            />
+            <v-time-picker
+              v-model="startTime"
+              landscape
+              format="24hr"
+            />
           </div>
           <div class="mt-4">
             Map Pool
