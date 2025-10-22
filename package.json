@@ -75,6 +75,7 @@
     "google-spreadsheet": "^3.2.0",
     "http-server": "^14.1.1",
     "lodash.set": "^4.3.2",
+    "prettier": "2.8.8",
     "rimraf": "^5.0.0",
     "sass": "~1.32.13",
     "terser": "^5.29.2",
