@@ -63,7 +63,7 @@ export default defineComponent({
 
     watch(selected, onSelect);
 
-    function onSelect(btag: string): void {
+    function onSelect(btag: string | undefined): void {
       if (!btag) return;
       context.emit("playerFound", btag);
     }
