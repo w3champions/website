@@ -90,7 +90,7 @@ export default defineComponent({
     watch(searchModel, onSearchModelChanged);
 
     // Handler when selecting a player from the list
-    function onSearchModelChanged(player: PlayerSearchInfo) {
+    function onSearchModelChanged(player: PlayerSearchInfo | null) {
       // We cleared the input, ignore
       if (!player?.battleTag) return;
 
