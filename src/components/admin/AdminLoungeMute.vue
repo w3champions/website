@@ -29,15 +29,14 @@
                 </v-card-title>
 
                 <v-card-text>
-                  <v-container>
-                    <v-row>
+                  <v-container class="px-0">
+                    <v-col class="pb-5">
                       <player-search
-                        classes="ml-5 mr-5"
                         @searchCleared="searchCleared"
                         @playerFound="playerFound"
                       />
-                    </v-row>
-                    <v-row v-if="showConfirmation" class="ma-2">
+                    </v-col>
+                    <v-row v-if="showConfirmation" class="px-6 pt-2">
                       <v-menu
                         v-model="dateMenu"
                         :close-on-content-click="false"
@@ -45,18 +44,27 @@
                       >
                         <template v-slot:activator="{ props }">
                           <v-text-field
-                            v-model="endDate"
+                            v-model="selectedDateString"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="props"
+                            class="w-100"
+                            variant="underlined"
                           />
                         </template>
-                        <v-date-picker v-model="endDate" no-title scrollable max="2099-01-01">
+                        <v-date-picker
+                          v-model="selectedDate"
+                          first-day-of-week="1"
+                          hide-header
+                          show-adjacent-months
+                          max="2099-01-01"
+                          @update:modelValue="setSelectedDateString"
+                        >
                           <v-spacer />
                           <v-btn
                             variant="text"
                             @click="
-                              endDate = '';
+                              clearDate();
                               dateMenu = false;
                             "
                           >
@@ -77,8 +85,9 @@
                           <v-text-field
                             v-model="reason"
                             :label="'Reason'"
-                            variant="outlined"
+                            variant="underlined"
                             density="compact"
+                            hide-details
                           />
                         </v-col>
                       </v-row>
@@ -88,6 +97,7 @@
                           <v-checkbox
                             v-model="isShadowBan"
                             :label="'Shadow Ban (user can connect but messages are only visible to them)'"
+                            hide-details
                           />
                         </v-col>
                       </v-row>
@@ -101,24 +111,24 @@
                       </v-card-title>
                     </v-row>
 
-                    <v-row>
+                    <v-row class="mx-1">
                       <v-col>
-                        <v-btn
-                          v-if="showConfirmation && isMuteEndDateSet"
-                          color="primary"
-                          class="w3-race-bg--text"
-                          @click="save"
-                        >
-                          {{ $t(`views_admin.ok`) }}
-                        </v-btn>
-                      </v-col>
-                      <v-col class="text-right">
                         <v-btn
                           color="primary"
                           class="w3-race-bg--text"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}
+                        </v-btn>
+                      </v-col>
+                      <v-col class="text-right">
+                        <v-btn
+                          v-if="showConfirmation && selectedDate"
+                          color="primary"
+                          class="w3-race-bg--text"
+                          @click="save"
+                        >
+                          {{ $t(`views_admin.ok`) }}
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -149,7 +159,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
-import { dateToCurrentTimeDate } from "@/helpers/date-functions";
+import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
 import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
@@ -166,12 +176,12 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const showConfirmation = ref<boolean>(false);
     const battleTag = ref<string>("");
-    const endDate = ref<string>("");
     const reason = ref<string>("");
     const isShadowBan = ref<boolean>(false);
+    const selectedDate = ref<Date>();
+    const selectedDateString = ref<string>("");
 
     const loungeMutes = computed<LoungeMuteResponse[]>(() => loungeMuteStore.loungeMutedPlayers);
-    const isMuteEndDateSet = computed<boolean>(() => endDate.value != "");
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
 
@@ -192,7 +202,7 @@ export default defineComponent({
       const mute = {
         battleTag: battleTag.value,
         author: author.value,
-        endDate: dateToCurrentTimeDate(endDate.value),
+        endDate: dateToCurrentTimeDate(selectedDateString.value),
         reason: reason.value,
         isShadowBan: isShadowBan.value,
       } as LoungeMute;
@@ -218,12 +228,16 @@ export default defineComponent({
       await init();
     });
 
+    const clearDate = (): void => {
+      selectedDate.value = undefined;
+      selectedDateString.value = "";
+    };
 
     function searchCleared(): void {
       showConfirmation.value = false;
-      endDate.value = "";
       reason.value = "";
       isShadowBan.value = false;
+      clearDate();
     }
 
     function playerFound(bTag: string): void {
@@ -250,6 +264,10 @@ export default defineComponent({
       { title: "Actions", sortable: false, value: "actions", align: "center" },
     ];
 
+    const setSelectedDateString = (date: Date) => {
+      selectedDateString.value = formatTimestampString(date, "yyyy-MM-dd");
+    };
+
     return {
       mdiDelete,
       headers,
@@ -259,14 +277,16 @@ export default defineComponent({
       playerFound,
       showConfirmation,
       dateMenu,
-      endDate,
       battleTag,
       reason,
       isShadowBan,
-      isMuteEndDateSet,
       save,
       close,
       deleteItem,
+      selectedDate,
+      selectedDateString,
+      setSelectedDateString,
+      clearDate,
     };
   },
 });
