@@ -60,7 +60,10 @@
                 return-object
                 autofocus
                 glow
+                color="primary"
+                icon-color="primary"
                 class="ml-4 mr-4"
+                variant="underlined"
                 @click:clear="revertToDefault"
               />
               <v-btn
@@ -200,7 +203,7 @@ export default defineComponent({
     const playerSearchStore = usePlayerSearchStore();
     const oauthStore = useOauthStore();
 
-    const searchPlayerModel = ref<string>("");
+    const searchPlayerModel = ref<string>();
     const search = ref<string>("");
     const showSmurfResults = ref<boolean>(false);
     const showExplanation = ref<boolean>(false);

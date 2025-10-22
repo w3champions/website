@@ -261,6 +261,7 @@
                       item-title="country"
                       :items="countries"
                       :label="$t('components_player_playeravatar.selectcountry')"
+                      variant="underlined"
                     >
                       <template v-slot:item="{ props, item }">
                         <v-list-item v-bind="props" :title="item.raw.country">

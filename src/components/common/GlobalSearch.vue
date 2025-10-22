@@ -14,14 +14,13 @@
       </v-btn>
     </template>
     <v-card>
-      <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
+      <v-card-title class="px-2 pb-2 pt-0">
         <v-autocomplete
           v-model="searchModel"
           v-model:search="search"
           :append-inner-icon="mdiMagnify"
           menu-icon=""
           label="Search"
-          single-line
           clearable
           autofocus
           :no-data-text="noDataText"
@@ -32,15 +31,15 @@
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           bg-color="transparent"
           glow
+          color="primary"
+          icon-color="primary"
           return-object
           autocomplete="off"
+          variant="underlined"
         >
           <template v-slot:item="{ props, item }">
-            <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)">
-              <div v-bind="props">
-                <v-list-item-title>
-                  {{ item.raw.battleTag }}
-                </v-list-item-title>
+            <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)" v-bind="props">
+              <div>
                 <v-list-item-title>
                   <div v-for="season in item.raw.seasons" :key="season.id" class="mr-1 mt-1 d-inline-block">
                     <season-badge :season="season" />
@@ -181,10 +180,5 @@ export default defineComponent({
 <style lang="scss" scoped>
 .global-search {
   z-index: 1000 !important;
-  .autocomplete-wrapper {
-    .v-text-field__details {
-      display: none;
-    }
-  }
 }
 </style>

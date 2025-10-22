@@ -12,11 +12,14 @@
       item-title="battleTag"
       :no-data-text="noDataText"
       :loading="isLoading"
-      :autofocus="setAutofocus"
+      :autofocus="false"
       bg-color="transparent"
       clearable
       hide-details
       glow
+      color="primary"
+      icon-color="primary"
+      variant="underlined"
       @click:clear="clearSearch"
     />
   </div>
@@ -50,7 +53,7 @@ export default defineComponent({
     const SEARCH_DELAY = 500;
     const debouncedSearch = debounce((val: string) => dispatchSearch(val), SEARCH_DELAY);
     const searchedPlayers = ref<PlayerProfile[]>([]);
-    const selected = ref<string>("");
+    const selected = ref<string>();
 
     async function dispatchSearch(val: string) {
       const players = await ProfileService.searchPlayer(val.toLowerCase());
@@ -104,5 +107,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 :deep(.v-field__input input) {
   cursor: text;
+}
+:deep(.v-field__clearable) {
+  color: rgb(var(--v-theme-primary));
 }
 </style>

@@ -68,6 +68,7 @@
           glow
           return-object
           autocomplete="off"
+          variant="underlined"
         >
           <!--
             In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
