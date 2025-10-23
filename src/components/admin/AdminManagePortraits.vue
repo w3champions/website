@@ -73,7 +73,7 @@
       </v-dialog>
 
       <v-row class="mt-1 pt-1">
-        <v-card-text>Click on a portrait in the grid below to edit it's groups.</v-card-text>
+        <v-card-text>Click on a portrait in the grid below to edit its groups.</v-card-text>
       </v-row>
 
       <v-row>

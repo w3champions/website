@@ -343,7 +343,7 @@ export default defineComponent({
   margin: initial;
 }
 
-.v-theme--light {
+.v-theme--orc, .v-theme--human {
   .LadderSummaryShowcase-card:before {
     border: 2px solid rgb(205, 205, 205);
   }
