@@ -32,12 +32,13 @@
               v-model="portraitId"
               label="Portrait ID (Auto-calculated)"
               readonly
+              variant="underlined"
               :disabled="uploading"
             />
           </v-col>
           <v-col cols="3">
             <v-btn
-              color="info"
+              class="bg-primary"
               :disabled="uploading"
               @click="calculateNextPortraitId"
             >
@@ -84,6 +85,7 @@
               chips
               show-size
               counter
+              variant="underlined"
               :prepend-icon="mdiImagePlus"
             />
           </v-col>
@@ -125,8 +127,7 @@
           Close
         </v-btn>
         <v-btn
-          color="primary"
-          class="w3-race-bg--text"
+          class="bg-primary w3-race-bg--text"
           :disabled="!canUpload || uploading"
           :loading="uploading"
           @click="startUploadProcess"

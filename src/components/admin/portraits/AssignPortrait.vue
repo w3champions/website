@@ -1,13 +1,13 @@
 <template>
-  <v-container class="ma-0 pa-0" @click="assignPortrait">
+  <v-container @click="assignPortrait">
     <v-tooltip location="top">
       <template v-slot:activator="{ props }">
         <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-bind="props" />
       </template>
       <span>ID: {{ portraitId }}</span>
     </v-tooltip>
-    <v-btn v-if="isAssigned" class="cancel-button" location="right" icon @click="removeAssignedPortrait">
-      <v-icon size="large">{{ mdiCloseCircleOutline }}</v-icon>
+    <v-btn v-if="isAssigned" class="cancel-button bg-transparent" icon variant="flat" size="x-large" density="compact" @click="removeAssignedPortrait">
+      <v-icon size="x-large" color="black-gold">{{ mdiCloseCircleOutline }}</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -64,6 +64,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .cancel-button {
-  left: 27%;
+  left: 23%;
 }
 </style>

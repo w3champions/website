@@ -22,7 +22,6 @@ export type AdminState = {
 };
 
 export type AdminPlayerManagementState = {
-  managedBattleTag: string;
   allSpecialPortraits: PortraitDefinition[];
   searchedPlayerSpecialPortraits: number[];
   portraitDefinitionGroups: PortraitDefinitionGroup[];

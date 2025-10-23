@@ -31,7 +31,7 @@
                           <v-card-title class="justify-center">Confirm Portrait Assignments</v-card-title>
                         </v-col>
 
-                        <v-btn icon @click="assignDialogOpen = false">
+                        <v-btn icon variant="plain" @click="assignDialogOpen = false">
                           <v-icon>{{ mdiClose }}</v-icon>
                         </v-btn>
                       </v-row>
@@ -58,6 +58,7 @@
                                 v-model="mouseoverText"
                                 :rules="[rules.required, rules.min]"
                                 label="Mouseover tooltip"
+                                variant="underlined"
                               />
                               <v-spacer />
                             </v-row>
@@ -113,8 +114,8 @@
               </v-col>
             </v-row>
 
-            <v-row v-if="hasSpecialPortraitsAssigned" no-gutters :justify="'start'">
-              <v-col v-for="portraitId in assignedPortraitsModel" :key="portraitId" align-self="stretch" cols="2" md="1">
+            <v-row v-if="assignedPortraitsModel.length > 0" no-gutters>
+              <v-col v-for="portraitId in assignedPortraitsModel" :key="portraitId" cols="2" md="1">
                 <assign-portrait
                   :portraitId="portraitId"
                   :isAssigned="true"
@@ -191,7 +192,6 @@ export default defineComponent({
 
     const searchedPlayerPortraits = computed<number[]>(() => playerManagement.searchedPlayerSpecialPortraits);
     const hasSpecialPortraits = computed<boolean>(() => searchedPlayerPortraits.value != null && searchedPlayerPortraits.value.length > 0);
-    const hasSpecialPortraitsAssigned = computed<boolean>(() => assignedPortraitsModel.value.length > 0);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     const rules = computed<AdminAssignPortraitsRules>(() => {
@@ -249,21 +249,13 @@ export default defineComponent({
     }
 
     function assignThisPortrait(portraitId: number): void {
-      if (!assignedPortraitsModel.value.includes(portraitId)) {
-        assignedPortraitsModel.value.push(portraitId);
-      }
-      assignedPortraitsModel.value.sort((a, b) => a - b);
-      assignedPortraitsModel.value = Object.create(assignedPortraitsModel.value); // force change detection
+      if (assignedPortraitsModel.value.includes(portraitId)) return;
+      assignedPortraitsModel.value = [portraitId, ...assignedPortraitsModel.value].toSorted((a, b) => a - b);
     }
 
     function assignGroupPortraits(portraits: number[]): void {
-      portraits.forEach((x) => {
-        if (allSpecialPortraits.value.includes(x) && !assignedPortraitsModel.value.includes(x)) {
-          assignedPortraitsModel.value.push(x);
-        }
-      });
-      assignedPortraitsModel.value.sort((a, b) => a - b);
-      assignedPortraitsModel.value = Object.create(assignedPortraitsModel.value); // force change detection
+      const portraitsToAdd = portraits.filter((x) => allSpecialPortraits.value.includes(x) && !assignedPortraitsModel.value.includes(x));
+      assignedPortraitsModel.value = [...portraitsToAdd, ...assignedPortraitsModel.value].toSorted((a, b) => a - b);
     }
 
     watch(assignDialogOpen, updateConfirmedAssignments);
@@ -275,7 +267,7 @@ export default defineComponent({
     async function playerFound(bTag: string): Promise<void> {
       await playerManagement.loadSpecialPortraitsForPlayer(bTag);
       const playerPortraits = playerManagement.searchedPlayerSpecialPortraits;
-      assignedPortraitsModel.value = Object.create(playerPortraits);
+      assignedPortraitsModel.value = [...playerPortraits].toSorted((a, b) => a - b);
 
       if (playerPortraits) {
         showPlayersPortraits.value = true;
@@ -293,16 +285,7 @@ export default defineComponent({
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
       await playerManagement.loadAllSpecialPortraits();
-      const managedPlayer = playerManagement.managedBattleTag;
-      if (managedPlayer) {
-        await playerManagement.loadSpecialPortraitsForPlayer(managedPlayer);
-      }
-      assignedPortraitsModel.value = Object.create(searchedPlayerPortraits.value);
-      allSpecialPortraits.value = Object.create(
-        playerManagement.allSpecialPortraits
-          .map((x) => parseInt(x.id))
-          .sort((a, b) => b - a)
-      );
+      allSpecialPortraits.value = playerManagement.allSpecialPortraits.map((x) => parseInt(x.id));
     }
 
     onMounted(async (): Promise<void> => {
@@ -323,7 +306,6 @@ export default defineComponent({
       confirmRemovedPortraits,
       confirmDialog,
       assignGroupPortraits,
-      hasSpecialPortraitsAssigned,
       assignedPortraitsModel,
       removeAssignedPortrait,
       hasSpecialPortraits,

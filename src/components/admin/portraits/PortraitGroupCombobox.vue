@@ -5,6 +5,7 @@
     clearable
     label="Assign Groups (optional) - Select existing or enter a new group"
     multiple
+    variant="underlined"
   >
     <template v-slot:selection="{ attrs, item, select, selected }">
       <v-chip

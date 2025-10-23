@@ -27,6 +27,7 @@
                     v-model="portraitId"
                     :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                     label="Portrait Id"
+                    variant="underlined"
                   />
                 </v-container>
               </v-row>
