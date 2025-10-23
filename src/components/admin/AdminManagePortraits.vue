@@ -34,9 +34,11 @@
               <v-col />
             </v-row>
             <v-row class="justify-center">
-              <v-card-actions>
-                <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
-              </v-card-actions>
+              <v-col>
+                <v-card-actions>
+                  <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
+                </v-card-actions>
+              </v-col>
             </v-row>
             <v-row class="justify-center">
               <v-card-actions>

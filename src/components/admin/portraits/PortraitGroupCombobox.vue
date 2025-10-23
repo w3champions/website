@@ -7,16 +7,14 @@
     multiple
     variant="underlined"
   >
-    <template v-slot:selection="{ attrs, item, select, selected }">
+    <template v-slot:selection="{ item }">
       <v-chip
-        v-bind="attrs"
-        :color="'blue lighten-3'"
-        :model-value="selected"
+        color="primary"
+        variant="flat"
         closable
-        @click="select"
-        @click:close="remove(item)"
+        @click:close="remove(item.value)"
       >
-        {{ item }}
+        {{ item.value }}
       </v-chip>
     </template>
   </v-combobox>
@@ -53,8 +51,7 @@ export default defineComponent({
     }
 
     function remove(item: string) {
-      chips.value.splice(chips.value.indexOf(item), 1);
-      chips.value = [...chips.value];
+      chips.value = chips.value.filter((x) => x !== item);
     }
 
     async function init(): Promise<void> {
