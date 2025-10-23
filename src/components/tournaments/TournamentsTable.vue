@@ -95,9 +95,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.tournament-row {
-  cursor: pointer;
-}
-</style>

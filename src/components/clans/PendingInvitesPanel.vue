@@ -11,7 +11,7 @@
         <td>
           <v-row class="justify-space-between align-center ma-0">
             <v-col class="pa-0">
-              <span class="pointer" @click="goToPlayer(member)">
+              <span class="cursor-pointer" @click="goToPlayer(member)">
                 {{ battleTagToName(member) }}
               </span>
             </v-col>

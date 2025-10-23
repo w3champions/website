@@ -1,7 +1,7 @@
 <template>
   <v-tooltip location="top">
     <template v-slot:activator="{ props }">
-      <span :class="{ 'clickable': clickable }" v-bind="props" @click="clickable && goToCountryRankings()">
+      <span :class="{ 'cursor-pointer': clickable }" v-bind="props" @click="clickable && goToCountryRankings()">
         <country-flag
           v-if="selectedCountryCode.get()"
           class="country-flag"
@@ -60,10 +60,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.clickable {
-  cursor: pointer;
-}
-
 .country-flag {
   font-size: 0.875rem;
   vertical-align: middle;

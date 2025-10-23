@@ -15,10 +15,10 @@
             :location="player.location"
           />
         </span>
-        <v-tooltip location="top" transition="none">
+        <v-tooltip location="top" transition="none" content-class="w3-tooltip-style elevation-1">
           <template v-slot:activator="{ props }">
             <a
-              class="truncated-text text-primary"
+              class="truncated-text text-primary cursor-pointer"
               :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
               v-bind="props"
               @click="notClickable ? null : goToPlayer()"

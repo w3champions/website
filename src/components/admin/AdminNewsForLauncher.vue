@@ -367,3 +367,71 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.menubar {
+  margin-bottom: 1rem;
+  transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
+
+  &.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.is-focused {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s;
+  }
+
+  &__button {
+    font-weight: bold;
+    display: inline-flex;
+    background: transparent;
+    border: 0;
+    padding: 0.2rem 0.5rem;
+    margin-right: 0.2rem;
+    border-radius: 3px;
+    cursor: pointer;
+
+    &:hover {
+      outline: 1px solid;
+    }
+
+    &.is-active {
+      outline: 1px solid;
+    }
+  }
+
+  span#{&}__button {
+    font-size: 13.3333px;
+  }
+}
+
+.editor {
+  position: relative;
+  margin: 0 auto;
+
+  &__content {
+    padding: 0.5rem;
+
+    .ProseMirror {
+      outline: 1px solid;
+      outline-offset: 0.5rem;
+    }
+
+    .ProseMirror-focused {
+      outline: 2px solid;
+    }
+
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+
+
+    * {
+      caret-color: currentColor;
+    }
+  }
+}
+</style>

@@ -2,7 +2,7 @@
   <v-tooltip v-if="season" location="top">
     <template v-slot:activator="{ props }">
       <div
-        :class="['season-badge', 'pointer']"
+        :class="['season-badge', 'cursor-pointer']"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
         v-bind="props"
         @click="() => onClick?.(season)"

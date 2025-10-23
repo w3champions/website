@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props }">
       <div
         style="display: inline"
-        class="pointer player-name"
+        class="cursor-pointer player-name"
         v-bind="props"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"

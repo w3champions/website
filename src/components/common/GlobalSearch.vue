@@ -31,6 +31,7 @@
           :placeholder="$t(`views_rankings.searchPlaceholder`)"
           bg-color="transparent"
           glow
+          single-line
           color="primary"
           icon-color="primary"
           return-object

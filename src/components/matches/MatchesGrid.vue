@@ -21,7 +21,7 @@
             <td>
               <div
                 v-if="isFfa(item.gameMode)"
-                :class="{ clickable: !unfinished }"
+                :class="{ 'cursor-pointer': !unfinished }"
                 class="my-3"
                 @click="goToMatchDetailPage(item)"
               >
@@ -53,7 +53,7 @@
               </div>
               <v-row
                 v-if="!isFfa(item.gameMode)"
-                :class="{ clickable: !unfinished }"
+                :class="{ 'cursor-pointer': !unfinished }"
                 class="force-no-wrap"
                 @click="goToMatchDetailPage(item)"
               >
@@ -109,7 +109,7 @@
         </tbody>
       </table>
     </div>
-    <div class="filter-blur">
+    <div>
       <div class="text-center font-regular mt-2">
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
         {{ totalMatches }}
@@ -364,10 +364,6 @@ export default defineComponent({
   &.left-side {
     justify-content: end;
   }
-}
-
-.clickable {
-  cursor: pointer;
 }
 
 .duration-bar {

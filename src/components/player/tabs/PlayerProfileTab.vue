@@ -4,7 +4,7 @@
       <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate />
     </v-card-text>
     <v-card-text v-else-if="loadProfileError" style="min-height: 500px" class="text-center">
-      <v-row class="mt-4 filter-none">
+      <v-row class="mt-4">
         <v-col>
           <v-card-title class="justify-center">
             {{ loadProfileError }}
@@ -13,7 +13,7 @@
       </v-row>
     </v-card-text>
     <v-card-text v-show="!loadProfileError && !loadingProfile">
-      <v-row class="mt-4 filter-none">
+      <v-row class="mt-4">
         <v-col cols="12" md="4" lg="3">
           <v-card-text style="padding-top: 0 !important">
             <player-avatar :is-logged-in-player="isLoggedInPlayer" />
@@ -32,7 +32,7 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-row v-if="!isBetaSeason" class="filter-none">
+          <v-row v-if="!isBetaSeason">
             <v-col cols="12" md="4">
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}

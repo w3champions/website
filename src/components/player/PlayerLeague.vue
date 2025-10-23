@@ -11,7 +11,7 @@
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
-        <span v-for="(partner, index) in atPartners" :key="partner.battleTag" class="text-center pointer" @click="navigateToPartner(partner)">
+        <span v-for="(partner, index) in atPartners" :key="partner.battleTag" class="text-center cursor-pointer" @click="navigateToPartner(partner)">
           {{ partner.name }}<span v-if="index < atPartners.length - 1">, </span>
         </span>
         <br v-if="showAtPartner" />

@@ -2,10 +2,10 @@
   <div class="pt-4">
     <div class="px-0">
       <v-tabs v-model="activeTab">
-        <v-tab class="profileTab" @click="navigateToLauncher">
+        <v-tab @click="navigateToLauncher">
           {{ $t("views_setupguides.launcher_setup") }}
         </v-tab>
-        <v-tab class="profileTab" @click="navigateToInstalling">
+        <v-tab @click="navigateToInstalling">
           {{ $t("views_setupguides.installing_war3") }}
         </v-tab>
       </v-tabs>

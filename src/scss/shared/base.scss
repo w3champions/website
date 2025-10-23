@@ -2,10 +2,6 @@
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 }
 
-.pointer {
-  cursor: pointer;
-}
-
 .won {
   color: green !important;
 }
@@ -32,14 +28,6 @@
     font-size: 0.875rem;
     height: 48px;
   }
-}
-
-.filter-none {
-  filter: none !important;
-}
-
-.filter-blur {
-  filter: blur(0) !important;
 }
 
 .circle {

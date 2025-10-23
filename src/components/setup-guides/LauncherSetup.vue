@@ -7,13 +7,13 @@
         </v-card-title>
         <div class="d-flex flex-row">
           <v-tabs v-model="tabsModel.self" direction="vertical" class="ml-4">
-            <v-tab class="profileTab" value="launcher">
+            <v-tab value="launcher">
               {{ $t("views_gettingstarted.launcher") }}
             </v-tab>
-            <v-tab class="profileTab" value="windows-setup">
+            <v-tab value="windows-setup">
               {{ $t("views_gettingstarted.manualwin") }}
             </v-tab>
-            <v-tab class="profileTab" value="mac-setup">
+            <v-tab value="mac-setup">
               {{ $t("views_gettingstarted.manualmac") }}
             </v-tab>
           </v-tabs>

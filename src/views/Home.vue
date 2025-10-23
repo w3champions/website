@@ -249,4 +249,17 @@ export default defineComponent({
     margin-right: 15px;
   }
 }
+
+.v-carousel {
+  .v-window__container {
+    height: 350px;
+    margin-bottom: 50px;
+  }
+  .v-window-item .v-responsive__content {
+    overflow-y: auto;
+  }
+  .v-carousel__controls {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
 </style>

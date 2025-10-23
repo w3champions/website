@@ -51,7 +51,7 @@
             >
               <div v-if="item.playersInfo && (item.playersInfo[index].countryCode || item.playersInfo[index].location) === selectedCountry">
                 <div
-                  class="player-avatar mr-1 alignRight race-icon"
+                  class="player-avatar mr-1 pa-0 race-icon"
                   :title="getTitleRace(item, index).toString()"
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
                 ></div>
@@ -60,7 +60,7 @@
                 <div v-if="isTwitchLive(item)" class="twitch__container">
                   <v-tooltip location="bottom">
                     <template v-slot:activator="{ props }">
-                      <span style="display: inline" class="pointer">
+                      <span style="display: inline" class="cursor-pointer">
                         <v-btn
                           icon
                           :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
@@ -117,7 +117,7 @@
             >
               <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
-                  <span style="display: inline" class="pointer" v-bind="props">
+                  <span style="display: inline" class="cursor-pointer" v-bind="props">
                     <sword-icon class="swords blinker" />
                   </span>
                 </template>
@@ -492,9 +492,5 @@ td.header {
   top: 0;
   left: 18px;
   cursor: pointer;
-}
-
-.race-icon {
-  padding: 0;
 }
 </style>

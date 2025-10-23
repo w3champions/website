@@ -7,7 +7,7 @@
             v-for="header in headers"
             :key="header.name"
             class="header"
-            :class="{ clickable: header.sortFunction !== undefined }"
+            :class="{ 'cursor-pointer': header.sortFunction !== undefined }"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -40,7 +40,7 @@
               :class="{ 'ml-md-3': index > 0 }"
             >
               <div
-                class="player-avatar mr-1 alignRight race-icon"
+                class="player-avatar mr-1 pa-0 race-icon"
                 :title="getTitleRace(item, index).toString()"
                 :style="{
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
@@ -60,7 +60,7 @@
               <div v-if="isTwitchLive(item, index)" class="twitch__container">
                 <v-tooltip location="bottom">
                   <template v-slot:activator="{ props }">
-                    <span style="display: inline" class="pointer" v-bind="props">
+                    <span style="display: inline" class="cursor-pointer" v-bind="props">
                       <v-btn
                         icon
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
@@ -101,7 +101,7 @@
               >
                 <v-tooltip location="bottom">
                   <template v-slot:activator="{ props }">
-                    <span style="display: inline" class="pointer" v-bind="props">
+                    <span style="display: inline" class="cursor-pointer" v-bind="props">
                       <sword-icon class="swords blinker" />
                     </span>
                   </template>
@@ -573,13 +573,5 @@ td.header {
   top: -10px;
   left: 18px;
   cursor: pointer;
-}
-
-.clickable {
-  cursor: pointer;
-}
-
-.race-icon {
-  padding: 0;
 }
 </style>

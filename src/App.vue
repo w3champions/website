@@ -1,5 +1,5 @@
 <template>
-  <v-app class="w3app" :class="getTheme">
+  <v-app :class="getTheme">
     <v-navigation-drawer
       v-model="navigationDrawerOpen"
       temporary
@@ -299,38 +299,8 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      // vuetify.theme.change(isDarkTheme.get() ? "dark" : "light");
-      // setThemeColors();
-      // rootStateStore.SET_DARK_MODE(isDarkTheme.get());
       theme.change(val);
     }
-
-    // const themeColors = ({
-    //   get: () => {
-    //     switch (getTheme.value) {
-    //       case "nightelf":
-    //         return {
-    //           primary: "#ffd428",
-    //           "w3-race-bg": "#0d0718",
-    //         };
-    //       case "undead":
-    //         return {
-    //           primary: "#ffd428",
-    //           "w3-race-bg": "#000",
-    //         };
-    //       case "orc":
-    //         return {
-    //           primary: "#5c2604",
-    //           "w3-race-bg": "#c7baa1",
-    //         };
-    //       default:
-    //         return {
-    //           primary: "#1976d2",
-    //           "w3-race-bg": "#e9e9e9",
-    //         };
-    //     }
-    //   },
-    // });
 
     const isDarkTheme = ({
       get: () => {
@@ -346,14 +316,6 @@ export default defineComponent({
       }
       return true;
     }
-
-    // function setThemeColors() {
-    //   const themeName = isDarkTheme.get() ? "dark" : "light";
-    //   const currentTheme = vuetify.theme.themes.value[themeName];
-    //   if (currentTheme && currentTheme.colors) {
-    //     Object.assign(currentTheme.colors, themeColors.get());
-    //   }
-    // }
 
     const toggleSignInDialog = (val: boolean) => {
       showSignInDialog.value = val;
@@ -378,7 +340,6 @@ export default defineComponent({
       if (t && t.length > 0) {
         setTheme(t);
       }
-      // setThemeColors();
     });
 
     return {
@@ -415,26 +376,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-@import "./scss/main.scss";
-
-.level {
-  color: white;
-  text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black,
-    -0.5px 0.5px 0.5px black, -0.5px -0.5px 0.5px black;
-}
-
-.button-margin {
-  margin-right: 10px;
-  top: 9px;
-}
-
-.v-theme--dark.v-badge .v-badge__badge::after {
-  border-color: #ffffff !important;
-}
-
-.v-theme--light.v-badge .v-badge__badge::after {
-  border-color: #36393f !important;
-}
-</style>

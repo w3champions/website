@@ -5,9 +5,8 @@
         <v-tooltip location="top" :disabled="!avatarDescription">
           <template v-slot:activator="{ props }">
             <v-card-text
-              style="cursor: pointer"
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
-              class="player-avatar text-center"
+              class="player-avatar text-center cursor-pointer"
               v-bind="props"
               @click.stop="iconsDialogOpened = true"
             />
@@ -18,7 +17,7 @@
         <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <div
-              class="country__container clickable"
+              class="country__container cursor-pointer"
               v-bind="props"
               @click="goToCountryRankings()"
             >
@@ -51,7 +50,7 @@
             <v-tooltip location="top">
               <template v-slot:activator="{ props }">
                 <v-card-text
-                  class="player-avatar-choosing"
+                  class="player-avatar-choosing cursor-pointer"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
                   v-bind="props"
                   @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
@@ -97,7 +96,7 @@
               <template v-slot:activator="{ props }">
                 <v-card-text
                   class="player-avatar-choosing"
-                  :class="{ pointer: isLoggedInPlayer }"
+                  :class="{ 'cursor-pointer': isLoggedInPlayer }"
                   :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
                   v-bind="props"
                   @click="isLoggedInPlayer
@@ -476,7 +475,7 @@ export default defineComponent({
 
     function getCorrectClasses(category: EAvatarCategory, iconId: number): string[] {
       const classes = ["player-avatar-choosing"];
-      if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("pointer");
+      if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("cursor-pointer");
 
       if (!enabledIfEnoughWins(category, iconId)) classes.push("player-avatar-choosing-disabled");
 
@@ -705,9 +704,5 @@ export default defineComponent({
 .avatar-choose-headers {
   padding-left: 25px;
   padding-right: 25px;
-}
-
-.clickable {
-  cursor: pointer;
 }
 </style>

@@ -40,7 +40,7 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.ChiefTain" />
-                  <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
+                  <span class="cursor-pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)">
@@ -62,7 +62,7 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.Shaman" />
-                  <span class="pointer" @click="goToPlayer(shaman)">
+                  <span class="cursor-pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)">
@@ -92,7 +92,7 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.Member" />
-                  <span class="pointer" @click="goToPlayer(member)">
+                  <span class="cursor-pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(member)">
@@ -124,7 +124,7 @@
         <table class="custom-table">
           <tr v-for="member in playersClan.foundingFathers" :key="member">
             <td>
-              <span class="pointer" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
+              <span class="cursor-pointer" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
             </td>
           </tr>
         </table>

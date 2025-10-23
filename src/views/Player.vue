@@ -100,19 +100,19 @@
           </v-container>
 
           <v-tabs v-model="tabsModel">
-            <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
+            <v-tab exact :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/matches`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/matches`">
               {{ $t("views_player.matchhistory") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/at-teams`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/at-teams`">
               {{ $t("views_player.teams") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
               {{ $t("views_player.statistics") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/clan`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/clan`">
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
@@ -319,16 +319,6 @@ export default defineComponent({
   margin-top: 7px;
   margin-left: 5px;
   margin-right: 5px;
-}
-
-.profileTab {
-  background-color: #f5f5f5;
-}
-
-.v-theme--dark {
-  .profileTab {
-    background-color: #2f2f2f;
-  }
 }
 
 .playerTag {

@@ -8,26 +8,22 @@
           </v-card-title>
           <v-tabs>
             <v-tab
-              class="profileTab"
               exact
               :to="{ name: EStatisticsRouteName.PLAYER_ACTIVITY }"
             >
               {{ $t("views_statistics.playeractivity") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.MMR }"
             >
               {{ $t("views_statistics.mmr") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.WINRATES }"
             >
               {{ $t("views_statistics.wrs") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.HEROES }"
             >
               {{ $t("views_statistics.heroes") }}
