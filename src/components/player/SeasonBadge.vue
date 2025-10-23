@@ -50,8 +50,7 @@ export default defineComponent({
 .season-badge {
   width: 24px;
   height: 24px;
-  background-size: cover;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: bottom;
 }
 </style>
