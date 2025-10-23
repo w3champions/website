@@ -18,9 +18,10 @@
           />
           <v-switch
             v-model="normalizedGamesPerDay"
-            class="mt-2"
+            class="mt-2 normalizedSwitch"
+            color="primary"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
-            @update:model-value="setNormalizedGamesPerDay"
+            @update:model-value="setNormalizedGamesPerDay!"
           />
           <div v-if="normalizedGamesPerDay">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
@@ -404,3 +405,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.normalizedSwitch .v-label) {
+  padding-left: 5px;
+}
+</style>
