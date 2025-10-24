@@ -16,11 +16,11 @@
 }
 
 .custom-table {
+  background-color: transparent !important;
   width: 100%;
   border-spacing: 0;
 
-  td,
-  th {
+  td, th {
     padding: 6px 16px;
   }
 
@@ -83,4 +83,10 @@ p {
 
 ul, ol {
     padding-left: 24px;
+}
+
+@media (min-width: 1904px) {
+  .w3-container-width {
+    max-width: 1185px;
+  }
 }

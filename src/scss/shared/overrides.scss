@@ -27,24 +27,6 @@ h3 {
   text-transform: uppercase !important;
 }
 
-.v-data-table,
-.custom-table {
+.v-data-table {
   background-color: transparent !important;
-
-  tr:hover {
-    background-color: transparent !important;
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.custom-table-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-@media (min-width: 1904px) {
-  .w3-container-width {
-    max-width: 1185px;
-  }
 }

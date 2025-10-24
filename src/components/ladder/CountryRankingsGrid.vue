@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-table-wrapper elevation-1">
+  <div class="elevation-1">
     <table v-for="countryRank in rankings" :key="countryRank.league" class="custom-table">
       <thead>
         <tr>

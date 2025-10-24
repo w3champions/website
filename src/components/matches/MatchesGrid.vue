@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="custom-table-wrapper elevation-1">
+    <div class="elevation-1">
       <table class="custom-table">
         <thead>
           <tr>
