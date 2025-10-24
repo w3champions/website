@@ -2,12 +2,12 @@
   <div class="elevation-1">
     <table class="custom-table">
       <thead>
-        <tr>
+        <tr class="w3-gray-text">
           <td
             v-for="header in headers"
             :key="header.name"
             class="header"
-            :class="{ 'cursor-pointer': header.sortFunction !== undefined, 'w3-gray-text': true }"
+            :class="{ 'cursor-pointer': header.sortFunction !== undefined }"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -29,6 +29,7 @@
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag(),
+            'w3-gray-text': true,
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
