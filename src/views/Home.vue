@@ -250,7 +250,7 @@ export default defineComponent({
   }
 }
 
-.v-carousel {
+:deep(.v-carousel) {
   .v-window__container {
     height: 350px;
     margin-bottom: 50px;

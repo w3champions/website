@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="text-h5">Edit map files</span>
+      Edit map files
     </v-card-title>
     <v-row dense justify="center">
       <div class="text-h6">{{ map.name }} ({{ map.id }})</div>

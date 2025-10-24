@@ -28,13 +28,13 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">New Item</span>
+                New Item
               </v-card-title>
 
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="12" class="pb-0">
+                    <v-col cols="12" sm="6" md="12">
                       <player-search
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"

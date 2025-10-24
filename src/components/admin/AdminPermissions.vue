@@ -24,7 +24,7 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="text-h5">{{ formTitle }}</span>
+                  {{ formTitle }}
                 </v-card-title>
 
                 <v-card-text>

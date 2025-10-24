@@ -23,7 +23,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
+                {{ formTitle }}
               </v-card-title>
 
               <v-card-text>
@@ -34,6 +34,7 @@
                     variant="filled"
                     rows="1"
                     label="Message"
+                    color="primary"
                   />
                 </v-container>
               </v-card-text>

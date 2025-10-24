@@ -13,47 +13,45 @@
         <v-icon size="x-large" class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
-    <v-card>
-      <v-card-title class="px-2 pb-2 pt-0">
-        <v-autocomplete
-          v-model="searchModel"
-          v-model:search="search"
-          :append-inner-icon="mdiMagnify"
-          menu-icon=""
-          label="Search"
-          clearable
-          autofocus
-          :no-data-text="noDataText"
-          :loading="isLoading"
-          :items="players"
-          item-title="battleTag"
-          item-value="battleTag"
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          bg-color="transparent"
-          glow
-          single-line
-          color="primary"
-          icon-color="primary"
-          return-object
-          autocomplete="off"
-          variant="underlined"
-        >
-          <template v-slot:item="{ props, item }">
-            <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)" v-bind="props">
-              <div>
-                <v-list-item-title>
-                  <div v-for="season in item.raw.seasons" :key="season.id" class="mr-1 mt-1 d-inline-block">
-                    <season-badge :season="season" />
-                  </div>
-                </v-list-item-title>
-              </div>
-            </v-list-item>
-          </template>
-          <template v-slot:append-item>
-            <div v-intersect="endIntersect"></div>
-          </template>
-        </v-autocomplete>
-      </v-card-title>
+    <v-card class="px-2 pb-2 pt-0">
+      <v-autocomplete
+        v-model="searchModel"
+        v-model:search="search"
+        :append-inner-icon="mdiMagnify"
+        class="font-weight-medium"
+        menu-icon=""
+        label="Search"
+        autofocus
+        :no-data-text="noDataText"
+        :loading="isLoading"
+        :items="players"
+        item-title="battleTag"
+        item-value="battleTag"
+        :placeholder="$t(`views_rankings.searchPlaceholder`)"
+        bg-color="transparent"
+        glow
+        single-line
+        color="primary"
+        icon-color="primary"
+        return-object
+        autocomplete="off"
+        variant="underlined"
+      >
+        <template v-slot:item="{ props, item }">
+          <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)" v-bind="props">
+            <div>
+              <v-list-item-title>
+                <div v-for="season in item.raw.seasons" :key="season.id" class="mr-1 mt-1 d-inline-block">
+                  <season-badge :season="season" />
+                </div>
+              </v-list-item-title>
+            </div>
+          </v-list-item>
+        </template>
+        <template v-slot:append-item>
+          <div v-intersect="endIntersect"></div>
+        </template>
+      </v-autocomplete>
     </v-card>
   </v-menu>
 </template>

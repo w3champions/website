@@ -411,27 +411,25 @@ export default defineComponent({
 .editor {
   position: relative;
   margin: 0 auto;
+}
 
-  &__content {
-    padding: 0.5rem;
+:deep(.editor__content) {
+  padding: 0.5rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
-    .ProseMirror {
-      outline: 1px solid;
-      outline-offset: 0.5rem;
-    }
+  .ProseMirror {
+    outline: 1px solid;
+    outline-offset: 0.5rem;
+  }
 
-    .ProseMirror-focused {
-      outline: 2px solid;
-    }
+  .ProseMirror-focused {
+    outline: 2px solid;
+  }
 
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-
-
-    * {
-      caret-color: currentColor;
-    }
+  * {
+    caret-color: currentColor;
   }
 }
 </style>

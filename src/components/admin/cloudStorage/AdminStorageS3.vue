@@ -30,7 +30,7 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="text-h5">Upload Image</span>
+                  Upload Image
                 </v-card-title>
                 <v-card-text>
                   <v-container>

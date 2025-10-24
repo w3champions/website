@@ -12,7 +12,7 @@
       item-title="battleTag"
       :no-data-text="noDataText"
       :loading="isLoading"
-      :autofocus="false"
+      :autofocus="setAutofocus"
       bg-color="transparent"
       clearable
       hide-details
