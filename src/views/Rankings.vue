@@ -47,64 +47,61 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer />
-        <v-autocomplete
-          v-model="selected"
-          v-model:search="search"
-          class="cursor-text"
-          menu-icon=""
-          :append-inner-icon="mdiMagnify"
-          label="Search"
-          :items="searchRanks"
-          single-line
-          clearable
-          :loading="isLoading"
-          :no-data-text="noDataText"
-          item-title="player.name"
-          item-value="player.id"
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          bg-color="transparent"
-          hide-details
-          glow
-          return-object
-          autocomplete="off"
-          variant="underlined"
-        >
-          <!--
-            In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
-            but for now in Vue 2 we can't use TypeScript in templates.
-          -->
-          <template v-slot:item="{ props, item }">
-            <template v-if="item?.raw?.player === undefined">
-              {{ item.raw }}
+        <div class="rankings-search-wrapper">
+          <v-autocomplete
+            v-model="selected"
+            v-model:search="search"
+            menu-icon=""
+            :append-inner-icon="mdiMagnify"
+            label="Search"
+            :items="searchRanks"
+            single-line
+            :loading="isLoading"
+            :no-data-text="noDataText"
+            item-title="player.name"
+            item-value="player.id"
+            :placeholder="$t(`views_rankings.searchPlaceholder`)"
+            bg-color="transparent"
+            hide-details
+            color="primary"
+            icon-color="primary"
+            glow
+            return-object
+            autocomplete="off"
+            variant="underlined"
+          >
+            <template v-slot:item="{ props, item }">
+              <template v-if="item?.raw?.player === undefined">
+                {{ item.raw }}
+              </template>
+              <template v-else>
+                <v-list-item>
+                  <v-list-item-title v-bind="props">
+                    <span v-if="!isDuplicateName(item.raw.player.name)">
+                      {{ item.raw.player.name }}
+                    </span>
+                    <span v-if="isDuplicateName(item.raw.player.name)">
+                      {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
+                    </span>
+                    <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
+                      ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
+                    </span>
+                  </v-list-item-title>
+                  <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                    {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
+                    {{ $t(`common.losses`) }}
+                    {{ item.raw.player.losses }} |
+                    {{ $t(`common.total`) }}
+                    {{ item.raw.player.games }}
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle v-else>
+                    {{ $t(`views_rankings.unranked`) }}
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </template>
             </template>
-            <template v-else>
-              <v-list-item>
-                <v-list-item-title v-bind="props">
-                  <span v-if="!isDuplicateName(item.raw.player.name)">
-                    {{ item.raw.player.name }}
-                  </span>
-                  <span v-if="isDuplicateName(item.raw.player.name)">
-                    {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
-                  </span>
-                  <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
-                    ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
-                  {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
-                  {{ $t(`common.losses`) }}
-                  {{ item.raw.player.losses }} |
-                  {{ $t(`common.total`) }}
-                  {{ item.raw.player.games }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle v-else>
-                  {{ $t(`views_rankings.unranked`) }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </template>
-          </template>
-        </v-autocomplete>
+          </v-autocomplete>
+        </div>
       </v-card-text>
       <v-menu location="right">
         <template v-slot:activator="{ props }">
@@ -505,4 +502,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.rankings-search-wrapper {
+  margin-left: auto;
+  width: 45%;
+  margin-top: -15px;
+  min-width: 100px;
+}
 </style>
