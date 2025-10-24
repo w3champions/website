@@ -2,9 +2,9 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn
-        tile
-        :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
-        style="background-color: transparent"
+        :tile="!isPlayerMatchesTab"
+        :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
+        class="bg-transparent"
         v-bind="props"
       >
         <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
@@ -102,7 +102,6 @@ export default defineComponent({
   @media (max-width: 960px) {
     width: 100% !important;
   }
-  margin-top: -8px;
   height: 56px !important;
   min-width: 250px !important;
   border-radius: 4px;

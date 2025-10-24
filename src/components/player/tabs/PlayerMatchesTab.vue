@@ -50,14 +50,14 @@
             @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
-        <v-col align-self="center" cols="12" md="3">
+        <v-col cols="12" md="3">
           <hero-select
             :is-player-matches-tab="true"
             :selectedHeroes="selectedHeroes"
             @heroChanged="heroChanged"
           />
         </v-col>
-        <v-col align-self="center">
+        <v-col class="pt-5 pl-0">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
