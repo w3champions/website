@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="overflow-hidden">
     <v-card-title>
       Edit map files
     </v-card-title>

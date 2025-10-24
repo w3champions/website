@@ -27,10 +27,6 @@ h3 {
   text-transform: uppercase !important;
 }
 
-.v-card {
-  overflow: hidden !important;
-}
-
 .v-data-table,
 .custom-table {
   background-color: transparent !important;
@@ -44,11 +40,6 @@ h3 {
 .custom-table-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
-}
-
-.scroll-v-dialog {
-  background: inherit !important;
-  overflow-y: scroll !important;
 }
 
 @media (min-width: 1904px) {
