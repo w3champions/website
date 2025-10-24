@@ -32,6 +32,18 @@ import { TournamentStateLabel } from "@/helpers/tournaments";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
 import { DataTableHeader } from "vuetify";
 
+// Not sure what Vuetify type this is, so defining it here.
+type rowObject = {
+  item: ITournament;
+  columns: DataTableHeader[];
+  index: number;
+  internalItem: unknown;
+  isExpanded: unknown;
+  isSelected: unknown;
+  toggleExpand: unknown;
+  toggleSelect: unknown;
+};
+
 export default defineComponent({
   name: "TournamentsTable",
   components: {},
@@ -45,8 +57,8 @@ export default defineComponent({
     const formatDate = (tournament: ITournament): string => formatDateToDateWeekday(tournament.startDateTime);
     const getStateDescription = (tournament: ITournament): string => TournamentStateLabel[tournament.state];
 
-    function onRowClick(item: ITournament) {
-      context.emit("click:row", item);
+    function onRowClick(_event: PointerEvent, rowObject: rowObject) {
+      context.emit("click:row", rowObject.item);
     }
 
     const itemStyle = (): StyleValue => {
@@ -56,7 +68,7 @@ export default defineComponent({
     };
 
     const headers: DataTableHeader[] = [
-            {
+      {
         title: "Tournament Name",
         value: "name",
         sortable: true,

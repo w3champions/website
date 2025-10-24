@@ -47,6 +47,7 @@ export default defineComponent({
         ));
 
     function onRowClick(item: ITournament) {
+      if (!item.id) return;
       router.push({
         path: getTournamentUrl(item.id),
       });
