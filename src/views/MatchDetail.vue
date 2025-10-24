@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">

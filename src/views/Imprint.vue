@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card>

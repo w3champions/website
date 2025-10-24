@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-3">
+  <v-container class="pa-3 w3-container-width">
     <v-card class="pb-2 pr-4">
       <v-card-title>Tournaments</v-card-title>
       <v-card-text>

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <v-card class="mt-2" tile>
       <v-card-title>
         <gateway-select

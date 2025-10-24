@@ -1,5 +1,5 @@
 <template>
-  <v-container class="rewards-page">
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col>
         <!-- Account Information -->
@@ -247,10 +247,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.rewards-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-</style>

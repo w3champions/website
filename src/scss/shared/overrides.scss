@@ -37,13 +37,14 @@ h3 {
     z-index: 1;
   }
 }
+
 .custom-table-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
 }
 
 @media (min-width: 1904px) {
-  .v-container {
+  .w3-container-width {
     max-width: 1185px;
   }
 }

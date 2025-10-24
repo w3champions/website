@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-3">
+  <v-container fluid class="pb-3 pr-3">
     <admin-check-jwt-lifetime />
     <div v-if="isAdmin" class="admin-page-wrapper">
       <admin-navigation />

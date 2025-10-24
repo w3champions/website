@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="pa-0 w3-container-width">
     <v-row class="ma-0">
       <v-col cols="12" md="8">
         <v-card tile>
