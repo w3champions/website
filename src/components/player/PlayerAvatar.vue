@@ -35,80 +35,83 @@
     </v-row>
     <player-socials :userProfile="userProfile" />
 
-    <v-dialog v-model="iconsDialogOpened" max-width="1150px" class="scroll-v-dialog">
-      <v-card>
+    <v-dialog v-model="iconsDialogOpened" max-width="1150px" scrollable>
+      <v-card class="pt-1">
         <v-checkbox
           v-model="useClassicIcons"
-          style="margin-left: 25px"
+          class="ml-3"
+          color="primary"
           :label="$t('components_player_playeravatar.useClassicIcons')"
         />
 
-        <!-- Starter Icons -->
-        <v-row class="pb-3" align="center" justify="center">
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
-          <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
-            <v-tooltip location="top">
-              <template v-slot:activator="{ props }">
-                <v-card-text
-                  class="player-avatar-choosing cursor-pointer"
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
-                  v-bind="props"
-                  @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
-                />
-              </template>
-              <span>Starter</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+        <v-card-text>
+          <!-- Starter Icons -->
+          <v-row class="pb-3" align="center" justify="center">
+            <v-card-text class="py-0 w-100" align="center">Starter</v-card-text>
+            <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    class="player-avatar-choosing cursor-pointer"
+                    :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
+                  />
+                </template>
+                <span>Starter</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
 
-        <!-- Race Icons Grid -->
-        <v-row
-          v-for="race in races"
-          :key="race"
-          class="mt-0 mb-2"
-          style="padding-left: 25px; padding-right: 25px"
-          align="center"
-          justify="center"
-        >
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">
-            {{ enumToString(race) }}
-          </v-card-text>
-          <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
-            <v-tooltip location="top">
-              <template v-slot:activator="{ props }">
-                <v-card-text
-                  :class="getCorrectClasses(raceToAvatar(race), number)"
-                  :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
-                  v-bind="props"
-                  @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
-                />
-              </template>
-              <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+          <!-- Race Icons Grid -->
+          <v-row
+            v-for="race in races"
+            :key="race"
+            class="mt-0 mb-2"
+            style="padding-left: 25px; padding-right: 25px"
+            align="center"
+            justify="center"
+          >
+            <v-card-text class="py-0 w-100" align="center">
+              {{ enumToString(race) }}
+            </v-card-text>
+            <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    :class="getCorrectClasses(raceToAvatar(race), number)"
+                    :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
+                  />
+                </template>
+                <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
 
-        <!-- Special Icons -->
-        <v-row v-if="specialPictures.length > 0" class="pb-3" align="center" justify="center">
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
-          <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
-            <v-tooltip location="top">
-              <template v-slot:activator="{ props }">
-                <v-card-text
-                  class="player-avatar-choosing"
-                  :class="{ 'cursor-pointer': isLoggedInPlayer }"
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
-                  v-bind="props"
-                  @click="isLoggedInPlayer
-                    ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
-                    : null
-                  "
-                />
-              </template>
-              <span>{{ specialPicture.description }}</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+          <!-- Special Icons -->
+          <v-row v-if="specialPictures.length > 0" align="center" justify="center">
+            <v-card-text class="py-0 w-100" align="center">Specials</v-card-text>
+            <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    class="player-avatar-choosing"
+                    :class="{ 'cursor-pointer': isLoggedInPlayer }"
+                    :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer
+                      ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
+                      : null
+                    "
+                  />
+                </template>
+                <span>{{ specialPicture.description }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -674,35 +677,8 @@ export default defineComponent({
   filter: alpha(opacity=50);
 }
 
-.player-league {
-  width: 182px;
-
-  .player-league-rank {
-    font-size: 20px;
-  }
-
-  .player-league-points {
-    font-size: 13px;
-  }
-}
-
-.special-icons {
-  .col {
-    margin-left: 10px;
-  }
-
-  .col:first-child {
-    margin-left: 0;
-  }
-}
-
 .alias-checkbox {
   margin-top: 0px;
   padding-top: 0px;
-}
-
-.avatar-choose-headers {
-  padding-left: 25px;
-  padding-right: 25px;
 }
 </style>
