@@ -227,6 +227,7 @@ import { Heading } from "@tiptap/extension-heading";
 import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
 import { OrderedList } from "@tiptap/extension-ordered-list";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminNewsForLauncher",
@@ -327,10 +328,10 @@ export default defineComponent({
       editor.destroy();
     });
 
-    const headers = [
-      { text: "Text", value: "message" },
-      { text: "Headline", value: "date" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Text", value: "message" },
+      { title: "Headline", value: "date" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {

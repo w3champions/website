@@ -69,6 +69,7 @@ import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminLoadingScreenTips",
@@ -131,11 +132,11 @@ export default defineComponent({
       await init();
     });
 
-    const headers = [
-      { text: "Author", value: "author" },
-      { text: "Creation Date", value: "creationDate" },
-      { text: "Text", value: "message" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Author", value: "author" },
+      { title: "Creation Date", value: "creationDate" },
+      { title: "Text", value: "message" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {

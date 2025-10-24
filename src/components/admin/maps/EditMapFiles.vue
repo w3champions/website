@@ -12,7 +12,6 @@
           :headers="headers"
           :items="mapFiles"
           class="elevation-1"
-          :hide-default-header="true"
           :hide-default-footer="true"
           :items-per-page="100"
         >
@@ -49,6 +48,7 @@
 import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "EditMapFiles",
@@ -99,9 +99,9 @@ export default defineComponent({
       await mapsManagementStore.loadMapFiles(props.map.id);
     });
 
-    const headers = [
-      { text: "File path", value: "filePath" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "File path", value: "filePath" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {

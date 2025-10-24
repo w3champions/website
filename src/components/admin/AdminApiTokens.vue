@@ -280,6 +280,7 @@ import { mdiPlus, mdiPencil, mdiDelete, mdiRefresh, mdiPause, mdiPlay, mdiConten
 import ApiTokenService from "@/services/admin/ApiTokenService";
 import { ApiToken, CreateApiTokenRequest, UpdateApiTokenRequest } from "@/types/admin/ApiToken";
 import { useOauthStore } from "@/store/oauth/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminApiTokens",
@@ -309,15 +310,15 @@ export default defineComponent({
       expiresAt: null,
     });
 
-    const headers = [
-      { text: "Name", value: "name" },
-      { text: "Token", value: "token", sortable: false },
-      { text: "Status", value: "isActive" },
-      { text: "Scopes", value: "scopes", sortable: false },
-      { text: "Contact", value: "contactDetails" },
-      { text: "Expires", value: "expiresAt" },
-      { text: "Last Used", value: "lastUsedAt" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Name", value: "name" },
+      { title: "Token", value: "token", sortable: false },
+      { title: "Status", value: "isActive" },
+      { title: "Scopes", value: "scopes", sortable: false },
+      { title: "Contact", value: "contactDetails" },
+      { title: "Expires", value: "expiresAt" },
+      { title: "Last Used", value: "lastUsedAt" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     async function loadTokens() {
