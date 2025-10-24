@@ -2,7 +2,7 @@
   <div v-if="!unfinished" style="margin-left: auto;">
     <v-btn
       tile
-      class="bg-transparent"
+      class="bg-transparent text-black-gold"
       @click="toggle"
     >
       <v-icon start>{{ showHeroes ? mdiEyeOff : mdiEye }}</v-icon>

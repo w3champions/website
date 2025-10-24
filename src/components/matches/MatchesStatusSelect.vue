@@ -2,7 +2,7 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
-        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
+        <v-icon size="large" start>{{ mdiControllerClassic }}</v-icon>
         {{ currentStatus.name }}
       </v-btn>
     </template>

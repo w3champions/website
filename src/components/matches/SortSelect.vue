@@ -2,7 +2,7 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn tile style="background-color: transparent" v-bind="props">
-        <v-icon class="mr-1">{{ mdiSortAscending }}</v-icon>
+        <v-icon size="large" start>{{ mdiSortAscending }}</v-icon>
         {{ currentSort.name }}
       </v-btn>
     </template>

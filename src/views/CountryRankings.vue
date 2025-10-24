@@ -1,7 +1,10 @@
 <template>
-  <v-container class="w3-container-width">
-    <v-card class="mt-2" tile>
+  <v-container class="pa-3 w3-container-width">
+    <v-card tile>
       <v-card-title>
+        Country Rankings
+      </v-card-title>
+      <v-card-title class="pt-2 d-flex">
         <gateway-select
           v-if="isGatewayNeeded"
           @gatewayChanged="onGatewayChanged"
@@ -53,13 +56,11 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer />
-        <v-menu location="right">
+        <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn
               tile
-              class="ma-4"
-              style="background-color: transparent"
+              class="ml-auto bg-transparent"
               v-bind="props"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
@@ -84,7 +85,7 @@
           </v-card>
         </v-menu>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="pt-5">
         <country-rankings-grid
           v-if="!isLoading"
           :rankings="rankings"

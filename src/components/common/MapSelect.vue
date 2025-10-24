@@ -2,7 +2,7 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn tile style="background-color: transparent" v-bind="props">
-        <v-icon style="margin-right: 5px">{{ mdiMap }}</v-icon>
+        <v-icon size="large" start>{{ mdiMap }}</v-icon>
         {{ selected }}
       </v-btn>
     </template>

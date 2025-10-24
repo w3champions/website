@@ -4,10 +4,10 @@
       <v-btn
         :tile="!isPlayerMatchesTab"
         :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
-        class="bg-transparent"
+        class="bg-transparent text-black-gold"
         v-bind="props"
       >
-        <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
+        <v-icon size="large" start>{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
       </v-btn>
     </template>

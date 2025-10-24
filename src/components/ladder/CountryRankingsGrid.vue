@@ -6,7 +6,7 @@
           <td
             v-if="leagueMap.get(countryRank.league)"
             colspan="100%"
-            class="text-uppercase font-weight-bold"
+            class="text-uppercase font-weight-bold w3-gray-text"
           >
             <league-icon :league="leagueMap.get(countryRank.league)?.order" />
             <div class="d-inline-block ml-2 my-4">
@@ -25,7 +25,7 @@
           <td
             v-for="(header, index) in headers"
             :key="index"
-            class="header"
+            class="w3-gray-text"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -97,7 +97,6 @@
                 </div>
               </div>
               <div v-else class="teammate__container">
-                (
                 <player-rank-info :player-id="playerId" />
                 <div
                   v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
@@ -108,7 +107,6 @@
                     :location="item.playersInfo[index].location"
                   />
                 </div>
-                )
               </div>
             </div>
             <span
@@ -465,10 +463,6 @@ export default defineComponent({
     margin-top: 5px;
     margin-left: 0 !important;
   }
-}
-
-td.header {
-  position: relative;
 }
 
 .teammate__container {

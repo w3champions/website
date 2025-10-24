@@ -12,7 +12,7 @@
             >
               {{ header.text }}
             </td>
-            <td v-if="!unfinished" class="text-center">
+            <td v-if="!unfinished" class="text-center w3-gray-text">
               {{ $t("components_matches_matchesgrid.replay") }}
             </td>
           </tr>

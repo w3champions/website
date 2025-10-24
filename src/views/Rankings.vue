@@ -214,7 +214,7 @@ export default defineComponent({
     let searchTimer: NodeJS.Timeout;
 
     const search = ref<string>("");
-    const selected = ref<Ranking | null>(null);
+    const selected = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
@@ -288,7 +288,7 @@ export default defineComponent({
     }
 
     watch(selected, onSelected);
-    function onSelected(rank: Ranking): void {
+    function onSelected(rank: Ranking | undefined): void {
       if (!rank) return;
 
       if (!playerIsRanked(rank)) {
