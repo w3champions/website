@@ -8,7 +8,7 @@
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span>{{ title }}</span>
-        <v-btn icon @click="close">
+        <v-btn icon variant="flat" @click="close">
           <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>
       </v-card-title>

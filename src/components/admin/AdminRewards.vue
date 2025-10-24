@@ -119,6 +119,7 @@
       :loading="loadingUsers"
       :error="usersError"
       @retry="loadRewardUsers"
+      @update:visible="toggleRewardUsersDialog"
     />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
@@ -399,6 +400,10 @@ export default defineComponent({
       return formatTimestampString(dateString, "HH:mm:ss");
     };
 
+    const toggleRewardUsersDialog = (isVisible: boolean) => {
+      usersDialog.value = isVisible;
+    };
+
     onMounted(() => {
       loadRewards();
       loadModules();
@@ -442,6 +447,7 @@ export default defineComponent({
       formatDuration,
       formatDate,
       formatTime,
+      toggleRewardUsersDialog,
 
       // Icons
       mdiMagnify,

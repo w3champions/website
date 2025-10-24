@@ -10,15 +10,15 @@
           <v-btn color="secondary" class="w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
           <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
         </div>
-        <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
+        <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
         </v-dialog>
 
-        <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
+        <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px" scrollable>
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px">
+        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px" scrollable>
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
