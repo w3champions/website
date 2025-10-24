@@ -97,12 +97,8 @@ export default defineComponent({
         path: getProfileUrl(player.battleTag),
       }).catch(() => null);
 
-      // Since the global search is present on all pages, we need to manually close it
       menuOpened.value = false;
-
-      // Reset the global search state
-      globalSearchStore.clearSearch();
-      searchModel.value = {} as PlayerSearchInfo;
+      searchModel.value = null;
     }
 
     watch(search, onSearchChanged);
