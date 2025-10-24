@@ -30,6 +30,7 @@
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
           :search="search"
           class="elevation-1"
+          :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.path`]="{ item }">
             {{ getMapPath(item) }}

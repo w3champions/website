@@ -8,6 +8,7 @@
               v-for="header in headers"
               :key="header.name"
               :style="header.style"
+              class="w3-gray-text"
             >
               {{ header.text }}
             </td>

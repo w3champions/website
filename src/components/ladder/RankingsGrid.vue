@@ -7,7 +7,7 @@
             v-for="header in headers"
             :key="header.name"
             class="header"
-            :class="{ 'cursor-pointer': header.sortFunction !== undefined }"
+            :class="{ 'cursor-pointer': header.sortFunction !== undefined, 'w3-gray-text': true }"
             :style="{
               width: header.width,
               'min-width': header.minWidth,

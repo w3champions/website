@@ -39,6 +39,7 @@
             :headers="headers"
             :items="raceWinrate"
             :mobile-breakpoint="400"
+            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
           >
             <template v-slot:body="{ items }">
               <tr v-for="item in items" :key="item.race">
@@ -163,7 +164,7 @@ export default defineComponent({
 
     const patches = computed<string[]>(() => {
       if (statsPerRaceAndMap.value[0]) {
-        const allowedPatches = ["All"];
+        const allowedPatches = [];
         const patches = Object.keys(
           statsPerRaceAndMap.value[0].patchToStatsPerModes
         );

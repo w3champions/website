@@ -8,6 +8,7 @@
       :items="news"
       :items-per-page="5"
       class="elevation-1"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">

@@ -10,6 +10,7 @@
       :search="tableSearch"
       :items-length="bannedPlayersCount"
       :options="bannedPlayersTableOptions"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >

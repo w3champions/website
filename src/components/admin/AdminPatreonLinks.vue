@@ -87,6 +87,7 @@
         :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
         :sort-by="[{ key: 'linkedAt', order: 'desc' }]"
         :loading="loading && patreonLinks.length > 0"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:item.battleTag="{ item }">
           <div class="d-flex align-center">

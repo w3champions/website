@@ -344,6 +344,7 @@ J<template>
                 :items="lastResult.details.missingMembers"
                 :items-per-page="10"
                 class="elevation-0"
+                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
               >
                 <template v-slot:item.entitledTierIds="{ item }">
                   <v-chip
@@ -372,6 +373,7 @@ J<template>
                 :items="lastResult.details.extraAssignments"
                 :items-per-page="10"
                 class="elevation-0"
+                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
               />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -389,6 +391,7 @@ J<template>
                 :items="lastResult.details.mismatchedTiers"
                 :items-per-page="10"
                 class="elevation-0"
+                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
               />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -426,6 +429,7 @@ J<template>
               :items="reconciliationDetailsItems"
               :items-per-page="10"
               class="elevation-0"
+              :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
             >
               <template v-slot:item.action="{ item }">
                 <v-chip

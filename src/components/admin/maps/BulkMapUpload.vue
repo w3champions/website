@@ -71,6 +71,7 @@
             :items-per-page="-1"
             hide-default-footer
             density="compact"
+            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
           >
             <template v-slot:[`item.status`]="{ item }">
               <v-chip :color="getStatusColor(item.status)" size="small">

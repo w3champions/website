@@ -8,6 +8,7 @@
         :headers="headers"
         :items-per-page="-1"
         :items="permissions"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">

@@ -72,6 +72,7 @@
             :items="filteredUsers"
             :items-per-page="10"
             class="elevation-1"
+            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
           >
             <template v-slot:item.userId="{ item }">
               <div class="font-weight-medium">{{ item.userId }}</div>

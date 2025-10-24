@@ -155,6 +155,7 @@
         :items-per-page="-1"
         :sort-by="[{ key: 'assignedAt', order: 'desc' }]"
         :loading="loading && assignments.length > 0"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         hide-default-footer
       >
         <template v-slot:item.userId="{ item }">

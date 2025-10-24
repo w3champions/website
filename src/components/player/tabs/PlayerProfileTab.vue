@@ -37,7 +37,12 @@
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
-              <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
+              <v-data-table
+                hide-default-footer
+                :headers="raceHeaders"
+                :items="selectedRaceStats"
+                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+              >
                 <template v-slot:item.race="{ item }">
                   <span><race-icon :race="item.race" /></span>
                 </template>

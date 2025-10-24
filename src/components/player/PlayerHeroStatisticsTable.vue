@@ -2,6 +2,7 @@
   <div class="player-hero-statistics-table">
     <v-data-table
       hide-default-footer
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:default>
         <thead>

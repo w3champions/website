@@ -10,6 +10,7 @@
         :items="globallyMutedPlayers"
         hide-default-footer
         :sort-by="[{ key: 'id', order: 'desc' }]"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">

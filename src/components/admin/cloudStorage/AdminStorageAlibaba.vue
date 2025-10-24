@@ -13,6 +13,7 @@
         :search="tableSearch"
         :loading="isLoadingFiles"
         loading-text="Loading... Please wait"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">

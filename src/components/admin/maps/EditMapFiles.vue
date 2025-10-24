@@ -14,6 +14,7 @@
           class="elevation-1"
           :hide-default-footer="true"
           :items-per-page="100"
+          :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.actions`]="{ item }">
             <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>

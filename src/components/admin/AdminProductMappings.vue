@@ -10,6 +10,7 @@
         :items="productMappings"
         :items-per-page="10"
         class="elevation-0"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
