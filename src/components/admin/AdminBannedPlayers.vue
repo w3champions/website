@@ -11,12 +11,19 @@
       :items-length="bannedPlayersCount"
       :options="bannedPlayersTableOptions"
       :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :sort-by="[{ key: bannedPlayersTableOptions.sortBy[0]?.key, order: bannedPlayersTableOptions.sortBy[0]?.order }]"
       item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <v-text-field v-model="tableSearch" label="Search ban" variant="underlined" :prepend-icon="mdiMagnify" />
+        <v-toolbar class="ml-3" flat color="transparent">
+          <v-text-field
+            v-model="tableSearch"
+            label="Search ban"
+            :prepend-inner-icon="mdiMagnify"
+            color="primary"
+            variant="underlined"
+          />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">

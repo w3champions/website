@@ -17,7 +17,8 @@
             <v-text-field
               v-model="searchQuery"
               label="Search mute"
-              :prepend-icon="mdiMagnify"
+              :prepend-inner-icon="mdiMagnify"
+              color="primary"
               variant="underlined"
               @keydown.enter="loadMutes"
             />
