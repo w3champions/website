@@ -1,9 +1,13 @@
 <template>
-  <v-dialog :model-value="visible" max-width="800px" @update:model-value="$emit('update:visible', $event)">
+  <v-dialog
+    :model-value="visible"
+    max-width="800px"
+    scrollable
+    @update:model-value="$emit('update:visible', $event)"
+  >
     <v-card>
-      <v-card-title>
-        <span class="text-h5">{{ title }}</span>
-        <v-spacer />
+      <v-card-title class="d-flex justify-space-between align-center">
+        <span>{{ title }}</span>
         <v-btn icon @click="close">
           <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>
@@ -54,7 +58,7 @@
               <v-text-field
                 v-model="searchQuery"
                 label="Search users..."
-                prepend-icon="mdi-magnify"
+                :prepend-icon="mdiMagnify"
                 clearable
                 variant="outlined"
                 density="compact"
@@ -123,7 +127,8 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { RewardAssignment, RewardStatus } from "@/store/admin/types";
-import { mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog } from "@mdi/js";
+import { mdiClose, mdiAlert, mdiAccountOff, mdiPatreon, mdiHandHeart, mdiCog, mdiMagnify } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "RewardUsersDialog",
@@ -154,13 +159,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const searchQuery = ref("");
 
-    const headers = [
-      { text: "User", value: "userId", sortable: true },
-      { text: "Status", value: "status", sortable: true },
-      { text: "Provider", value: "providerId", sortable: true },
-      { text: "Assigned", value: "assignedAt", sortable: true },
-      { text: "Expires", value: "expiresAt", sortable: true },
-      { text: "Revoked Reason", value: "revocationReason", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "User", value: "userId", sortable: true },
+      { title: "Status", value: "status", sortable: true },
+      { title: "Provider", value: "providerId", sortable: true },
+      { title: "Assigned", value: "assignedAt", sortable: true },
+      { title: "Expires", value: "expiresAt", sortable: true },
+      { title: "Revoked Reason", value: "revocationReason", sortable: false },
     ];
 
     const getStatusName = (status: RewardStatus | string): string => {
@@ -248,6 +253,7 @@ export default defineComponent({
       mdiClose,
       mdiAlert,
       mdiAccountOff,
+      mdiMagnify,
     };
   },
 });

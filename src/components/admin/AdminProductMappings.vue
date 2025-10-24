@@ -222,6 +222,7 @@
       :loading="loadingUsers"
       :error="usersError"
       @retry="loadMappingUsers"
+      @update:visible="toggleRewardUsersDialog"
     />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
@@ -512,6 +513,9 @@ export default defineComponent({
       }
     };
 
+    const toggleRewardUsersDialog = (isVisible: boolean) => {
+      usersDialog.value = isVisible;
+    };
 
     onMounted(() => {
       loadData();
@@ -562,6 +566,7 @@ export default defineComponent({
       viewUsers,
       loadMappingUsers,
       isNil,
+      toggleRewardUsersDialog,
 
       // Icons
       mdiDelete,
