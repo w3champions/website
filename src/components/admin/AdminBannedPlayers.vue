@@ -83,7 +83,7 @@
                     </v-col>
 
                     <v-col class="py-0">
-                      <v-tooltip location="top">
+                      <v-tooltip location="top" content-class="w3-tooltip elevation-1">
                         <template v-slot:activator="{ props }">
                           <v-select
                             v-model="editedItem.gameModes"

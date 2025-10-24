@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip v-if="renderIcon" location="top" style="white-space: pre-line">
+  <v-tooltip v-if="renderIcon" location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <img
         class="race-icon"

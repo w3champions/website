@@ -31,7 +31,7 @@
                           <img class="mt-1" :src="item.image" height="40" width="40" />
                         </td>
                         <td>{{ item.name }}</td>
-                        <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top">
+                        <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top" content-class="w3-tooltip elevation-1">
                           <template v-slot:activator="{ props }">
                             <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
                           </template>

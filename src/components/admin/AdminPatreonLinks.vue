@@ -123,7 +123,7 @@
 
         <template v-slot:item.actions="{ item }">
           <div class="d-flex justify-end">
-            <v-tooltip location="bottom">
+            <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
               <template v-slot:activator="{ props }">
                 <v-btn
                   icon
@@ -140,7 +140,7 @@
               </template>
               <span>View details</span>
             </v-tooltip>
-            <v-tooltip location="bottom">
+            <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
               <template v-slot:activator="{ props }">
                 <v-btn
                   icon

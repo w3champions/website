@@ -43,7 +43,7 @@
                   <span class="cursor-pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)" content-class="w3-tooltip elevation-1">
                     <template v-slot:activator="{ props }">
                       <div style="display: inline">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-bind="props" />
@@ -65,7 +65,7 @@
                   <span class="cursor-pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)" content-class="w3-tooltip elevation-1">
                     <template v-slot:activator="{ props }">
                       <div style="display: inline">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-bind="props" />
@@ -95,7 +95,7 @@
                   <span class="cursor-pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)">
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)" content-class="w3-tooltip elevation-1">
                     <template v-slot:activator="{ props }">
                       <div style="display: inline">
                         <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-bind="props" />

@@ -15,7 +15,7 @@
             :location="player.location"
           />
         </span>
-        <v-tooltip location="top" transition="none" content-class="w3-tooltip-style elevation-1">
+        <v-tooltip location="top" transition="none" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <a
               class="truncated-text text-primary cursor-pointer"

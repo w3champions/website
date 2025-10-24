@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tooltip v-if="object.length > 1" :location="align === 'left' ? 'left' : 'right'">
+    <v-tooltip v-if="object.length > 1" :location="align === 'left' ? 'left' : 'right'" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
         <span v-bind="props">{{ stringValues }}</span>
       </template>

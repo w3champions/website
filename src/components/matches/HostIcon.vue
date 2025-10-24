@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="bottom" style="white-space: pre-line">
+  <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <div class="globe" v-bind="props">
         <v-img :src="icon" :width="18" :height="18" />

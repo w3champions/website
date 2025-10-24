@@ -10,7 +10,7 @@
             <v-text-field v-model="mapRef.name" label="Name" autofocus variant="underlined" />
           </v-col>
 
-          <v-tooltip v-if="isAddDialog" location="left">
+          <v-tooltip v-if="isAddDialog" location="left" content-class="w3-tooltip elevation-1">
             <template v-slot:activator="{ props }">
               <v-col cols="12" sm="6" md="12">
                 <v-text-field v-model="mapId" label="Id" v-bind="props" variant="underlined" />

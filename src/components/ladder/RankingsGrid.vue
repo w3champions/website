@@ -58,7 +58,7 @@
                 />
               </div>
               <div v-if="isTwitchLive(item, index)" class="twitch__container">
-                <v-tooltip location="bottom">
+                <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                   <template v-slot:activator="{ props }">
                     <span style="display: inline" class="cursor-pointer" v-bind="props">
                       <v-btn
@@ -99,7 +99,7 @@
                 v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
                 style="position: relative"
               >
-                <v-tooltip location="bottom">
+                <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                   <template v-slot:activator="{ props }">
                     <span style="display: inline" class="cursor-pointer" v-bind="props">
                       <sword-icon class="swords blinker" />

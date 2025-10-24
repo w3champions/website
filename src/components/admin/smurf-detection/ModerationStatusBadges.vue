@@ -1,7 +1,7 @@
 <template>
   <div v-if="hasModerationPermission" class="d-inline-flex align-center">
     <!-- Ban badge -->
-    <v-tooltip v-if="moderationStatus?.ban" location="top">
+    <v-tooltip v-if="moderationStatus?.ban" location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
         <v-chip
           :size="compact ? 'x-small' : 'small'"
@@ -28,7 +28,7 @@
     </v-tooltip>
 
     <!-- Global mute badge -->
-    <v-tooltip v-if="moderationStatus?.globalMute" location="top">
+    <v-tooltip v-if="moderationStatus?.globalMute" location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
         <v-chip
           :size="compact ? 'x-small' : 'small'"
@@ -54,7 +54,7 @@
     </v-tooltip>
 
     <!-- Lounge mute badge -->
-    <v-tooltip v-if="moderationStatus?.loungeMute" location="top">
+    <v-tooltip v-if="moderationStatus?.loungeMute" location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
         <v-chip
           :size="compact ? 'x-small' : 'small'"

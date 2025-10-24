@@ -1,7 +1,7 @@
 <template>
   <v-row class="pl-2">
     <v-col v-if="userProfile.twitch != ''" cols="2" class="pt-0 pb-0">
-      <v-tooltip location="bottom">
+      <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
         <template v-slot:activator="{ props }">
           <v-btn
             icon
@@ -18,7 +18,7 @@
       </v-tooltip>
     </v-col>
     <v-col v-if="userProfile.youtube != ''" cols="2" class="pt-0 pb-0">
-      <v-tooltip location="bottom">
+      <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
         <template v-slot:activator="{ props }">
           <v-btn
             icon
@@ -36,7 +36,7 @@
       </v-tooltip>
     </v-col>
     <v-col v-if="userProfile.twitter != ''" cols="2" class="pt-0 pb-0">
-      <v-tooltip location="bottom">
+      <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
         <template v-slot:activator="{ props }">
           <v-btn
             icon
@@ -53,7 +53,7 @@
       </v-tooltip>
     </v-col>
     <v-col v-if="!!userProfile.trovo" cols="2" class="pt-0 pb-0">
-      <v-tooltip location="bottom">
+      <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
         <template v-slot:activator="{ props }">
           <v-btn
             icon

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top" style="white-space: pre-line">
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <span :class="classes" v-bind="props"></span>
     </template>
@@ -32,7 +32,7 @@ export default defineComponent({
     rndRace: {
       type: Number as PropType<ERaceEnum>,
       required: false,
-      default: undefined,
+      default: null,
     },
   },
   setup(props) {
@@ -47,7 +47,7 @@ export default defineComponent({
     return {
       classes,
       isRandom: props.rndRace !== null,
-      raceName: ERaceEnum[props.rndRace] ?? ERaceEnum[props.race],
+      raceName: props.rndRace === null ? ERaceEnum[props.race] : ERaceEnum[props.rndRace],
     };
   },
 });

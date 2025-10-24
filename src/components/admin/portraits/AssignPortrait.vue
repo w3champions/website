@@ -1,6 +1,6 @@
 <template>
   <v-container @click="assignPortrait">
-    <v-tooltip location="top">
+    <v-tooltip location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
         <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-bind="props" />
       </template>

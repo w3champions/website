@@ -10,7 +10,7 @@
 
       <v-list max-height="400" class="overflow-y-auto">
         <v-list-item v-for="group in groupNames" :key="group">
-          <v-tooltip location="left" max-width="500" min-width="500">
+          <v-tooltip location="left" max-width="500" min-width="500" content-class="w3-tooltip elevation-1">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" @click="addPortraitGroup(group)">
                 {{ group }}

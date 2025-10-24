@@ -2,7 +2,7 @@
   <v-col>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip location="top">
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiSkull }}</v-icon>
           </template>
@@ -15,7 +15,7 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip location="top">
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiChevronTripleUp }}</v-icon>
           </template>
@@ -28,7 +28,7 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip location="top">
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiTreasureChest }}</v-icon>
           </template>

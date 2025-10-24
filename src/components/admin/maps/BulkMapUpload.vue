@@ -78,7 +78,7 @@
               </v-chip>
             </template>
             <template v-slot:[`item.fileName`]="{ item }">
-              <v-tooltip location="bottom">
+              <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
                   <span v-bind="props">{{ item.fileName }}</span>
                 </template>

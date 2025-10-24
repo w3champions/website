@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-tooltip location="top" :disabled="!avatarDescription">
+        <v-tooltip location="top" :disabled="!avatarDescription" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <v-card-text
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
@@ -14,7 +14,7 @@
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
-        <v-tooltip location="bottom">
+        <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <div
               class="country__container cursor-pointer"
@@ -49,7 +49,7 @@
           <v-row class="pb-3" align="center" justify="center">
             <v-card-text class="py-0 w-100" align="center">Starter</v-card-text>
             <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
-              <v-tooltip location="top">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
                   <v-card-text
                     class="player-avatar-choosing cursor-pointer"
@@ -76,7 +76,7 @@
               {{ enumToString(race) }}
             </v-card-text>
             <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
-              <v-tooltip location="top">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
                   <v-card-text
                     :class="getCorrectClasses(raceToAvatar(race), number)"
@@ -94,7 +94,7 @@
           <v-row v-if="specialPictures.length > 0" align="center" justify="center">
             <v-card-text class="py-0 w-100" align="center">Specials</v-card-text>
             <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
-              <v-tooltip location="top">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
                   <v-card-text
                     class="player-avatar-choosing"

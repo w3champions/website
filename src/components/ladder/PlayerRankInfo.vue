@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top">
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <div
         style="display: inline"

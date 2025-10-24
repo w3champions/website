@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip location="top">
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <span :class="{ 'cursor-pointer': clickable }" v-bind="props" @click="clickable && goToCountryRankings()">
         <country-flag

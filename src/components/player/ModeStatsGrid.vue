@@ -1,7 +1,7 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
+  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" :mobile-breakpoint="400" :items-per-page="-1">
     <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ column }">
-      <v-tooltip :key="h.text" location="top">
+      <v-tooltip :key="h.title" location="top">
         <template v-slot:activator="{ props }">
           <span v-bind="props">{{ column.title }}</span>
         </template>
