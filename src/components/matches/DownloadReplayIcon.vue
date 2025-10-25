@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props }">
       <span v-bind="props">
         <v-btn
-          class="ma-2"
+          class="ma-2 w3-gray-gold-text"
           icon
           variant="outlined"
           :loading="downloading"

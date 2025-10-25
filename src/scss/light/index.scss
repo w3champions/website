@@ -30,4 +30,8 @@
     color: rgb(var(--v-theme-secondary-darken-1));
     background-color: rgb(var(--v-theme-w3-race-bg-lighten-1));
   }
+
+  .w3-gray-gold-text {
+    color: rgba(var(--v-theme-black), 0.54) !important;
+  }
 }
