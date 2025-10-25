@@ -1,4 +1,4 @@
-import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BattleTagModerationMap, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData } from "./types";
+import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, BattleTagModerationMap, CreateBanReasonTranslationRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData, UpdateBanReasonTranslationRequest } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import ModerationService from "@/services/admin/ModerationService";
@@ -24,6 +24,7 @@ export const useAdminStore = defineStore("admin", {
     banValidationError: "",
     showJwtExpiredDialog: false,
     battleTagModerationStatus: {} as BattleTagModerationMap,
+    banReasonTranslations: [] as BanReasonTranslation[],
   }),
   actions: {
     async loadBannedPlayers(req: BannedPlayersGetRequest) {
@@ -124,6 +125,28 @@ export const useAdminStore = defineStore("admin", {
         this.SET_SHOW_JWT_EXPIRED_DIALOG(true);
       }
     },
+    async loadBanReasonTranslations(): Promise<void> {
+      const oauthStore = useOauthStore();
+      const translations = await AdminService.getBanReasonTranslations(oauthStore.token);
+      this.SET_BAN_REASON_TRANSLATIONS(translations);
+    },
+    async createBanReasonTranslation(request: CreateBanReasonTranslationRequest): Promise<BanReasonTranslation> {
+      const oauthStore = useOauthStore();
+      const translation = await AdminService.createBanReasonTranslation(request, oauthStore.token);
+      await this.loadBanReasonTranslations();
+      return translation;
+    },
+    async updateBanReasonTranslation(id: string, request: UpdateBanReasonTranslationRequest): Promise<BanReasonTranslation> {
+      const oauthStore = useOauthStore();
+      const translation = await AdminService.updateBanReasonTranslation(id, request, oauthStore.token);
+      await this.loadBanReasonTranslations();
+      return translation;
+    },
+    async deleteBanReasonTranslation(id: string): Promise<void> {
+      const oauthStore = useOauthStore();
+      await AdminService.deleteBanReasonTranslation(id, oauthStore.token);
+      await this.loadBanReasonTranslations();
+    },
     SET_BANNED_PLAYERS(bannedPlayers: BannedPlayersResponse): void {
       this.bannedPlayers = bannedPlayers.players;
       this.bannedPlayersCount = bannedPlayers.total;
@@ -192,6 +215,9 @@ export const useAdminStore = defineStore("admin", {
     },
     SET_BATTLETAG_MODERATION_STATUS(map: BattleTagModerationMap): void {
       this.battleTagModerationStatus = map;
+    },
+    SET_BAN_REASON_TRANSLATIONS(translations: BanReasonTranslation[]): void {
+      this.banReasonTranslations = translations;
     },
   },
 });

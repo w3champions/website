@@ -119,6 +119,27 @@
                         :label="$t(`views_admin.banreason`)"
                       />
                     </v-col>
+                    <v-col cols="12" sm="12" md="12" class="pb-0">
+                      <v-select
+                        v-model="selectedTranslationId"
+                        :items="translationItems"
+                        item-title="label"
+                        item-value="value"
+                        label="User-Visible Ban Reason (Translation)"
+                        clearable
+                        hint="Select a predefined translation or leave empty to use free text"
+                        persistent-hint
+                      />
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12" class="pb-0">
+                      <v-text-field
+                        v-model="userVisibleFreeText"
+                        label="User-Visible Ban Reason (Free Text)"
+                        hint="Only used if no translation is selected"
+                        persistent-hint
+                        :disabled="!!selectedTranslationId"
+                      />
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -151,6 +172,9 @@
         </td>
         <td v-else>All</td>
       </template>
+      <template v-slot:[`item.userVisibleBanReasonText`]="{ item }">
+        <td>{{ getUserVisibleBanReasonText(item) }}</td>
+      </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
@@ -161,7 +185,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
 import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
-import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest, BanReasonTranslation } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -198,6 +222,8 @@ export default defineComponent({
     const dateMenu = ref<boolean>(false);
     const tableSearch = ref<string>("");
     const foundPlayer = ref<string>("");
+    const selectedTranslationId = ref<string>("");
+    const userVisibleFreeText = ref<string>("");
 
     const bannedPlayers = computed<BannedPlayer[]>(() => adminStore.bannedPlayers);
     const bannedPlayersCount = computed<number>(() => adminStore.bannedPlayersCount);
@@ -207,6 +233,15 @@ export default defineComponent({
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
     const selectedDate = ref<Date>();
     const selectedDateString = ref<string>("");
+
+    const banReasonTranslations = computed<BanReasonTranslation[]>(() => adminStore.banReasonTranslations);
+
+    const translationItems = computed(() => {
+      return banReasonTranslations.value.map((t) => ({
+        label: t.translations.en,
+        value: t._id,
+      }));
+    });
 
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
@@ -272,6 +307,19 @@ export default defineComponent({
       editedItem.value.endDate = dateToCurrentTimeDate(selectedDateString.value);
       editedItem.value.battleTag = foundPlayer.value;
 
+      // Build userVisibleBanReason
+      if (selectedTranslationId.value) {
+        editedItem.value.userVisibleBanReason = {
+          translationId: selectedTranslationId.value,
+        };
+      } else if (userVisibleFreeText.value.trim()) {
+        editedItem.value.userVisibleBanReason = {
+          freeText: userVisibleFreeText.value.trim(),
+        };
+      } else {
+        editedItem.value.userVisibleBanReason = undefined;
+      }
+
       await adminStore.postBan(editedItem.value);
 
       if (!isValidationError.value) {
@@ -287,6 +335,7 @@ export default defineComponent({
 
     async function init(): Promise<void> {
       await loadActiveGameModes();
+      await adminStore.loadBanReasonTranslations();
       editedItem.value = Object.assign({}, defaultItem);
     }
 
@@ -311,6 +360,8 @@ export default defineComponent({
       nextTick(() => {
         editedItem.value = Object.assign({}, defaultItem);
       });
+      selectedTranslationId.value = "";
+      userVisibleFreeText.value = "";
       playerSearchStore.clearPlayerSearch();
     }
 
@@ -334,6 +385,25 @@ export default defineComponent({
       foundPlayer.value = "";
     }
 
+    function getUserVisibleBanReasonText(item: BannedPlayer): string {
+      if (!item.userVisibleBanReason) {
+        return "-";
+      }
+      if (item.userVisibleBanReason.freeText) {
+        return item.userVisibleBanReason.freeText;
+      }
+      if (item.userVisibleBanReason.translationId) {
+        const translation = banReasonTranslations.value.find(
+          (t) => t._id === item.userVisibleBanReason?.translationId
+        );
+        if (translation) {
+          return translation.translations.en;
+        }
+        return `[Translation not found: ${item.userVisibleBanReason.translationId}]`;
+      }
+      return "-";
+    }
+
     const headers: DataTableHeader[] = [
       { title: "BattleTag", value: "battleTag", sortable: true, width: "10vw" },
       { title: "Ban End Date", value: "endDate", sortable: true, width: "10vw" },
@@ -342,6 +412,7 @@ export default defineComponent({
       { title: "IP ban", value: "isIpBan", sortable: false, width: "5vw" },
       { title: "Author", value: "author", sortable: true, width: "10vw" },
       { title: "Ban reason", value: "banReason", sortable: false },
+      { title: "User-Visible Ban Reason", value: "userVisibleBanReasonText", sortable: false, width: "15vw" },
       { title: "Actions", value: "actions", sortable: false, width: "1vw", align: "center" },
     ];
 
@@ -368,6 +439,7 @@ export default defineComponent({
       close,
       isEmpty,
       getGameModeName,
+      getUserVisibleBanReasonText,
       save,
       deleteItem,
       onTableOptionsUpdate,
@@ -375,6 +447,9 @@ export default defineComponent({
       selectedDate,
       selectedDateString,
       setSelectedDateString,
+      selectedTranslationId,
+      userVisibleFreeText,
+      translationItems,
     };
   },
 });

@@ -15,6 +15,7 @@ declare module 'vue' {
     AdminAssignments: typeof import('./src/components/admin/AdminAssignments.vue')['default']
     AdminAssignPortraits: typeof import('./src/components/admin/AdminAssignPortraits.vue')['default']
     AdminBannedPlayers: typeof import('./src/components/admin/AdminBannedPlayers.vue')['default']
+    AdminBanReasonTranslations: typeof import('./src/components/admin/AdminBanReasonTranslations.vue')['default']
     AdminCheckJwtLifetime: typeof import('./src/components/admin/AdminCheckJwtLifetime.vue')['default']
     AdminDriftDetection: typeof import('./src/components/admin/AdminDriftDetection.vue')['default']
     AdminGlobalMute: typeof import('./src/components/admin/AdminGlobalMute.vue')['default']

@@ -25,6 +25,7 @@ import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
 import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
+import AdminBanReasonTranslations from "@/components/admin/AdminBanReasonTranslations.vue";
 import Admin from "@/views/Admin.vue";
 import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
 import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
@@ -247,6 +248,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
       { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
+      { path: "admin-ban-reason-translations", name: EAdminRouteName.BAN_REASON_TRANSLATIONS, component: AdminBanReasonTranslations },
       { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
