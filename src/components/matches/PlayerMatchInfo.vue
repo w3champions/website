@@ -8,8 +8,7 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
-
-        <span v-if="!left && (player.countryCode || player.location)">
+        <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
