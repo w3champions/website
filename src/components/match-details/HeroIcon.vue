@@ -96,7 +96,7 @@ export default defineComponent({
   transition: border-color 0.2s;
 }
 .hero-icon-highlight-wrapper.highlighted {
-  border-color: gold;
-  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.5);
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 6px 2px rgba(var(--v-theme-primary), 0.5);
 }
 </style>
