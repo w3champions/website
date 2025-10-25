@@ -39,7 +39,7 @@
             :headers="headers"
             :items="raceWinrate"
             :mobile-breakpoint="400"
-            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+            :header-props="{ class: ['w3-gray-text', 'font-weight-bold', 'w3-font-size-small'] }"
           >
             <template v-slot:body="{ items }">
               <tr v-for="item in items" :key="item.race">
