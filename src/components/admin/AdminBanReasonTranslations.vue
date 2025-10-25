@@ -14,12 +14,11 @@
         <v-toolbar flat color="transparent">
           <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
                 class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                v-bind="props"
                 @click="openAddDialog"
               >
                 Add Translation
@@ -60,7 +59,7 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="close">
+                <v-btn variant="text" @click="close">
                   Cancel
                 </v-btn>
                 <v-btn
@@ -77,8 +76,8 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
