@@ -61,12 +61,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.v-theme--light .hero-level-flag {
-  background: rgba(52, 122, 154, 0.5);
+.v-theme--human, .v-theme--orc {
+  .hero-level-flag {
+    background: rgba(52, 122, 154, 0.5);
+  }
 }
 
-.v-theme--dark .hero-level-flag {
-  background: rgba(50, 194, 165, 0.4);
+.v-theme--nightelf, .v-theme--undead {
+  .hero-level-flag {
+    background: rgba(50, 194, 165, 0.4);
+  }
 }
 
 .hero-level-flag {

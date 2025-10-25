@@ -6,20 +6,22 @@
         {{ selected }}
       </v-btn>
     </template>
-    <v-card class="px-2 pt-2">
+    <v-card class="px-2">
+      <div class="w3-gray-text pt-2 pl-1">{{ $t('components_common_mmrselect.selectmmr') }}</div>
       <v-card-text>
         <v-range-slider
           v-model="currentMinMax"
           color="primary"
+          thumb-color="primary"
           :min="minSelectableMmr"
           :max="maxSelectableMmr"
           step="100"
           thumb-label="always"
-          :hint="$t('components_common_mmrselect.selectmmr')"
-          persistent-hint
-          class="pt-7"
+          class="pt-6"
           strict
           min-width="300"
+          track-size="1"
+          hide-details
         />
       </v-card-text>
     </v-card>
@@ -71,15 +73,8 @@ export default defineComponent({
     };
   },
 });
-
 </script>
 
 <style lang="scss" scoped>
-::v-deep(.v-messages) {
-  font-size: 15px;
-}
 
-::v-deep(.v-theme--dark .v-slider__thumb-label) {
-  color: black;
-}
 </style>

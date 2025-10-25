@@ -160,7 +160,7 @@ export default defineComponent({
   text-align: center;
 }
 
-.v-theme--light {
+.v-theme--human, .v-theme--orc {
   .sub-value {
     border-top: 2px solid rgb(205, 205, 205);
   }

@@ -97,7 +97,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .is-player-matches-tab {
   @media (max-width: 960px) {
     width: 100% !important;
@@ -109,8 +109,5 @@ export default defineComponent({
   border-width: 1px !important;
   border-style: solid !important;
   box-shadow: none !important;
-}
-.is-player-matches-tab.v-theme--dark {
-  color: #ffffff;
 }
 </style>
