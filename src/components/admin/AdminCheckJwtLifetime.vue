@@ -1,5 +1,5 @@
 <template>
-  <sign-in-dialog v-model="showSignInDialog" :isAdminPanel="true" />
+  <sign-in-dialog :value="showSignInDialog" :isAdminPanel="true" />
 </template>
 
 <script lang="ts">

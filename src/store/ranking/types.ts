@@ -1,5 +1,6 @@
 import { WinLoss } from "@/store/overallStats/types";
 import { EGameMode, EGameModeType, ERaceEnum } from "@/store/types";
+import { AliasData } from "../player/types";
 
 export type RankingState = {
   league: number;
@@ -85,6 +86,7 @@ export interface PlayerInfo {
   country: string;
   countryCode: string;
   location: string;
+  playerAkaData: AliasData;
 }
 
 export interface PlayerId {

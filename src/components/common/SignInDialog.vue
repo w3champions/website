@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" max-width="500">
     <v-card>
-      <v-card-title class="justify-center">Select Your Gateway</v-card-title>
+      <v-card-title class="d-flex justify-center pt-5">Select Your Gateway</v-card-title>
       <p v-if="isAdminPanel" class="d-flex justify-center">Your token has expired. Please log in again.</p>
       <v-container>
         <v-row
@@ -9,10 +9,9 @@
           :key="gateway.id"
           class="pa-2"
           justify="center"
-          align="center"
         >
-          <v-btn block x-large @click="signIn(gateway)">
-            <v-col cols="2" align-self="center">
+          <v-btn block size="x-large" @click="signIn(gateway)">
+            <v-col cols="5">
               <v-img
                 min-width="32"
                 max-width="48"
@@ -21,7 +20,7 @@
                 :src="gateway.image"
               />
             </v-col>
-            <v-col cols="2" align-self="center">
+            <v-col cols="5">
               {{ gateway.name }}
             </v-col>
           </v-btn>
@@ -29,7 +28,7 @@
 
         <v-row class="mt-4 mb-1">
           <v-spacer />
-          <v-btn @click.stop="show = false">Close</v-btn>
+          <v-btn @click="show = false">Close</v-btn>
           <v-spacer />
         </v-row>
       </v-container>
@@ -41,7 +40,7 @@
 import { computed, defineComponent } from "vue";
 import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
 import { BnetOAuthRegion } from "@/store/oauth/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";
 
 export default defineComponent({
@@ -81,7 +80,7 @@ export default defineComponent({
         return props.value;
       },
       set(val: boolean): void {
-        context.emit("input", val);
+        context.emit("toggle-dialog", val);
       },
     });
 

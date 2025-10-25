@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row dense :class="left ? 'justify-end' : 'justify-start'">
-      <v-col :order="left ? 1 : 3" class="col-md-auto" :style="{ 'text-align': alignText }">
+      <v-col :order="left ? 1 : 3" cols="auto" :style="{ 'text-align': alignText }">
         <v-row dense>
           <v-col>{{ $t("components_match-details_playerperformanceonmatch.unitskilled") }}</v-col>
         </v-row>
@@ -23,43 +23,38 @@
       </v-col>
       <v-col :order="1" cols="1" />
       <v-col
-        class="col-md-auto"
+        cols="auto"
         :order="left ? 3 : 0"
         :style="{ 'text-align': alignText }"
       >
         <v-row dense>
           <v-col :class="unitsKilledComparison">
-            <number-display :object="unitScore" value="unitsKilled" />
+            <number-display :object="unitScore" value="unitsKilled" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="unitsProducedComparison">
-            <number-display :object="unitScore" value="unitsProduced" />
+            <number-display :object="unitScore" value="unitsProduced" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="goldComparison">
-            <number-display :object="resourceScore" value="goldCollected" />
+            <number-display :object="resourceScore" value="goldCollected" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="woodComparison">
-            <number-display :object="resourceScore" value="lumberCollected" />
+            <number-display :object="resourceScore" value="lumberCollected" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="upkeepComparison">
-            <number-display :object="resourceScore" value="goldUpkeepLost" />
+            <number-display :object="resourceScore" value="goldUpkeepLost" :align="alignText" />
           </v-col>
         </v-row>
         <v-row dense>
           <v-col :class="armyComparison">
-            <number-display
-              :object="unitScore"
-              value="largestArmy"
-              :delimiter="AddValuesDelimiter.SLASH"
-              :align="alignText"
-            />
+            <number-display :object="unitScore" value="largestArmy" :delimiter="AddValuesDelimiter.SLASH" :align="alignText" />
           </v-col>
         </v-row>
       </v-col>
@@ -72,7 +67,7 @@ import { computed, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",
@@ -114,7 +109,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const alignText = ref<string>(props.left ? "right" : "left");
+    const alignText = ref<"right" | "left">(props.left ? "right" : "left");
 
     const goldComparison = computed<TranslateResult>(() => {
       return comparison(

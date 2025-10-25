@@ -1,34 +1,30 @@
 <template>
-  <v-menu offset-x>
-    <template v-slot:activator="{ on }">
+  <v-menu location="right">
+    <template v-slot:activator="{ props }">
       <v-btn
-        tile
-        :class="{ 'is-player-matches-tab': $props.isPlayerMatchesTab }"
-        style="background-color: transparent"
-        v-on="on"
+        :tile="!isPlayerMatchesTab"
+        :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
+        class="bg-transparent text-black-gold"
+        v-bind="props"
       >
-        <v-icon style="margin-right: 5px">{{ mdiDramaMasks }}</v-icon>
+        <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
       </v-btn>
     </template>
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ $t("common.selecthero_highestlevel") }}</v-list-item-title>
         </v-list>
         <v-divider />
-        <v-list dense max-height="400" class="overflow-y-auto">
+        <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="hero in heroFilters"
             :key="hero.type"
             :class="{ 'primary--text': isSelected(hero) }"
             @click="toggleHero(hero)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
             <v-list-item-action>
               <v-icon v-if="isSelected(hero)">mdi-check</v-icon>
             </v-list-item-action>
@@ -41,7 +37,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { TranslateResult, useI18n } from "vue-i18n";
 import { mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
@@ -101,12 +97,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .is-player-matches-tab {
   @media (max-width: 960px) {
     width: 100% !important;
   }
-  margin-top: -8px;
   height: 56px !important;
   min-width: 250px !important;
   border-radius: 4px;
@@ -114,8 +109,5 @@ export default defineComponent({
   border-width: 1px !important;
   border-style: solid !important;
   box-shadow: none !important;
-}
-.is-player-matches-tab.theme--dark {
-  color: #ffffff;
 }
 </style>

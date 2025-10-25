@@ -8,24 +8,23 @@
       :items="tips"
       :items-per-page="10"
       class="elevation-1"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
           <v-spacer />
           <v-dialog v-model="dialog">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                class="mb-2 bg-primary w3-race-bg--text"
+                v-bind="props"
               >
                 Add Tip
               </v-btn>
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
+                {{ formTitle }}
               </v-card-title>
 
               <v-card-text>
@@ -33,20 +32,20 @@
                   <v-textarea
                     v-model="editedTipItem.message"
                     auto-grow
-                    filled
+                    variant="filled"
                     rows="1"
                     label="Message"
+                    color="primary"
                   />
                 </v-container>
               </v-card-text>
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="closeTips">Cancel</v-btn>
+                <v-btn variant="text" @click="closeTips">Cancel</v-btn>
                 <v-btn
-                  color="primary"
-                  class="w3-race-bg--text primary"
-                  text
+                  class="bg-primary w3-race-bg--text"
+                  variant="text"
                   @click="saveTips"
                 >
                   {{ $t(`views_admin.save`) }}
@@ -57,8 +56,8 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteTipItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -71,6 +70,7 @@ import { LoadingScreenTip } from "@/store/admin/infoMessages/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminLoadingScreenTips",
@@ -133,11 +133,11 @@ export default defineComponent({
       await init();
     });
 
-    const headers = [
-      { text: "Author", value: "author" },
-      { text: "Creation Date", value: "creationDate" },
-      { text: "Text", value: "message" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Author", value: "author" },
+      { title: "Creation Date", value: "creationDate" },
+      { title: "Text", value: "message" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {

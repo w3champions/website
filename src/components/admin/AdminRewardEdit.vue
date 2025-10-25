@@ -26,13 +26,12 @@
               :rules="[rules.required]"
               :loading="loading"
               required
-              @change="onModuleChange"
+              @update:model-value="onModuleChange"
             >
-              <template v-slot:item="{ item }">
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.text }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
-                </v-list-item-content>
+              <template v-slot:item="{ props, item }">
+                <v-list-item v-bind="props">
+                  <v-list-item-subtitle>{{ item.raw.description }}</v-list-item-subtitle>
+                </v-list-item>
               </template>
             </v-select>
           </v-col>
@@ -41,13 +40,13 @@
         <!-- Translation Preview -->
         <v-row v-if="localReward.displayId">
           <v-col cols="12">
-            <v-card outlined class="mb-4">
+            <v-card border class="mb-4">
               <v-card-title class="text-subtitle-1">Translation Preview</v-card-title>
               <v-card-text>
                 <div><strong>Name:</strong> {{ getRewardName(localReward.displayId) }}</div>
                 <div><strong>Description:</strong> {{ getRewardDescription(localReward.displayId) }}</div>
                 <div v-if="!hasTranslation(localReward.displayId)" class="text--secondary mt-2">
-                  <v-icon small color="warning">mdi-alert</v-icon>
+                  <v-icon size="small" color="warning">mdi-alert</v-icon>
                   No translation found for display ID "{{ localReward.displayId }}"
                 </div>
               </v-card-text>
@@ -58,11 +57,11 @@
         <!-- Dynamic Module Parameters -->
         <v-row v-if="selectedModule && selectedModule.supportsParameters">
           <v-col cols="12">
-            <v-subheader>Module Parameters</v-subheader>
+            <v-list-subheader>Module Parameters</v-list-subheader>
             <v-alert
               v-if="selectedModule.description"
               type="info"
-              outlined
+              variant="outlined"
               class="mb-4"
             >
               {{ selectedModule.description }}
@@ -97,7 +96,7 @@
                   :rules="paramDef.required ? [rules.required] : []"
                   :hint="paramDef.description + ' (e.g., 1,2,3)'"
                   persistent-hint
-                  @input="(value) => onInput(value, paramKey)"
+                  @update:model-value="(value) => onInput(value, paramKey)"
                 />
               </v-col>
             </v-row>
@@ -116,8 +115,8 @@
 
         <v-row>
           <v-col cols="12">
-            <v-subheader>Duration Settings</v-subheader>
-            <v-radio-group v-model="durationType" row>
+            <v-list-subheader>Duration Settings</v-list-subheader>
+            <v-radio-group v-model="durationType" inline>
               <v-radio label="Permanent" value="permanent" />
               <v-radio label="Time Limited" value="limited" />
             </v-radio-group>
@@ -151,15 +150,14 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
-        color="blue darken-1"
-        text
+        variant="text"
         @click="cancel"
       >
         Cancel
       </v-btn>
       <v-btn
-        color="blue darken-1"
-        text
+        class="bg-primary w3-race-bg--text"
+        variant="text"
         :disabled="!isValid"
         @click="save"
       >
@@ -214,16 +212,16 @@ export default defineComponent({
 
     const moduleItems = computed(() =>
       availableModules.value.map((module) => ({
-        text: module.moduleName,
+        title: module.moduleName,
         value: module.moduleId,
         description: module.description
       }))
     );
 
-    const durationUnitItems = computed(() => [
-      { text: "Days", value: DurationType.Days },
-      { text: "Months", value: DurationType.Months },
-      { text: "Years", value: DurationType.Years },
+    const durationUnitItems = ref<{title: string; value: DurationType}[]>([
+      { title: "Days", value: DurationType.Days },
+      { title: "Months", value: DurationType.Months },
+      { title: "Years", value: DurationType.Years },
     ]);
 
     const isValid = computed(() => {

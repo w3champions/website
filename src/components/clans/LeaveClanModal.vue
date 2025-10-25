@@ -5,8 +5,8 @@
     <v-row class="justify-center">
       <v-col class="text-end">
         <v-dialog v-model="invitePlayerDialog" max-width="600px">
-          <template v-slot:activator="{ on }">
-            <v-btn :disabled="isChieftain" outlined color="error" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn :disabled="isChieftain" variant="outlined" color="error" v-bind="props">
               {{ $t("components_clans_leaveclanmodal.leaveclan") }}
               {{ clanName }}
             </v-btn>
@@ -21,10 +21,10 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="invitePlayerDialog = false">
+              <v-btn color="blue-darken-1" variant="text" @click="invitePlayerDialog = false">
                 {{ $t("components_clans_leaveclanmodal.close") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="leaveClan">
+              <v-btn color="blue-darken-1" variant="text" @click="leaveClan">
                 {{ $t("components_clans_leaveclanmodal.leaveclan") }}
                 {{ clanName }}
               </v-btn>

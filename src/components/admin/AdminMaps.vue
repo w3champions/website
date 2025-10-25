@@ -5,22 +5,24 @@
     </v-card-title>
     <v-container>
       <v-card class="pa-md-4">
-        <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
-        <v-btn color="secondary" class="mb-2 w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
-        <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" dense hide-details />
-        <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px">
+        <div class="d-flex align-center">
+          <v-btn color="primary" class="mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
+          <v-btn color="secondary" class="w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
+          <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
+        </div>
+        <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
         </v-dialog>
 
-        <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px">
+        <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px" scrollable>
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px">
+        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px" scrollable>
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <v-text-field v-model="search" label="Search" />
+        <v-text-field v-model="search" label="Search" variant="underlined" />
         <v-data-table
           :headers="headers"
           :items="maps"
@@ -28,13 +30,14 @@
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
           :search="search"
           class="elevation-1"
+          :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.path`]="{ item }">
             {{ getMapPath(item) }}
           </template>
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
-            <v-icon small class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
+            <v-icon size="small" class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
           </template>
         </v-data-table>
       </v-card>
@@ -51,6 +54,7 @@ import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiFile, mdiPencil } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminMaps",
@@ -180,33 +184,13 @@ export default defineComponent({
       await init();
     });
 
-    const headers = [
-      {
-        text: "Map name",
-        value: "name",
-      },
-      {
-        text: "ID",
-        value: "id",
-      },
-      {
-        text: "Category",
-        value: "category",
-      },
-      {
-        text: "Disabled",
-        value: "disabled",
-      },
-      {
-        text: "File",
-        value: "path",
-        sortable: false
-      },
-      {
-        text: "Actions",
-        value: "actions",
-        sortable: false
-      },
+    const headers: DataTableHeader[] = [
+      { title: "Map name", value: "name" },
+      { title: "ID", value: "id" },
+      { title: "Category", value: "category" },
+      { title: "Disabled", value: "disabled" },
+      { title: "File", value: "path", sortable: false },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {

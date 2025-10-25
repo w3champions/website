@@ -2,10 +2,6 @@
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 }
 
-.pointer {
-  cursor: pointer;
-}
-
 .won {
   color: green !important;
 }
@@ -20,11 +16,11 @@
 }
 
 .custom-table {
+  background-color: transparent !important;
   width: 100%;
   border-spacing: 0;
 
-  td,
-  th {
+  td, th {
     padding: 6px 16px;
   }
 
@@ -32,30 +28,6 @@
     font-size: 0.875rem;
     height: 48px;
   }
-}
-
-.filter-none {
-  filter: none !important;
-}
-
-.filter-blur {
-  filter: blur(0) !important;
-}
-
-header.v-app-bar--is-scrolled + main {
-  .search-bar-container {
-    overflow: unset !important;
-
-    .search-bar {
-      position: sticky;
-      top: 64px;
-      z-index: 10;
-    }
-  }
-}
-
-.float-clear {
-  clear: both;
 }
 
 .circle {
@@ -105,7 +77,20 @@ header.v-app-bar--is-scrolled + main {
   text-decoration: none;
 }
 
-.theme--dark.v-application .v-btn.join-button {
-  text-shadow: none;
-  color: black;
+p {
+  margin-bottom: 16px;
+}
+
+ul, ol {
+    padding-left: 24px;
+}
+
+@media (min-width: 1904px) {
+  .w3-container-width {
+    max-width: 1185px;
+  }
+}
+
+.w3-font-size-small {
+  font-size: small;
 }

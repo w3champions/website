@@ -18,46 +18,46 @@
           <v-select
             class="over-chart-select-box"
             :items="activeGameModesWithAll()"
-            item-text="name"
+            item-title="name"
             item-value="id"
-            :value="profileMatchesGameMode"
+            :model-value="profileMatchesGameMode"
             label="Mode"
-            outlined
-            @change="setSelectedGameModeForSearch"
+            variant="outlined"
+            @update:model-value="setSelectedGameModeForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="player-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="playerRace"
+            :model-value="playerRace"
             label="Player Race"
-            outlined
-            @change="setPlayerRaceForSearch"
+            variant="outlined"
+            @update:model-value="setPlayerRaceForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
             class="opponent-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="opponentRace"
+            :model-value="opponentRace"
             label="Opponent Race"
-            outlined
-            @change="setOpponentRaceForSearch"
+            variant="outlined"
+            @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
-        <v-col align-self="center" cols="12" md="3">
+        <v-col cols="12" md="3">
           <hero-select
             :is-player-matches-tab="true"
             :selectedHeroes="selectedHeroes"
             @heroChanged="heroChanged"
           />
         </v-col>
-        <v-col align-self="center">
+        <v-col class="pt-5 pl-0">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
@@ -91,8 +91,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
+import { useI18n } from "vue-i18n";
+import { loadActiveGameModes, activeGameModesWithAll } from "@/composables/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";

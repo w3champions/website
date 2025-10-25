@@ -2,21 +2,19 @@
   <v-combobox
     v-model="chips"
     :items="items"
-    small-chips
     clearable
     label="Assign Groups (optional) - Select existing or enter a new group"
     multiple
+    variant="underlined"
   >
-    <template v-slot:selection="{ attrs, item, select, selected }">
+    <template v-slot:selection="{ item }">
       <v-chip
-        v-bind="attrs"
-        :color="'blue lighten-3'"
-        :input-value="selected"
-        close
-        @click="select"
-        @click:close="remove(item)"
+        color="primary"
+        variant="flat"
+        closable
+        @click:close="remove(item.value)"
       >
-        {{ item }}
+        {{ item.value }}
       </v-chip>
     </template>
   </v-combobox>
@@ -53,8 +51,7 @@ export default defineComponent({
     }
 
     function remove(item: string) {
-      chips.value.splice(chips.value.indexOf(item), 1);
-      chips.value = [...chips.value];
+      chips.value = chips.value.filter((x) => x !== item);
     }
 
     async function init(): Promise<void> {

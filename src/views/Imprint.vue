@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card>
@@ -95,9 +95,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.v-card__title, .v-card__text {
-  filter: blur(0) !important;
-}
-</style>

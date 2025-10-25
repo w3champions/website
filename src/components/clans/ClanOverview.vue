@@ -40,13 +40,13 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.ChiefTain" />
-                  <span class="pointer" @click="goToPlayer(playersClan.chiefTain)">
+                  <span class="cursor-pointer" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(playersClan.chiefTain)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)" content-class="w3-tooltip elevation-1">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -62,13 +62,13 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.Shaman" />
-                  <span class="pointer" @click="goToPlayer(shaman)">
+                  <span class="cursor-pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(shaman)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)" content-class="w3-tooltip elevation-1">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -92,13 +92,13 @@
               <v-row class="justify-space-between align-center ma-0">
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.Member" />
-                  <span class="pointer" @click="goToPlayer(member)">
+                  <span class="cursor-pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
-                  <v-tooltip top :disabled="!getLeagueOrder(member)">
-                    <template v-slot:activator="{ on }">
-                      <div style="display: inline" v-on="on">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-on="on" />
+                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)" content-class="w3-tooltip elevation-1">
+                    <template v-slot:activator="{ props }">
+                      <div style="display: inline">
+                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-bind="props" />
                       </div>
                     </template>
                     <div>1 vs 1</div>
@@ -124,7 +124,7 @@
         <table class="custom-table">
           <tr v-for="member in playersClan.foundingFathers" :key="member">
             <td>
-              <span class="pointer" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
+              <span class="cursor-pointer" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
             </td>
           </tr>
         </table>
@@ -156,7 +156,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useClanStore } from "@/store/clan/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({

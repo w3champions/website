@@ -3,41 +3,46 @@
     <v-card-title>
       Banned Players
     </v-card-title>
-    <v-data-table
+    <v-data-table-server
       :headers="headers"
       :items="bannedPlayers"
-      :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
+      :items-per-page-options="[10, 25, 50, 100]"
       :search="tableSearch"
-      :server-items-length="bannedPlayersCount"
+      :items-length="bannedPlayersCount"
       :options="bannedPlayersTableOptions"
-      class="elevation-1"
-      item-key="banInsertDate"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :sort-by="[{ key: bannedPlayersTableOptions.sortBy[0]?.key, order: bannedPlayersTableOptions.sortBy[0]?.order }]"
+      item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <v-text-field v-model="tableSearch" label="Search ban" :prepend-icon="mdiMagnify" />
+        <v-toolbar class="ml-3" flat color="transparent">
+          <v-text-field
+            v-model="tableSearch"
+            label="Search ban"
+            :prepend-inner-icon="mdiMagnify"
+            color="primary"
+            variant="underlined"
+          />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                class="bg-primary mb-2 w3-race-bg--text"
+                v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
               </v-btn>
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5">New Item</span>
+                New Item
               </v-card-title>
 
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="12" class="pb-0">
+                    <v-col cols="12" sm="6" md="12">
                       <player-search
                         @playerFound="playerFound"
                         @searchCleared="searchCleared"
@@ -49,23 +54,25 @@
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props }">
                           <v-text-field
-                            v-model="editedItem.endDate"
+                            v-model="selectedDateString"
                             readonly
+                            variant="underlined"
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
                           />
                         </template>
                         <v-date-picker
-                          v-model="editedItem.endDate"
-                          no-title
-                          scrollable
+                          v-model="selectedDate"
+                          first-day-of-week="1"
+                          hide-header
+                          show-adjacent-months
+                          @update:modelValue="setSelectedDateString"
                         >
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
                               editedItem.endDate = '';
                               dateMenu = false;
@@ -74,8 +81,7 @@
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
                           <v-btn
-                            color="primary"
-                            class="w3-race-bg--text"
+                            class="bg-primary w3-race-bg--text"
                             @click="dateMenu = false"
                           >
                             {{ $t(`views_admin.ok`) }}
@@ -85,18 +91,19 @@
                     </v-col>
 
                     <v-col class="py-0">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
+                      <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                        <template v-slot:activator="{ props }">
                           <v-select
                             v-model="editedItem.gameModes"
                             :items="activeGameModes()"
-                            item-text="name"
+                            item-title="name"
                             item-value="id"
                             :menu-props="{ maxHeight: '400' }"
                             :label="$t(`views_admin.gameMode`)"
                             multiple
+                            v-bind="props"
                             hint="Which game modes to ban from?"
-                            v-on="on"
+                            variant="underlined"
                           />
                         </template>
                         <span>
@@ -108,6 +115,7 @@
                     <v-col cols="12" sm="12" md="12" class="pb-0">
                       <v-text-field
                         v-model="editedItem.banReason"
+                        variant="underlined"
                         :label="$t(`views_admin.banreason`)"
                       />
                     </v-col>
@@ -118,7 +126,7 @@
               <v-alert
                 v-model="isValidationError"
                 type="warning"
-                dense
+                density="compact"
                 class="ml-4 mr-4"
               >
                 {{ banValidationError }}
@@ -126,10 +134,10 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="close">
+                <v-btn variant="text" @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="save">
+                <v-btn class="bg-primary w3-race-bg--text" @click="save">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>
@@ -139,20 +147,20 @@
       </template>
       <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
-          <div v-for="id in item.gameModes" :key="id">{{ getGameModeName(id) }}</div>
+          <div v-for="(id, index) in item.gameModes" :key="`${id}-${index}`">{{ getGameModeName(id) }}</div>
         </td>
         <td v-else>All</td>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, nextTick, ref, watch } from "vue";
-import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { BannedPlayer, BannedPlayersGetRequest } from "@/store/admin/types";
 import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -161,18 +169,18 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
-import { dateToCurrentTimeDate } from "@/helpers/date-functions";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
-import { DataOptions } from "vuetify";
+import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
+import { TranslateResult, useI18n } from "vue-i18n";
 import debounce from "debounce";
+import { DataTableHeader } from "vuetify";
+import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort";
 
-type AdminBannedPlayersHeader = {
-  text: string;
-  value: string;
-  sortable: boolean;
-  width?: string;
-  filterable: boolean;
-  align?: "start" | "center" | "end";
+type VuetifyTableUpdateOptions = {
+  page: number;
+  itemsPerPage: number;
+  sortBy: Array<SortItem>;
+  groupBy: Array<string>;
+  search: string;
 };
 
 export default defineComponent({
@@ -197,19 +205,19 @@ export default defineComponent({
     const isValidationError = computed<boolean>(() => adminStore.banValidationError !== "");
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const editedItem = ref<BannedPlayer>({} as BannedPlayer);
+    const selectedDate = ref<Date>();
+    const selectedDateString = ref<string>("");
 
     const SEARCH_DELAY = 500;
     const debouncedLoadBanList = debounce(loadBanList, SEARCH_DELAY);
 
-    const bannedPlayersTableOptions = ref<DataOptions>({
+    // https://vuetifyjs.com/en/api/v-data-table-server/
+    const bannedPlayersTableOptions = ref<VuetifyTableUpdateOptions>({
       page: 1,
       itemsPerPage: 10,
-      sortBy: ["banInsertDate"],
-      sortDesc: [true],
+      sortBy: [{ key: "banInsertDate", order: "desc" }],
       groupBy: [],
-      groupDesc: [],
-      multiSort: false,
-      mustSort: false,
+      search: "",
     });
 
     const defaultItem = {
@@ -222,9 +230,11 @@ export default defineComponent({
       author: "",
     };
 
-    async function onTableOptionsUpdate(dataOptions: DataOptions) {
+    // TODO: Only debounce the request when you're searching, not when you're doing something else,
+    // like changing the sort key, sort order or page.
+    async function onTableOptionsUpdate(dataOptions: VuetifyTableUpdateOptions) {
       bannedPlayersTableOptions.value = dataOptions;
-      await loadBanList();
+      await debouncedLoadBanList();
     }
 
     function getGameModeName(id: EGameMode): TranslateResult {
@@ -240,8 +250,8 @@ export default defineComponent({
       return {
         page: bannedPlayersTableOptions.value.page,
         itemsPerPage: bannedPlayersTableOptions.value.itemsPerPage,
-        sortBy: bannedPlayersTableOptions.value.sortBy[0],
-        sortDirection: bannedPlayersTableOptions.value.sortDesc[0] ? "desc" : "asc",
+        sortBy: bannedPlayersTableOptions.value.sortBy[0]?.key,
+        sortDirection: bannedPlayersTableOptions.value.sortBy[0]?.order,
         search: tableSearch.value,
       };
     }
@@ -259,7 +269,7 @@ export default defineComponent({
 
     async function save(): Promise<void> {
       editedItem.value.author = author.value;
-      editedItem.value.endDate = dateToCurrentTimeDate(editedItem.value.endDate);
+      editedItem.value.endDate = dateToCurrentTimeDate(selectedDateString.value);
       editedItem.value.battleTag = foundPlayer.value;
 
       await adminStore.postBan(editedItem.value);
@@ -284,18 +294,18 @@ export default defineComponent({
       await init();
     });
 
-    watch(tableSearch, onTableSearch);
+    // watch(tableSearch, onTableSearch);
 
     // Fetching the ban list is done automatically when changing the page.
     // We need to set the page to 1 when searching, otherwise you could be on page 5 for instance when making a more narrow search,
     // which leaves you with an empty table.
-    async function onTableSearch(): Promise<void> {
-      if (bannedPlayersTableOptions.value.page === 1) {
-        await debouncedLoadBanList();
-      } else {
-        bannedPlayersTableOptions.value.page = 1;
-      }
-    }
+    // async function onTableSearch(): Promise<void> {
+    //   if (bannedPlayersTableOptions.value.page === 1) {
+    //     await debouncedLoadBanList();
+    //   } else {
+    //     bannedPlayersTableOptions.value.page = 1;
+    //   }
+    // }
 
     function resetDialog(): void {
       nextTick(() => {
@@ -311,6 +321,8 @@ export default defineComponent({
         adminStore.resetBanValidationMessage();
         resetDialog();
         playerSearchStore.clearPlayerSearch();
+        foundPlayer.value = "";
+        selectedDateString.value = "";
       }
     }
 
@@ -322,16 +334,20 @@ export default defineComponent({
       foundPlayer.value = "";
     }
 
-    const headers: AdminBannedPlayersHeader[] = [
-      { text: "BattleTag", value: "battleTag", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban End Date", value: "endDate", sortable: true, width: "10vw", filterable: false },
-      { text: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw", filterable: false },
-      { text: "Game modes", value: "gameModesText", sortable: false, width: "10vw", filterable: false },
-      { text: "IP ban", value: "isIpBan", sortable: false, width: "5vw", filterable: false },
-      { text: "Author", value: "author", sortable: true, width: "10vw", filterable: true },
-      { text: "Ban reason", value: "banReason", sortable: false, filterable: false },
-      { text: "Actions", value: "actions", sortable: false, filterable: false, width: "1vw", align: "center" },
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", value: "battleTag", sortable: true, width: "10vw" },
+      { title: "Ban End Date", value: "endDate", sortable: true, width: "10vw" },
+      { title: "Ban Insert Date", value: "banInsertDate", sortable: true, width: "10vw" },
+      { title: "Game modes", value: "gameModesText", sortable: false, width: "10vw" },
+      { title: "IP ban", value: "isIpBan", sortable: false, width: "5vw" },
+      { title: "Author", value: "author", sortable: true, width: "10vw" },
+      { title: "Ban reason", value: "banReason", sortable: false },
+      { title: "Actions", value: "actions", sortable: false, width: "1vw", align: "center" },
     ];
+
+    const setSelectedDateString = (date: Date) => {
+      selectedDateString.value = formatTimestampString(date, "yyyy-MM-dd");
+    };
 
     return {
       mdiDelete,
@@ -356,6 +372,9 @@ export default defineComponent({
       deleteItem,
       onTableOptionsUpdate,
       bannedPlayersTableOptions,
+      selectedDate,
+      selectedDateString,
+      setSelectedDateString,
     };
   },
 });

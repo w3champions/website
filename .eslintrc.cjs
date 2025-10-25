@@ -74,6 +74,10 @@ module.exports = {
     "vue/no-v-html": ["off"],
     "vue/no-lone-template": ["warn"],
 
+    // This rule is for Vue 2, and was deprecated in eslint-plugin-vue v10.0.0, and will be removed in v11.
+    // https://github.com/vuejs/eslint-plugin-vue/pull/2675
+    "vue/no-v-model-argument": ["off"],
+
     // Vue rules for Vue 3 migration
     "vue/no-deprecated-delete-set": "warn",
     "vue/no-deprecated-dollar-listeners-api": "warn",

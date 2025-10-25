@@ -5,12 +5,11 @@
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
-        <v-tabs-slider />
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tabsModel">
-        <v-tab-item :transition="false">
+      <v-window v-model="tabsModel">
+        <v-window-item :transition="false">
           <v-text-field
             v-model="name"
             label="Name"
@@ -21,7 +20,7 @@
             v-if="isEdit"
             v-model="state"
             :items="states"
-            item-text="name"
+            item-title="name"
             item-value="id"
             label="State"
             hide-details
@@ -29,8 +28,18 @@
             :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
-            <v-date-picker v-model="startDate" landscape />
-            <v-time-picker v-model="startTime" landscape format="24hr" />
+            <v-date-picker
+              v-model="startDate"
+              landscape
+              first-day-of-week="1"
+              hide-header
+              show-adjacent-months
+            />
+            <v-time-picker
+              v-model="startTime"
+              landscape
+              format="24hr"
+            />
           </div>
           <div class="mt-4">
             Map Pool
@@ -42,13 +51,12 @@
                 :multiple="true"
                 :label="map.name"
                 :value="map.id"
-                :dense="true"
                 hide-details
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-        <v-tab-item :transition="false">
+        </v-window-item>
+        <v-window-item :transition="false">
           <v-row class="mt-0">
             <v-col cols="4">
               <v-text-field
@@ -98,7 +106,7 @@
                 v-model="mode"
                 :items="gameModes"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Game Mode"
                 hide-details
@@ -110,7 +118,7 @@
                 v-model="format"
                 :items="formats"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Format"
                 hide-details
@@ -124,7 +132,7 @@
                 v-model="maxPlayers"
                 :items="[2, 4, 8, 16, 32, 64]"
                 label="Max Players"
-                outlined
+                variant="outlined"
               />
             </v-col>
             <v-col cols="3">
@@ -132,10 +140,10 @@
                 v-model="floNode"
                 :items="enabledFloNodes"
                 label="Flo Node"
-                item-text="name"
+                item-title="name"
                 return-object
-                outlined
-                @change="setFloNode"
+                variant="outlined"
+                @update:model-value="setFloNode"
               />
             </v-col>
             <v-col cols="3">
@@ -143,20 +151,20 @@
                 v-model="floNodeMaxPing"
                 :items="[100, 200, 300, 400]"
                 label="Flo Node Max Ping"
-                outlined
+                variant="outlined"
                 :disabled="floNode === null"
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-window-item>
+      </v-window>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || !formValid" @click="save">
+      <v-btn class="bg-primary w3-race-bg--text" :disabled="saving || !formValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

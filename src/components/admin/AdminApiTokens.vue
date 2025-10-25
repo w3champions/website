@@ -2,11 +2,10 @@
   <div>
     <v-container>
       <v-card>
-        <v-card-title>
+        <v-card-title class="d-flex justify-space-between">
           API Token Management
-          <v-spacer />
           <v-btn color="primary" @click="showCreateDialog = true">
-            <v-icon left>{{ mdiPlus }}</v-icon>
+            <v-icon start>{{ mdiPlus }}</v-icon>
             Create Token
           </v-btn>
         </v-card-title>
@@ -21,8 +20,8 @@
             <template v-slot:item.isActive="{ item }">
               <v-chip
                 :color="item.isActive ? 'success' : 'error'"
-                small
-                dark
+                size="small"
+                variant="flat"
               >
                 {{ item.isActive ? 'Active' : 'Inactive' }}
               </v-chip>
@@ -31,8 +30,8 @@
             <template v-slot:item.token="{ item }">
               <div style="display: flex; align-items: center;">
                 <code style="font-size: 0.8em;">{{ item.token.substring(0, 8) }}...</code>
-                <v-btn icon small @click="copyTokenValue(item.token)">
-                  <v-icon small>{{ mdiContentCopy }}</v-icon>
+                <v-btn icon size="small" variant="plain" @click="copyTokenValue(item.token)">
+                  <v-icon>{{ mdiContentCopy }}</v-icon>
                 </v-btn>
               </div>
             </template>
@@ -41,9 +40,10 @@
               <v-chip
                 v-for="scope in Object.keys(item.scopes || {})"
                 :key="scope"
-                small
+                size="small"
                 class="mr-1"
                 :color="item.scopes[scope].isEnabled ? 'primary' : 'grey'"
+                variant="flat"
               >
                 {{ scope }}
               </v-chip>
@@ -58,19 +58,19 @@
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <v-btn icon @click="showTokenDetails(item)">
+              <v-btn icon size="small" variant="plain" @click="showTokenDetails(item)">
                 <v-icon>{{ mdiEye }}</v-icon>
               </v-btn>
-              <v-btn icon @click="editToken(item)">
+              <v-btn icon size="small" variant="plain" @click="editToken(item)">
                 <v-icon>{{ mdiPencil }}</v-icon>
               </v-btn>
-              <v-btn icon @click="toggleTokenStatus(item)">
+              <v-btn icon size="small" variant="plain" @click="toggleTokenStatus(item)">
                 <v-icon>{{ item.isActive ? mdiPause : mdiPlay }}</v-icon>
               </v-btn>
-              <v-btn icon @click="regenerateToken(item)">
+              <v-btn icon size="small" variant="plain" @click="regenerateToken(item)">
                 <v-icon>{{ mdiRefresh }}</v-icon>
               </v-btn>
-              <v-btn icon @click="deleteToken(item)">
+              <v-btn icon size="small" variant="plain" @click="deleteToken(item)">
                 <v-icon>{{ mdiDelete }}</v-icon>
               </v-btn>
             </template>
@@ -89,18 +89,21 @@
           <v-text-field
             v-model="tokenForm.name"
             label="Name"
+            variant="underlined"
             required
           />
 
           <v-textarea
             v-model="tokenForm.description"
             label="Description"
+            variant="underlined"
             rows="2"
           />
 
           <v-text-field
             v-model="tokenForm.contactDetails"
             label="Contact Details"
+            variant="underlined"
           />
 
           <v-combobox
@@ -111,27 +114,29 @@
             clearable
             hint="Enter IP addresses and press enter"
             persistent-hint
+            variant="underlined"
           />
 
           <v-menu
             v-model="dateMenu"
             :close-on-content-click="false"
             transition="scale-transition"
-            offset-y
-            min-width="auto"
           >
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-text-field
                 v-model="tokenForm.expiresAt"
                 label="Expires At (optional)"
                 readonly
-                v-bind="attrs"
                 clearable
-                v-on="on"
+                v-bind="props"
+                variant="underlined"
               />
             </template>
             <v-date-picker
               v-model="tokenForm.expiresAt"
+              first-day-of-week="1"
+              hide-header
+              show-adjacent-months
               @input="dateMenu = false"
             />
           </v-menu>
@@ -142,27 +147,27 @@
             Scopes & Rate Limits
             <v-btn
               color="primary"
-              small
-              outlined
+              size="small"
+              variant="outlined"
               class="ml-4"
               @click="addScope"
             >
-              <v-icon left>{{ mdiPlus }}</v-icon>
+              <v-icon start>{{ mdiPlus }}</v-icon>
               Add Scope
             </v-btn>
           </div>
 
-          <v-alert type="info" dense class="mb-3">
+          <v-alert type="info" density="compact" class="mb-3">
             Define scopes to allow different rate limits for different resource categories (e.g., "replay", "stats", "profile")
           </v-alert>
 
-          <v-card v-for="(scope, scopeName, index) in tokenForm.scopes" :key="`scope-${index}`" class="mb-2 pa-3" outlined>
+          <v-card v-for="(scope, scopeName, index) in tokenForm.scopes" :key="`scope-${index}`" class="mb-2 pa-3" border>
             <v-row align="center">
               <v-col cols="3">
                 <v-text-field
-                  :value="scopeName"
+                  :model-value="scopeName"
                   label="Scope Name"
-                  dense
+                  density="compact"
                   :disabled="editingToken !== null"
                   hint="e.g., replay, stats"
                   @blur="(e) => renameScope(scopeName, e.target.value)"
@@ -173,7 +178,7 @@
                   v-model.number="scope.hourlyLimit"
                   label="Hourly Limit"
                   type="number"
-                  dense
+                  density="compact"
                 />
               </v-col>
               <v-col cols="3">
@@ -181,14 +186,14 @@
                   v-model.number="scope.dailyLimit"
                   label="Daily Limit"
                   type="number"
-                  dense
+                  density="compact"
                 />
               </v-col>
               <v-col cols="2">
                 <v-switch
                   v-model="scope.isEnabled"
                   label="Enabled"
-                  dense
+                  density="compact"
                 />
               </v-col>
               <v-col cols="1">
@@ -199,15 +204,15 @@
             </v-row>
           </v-card>
 
-          <div v-if="Object.keys(tokenForm.scopes).length === 0" class="text-center py-3 grey--text">
+          <div v-if="Object.keys(tokenForm.scopes).length === 0" class="text-center py-3 text-grey">
             No scopes defined. Click "Add Scope" to create one.
           </div>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="closeDialog">Cancel</v-btn>
-          <v-btn color="primary" @click="saveToken">Save</v-btn>
+          <v-btn variant="text" @click="closeDialog">Cancel</v-btn>
+          <v-btn class="bg-primary" @click="saveToken">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -218,7 +223,7 @@
         <v-card-title>API Token Details</v-card-title>
         <v-card-text>
           <v-text-field
-            :value="newTokenValue"
+            :model-value="newTokenValue"
             label="API Token"
             readonly
             :append-icon="mdiContentCopy"
@@ -242,7 +247,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="showDeleteDialog = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showDeleteDialog = false">Cancel</v-btn>
           <v-btn color="error" @click="confirmDelete">Delete</v-btn>
         </v-card-actions>
       </v-card>
@@ -253,7 +258,7 @@
       <v-card>
         <v-card-title>Confirm Token Regeneration</v-card-title>
         <v-card-text>
-          <v-alert type="warning" dense class="mb-3">
+          <v-alert type="warning" density="compact" class="mb-3">
             Regenerating this token will invalidate the current token value.
           </v-alert>
           <p>Are you sure you want to regenerate the token "{{ tokenToRegenerate?.name }}"?</p>
@@ -261,7 +266,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="showRegenerateDialog = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showRegenerateDialog = false">Cancel</v-btn>
           <v-btn color="warning" @click="confirmRegenerate">Regenerate</v-btn>
         </v-card-actions>
       </v-card>
@@ -275,6 +280,7 @@ import { mdiPlus, mdiPencil, mdiDelete, mdiRefresh, mdiPause, mdiPlay, mdiConten
 import ApiTokenService from "@/services/admin/ApiTokenService";
 import { ApiToken, CreateApiTokenRequest, UpdateApiTokenRequest } from "@/types/admin/ApiToken";
 import { useOauthStore } from "@/store/oauth/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminApiTokens",
@@ -304,15 +310,15 @@ export default defineComponent({
       expiresAt: null,
     });
 
-    const headers = [
-      { text: "Name", value: "name" },
-      { text: "Token", value: "token", sortable: false },
-      { text: "Status", value: "isActive" },
-      { text: "Scopes", value: "scopes", sortable: false },
-      { text: "Contact", value: "contactDetails" },
-      { text: "Expires", value: "expiresAt" },
-      { text: "Last Used", value: "lastUsedAt" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Name", value: "name" },
+      { title: "Token", value: "token", sortable: false },
+      { title: "Status", value: "isActive" },
+      { title: "Scopes", value: "scopes", sortable: false },
+      { title: "Contact", value: "contactDetails" },
+      { title: "Expires", value: "expiresAt" },
+      { title: "Last Used", value: "lastUsedAt" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     async function loadTokens() {

@@ -28,7 +28,7 @@ import { computed, defineComponent } from "vue";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { ModeStat } from "@/store/player/types";
-import { AT_modes } from "@/mixins/GameModesMixin";
+import { AT_modes } from "@/composables/GameModesMixin";
 
 export default defineComponent({
   name: "PlayerArrangedTeamsTab",

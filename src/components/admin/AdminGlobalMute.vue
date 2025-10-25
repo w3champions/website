@@ -9,25 +9,25 @@
         :items-per-page="-1"
         :items="globallyMutedPlayers"
         hide-default-footer
-        sort-by="id"
-        :sort-desc="true"
+        :sort-by="[{ key: 'id', order: 'desc' }]"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
             <v-text-field
               v-model="searchQuery"
               label="Search mute"
-              :prepend-icon="mdiMagnify"
+              :prepend-inner-icon="mdiMagnify"
+              color="primary"
+              variant="underlined"
               @keydown.enter="loadMutes"
             />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  color="primary"
-                  class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  class="mb-2 bg-primary w3-race-bg--text"
+                  v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-btn>
@@ -39,35 +39,42 @@
                 </v-card-title>
 
                 <v-card-text>
-                  <v-container>
-                    <v-row>
+                  <v-container class="px-0">
+                    <v-col class="pb-5">
                       <player-search
-                        classes="ml-5 mr-5"
                         @searchCleared="searchCleared"
                         @playerFound="playerFound"
                       />
-                    </v-row>
-                    <v-row v-if="showConfirmation" class="ma-2">
+                    </v-col>
+                    <v-row v-if="showConfirmation" class="px-6 pt-2">
                       <v-menu
                         v-model="dateMenu"
                         :close-on-content-click="false"
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ props }">
                           <v-text-field
-                            v-model="banExpiry"
+                            v-model="selectedDateString"
                             readonly
                             :label="$t(`views_admin.banenddate`)"
-                            v-bind="attrs"
-                            v-on="on"
+                            v-bind="props"
+                            class="w-100"
+                            variant="underlined"
                           />
                         </template>
-                        <v-date-picker v-model="banExpiry" no-title scrollable max="2099-01-01">
+                        <v-date-picker
+                          v-model="selectedDate"
+                          first-day-of-week="1"
+                          hide-header
+                          show-adjacent-months
+                          max="2099-01-01"
+                          @update:modelValue="setSelectedDateString"
+                        >
                           <v-spacer />
                           <v-btn
-                            text
+                            variant="text"
                             @click="
-                              banExpiry = '';
+                              clearDate();
                               dateMenu = false;
                             "
                           >
@@ -92,24 +99,24 @@
                       </v-card-title>
                     </v-row>
 
-                    <v-row>
+                    <v-row class="mx-1">
                       <v-col>
-                        <v-btn
-                          v-if="showConfirmation && banDateSet"
-                          color="primary"
-                          class="w3-race-bg--text"
-                          @click="save"
-                        >
-                          {{ $t(`views_admin.ok`) }}
-                        </v-btn>
-                      </v-col>
-                      <v-col class="text-right">
                         <v-btn
                           color="primary"
                           class="w3-race-bg--text"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}
+                        </v-btn>
+                      </v-col>
+                      <v-col class="text-right">
+                        <v-btn
+                          v-if="showConfirmation && selectedDate"
+                          color="primary"
+                          class="w3-race-bg--text"
+                          @click="save"
+                        >
+                          {{ $t(`views_admin.ok`) }}
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -121,7 +128,7 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
       <v-row class="ma-2">
@@ -143,6 +150,8 @@ import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify, mdiDelete } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
+import { formatTimestampString } from "@/helpers/date-functions";
 
 export default defineComponent({
   name: "AdminGlobalMute",
@@ -154,16 +163,16 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const playerSearchStore = usePlayerSearchStore();
 
-    const banExpiry = ref<string>("");
     const dateMenu = ref<boolean>(false);
     const dialog = ref<boolean>(false);
     const showConfirmation = ref<boolean>(false);
     const player = ref<string>("");
     const searchQuery = ref<string | undefined>(undefined);
+    const selectedDate = ref<Date>();
+    const selectedDateString = ref<string>("");
     const mutesNextId = computed<number | null>(() => adminStore.mutesNextId);
 
     const globallyMutedPlayers = computed<GloballyMutedPlayer[]>(() => adminStore.globallyMutedPlayers);
-    const banDateSet = computed<boolean>(() => banExpiry.value != "");
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
@@ -180,7 +189,7 @@ export default defineComponent({
 
     async function save(): Promise<void> {
       close();
-      const mute = { battleTag: player.value, expiresAt: banExpiry.value, author: author.value } as GlobalMute;
+      const mute = { battleTag: player.value, expiresAt: selectedDateString.value, author: author.value } as GlobalMute;
       await adminStore.addGlobalMute(mute);
       loadMutes();
     }
@@ -202,10 +211,16 @@ export default defineComponent({
       await init();
     });
 
+    const clearDate = (): void => {
+      selectedDate.value = undefined;
+      selectedDateString.value = "";
+    };
+
     function searchCleared(): void {
       showConfirmation.value = false;
-      banExpiry.value = "";
+      clearDate();
     }
+
 
     function playerFound(bTag: string): void {
       showConfirmation.value = true;
@@ -221,38 +236,42 @@ export default defineComponent({
       }
     }
 
-    const headers = [
+    const headers: DataTableHeader[] = [
       {
-        text: "Flo Ban Id",
+        title: "Flo Ban Id",
         sortable: true,
         value: "id",
       },
       {
-        text: "BattleTag",
+        title: "BattleTag",
         sortable: true,
         value: "battleTag",
       },
       {
-        text: "Ban Insert Date",
+        title: "Ban Insert Date",
         sortable: true,
         value: "createdAt",
       },
       {
-        text: "Ban Expiry Date",
+        title: "Ban Expiry Date",
         sortable: true,
         value: "expiresAt",
       },
       {
-        text: "Author",
+        title: "Author",
         sortable: true,
         value: "author",
       },
       {
-        text: "Actions",
+        title: "Actions",
         sortable: false,
         value: "actions",
       },
     ];
+
+    const setSelectedDateString = (date: Date) => {
+      selectedDateString.value = formatTimestampString(date, "yyyy-MM-dd");
+    };
 
     return {
       mdiMagnify,
@@ -265,13 +284,15 @@ export default defineComponent({
       playerFound,
       showConfirmation,
       dateMenu,
-      banExpiry,
       player,
-      banDateSet,
       save,
       close,
       deleteItem,
       loadMutes,
+      selectedDate,
+      selectedDateString,
+      setSelectedDateString,
+      clearDate,
     };
   },
 });

@@ -1,10 +1,10 @@
 <template>
-  <v-tooltip v-if="season" top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip v-if="season" location="top" content-class="w3-tooltip elevation-1">
+    <template v-slot:activator="{ props }">
       <div
-        :class="['season-badge', 'pointer']"
+        :class="['season-badge', 'cursor-pointer']"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
-        v-on="on"
+        v-bind="props"
         @click="() => onClick?.(season)"
       ></div>
     </template>
@@ -50,8 +50,7 @@ export default defineComponent({
 .season-badge {
   width: 24px;
   height: 24px;
-  background-size: cover;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: bottom;
 }
 </style>

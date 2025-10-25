@@ -34,17 +34,19 @@
               <v-col />
             </v-row>
             <v-row class="justify-center">
-              <v-card-actions>
-                <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
-              </v-card-actions>
+              <v-col>
+                <v-card-actions>
+                  <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
+                </v-card-actions>
+              </v-col>
             </v-row>
             <v-row class="justify-center">
               <v-card-actions>
                 <v-col>
-                  <v-btn x-large class="primary w3-race-bg--text" @click="changeGroups">Change groups</v-btn>
+                  <v-btn size="x-large" class="bg-primary w3-race-bg--text" @click="changeGroups">Change groups</v-btn>
                 </v-col>
                 <v-col>
-                  <v-btn x-large class="error w3-race-bg--text" @click="confirmDeleteDialogOpen = true">
+                  <v-btn size="x-large" class="bg-error w3-race-bg--text" @click="confirmDeleteDialogOpen = true">
                     Delete Definition
                   </v-btn>
                   <v-dialog v-model="confirmDeleteDialogOpen" width="300">
@@ -54,10 +56,10 @@
                       <v-card-actions>
                         <v-row class="justify-center pa-3">
                           <v-col>
-                            <v-btn class="primary w3-race-bg--text" @click="confirmDelete">Confirm</v-btn>
+                            <v-btn class="bg-primary w3-race-bg--text" @click="confirmDelete">Confirm</v-btn>
                           </v-col>
                           <v-col>
-                            <v-btn class="info w3-race-bg--text" @click="confirmDeleteDialogOpen = false">Cancel</v-btn>
+                            <v-btn class="bg-info w3-race-bg--text" @click="confirmDeleteDialogOpen = false">Cancel</v-btn>
                           </v-col>
                         </v-row>
                       </v-card-actions>
@@ -71,7 +73,7 @@
       </v-dialog>
 
       <v-row class="mt-1 pt-1">
-        <v-card-text>Click on a portrait in the grid below to edit it's groups.</v-card-text>
+        <v-card-text>Click on a portrait in the grid below to edit its groups.</v-card-text>
       </v-row>
 
       <v-row>

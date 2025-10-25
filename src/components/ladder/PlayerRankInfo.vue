@@ -1,12 +1,12 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+    <template v-slot:activator="{ props }">
       <div
         style="display: inline"
-        class="pointer player-name"
+        class="cursor-pointer player-name"
+        v-bind="props"
         @click.left="openPlayerProfile(playerId.battleTag)"
         @click.middle="openPlayerProfileInNewTab(playerId.battleTag)"
-        v-on="on"
       >
         {{ playerId.name }}<span v-if="alias" class="alias"> ({{ alias }})</span>
       </div>
@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from "vue";
 import { PlayerId } from "@/store/ranking/types";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "PlayerRankInfo",

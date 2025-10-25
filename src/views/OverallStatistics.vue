@@ -1,5 +1,5 @@
 <template>
-  <v-container class="profile">
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card tile>
@@ -7,28 +7,23 @@
             <span>{{ $t("views_statistics.w3cstats") }}</span>
           </v-card-title>
           <v-tabs>
-            <v-tabs-slider />
             <v-tab
-              class="profileTab"
               exact
               :to="{ name: EStatisticsRouteName.PLAYER_ACTIVITY }"
             >
               {{ $t("views_statistics.playeractivity") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.MMR }"
             >
               {{ $t("views_statistics.mmr") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.WINRATES }"
             >
               {{ $t("views_statistics.wrs") }}
             </v-tab>
             <v-tab
-              class="profileTab"
               :to="{ name: EStatisticsRouteName.HEROES }"
             >
               {{ $t("views_statistics.heroes") }}
@@ -90,3 +85,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-tabs .v-slide-group__content) {
+  border-bottom: 1px solid #cdcdcd;
+}
+</style>

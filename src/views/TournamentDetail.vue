@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <v-card class="pa-md-4">
       <div v-if="tournament">
         <tournament-view :tournament="tournament" />

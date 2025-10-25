@@ -6,17 +6,17 @@
 
     <v-card>
       <v-data-table
-        :headers="mappingHeaders"
+        :headers="headers"
         :items="productMappings"
         :items-per-page="10"
         class="elevation-0"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
             <v-spacer />
             <v-btn
-              color="primary"
-              small
+              class="bg-primary"
               @click="createMapping"
             >
               Add Mapping
@@ -33,11 +33,12 @@
             <v-chip
               v-for="provider in item.productProviders"
               :key="`${provider.providerId}-${provider.productId}`"
-              small
+              size="small"
               class="mr-1 mb-1"
+              variant="flat"
               :color="getProviderColor(provider.providerId)"
             >
-              <v-icon small left>{{ getProviderIcon(provider.providerId) }}</v-icon>
+              <v-icon size="small" start>{{ getProviderIcon(provider.providerId) }}</v-icon>
               {{ provider.productId }}
             </v-chip>
           </div>
@@ -54,14 +55,18 @@
         </template>
 
         <template v-slot:item.type="{ item }">
-          <v-chip :color="getMappingTypeColor(item.type)" small>
+          <v-chip
+            size="small"
+            variant="flat"
+            :color="getMappingTypeColor(item.type)"
+          >
             {{ getMappingTypeName(item.type) }}
           </v-chip>
         </template>
 
         <template v-slot:item.actions="{ item }">
           <v-icon
-            small
+            size="small"
             color="info"
             class="mr-2"
             @click="viewUsers(item)"
@@ -69,7 +74,7 @@
             {{ mdiAccountGroup }}
           </v-icon>
           <v-icon
-            small
+            size="small"
             color="primary"
             class="mr-2"
             @click="editMapping(item)"
@@ -77,7 +82,7 @@
             {{ mdiPencil }}
           </v-icon>
           <v-icon
-            small
+            size="small"
             color="error"
             @click="deleteMapping(item.id)"
           >
@@ -94,7 +99,7 @@
           <span class="text-h5">{{ isEditMode ? 'Edit Product Mapping' : 'Add Product Mapping' }}</span>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="pt-0 pb-0">
           <v-container>
             <v-row>
               <v-col cols="12">
@@ -104,6 +109,7 @@
                   :rules="[rules.required]"
                   hint="Human-readable name for the product (e.g., 'Premium Subscription')"
                   persistent-hint
+                  variant="underlined"
                   required
                 />
               </v-col>
@@ -111,7 +117,7 @@
 
             <v-row>
               <v-col cols="12">
-                <v-subheader class="px-0">Product Provider Pairs *</v-subheader>
+                <v-list-subheader class="px-0">Product Provider Pairs *</v-list-subheader>
                 <div v-for="(pair, index) in newMapping.productProviders" :key="index" class="mb-3 pa-3 border">
                   <v-row>
                     <v-col cols="5">
@@ -120,8 +126,7 @@
                         :items="providerOptions"
                         label="Provider *"
                         :rules="[rules.required]"
-                        item-text="text"
-                        item-value="value"
+                        variant="underlined"
                         required
                       />
                     </v-col>
@@ -131,13 +136,15 @@
                         label="Product ID *"
                         :rules="[rules.required]"
                         hint="ID from the payment provider"
+                        variant="underlined"
                         required
                       />
                     </v-col>
                     <v-col cols="2" class="d-flex align-center">
                       <v-btn
                         icon
-                        color="error"
+                        variant="plain"
+                        color="red"
                         :disabled="isNil(newMapping.productProviders) || newMapping.productProviders.length <= 1"
                         @click="removeProductProvider(index)"
                       >
@@ -147,7 +154,7 @@
                   </v-row>
                 </div>
                 <v-btn
-                  text
+                  variant="text"
                   color="primary"
                   @click="addProductProvider"
                 >
@@ -163,11 +170,10 @@
                   :items="rewardOptions"
                   label="Rewards *"
                   :rules="[rules.required]"
-                  item-text="text"
-                  item-value="value"
+                  variant="underlined"
                   multiple
                   chips
-                  deletable-chips
+                  closable-chips
                   required
                   hint="Select one or more rewards to assign for this product"
                   persistent-hint
@@ -182,6 +188,7 @@
                   :items="mappingTypeOptions"
                   label="Mapping Type *"
                   :rules="[rules.required]"
+                  variant="underlined"
                   required
                 />
               </v-col>
@@ -192,15 +199,13 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="blue darken-1"
-            text
+            variant="text"
             @click="closeMappingDialog"
           >
             Cancel
           </v-btn>
           <v-btn
-            color="blue darken-1"
-            text
+            class="bg-primary w3-race-bg--text"
             :disabled="!isMappingValid"
             @click="saveMappingDialog"
           >
@@ -218,6 +223,7 @@
       :loading="loadingUsers"
       :error="usersError"
       @retry="loadMappingUsers"
+      @update:visible="toggleRewardUsersDialog"
     />
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
@@ -234,6 +240,7 @@ import { ProductMapping, ProductMappingType, Reward, ProductMappingUsersResponse
 import { mdiDelete, mdiPencil, mdiPatreon, mdiHandHeart, mdiCog, mdiAccountGroup } from "@mdi/js";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
 import isNil from "lodash/isNil";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminProductMappings",
@@ -283,12 +290,12 @@ export default defineComponent({
       }));
     });
 
-    const mappingHeaders = [
-      { text: "Product Name", value: "productName", sortable: true },
-      { text: "Providers", value: "productProviders", sortable: false },
-      { text: "Rewards", value: "rewardIds", sortable: false },
-      { text: "Type", value: "type", sortable: true },
-      { text: "Actions", value: "actions", sortable: false, width: "120px" },
+    const headers: DataTableHeader[] = [
+      { title: "Product Name", value: "productName", sortable: true },
+      { title: "Providers", value: "productProviders", sortable: false },
+      { title: "Rewards", value: "rewardIds", sortable: false },
+      { title: "Type", value: "type", sortable: true },
+      { title: "Actions", value: "actions", sortable: false, width: "120px" },
     ];
 
     // const usersHeaders = [
@@ -309,22 +316,22 @@ export default defineComponent({
       },
     };
 
-    const mappingTypeOptions = computed(() => [
-      { text: "One Time", value: ProductMappingType.OneTime },
-      { text: "Recurring", value: ProductMappingType.Recurring },
-      { text: "Tiered", value: ProductMappingType.Tiered },
+    const mappingTypeOptions = ref<{title: string; value: ProductMappingType}[]>([
+      { title: "One Time", value: ProductMappingType.OneTime },
+      { title: "Recurring", value: ProductMappingType.Recurring },
+      { title: "Tiered", value: ProductMappingType.Tiered },
     ]);
 
     const providerOptions = computed(() =>
       providers.value.map((provider) => ({
-        text: provider.providerName,
+        title: provider.providerName,
         value: provider.providerId,
       }))
     );
 
     const rewardOptions = computed(() =>
       rewards.value.map((reward) => ({
-        text: `${getRewardTranslatedName(reward.displayId)} (${reward.id})`,
+        title: `${getRewardTranslatedName(reward.displayId)} (${reward.id})`,
         value: reward.id,
       }))
     );
@@ -507,6 +514,9 @@ export default defineComponent({
       }
     };
 
+    const toggleRewardUsersDialog = (isVisible: boolean) => {
+      usersDialog.value = isVisible;
+    };
 
     onMounted(() => {
       loadData();
@@ -533,7 +543,7 @@ export default defineComponent({
       selectedMapping,
 
       // Computed
-      mappingHeaders,
+      headers,
       mappingUsersForDialog,
       rules,
       mappingTypeOptions,
@@ -557,6 +567,7 @@ export default defineComponent({
       viewUsers,
       loadMappingUsers,
       isNil,
+      toggleRewardUsersDialog,
 
       // Icons
       mdiDelete,
@@ -567,7 +578,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .border {
   border: 1px solid #ddd;
   border-radius: 4px;

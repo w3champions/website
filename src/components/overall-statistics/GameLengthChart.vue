@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { GameLength } from "@/store/overallStats/types";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData } from "chart.js";

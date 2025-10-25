@@ -5,10 +5,10 @@
       <span class="ml-2">{{ $t("common.verifying") || "Verifying..." }}</span>
     </div>
     <div v-else-if="error" class="turnstile-error">
-      <v-alert type="error" dense>
+      <v-alert type="error" density="compact">
         {{ errorMessage }}
       </v-alert>
-      <v-btn small class="mt-2" @click="retry">
+      <v-btn size="small" class="mt-2" @click="retry">
         {{ $t("common.retry") || "Retry" }}
       </v-btn>
     </div>

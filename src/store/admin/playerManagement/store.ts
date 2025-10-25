@@ -22,7 +22,6 @@ export const usePlayerManagementStore = defineStore("playerManagement", {
       } else {
         this.SET_SEARCHED_PLAYER_SPECIAL_PORTRAITS([] as number[]);
       }
-      this.SET_MANAGED_PLAYER_BATTLETAG(btag);
     },
     async addPortraits(portraitCommand: ChangePortraitsCommand): Promise<void> {
       const oauthStore = useOauthStore();
@@ -31,9 +30,6 @@ export const usePlayerManagementStore = defineStore("playerManagement", {
     async removePortraits(portraitCommand: ChangePortraitsCommand): Promise<void> {
       const oauthStore = useOauthStore();
       await AdminService.deletePortraits(oauthStore.token, portraitCommand);
-    },
-    clearManagedPlayer(): void {
-      this.SET_MANAGED_PLAYER_BATTLETAG("");
     },
     async loadPortraitDefinitionGroups(): Promise<void> {
       const portDefGroups = await AdminService.getAllPortraitDefinitionGroups();
@@ -50,9 +46,6 @@ export const usePlayerManagementStore = defineStore("playerManagement", {
     async updatePortraitDefinition(definition: PortraitDefinitionDTO): Promise<void> {
       const oauthStore = useOauthStore();
       await AdminService.putPortraitDefinitions(oauthStore.token, definition);
-    },
-    SET_MANAGED_PLAYER_BATTLETAG(battleTag: string): void {
-      this.managedBattleTag = battleTag;
     },
     SET_SPECIAL_PORTRAITS(specialPortraits: PortraitDefinition[]): void {
       this.allSpecialPortraits = specialPortraits;

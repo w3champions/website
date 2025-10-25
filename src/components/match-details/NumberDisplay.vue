@@ -1,12 +1,8 @@
 <template>
   <div>
-    <v-tooltip
-      v-if="object.length > 1 && delimiter !== AddValuesDelimiter.SLASH"
-      :right="align === 'right'"
-      :left="align === 'left'"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <span v-bind="attrs" v-on="on">{{ stringValues }}</span>
+    <v-tooltip v-if="object.length > 1" :location="align === 'left' ? 'left' : 'right'" content-class="w3-tooltip elevation-1">
+      <template v-slot:activator="{ props }">
+        <span v-bind="props">{{ stringValues }}</span>
       </template>
       <div>{{ addValues }}</div>
     </v-tooltip>

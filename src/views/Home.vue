@@ -1,10 +1,10 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container class="pa-0 w3-container-width">
+    <v-row class="ma-0">
       <v-col cols="12" md="8">
         <v-card tile>
           <br />
-          <v-card-title class="justify-center">
+          <v-card-title class="d-flex justify-center">
             {{ $t("views_home.w3c_motto") }}
           </v-card-title>
           <v-row class="justify-center">
@@ -22,9 +22,8 @@
             <v-carousel
               v-model="model"
               :show-arrows="false"
-              :dark="$vuetify.theme.dark"
-              :light="!$vuetify.theme.dark"
-              height="350px"
+              height="400px"
+              hide-delimiter-background
             >
               <v-carousel-item v-for="newsItem in news.slice(0,8)" :key="newsItem.date">
                 <v-card-title>
@@ -35,7 +34,7 @@
             </v-carousel>
           </v-card-text>
           <v-card-title>{{ $t("views_home.hometitle") }}</v-card-title>
-          <v-card-text>
+          <v-card-text class="w3-gray-text">
             <v-row>
               <v-col cols="12" md="6">
                 {{ $t("views_home.homebody1") }}
@@ -93,7 +92,7 @@
 
       <v-col cols="12" md="4">
         <v-row>
-          <v-col cols="12" class="no-padding">
+          <v-col cols="12">
             <social-box />
             <support-box />
             <partner-box />
@@ -155,7 +154,7 @@ import CopyButton from "@/components/common/CopyButton.vue";
 import { EGameMode } from "@/store/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
 import { useRankingStore } from "@/store/ranking/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { ESetupGuideRouteName } from "@/router/types";
 
 export default defineComponent({
@@ -226,10 +225,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.no-padding {
-  padding-top: 0;
-}
-
 .v-btn.join-button {
   letter-spacing: 0 !important;
   font-family: inherit !important;
@@ -252,6 +247,19 @@ export default defineComponent({
 
   .mode {
     margin-right: 15px;
+  }
+}
+
+:deep(.v-carousel) {
+  .v-window__container {
+    height: 350px;
+    margin-bottom: 50px;
+  }
+  .v-window-item .v-responsive__content {
+    overflow-y: auto;
+  }
+  .v-carousel__controls {
+    background: rgba(0, 0, 0, 0.3);
   }
 }
 </style>

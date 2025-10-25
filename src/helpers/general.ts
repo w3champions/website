@@ -1,6 +1,6 @@
 import { Race } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 // got it from here: https://www.petermorlion.com/iterating-a-typescript-enum/
 export const enumKeys = <

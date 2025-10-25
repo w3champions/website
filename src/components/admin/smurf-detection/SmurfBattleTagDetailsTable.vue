@@ -1,7 +1,7 @@
 <template>
   <v-col cols="6">
     <h3 class="text-subtitle-2">{{ title }}</h3>
-    <v-simple-table dense>
+    <v-table density="compact">
       <thead>
         <tr>
           <th>BattleTag</th>
@@ -17,7 +17,7 @@
           <td class="text-right">{{ stat.numberOfLogins }}</td>
         </tr>
       </tbody>
-    </v-simple-table>
+    </v-table>
   </v-col>
 </template>
 

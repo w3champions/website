@@ -8,20 +8,18 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
-
-        <span v-if="!left && (player.countryCode || player.location)">
+        <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
           />
         </span>
-        <v-tooltip top transition="none">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip location="top" transition="none" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
             <a
-              class="truncated-text"
+              class="truncated-text text-primary cursor-pointer"
               :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
-              v-bind="attrs"
-              v-on="on"
+              v-bind="props"
               @click="notClickable ? null : goToPlayer()"
               @click.middle="openProfileInNewTab()"
               @click.right="openProfileInNewTab()"
@@ -63,7 +61,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from "vue";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import isNil from "lodash/isNil";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";

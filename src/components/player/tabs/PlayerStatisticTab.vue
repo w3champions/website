@@ -16,11 +16,9 @@
           <v-select
             v-model="selectedPatch"
             :items="patches"
-            item-text="patchVersion"
-            item-value="patch"
             label="Select Patch"
-            outlined
-            @change="setSelectedPatch"
+            variant="outlined"
+            @update:model-value="setSelectedPatch"
           />
         </v-card-text>
       </v-col>
@@ -40,18 +38,18 @@
           <v-select
             v-model="selectedGameMode"
             :items="activeGameModes()"
-            item-text="name"
+            item-title="name"
             item-value="id"
             label="Select Mode"
-            outlined
+            variant="outlined"
           />
           <v-select
             v-model="selectedRace"
             :items="races()"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
             label="Select Race"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -77,10 +75,10 @@
           <v-select
             v-model="selectedMap"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
             label="Map"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -101,10 +99,10 @@
           <v-select
             v-model="selectedMapHeroWinRate"
             :items="maps"
-            item-text="mapName"
+            item-title="mapName"
             item-value="mapId"
             label="Map"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -125,10 +123,10 @@
           <v-select
             v-model="selectedGameLengthOpponentRace"
             :items="gameLengthOpponentRaces"
-            item-text="opponentRace"
+            item-title="opponentRace"
             item-value="raceId"
             label="Opponent Race"
-            outlined
+            variant="outlined"
           />
         </v-card-text>
       </v-col>
@@ -145,8 +143,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { useI18n } from "vue-i18n";
+import { activeGameModes, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode, ERaceEnum } from "@/store/types";
 import { PlayerMmrRpTimeline, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceWinsOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMap from "@/components/player/PlayerStatsRaceVersusRaceOnMap.vue";
@@ -159,6 +157,11 @@ import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { Season } from "@/store/ranking/types";
 import isEmpty from "lodash/isEmpty";
+
+interface mapNameAndId {
+  mapName: string;
+  mapId: string;
+}
 
 export default defineComponent({
   name: "PlayerStatisticTab",
@@ -219,7 +222,7 @@ export default defineComponent({
       if (!playerStatsRaceVersusRaceOnMap.value || !playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch) {
         return [];
       }
-      const patches = ["All"];
+      const patches: string[] = [];
 
       Object.keys(playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch).map(
         (p) => patches.push(p)
@@ -238,13 +241,12 @@ export default defineComponent({
       ) {
         return [];
       }
-
       return playerStatsRaceVersusRaceOnMap.value.raceWinsOnMapByPatch[selectedPatch.value]
         .filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
     });
 
-    const maps = computed<{ mapName: string; mapId: string }[]>(() => {
-      const maps = [{ mapName: "Overall", mapId: "Overall" }];
+    const maps = computed<mapNameAndId[]>(() => {
+      const maps: mapNameAndId[] = [];
       const mapsList: string[] = [];
       playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
         heroItemList.stats.map((stats) => {

@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue2";
+import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import { ComponentResolver } from "unplugin-vue-components";
 import legacy from "@vitejs/plugin-legacy";
@@ -12,7 +12,7 @@ export function VuetifyResolverMod(): ComponentResolver {
     type: "component",
     resolve: (name: string) => {
       if (name.match(/^V[A-Z]/)) {
-        return { name, from: "vuetify/lib" };
+        return { name, from: "vuetify/components" };
       }
     },
   };
