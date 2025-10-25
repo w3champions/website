@@ -16,19 +16,20 @@
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:top>
-        <v-toolbar class="ml-3" flat color="transparent">
-          <v-text-field
-            v-model="tableSearch"
-            label="Search ban"
-            :prepend-inner-icon="mdiMagnify"
-            color="primary"
-            variant="underlined"
-          />
-          <v-spacer />
+        <v-toolbar flat color="transparent">
+          <div class="ml-3 w-50">
+            <v-text-field
+              v-model="tableSearch"
+              label="Search ban"
+              :prepend-inner-icon="mdiMagnify"
+              color="primary"
+              variant="underlined"
+            />
+          </div>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="bg-primary mb-2 w3-race-bg--text"
+                class="bg-primary ml-auto mr-3"
                 v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
@@ -129,6 +130,7 @@
                         clearable
                         hint="Select a predefined translation or leave empty to use free text"
                         persistent-hint
+                        variant="underlined"
                       />
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="pb-0">
@@ -137,6 +139,7 @@
                         label="User-Visible Ban Reason (Free Text)"
                         hint="Only used if no translation is selected"
                         persistent-hint
+                        variant="underlined"
                         :disabled="!!selectedTranslationId"
                       />
                     </v-col>
