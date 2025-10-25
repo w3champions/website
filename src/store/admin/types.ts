@@ -19,6 +19,7 @@ export type AdminState = {
   banValidationError: string;
   showJwtExpiredDialog: boolean;
   battleTagModerationStatus: BattleTagModerationMap;
+  banReasonTranslations: BanReasonTranslation[];
 };
 
 export type AdminPlayerManagementState = {
@@ -44,6 +45,11 @@ export interface ChangePortraitsDto {
   Tooltip?: string;
 }
 
+export interface UserVisibleBanReason {
+  translationId?: string;
+  freeText?: string;
+}
+
 export interface BannedPlayer {
   battleTag: string;
   endDate: string;
@@ -51,6 +57,31 @@ export interface BannedPlayer {
   isIpBan: boolean;
   banReason: string;
   banInsertDate: string;
+  author: string;
+  userVisibleBanReason?: UserVisibleBanReason;
+}
+
+export interface BanReasonTranslations {
+  en: string;
+  cn: string;
+  es: string;
+}
+
+export interface BanReasonTranslation {
+  _id: string;
+  translations: BanReasonTranslations;
+  createdBy: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateBanReasonTranslationRequest {
+  translations: BanReasonTranslations;
+  author: string;
+}
+
+export interface UpdateBanReasonTranslationRequest {
+  translations: BanReasonTranslations;
   author: string;
 }
 

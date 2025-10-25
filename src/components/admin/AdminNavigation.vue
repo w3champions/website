@@ -69,7 +69,7 @@ import {
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
-  mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi
+  mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate
 } from "@mdi/js";
 
 export default defineComponent({
@@ -154,6 +154,13 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-banned-players",
             routeName: EAdminRouteName.BANNED_PLAYERS,
+          },
+          {
+            title: "Ban Reason Translations",
+            icon: mdiTranslate,
+            permission: EPermission.Moderation,
+            component: "admin-ban-reason-translations",
+            routeName: EAdminRouteName.BAN_REASON_TRANSLATIONS,
           },
           {
             title: "Global Mute",
