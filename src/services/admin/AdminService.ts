@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, ChangePortraitsCommand, ChangePortraitsDto, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateRewardRequest } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -23,6 +23,36 @@ export default class AdminService {
     const url = `${API_URL}api/admin/bannedPlayers`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify(bannedPlayer));
     return response.ok ? "" : await response.json();
+  }
+
+  public static async getBanReasonTranslations(token: string): Promise<BanReasonTranslation[]> {
+    const url = `${API_URL}api/admin/ban-reason-translations`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async getBanReasonTranslation(id: string, token: string): Promise<BanReasonTranslation> {
+    const url = `${API_URL}api/admin/ban-reason-translations/${id}`;
+    const response = await authorizedFetch("GET", url, token);
+    return await response.json();
+  }
+
+  public static async createBanReasonTranslation(request: CreateBanReasonTranslationRequest, token: string): Promise<BanReasonTranslation> {
+    const url = `${API_URL}api/admin/ban-reason-translations`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(request));
+    return await response.json();
+  }
+
+  public static async updateBanReasonTranslation(id: string, request: UpdateBanReasonTranslationRequest, token: string): Promise<BanReasonTranslation> {
+    const url = `${API_URL}api/admin/ban-reason-translations/${id}`;
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(request));
+    return await response.json();
+  }
+
+  public static async deleteBanReasonTranslation(id: string, token: string): Promise<boolean> {
+    const url = `${API_URL}api/admin/ban-reason-translations/${id}`;
+    const response = await authorizedFetch("DELETE", url, token);
+    return response.ok;
   }
 
   public static async getQueueData(token: string): Promise<QueueData[] | null> {
