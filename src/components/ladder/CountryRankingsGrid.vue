@@ -115,9 +115,7 @@
             >
               <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
-                  <span style="display: inline" class="cursor-pointer" v-bind="props">
-                    <sword-icon class="swords blinker" />
-                  </span>
+                  <sword-icon class="swords blinker cursor-pointer" v-bind="props" />
                 </template>
                 <div>
                   {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
@@ -485,6 +483,5 @@ export default defineComponent({
   position: absolute;
   top: 0;
   left: 18px;
-  cursor: pointer;
 }
 </style>

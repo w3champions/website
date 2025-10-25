@@ -49,7 +49,7 @@
         </v-menu>
         <div class="rankings-search-wrapper">
           <v-autocomplete
-            v-model="selected"
+            v-model="selectedRank"
             v-model:search="search"
             menu-icon=""
             :append-inner-icon="mdiMagnify"
@@ -137,7 +137,7 @@
         <rankings-grid
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
-          :selectedRank="selected"
+          :selectedRank="selectedRank"
         />
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
@@ -211,7 +211,7 @@ export default defineComponent({
     let searchTimer: NodeJS.Timeout;
 
     const search = ref<string>("");
-    const selected = ref<Ranking | undefined>(undefined);
+    const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
@@ -284,8 +284,8 @@ export default defineComponent({
       await rankingsStore.retrieveLeagueConstellation();
     }
 
-    watch(selected, onSelected);
-    function onSelected(rank: Ranking | undefined): void {
+    watch(selectedRank, onSelectedRank);
+    function onSelectedRank(rank: Ranking | undefined): void {
       if (!rank) return;
 
       if (!playerIsRanked(rank)) {
@@ -381,7 +381,7 @@ export default defineComponent({
         ? rankingsStore.setSeason({ id: props.season })
         : rankingsStore.setSeason(rankingsStore.seasons[0]);
 
-      if (props.league) {
+      if (props.league || props.league === 0) {
         rankingsStore.setLeague(props.league);
       }
       if (props.gamemode) {
@@ -402,7 +402,7 @@ export default defineComponent({
 
       if (props.playerId) {
         const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
-        selected.value = selectedPlayer ?? ({} as Ranking);
+        selectedRank.value = selectedPlayer;
       }
 
       _intervalRefreshHandle = setInterval(async () => {
@@ -483,7 +483,7 @@ export default defineComponent({
       setLeague,
       listLeagueIcon,
       ladders,
-      selected,
+      selectedRank,
       searchRanks,
       isLoading,
       search,

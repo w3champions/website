@@ -137,9 +137,14 @@ export default defineComponent({
 
     function navigateToLeague(): void {
       router.push({
-        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${gateWay.value}&gamemode=${gameMode.value}&league=${
-          league.value
-        }&playerId=${encodeURIComponent(playerId.value)}`,
+        path: "/rankings",
+        query: {
+          season: selectedSeason.value.id,
+          gateway: gateWay.value,
+          gamemode: gameMode.value,
+          league: league.value,
+          playerId: playerId.value,
+        }
       });
     }
 

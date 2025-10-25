@@ -102,9 +102,7 @@
               >
                 <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                   <template v-slot:activator="{ props }">
-                    <span style="display: inline" class="cursor-pointer" v-bind="props">
-                      <sword-icon class="swords blinker" />
-                    </span>
+                    <sword-icon class="swords blinker cursor-pointer" v-bind="props" />
                   </template>
                   <div>
                     {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
@@ -361,16 +359,17 @@ export default defineComponent({
     const goToOptions: Partial<Partial<InternalGoToOptions>> = {
       duration: 500,
       easing: "easeInOutCubic",
-      offset: window.innerHeight - 150,
+      offset: -window.innerHeight / 2,
     };
 
     function goToRank(rank: Ranking): void {
       setTimeout(() => {
-        const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+        const elementId = `listitem_${rank.rankNumber}`;
+        const listItemOfPlayer = document.getElementById(elementId);
 
         if (!listItemOfPlayer) return;
 
-        goTo(listItemOfPlayer, goToOptions);
+        goTo(`#${elementId}`, goToOptions);
       }, 500);
     }
 
@@ -519,22 +518,18 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.v-theme--light {
+.v-theme--human, .v-theme--orc {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: lightblue !important;
   }
 }
 
-.v-theme--dark {
+.v-theme--nightelf, .v-theme--undead {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: #310e6f !important;
   }
-}
-
-.red {
-  left: 10px;
 }
 
 @media (max-width: 768px) {
@@ -548,8 +543,6 @@ export default defineComponent({
 .rank-icon-container {
   display: flex;
   align-items: center;
-  /*width: 50%;*/
-  /* fix aliases display */
   margin-left: 0 !important;
   min-height: 39px;
 }
@@ -573,6 +566,5 @@ td.header {
   position: absolute;
   top: -10px;
   left: 18px;
-  cursor: pointer;
 }
 </style>
