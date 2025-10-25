@@ -6,7 +6,7 @@
           <v-card-title>
             {{ $t("views_app.matches") }}
           </v-card-title>
-          <v-card-text class="d-flex align-center">
+          <v-card-text class="pt-2 d-flex align-center">
             <matches-status-select />
             <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
             <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />

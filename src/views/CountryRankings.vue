@@ -64,7 +64,7 @@
               v-bind="props"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
-              <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
+              <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
             </v-btn>
           </template>
           <v-card>

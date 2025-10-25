@@ -7,7 +7,7 @@
         class="bg-transparent text-black-gold"
         v-bind="props"
       >
-        <v-icon size="large" start>{{ mdiDramaMasks }}</v-icon>
+        <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>
         {{ selectedText }}
       </v-btn>
     </template>

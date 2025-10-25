@@ -1,8 +1,8 @@
 <template>
   <v-menu location="right">
     <template v-slot:activator="{ props }">
-      <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
-        <v-icon size="large" start>{{ mdiControllerClassic }}</v-icon>
+      <v-btn tile style="background-color: transparent" v-bind="props">
+        <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName() }}
       </v-btn>
     </template>

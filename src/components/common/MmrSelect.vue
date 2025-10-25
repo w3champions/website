@@ -1,8 +1,8 @@
 <template>
   <v-menu location="right" :close-on-content-click="false" @update:model-value="onMenuToggled">
     <template v-slot:activator="{ props }">
-      <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
-        <v-icon size="large" start>{{ mdiChevronTripleUp }}</v-icon>
+      <v-btn tile style="background-color: transparent" v-bind="props">
+        <v-icon size="x-large" start>{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
       </v-btn>
     </template>

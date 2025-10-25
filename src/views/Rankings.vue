@@ -109,7 +109,7 @@
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
-            <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
+            <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
           </v-btn>
         </template>
         <v-card>

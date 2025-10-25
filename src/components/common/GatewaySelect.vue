@@ -2,7 +2,7 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
-        <v-icon size="large" style="margin-right: 5px">{{ mdiEarth }}</v-icon>
+        <v-icon size="x-large" style="margin-right: 5px">{{ mdiEarth }}</v-icon>
         {{ $t(gateway.name) }}
       </v-btn>
     </template>
