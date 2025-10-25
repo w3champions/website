@@ -3,14 +3,13 @@
     <div v-if="isJubileeGame" class="jubilee"></div>
     <v-row v-if="!loading">
       <v-col cols="12">
-        <v-card tile class="pb-5">
+        <v-card tile class="pb-5 pt-1">
           <v-card-title class="justify-center">
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
-                <v-card-subtitle class="pa-0">
-                  {{ $t(`gatewayNames.${gateWay}`) }}
-                  <br />
-                  {{ $t(`views_matchdetail.season`) }}: {{ season }}
+                <v-card-subtitle class="pa-0 text-uppercase opacity-100">
+                  <div>{{ $t(`gatewayNames.${gateWay}`) }}</div>
+                  <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
                 </v-card-subtitle>
                 <host-icon
                   v-if="match.serverInfo && match.serverInfo.provider"
@@ -59,13 +58,17 @@
               </div>
             </v-row>
           </v-card-title>
-          <v-card-title v-if="isJubileeGame" class="justify-center">
-            {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
-          </v-card-title>
-          <v-card-title v-if="isJubileeGame" class="justify-center">
-            {{ $t(`views_matchdetail.jubileeGameMessage`) }}
-          </v-card-title>
-          <v-card-title class="justify-center">{{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}</v-card-title>
+          <div class="pb-2">
+            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+              {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
+            </v-card-title>
+            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+              {{ $t(`views_matchdetail.jubileeGameMessage`) }}
+            </v-card-title>
+            <v-card-title class="d-flex justify-center">
+              {{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}
+            </v-card-title>
+          </div>
           <div v-if="isCompleteGame">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"

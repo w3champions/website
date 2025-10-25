@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row dense :class="left ? 'justify-end' : 'justify-start'">
-      <v-col :order="left ? 1 : 3" class="col-md-auto" :style="{ 'text-align': alignText }">
+      <v-col :order="left ? 1 : 3" cols="auto" :style="{ 'text-align': alignText }">
         <v-row dense>
           <v-col>{{ $t("components_match-details_playerperformanceonmatch.unitskilled") }}</v-col>
         </v-row>
@@ -23,7 +23,7 @@
       </v-col>
       <v-col :order="1" cols="1" />
       <v-col
-        class="col-md-auto"
+        cols="auto"
         :order="left ? 3 : 0"
         :style="{ 'text-align': alignText }"
       >
@@ -109,7 +109,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
 
-    const alignText = ref<string>(props.left ? "right" : "left");
+    const alignText = ref<"right" | "left">(props.left ? "right" : "left");
 
     const goldComparison = computed<TranslateResult>(() => {
       return comparison(
