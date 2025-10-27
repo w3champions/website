@@ -27,12 +27,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-code {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Monaco', 'Consolas', monospace;
-}
-</style>

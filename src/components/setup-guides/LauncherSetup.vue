@@ -19,7 +19,7 @@
           </v-tabs>
           <v-window :model-value="tabsModel.self">
             <v-window-item value="launcher">
-              <v-card-text class="pt-0 px-8">
+              <v-card-text class="pt-0 px-3">
                 <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                 <br />
                 <v-card-text>
@@ -68,7 +68,7 @@
               </v-card-text>
             </v-window-item>
             <v-window-item value="windows-setup">
-              <v-card-text class="pt-0 px-8">
+              <v-card-text class="pt-0 px-3">
                 <v-alert variant="outlined" type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
@@ -89,34 +89,21 @@
                     {{ $t("views_gettingstarted.manualwinbody2") }}
                   </span>
                 </v-btn>
-                <p class="mt-2">
-                  {{ $t("views_gettingstarted.manualwinbody3") }}
-                  <br />
+                <div class="mt-3">
+                  <div>{{ $t("views_gettingstarted.manualwinbody3") }}</div>
                   <code>{{ $t("views_gettingstarted.manualwinbody3_1") }}</code>
-                </p>
-                <p>
-                  <i style="color: red">
-                    {{ $t("views_gettingstarted.manualwinbody4") }}
-                  </i>
-                  <br />
-                  {{ $t("views_gettingstarted.manualwinbody5") }}
-                  <br />
-                  <code>
-                    {{ $t("views_gettingstarted.manualwinbody6") }}
-                  </code>
-                  <br />
-                  <code>
-                    {{ $t("views_gettingstarted.manualwinbody7") }}
-                  </code>
-                  <br />
-
-                  {{ $t("views_gettingstarted.manualwinbody8") }}
-                  <br />
-                </p>
+                </div>
+                <div class="mt-3">
+                  <i style="color: red">{{ $t("views_gettingstarted.manualwinbody4") }}</i>
+                  <div>{{ $t("views_gettingstarted.manualwinbody5") }}</div>
+                  <code>{{ $t("views_gettingstarted.manualwinbody6") }}</code>
+                  <div>{{ $t("views_gettingstarted.manualwinbody7") }}</div>
+                  <code>{{ $t("views_gettingstarted.manualwinbody8") }}</code>
+                </div>
               </v-card-text>
             </v-window-item>
             <v-window-item value="mac-setup">
-              <v-card-text class="pt-0 px-8">
+              <v-card-text class="pt-0 px-3">
                 <v-alert variant="outlined" type="info" prominent border="start">
                   {{ alertMessage }}
                 </v-alert>
@@ -258,5 +245,24 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: small;
+}
+
+.v-theme--human, .v-theme--orc {
+  code {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.v-theme--nightelf, .v-theme--undead {
+  code {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 </style>
