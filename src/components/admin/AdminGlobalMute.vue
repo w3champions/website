@@ -71,22 +71,23 @@
                           max="2099-01-01"
                           @update:modelValue="setSelectedDateString"
                         >
-                          <v-spacer />
-                          <v-btn
-                            variant="text"
-                            @click="
-                              clearDate();
-                              dateMenu = false;
-                            "
-                          >
-                            {{ $t(`views_admin.cancel`) }}
-                          </v-btn>
-                          <v-btn
-                            class="bg-primary text-w3-race-bg"
-                            @click="dateMenu = false"
-                          >
-                            {{ $t(`views_admin.ok`) }}
-                          </v-btn>
+                          <template v-slot:actions>
+                            <v-btn
+                              variant="text"
+                              @click="
+                                clearDate();
+                                dateMenu = false;
+                              "
+                            >
+                              {{ $t(`views_admin.cancel`) }}
+                            </v-btn>
+                            <v-btn
+                              class="bg-primary text-w3-race-bg"
+                              @click="dateMenu = false"
+                            >
+                              {{ $t(`views_admin.ok`) }}
+                            </v-btn>
+                          </template>
                         </v-date-picker>
                       </v-menu>
 

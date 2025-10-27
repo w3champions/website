@@ -72,22 +72,24 @@
                           show-adjacent-months
                           @update:modelValue="setSelectedDateString"
                         >
+                          <template v-slot:actions>
+                            <v-btn
+                              variant="text"
+                              @click="
+                                editedItem.endDate = '';
+                                dateMenu = false;
+                              "
+                            >
+                              {{ $t(`views_admin.cancel`) }}
+                            </v-btn>
+                            <v-btn
+                              class="bg-primary text-w3-race-bg"
+                              @click="dateMenu = false"
+                            >
+                              {{ $t(`views_admin.ok`) }}
+                            </v-btn>
+                          </template>
                           <v-spacer />
-                          <v-btn
-                            variant="text"
-                            @click="
-                              editedItem.endDate = '';
-                              dateMenu = false;
-                            "
-                          >
-                            {{ $t(`views_admin.cancel`) }}
-                          </v-btn>
-                          <v-btn
-                            class="bg-primary text-w3-race-bg"
-                            @click="dateMenu = false"
-                          >
-                            {{ $t(`views_admin.ok`) }}
-                          </v-btn>
                         </v-date-picker>
                       </v-menu>
                     </v-col>
