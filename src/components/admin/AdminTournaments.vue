@@ -45,11 +45,11 @@
           </v-col>
           <v-col class="d-flex justify-end">
             <div v-if="tournament.id">
-              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openAddPlayer">Add Player</v-btn>
-              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openRemovePlayer">Remove Player</v-btn>
-              <v-btn color="primary" class="mb-2 mr-2 w3-race-bg--text" @click="openEditTournament">Edit</v-btn>
+              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 text-w3-race-bg" @click="openAddPlayer">Add Player</v-btn>
+              <v-btn v-if="registrationOpen" color="primary" class="mb-2 mr-2 text-w3-race-bg" @click="openRemovePlayer">Remove Player</v-btn>
+              <v-btn color="primary" class="mb-2 mr-2 text-w3-race-bg" @click="openEditTournament">Edit</v-btn>
             </div>
-            <v-btn v-else color="primary" class="mb-2 w3-race-bg--text" @click="openCreateTournament">Create Tournament</v-btn>
+            <v-btn v-else color="primary" class="mb-2 text-w3-race-bg" @click="openCreateTournament">Create Tournament</v-btn>
           </v-col>
         </v-row>
 

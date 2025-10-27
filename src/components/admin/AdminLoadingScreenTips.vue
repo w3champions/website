@@ -16,7 +16,7 @@
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary w3-race-bg--text"
+                class="mb-2 bg-primary text-w3-race-bg"
                 v-bind="props"
               >
                 Add Tip
@@ -44,7 +44,7 @@
                 <v-spacer />
                 <v-btn variant="text" @click="closeTips">Cancel</v-btn>
                 <v-btn
-                  class="bg-primary w3-race-bg--text"
+                  class="bg-primary text-w3-race-bg"
                   variant="text"
                   @click="saveTips"
                 >

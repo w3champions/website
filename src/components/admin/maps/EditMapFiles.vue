@@ -17,7 +17,7 @@
           :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>
+            <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="selectMapFile(item)">Select</v-btn>
           </template>
         </v-data-table>
 
@@ -32,7 +32,7 @@
             <v-text-field v-model="fileName" label="File name (optional)" variant="underlined" />
           </v-col>
         </v-row>
-        <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMapFile()">Add map file</v-btn>
+        <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="addMapFile()">Add map file</v-btn>
       </v-container>
     </v-card-text>
 

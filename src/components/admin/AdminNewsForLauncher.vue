@@ -17,7 +17,7 @@
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary w3-race-bg--text"
+                class="mb-2 bg-primary text-w3-race-bg"
                 v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
@@ -170,7 +170,7 @@
                 <v-btn variant="text" @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn class="bg-primary w3-race-bg--text" @click="saveNews">
+                <v-btn class="bg-primary text-w3-race-bg" @click="saveNews">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>

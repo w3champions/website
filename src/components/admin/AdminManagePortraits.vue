@@ -43,10 +43,10 @@
             <v-row class="justify-center">
               <v-card-actions>
                 <v-col>
-                  <v-btn size="x-large" class="bg-primary w3-race-bg--text" @click="changeGroups">Change groups</v-btn>
+                  <v-btn size="x-large" class="bg-primary text-w3-race-bg" @click="changeGroups">Change groups</v-btn>
                 </v-col>
                 <v-col>
-                  <v-btn size="x-large" class="bg-error w3-race-bg--text" @click="confirmDeleteDialogOpen = true">
+                  <v-btn size="x-large" class="bg-error text-w3-race-bg" @click="confirmDeleteDialogOpen = true">
                     Delete Definition
                   </v-btn>
                   <v-dialog v-model="confirmDeleteDialogOpen" width="300">
@@ -56,10 +56,10 @@
                       <v-card-actions>
                         <v-row class="justify-center pa-3">
                           <v-col>
-                            <v-btn class="bg-primary w3-race-bg--text" @click="confirmDelete">Confirm</v-btn>
+                            <v-btn class="bg-primary text-w3-race-bg" @click="confirmDelete">Confirm</v-btn>
                           </v-col>
                           <v-col>
-                            <v-btn class="bg-info w3-race-bg--text" @click="confirmDeleteDialogOpen = false">Cancel</v-btn>
+                            <v-btn class="bg-info text-w3-race-bg" @click="confirmDeleteDialogOpen = false">Cancel</v-btn>
                           </v-col>
                         </v-row>
                       </v-card-actions>

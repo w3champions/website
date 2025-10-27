@@ -16,7 +16,7 @@
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn
-                  class="mb-2 bg-primary w3-race-bg--text"
+                  class="mb-2 bg-primary text-w3-race-bg"
                   v-bind="props"
                 >
                   Add Admin
@@ -71,7 +71,7 @@
                     <v-row>
                       <v-col>
                         <v-btn
-                          class="bg-primary w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="save"
                         >
                           {{ $t(`views_admin.ok`) }}
@@ -79,7 +79,7 @@
                       </v-col>
                       <v-col class="text-right">
                         <v-btn
-                          class="bg-primary w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}

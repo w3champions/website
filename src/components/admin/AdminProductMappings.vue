@@ -205,7 +205,7 @@
             Cancel
           </v-btn>
           <v-btn
-            class="bg-primary w3-race-bg--text"
+            class="bg-primary text-w3-race-bg"
             :disabled="!isMappingValid"
             @click="saveMappingDialog"
           >

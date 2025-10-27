@@ -14,7 +14,7 @@
             <v-col>
               <v-dialog v-model="dialog" width="1500">
                 <template v-slot:activator="{ props }">
-                  <v-btn size="x-large" class="bg-primary w3-race-bg--text" v-bind="props" @click="openConfirmation">Load</v-btn>
+                  <v-btn size="x-large" class="bg-primary text-w3-race-bg" v-bind="props" @click="openConfirmation">Load</v-btn>
                 </template>
 
                 <v-card>
@@ -23,8 +23,8 @@
 
                     <v-card-actions>
                       <v-spacer />
-                      <v-btn size="x-large" class="bg-primary w3-race-bg--text" @click="accept">Accept</v-btn>
-                      <v-btn size="x-large" class="bg-error w3-race-bg--text" @click="dialog = false">Cancel</v-btn>
+                      <v-btn size="x-large" class="bg-primary text-w3-race-bg" @click="accept">Accept</v-btn>
+                      <v-btn size="x-large" class="bg-error text-w3-race-bg" @click="dialog = false">Cancel</v-btn>
                       <v-spacer />
                     </v-card-actions>
                     <match-detail-view :matchId="matchId" />

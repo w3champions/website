@@ -2,7 +2,7 @@
   <v-container>
     <v-menu location="bottom">
       <template v-slot:activator="{ props }">
-        <v-btn color="primary w3-race-bg--text" v-bind="props">
+        <v-btn color="primary text-w3-race-bg" v-bind="props">
           Select Portrait Groups
           <v-icon>{{ mdiChevronDown }}</v-icon>
         </v-btn>

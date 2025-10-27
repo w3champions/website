@@ -6,8 +6,8 @@
     <v-container>
       <v-card class="pa-md-4">
         <div class="d-flex align-center">
-          <v-btn color="primary" class="mr-2 w3-race-bg--text" @click="addMap">Add map</v-btn>
-          <v-btn color="secondary" class="w3-race-bg--text" @click="openBulkUpload">Bulk Upload</v-btn>
+          <v-btn color="primary" class="mr-2 text-w3-race-bg" @click="addMap">Add map</v-btn>
+          <v-btn color="secondary" class="text-w3-race-bg" @click="openBulkUpload">Bulk Upload</v-btn>
           <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
         </div>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>

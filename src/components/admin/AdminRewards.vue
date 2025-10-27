@@ -25,7 +25,7 @@
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary w3-race-bg--text"
+                class="mb-2 bg-primary text-w3-race-bg"
                 v-bind="props"
                 @click="createNewReward"
               >

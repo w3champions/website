@@ -6,10 +6,10 @@
     <v-container fluid>
       <v-row>
         <v-col class="pt-0">
-          <v-btn color="primary" class="w3-race-bg--text mr-3" @click="goBack">
+          <v-btn color="primary" class="text-w3-race-bg mr-3" @click="goBack">
             Go Back
           </v-btn>
-          <v-btn color="primary" class="w3-race-bg--text" @click="downloadLog">
+          <v-btn color="primary" class="text-w3-race-bg" @click="downloadLog">
             Download
           </v-btn>
         </v-col>

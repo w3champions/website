@@ -156,7 +156,7 @@
         Cancel
       </v-btn>
       <v-btn
-        class="bg-primary w3-race-bg--text"
+        class="bg-primary text-w3-race-bg"
         variant="text"
         :disabled="!isValid"
         @click="save"

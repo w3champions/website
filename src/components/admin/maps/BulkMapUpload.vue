@@ -35,7 +35,7 @@
           <v-col>
             <v-btn
               color="primary"
-              class="w3-race-bg--text mr-2"
+              class="text-w3-race-bg mr-2"
               :disabled="!files || files.length === 0 || uploading || selecting"
               :loading="uploading"
               @click="uploadFiles"
@@ -44,7 +44,7 @@
             </v-btn>
             <v-btn
               color="success"
-              class="mr-2"
+              class="mr-2 text-w3-race-bg"
               :disabled="uploadedFiles.length === 0 || uploading || selecting"
               :loading="selecting"
               @click="selectAll"
@@ -52,6 +52,7 @@
               Select All ({{ uploadedFiles.length }})
             </v-btn>
             <v-btn
+              class="bg-error text-w3-race-bg"
               :disabled="uploading || selecting"
               variant="text"
               @click="reset"
@@ -115,7 +116,7 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn :disabled="uploading || selecting" variant="text" @click="cancel">
+      <v-btn :disabled="uploading || selecting" variant="text" class="bg-primary text-w3-race-bg" @click="cancel">
         Close
       </v-btn>
     </v-card-actions>

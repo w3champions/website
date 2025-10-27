@@ -164,7 +164,7 @@
       <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn class="bg-primary w3-race-bg--text" :disabled="saving || !formValid" @click="save">
+      <v-btn class="bg-primary text-w3-race-bg" :disabled="saving || !formValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

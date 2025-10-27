@@ -20,7 +20,7 @@
               <v-row v-if="assignmentsChanged" class="justify-end">
                 <v-dialog v-model="assignDialogOpen" transition="fade-transition" max-width="1000">
                   <template v-slot:activator="{ props }">
-                    <v-btn size="x-large" class="bg-primary w3-race-bg--text" v-bind="props">Assign</v-btn>
+                    <v-btn size="x-large" class="bg-primary text-w3-race-bg" v-bind="props">Assign</v-btn>
                   </template>
 
                   <!-- Confirmation dialog -->
@@ -89,7 +89,7 @@
                         <v-spacer />
                         <v-container>
                           <v-card-actions class="justify-end">
-                            <v-btn class="bg-primary w3-race-bg--text" size="x-large" @click="confirmDialog">Confirm</v-btn>
+                            <v-btn class="bg-primary text-w3-race-bg" size="x-large" @click="confirmDialog">Confirm</v-btn>
                           </v-card-actions>
                         </v-container>
                       </v-row>

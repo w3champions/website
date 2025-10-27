@@ -22,7 +22,7 @@
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn
-                  class="mb-2 bg-primary w3-race-bg--text"
+                  class="mb-2 bg-primary text-w3-race-bg"
                   v-bind="props"
                 >
                   Upload Image
@@ -52,7 +52,7 @@
                   <v-btn variant="text" :disabled="isUploadingFile" @click="close">
                     {{ $t(`views_admin.cancel`) }}
                   </v-btn>
-                  <v-btn class="bg-primary w3-race-bg--text" :disabled="isUploadingFile" @click="uploadFile">
+                  <v-btn class="bg-primary text-w3-race-bg" :disabled="isUploadingFile" @click="uploadFile">
                     {{ isUploadingFile ? "Uploading..." : "Upload" }}
                   </v-btn>
                 </v-card-actions>

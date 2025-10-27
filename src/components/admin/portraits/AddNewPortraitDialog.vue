@@ -2,7 +2,7 @@
   <v-dialog v-model="dialogOpen" max-width="800">
     <template v-slot:activator="{ props }">
       <v-row class="justify-center ma-0 pa-0">
-        <v-btn class="bg-primary w3-race-bg--text" v-bind="props">Add New Portrait</v-btn>
+        <v-btn class="bg-primary text-w3-race-bg" v-bind="props">Add New Portrait</v-btn>
       </v-row>
     </template>
 
@@ -127,7 +127,7 @@
           Close
         </v-btn>
         <v-btn
-          class="bg-primary w3-race-bg--text"
+          class="bg-primary text-w3-race-bg"
           :disabled="!canUpload || uploading"
           :loading="uploading"
           @click="startUploadProcess"

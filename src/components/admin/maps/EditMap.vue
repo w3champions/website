@@ -39,7 +39,7 @@
       <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn class="bg-primary w3-race-bg--text" @click="save">
+      <v-btn class="bg-primary text-w3-race-bg" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

@@ -20,7 +20,7 @@
               <v-textarea v-model="newMotd" variant="outlined" counter label="New Motd:" :rules="rules" />
             </v-card-actions>
             <v-card-actions class="pa-3 ma-3 justify-end">
-              <v-btn class="bg-primary w3-race-bg--text" :disabled="!isFormValid" @click="confirmNewMotd">Set New Motd</v-btn>
+              <v-btn class="bg-primary text-w3-race-bg" :disabled="!isFormValid" @click="confirmNewMotd">Set New Motd</v-btn>
             </v-card-actions>
           </v-form>
         </div>

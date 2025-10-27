@@ -16,8 +16,7 @@
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
+                class="bg-primary text-w3-race-bg"
                 v-bind="props"
                 @click="openAddDialog"
               >
@@ -36,6 +35,7 @@
                       <v-text-field
                         v-model="editedItem.translations.en"
                         label="English"
+                        variant="underlined"
                         required
                       />
                     </v-col>
@@ -43,6 +43,7 @@
                       <v-text-field
                         v-model="editedItem.translations.cn"
                         label="Chinese (CN)"
+                        variant="underlined"
                         required
                       />
                     </v-col>
@@ -50,6 +51,7 @@
                       <v-text-field
                         v-model="editedItem.translations.es"
                         label="Spanish"
+                        variant="underlined"
                         required
                       />
                     </v-col>
@@ -63,8 +65,7 @@
                   Cancel
                 </v-btn>
                 <v-btn
-                  color="primary"
-                  class="w3-race-bg--text"
+                  class="bg-primary text-w3-race-bg"
                   :disabled="!isValid"
                   @click="save"
                 >

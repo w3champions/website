@@ -26,7 +26,7 @@
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn
-                  class="mb-2 bg-primary w3-race-bg--text"
+                  class="mb-2 bg-primary text-w3-race-bg"
                   v-bind="props"
                 >
                   {{ $t(`views_admin.mutePlayer`) }}
@@ -81,8 +81,7 @@
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
                           <v-btn
-                            color="primary"
-                            class="w3-race-bg--text"
+                            class="bg-primary text-w3-race-bg"
                             @click="dateMenu = false"
                           >
                             {{ $t(`views_admin.ok`) }}
@@ -102,8 +101,7 @@
                     <v-row class="mx-1">
                       <v-col>
                         <v-btn
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}
@@ -112,8 +110,7 @@
                       <v-col class="text-right">
                         <v-btn
                           v-if="showConfirmation && selectedDate"
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="save"
                         >
                           {{ $t(`views_admin.ok`) }}
@@ -133,7 +130,7 @@
       </v-data-table>
       <v-row class="ma-2">
         <v-spacer />
-        <v-btn v-if="!searchQuery" color="primary" class="w3-race-bg--text" @click="loadMutes">
+        <v-btn v-if="!searchQuery" color="primary" class="text-w3-race-bg" @click="loadMutes">
           Next
         </v-btn>
         <v-spacer />

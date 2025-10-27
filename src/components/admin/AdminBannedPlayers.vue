@@ -29,7 +29,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="bg-primary ml-auto mr-3"
+                class="bg-primary ml-auto mr-5 text-w3-race-bg"
                 v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
@@ -82,7 +82,7 @@
                             {{ $t(`views_admin.cancel`) }}
                           </v-btn>
                           <v-btn
-                            class="bg-primary w3-race-bg--text"
+                            class="bg-primary text-w3-race-bg"
                             @click="dateMenu = false"
                           >
                             {{ $t(`views_admin.ok`) }}
@@ -161,7 +161,7 @@
                 <v-btn variant="text" @click="close">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn class="bg-primary w3-race-bg--text" @click="save">
+                <v-btn class="bg-primary text-w3-race-bg" @click="save">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>
