@@ -7,6 +7,7 @@
       :headers="headers"
       :items="banReasonTranslations"
       :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       class="elevation-1"
       item-key="_id"
     >
@@ -93,14 +94,7 @@ import { BanReasonTranslation, CreateBanReasonTranslationRequest, UpdateBanReaso
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
-
-type AdminBanReasonTranslationsHeader = {
-  text: string;
-  value: string;
-  sortable: boolean;
-  width?: string;
-  align?: "start" | "center" | "end";
-};
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminBanReasonTranslations",
@@ -128,36 +122,36 @@ export default defineComponent({
 
     const editedItem = ref<BanReasonTranslation>({ ...defaultItem });
 
-    const headers = ref<AdminBanReasonTranslationsHeader[]>([
+    const headers: DataTableHeader[] = [
       {
-        text: "English",
+        title: "English",
         value: "translations.en",
         sortable: true,
       },
       {
-        text: "Chinese (CN)",
+        title: "Chinese (CN)",
         value: "translations.cn",
         sortable: true,
       },
       {
-        text: "Spanish",
+        title: "Spanish",
         value: "translations.es",
         sortable: true,
       },
       {
-        text: "Created By",
+        title: "Created By",
         value: "createdBy",
         sortable: true,
         width: "150px",
       },
       {
-        text: "Actions",
+        title: "Actions",
         value: "actions",
         sortable: false,
         width: "100px",
         align: "end",
       },
-    ]);
+    ];
 
     const dialogTitle = computed<string>(() => {
       return isEditMode.value ? "Edit Translation" : "Add Translation";
