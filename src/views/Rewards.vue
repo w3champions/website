@@ -40,9 +40,10 @@
               <v-btn
                 :loading="isLinkingPatreon"
                 class="mt-2"
+                style="background-color: transparent"
                 @click="linkWithPatreon"
               >
-                <v-icon start>mdi-patreon</v-icon>
+                <v-icon start>{{ mdiPatreon }}</v-icon>
                 {{ $t("views_rewards.link_with_patreon") }}
               </v-btn>
             </div>
@@ -117,6 +118,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import noop from "lodash/noop";
+import { mdiPatreon } from "@mdi/js";
 
 export default defineComponent({
   name: "RewardsPage",
@@ -243,6 +245,7 @@ export default defineComponent({
       sortedRewards,
       getRewardName,
       getRewardDescription,
+      mdiPatreon,
     };
   },
 });
