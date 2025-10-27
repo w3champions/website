@@ -261,8 +261,8 @@
           <v-alert type="warning" density="compact" class="mb-3">
             Regenerating this token will invalidate the current token value.
           </v-alert>
-          <p>Are you sure you want to regenerate the token "{{ tokenToRegenerate?.name }}"?</p>
-          <p class="mt-2 text--secondary">Any applications using the current token will stop working until updated with the new token.</p>
+          <p class="text-body-1 w3-gray-text">Are you sure you want to regenerate the token "{{ tokenToRegenerate?.name }}"?</p>
+          <p class="text-body-1 w3-gray-text">Any applications using the current token will stop working until updated with the new token.</p>
         </v-card-text>
         <v-card-actions>
           <v-spacer />

@@ -45,7 +45,7 @@
               <v-card-text>
                 <div><strong>Name:</strong> {{ getRewardName(localReward.displayId) }}</div>
                 <div><strong>Description:</strong> {{ getRewardDescription(localReward.displayId) }}</div>
-                <div v-if="!hasTranslation(localReward.displayId)" class="text--secondary mt-2">
+                <div v-if="!hasTranslation(localReward.displayId)" class="w3-gray-text mt-2">
                   <v-icon size="small" color="warning">mdi-alert</v-icon>
                   No translation found for display ID "{{ localReward.displayId }}"
                 </div>

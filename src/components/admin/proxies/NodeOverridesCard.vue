@@ -11,7 +11,7 @@
       <v-chip-group
         v-model="chipGroupIndex"
         class="ma-2"
-        selected-class="info--text"
+        selected-class="text-info"
         column
         multiple
       >

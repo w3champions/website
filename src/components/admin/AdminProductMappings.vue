@@ -48,9 +48,9 @@
           <div>
             <div v-for="rewardId in item.rewardIds" :key="rewardId" class="mb-1">
               <div class="font-weight-medium">{{ getRewardName(rewardId) }}</div>
-              <div class="text-caption text--secondary">{{ rewardId }}</div>
+              <div class="text-caption w3-gray-text">{{ rewardId }}</div>
             </div>
-            <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption text--secondary">No rewards assigned</div>
+            <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption w3-gray-text">No rewards assigned</div>
           </div>
         </template>
 

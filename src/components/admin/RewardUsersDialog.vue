@@ -31,7 +31,7 @@
               <v-card border>
                 <v-card-text class="text-center">
                   <div class="text-h4 text-primary">{{ filteredUsers.length }}</div>
-                  <div class="text-subtitle1">Showing / {{ users.length }} Total</div>
+                  <div class="text-subtitle-1">Showing / {{ users.length }} Total</div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -39,7 +39,7 @@
               <v-card border>
                 <v-card-text class="text-center">
                   <div class="text-h4 text-success">{{ activeUsersCount }}</div>
-                  <div class="text-subtitle1">Active</div>
+                  <div class="text-subtitle-1">Active</div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -47,7 +47,7 @@
               <v-card border>
                 <v-card-text class="text-center">
                   <div class="text-h4 text-error">{{ expiredUsersCount }}</div>
-                  <div class="text-subtitle1">Expired/Revoked</div>
+                  <div class="text-subtitle-1">Expired/Revoked</div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -103,7 +103,7 @@
 
             <template v-slot:item.expiresAt="{ item }">
               <div v-if="item.expiresAt">{{ formatDate(item.expiresAt) }}</div>
-              <div v-else class="text--secondary">Permanent</div>
+              <div v-else class="w3-gray-text">Permanent</div>
             </template>
 
             <template v-slot:item.revocationReason="{ item }">
@@ -111,12 +111,12 @@
                 <v-icon size="small" color="warning" class="mr-1">mdi-information-outline</v-icon>
                 {{ getRevocationReason(item) }}
               </div>
-              <div v-else class="text--secondary text-center">—</div>
+              <div v-else class="w3-gray-text text-center">—</div>
             </template>
           </v-data-table>
         </div>
 
-        <div v-else class="text-center pa-4 text--secondary">
+        <div v-else class="text-center pa-4 w3-gray-text">
           <v-icon color="grey" size="64" class="mb-2">{{ mdiAccountOff }}</v-icon>
           <div>No users found</div>
         </div>

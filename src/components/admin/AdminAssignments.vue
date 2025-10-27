@@ -10,25 +10,25 @@
       <v-col cols="12" sm="6" md="3">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-primary mb-1">{{ getTotalCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Total Assignments</div>
+          <div class="w3-gray-text">Total Assignments</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-success mb-1">{{ getActiveCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Active</div>
+          <div class="w3-gray-text">Active</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-warning mb-1">{{ getExpiredCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Expired</div>
+          <div class="w3-gray-text">Expired</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-error mb-1">{{ getRevokedCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Revoked</div>
+          <div class="w3-gray-text">Revoked</div>
         </v-card>
       </v-col>
     </v-row>
@@ -80,7 +80,7 @@
         <!-- Quick Filter Buttons -->
         <v-row class="mb-4">
           <v-col cols="12">
-            <div class="mb-2 text-subtitle2 text--secondary">Quick Filters:</div>
+            <div class="mb-2 w3-gray-text">Quick Filters:</div>
             <v-chip-group v-model="quickFilter" column>
               <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('active')">
                 <v-icon start size="small" color="success">{{ mdiCheckCircle }}</v-icon>
@@ -145,7 +145,7 @@
     <v-card class="elevation-2">
       <v-card-text v-if="loading && assignments.length === 0" class="text-center py-8">
         <v-skeleton-loader type="table" />
-        <div class="mt-4 text-subtitle1">Loading assignments...</div>
+        <div class="mt-4 text-subtitle-1 w3-gray-text">Loading assignments...</div>
       </v-card-text>
 
       <v-data-table
@@ -174,7 +174,7 @@
             <v-icon class="mr-2" color="primary" size="small">{{ mdiGift }}</v-icon>
             <div>
               <div class="font-weight-medium text-primary">{{ getRewardName(item.rewardId) }}</div>
-              <div class="text-caption text--secondary">{{ item.rewardId }}</div>
+              <div class="text-caption w3-gray-text">{{ item.rewardId }}</div>
             </div>
           </div>
         </template>
@@ -196,7 +196,7 @@
         <template v-slot:item.assignedAt="{ item }">
           <div>
             <div class="font-weight-medium">{{ formatDate(item.assignedAt) }}</div>
-            <div class="text-caption text--secondary">{{ formatTime(item.assignedAt) }}</div>
+            <div class="text-caption w3-gray-text">{{ formatTime(item.assignedAt) }}</div>
           </div>
         </template>
 
@@ -205,12 +205,12 @@
             <div :class="getExpirationClass(item.expiresAt)" class="font-weight-medium">
               {{ formatDate(item.expiresAt) }}
             </div>
-            <div class="text-caption text--secondary">{{ formatTime(item.expiresAt) }}</div>
+            <div class="text-caption w3-gray-text">{{ formatTime(item.expiresAt) }}</div>
             <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)" size="x-small" color="orange" class="mt-1">
               Expires Soon
             </v-chip>
           </div>
-          <div v-else class="text--secondary font-italic">Permanent</div>
+          <div v-else class="w3-gray-text font-italic">Permanent</div>
         </template>
 
         <template v-slot:item.actions="{ item }">
@@ -242,8 +242,8 @@
         <template v-slot:no-data>
           <div class="text-center py-8">
             <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ mdiDatabaseSearch }}</v-icon>
-            <div class="text-h6 text--secondary mb-2">No assignments found</div>
-            <div class="text-body-2 text--secondary mb-4">
+            <div class="text-h6 w3-gray-text mb-2">No assignments found</div>
+            <div class="text-body-2 w3-gray-text mb-4">
               {{ selectedPlayer ? 'Try searching for a different user or adjust your filters' : 'Use the player search above to find user assignments or load all assignments' }}
             </div>
           </div>
@@ -262,7 +262,7 @@
           @update:model-value="onPageChange"
         />
         <div class="d-flex justify-center align-center mt-3">
-          <div class="text-body-2 text--secondary mr-4">
+          <div class="text-body-2 w3-gray-text mr-4">
             Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, paginationData.totalCount) }}
             of {{ paginationData.totalCount.toLocaleString() }} assignments
           </div>
@@ -296,7 +296,7 @@
           <v-row class="mb-4">
             <v-col cols="6">
               <v-card border class="pa-3">
-                <div class="text-overline text--secondary mb-1">User</div>
+                <div class="text-overline w3-gray-text mb-1">User</div>
                 <div class="d-flex align-center">
                   <v-avatar size="32" color="primary" class="mr-2">
                     <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
@@ -307,12 +307,12 @@
             </v-col>
             <v-col cols="6">
               <v-card border class="pa-3">
-                <div class="text-overline text--secondary mb-1">Reward</div>
+                <div class="text-overline w3-gray-text mb-1">Reward</div>
                 <div class="d-flex align-center">
                   <v-icon class="mr-2" color="primary">{{ mdiGift }}</v-icon>
                   <div>
                     <div class="font-weight-bold">{{ getRewardName(selectedAssignment.rewardId) }}</div>
-                    <div class="text-caption text--secondary">{{ selectedAssignment.rewardId }}</div>
+                    <div class="text-caption w3-gray-text">{{ selectedAssignment.rewardId }}</div>
                   </div>
                 </div>
               </v-card>
@@ -323,7 +323,7 @@
           <v-row class="mb-4">
             <v-col cols="6">
               <v-card border class="pa-3">
-                <div class="text-overline text--secondary mb-1">Status</div>
+                <div class="text-overline w3-gray-text mb-1">Status</div>
                 <v-chip :color="getStatusColor(selectedAssignment.status)" label>
                   <v-icon start size="x-small">{{ getStatusIcon(selectedAssignment.status) }}</v-icon>
                   {{ getStatusName(selectedAssignment.status) }}
@@ -332,7 +332,7 @@
             </v-col>
             <v-col cols="6">
               <v-card border class="pa-3">
-                <div class="text-overline text--secondary mb-1">Provider</div>
+                <div class="text-overline w3-gray-text mb-1">Provider</div>
                 <v-chip variant="outlined" :color="getProviderColor(selectedAssignment.providerId)">
                   <v-icon start size="small" :color="getProviderColor(selectedAssignment.providerId)">{{ getProviderIcon(selectedAssignment.providerId) }}</v-icon>
                   {{ formatProviderName(selectedAssignment.providerId) }}
@@ -665,9 +665,9 @@ export default defineComponent({
     };
 
     const getExpirationClass = (expiresAt: string): string => {
-      if (isExpired(expiresAt)) return "error--text";
-      if (isExpiringSoon(expiresAt)) return "warning--text";
-      return "text--primary";
+      if (isExpired(expiresAt)) return "text-error";
+      if (isExpiringSoon(expiresAt)) return "text-warning";
+      return "text-primary";
     };
 
     const getStatusIcon = (status: RewardStatus): string => {

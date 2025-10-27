@@ -21,13 +21,15 @@
           <v-list-item
             v-for="hero in heroFilters"
             :key="hero.type"
-            :class="{ 'primary--text': isSelected(hero) }"
+            :class="{ 'text-primary': isSelected(hero) }"
             @click="toggleHero(hero)"
           >
             <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
-            <v-list-item-action>
-              <v-icon v-if="isSelected(hero)">mdi-check</v-icon>
-            </v-list-item-action>
+            <template v-slot:prepend>
+              <v-list-item-action>
+                <v-icon v-if="isSelected(hero)" start>{{ mdiCheck }}</v-icon>
+              </v-list-item-action>
+            </template>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -38,7 +40,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { TranslateResult, useI18n } from "vue-i18n";
-import { mdiDramaMasks } from "@mdi/js";
+import { mdiCheck, mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
 
@@ -87,6 +89,7 @@ export default defineComponent({
     };
 
     return {
+      mdiCheck,
       mdiDramaMasks,
       heroFilters,
       toggleHero,

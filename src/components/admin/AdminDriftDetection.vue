@@ -13,7 +13,7 @@ J<template>
           </v-card-title>
           <v-card-text>
             <div v-if="!lastResult">
-              <p class="text--secondary">No drift detection has been run yet.</p>
+              <p class="w3-gray-text">No drift detection has been run yet.</p>
             </div>
             <div v-else>
               <v-row>
@@ -108,14 +108,14 @@ J<template>
           </v-card-title>
           <v-card-text>
             <div v-if="!reconciliationResult">
-              <p class="text--secondary">No reconciliation has been run yet.</p>
+              <p class="w3-gray-text">No reconciliation has been run yet.</p>
             </div>
             <div v-else>
               <v-row>
                 <v-col cols="6">
                   <v-card border>
                     <v-card-text class="text-center">
-                      <div class="text-h4" :class="reconciliationResult.totalUsersAffected > 0 ? 'warning--text' : 'success--text'">
+                      <div class="text-h4" :class="reconciliationResult.totalUsersAffected > 0 ? 'text-warning' : 'text-success'">
                         {{ reconciliationResult.totalUsersAffected }}
                       </div>
                       <div class="text-caption">Users Affected</div>
@@ -314,7 +314,7 @@ J<template>
               </v-btn>
 
               <v-card v-if="showSyncDetails" border class="mt-2 pa-3">
-                <div class="text-subtitle2 mb-2">Processed Associations ({{ syncResult.processedAssociations.length }}):</div>
+                <div class="w3-gray-text mb-2">Processed Associations ({{ syncResult.processedAssociations.length }}):</div>
                 <div class="text-body-2">
                   <div v-for="(association, index) in syncResult.processedAssociations" :key="index" class="mb-1">
                     • {{ association }}

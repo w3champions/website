@@ -51,7 +51,7 @@
       <template v-slot:item.translatedName="{ item }">
         <div>
           <strong>{{ getRewardName(item.displayId) }}</strong>
-          <div v-if="!hasTranslation(item.displayId)" class="text--secondary text-caption">
+          <div v-if="!hasTranslation(item.displayId)" class="w3-gray-text text-caption">
             <v-icon size="small" color="warning">mdi-alert</v-icon>
             No translation
           </div>
@@ -68,7 +68,7 @@
         <span v-if="item.duration">
           {{ formatDuration(item.duration) }}
         </span>
-        <span v-else class="text--secondary">Permanent</span>
+        <span v-else class="w3-gray-text">Permanent</span>
       </template>
 
       <template v-slot:item.assignmentStats="{ item }">
