@@ -124,7 +124,7 @@
         <table class="custom-table">
           <tr v-for="member in playersClan.foundingFathers" :key="member">
             <td>
-              <span class="cursor-pointer" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
+              <span class="cursor-pointer w3-gray-text" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
             </td>
           </tr>
         </table>

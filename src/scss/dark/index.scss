@@ -22,6 +22,12 @@
     }
   }
 
+  .v-data-table, .custom-table {
+    tr:hover {
+      box-shadow: 0 0 17px grey;
+    }
+  }
+
   .custom-table {
     td {
       border-bottom: thin solid hsla(0, 0%, 100%, 0.12);
@@ -35,7 +41,7 @@
     }
   }
 
-  .v-btn.join-button {
+  .join-button {
     text-shadow: none;
     color: black;
   }

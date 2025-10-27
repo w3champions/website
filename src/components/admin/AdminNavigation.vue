@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer permanent class="mt-0">
+  <v-navigation-drawer permanent class="mt-0 w3-glass">
     <v-list-item>
       <v-list-item-title>
         {{ $t("views_admin.adminpage") }}

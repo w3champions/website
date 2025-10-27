@@ -7,7 +7,13 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="battleTag" label="Battletag" autofocus />
+            <v-text-field
+              v-model="battleTag"
+              label="Battletag"
+              autofocus
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
         </v-row>
         <v-row>

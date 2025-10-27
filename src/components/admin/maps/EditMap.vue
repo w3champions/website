@@ -7,28 +7,54 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.name" label="Name" autofocus variant="underlined" />
+            <v-text-field
+              v-model="mapRef.name"
+              label="Name"
+              autofocus
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
 
           <v-tooltip v-if="isAddDialog" location="left" content-class="w3-tooltip elevation-1">
             <template v-slot:activator="{ props }">
               <v-col cols="12" sm="6" md="12">
-                <v-text-field v-model="mapId" label="Id" v-bind="props" variant="underlined" />
+                <v-text-field
+                  v-model="mapId"
+                  label="Id"
+                  v-bind="props"
+                  variant="underlined"
+                  color="primary"
+                />
               </v-col>
             </template>
             <span>Leave blank to auto assign an Id</span>
           </v-tooltip>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.category" label="Category" variant="underlined" />
+            <v-text-field
+              v-model="mapRef.category"
+              label="Category"
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="mapRef.maxTeams" label="Max Teams" variant="underlined" />
+            <v-text-field
+              v-model="mapRef.maxTeams"
+              label="Max Teams"
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
 
           <v-col cols="12" sm="6" md="12" class="pt-0">
-            <v-checkbox v-model="mapRef.disabled" label="Disable map" />
+            <v-checkbox
+              v-model="mapRef.disabled"
+              label="Disable map"
+              class="w3-gray-text"
+            />
           </v-col>
         </v-row>
       </v-container>

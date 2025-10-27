@@ -9,7 +9,14 @@
           <v-row>
             <v-col />
             <v-col cols="6">
-              <v-text-field v-model="matchId" variant="outlined" clearable placeholder="Game ID" autofocus />
+              <v-text-field
+                v-model="matchId"
+                variant="outlined"
+                color="primary"
+                clearable
+                placeholder="Game ID"
+                autofocus
+              />
             </v-col>
             <v-col>
               <v-dialog v-model="dialog" width="1500">

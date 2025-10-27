@@ -16,6 +16,8 @@
               required
               hint="Translation key for the reward (e.g., 'portrait_grubby', 'patreon_tier1')"
               persistent-hint
+              variant="underlined"
+              color="primary"
             />
           </v-col>
           <v-col cols="12" md="6">
@@ -26,6 +28,8 @@
               :rules="[rules.required]"
               :loading="loading"
               required
+              variant="underlined"
+              color="primary"
               @update:model-value="onModuleChange"
             >
               <template v-slot:item="{ props, item }">
@@ -116,7 +120,7 @@
         <v-row>
           <v-col cols="12">
             <v-list-subheader>Duration Settings</v-list-subheader>
-            <v-radio-group v-model="durationType" inline>
+            <v-radio-group v-model="durationType" inline class="w3-gray-text">
               <v-radio label="Permanent" value="permanent" />
               <v-radio label="Time Limited" value="limited" />
             </v-radio-group>
@@ -128,8 +132,10 @@
                     v-model.number="durationValue"
                     label="Duration Value"
                     type="number"
-                    :rules="[rules.required, rules.positiveNumber]"
                     min="1"
+                    variant="underlined"
+                    color="primary"
+                    :rules="[rules.required, rules.positiveNumber]"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
@@ -137,6 +143,8 @@
                     v-model="durationUnit"
                     :items="durationUnitItems"
                     label="Duration Unit"
+                    variant="underlined"
+                    color="primary"
                     :rules="[rules.required]"
                   />
                 </v-col>

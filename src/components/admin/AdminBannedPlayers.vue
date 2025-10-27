@@ -60,6 +60,7 @@
                             v-model="selectedDateString"
                             readonly
                             variant="underlined"
+                            color="primary"
                             :label="$t(`views_admin.banenddate`)"
                             v-bind="props"
                           />
@@ -105,6 +106,7 @@
                             v-bind="props"
                             hint="Which game modes to ban from?"
                             variant="underlined"
+                            color="primary"
                           />
                         </template>
                         <span>
@@ -117,6 +119,7 @@
                       <v-text-field
                         v-model="editedItem.banReason"
                         variant="underlined"
+                        color="primary"
                         :label="$t(`views_admin.banreason`)"
                       />
                     </v-col>
@@ -131,6 +134,7 @@
                         hint="Select a predefined translation or leave empty to use free text"
                         persistent-hint
                         variant="underlined"
+                        color="primary"
                       />
                     </v-col>
                     <v-col cols="12" sm="12" md="12" class="pb-0">
@@ -140,6 +144,7 @@
                         hint="Only used if no translation is selected"
                         persistent-hint
                         variant="underlined"
+                        color="primary"
                         :disabled="!!selectedTranslationId"
                       />
                     </v-col>

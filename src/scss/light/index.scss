@@ -6,6 +6,12 @@
     color: rgb(var(--v-theme-lost)) !important;
   }
 
+  .v-data-table, .custom-table {
+    tr:hover {
+      box-shadow: 0 0 6px black;
+    }
+  }
+
   .custom-table {
     td {
       border-bottom: thin solid rgba(0, 0, 0, 0.12);

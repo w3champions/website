@@ -33,6 +33,7 @@
               label="Portrait ID (Auto-calculated)"
               readonly
               variant="underlined"
+              color="primary"
               :disabled="uploading"
             />
           </v-col>

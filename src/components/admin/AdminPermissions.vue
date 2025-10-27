@@ -42,6 +42,7 @@
                         label="BattleTag"
                         class="mx-5"
                         variant="underlined"
+                        color="primary"
                       />
                     </v-row>
                     <v-row>
@@ -50,6 +51,7 @@
                           v-model="editedItem.description"
                           :label="'Description'"
                           variant="underlined"
+                          color="primary"
                         />
                       </v-col>
                       <v-col class="px-5 py-0">

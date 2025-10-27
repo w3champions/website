@@ -36,6 +36,7 @@
                         v-model="editedItem.translations.en"
                         label="English"
                         variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>
@@ -44,6 +45,7 @@
                         v-model="editedItem.translations.cn"
                         label="Chinese (CN)"
                         variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>
@@ -52,6 +54,7 @@
                         v-model="editedItem.translations.es"
                         label="Spanish"
                         variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>

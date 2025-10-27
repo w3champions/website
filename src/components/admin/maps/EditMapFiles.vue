@@ -29,7 +29,12 @@
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="fileName" label="File name (optional)" variant="underlined" />
+            <v-text-field
+              v-model="fileName"
+              label="File name (optional)"
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
         </v-row>
         <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="addMapFile()">Add map file</v-btn>

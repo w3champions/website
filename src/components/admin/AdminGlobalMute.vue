@@ -60,6 +60,7 @@
                             v-bind="props"
                             class="w-100"
                             variant="underlined"
+                            color="primary"
                           />
                         </template>
                         <v-date-picker

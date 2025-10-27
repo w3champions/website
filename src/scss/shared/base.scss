@@ -2,14 +2,6 @@
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 }
 
-.won {
-  color: green !important;
-}
-
-.lost {
-  color: red !important;
-}
-
 .number-text {
   font-family: "Inter Variable" !important;
   font-style: normal;
@@ -28,13 +20,6 @@
     font-size: 0.875rem;
     height: 48px;
   }
-}
-
-.circle {
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  opacity: 0.25;
 }
 
 .blinker {
@@ -59,7 +44,7 @@
   }
 }
 
-.v-btn.join-button {
+.join-button {
   color: rgb(51, 38, 28);
   background-image: linear-gradient(rgba(255, 255, 0, 0.2) 50%, transparent 50%),
     linear-gradient(rgb(255, 209, 85), rgb(220, 166, 13));

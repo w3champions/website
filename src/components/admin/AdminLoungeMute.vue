@@ -51,6 +51,7 @@
                             v-bind="props"
                             class="w-100"
                             variant="underlined"
+                            color="primary"
                           />
                         </template>
                         <v-date-picker
@@ -86,6 +87,7 @@
                             v-model="reason"
                             :label="'Reason'"
                             variant="underlined"
+                            color="primary"
                             density="compact"
                             hide-details
                           />

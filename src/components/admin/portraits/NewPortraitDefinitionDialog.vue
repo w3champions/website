@@ -28,6 +28,7 @@
                     :rules="[ruleRequired, ruleMin, ruleTaken, ruleNumber, ruleNotZero]"
                     label="Portrait Id"
                     variant="underlined"
+                    color="primary"
                   />
                 </v-container>
               </v-row>

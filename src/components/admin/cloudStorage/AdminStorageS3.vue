@@ -17,7 +17,13 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="transparent">
-            <v-text-field v-model="tableSearch" variant="underlined" label="Search" :prepend-icon="mdiMagnify" />
+            <v-text-field
+              v-model="tableSearch"
+              variant="underlined"
+              color="primary"
+              label="Search"
+              :prepend-inner-icon="mdiMagnify"
+            />
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">

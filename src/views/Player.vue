@@ -333,4 +333,10 @@ export default defineComponent({
 :deep(.v-tabs .v-slide-group__content) {
   border-bottom: 1px solid #cdcdcd;
 }
+
+.circle {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
 </style>

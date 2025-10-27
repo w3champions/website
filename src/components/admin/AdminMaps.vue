@@ -8,7 +8,7 @@
         <div class="d-flex align-center">
           <v-btn color="primary" class="mr-2 text-w3-race-bg" @click="addMap">Add map</v-btn>
           <v-btn color="secondary" class="text-w3-race-bg" @click="openBulkUpload">Bulk Upload</v-btn>
-          <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details />
+          <v-checkbox v-model="adminMapsFilters.hideDisabled" label="Hide disabled maps" hide-details class="w3-gray-text" />
         </div>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>
           <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
@@ -22,7 +22,7 @@
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <v-text-field v-model="search" label="Search" variant="underlined" />
+        <v-text-field v-model="search" label="Search" variant="underlined" color="primary" />
         <v-data-table
           :headers="headers"
           :items="maps"

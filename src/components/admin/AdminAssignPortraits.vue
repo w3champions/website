@@ -59,6 +59,7 @@
                                 :rules="[rules.required, rules.min]"
                                 label="Mouseover tooltip"
                                 variant="underlined"
+                                color="primary"
                               />
                               <v-spacer />
                             </v-row>

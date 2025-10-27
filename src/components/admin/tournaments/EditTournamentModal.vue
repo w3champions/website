@@ -15,6 +15,8 @@
             label="Name"
             hide-details
             single-line
+            variant="underlined"
+            color="primary"
           />
           <v-select
             v-if="isEdit"
@@ -25,6 +27,8 @@
             label="State"
             hide-details
             single-line
+            variant="underlined"
+            color="primary"
             :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
@@ -41,7 +45,7 @@
               format="24hr"
             />
           </div>
-          <div class="mt-4">
+          <div class="mt-4 w3-gray-text">
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
@@ -52,6 +56,9 @@
                 :label="map.name"
                 :value="map.id"
                 hide-details
+                color="primary"
+                class="w3-gray-text"
+                density="compact"
               />
             </v-col>
           </v-row>
@@ -64,6 +71,7 @@
                 label="Registration Time (mins)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -72,6 +80,7 @@
                 label="Ready Time (s)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -80,6 +89,7 @@
                 label="Veto Time (s)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -90,6 +100,7 @@
                 label="Show Winner Time (hrs)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="8">
@@ -97,6 +108,8 @@
                 v-model="matcherinoUrl"
                 label="Matcherino URL"
                 hide-details
+                variant="underlined"
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -111,6 +124,7 @@
                 label="Game Mode"
                 hide-details
                 single-line
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -123,6 +137,7 @@
                 label="Format"
                 hide-details
                 single-line
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -133,6 +148,7 @@
                 :items="[2, 4, 8, 16, 32, 64]"
                 label="Max Players"
                 variant="outlined"
+                color="primary"
               />
             </v-col>
             <v-col cols="3">
@@ -143,6 +159,7 @@
                 item-title="name"
                 return-object
                 variant="outlined"
+                color="primary"
                 @update:model-value="setFloNode"
               />
             </v-col>
@@ -152,6 +169,7 @@
                 :items="[100, 200, 300, 400]"
                 label="Flo Node Max Ping"
                 variant="outlined"
+                color="primary"
                 :disabled="floNode === null"
               />
             </v-col>

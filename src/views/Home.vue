@@ -225,7 +225,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.v-btn.join-button {
+.join-button {
   letter-spacing: 0 !important;
   font-family: inherit !important;
   font-size: 20px;

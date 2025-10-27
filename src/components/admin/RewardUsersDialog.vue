@@ -61,6 +61,7 @@
                 :prepend-icon="mdiMagnify"
                 clearable
                 variant="outlined"
+                color="primary"
                 density="compact"
                 placeholder="Search by User ID, Provider, or Status"
               />

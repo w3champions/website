@@ -110,6 +110,7 @@
                   hint="Human-readable name for the product (e.g., 'Premium Subscription')"
                   persistent-hint
                   variant="underlined"
+                  color="primary"
                   required
                 />
               </v-col>
@@ -137,6 +138,7 @@
                         :rules="[rules.required]"
                         hint="ID from the payment provider"
                         variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>

@@ -15,13 +15,6 @@
   align-items: center !important;
   justify-content: center !important;
 
-  .v-data-table,
-  .custom-table {
-    tr:hover {
-      box-shadow: 0 0 6px black;
-    }
-  }
-
   .v-expansion-panel {
     background-color: transparent !important;
   }
@@ -31,6 +24,10 @@
   }
 
   .v-toolbar {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .w3-glass {
     background-color: var(--w3-bg-glass);
   }
 }

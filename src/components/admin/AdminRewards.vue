@@ -19,7 +19,9 @@
           <v-text-field
             v-model="tableSearch"
             label="Search rewards"
-            :prepend-icon="mdiMagnify"
+            :prepend-inner-icon="mdiMagnify"
+            variant="underlined"
+            color="primary"
           />
           <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">

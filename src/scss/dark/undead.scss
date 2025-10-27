@@ -17,10 +17,7 @@
     background-color: var(--w3-bg-glass);
   }
 
-  .v-data-table,
-  .custom-table {
-    tr:hover {
-      box-shadow: 0 0 17px grey;
-    }
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
   }
 }

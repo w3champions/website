@@ -32,6 +32,7 @@
                 <v-text-field
                   v-model="editedNewsItem.date"
                   variant="filled"
+                  color="primary"
                   :label="$t(`views_admin.headline`)"
                 />
                 <div class="editor">

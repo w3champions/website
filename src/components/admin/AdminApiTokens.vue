@@ -90,6 +90,7 @@
             v-model="tokenForm.name"
             label="Name"
             variant="underlined"
+            color="primary"
             required
           />
 
@@ -97,6 +98,7 @@
             v-model="tokenForm.description"
             label="Description"
             variant="underlined"
+            color="primary"
             rows="2"
           />
 
@@ -104,6 +106,7 @@
             v-model="tokenForm.contactDetails"
             label="Contact Details"
             variant="underlined"
+            color="primary"
           />
 
           <v-combobox
@@ -115,6 +118,7 @@
             hint="Enter IP addresses and press enter"
             persistent-hint
             variant="underlined"
+            color="primary"
           />
 
           <v-menu
@@ -130,6 +134,7 @@
                 clearable
                 v-bind="props"
                 variant="underlined"
+                color="primary"
               />
             </template>
             <v-date-picker
@@ -143,7 +148,7 @@
 
           <v-divider class="my-4" />
 
-          <div class="text-h6 mb-3">
+          <div class="text-h6 mb-3 w3-gray-text">
             Scopes & Rate Limits
             <v-btn
               color="primary"
@@ -170,6 +175,7 @@
                   density="compact"
                   :disabled="editingToken !== null"
                   hint="e.g., replay, stats"
+                  variant="outlined"
                   @blur="(e) => renameScope(scopeName, e.target.value)"
                 />
               </v-col>
@@ -179,6 +185,8 @@
                   label="Hourly Limit"
                   type="number"
                   density="compact"
+                  variant="outlined"
+                  color="primary"
                 />
               </v-col>
               <v-col cols="3">
@@ -187,6 +195,8 @@
                   label="Daily Limit"
                   type="number"
                   density="compact"
+                  variant="outlined"
+                  color="primary"
                 />
               </v-col>
               <v-col cols="2">
@@ -194,6 +204,7 @@
                   v-model="scope.isEnabled"
                   label="Enabled"
                   density="compact"
+                  color="primary"
                 />
               </v-col>
               <v-col cols="1">
@@ -226,6 +237,7 @@
             :model-value="newTokenValue"
             label="API Token"
             readonly
+            color="primary"
             :append-icon="mdiContentCopy"
             @click:append="copyToken"
           />
