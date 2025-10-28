@@ -642,7 +642,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .v-data-table {
   margin-top: 16px;
 }
