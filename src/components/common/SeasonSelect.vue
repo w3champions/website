@@ -1,7 +1,7 @@
 <template>
   <v-menu location="right">
     <template v-slot:activator="{ props }">
-      <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
+      <v-btn tile style="background-color: transparent" v-bind="props">
         {{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }}
       </v-btn>
     </template>

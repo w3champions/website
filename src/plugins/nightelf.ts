@@ -7,7 +7,6 @@ export const nightelf = {
     secondary: "#424242",
     surface: "rgba(13, 7, 24, 0.9)",
     gold: "#FFD428",
-    "black-gold": "#FFD428",
     "w3-race-bg": "#0d0718",
     lost: colors.red.accent2,
   },
@@ -24,3 +23,4 @@ export const nightelf = {
 // success: "#4caf50",
 // black: colors.shades.black,
 // white: colors.shades.white,
+// "black-gold": "#FFD428",

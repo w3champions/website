@@ -4,7 +4,7 @@
       <v-btn
         :tile="!isPlayerMatchesTab"
         :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
-        class="bg-transparent"
+        style="background-color: transparent"
         v-bind="props"
       >
         <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>

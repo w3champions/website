@@ -6,8 +6,8 @@
       </template>
       <span>ID: {{ portraitId }}</span>
     </v-tooltip>
-    <v-btn v-if="isAssigned" class="cancel-button bg-transparent" icon variant="flat" size="x-large" density="compact" @click="removeAssignedPortrait">
-      <v-icon size="x-large" color="black-gold">{{ mdiCloseCircleOutline }}</v-icon>
+    <v-btn v-if="isAssigned" class="cancel-button" style="background-color: transparent" icon variant="flat" size="x-large" density="compact" @click="removeAssignedPortrait">
+      <v-icon size="x-large">{{ mdiCloseCircleOutline }}</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -64,6 +64,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .cancel-button {
-  left: 23%;
+  left: 27%;
 }
 </style>

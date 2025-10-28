@@ -7,7 +7,6 @@ export const undead = {
     secondary: "#424242",
     surface: "rgba(0, 0, 0, 0.9)",
     gold: "#FFD428",
-    "black-gold": "#FFD428",
     "w3-race-bg": colors.shades.black,
     lost: colors.red.accent2,
   },
@@ -24,3 +23,4 @@ export const undead = {
 // success: "#4caf50",
 // black: colors.shades.black,
 // white: colors.shades.white,
+// "black-gold": "#FFD428",

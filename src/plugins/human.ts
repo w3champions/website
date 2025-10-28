@@ -7,7 +7,6 @@ export const human = {
     secondary: "#424242",
     surface: "rgba(233, 233, 233, 0.9)",
     gold: "#FFD428",
-    "black-gold": colors.shades.black,
     "w3-race-bg": "#e9e9e9",
     lost: colors.red.darken1,
   },
@@ -25,3 +24,4 @@ export const human = {
 // success: "#4caf50",
 // black: colors.shades.black,
 // white: colors.shades.white,
+// "black-gold": colors.shades.black,

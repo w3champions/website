@@ -15,7 +15,7 @@
         />
         <v-menu location="right">
           <template v-slot:activator="{ props }">
-            <v-btn tile class="bg-transparent text-black-gold" v-bind="props">
+            <v-btn tile style="background-color: transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
@@ -105,7 +105,7 @@
       </v-card-text>
       <v-menu location="right">
         <template v-slot:activator="{ props }">
-          <v-btn tile class="ma-4 bg-transparent text-black-gold" v-bind="props">
+          <v-btn tile class="ma-4" style="background-color: transparent" v-bind="props">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>

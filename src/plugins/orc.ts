@@ -7,7 +7,6 @@ export const orc = {
     secondary: "#424242",
     surface: "rgba(199, 186, 161, 0.9)",
     gold: "#FFD428",
-    "black-gold": colors.shades.black,
     "w3-race-bg": "#c7baa1",
     lost: colors.red.darken2,
   },
@@ -25,3 +24,4 @@ export const orc = {
 // success: "#4caf50",
 // black: colors.shades.black,
 // white: colors.shades.white,
+// "black-gold": colors.shades.black,
