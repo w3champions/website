@@ -3,7 +3,7 @@
     <v-card-title>
       Manage Tournaments
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card class="pa-md-4">
         <v-dialog v-if="isAddPlayerOpen" v-model="isAddPlayerOpen" max-width="800px">
           <add-player-modal

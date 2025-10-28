@@ -3,7 +3,7 @@
     <v-card-title>
       Global Mute
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-data-table
         :headers="headers"
         :items-per-page="-1"
@@ -38,9 +38,9 @@
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-card-title>
 
-                <v-card-text>
-                  <v-container class="px-0">
-                    <v-col class="pb-5">
+                <v-card-text class="pt-0">
+                  <v-container class="pa-0">
+                    <v-col class="pb-7">
                       <player-search
                         @searchCleared="searchCleared"
                         @playerFound="playerFound"

@@ -61,6 +61,7 @@
               :items="statusFilterOptions"
               label="Status Filter"
               variant="outlined"
+              color="primary"
               density="compact"
               clearable
             />
@@ -71,6 +72,7 @@
               :items="providerFilterOptions"
               label="Provider Filter"
               variant="outlined"
+              color="primary"
               density="compact"
               clearable
             />
@@ -82,23 +84,23 @@
           <v-col cols="12">
             <div class="mb-2 w3-gray-text">Quick Filters:</div>
             <v-chip-group v-model="quickFilter" column>
-              <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('active')">
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('active')">
                 <v-icon start size="small" color="success">{{ mdiCheckCircle }}</v-icon>
                 Active Only
               </v-chip>
-              <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('expired')">
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('expired')">
                 <v-icon start size="small" color="warning">{{ mdiClockOutline }}</v-icon>
                 Expired Only
               </v-chip>
-              <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('revoked')">
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('revoked')">
                 <v-icon start size="small" color="error">{{ mdiCancel }}</v-icon>
                 Revoked Only
               </v-chip>
-              <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('patreon')">
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('patreon')">
                 <v-icon start size="small">{{ mdiPatreon }}</v-icon>
                 Patreon
               </v-chip>
-              <v-chip filter variant="outlined" size="small" @click="applyQuickFilter('kofi')">
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('kofi')">
                 <v-icon start size="small">{{ mdiHandHeart }}</v-icon>
                 Ko-Fi
               </v-chip>

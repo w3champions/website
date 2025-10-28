@@ -3,7 +3,7 @@
     <v-card-title>
       Smurf Checker
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
         <v-card-title>
           Configuration

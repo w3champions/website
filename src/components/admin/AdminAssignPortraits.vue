@@ -3,7 +3,7 @@
     <v-card-title>
       Assign Portraits
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <player-search
         classes="ml-5 mr-5"
         @searchCleared="searchCleared"

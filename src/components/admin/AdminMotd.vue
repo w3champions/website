@@ -3,7 +3,7 @@
     <v-card-title>
       Message Of The Day
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <div v-if="!loaded">
         <v-alert class="ma-4 pa-4" density="compact" variant="outlined" type="error">Could not load the Message of the Day</v-alert>
       </div>

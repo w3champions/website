@@ -3,7 +3,7 @@
     <v-card-title>
       Manage Alibaba Files
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-data-table
         :headers="headers"
         :items-per-page="10"

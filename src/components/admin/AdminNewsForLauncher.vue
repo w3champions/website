@@ -17,7 +17,7 @@
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary text-w3-race-bg"
+                class="bg-primary text-w3-race-bg mr-4"
                 v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}

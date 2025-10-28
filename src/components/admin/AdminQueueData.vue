@@ -3,7 +3,7 @@
     <v-card-title>
       Live Queue Data
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
         <v-expansion-panels tile multiple>
           <v-expansion-panel

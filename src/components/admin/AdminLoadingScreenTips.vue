@@ -16,7 +16,7 @@
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary text-w3-race-bg"
+                class="bg-primary text-w3-race-bg mr-4"
                 v-bind="props"
               >
                 Add Tip

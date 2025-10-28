@@ -3,7 +3,7 @@
     <v-card-title>
       Manage Portraits
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-row class="mb-1 pb-1">
         <v-card-text>
           This page is for adding new portraits and adding/editing what groups they are a part of, e.g.
