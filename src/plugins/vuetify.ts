@@ -14,9 +14,9 @@ export const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: "orc",
+    defaultTheme: "human",
     variations: {
-      colors: ["black", "w3-race-bg", "success", "secondary"],
+      colors: ["w3-race-bg", "success", "secondary"],
       lighten: 4,
       darken: 4,
     },

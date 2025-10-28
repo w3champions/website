@@ -20,7 +20,7 @@
 
   .v-btn {
     &.v-tab {
-      color: rgba(var(--v-theme-black), 0.54);
+      color: rgba(black, 0.54);
 
       &.v-tab--selected {
         color: rgb(var(--v-theme-primary));
@@ -28,8 +28,12 @@
     }
   }
 
+  .v-expansion-panel {
+    background-color: transparent;
+  }
+
   .w3-gray-text {
-    color: rgba(var(--v-theme-black), 0.75); // #000000DE
+    color: rgba(black, 0.75); // #000000DE
   }
 
   .w3-tooltip {
@@ -38,6 +42,6 @@
   }
 
   .w3-gray-gold-text {
-    color: rgba(var(--v-theme-black), 0.54) !important;
+    color: rgba(black, 0.54);  // #0000008A
   }
 }

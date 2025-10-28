@@ -1,7 +1,5 @@
 @import "../shared/index.scss";
 
-// #1976d2 blue
-
 .v-application.human {
   --w3-bg-glass: rgba(233, 233, 233, 0.9);
 
@@ -14,10 +12,6 @@
   background-size: cover !important;
   align-items: center !important;
   justify-content: center !important;
-
-  .v-expansion-panel {
-    background-color: transparent !important;
-  }
 
   .v-card {
     background-color: var(--w3-bg-glass);

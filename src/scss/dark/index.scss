@@ -10,18 +10,6 @@
     color: rgb(var(--v-theme-lost)) !important;
   }
 
-  .v-btn {
-    color: rgb(var(--v-theme-primary));
-
-    &.v-tab {
-      color: rgba(var(--v-theme-white), 0.6);
-
-      &.v-tab--selected {
-        color: rgb(var(--v-theme-primary));
-      }
-    }
-  }
-
   .v-data-table, .custom-table {
     tr:hover {
       box-shadow: 0 0 17px grey;
@@ -34,10 +22,22 @@
     }
   }
 
+  .v-btn {
+    color: rgb(var(--v-theme-primary));
+
+    &.v-tab {
+      color: rgba(white, 0.6);
+
+      &.v-tab--selected {
+        color: rgb(var(--v-theme-primary));
+      }
+    }
+  }
+
   &.v-application, &.v-overlay {
     .v-card-title, h3 {
       color: rgb(var(--v-theme-gold));
-      text-shadow: rgb(var(--v-theme-black)) 0px 3px 1px;
+      text-shadow: black 0px 3px 1px;
     }
   }
 
@@ -47,7 +47,7 @@
   }
 
   .w3-gray-text {
-    color: rgba(var(--v-theme-white), 0.7);  // #000000B3
+    color: rgba(white, 0.7);  // #FFFFFFB3
   }
 
   .w3-tooltip {

@@ -5,13 +5,10 @@ export const orc = {
   colors: {
     primary: "#5c2604",
     secondary: "#424242",
-    gold: "#FFD428",
-    black: colors.shades.black,
-    white: colors.shades.white,
-    "black-gold": colors.shades.black,
     surface: "rgba(199, 186, 161, 0.9)",
+    gold: "#FFD428",
+    "black-gold": colors.shades.black,
     "w3-race-bg": "#c7baa1",
-    success: "#4caf50",
     lost: colors.red.darken2,
   },
 };
@@ -25,3 +22,6 @@ export const orc = {
 // "navigation-drawer": "var(--w3-bg-glass)",
 // "bottom-navigation": "var(--v-w3-race-bg-base)",
 // "text-primary": "var(--v-w3-race-bg-base)",
+// success: "#4caf50",
+// black: colors.shades.black,
+// white: colors.shades.white,
