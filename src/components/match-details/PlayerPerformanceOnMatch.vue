@@ -67,7 +67,6 @@ import { computed, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",
@@ -107,8 +106,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { t } = useI18n();
-
     const alignText = ref<"right" | "left">(props.left ? "right" : "left");
 
     const goldComparison = computed<TranslateResult>(() => {
@@ -172,9 +169,7 @@ export default defineComponent({
     function comparison(opponent: number, me: number): TranslateResult {
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
-      return opponent > me
-        ? t("components_match-details_playerperformanceonmatch.lost")
-        : t("components_match-details_playerperformanceonmatch.won");
+      return opponent > me ? "w3-lost" : "w3-won";
     }
 
     return {
