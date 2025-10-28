@@ -23,6 +23,7 @@
             :model-value="profileMatchesGameMode"
             label="Mode"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedGameModeForSearch"
           />
         </v-col>
@@ -35,6 +36,7 @@
             :model-value="playerRace"
             label="Player Race"
             variant="outlined"
+            color="primary"
             @update:model-value="setPlayerRaceForSearch"
           />
         </v-col>
@@ -47,6 +49,7 @@
             :model-value="opponentRace"
             label="Opponent Race"
             variant="outlined"
+            color="primary"
             @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
