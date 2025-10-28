@@ -126,7 +126,7 @@ export default defineComponent({
     const commonStore = useCommonStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
-    const showHeroIcons = ref<boolean>(true);
+    const showHeroIcons = ref<boolean>(false);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
