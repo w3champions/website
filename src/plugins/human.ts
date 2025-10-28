@@ -6,7 +6,7 @@ export const human = {
     primary: "#1976d2",
     secondary: "#424242",
     surface: "rgba(233, 233, 233, 0.9)",
-    'w3-gold': "#FFD428",
+    "w3-gold": "#FFD428",
     "w3-race-bg": "#e9e9e9",
     lost: "#DF323B",
   },

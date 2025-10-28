@@ -6,7 +6,7 @@ export const undead = {
     primary: "#ffd428",
     secondary: "#424242",
     surface: "rgba(0, 0, 0, 0.9)",
-    'w3-gold': "#FFD428",
+    "w3-gold": "#FFD428",
     "w3-race-bg": colors.shades.black,
     lost: colors.red.accent2,
   },

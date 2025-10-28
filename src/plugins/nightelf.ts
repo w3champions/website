@@ -6,7 +6,7 @@ export const nightelf = {
     primary: "#ffd428",
     secondary: "#424242",
     surface: "rgba(13, 7, 24, 0.9)",
-    'w3-gold': "#FFD428",
+    "w3-gold": "#FFD428",
     "w3-race-bg": "#0d0718",
     lost: colors.red.accent2,
   },
