@@ -3,13 +3,15 @@
     <v-card-title>
       Proxy Settings
     </v-card-title>
-    <v-container>
-      <v-row>
-        <player-search
-          classes="ml-5 mr-5"
-          @searchCleared="searchCleared"
-          @playerFound="playerFound"
-        />
+    <v-container class="w3-container-width">
+      <v-row class="d-flex justify-center">
+        <v-col cols="12" md="6">
+          <player-search
+            classes="ml-5 mr-5"
+            @searchCleared="searchCleared"
+            @playerFound="playerFound"
+          />
+        </v-col>
       </v-row>
 
       <review-proxies

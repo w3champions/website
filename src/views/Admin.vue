@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-3">
     <admin-check-jwt-lifetime />
-    <div v-if="isAdmin" class="admin-page-wrapper">
+    <div v-if="isAdmin">
       <admin-navigation />
       <v-card tile>
         <router-view />
@@ -32,12 +32,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-// Added 'NOT-USED' to remove this styling for now, because it looks better without it, but it still doesn't look good.
-.admin-page-wrapper-NOT-USED {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 256px auto;
-}
-</style>
