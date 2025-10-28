@@ -6,7 +6,7 @@ export const orc = {
     primary: "#5c2604",
     secondary: "#424242",
     surface: "rgba(199, 186, 161, 0.9)",
-    gold: "#FFD428",
+    'w3-gold': "#FFD428",
     "w3-race-bg": "#c7baa1",
     lost: colors.red.darken2,
   },

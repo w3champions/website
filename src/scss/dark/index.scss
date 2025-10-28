@@ -36,7 +36,7 @@
 
   &.v-application, &.v-overlay {
     .v-card-title, h3 {
-      color: rgb(var(--v-theme-gold));
+      color: rgb(var(--v-theme-w3-gold));
       text-shadow: black 0px 3px 1px;
     }
   }
@@ -56,6 +56,6 @@
   }
 
   .w3-gray-gold-text {
-    color: rgb(var(--v-theme-gold)) !important;
+    color: rgb(var(--v-theme-w3-gold)) !important;
   }
 }
