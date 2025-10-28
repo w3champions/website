@@ -127,7 +127,7 @@ export default defineComponent({
       if (props.unfinishedMatch) return "";
 
       if (Object.prototype.hasOwnProperty.call(props.player, "won")) {
-        return props.player.won ? "won" : "lost";
+        return props.player.won ? "w3-won" : "w3-lost";
       }
 
       return "";

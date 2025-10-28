@@ -119,8 +119,8 @@
           <td class="number-text text-end">
             {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
           </td>
-          <td class="number-text text-end won">{{ item.player.wins }}</td>
-          <td class="number-text text-end lost">{{ item.player.losses }}</td>
+          <td class="number-text text-end w3-won">{{ item.player.wins }}</td>
+          <td class="number-text text-end w3-lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
           <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>

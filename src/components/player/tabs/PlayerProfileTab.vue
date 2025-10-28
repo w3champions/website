@@ -48,9 +48,9 @@
                 </template>
                 <template v-slot:item.wins="{ item }">
                   <span class="number-text">
-                    <span class="won">{{ item.wins }}</span>
+                    <span class="w3-won">{{ item.wins }}</span>
                     -
-                    <span class="lost">{{ item.losses }}</span>
+                    <span class="w3-lost">{{ item.losses }}</span>
                     <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                   </span>
                 </template>

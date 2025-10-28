@@ -23,9 +23,9 @@
         </td>
         <td class="number-text text-start text-no-wrap">
           <div class="text-center">
-            <span class="won">{{ item.wins }}</span>
+            <span class="w3-won">{{ item.wins }}</span>
             -
-            <span class="lost">{{ item.losses }}</span>
+            <span class="w3-lost">{{ item.losses }}</span>
           </div>
           <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
         </td>

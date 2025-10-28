@@ -66,9 +66,9 @@
       <v-row align="center">
         <v-col cols="12">
           <div>vs. {{ foundPlayer }}</div>
-          <span class="won">Wins: {{ opponentWins }}</span>
+          <span class="w3-won">Wins: {{ opponentWins }}</span>
           /
-          <span class="lost">
+          <span class="w3-lost">
             Losses: {{ totalMatchesAgainstOpponent - opponentWins }}
           </span>
           <span>({{ winRateVsOpponent }}%)</span>

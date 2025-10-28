@@ -94,7 +94,7 @@ export default defineComponent({
       if (props.notColorWinner || hasFaultyData(opponent, me)) return "";
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
-      return opponent > me ? "lost" : "won";
+      return opponent > me ? "w3-lost" : "w3-won";
     }
 
     function hasFaultyData(opponent: number, me: number): boolean {

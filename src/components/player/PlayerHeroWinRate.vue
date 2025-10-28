@@ -37,9 +37,9 @@
                             <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
                           </template>
                           <div v-if="item.numbers_by_race[header.value]">
-                            <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
+                            <span class="number-text w3-won">{{ item.numbers_by_race[header.value].number }}W</span>
                             -
-                            <span class="number-text lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
+                            <span class="number-text w3-lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
                             &nbsp;&nbsp;
                             {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
                           </div>
@@ -131,10 +131,10 @@ export default defineComponent({
 
       const winrate = raceStats.number / raceStats.total;
       if (winrate > (props.winThreshold || 0.6)) {
-        classes.push("won");
+        classes.push("w3-won");
       }
       if (winrate < (props.lossThreshold || 0.4)) {
-        classes.push("lost");
+        classes.push("w3-lost");
       }
 
       return classes;

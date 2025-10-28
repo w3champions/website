@@ -19,9 +19,9 @@
       <span v-if="isRanked">
         <span v-if="!smallMode">Rank</span>
         <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
-        <span class="won">{{ modeStat.wins }}</span>
+        <span class="w3-won">{{ modeStat.wins }}</span>
         -
-        <span class="lost">{{ modeStat.losses }}</span>
+        <span class="w3-lost">{{ modeStat.losses }}</span>
       </span>
       <span v-else>
         <span class="number-text">{{ modeStat.games }} / 5</span>

@@ -2,11 +2,11 @@
 @import "./nightelf.scss";
 
 .v-theme--nightelf, .v-theme--undead {
-  .won {
+  .w3-won {
     color: rgb(var(--v-theme-success)) !important;
   }
 
-  .lost {
+  .w3-lost {
     color: rgb(var(--v-theme-lost)) !important;
   }
 
