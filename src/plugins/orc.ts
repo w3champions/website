@@ -8,7 +8,7 @@ export const orc = {
     surface: "rgba(199, 186, 161, 0.9)",
     'w3-gold': "#FFD428",
     "w3-race-bg": "#c7baa1",
-    lost: colors.red.darken2,
+    lost: "#BF0025",
   },
 };
 
@@ -25,3 +25,4 @@ export const orc = {
 // black: colors.shades.black,
 // white: colors.shades.white,
 // "black-gold": colors.shades.black,
+// lost: colors.red.darken2,

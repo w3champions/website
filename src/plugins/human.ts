@@ -8,7 +8,7 @@ export const human = {
     surface: "rgba(233, 233, 233, 0.9)",
     'w3-gold': "#FFD428",
     "w3-race-bg": "#e9e9e9",
-    lost: colors.red.darken1,
+    lost: "#DF323B",
   },
 };
 
@@ -25,3 +25,4 @@ export const human = {
 // black: colors.shades.black,
 // white: colors.shades.white,
 // "black-gold": colors.shades.black,
+// lost: colors.red.darken1,
