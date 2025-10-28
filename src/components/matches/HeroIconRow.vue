@@ -1,5 +1,5 @@
 <template>
-  <v-row no-gutters :class="[show ? 'd-flex' : 'd-none', 'ga-2']">
+  <v-row v-if="show" no-gutters :class="['d-flex', 'ga-2']">
     <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex">
       <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" :selectedHeroes="selectedHeroes" />
     </v-col>
@@ -55,12 +55,3 @@ export default defineComponent({
   }
 });
 </script>
-<style lang="scss" scoped>
-// These classes only exist in Vuetify 3, not in Vuetify 2
-.ga-1 {
-  gap: 4px;
-}
-.ga-2 {
-  gap: 8px;
-}
-</style>
