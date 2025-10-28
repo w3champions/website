@@ -134,9 +134,9 @@ export default defineComponent({
     });
 
     const headers: DataTableHeader[] = [
-      { title: "Author", value: "author" },
-      { title: "Creation Date", value: "creationDate" },
-      { title: "Text", value: "message" },
+      { title: "Author", value: "author", sortable: true },
+      { title: "Creation Date", value: "creationDate", sortable: true },
+      { title: "Text", value: "message", sortable: true },
       { title: "Actions", value: "actions", sortable: false },
     ];
 

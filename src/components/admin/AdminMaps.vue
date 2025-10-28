@@ -200,10 +200,10 @@ export default defineComponent({
     });
 
     const headers: DataTableHeader[] = [
-      { title: "Map name", value: "name" },
-      { title: "ID", value: "id" },
-      { title: "Category", value: "category" },
-      { title: "Disabled", value: "disabled" },
+      { title: "Map name", value: "name", sortable: true },
+      { title: "ID", value: "id", sortable: true },
+      { title: "Category", value: "category", sortable: true },
+      { title: "Disabled", value: "disabled", sortable: true },
       { title: "File", value: "path", sortable: false },
       { title: "Actions", value: "actions", sortable: false },
     ];

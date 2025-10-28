@@ -177,9 +177,9 @@ export default defineComponent({
       { title: "Module", value: "moduleId", sortable: true },
       { title: "Duration", value: "duration", sortable: false },
       { title: "Status", value: "isActive", sortable: true },
-      { title: "Users", value: "assignmentStats", sortable: false, width: "120px" },
+      { title: "Users", value: "assignmentStats", sortable: false },
       { title: "Created", value: "createdAt", sortable: true },
-      { title: "Actions", value: "actions", sortable: false, width: "140px" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     // const usersHeaders = [

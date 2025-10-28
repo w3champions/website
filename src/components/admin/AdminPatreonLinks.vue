@@ -412,11 +412,11 @@ export default defineComponent({
 
     // Table headers
     const headers: DataTableHeader[] = [
-      { title: "BattleTag", value: "battleTag", width: "25%" },
-      { title: "Patreon User ID", value: "patreonUserId", width: "30%" },
-      { title: "Linked At", value: "linkedAt", width: "20%" },
-      { title: "Last Sync", value: "lastSyncAt", width: "20%" },
-      { title: "Actions", value: "actions", sortable: false, width: "5%" }
+      { title: "BattleTag", value: "battleTag", width: "25%", sortable: true },
+      { title: "Patreon User ID", value: "patreonUserId", width: "30%", sortable: true },
+      { title: "Linked At", value: "linkedAt", width: "20%", sortable: true },
+      { title: "Last Sync", value: "lastSyncAt", width: "20%", sortable: true },
+      { title: "Actions", value: "actions", width: "5%", sortable: false }
     ];
 
     // Methods

@@ -323,13 +323,13 @@ export default defineComponent({
     });
 
     const headers: DataTableHeader[] = [
-      { title: "Name", value: "name" },
+      { title: "Name", value: "name", sortable: true },
       { title: "Token", value: "token", sortable: false },
-      { title: "Status", value: "isActive" },
+      { title: "Status", value: "isActive", sortable: true },
       { title: "Scopes", value: "scopes", sortable: false },
-      { title: "Contact", value: "contactDetails" },
-      { title: "Expires", value: "expiresAt" },
-      { title: "Last Used", value: "lastUsedAt" },
+      { title: "Contact", value: "contactDetails", sortable: true },
+      { title: "Expires", value: "expiresAt", sortable: true },
+      { title: "Last Used", value: "lastUsedAt", sortable: true },
       { title: "Actions", value: "actions", sortable: false },
     ];
 
