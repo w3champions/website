@@ -11,7 +11,7 @@
               <div class="mt-2">
                 <strong>{{ $t("views_rewards.patreon_status") }}:</strong>
                 <v-chip
-                  :color="patreonLinkStatus ? 'success' : 'grey'"
+                  :color="patreonLinkStatus ? 'success' : ''"
                   size="small"
                   class="ml-2"
                 >
