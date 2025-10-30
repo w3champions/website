@@ -13,7 +13,7 @@
         :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
-          <v-toolbar flat color="transparent">
+          <div class="d-flex align-center px-4">
             <v-text-field
               v-model="searchQuery"
               label="Search mute"
@@ -123,7 +123,7 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
-          </v-toolbar>
+          </div>
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
@@ -265,6 +265,7 @@ export default defineComponent({
         title: "Actions",
         sortable: false,
         value: "actions",
+        align: "center",
       },
     ];
 

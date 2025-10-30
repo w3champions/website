@@ -12,7 +12,7 @@
         :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
-          <v-toolbar flat color="transparent">
+          <div class="d-flex align-center px-4">
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ props }">
@@ -137,7 +137,7 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
-          </v-toolbar>
+          </div>
         </template>
 
         <template v-slot:[`item.isShadowBan`]="{ item }">

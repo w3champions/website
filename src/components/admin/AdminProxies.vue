@@ -5,7 +5,7 @@
     </v-card-title>
     <v-container class="w3-container-width">
       <v-row class="d-flex justify-center">
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="8">
           <player-search
             classes="ml-5 mr-5"
             @searchCleared="searchCleared"

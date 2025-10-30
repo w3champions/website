@@ -21,7 +21,7 @@
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <div class="d-flex mt-2">
+        <div class="d-flex pt-2 px-1">
           <div class="w-50">
             <v-text-field
               v-model="search"

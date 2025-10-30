@@ -15,7 +15,7 @@
       :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
+        <div class="d-flex align-center px-4">
           <v-text-field
             v-model="tableSearch"
             label="Search rewards"
@@ -27,7 +27,7 @@
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mb-2 bg-primary text-w3-race-bg"
+                class="bg-primary text-w3-race-bg"
                 v-bind="props"
                 @click="createNewReward"
               >
@@ -41,7 +41,7 @@
               @cancel="closeDialog"
             />
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
 
       <template v-slot:item.moduleId="{ item }">

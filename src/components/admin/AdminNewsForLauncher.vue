@@ -11,13 +11,13 @@
       :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <v-toolbar-title>News for Launcher</v-toolbar-title>
+        <div class="d-flex align-center px-4">
+          <div class="text-h6">News for Launcher</div>
           <v-spacer />
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="bg-primary text-w3-race-bg mr-4"
+                class="bg-primary text-w3-race-bg"
                 v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
@@ -177,7 +177,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon size="small" class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>

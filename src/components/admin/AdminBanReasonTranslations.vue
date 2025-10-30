@@ -12,7 +12,7 @@
       item-key="_id"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
+        <div class="d-flex px-4">
           <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ props }">
@@ -78,7 +78,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon size="small" class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>

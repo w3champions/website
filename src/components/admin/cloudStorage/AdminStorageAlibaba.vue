@@ -16,7 +16,7 @@
         :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
-          <v-toolbar flat color="transparent">
+          <div class="d-flex align-center px-4">
             <v-text-field
               v-model="tableSearch"
               variant="underlined"
@@ -64,7 +64,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-          </v-toolbar>
+          </div>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon size="small" class="mr-3" @click="downloadFile(item)">{{ mdiDownload }}</v-icon>

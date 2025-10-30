@@ -1,15 +1,17 @@
 <template>
   <div>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
         <v-card-title class="d-flex justify-space-between">
           API Token Management
+        </v-card-title>
+        <div class="d-flex align-center px-4">
+          <v-spacer />
           <v-btn color="primary" @click="showCreateDialog = true">
             <v-icon start>{{ mdiPlus }}</v-icon>
             Create Token
           </v-btn>
-        </v-card-title>
-
+        </div>
         <v-card-text>
           <v-data-table
             :headers="headers"

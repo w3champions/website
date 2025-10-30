@@ -11,12 +11,12 @@
       :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
+        <div class="d-flex align-center px-4">
           <v-spacer />
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="bg-primary text-w3-race-bg mr-4"
+                class="bg-primary text-w3-race-bg"
                 v-bind="props"
               >
                 Add Tip
@@ -53,7 +53,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon size="small" class="mr-2" @click="editTipItem(item)">{{ mdiPencil }}</v-icon>

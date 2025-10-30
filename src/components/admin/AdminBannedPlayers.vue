@@ -16,8 +16,8 @@
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <div class="ml-3 w-50">
+        <div class="d-flex align-center px-4">
+          <div class="w-50">
             <v-text-field
               v-model="tableSearch"
               label="Search ban"
@@ -26,10 +26,11 @@
               variant="underlined"
             />
           </div>
+          <v-spacer />
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn
-                class="bg-primary ml-auto mr-5 text-w3-race-bg"
+                class="bg-primary text-w3-race-bg"
                 v-bind="props"
               >
                 {{ $t("views_admin.addplayer") }}
@@ -174,7 +175,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.gameModesText`]="{ item }">
         <td v-if="!isEmpty(item.gameModes)">
