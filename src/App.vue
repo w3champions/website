@@ -47,7 +47,6 @@
           />
         </router-link>
       </v-toolbar-title>
-      <v-spacer />
 
       <!-- alternative menu for lg+ only -->
       <span class="d-none d-lg-flex">
