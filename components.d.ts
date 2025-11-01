@@ -228,7 +228,6 @@ declare module 'vue' {
     VTimeline: typeof import('vuetify/components')['VTimeline']
     VTimelineItem: typeof import('vuetify/components')['VTimelineItem']
     VTimePicker: typeof import('vuetify/components')['VTimePicker']
-    VToolbar: typeof import('vuetify/components')['VToolbar']
     VToolbarTitle: typeof import('vuetify/components')['VToolbarTitle']
     VTooltip: typeof import('vuetify/components')['VTooltip']
     VWindow: typeof import('vuetify/components')['VWindow']
