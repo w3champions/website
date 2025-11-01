@@ -1,9 +1,9 @@
 <template>
-  <v-container class="w3-container-width">
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title>Impressum</v-card-title>
+          <v-card-title class="pt-3">Impressum</v-card-title>
           <v-card-text>
             W3Champions is owned and operated by:
             <br />
@@ -27,7 +27,7 @@
               <a href="https://w3champions.com" target="_blank" class="text-primary">https://w3champions.com</a>
             </p>
           </v-card-text>
-          <v-card-text>
+          <v-card-text class="py-0">
             <h3>Graphics and Image Sources</h3>
             <p>
               <a href="https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit" target="_blank" class="text-primary">

@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-3 w3-container-width">
-    <v-card class="pb-2 pr-4">
-      <v-card-title>Tournaments</v-card-title>
+    <v-card>
+      <v-card-title class="pt-3">Tournaments</v-card-title>
       <v-card-text>
         <div class="mb-4">
           <h3>Upcoming</h3>

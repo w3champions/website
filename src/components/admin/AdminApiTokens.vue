@@ -2,7 +2,7 @@
   <div>
     <v-container class="w3-container-width">
       <v-card>
-        <v-card-title class="d-flex justify-space-between">
+        <v-card-title class="pt-3">
           API Token Management
         </v-card-title>
         <div class="d-flex align-center px-4">

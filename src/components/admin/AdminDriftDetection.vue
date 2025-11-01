@@ -1,6 +1,6 @@
 J<template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Drift Detection Dashboard
     </v-card-title>
 

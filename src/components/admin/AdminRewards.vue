@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Rewards Management
     </v-card-title>
 

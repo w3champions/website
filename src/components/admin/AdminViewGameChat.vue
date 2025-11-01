@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       View Game Chat
     </v-card-title>
     <v-container class="w3-container-width">

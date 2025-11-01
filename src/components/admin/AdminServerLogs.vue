@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       View Server Logs
     </v-card-title>
     <v-container fluid>

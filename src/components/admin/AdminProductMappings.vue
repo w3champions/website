@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Product Mappings
     </v-card-title>
 

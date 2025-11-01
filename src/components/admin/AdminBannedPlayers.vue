@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Banned Players
     </v-card-title>
     <v-data-table-server

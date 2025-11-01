@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-3 w3-container-width">
     <v-card tile>
-      <v-card-title>
+      <v-card-title class="pt-3">
         {{ $t("views_app.rankings") }}
       </v-card-title>
       <v-card-text class="pt-2 d-flex">

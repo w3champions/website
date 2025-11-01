@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Lounge Mute
     </v-card-title>
     <v-container style="max-width: 1300px;">

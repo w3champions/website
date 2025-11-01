@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-card tile>
-          <v-card-title>
+          <v-card-title class="pt-3">
             {{ $t("views_app.matches") }}
           </v-card-title>
           <v-card-text class="pt-2 d-flex align-center">

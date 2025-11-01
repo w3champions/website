@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-card tile>
-          <v-card-title>
+          <v-card-title class="pt-3">
             <span>{{ $t("views_statistics.w3cstats") }}</span>
           </v-card-title>
           <v-tabs>

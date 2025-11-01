@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Manage Maps
     </v-card-title>
     <v-container style="max-width: 1350px;">

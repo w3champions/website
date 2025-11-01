@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Loading Screen Tips
     </v-card-title>
     <v-data-table

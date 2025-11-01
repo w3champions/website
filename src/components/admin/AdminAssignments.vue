@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title class="text-h4 mb-4">
+    <v-card-title class="py-3">
       <v-icon start class="mr-3">{{ mdiAccountMultiple }}</v-icon>
       Reward Assignments
     </v-card-title>
