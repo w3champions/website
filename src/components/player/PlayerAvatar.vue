@@ -189,7 +189,6 @@
                     icon-color="purple-accent-4"
                     glow
                     density="compact"
-                    clearable
                     single-line
                     prefix="https://twitch.tv/"
                     :hint="$t('components_player_playeravatar.entertwitchname')"
@@ -201,7 +200,6 @@
                     icon-color="red-darken-2"
                     glow
                     density="compact"
-                    clearable
                     single-line
                     :hint="$t('components_player_playeravatar.enterytname')"
                     prefix="https://www.youtube.com/"
@@ -213,7 +211,6 @@
                     icon-color="blue-darken-2"
                     glow
                     density="compact"
-                    clearable
                     single-line
                     :hint="$t('components_player_playeravatar.entertwittername')"
                     prefix="https://www.twitter.com/"
@@ -226,7 +223,6 @@
                     icon-color="green-darken-3"
                     glow
                     density="compact"
-                    clearable
                     single-line
                     :hint="$t('components_player_playeravatar.entertrovoname')"
                     prefix="https://trovo.live/"
@@ -240,7 +236,6 @@
                     density="compact"
                     :rules="[rules.maxLength(50)]"
                     single-line
-                    clearable
                     :hint="$t('components_player_playeravatar.entercustomhp')"
                     label="Homepage"
                   />
@@ -299,7 +294,7 @@
                       variant="outlined"
                       name="input-7-1"
                       label="About"
-                      clearable
+                      color="primary"
                       :rules="[rules.maxLength(300)]"
                       :hint="$t('components_player_playeravatar.aboutdesc')"
                     />
