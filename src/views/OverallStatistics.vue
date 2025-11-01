@@ -30,9 +30,7 @@
             </v-tab>
           </v-tabs>
           <v-card-text>
-            <keep-alive>
-              <router-view />
-            </keep-alive>
+            <router-view />
           </v-card-text>
         </v-card>
       </v-col>
