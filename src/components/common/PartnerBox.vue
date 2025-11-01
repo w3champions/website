@@ -27,10 +27,6 @@ export default defineComponent({
     function partners() {
       return [
         {
-          img: "back2warcraft",
-          link: "https://www.back2warcraft.com/",
-        },
-        {
           img: "hive",
           link: "https://www.hiveworkshop.com/",
         },
