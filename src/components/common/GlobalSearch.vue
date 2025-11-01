@@ -20,7 +20,6 @@
         :append-inner-icon="mdiMagnify"
         class="font-weight-medium w3-autocomplete"
         menu-icon=""
-        label="Search"
         autofocus
         :no-data-text="noDataText"
         :loading="isLoading"
