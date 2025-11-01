@@ -1,11 +1,12 @@
 <template>
   <div>
-    <v-card-title>
-      <v-row align="center">
-        <v-col cols="12" md="5">
-          {{ $t("components_player_tabs_matchhistorytab.title") }}
-        </v-col>
-        <v-col cols="12" md="5">
+    <v-card-title class="pb-0">
+      {{ $t("components_player_tabs_matchhistorytab.title") }}
+    </v-card-title>
+    <v-card-text class="pb-3">
+      <v-row>
+        <v-spacer />
+        <v-col cols="12" md="5" class="pt-0 px-4">
           <player-search
             :setAutofocus="false"
             @playerFound="playerFound"
@@ -24,6 +25,7 @@
             label="Mode"
             variant="outlined"
             color="primary"
+            hide-details
             @update:model-value="setSelectedGameModeForSearch"
           />
         </v-col>
@@ -37,6 +39,7 @@
             label="Player Race"
             variant="outlined"
             color="primary"
+            hide-details
             @update:model-value="setPlayerRaceForSearch"
           />
         </v-col>
@@ -50,6 +53,7 @@
             label="Opponent Race"
             variant="outlined"
             color="primary"
+            hide-details
             @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
@@ -64,7 +68,7 @@
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
-    </v-card-title>
+    </v-card-text>
     <v-card-text v-if="foundPlayer">
       <v-row align="center">
         <v-col cols="12">
@@ -278,9 +282,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-::v-deep(.v-text-field__details) {
-  display: none;
-}
-</style>
