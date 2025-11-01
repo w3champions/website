@@ -1,5 +1,5 @@
 <template>
-  <v-menu location="right">
+  <v-menu location="right" transition="fade-transition">
     <template v-slot:activator="{ props }">
       <v-btn tile style="background-color: transparent" v-bind="props">
         <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>

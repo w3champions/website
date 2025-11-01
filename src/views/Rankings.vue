@@ -13,7 +13,7 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu location="right">
+        <v-menu location="right" transition="fade-transition">
           <template v-slot:activator="{ props }">
             <v-btn tile style="background-color: transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
@@ -104,7 +104,7 @@
           </v-autocomplete>
         </div>
       </v-card-text>
-      <v-menu location="right">
+      <v-menu location="right" transition="fade-transition">
         <template v-slot:activator="{ props }">
           <v-btn tile class="ma-4" style="background-color: transparent" v-bind="props">
             <h2 class="pa-0">
