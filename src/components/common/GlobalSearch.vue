@@ -18,7 +18,7 @@
         v-model="searchModel"
         v-model:search="search"
         :append-inner-icon="mdiMagnify"
-        class="font-weight-medium"
+        class="font-weight-medium w3-autocomplete"
         menu-icon=""
         label="Search"
         autofocus
@@ -174,6 +174,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .global-search {
-  z-index: 1000 !important;
+  z-index: 1000;
+}
+
+.w3-autocomplete {
+  :deep(.v-field__input input) {
+    cursor: text;
+  }
 }
 </style>

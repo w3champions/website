@@ -3,7 +3,7 @@
     <v-autocomplete
       v-model="selected"
       v-model:search="input"
-      class="cursor-text"
+      class="w3-autocomplete"
       :class="classes"
       menu-icon=""
       :append-inner-icon="mdiMagnify"
@@ -20,6 +20,7 @@
       color="primary"
       icon-color="primary"
       variant="underlined"
+      autocomplete="off"
       @click:clear="clearSearch"
     />
   </div>
@@ -105,10 +106,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-field__input input) {
-  cursor: text;
-}
-:deep(.v-field__clearable) {
-  color: rgb(var(--v-theme-primary));
+.w3-autocomplete {
+  :deep(.v-field__input input) {
+    cursor: text;
+  }
+  :deep(.v-field__clearable) {
+    color: rgb(var(--v-theme-primary));
+  }
 }
 </style>

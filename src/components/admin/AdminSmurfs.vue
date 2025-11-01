@@ -62,7 +62,7 @@
                 glow
                 color="primary"
                 icon-color="primary"
-                class="ml-4 mr-4"
+                class="ml-4 mr-4 w3-autocomplete"
                 variant="underlined"
                 @click:clear="revertToDefault"
               />
@@ -308,3 +308,11 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.w3-autocomplete {
+  :deep(.v-field__input input) {
+    cursor: text;
+  }
+}
+</style>

@@ -69,6 +69,7 @@
             return-object
             autocomplete="off"
             variant="underlined"
+            class="w3-autocomplete"
           >
             <template v-slot:item="{ props, item }">
               <template v-if="item?.raw?.player === undefined">
@@ -507,5 +508,11 @@ export default defineComponent({
   width: 45%;
   margin-top: -15px;
   min-width: 100px;
+}
+
+.w3-autocomplete {
+  :deep(.v-field__input input) {
+    cursor: text;
+  }
 }
 </style>
