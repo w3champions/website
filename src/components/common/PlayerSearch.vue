@@ -14,7 +14,6 @@
       :loading="isLoading"
       :autofocus="setAutofocus"
       bg-color="transparent"
-      clearable
       hide-details
       glow
       color="primary"
@@ -109,9 +108,6 @@ export default defineComponent({
 .w3-autocomplete {
   :deep(.v-field__input input) {
     cursor: text;
-  }
-  :deep(.v-field__clearable) {
-    color: rgb(var(--v-theme-primary));
   }
 }
 </style>
