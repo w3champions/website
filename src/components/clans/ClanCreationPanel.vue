@@ -15,6 +15,8 @@
           :rules="[mustBeBetween(3, 30, ' ')]"
           :label="$t(`components_clans_clancreationpanel.clanname`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
+          variant="underlined"
+          color="primary"
           @change="changeInsertedClanName"
         />
         <v-text-field
@@ -22,6 +24,8 @@
           :rules="[mustBeBetween(2, 5, '')]"
           :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
+          variant="underlined"
+          color="primary"
           @change="changeInsertedClanAbbreviation"
         />
       </v-col>
