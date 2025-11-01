@@ -26,5 +26,13 @@
   }
 }
 
+// Dialogs are not placed in the dom as a child of .v-application.orc, so we need to define this class here as well.
+.v-theme--orc {
+  --w3-bg-glass: rgba(199, 186, 161, 0.9);
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
+  }
+}
+
 // #c12b12 orc red
 // #5c2604 orc brown

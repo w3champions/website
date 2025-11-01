@@ -21,3 +21,11 @@
     background-color: var(--w3-bg-glass);
   }
 }
+
+// Dialogs are not placed in the dom as a child of .v-application.undead, so we need to define this class here as well.
+.v-theme--undead {
+  --w3-bg-glass: rgba(0, 0, 0, 0.9);
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
+  }
+}

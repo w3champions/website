@@ -25,3 +25,11 @@
     background-color: var(--w3-bg-glass);
   }
 }
+
+// Dialogs are not placed in the dom as a child of .v-application.human, so we need to define this class here as well.
+.v-theme--human {
+  --w3-bg-glass: rgba(233, 233, 233, 0.9);
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
+  }
+}

@@ -173,19 +173,21 @@
               {{ $t("components_player_playeravatar.edit") }}
             </v-btn>
           </template>
-          <v-card>
+          <v-card class="w3-glass">
             <v-card-title>
               <span class="text-h5">
                 {{ $t("components_player_playeravatar.userprofile") }}
               </span>
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pb-0">
               <v-container>
                 <v-row>
                   <v-text-field
                     v-model="userProfile.twitch"
                     :prepend-icon="mdiTwitch"
                     color="purple-accent-4"
+                    icon-color="purple-accent-4"
+                    glow
                     density="compact"
                     clearable
                     single-line
@@ -196,6 +198,8 @@
                     v-model="userProfile.youtube"
                     :prepend-icon="mdiYoutube"
                     color="red-darken-2"
+                    icon-color="red-darken-2"
+                    glow
                     density="compact"
                     clearable
                     single-line
@@ -206,6 +210,8 @@
                     v-model="userProfile.twitter"
                     :prepend-icon="mdiTwitter"
                     color="blue-darken-2"
+                    icon-color="blue-darken-2"
+                    glow
                     density="compact"
                     clearable
                     single-line
@@ -214,8 +220,11 @@
                   />
                   <v-text-field
                     v-model="userProfile.trovo"
+                    class="w-100"
                     prepend-icon="$trovo"
                     color="green-darken-3"
+                    icon-color="green-darken-3"
+                    glow
                     density="compact"
                     clearable
                     single-line
@@ -226,6 +235,8 @@
                     v-model="userProfile.homePage"
                     :prepend-icon="mdiHome"
                     color="blue-darken-2"
+                    icon-color="blue-darken-2"
+                    glow
                     density="compact"
                     :rules="[rules.maxLength(50)]"
                     single-line
@@ -233,10 +244,10 @@
                     :hint="$t('components_player_playeravatar.entercustomhp')"
                     label="Homepage"
                   />
-                  <v-container>
+                  <v-container class="py-0 pl-0">
                     <v-checkbox
                       v-model="userProfile.aliasSettings.showAka"
-                      class="alias-checkbox"
+                      color="primary"
                       :prepend-icon="mdiAccountCheck"
                       :label="$t('components_player_playeravatar.showalias')"
                     />
@@ -264,6 +275,9 @@
                       :items="countries"
                       :label="$t('components_player_playeravatar.selectcountry')"
                       variant="underlined"
+                      color="primary"
+                      icon-color="primary"
+                      glow
                     >
                       <template v-slot:item="{ props, item }">
                         <v-list-item v-bind="props" :title="item.raw.country">
@@ -271,6 +285,10 @@
                             <country-flag :country="item.raw.countryCode" size="normal" class="ma-0" />
                           </template>
                         </v-list-item>
+                      </template>
+                      <template v-slot:selection="{ item }">
+                        <country-flag :country="item.raw.countryCode" size="normal" style="margin: 0;" />
+                        {{ item.raw.country }}
                       </template>
                     </v-autocomplete>
                   </v-col>
@@ -292,10 +310,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue-darken-1" variant="text" @click="resetUserProfile">
+              <v-btn color="primary" @click="resetUserProfile">
                 {{ $t("components_player_playeravatar.close") }}
               </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="saveUserProfile">
+              <v-btn color="primary" @click="saveUserProfile">
                 {{ $t("components_player_playeravatar.save") }}
               </v-btn>
             </v-card-actions>
@@ -675,10 +693,5 @@ export default defineComponent({
 .player-avatar-choosing-disabled {
   opacity: 0.5;
   filter: alpha(opacity=50);
-}
-
-.alias-checkbox {
-  margin-top: 0px;
-  padding-top: 0px;
 }
 </style>

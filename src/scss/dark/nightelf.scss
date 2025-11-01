@@ -21,3 +21,11 @@
     background-color: var(--w3-bg-glass);
   }
 }
+
+// Dialogs are not placed in the dom as a child of .v-application.nightelf, so we need to define this class here as well.
+.v-theme--nightelf {
+  --w3-bg-glass: rgba(13, 7, 24, 0.9);
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
+  }
+}
