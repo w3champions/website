@@ -5,7 +5,7 @@
     </v-card-title>
     <v-container class="w3-container-width">
       <v-card>
-        <v-card-title>
+        <v-card-title class="pt-3">
           Configuration
         </v-card-title>
         <v-card-text>
@@ -25,6 +25,7 @@
                 v-model="generateExplanation"
                 label="Generate explanation"
                 class="ml-4"
+                color="primary"
                 hide-details
               />
             </v-col>
@@ -64,6 +65,7 @@
                 icon-color="primary"
                 class="ml-4 mr-4 w3-autocomplete"
                 variant="underlined"
+                autocomplete="off"
                 @click:clear="revertToDefault"
               />
               <v-btn
@@ -308,11 +310,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.w3-autocomplete {
-  :deep(.v-field__input input) {
-    cursor: text;
-  }
-}
-</style>

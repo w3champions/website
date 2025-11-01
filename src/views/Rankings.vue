@@ -509,10 +509,4 @@ export default defineComponent({
   margin-top: -15px;
   min-width: 100px;
 }
-
-.w3-autocomplete {
-  :deep(.v-field__input input) {
-    cursor: text;
-  }
-}
 </style>

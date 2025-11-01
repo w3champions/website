@@ -75,3 +75,12 @@ ul, ol {
 .w3-font-size-small {
   font-size: small;
 }
+
+.w3-autocomplete {
+  .v-field__input input {
+    cursor: text;
+  }
+  .v-field__clearable {
+    color: rgb(var(--v-theme-primary));
+  }
+}

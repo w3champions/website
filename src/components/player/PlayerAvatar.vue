@@ -267,6 +267,7 @@
                     <v-autocomplete
                       v-model="selectedCountry"
                       :prepend-icon="mdiFlag"
+                      class="w3-autocomplete"
                       clearable
                       :item-value="countryCode"
                       item-title="country"

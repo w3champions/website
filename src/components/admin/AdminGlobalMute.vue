@@ -34,7 +34,7 @@
               </template>
 
               <v-card>
-                <v-card-title>
+                <v-card-title class="pt-3">
                   {{ $t(`views_admin.mutePlayer`) }}
                 </v-card-title>
 

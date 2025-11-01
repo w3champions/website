@@ -104,14 +104,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.w3-autocomplete {
-  :deep(.v-field__input input) {
-    cursor: text;
-  }
-  :deep(.v-field__clearable) {
-    color: rgb(var(--v-theme-primary));
-  }
-}
-</style>

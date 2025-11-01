@@ -84,7 +84,7 @@
     <!-- Create/Edit Dialog -->
     <v-dialog v-model="showCreateDialog" max-width="800px">
       <v-card>
-        <v-card-title>
+        <v-card-title class="pt-3">
           {{ editingToken ? 'Edit API Token' : 'Create API Token' }}
         </v-card-title>
         <v-card-text>
@@ -233,7 +233,7 @@
     <!-- Token Display Dialog -->
     <v-dialog v-model="showTokenDialog" max-width="600px">
       <v-card>
-        <v-card-title>API Token Details</v-card-title>
+        <v-card-title class="pt-3">API Token Details</v-card-title>
         <v-card-text>
           <v-text-field
             :model-value="newTokenValue"

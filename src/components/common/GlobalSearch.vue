@@ -170,15 +170,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.global-search {
-  z-index: 1000;
-}
-
-.w3-autocomplete {
-  :deep(.v-field__input input) {
-    cursor: text;
-  }
-}
-</style>
