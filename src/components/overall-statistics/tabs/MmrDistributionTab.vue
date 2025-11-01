@@ -14,7 +14,6 @@
 
           <v-select
             v-model="selectedGameMode"
-            class="over-chart-select-box"
             :items="activeGameModes()"
             item-title="name"
             item-value="id"

@@ -17,7 +17,6 @@
       <v-row>
         <v-col cols="12" md="2">
           <v-select
-            class="over-chart-select-box"
             :items="activeGameModesWithAll()"
             item-title="name"
             item-value="id"
@@ -31,7 +30,6 @@
         </v-col>
         <v-col cols="12" md="2">
           <v-select
-            class="player-race-select-box"
             :items="races"
             item-title="raceName"
             item-value="raceId"
@@ -45,7 +43,6 @@
         </v-col>
         <v-col cols="12" md="2">
           <v-select
-            class="opponent-race-select-box"
             :items="races"
             item-title="raceName"
             item-value="raceId"
