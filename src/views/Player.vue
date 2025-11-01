@@ -24,7 +24,7 @@
                   <season-badge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
-              <div class="position-static right-0 mt-1 ml-1">
+              <div class="position-static right-0 mt-2 ml-1">
                 <gateway-select @gatewayChanged="gatewayChanged" />
                 <v-menu v-if="!!seasons && seasons.length > 0" location="right">
                   <template v-slot:activator="{ props }">

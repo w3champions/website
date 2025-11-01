@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title class="pb-0">
+    <v-card-title class="pb-0 pt-3">
       {{ $t("components_player_tabs_matchhistorytab.title") }}
     </v-card-title>
     <v-card-text class="pb-3">
