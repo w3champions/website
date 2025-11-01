@@ -16,7 +16,7 @@
                   v-if="hasModerationPermission && !loadingModerationStatus && profile.battleTag"
                   :battle-tag="profile.battleTag"
                   :compact="true"
-                  class="ml-3"
+                  class="ml-3 mr-2"
                 />
                 <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
