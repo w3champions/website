@@ -20,6 +20,7 @@
       icon-color="primary"
       variant="underlined"
       autocomplete="off"
+      clearable
       @click:clear="clearSearch"
     />
   </div>
@@ -108,6 +109,9 @@ export default defineComponent({
 .w3-autocomplete {
   :deep(.v-field__input input) {
     cursor: text;
+  }
+  :deep(.v-field__clearable) {
+    color: rgb(var(--v-theme-primary));
   }
 }
 </style>
