@@ -159,7 +159,7 @@
     </v-row>
     <v-row v-if="isLoggedInPlayer">
       <v-col>
-        <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
+        <v-dialog v-model="personalSettingsDialogOpened" max-width="600px">
           <template v-slot:activator="{ props }">
             <v-btn
               size="small"
@@ -263,9 +263,7 @@
                       :label="`Show Liquipedia Page Link`"
                     /> -->
                   </v-container>
-                </v-row>
-                <v-row no-gutters>
-                  <v-col md="12">
+                  <v-col md="12" class="pl-0 pt-0">
                     <v-autocomplete
                       v-model="selectedCountry"
                       :prepend-icon="mdiFlag"

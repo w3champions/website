@@ -5,7 +5,7 @@
         <template v-slot:activator="{ props }">
           <v-btn
             icon
-            :href="'https:///twitch.tv/' + userProfile.twitch"
+            :href="`https://twitch.tv/${userProfile.twitch}`"
             target="_blank"
             v-bind="props"
             class="bg-transparent"
@@ -14,7 +14,7 @@
             <v-icon color="purple-accent-4">{{ mdiTwitch }}</v-icon>
           </v-btn>
         </template>
-        <span>{{ userProfile.twitch }}</span>
+        <span>https://twitch.tv/{{ userProfile.twitch }}</span>
       </v-tooltip>
     </v-col>
     <v-col v-if="userProfile.youtube != ''" cols="2" class="pt-0 pb-0">
@@ -23,7 +23,7 @@
           <v-btn
             icon
             tile
-            :href="'https:///youtube.com/' + userProfile.youtube"
+            :href="`https://youtube.com/${userProfile.youtube}`"
             target="_blank"
             v-bind="props"
             class="bg-transparent"
@@ -32,7 +32,7 @@
             <v-icon color="red-darken-2">{{ mdiYoutube }}</v-icon>
           </v-btn>
         </template>
-        <span>{{ userProfile.youtube }}</span>
+        <span>https://youtube.com/{{ userProfile.youtube }}</span>
       </v-tooltip>
     </v-col>
     <v-col v-if="userProfile.twitter != ''" cols="2" class="pt-0 pb-0">
@@ -40,7 +40,7 @@
         <template v-slot:activator="{ props }">
           <v-btn
             icon
-            :href="'https:///twitter.com/' + userProfile.twitter"
+            :href="`https://twitter.com/${userProfile.twitter}`"
             target="_blank"
             v-bind="props"
             class="bg-transparent"
@@ -49,7 +49,7 @@
             <v-icon color="blue-darken-2">{{ mdiTwitter }}</v-icon>
           </v-btn>
         </template>
-        <span>{{ userProfile.twitter }}</span>
+        <span>https://twitter.com/{{ userProfile.twitter }}</span>
       </v-tooltip>
     </v-col>
     <v-col v-if="!!userProfile.trovo" cols="2" class="pt-0 pb-0">
