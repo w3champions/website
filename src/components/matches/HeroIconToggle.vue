@@ -3,6 +3,7 @@
     <v-btn
       tile
       style="background-color: transparent"
+      class="w3-gray-text"
       @click="toggle"
     >
       <v-icon start>{{ showHeroes ? mdiEyeOff : mdiEye }}</v-icon>

@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { TranslateResult, useI18n } from "vue-i18n";
 import { mdiCheck, mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
@@ -61,12 +61,11 @@ export default defineComponent({
     const commonStore = useCommonStore();
     const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
 
-    const selectedHeroes = ref<number[]>([...props.selectedHeroes]);
     const selectedText = computed<TranslateResult>(() => {
-      if (!selectedHeroes.value.length) {
+      if (!props.selectedHeroes.length) {
         return t("heroNames.allfilter");
       }
-      const hero = heroFilters.value.find((h) => h.type === selectedHeroes.value[0]);
+      const hero = heroFilters.value.find((h) => h.type === props.selectedHeroes[0]);
       return hero ? t(`heroNames.${hero.name}`) : t("heroNames.allfilter");
     });
 
@@ -75,17 +74,12 @@ export default defineComponent({
     });
 
     const toggleHero = (hero: HeroFilter) => {
-      if (hero.name === "all") {
-        selectedHeroes.value = [];
-      } else {
-        selectedHeroes.value = [hero.type];
-      }
-      context.emit("heroChanged", [...selectedHeroes.value]);
+      context.emit("heroChanged", hero.name === "allfilter" ? [] : [hero.type]);
     };
 
     const isSelected = (hero: HeroFilter): boolean => {
-      if (hero.name === "all") return selectedHeroes.value.length === 0;
-      return selectedHeroes.value.includes(hero.type);
+      if (hero.name === "allfilter") return props.selectedHeroes.length === 0;
+      return props.selectedHeroes.includes(hero.type);
     };
 
     return {
