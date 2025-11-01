@@ -44,8 +44,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .socials-subcard {
-  border: none !important;
-  padding: 2px;
+  border: none;
+  margin: 2px;
 }
 
 .socials-card {

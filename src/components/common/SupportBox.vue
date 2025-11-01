@@ -95,11 +95,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .support-subcard {
-  border: none !important;
-  padding: 1px;
+  border: none;
+  padding: 1px 2px;
 }
 
 .support-card {
-  padding: 1px;
+  padding: 2px;
 }
 </style>
