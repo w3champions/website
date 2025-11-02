@@ -1,6 +1,6 @@
 <template>
   <div
-    class="LadderSummaryShowcase-card mt-1"
+    class="LadderSummaryShowcase-card mt-1 cursor-pointer"
     :title="isRanked && !smallMode ? 'Go to League Rankings' : undefined"
     :class="`${leagueName} ${isRanked && !smallMode ? 'pointer' : ''}`"
     @click="isRanked && !smallMode ? navigateToLeague() : null"
@@ -11,7 +11,7 @@
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
-        <span v-for="(partner, index) in atPartners" :key="partner.battleTag" class="text-center pointer" @click="navigateToPartner(partner)">
+        <span v-for="(partner, index) in atPartners" :key="partner.battleTag" class="text-center" @click="navigateToPartner(partner)">
           {{ partner.name }}<span v-if="index < atPartners.length - 1">, </span>
         </span>
         <br v-if="showAtPartner" />
@@ -19,9 +19,9 @@
       <span v-if="isRanked">
         <span v-if="!smallMode">Rank</span>
         <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
-        <span class="won">{{ modeStat.wins }}</span>
+        <span class="w3-won">{{ modeStat.wins }}</span>
         -
-        <span class="lost">{{ modeStat.losses }}</span>
+        <span class="w3-lost">{{ modeStat.losses }}</span>
       </span>
       <span v-else>
         <span class="number-text">{{ modeStat.games }} / 5</span>
@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { EGameMode, ERaceEnum, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
@@ -61,7 +61,7 @@ import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { Gateways, PlayerId, Season } from "@/store/ranking/types";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "PlayerLeague",
@@ -137,9 +137,14 @@ export default defineComponent({
 
     function navigateToLeague(): void {
       router.push({
-        path: `/Rankings?season=${selectedSeason.value.id}&gateway=${gateWay.value}&gamemode=${gameMode.value}&league=${
-          league.value
-        }&playerId=${encodeURIComponent(playerId.value)}`,
+        path: "/rankings",
+        query: {
+          season: selectedSeason.value.id,
+          gateway: gateWay.value,
+          gamemode: gameMode.value,
+          league: league.value,
+          playerId: playerId.value,
+        }
       });
     }
 
@@ -343,7 +348,7 @@ export default defineComponent({
   margin: initial;
 }
 
-.theme--light {
+.v-theme--orc, .v-theme--human {
   .LadderSummaryShowcase-card:before {
     border: 2px solid rgb(205, 205, 205);
   }

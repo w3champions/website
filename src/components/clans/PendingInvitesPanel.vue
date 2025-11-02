@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       {{ $t("components_clans_pendinginvitespanel.invitespending") }}
     </v-card-title>
     <v-card-subtitle v-if="hasNoPendingInvites">
@@ -9,15 +9,15 @@
     <table v-if="!hasNoPendingInvites" class="custom-table">
       <tr v-for="member in playersClan.pendingInvites" :key="member">
         <td>
-          <v-row class="justify-space-between align-center ma-0">
-            <v-col class="pa-0">
-              <span class="pointer" @click="goToPlayer(member)">
+          <v-row class="align-center" no-gutters>
+            <v-col>
+              <span class="cursor-pointer" @click="goToPlayer(member)">
                 {{ battleTagToName(member) }}
               </span>
             </v-col>
-            <v-col class="text-right pa-0">
-              <v-btn @click="revokeInvite(member)">
-                <v-icon>{{ mdiDelete }}</v-icon>
+            <v-col class="text-right">
+              <v-btn size="small" variant="outlined" @click="revokeInvite(member)">
+                <v-icon size="x-large">{{ mdiDelete }}</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -33,7 +33,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { Clan } from "@/store/clan/types";
 import { useClanStore } from "@/store/clan/store";
 import { mdiDelete } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { battleTagToName } from "@/helpers/profile";
 
 export default defineComponent({

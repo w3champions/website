@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Live Queue Data
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
         <v-expansion-panels tile multiple>
           <v-expansion-panel
@@ -11,10 +11,10 @@
             :key="index"
             tile
           >
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               {{ mode.name }}
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <div v-if="getPlayerDataInGamemode(mode.id) != null">
                 <v-data-table
                   :headers="headers"
@@ -22,10 +22,11 @@
                   :items-per-page="-1"
                   :disable-pagination="true"
                   :hide-default-footer="true"
+                  :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
                 />
               </div>
               <div v-else>No Data found.</div>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-card>
@@ -36,11 +37,12 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
 import { QueueData, QueuedPlayer } from "@/store/admin/types";
-import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -103,49 +105,49 @@ export default defineComponent({
       clearInterval(_intervalRefreshHandle);
     });
 
-    const headers = [
+    const headers: DataTableHeader[] = [
       {
-        text: "Battletag",
+        title: "Battletag",
         value: "battleTag",
         sortable: false,
       },
       {
-        text: "MMR",
+        title: "MMR",
         value: "mmr",
         sortable: true,
       },
       {
-        text: "RD",
+        title: "RD",
         value: "rd",
         sortable: true,
       },
       {
-        text: "Quantile",
+        title: "Quantile",
         value: "quantile",
         sortable: true,
       },
       {
-        text: "Activity Quantile",
+        title: "Activity Quantile",
         value: "activityQuantile",
         sortable: true,
       },
       {
-        text: "Queue Time",
+        title: "Queue Time",
         value: "queueTime",
         sortable: true,
       },
       {
-        text: "Flo Connected",
+        title: "Flo Connected",
         value: "isFloConnected",
         sortable: true,
       },
       {
-        text: "Location",
+        title: "Location",
         value: "location",
         sortable: false,
       },
       {
-        text: "Server Option",
+        title: "Server Option",
         value: "serverOption",
         sortable: true,
       },

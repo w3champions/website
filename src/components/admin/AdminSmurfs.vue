@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Smurf Checker
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
-        <v-card-title>
+        <v-card-title class="pt-3">
           Configuration
         </v-card-title>
         <v-card-text>
@@ -15,17 +15,17 @@
                 v-model="searchDepth"
                 :items="[1, 2, 3, 4, 5]"
                 label="Search depth"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
-                style="max-width: 150px;"
+                width="150"
               />
               <v-checkbox
                 v-if="canSeeSmurfCheckerQueryExplanation"
                 v-model="generateExplanation"
                 label="Generate explanation"
-                dense
                 class="ml-4"
+                color="primary"
                 hide-details
               />
             </v-col>
@@ -42,8 +42,8 @@
                 v-model="selectedIdentifierType"
                 :items="availableIdentifierTypes"
                 label="Identifier Type"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
                 disabled
                 style="max-width: 150px;"
@@ -51,19 +51,24 @@
               <!-- Autocomplete Btag search -->
               <v-autocomplete
                 v-model="searchPlayerModel"
-                :append-icon="mdiMagnify"
+                v-model:search="search"
+                menu-icon=""
+                :append-inner-icon="mdiMagnify"
                 label="Search..."
                 clearable
-                placeholder=" "
                 :items="searchedPlayers"
-                :search-input.sync="search"
+                bg-color="transparent"
                 return-object
                 autofocus
-                class="flex-grow-1 ml-4 mr-2"
+                glow
+                color="primary"
+                icon-color="primary"
+                class="ml-4 mr-4 w3-autocomplete"
+                variant="underlined"
+                autocomplete="off"
                 @click:clear="revertToDefault"
               />
               <v-btn
-                class="ml-5"
                 :disabled="!searchPlayerModel"
                 @click="executeSearch"
               >
@@ -77,20 +82,22 @@
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
           <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
-            <div style="cursor: pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
+            <div class="d-flex align-center">
+              <div class="cursor-pointer" @click="searchSmurfsFromClick(battleTag)">{{ battleTag }}</div>
 
-            <!-- Moderation status badges -->
-            <moderation-status-badges
-              v-if="hasModerationPermission && !loadingModerationStatus"
-              :battle-tag="battleTag"
-              :compact="false"
-              class="ml-3"
-            />
+              <!-- Moderation status badges -->
+              <moderation-status-badges
+                v-if="hasModerationPermission && !loadingModerationStatus"
+                :battle-tag="battleTag"
+                :compact="false"
+                class="ml-3"
+              />
 
-            <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
+              <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
-            <v-spacer />
-            <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+              <v-spacer />
+              <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+            </div>
           </v-list-item>
         </v-list>
       </v-card>
@@ -104,7 +111,7 @@
               :key="step.iteration"
             >
               <!-- Header shows iteration number, identifierType, and how many groups -->
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 <div class="d-flex justify-space-between align-center" style="width: 100%">
                   <div>
                     <strong>Iteration {{ step.iteration }}</strong> —
@@ -112,9 +119,9 @@
                   </div>
                   <div>Groups: {{ step.identifierGroups.length }}</div>
                 </div>
-              </v-expansion-panel-header>
+              </v-expansion-panel-title>
 
-              <v-expansion-panel-content>
+              <v-expansion-panel-text>
                 <!-- Show filteredIdentifiers as chips or comma-separated -->
                 <v-row class="mb-3">
                   <v-col cols="12">
@@ -127,7 +134,7 @@
                       <v-chip
                         v-for="filteredIdentifier in step.filteredIdentifiers"
                         :key="filteredIdentifier"
-                        small
+                        size="small"
                       >
                         {{ filteredIdentifier }}
                       </v-chip>
@@ -141,7 +148,7 @@
                     v-for="group in step.identifierGroups"
                     :key="group.identifier"
                   >
-                    <v-expansion-panel-header>
+                    <v-expansion-panel-title>
                       <!-- Display the identifier and a summary of login counts to show significant identifiers -->
                       <div class="d-flex justify-space-between align-center" style="width: 100%">
                         <div>
@@ -153,18 +160,18 @@
                           To: {{ totalLogins(group.toBattleTags) }}
                         </div>
                       </div>
-                    </v-expansion-panel-header>
+                    </v-expansion-panel-title>
 
-                    <v-expansion-panel-content>
+                    <v-expansion-panel-text>
                       <!-- Two side-by-side lists or tables for from vs. to -->
                       <v-row>
                         <SmurfBattleTagDetailsTable title="From BattleTags" :data="group.fromBattleTags" />
                         <SmurfBattleTagDetailsTable title="To BattleTags" :data="group.toBattleTags" />
                       </v-row>
-                    </v-expansion-panel-content>
+                    </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
-              </v-expansion-panel-content>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-list>
@@ -179,7 +186,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
 import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
@@ -198,7 +205,7 @@ export default defineComponent({
     const playerSearchStore = usePlayerSearchStore();
     const oauthStore = useOauthStore();
 
-    const searchPlayerModel = ref<string>("");
+    const searchPlayerModel = ref<string>();
     const search = ref<string>("");
     const showSmurfResults = ref<boolean>(false);
     const showExplanation = ref<boolean>(false);

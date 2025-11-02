@@ -1,12 +1,11 @@
 <template>
-  <div class="custom-table-wrapper elevation-1">
+  <div class="elevation-1">
     <table v-for="countryRank in rankings" :key="countryRank.league" class="custom-table">
       <thead>
-        <tr>
+        <tr class="text-uppercase font-weight-bold w3-gray-text">
           <td
             v-if="leagueMap.get(countryRank.league)"
             colspan="100%"
-            class="text-uppercase font-weight-bold"
           >
             <league-icon :league="leagueMap.get(countryRank.league)?.order" />
             <div class="d-inline-block ml-2 my-4">
@@ -21,11 +20,11 @@
         </tr>
       </thead>
       <thead>
-        <tr>
+        <tr class="w3-gray-text">
           <td
             v-for="(header, index) in headers"
             :key="index"
-            class="header"
+            class="w3-gray-text"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -40,6 +39,7 @@
           v-for="item in countryRank.ranks"
           :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
+          class="w3-gray-text"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td>
@@ -51,32 +51,34 @@
             >
               <div v-if="item.playersInfo && (item.playersInfo[index].countryCode || item.playersInfo[index].location) === selectedCountry">
                 <div
-                  class="player-avatar mr-1 alignRight race-icon"
+                  class="player-avatar mr-1 pa-0 race-icon"
                   :title="getTitleRace(item, index).toString()"
                   :style="{ 'background-image': `url(${getPlayerIcon(item, index)})` }"
                 ></div>
 
                 <player-rank-info :player-id="playerId" />
                 <div v-if="isTwitchLive(item)" class="twitch__container">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <span style="display: inline" class="pointer" v-on="on">
+                  <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+                    <template v-slot:activator="{ props }">
+                      <span style="display: inline" class="cursor-pointer">
                         <v-btn
                           icon
                           :href="`https:///twitch.tv/${item.playersInfo[index].twitchName}`"
                           target="_blank"
-                          v-on="on"
+                          v-bind="props"
+                          class="bg-transparent"
+                          variant="flat"
                         >
                           <v-icon
                             v-if="!isCurrentlyLive(item.player.playerIds)"
-                            color="purple accent-4"
+                            color="purple-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>
                           <v-icon
                             v-if="isCurrentlyLive(item.player.playerIds)"
                             class="blinker"
-                            color="red accent-4"
+                            color="red-accent-4"
                           >
                             {{ mdiTwitch }}
                           </v-icon>
@@ -95,7 +97,6 @@
                 </div>
               </div>
               <div v-else class="teammate__container">
-                (
                 <player-rank-info :player-id="playerId" />
                 <div
                   v-if="(item.playersInfo && item.playersInfo[index].countryCode) || item.playersInfo[index].location"
@@ -106,18 +107,15 @@
                     :location="item.playersInfo[index].location"
                   />
                 </div>
-                )
               </div>
             </div>
             <span
               v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item)"
               style="position: relative"
             >
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <span style="display: inline" class="pointer" v-on="on">
-                    <sword-icon class="swords blinker" />
-                  </span>
+              <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props }">
+                  <sword-icon class="swords blinker cursor-pointer" v-bind="props" />
                 </template>
                 <div>
                   {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
@@ -133,8 +131,8 @@
           <td class="number-text text-end">
             {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
           </td>
-          <td class="number-text text-end won">{{ item.player.wins }}</td>
-          <td class="number-text text-end lost">{{ item.player.losses }}</td>
+          <td class="number-text text-end w3-won">{{ item.player.wins }}</td>
+          <td class="number-text text-end w3-lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
           <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
@@ -170,7 +168,7 @@ import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "CountryRankingsGrid",
@@ -465,10 +463,6 @@ export default defineComponent({
   }
 }
 
-td.header {
-  position: relative;
-}
-
 .teammate__container {
   font-size: small;
 }
@@ -489,10 +483,5 @@ td.header {
   position: absolute;
   top: 0;
   left: 18px;
-  cursor: pointer;
-}
-
-.race-icon {
-  padding: 0;
 }
 </style>

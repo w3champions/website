@@ -9,7 +9,7 @@ import { computed, defineComponent } from "vue";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { ChartData } from "chart.js";
 
 export default defineComponent({

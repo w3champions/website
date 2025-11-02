@@ -7,21 +7,20 @@
       hide-default-footer
       :mobile-breakpoint="400"
       :hidden="stats.length === 0"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:body>
-        <tbody>
-          <tr v-for="item in sortedStats" :key="item.mapName || item.map">
-            <td>{{ item.mapName || item.map }}</td>
-            <player-stats-race-versus-race-on-map-table-cell
-              :stats="totalWins(item.winLosses)"
-            />
-            <player-stats-race-versus-race-on-map-table-cell
-              v-for="(winLoss, index) in item.winLosses"
-              :key="index"
-              :stats="winLoss"
-            />
-          </tr>
-        </tbody>
+        <tr v-for="item in sortedStats" :key="item.mapName || item.map">
+          <td>{{ item.mapName || item.map }}</td>
+          <player-stats-race-versus-race-on-map-table-cell
+            :stats="totalWins(item.winLosses)"
+          />
+          <player-stats-race-versus-race-on-map-table-cell
+            v-for="(winLoss, index) in item.winLosses"
+            :key="index"
+            :stats="winLoss"
+          />
+        </tr>
       </template>
     </v-data-table>
     <v-card-text :hidden="stats.length !== 0">
@@ -32,18 +31,11 @@
 
 <script lang="ts">
 import { defineComponent, computed } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { TranslateResult } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { ERaceEnum } from "@/store/types";
-
-interface RaceToMapStatHeader {
-  text: TranslateResult;
-  sortable: boolean;
-  width: string;
-  align?: "left" | "center" | "right";
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "RaceToMapStat",
@@ -92,41 +84,41 @@ export default defineComponent({
         }));
     });
 
-    const headers: RaceToMapStatHeader[] = [
+    const headers: DataTableHeader[] = [
       {
-        text: t("components_overall-statistics_racetomapstat.map"),
+        title: t("components_overall-statistics_racetomapstat.map"),
         sortable: false,
         width: "25px",
       },
       {
-        text: t("components_overall-statistics_racetomapstat.total"),
+        title: t("components_overall-statistics_racetomapstat.total"),
         sortable: false,
         width: "25px",
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_racetomapstat.vshu"),
+        title: t("components_overall-statistics_racetomapstat.vshu"),
         sortable: false,
         width: "25px",
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_racetomapstat.vsorc"),
+        title: t("components_overall-statistics_racetomapstat.vsorc"),
         sortable: false,
         width: "25px",
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_racetomapstat.vsne"),
+        title: t("components_overall-statistics_racetomapstat.vsne"),
         sortable: false,
         width: "25px",
-        align: "right",
+        align: "end",
       },
       {
-        text: t("components_overall-statistics_racetomapstat.vsud"),
+        title: t("components_overall-statistics_racetomapstat.vsud"),
         sortable: false,
         width: "25px",
-        align: "right",
+        align: "end",
       },
     ];
 

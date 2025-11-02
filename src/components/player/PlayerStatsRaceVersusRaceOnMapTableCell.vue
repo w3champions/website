@@ -1,14 +1,14 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <td class="number-text text-right" :class="toWinClass" v-on="on">
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+    <template v-slot:activator="{ props }">
+      <td class="number-text text-right" :class="toWinClass" v-bind="props">
         {{ toWinText }}
       </td>
     </template>
     <div>
-      <span class="number-text won">{{ stats.wins }}W</span>
+      <span class="number-text w3-won">{{ stats.wins }}W</span>
       -
-      <span class="number-text lost">{{ stats.losses }}L</span>
+      <span class="number-text w3-lost">{{ stats.losses }}L</span>
       &nbsp;&nbsp;
       {{ $t("common.total") }} <span class="number-text">{{ stats.games }}</span>
     </div>
@@ -63,10 +63,10 @@ export default defineComponent({
       }
 
       if (props.stats.winrate > (props.winThreshold || 0.6)) {
-        classes.push("won");
+        classes.push("w3-won");
       }
       if (props.stats.winrate < (props.lossThreshold || 0.4)) {
-        classes.push("lost");
+        classes.push("w3-lost");
       }
 
       return classes;

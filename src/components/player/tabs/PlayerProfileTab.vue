@@ -4,7 +4,7 @@
       <v-progress-circular style="margin-top: 180px" :size="50" color="primary" indeterminate />
     </v-card-text>
     <v-card-text v-else-if="loadProfileError" style="min-height: 500px" class="text-center">
-      <v-row class="mt-4 filter-none">
+      <v-row class="mt-4">
         <v-col>
           <v-card-title class="justify-center">
             {{ loadProfileError }}
@@ -13,7 +13,7 @@
       </v-row>
     </v-card-text>
     <v-card-text v-show="!loadProfileError && !loadingProfile">
-      <v-row class="mt-4 filter-none">
+      <v-row class="mt-4">
         <v-col cols="12" md="4" lg="3">
           <v-card-text style="padding-top: 0 !important">
             <player-avatar :is-logged-in-player="isLoggedInPlayer" />
@@ -32,20 +32,25 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-row v-if="!isBetaSeason" class="filter-none">
+          <v-row v-if="!isBetaSeason">
             <v-col cols="12" md="4">
               <h4 style="position: relative">
                 {{ $t("components_player_tabs_playerprofiletab.statsByRace") }}
               </h4>
-              <v-data-table hide-default-footer :headers="raceHeaders" :items="selectedRaceStats">
+              <v-data-table
+                hide-default-footer
+                :headers="raceHeaders"
+                :items="selectedRaceStats"
+                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+              >
                 <template v-slot:item.race="{ item }">
                   <span><race-icon :race="item.race" /></span>
                 </template>
                 <template v-slot:item.wins="{ item }">
                   <span class="number-text">
-                    <span class="won">{{ item.wins }}</span>
+                    <span class="w3-won">{{ item.wins }}</span>
                     -
-                    <span class="lost">{{ item.losses }}</span>
+                    <span class="w3-lost">{{ item.losses }}</span>
                     <span style="float: right">({{ (item.winrate * 100).toFixed(1) }}%)</span>
                   </span>
                 </template>
@@ -66,8 +71,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { TranslateResult } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
@@ -80,12 +84,7 @@ import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { ModeStat, RaceStat } from "@/store/player/types";
 import { Season } from "@/store/ranking/types";
-
-interface PlayerProfileTabRaceHeader {
-  text: TranslateResult;
-  sortable: boolean;
-  value: string;
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "PlayerProfileTab",
@@ -171,14 +170,14 @@ export default defineComponent({
       );
     });
 
-    const raceHeaders: PlayerProfileTabRaceHeader[] = [
+    const raceHeaders: DataTableHeader[] = [
       {
-        text: t("components_player_tabs_playerprofiletab.race"),
+        title: t("components_player_tabs_playerprofiletab.race"),
         sortable: false,
         value: "race",
       },
       {
-        text: t("components_player_tabs_playerprofiletab.winloss"),
+        title: t("components_player_tabs_playerprofiletab.winloss"),
         sortable: false,
         value: "wins",
       },
@@ -214,15 +213,6 @@ export default defineComponent({
 .country__container {
   position: relative;
   max-width: 120px;
-}
-
-.socialIcon {
-  padding-top: 0px;
-  padding-left: 2px;
-}
-
-.twitchIcon {
-  margin-top: 2px;
 }
 
 @media (min-width: 960px) {

@@ -1,14 +1,13 @@
 <template>
   <v-dialog v-model="dialog" max-width="600px">
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-btn
-        class="ma-0"
-        outlined
+        variant="outlined"
         color="primary"
-        v-on="on"
+        v-bind="props"
         @click="dialog = true"
       >
-        <v-icon left>{{ mdiPencil }}</v-icon>
+        <v-icon start>{{ mdiPencil }}</v-icon>
         <span>{{ $t("components_clans_inviteplayermodal.inviteplayer") }}</span>
       </v-btn>
     </template>
@@ -26,8 +25,8 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
-          text
+          color="primary"
+          variant="text"
           :disabled="!player"
           @click="invitePlayer"
         >
@@ -38,9 +37,9 @@
       <v-alert
         v-model="clanValidationError"
         type="warning"
-        dense
+        density="compact"
         class="ml-4 mr-4"
-        dismissible
+        closable
       >
         {{ clanValidationErrorText }}
       </v-alert>

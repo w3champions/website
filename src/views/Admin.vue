@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid style="height: 100%">
+  <v-container fluid class="pa-3">
     <admin-check-jwt-lifetime />
-    <div v-if="isAdmin" class="admin-page-wrapper">
+    <div v-if="isAdmin">
       <admin-navigation />
       <v-card tile>
         <router-view />
@@ -32,11 +32,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.admin-page-wrapper {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 256px auto;
-}
-</style>

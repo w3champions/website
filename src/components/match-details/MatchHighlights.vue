@@ -2,9 +2,9 @@
   <v-col>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiSkull }}</v-icon>
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiSkull }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.heroeskilled") }}</div>
         </v-tooltip>
@@ -15,9 +15,9 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiChevronTripleUp }}</v-icon>
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiChevronTripleUp }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.xpgained") }}</div>
         </v-tooltip>
@@ -28,9 +28,9 @@
     </v-row>
     <v-row>
       <v-col :order="left ? 0 : 1" :style="{ 'text-align': left ? 'right' : 'left' }" class="pa-1">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-icon class="mr-4 ml-4" v-on="on">{{ mdiTreasureChest }}</v-icon>
+        <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
+            <v-icon class="mr-4 ml-4" v-bind="props">{{ mdiTreasureChest }}</v-icon>
           </template>
           <div>{{ $t("components_match-details_matchhighlights.itemscollected") }}</div>
         </v-tooltip>
@@ -94,7 +94,7 @@ export default defineComponent({
       if (props.notColorWinner || hasFaultyData(opponent, me)) return "";
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
-      return opponent > me ? "lost" : "won";
+      return opponent > me ? "w3-lost" : "w3-won";
     }
 
     function hasFaultyData(opponent: number, me: number): boolean {

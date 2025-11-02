@@ -1,7 +1,7 @@
 <template>
-  <v-container>
-    <v-card class="mt-2 pb-2 pr-4">
-      <v-card-title>Tournaments</v-card-title>
+  <v-container class="pa-3 w3-container-width">
+    <v-card>
+      <v-card-title class="pt-3">Tournaments</v-card-title>
       <v-card-text>
         <div class="mb-4">
           <h3>Upcoming</h3>
@@ -25,7 +25,7 @@ import { ITournament } from "@/store/tournaments/types";
 import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TournamentsList",
@@ -47,6 +47,7 @@ export default defineComponent({
         ));
 
     function onRowClick(item: ITournament) {
+      if (!item.id) return;
       router.push({
         path: getTournamentUrl(item.id),
       });

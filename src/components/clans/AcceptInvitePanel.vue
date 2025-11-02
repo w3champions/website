@@ -4,7 +4,7 @@
       <v-col class="text-center">
         <h3>
           {{ $t("components_clans_acceptinvitepanel.invitemsg1") }}
-          <b>{{ clanName }}</b>
+          <span>{{ clanName }}</span>
           {{ $t("components_clans_acceptinvitepanel.invitemsg2") }}
         </h3>
       </v-col>
@@ -12,13 +12,13 @@
 
     <v-row class="justify-center">
       <v-col cols="3" class="text-center">
-        <v-btn @click="joinClan">
+        <v-btn variant="outlined" @click="joinClan">
           {{ $t("components_clans_acceptinvitepanel.join") }}
-          {{ clanName }} !
+          {{ clanName }}
         </v-btn>
       </v-col>
       <v-col cols="3" class="text-center">
-        <v-btn outlined @click="rejectClan">
+        <v-btn variant="outlined" @click="rejectClan">
           {{ $t("components_clans_acceptinvitepanel.reject") }}
         </v-btn>
       </v-col>

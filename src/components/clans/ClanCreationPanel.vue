@@ -11,18 +11,20 @@
     <v-row class="justify-center">
       <v-col cols="6">
         <v-text-field
-          :v-model="clanNameToCreate"
+          v-model="clanNameToCreate"
           :rules="[mustBeBetween(3, 30, ' ')]"
           :label="$t(`components_clans_clancreationpanel.clanname`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
-          @change="changeInsertedClanName"
+          variant="underlined"
+          color="primary"
         />
         <v-text-field
-          :v-model="clanAbbreviationToCreate"
+          v-model="clanAbbreviationToCreate"
           :rules="[mustBeBetween(2, 5, '')]"
           :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
-          @change="changeInsertedClanAbbreviation"
+          variant="underlined"
+          color="primary"
         />
       </v-col>
     </v-row>
@@ -36,9 +38,9 @@
     <v-alert
       v-model="isValidationError"
       type="warning"
-      dense
+      density="compact"
       class="ml-4 mr-4"
-      dismissible
+      closable
     >
       {{ clanValidationError }}
     </v-alert>
@@ -46,7 +48,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n-bridge";
+import { TranslateResult, useI18n } from "vue-i18n";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -74,14 +76,6 @@ export default defineComponent({
       };
     }
 
-    function changeInsertedClanName(newName: string): void {
-      clanNameToCreate.value = newName;
-    }
-
-    function changeInsertedClanAbbreviation(newName: string): void {
-      clanAbbreviationToCreate.value = newName;
-    }
-
     async function createClan(): Promise<void> {
       await clanStore.createClan({
         clanName: clanNameToCreate.value.trim(),
@@ -96,8 +90,6 @@ export default defineComponent({
       clanValidationError,
       isValidationError,
       mustBeBetween,
-      changeInsertedClanName,
-      changeInsertedClanAbbreviation,
       createClan,
     };
   },

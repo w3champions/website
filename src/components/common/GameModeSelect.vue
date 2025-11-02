@@ -1,30 +1,28 @@
 <template>
-  <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
-        <v-icon style="margin-right: 5px">{{ mdiControllerClassic }}</v-icon>
+  <v-menu location="right" transition="fade-transition">
+    <template v-slot:activator="{ props }">
+      <v-btn tile style="background-color: transparent" v-bind="props">
+        <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName() }}
       </v-btn>
     </template>
     <v-card>
       <v-card-text>
         <v-list>
-          <v-list-item-content>
+          <v-list-item>
             <v-list-item-title>
               {{ $t("components_common_gamemodeselect.selectgamemode") }}
             </v-list-item-title>
-          </v-list-item-content>
+          </v-list-item>
         </v-list>
         <v-divider />
-        <v-list dense max-height="400" class="overflow-y-auto">
+        <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item
             v-for="mode in gameModes()"
             :key="mode.id"
             @click="selectGameMode(mode.id)"
           >
-            <v-list-item-content>
-              <v-list-item-title>{{ mode.name }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>{{ mode.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -34,10 +32,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { activeGameModesWithAT, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
-import { TranslateResult } from "vue-i18n-bridge";
+import { TranslateResult } from "vue-i18n";
 
 export default defineComponent({
   name: "GameModeSelect",

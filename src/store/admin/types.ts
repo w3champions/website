@@ -23,7 +23,6 @@ export type AdminState = {
 };
 
 export type AdminPlayerManagementState = {
-  managedBattleTag: string;
   allSpecialPortraits: PortraitDefinition[];
   searchedPlayerSpecialPortraits: number[];
   portraitDefinitionGroups: PortraitDefinitionGroup[];
@@ -89,7 +88,7 @@ export interface BannedPlayersGetRequest {
   page: number;
   itemsPerPage: number;
   sortBy: string;
-  sortDirection: "desc" | "asc";
+  sortDirection: boolean | "asc" | "desc" | undefined;
   search: string;
 }
 
@@ -213,6 +212,14 @@ export type Reward = {
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
+  assignmentStats?: RewardAssignmentStats;
+};
+
+export type RewardAssignmentStats = {
+  activeCount: number;
+  expiredCount: number;
+  revokedCount: number;
+  totalCount: number;
 };
 
 // Module-related types for dynamic reward configuration

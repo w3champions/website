@@ -2,60 +2,55 @@
   <v-menu
     v-model="menuOpened"
     content-class="global-search"
-    bottom
-    offset-y
+    location="bottom"
     transition="slide-y-transition"
-    :nudge-bottom="18"
-    :nudge-width="300"
+    :offset="18"
+    :width="365"
     :close-on-content-click="false"
   >
-    <template v-slot:activator="{ on }">
-      <v-btn text tile v-on="on">
-        <v-icon class="mr-2">{{ mdiMagnify }}</v-icon>
+    <template v-slot:activator="{ props }">
+      <v-btn variant="text" tile v-bind="props">
+        <v-icon size="x-large" class="mr-2">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
-    <v-card>
-      <v-card-title class="autocomplete-wrapper px-2 pb-2 pt-0">
-        <v-autocomplete
-          v-model="searchModel"
-          :append-icon="mdiMagnify"
-          label="Search"
-          single-line
-          clearable
-          autofocus
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          return-object
-          :search-input.sync="search"
-          :no-data-text="noDataText"
-          :loading="isLoading"
-          :items="players"
-          item-text="battleTag"
-          item-value="battleTag"
-        >
-          <template v-slot:item="data">
-            <v-list-item-avatar>
-              <img :src="getPlayerAvatarUrl(data.item)" />
-            </v-list-item-avatar>
-            <v-list-item-content>
+    <v-card class="px-2 pb-2 pt-0">
+      <v-autocomplete
+        v-model="searchModel"
+        v-model:search="search"
+        :append-inner-icon="mdiMagnify"
+        class="font-weight-medium w3-autocomplete"
+        menu-icon=""
+        autofocus
+        :no-data-text="noDataText"
+        :loading="isLoading"
+        :items="players"
+        item-title="battleTag"
+        item-value="battleTag"
+        :placeholder="$t(`views_rankings.searchPlaceholder`)"
+        bg-color="transparent"
+        glow
+        single-line
+        color="primary"
+        icon-color="primary"
+        return-object
+        autocomplete="off"
+        variant="underlined"
+      >
+        <template v-slot:item="{ props, item }">
+          <v-list-item :prepend-avatar="getPlayerAvatarUrl(item.raw)" v-bind="props">
+            <div>
               <v-list-item-title>
-                {{ data.item.battleTag }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <div
-                  v-for="season in data.item.seasons"
-                  :key="season.id"
-                  class="mr-1 mt-1 d-inline-block"
-                >
+                <div v-for="season in item.raw.seasons" :key="season.id" class="mr-1 mt-1 d-inline-block">
                   <season-badge :season="season" />
                 </div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </template>
-          <template v-slot:append-item>
-            <div v-intersect="endIntersect"></div>
-          </template>
-        </v-autocomplete>
-      </v-card-title>
+              </v-list-item-title>
+            </div>
+          </v-list-item>
+        </template>
+        <template v-slot:append-item>
+          <div v-intersect="endIntersect"></div>
+        </template>
+      </v-autocomplete>
     </v-card>
   </v-menu>
 </template>
@@ -67,9 +62,9 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchInfo } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { mdiMagnify } from "@mdi/js";
-import { Intersect } from "vuetify/lib";
+import { Intersect } from "vuetify/directives";
 
 export default defineComponent({
   name: "GlobalSearch",
@@ -81,7 +76,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const searchModel = ref<PlayerSearchInfo>({} as PlayerSearchInfo);
+    const searchModel = ref<PlayerSearchInfo | null>(null);
     const search = ref<string>("");
     const isLoading = ref<boolean>(false);
     const menuOpened = ref<boolean>(false);
@@ -92,7 +87,7 @@ export default defineComponent({
     watch(searchModel, onSearchModelChanged);
 
     // Handler when selecting a player from the list
-    function onSearchModelChanged(player: PlayerSearchInfo) {
+    function onSearchModelChanged(player: PlayerSearchInfo | null) {
       // We cleared the input, ignore
       if (!player?.battleTag) return;
 
@@ -101,12 +96,8 @@ export default defineComponent({
         path: getProfileUrl(player.battleTag),
       }).catch(() => null);
 
-      // Since the global search is present on all pages, we need to manually close it
       menuOpened.value = false;
-
-      // Reset the global search state
-      globalSearchStore.clearSearch();
-      searchModel.value = {} as PlayerSearchInfo;
+      searchModel.value = null;
     }
 
     watch(search, onSearchChanged);
@@ -178,16 +169,4 @@ export default defineComponent({
     };
   },
 });
-
 </script>
-
-<style lang="scss" scoped>
-.global-search {
-  z-index: 1000 !important;
-  .autocomplete-wrapper {
-    .v-text-field__details {
-      display: none;
-    }
-  }
-}
-</style>

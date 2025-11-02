@@ -1,16 +1,16 @@
 <template>
-  <v-container>
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card tile>
-          <v-card-title>
+          <v-card-title class="pt-3">
             {{ $t("views_app.matches") }}
           </v-card-title>
-          <v-card-text class="d-flex align-center">
+          <v-card-text class="pt-2 d-flex align-center">
             <matches-status-select />
             <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
             <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
-            <mmr-select :mmr="mmr" @mmrChanged="mmrChanged" />
+            <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
             <sort-select v-if="unfinished" />
             <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
             <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
@@ -167,7 +167,7 @@ export default defineComponent({
       matchStore.setMap(map);
     }
 
-    function mmrChanged(mmr: Mmr): void {
+    function mmrFilterChanged(mmr: Mmr): void {
       matchStore.setMmr(mmr);
     }
 
@@ -189,7 +189,7 @@ export default defineComponent({
       mapChanged,
       maps,
       map,
-      mmrChanged,
+      mmrFilterChanged,
       mmr,
       selectSeason,
       unfinished,

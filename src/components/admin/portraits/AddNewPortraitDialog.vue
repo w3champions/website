@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="dialogOpen" max-width="800">
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-row class="justify-center ma-0 pa-0">
-        <v-btn class="primary w3-race-bg--text" v-on="on">Add New Portrait</v-btn>
+        <v-btn class="bg-primary text-w3-race-bg" v-bind="props">Add New Portrait</v-btn>
       </v-row>
     </template>
 
@@ -17,11 +17,11 @@
           </v-btn>
         </v-row>
 
-        <v-alert v-if="error" type="error" dismissible @input="error = ''">
+        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
           {{ error }}
         </v-alert>
 
-        <v-alert v-if="success" type="success" dismissible @input="success = ''">
+        <v-alert v-if="success" type="success" closable @update:model-value="success = ''">
           {{ success }}
         </v-alert>
 
@@ -32,16 +32,18 @@
               v-model="portraitId"
               label="Portrait ID (Auto-calculated)"
               readonly
+              variant="underlined"
+              color="primary"
               :disabled="uploading"
             />
           </v-col>
           <v-col cols="3">
             <v-btn
-              color="info"
+              class="bg-primary"
               :disabled="uploading"
               @click="calculateNextPortraitId"
             >
-              <v-icon left>{{ mdiRefresh }}</v-icon>
+              <v-icon start>{{ mdiRefresh }}</v-icon>
               Refresh
             </v-btn>
           </v-col>
@@ -60,7 +62,7 @@
         <!-- File Upload Section -->
         <v-row>
           <v-col>
-            <v-alert type="info" outlined dense>
+            <v-alert type="info" variant="outlined" density="compact">
               <div class="text-subtitle-2 mb-1">Instructions:</div>
               <ul class="ml-4">
                 <li>Select one or multiple JPG files to upload</li>
@@ -84,6 +86,7 @@
               chips
               show-size
               counter
+              variant="underlined"
               :prepend-icon="mdiImagePlus"
             />
           </v-col>
@@ -94,7 +97,7 @@
 
         <div v-if="uploadProgress.length > 0">
           <div class="text-h6 mb-3">Upload Progress</div>
-          <v-simple-table dense>
+          <v-table density="compact">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -107,7 +110,7 @@
                 <tr v-for="(progress, index) in uploadProgress" :key="index">
                   <td>{{ progress.step }}</td>
                   <td>
-                    <v-chip :color="getStatusColor(progress.status)" small>
+                    <v-chip :color="getStatusColor(progress.status)" size="small">
                       {{ progress.status }}
                     </v-chip>
                   </td>
@@ -115,18 +118,17 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table>
+          </v-table>
         </div>
       </v-container>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn text :disabled="uploading" @click="close">
+        <v-btn variant="text" :disabled="uploading" @click="close">
           Close
         </v-btn>
         <v-btn
-          color="primary"
-          class="w3-race-bg--text"
+          class="bg-primary text-w3-race-bg"
           :disabled="!canUpload || uploading"
           :loading="uploading"
           @click="startUploadProcess"

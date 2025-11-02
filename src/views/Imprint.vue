@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title>Impressum</v-card-title>
+          <v-card-title class="pt-3">Impressum</v-card-title>
           <v-card-text>
             W3Champions is owned and operated by:
             <br />
@@ -21,28 +21,28 @@
               Telephone: 404 857 4571
               <br />
               E-Mail:
-              <a href="mailto:w3champions.team@gmail.com">w3champions.team@gmail.com</a>
+              <a href="mailto:w3champions.team@gmail.com" class="text-primary">w3champions.team@gmail.com</a>
               <br />
               Internet address:
-              <a href="https://w3champions.com" target="_blank">https://w3champions.com</a>
+              <a href="https://w3champions.com" target="_blank" class="text-primary">https://w3champions.com</a>
             </p>
           </v-card-text>
-          <v-card-text>
+          <v-card-text class="py-0">
             <h3>Graphics and Image Sources</h3>
             <p>
-              <a href="https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit">
+              <a href="https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit" target="_blank" class="text-primary">
                 https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit
               </a>
             </p>
             <h3>Country flags:</h3>
             <p>
-              <a href="https://github.com/HatScripts/circle-flags" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/HatScripts/circle-flags" target="_blank" rel="noopener noreferrer" class="text-primary">
                 https://github.com/HatScripts/circle-flags
               </a>
             </p>
             <h3>VPN and Proxy detection:</h3>
             <p>
-              <a href="https://getipintel.net/" target="_blank" rel="noopener noreferrer">
+              <a href="https://getipintel.net/" target="_blank" rel="noopener noreferrer" class="text-primary">
                 getipintel.net
               </a>
             </p>
@@ -95,9 +95,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.v-card__title, .v-card__text {
-  filter: blur(0) !important;
-}
-</style>

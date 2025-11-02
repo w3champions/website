@@ -1,60 +1,56 @@
 <template>
-  <v-container class="profile">
+  <v-container class="pa-3 w3-container-width">
     <v-row>
-      <v-col cols="12">
+      <v-col>
         <v-card tile>
           <v-card-title>
             <v-row no-gutters>
-              <v-col :align-self="'center'">
-                <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
-                <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
+              <v-col class="d-flex flex-wrap">
+                <div class="mt-1">
+                  <span>{{ $t("views_player.profile") }} {{ profile.battleTag }}</span>
+                  <span v-if="aliasName" class="ml-1">({{ aliasName }})</span>
+                </div>
 
                 <!-- Moderation status badges -->
                 <moderation-status-badges
                   v-if="hasModerationPermission && !loadingModerationStatus && profile.battleTag"
                   :battle-tag="profile.battleTag"
                   :compact="true"
-                  class="ml-3"
+                  class="ml-3 mr-2"
                 />
                 <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
-                <span class="mr-2"></span>
-                <!-- add some space between name and season badges -->
                 <div v-for="season in seasonsReversed" :key="season.id" class="ml-1 d-inline-block">
                   <season-badge :season="season" :on-click="selectSeason" />
                 </div>
               </v-col>
-              <v-col :cols="12" :sm="'auto'">
-                <div class="ml-3">
-                  <gateway-select @gatewayChanged="gatewayChanged" />
-                  <v-menu v-if="!!seasons && seasons.length > 0" offset-x>
-                    <template v-slot:activator="{ on }">
-                      <v-btn tile class="ma-2 transparent" v-on="on">
-                        <span v-if="selectedSeason" class="pa-0">
-                          {{ $t("views_rankings.season") }}
-                          {{ selectedSeason.id }}
-                        </span>
-                      </v-btn>
-                    </template>
+              <div class="position-static right-0 mt-2 ml-1">
+                <gateway-select @gatewayChanged="gatewayChanged" />
+                <v-menu v-if="!!seasons && seasons.length > 0" location="right">
+                  <template v-slot:activator="{ props }">
+                    <v-btn tile class="ml-2 bg-transparent" v-bind="props">
+                      <span v-if="selectedSeason" class="pa-0">
+                        {{ $t("views_rankings.season") }}
+                        {{ selectedSeason.id }}
+                      </span>
+                    </v-btn>
+                  </template>
 
-                    <v-card>
-                      <v-list>
-                        <v-subheader>
-                          {{ $t("views_player.prevseasons") }}
-                        </v-subheader>
-                        <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
-                          <v-list-item-content>
-                            <v-list-item-title>{{ $t("views_rankings.season") }} {{ item.id }}</v-list-item-title>
-                          </v-list-item-content>
-                        </v-list-item>
-                      </v-list>
-                    </v-card>
-                  </v-menu>
-                </div>
-              </v-col>
+                  <v-card>
+                    <v-list>
+                      <v-list-subheader>
+                        {{ $t("views_player.prevseasons") }}
+                      </v-list-subheader>
+                      <v-list-item v-for="item in seasons" :key="item.id" @click="selectSeason(item)">
+                        <v-list-item-title>{{ $t("views_rankings.season") }} {{ item.id }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-menu>
+              </div>
             </v-row>
           </v-card-title>
-          <v-container v-if="ongoingMatch.id" class="pt-0">
+          <v-container v-if="ongoingMatch.id" class="pt-2">
             <v-row justify="center">
               <div class="d-flex justify-center" style="font-size: 0.9rem">
                 <span>Live</span>
@@ -104,20 +100,19 @@
           </v-container>
 
           <v-tabs v-model="tabsModel">
-            <v-tabs-slider />
-            <v-tab exact class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}`">
+            <v-tab exact :to="`/player/${encodeURIComponent(battleTag)}`">
               {{ $t("views_player.profile") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/matches`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/matches`">
               {{ $t("views_player.matchhistory") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/at-teams`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/at-teams`">
               {{ $t("views_player.teams") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
               {{ $t("views_player.statistics") }}
             </v-tab>
-            <v-tab class="profileTab" :to="`/player/${encodeURIComponent(battleTag)}/clan`">
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/clan`">
               {{ $t("views_player.clan") }}
             </v-tab>
           </v-tabs>
@@ -138,8 +133,8 @@ import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants from "../constants";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
+import { mapNameFromMatch } from "@/composables/MatchMixin";
 import ModerationStatusBadges from "@/components/admin/smurf-detection/ModerationStatusBadges.vue";
-import { mapNameFromMatch } from "@/mixins/MatchMixin";
 import { usePlayerStore } from "@/store/player/store";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
@@ -326,16 +321,6 @@ export default defineComponent({
   margin-right: 5px;
 }
 
-.profileTab {
-  background-color: #f5f5f5;
-}
-
-.theme--dark {
-  .profileTab {
-    background-color: #2f2f2f;
-  }
-}
-
 .playerTag {
   margin-left: 10px;
   text-transform: none;
@@ -345,4 +330,13 @@ export default defineComponent({
   width: 300px;
 }
 
+:deep(.v-tabs .v-slide-group__content) {
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.circle {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
 </style>

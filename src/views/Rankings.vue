@@ -1,7 +1,10 @@
 <template>
-  <v-container>
-    <v-card class="mt-2 search-bar-container" tile>
-      <v-card-title class="search-bar">
+  <v-container class="pa-3 w3-container-width">
+    <v-card tile>
+      <v-card-title class="pt-3">
+        {{ $t("views_app.rankings") }}
+      </v-card-title>
+      <v-card-text class="pt-2 d-flex">
         <gateway-select
           v-if="isGatewayNeeded"
           @gatewayChanged="onGatewayChanged"
@@ -10,125 +13,122 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn tile class="transparent" v-on="on">
+        <v-menu location="right" transition="fade-transition">
+          <template v-slot:activator="{ props }">
+            <v-btn tile style="background-color: transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
-              {{
-                selectedLeague.division !== 0 ? selectedLeague.division : null
-              }}
+              {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}
             </v-btn>
           </template>
           <v-card>
             <v-card-text>
               <v-list>
-                <v-list-item-content>
+                <v-list-item>
                   <v-list-item-title>
                     {{ $t("views_rankings.selectleague") }}
                   </v-list-item-title>
-                </v-list-item-content>
+                </v-list-item>
               </v-list>
               <v-divider />
-              <v-list dense max-height="400" class="leagues-list overflow-y-auto">
+              <v-list density="compact" max-height="400" class="overflow-y-auto" style="max-height: 650px">
                 <v-list-item
                   v-for="item in ladders"
                   :key="item.id"
                   @click="setLeague(item.id)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <league-icon :league="listLeagueIcon(item)" />
-                      {{ item.name }}
-                      {{ item.division !== 0 ? item.division : null }}
-                    </v-list-item-title>
-                  </v-list-item-content>
+                  <v-list-item-title>
+                    <league-icon :league="listLeagueIcon(item)" />
+                    {{ item.name }}
+                    {{ item.division !== 0 ? item.division : null }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-spacer />
-        <v-autocomplete
-          v-model="searchModel"
-          :append-icon="mdiMagnify"
-          label="Search"
-          single-line
-          clearable
-          :items="searchRanks"
-          :loading="isLoading"
-          :search-input.sync="search"
-          :no-data-text="noDataText"
-          item-text="player.name"
-          item-value="player.id"
-          :placeholder="$t(`views_rankings.searchPlaceholder`)"
-          return-object
-        >
-          <!--
-            In Vue 3, it should be possible to type the below as `{ item }: { item: Ranking }`,
-            but for now in Vue 2 we can't use TypeScript in templates.
-          -->
-          <template v-slot:item="{ item }">
-            <template v-if="item?.player === undefined">
-              <v-list-item-content>{{ item }}</v-list-item-content>
+        <div class="rankings-search-wrapper">
+          <v-autocomplete
+            v-model="selectedRank"
+            v-model:search="search"
+            menu-icon=""
+            :append-inner-icon="mdiMagnify"
+            label="Search"
+            :items="searchRanks"
+            single-line
+            :loading="isLoading"
+            :no-data-text="noDataText"
+            item-title="player.name"
+            item-value="player.id"
+            :placeholder="$t(`views_rankings.searchPlaceholder`)"
+            bg-color="transparent"
+            hide-details
+            color="primary"
+            icon-color="primary"
+            glow
+            return-object
+            autocomplete="off"
+            variant="underlined"
+            class="w3-autocomplete"
+          >
+            <template v-slot:item="{ props, item }">
+              <template v-if="item?.raw?.player === undefined">
+                {{ item.raw }}
+              </template>
+              <template v-else>
+                <v-list-item>
+                  <v-list-item-title v-bind="props">
+                    <span v-if="!isDuplicateName(item.raw.player.name)">
+                      {{ item.raw.player.name }}
+                    </span>
+                    <span v-if="isDuplicateName(item.raw.player.name)">
+                      {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
+                    </span>
+                    <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
+                      ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
+                    </span>
+                  </v-list-item-title>
+                  <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                    {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
+                    {{ $t(`common.losses`) }}
+                    {{ item.raw.player.losses }} |
+                    {{ $t(`common.total`) }}
+                    {{ item.raw.player.games }}
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle v-else>
+                    {{ $t(`views_rankings.unranked`) }}
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </template>
             </template>
-            <template v-else>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span v-if="!isDuplicateName(item.player.name)">
-                    {{ item.player.name }}
-                  </span>
-                  <span v-if="isDuplicateName(item.player.name)">
-                    {{ item.player.playerIds.map((p) => p.battleTag).join(" & ") }}
-                  </span>
-                  <span v-if="item.player.gameMode === EGameMode.GM_1ON1 && item.player.race">
-                    ({{ $t(`racesShort.${ERaceEnum[item.player.race]}`) }})
-                  </span>
-                </v-list-item-title>
-                <v-list-item-subtitle v-if="playerIsRanked(item)">
-                  {{ $t(`common.wins`) }} {{ item.player.wins }} |
-                  {{ $t(`common.losses`) }}
-                  {{ item.player.losses }} |
-                  {{ $t(`common.total`) }}
-                  {{ item.player.games }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle v-else>
-                  {{ $t(`views_rankings.unranked`) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </template>
-          </template>
-        </v-autocomplete>
-      </v-card-title>
-      <v-menu offset-x>
-        <template v-slot:activator="{ on }">
-          <v-btn tile class="ma-4 transparent" v-on="on">
+          </v-autocomplete>
+        </div>
+      </v-card-text>
+      <v-menu location="right" transition="fade-transition">
+        <template v-slot:activator="{ props }">
+          <v-btn tile class="ma-4" style="background-color: transparent" v-bind="props">
             <h2 class="pa-0">
               {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
             </h2>
-            <v-icon class="ml-4">{{ mdiChevronRight }}</v-icon>
+            <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
           </v-btn>
         </template>
         <v-card>
           <v-card-text>
             <v-list>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ $t("views_rankings.prevseasons") }}
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title>
+                {{ $t("views_rankings.prevseasons") }}
+              </v-list-item-title>
             </v-list>
-            <v-list dense max-height="400" class="overflow-y-auto">
+            <v-list density="compact" max-height="400" class="overflow-y-auto">
               <v-list-item
                 v-for="item in seasons"
                 :key="item.id"
                 @click="selectSeason(item)"
               >
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ $t("views_rankings.season") }} {{ item.id }}
-                  </v-list-item-title>
-                </v-list-item-content>
+                <v-list-item-title>
+                  {{ $t("views_rankings.season") }} {{ item.id }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -138,7 +138,7 @@
         <rankings-grid
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
-          :selectedRank="searchModel"
+          :selectedRank="selectedRank"
         />
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
@@ -168,7 +168,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { mdiChevronRight, mdiMagnify } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import noop from "lodash/noop";
 
 export default defineComponent({
@@ -204,7 +204,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    // @Prop({ default: "" })
     const router = useRouter();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
@@ -213,7 +212,7 @@ export default defineComponent({
     let searchTimer: NodeJS.Timeout;
 
     const search = ref<string>("");
-    const searchModel = ref<Ranking>({} as Ranking);
+    const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
@@ -250,7 +249,7 @@ export default defineComponent({
 
     // Function to update URL query parameters
     function updateQueryParams() {
-      const currentQuery = { ...router.currentRoute.query };
+      const currentQuery = { ...router.currentRoute.value.query };
       const newQuery = {
         ...currentQuery,
         season: rankingsStore.selectedSeason.id?.toString(),
@@ -266,7 +265,7 @@ export default defineComponent({
 
       if (queryChanged) {
         router.replace({
-          name: router.currentRoute.name || "Rankings",
+          name: router.currentRoute.value.name || "Rankings",
           query: newQuery
         }).catch(noop); // Use lodash's noop to handle any potential errors silently
       }
@@ -286,8 +285,8 @@ export default defineComponent({
       await rankingsStore.retrieveLeagueConstellation();
     }
 
-    watch(searchModel, onSearchModelChanged);
-    function onSearchModelChanged(rank: Ranking): void {
+    watch(selectedRank, onSelectedRank);
+    function onSelectedRank(rank: Ranking | undefined): void {
       if (!rank) return;
 
       if (!playerIsRanked(rank)) {
@@ -302,18 +301,18 @@ export default defineComponent({
       isLoading.value = false;
     }
 
+    const searchDebounced = (newValue: string, timeout = 500) => {
+      clearTimeout(searchTimer);
+      isLoading.value = true;
+      searchTimer = setTimeout(() => {
+        rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
+      }, timeout);
+    };
+
     watch(search, onSearchChanged);
     function onSearchChanged(newValue: string) {
-      const searchDebounced = (timeout = 500) => {
-        clearTimeout(searchTimer);
-        isLoading.value = true;
-        searchTimer = setTimeout(() => {
-          rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
-        }, timeout);
-      };
-
       if (newValue && newValue.length > 2) {
-        searchDebounced();
+        searchDebounced(newValue);
       } else {
         rankingsStore.clearSearch();
         isLoading.value = false;
@@ -383,7 +382,7 @@ export default defineComponent({
         ? rankingsStore.setSeason({ id: props.season })
         : rankingsStore.setSeason(rankingsStore.seasons[0]);
 
-      if (props.league) {
+      if (props.league || props.league === 0) {
         rankingsStore.setLeague(props.league);
       }
       if (props.gamemode) {
@@ -404,7 +403,7 @@ export default defineComponent({
 
       if (props.playerId) {
         const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
-        searchModel.value = selectedPlayer ?? ({} as Ranking);
+        selectedRank.value = selectedPlayer;
       }
 
       _intervalRefreshHandle = setInterval(async () => {
@@ -485,7 +484,7 @@ export default defineComponent({
       setLeague,
       listLeagueIcon,
       ladders,
-      searchModel,
+      selectedRank,
       searchRanks,
       isLoading,
       search,
@@ -502,9 +501,12 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
-.leagues-list {
-  max-height: 650px;
-  overflow-y: auto;
+.rankings-search-wrapper {
+  margin-left: auto;
+  width: 45%;
+  margin-top: -15px;
+  min-width: 100px;
 }
 </style>

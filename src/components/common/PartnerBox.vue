@@ -1,6 +1,6 @@
 <template>
   <v-card tile class="socials-card">
-    <v-card-text class="text-center" style="opacity: 0.87">
+    <v-card-text class="text-center w3-gray-text" style="opacity: 0.87">
       {{ $t("views_home.partners") }}
     </v-card-text>
     <v-card
@@ -10,7 +10,7 @@
       tile
       :href="partner.link"
       target="_blank"
-      outlined
+      border
     >
       <v-img :src="imgSource(partner.img)" :alt="partner.img" />
     </v-card>
@@ -54,7 +54,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .socials-subcard {
-  border: none !important;
+  border: none;
   padding: 2px;
 }
 

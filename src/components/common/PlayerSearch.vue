@@ -1,25 +1,38 @@
 <template>
-  <v-autocomplete
-    v-model="playerSearchModel"
-    :class="classes"
-    :append-icon="mdiMagnify"
-    label="Search BattleTag"
-    clearable
-    placeholder=" "
-    :items="searchedPlayers"
-    :search-input.sync="search"
-    :no-data-text="noDataText"
-    :loading="isLoading"
-    :autofocus="setAutofocus ? true : false"
-  />
+  <div>
+    <v-autocomplete
+      v-model="selected"
+      v-model:search="input"
+      class="w3-autocomplete"
+      :class="classes"
+      menu-icon=""
+      :append-inner-icon="mdiMagnify"
+      label="Search BattleTag"
+      :items="searchedPlayers"
+      item-title="battleTag"
+      :no-data-text="noDataText"
+      :loading="isLoading"
+      :autofocus="setAutofocus"
+      bg-color="transparent"
+      hide-details
+      glow
+      color="primary"
+      icon-color="primary"
+      variant="underlined"
+      autocomplete="off"
+      clearable
+      @click:clear="clearSearch"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
 import debounce from "debounce";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
+import ProfileService from "@/services/ProfileService";
 
 import { mdiMagnify } from "@mdi/js";
+import { PlayerProfile } from "@/store/player/types";
 
 export default defineComponent({
   name: "PlayerSearch",
@@ -36,83 +49,58 @@ export default defineComponent({
     },
   },
   setup: (_props, context) => {
-    const search = ref<string | null>(null);
+    const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
-    const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
-    const playerSearchStore = usePlayerSearchStore();
+    const debouncedSearch = debounce((val: string) => dispatchSearch(val), SEARCH_DELAY);
+    const searchedPlayers = ref<PlayerProfile[]>([]);
+    const selected = ref<string>();
 
-    // Instead of using the playerSearchStore for the playerSearchModel, we can have it in this component only,
-    // and then clearing the necessary data from the parent when closing dialog/moving away from page, by using defineExpose.
-    // defineExpose is available in Vue 3: https://stackoverflow.com/a/75145481
-    const playerSearchModel = computed<string>({
-      get(): string {
-        return playerSearchStore.playerSearchModel;
-      },
-      set(val: string): void {
-        playerSearchStore.setPlayerSearchModel(val);
-      },
-    });
-
-    function dispatchSearch() {
-      if (search.value === null) return;
-      playerSearchStore.searchBnetTag({ searchText: search.value.toLowerCase() });
+    async function dispatchSearch(val: string) {
+      const players = await ProfileService.searchPlayer(val.toLowerCase());
+      searchedPlayers.value = players;
+      isLoading.value = false;
     }
 
-    watch(playerSearchModel, onPlayerSearchModelChanged);
+    watch(selected, onSelect);
 
-    function onPlayerSearchModelChanged(btag: string): void {
+    function onSelect(btag: string | undefined): void {
       if (!btag) return;
       context.emit("playerFound", btag);
     }
 
-    watch(search, onPlayerSearchChanged);
+    watch(input, onInput);
 
-    function onPlayerSearchChanged(): void {
-      if (search.value === null) return;
-      if (search.value && search.value.length > 2) {
-        isLoading.value = true;
-        debouncedSearch();
-      } else {
-        clearSearch();
-        isLoading.value = false;
-        // Prevent previous calls from executing
-        debouncedSearch.clear();
+    function onInput(val: string): void {
+      if (!val || val.length < 3) {
+        searchedPlayers.value = [];
+        return;
       }
+      isLoading.value = true;
+      debouncedSearch(val);
     }
 
-    function clearSearch(): void {
+    const clearSearch = (): void => {
       context.emit("searchCleared");
-      playerSearchStore.clearPlayerSearch();
-    }
-
-    const searchedPlayers = computed<string[]>(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
+      isLoading.value = false;
+    };
 
     const noDataText = computed<string>(() =>
-      (!search.value || search.value.length < 3)
+      (!input.value || input.value.length < 3)
         ? "Type at least 3 letters"
         : isLoading.value
           ? "Loading..."
           : "No player found");
 
-    watch(searchedPlayers, onPlayersChanged);
-
-    function onPlayersChanged() {
-      // If the players array has changed it means the search request finished
-      isLoading.value = false;
-    }
-
     return {
       mdiMagnify,
-      playerSearchModel,
-      searchedPlayers,
-      search,
+      selected,
+      input,
       noDataText,
       isLoading,
+      searchedPlayers,
+      clearSearch,
     };
   },
 });
-
 </script>
-
-<style lang="scss"></style>

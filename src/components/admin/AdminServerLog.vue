@@ -1,15 +1,15 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Server Log
     </v-card-title>
     <v-container fluid>
       <v-row>
         <v-col class="pt-0">
-          <v-btn color="primary" class="w3-race-bg--text mr-3" @click="goBack">
+          <v-btn color="primary" class="text-w3-race-bg mr-3" @click="goBack">
             Go Back
           </v-btn>
-          <v-btn color="primary" class="w3-race-bg--text" @click="downloadLog">
+          <v-btn color="primary" class="text-w3-race-bg" @click="downloadLog">
             Download
           </v-btn>
         </v-col>
@@ -28,7 +28,7 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useServerLogsStore } from "@/store/admin/serverLogs/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AdminServerLog",

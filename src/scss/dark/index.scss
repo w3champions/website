@@ -1,13 +1,19 @@
 @import "./undead.scss";
 @import "./nightelf.scss";
 
-.theme--dark {
-  .won {
-    color: var(--v-success-base) !important;
+.v-theme--nightelf, .v-theme--undead {
+  .w3-won {
+    color: rgb(var(--v-theme-success)) !important;
   }
-  
-  .lost {
-    color: var(--v-error-base) !important;
+
+  .w3-lost {
+    color: rgb(var(--v-theme-lost)) !important;
+  }
+
+  .v-data-table, .custom-table {
+    tr:hover {
+      box-shadow: 0 0 17px grey;
+    }
   }
 
   .custom-table {
@@ -16,29 +22,40 @@
     }
   }
 
-  &.v-application {
-    .v-card__title, h3 {
-      font-family: "Friz Quadrata Std Medium";
-      color: rgb(255, 212, 40);
-      letter-spacing: 1.56px;
-      text-transform: uppercase;
-      text-shadow: rgb(0, 0, 0) 0px 3px 1px;
-    }
+  .v-btn {
+    color: rgb(var(--v-theme-primary));
 
-    .v-btn {
-      color: rgb(255, 212, 40);
-    }
+    &.v-tab {
+      color: rgba(white, 0.6);
 
-    .v-tooltip__content {
-      background-color: var(--v-w3-race-bg-lighten2);
-      box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-      &.menuable__content__active {
-        opacity: 1;
+      &.v-tab--selected {
+        color: rgb(var(--v-theme-primary));
       }
     }
+  }
 
-    .v-pagination .v-pagination__item--active {
-      color: rgba(0, 0, 0, 0.87);
+  &.v-application, &.v-overlay {
+    .v-card-title, h3 {
+      color: rgb(var(--v-theme-w3-gold));
+      text-shadow: black 0px 3px 1px;
     }
+  }
+
+  .v-btn.join-button {
+    text-shadow: none;
+    color: black;
+  }
+
+  .w3-gray-text {
+    color: rgba(white, 0.7);  // #FFFFFFB3
+  }
+
+  .w3-tooltip {
+    color: white;
+    background-color: rgb(var(--v-theme-w3-race-bg-lighten-2));
+  }
+
+  .w3-gray-gold-text {
+    color: rgb(var(--v-theme-w3-gold)) !important;
   }
 }

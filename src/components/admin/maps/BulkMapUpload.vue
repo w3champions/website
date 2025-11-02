@@ -5,11 +5,11 @@
     </v-card-title>
     <v-card-text>
       <v-container>
-        <v-alert v-if="error" type="error" dismissible @input="error = ''">
+        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
           {{ error }}
         </v-alert>
 
-        <v-alert type="info" outlined class="mb-4">
+        <v-alert type="info" variant="outlined" class="mb-4">
           <div class="text-subtitle-2 mb-2">Instructions:</div>
           <ul class="ml-4">
             <li>Select multiple .w3m or .w3x files</li>
@@ -35,7 +35,7 @@
           <v-col>
             <v-btn
               color="primary"
-              class="w3-race-bg--text mr-2"
+              class="text-w3-race-bg mr-2"
               :disabled="!files || files.length === 0 || uploading || selecting"
               :loading="uploading"
               @click="uploadFiles"
@@ -44,7 +44,7 @@
             </v-btn>
             <v-btn
               color="success"
-              class="mr-2"
+              class="mr-2 text-w3-race-bg"
               :disabled="uploadedFiles.length === 0 || uploading || selecting"
               :loading="selecting"
               @click="selectAll"
@@ -52,8 +52,9 @@
               Select All ({{ uploadedFiles.length }})
             </v-btn>
             <v-btn
+              class="bg-error text-w3-race-bg"
               :disabled="uploading || selecting"
-              text
+              variant="text"
               @click="reset"
             >
               Reset
@@ -70,17 +71,18 @@
             :items="uploadProgress"
             :items-per-page="-1"
             hide-default-footer
-            dense
+            density="compact"
+            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
           >
             <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getStatusColor(item.status)" small>
+              <v-chip :color="getStatusColor(item.status)" size="small">
                 {{ item.status }}
               </v-chip>
             </template>
             <template v-slot:[`item.fileName`]="{ item }">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <span v-bind="attrs" v-on="on">{{ item.fileName }}</span>
+              <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">{{ item.fileName }}</span>
                 </template>
                 <span>{{ item.fileName }}</span>
               </v-tooltip>
@@ -90,7 +92,7 @@
 
         <div v-if="uploadedFiles.length > 0" class="mt-4">
           <div class="text-h6 mb-3">Ready to Select ({{ uploadedFiles.length }} files)</div>
-          <v-simple-table dense>
+          <v-table density="compact">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -107,14 +109,14 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table>
+          </v-table>
         </div>
       </v-container>
     </v-card-text>
 
     <v-card-actions>
       <v-spacer />
-      <v-btn :disabled="uploading || selecting" text @click="cancel">
+      <v-btn :disabled="uploading || selecting" variant="text" class="bg-primary text-w3-race-bg" @click="cancel">
         Close
       </v-btn>
     </v-card-actions>

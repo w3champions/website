@@ -1,6 +1,9 @@
 <template>
   <div class="player-hero-statistics-table">
-    <v-simple-table>
+    <v-data-table
+      hide-default-footer
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+    >
       <template v-slot:default>
         <thead>
           <tr>
@@ -19,9 +22,9 @@
               <img class="mt-1" :src="item.image" height="40" width="40" />
             </td>
             <td>{{ item.name }}</td>
-            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-              <template v-slot:activator="{ on }">
-                <td class="text-right" v-on="on">{{ item[header.value] }}</td>
+            <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top" content-class="w3-tooltip elevation-1">
+              <template v-slot:activator="{ props }">
+                <td class="text-right" v-bind="props">{{ item[header.value] }}</td>
               </template>
               <div v-if="item.numbers_by_race[header.value]">
                 {{ $t("components_player_playeravatar.games") }} {{ item.numbers_by_race[header.value].number }}
@@ -32,7 +35,7 @@
           </tr>
         </tbody>
       </template>
-    </v-simple-table>
+    </v-data-table>
 
     <v-pagination
       v-if="pageLength > 1"

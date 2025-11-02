@@ -1,7 +1,7 @@
 <template>
-  <v-card>
+  <v-card class="overflow-hidden">
     <v-card-title>
-      <span class="text-h5">Edit map files</span>
+      Edit map files
     </v-card-title>
     <v-row dense justify="center">
       <div class="text-h6">{{ map.name }} ({{ map.id }})</div>
@@ -12,12 +12,12 @@
           :headers="headers"
           :items="mapFiles"
           class="elevation-1"
-          :hide-default-header="true"
           :hide-default-footer="true"
           :items-per-page="100"
+          :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="selectMapFile(item)">Select</v-btn>
+            <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="selectMapFile(item)">Select</v-btn>
           </template>
         </v-data-table>
 
@@ -25,20 +25,25 @@
         <span class="text-subtitle-1">Add file</span>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-file-input v-model="file" label="Map file" truncate-length="70" />
+            <v-file-input v-model="file" label="Map file" truncate-length="70" variant="underlined" />
           </v-col>
 
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="fileName" label="File name (optional)" />
+            <v-text-field
+              v-model="fileName"
+              label="File name (optional)"
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
         </v-row>
-        <v-btn color="primary" class="mb-2 w3-race-bg--text" @click="addMapFile()">Add map file</v-btn>
+        <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="addMapFile()">Add map file</v-btn>
       </v-container>
     </v-card-text>
 
     <v-card-actions>
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
     </v-card-actions>
@@ -49,6 +54,7 @@
 import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "EditMapFiles",
@@ -99,9 +105,9 @@ export default defineComponent({
       await mapsManagementStore.loadMapFiles(props.map.id);
     });
 
-    const headers = [
-      { text: "File path", value: "filePath" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "File path", value: "filePath" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {
