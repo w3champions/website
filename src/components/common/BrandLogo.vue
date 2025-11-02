@@ -24,7 +24,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 img {
   max-height: 100%;
   max-width: 100%;

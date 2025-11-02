@@ -1,34 +1,34 @@
 <template>
   <div>
-    <v-card-title class="text-h4 mb-4">
-      <v-icon left class="mr-3">{{ mdiAccountMultiple }}</v-icon>
+    <v-card-title class="py-3">
+      <v-icon start class="mr-3">{{ mdiAccountMultiple }}</v-icon>
       Reward Assignments
     </v-card-title>
 
     <!-- Statistics Summary Cards -->
     <v-row v-if="assignments.length > 0 || paginationData" class="mb-6">
       <v-col cols="12" sm="6" md="3">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 primary--text mb-1">{{ getTotalCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Total Assignments</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-primary mb-1">{{ getTotalCount() }}</div>
+          <div class="w3-gray-text">Total Assignments</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 success--text mb-1">{{ getActiveCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Active</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-success mb-1">{{ getActiveCount() }}</div>
+          <div class="w3-gray-text">Active</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 warning--text mb-1">{{ getExpiredCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Expired</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-warning mb-1">{{ getExpiredCount() }}</div>
+          <div class="w3-gray-text">Expired</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="3">
-        <v-card outlined class="text-center pa-4">
-          <div class="text-h4 error--text mb-1">{{ getRevokedCount() }}</div>
-          <div class="text-subtitle2 text--secondary">Revoked</div>
+        <v-card border class="text-center pa-4">
+          <div class="text-h4 text-error mb-1">{{ getRevokedCount() }}</div>
+          <div class="w3-gray-text">Revoked</div>
         </v-card>
       </v-col>
     </v-row>
@@ -47,11 +47,11 @@
             />
             <div v-if="selectedPlayer" class="mt-2 d-flex align-center">
               <v-avatar size="24" color="primary" class="mr-2">
-                <v-icon small color="white">{{ mdiAccount }}</v-icon>
+                <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
               </v-avatar>
               <span class="font-weight-medium">{{ selectedPlayer }}</span>
-              <v-btn icon x-small class="ml-2" @click="clearPlayerSelection">
-                <v-icon x-small>{{ mdiClose }}</v-icon>
+              <v-btn icon size="x-small" class="ml-2" @click="clearPlayerSelection">
+                <v-icon size="x-small">{{ mdiClose }}</v-icon>
               </v-btn>
             </div>
           </v-col>
@@ -60,8 +60,9 @@
               v-model="statusFilter"
               :items="statusFilterOptions"
               label="Status Filter"
-              outlined
-              dense
+              variant="outlined"
+              color="primary"
+              density="compact"
               clearable
             />
           </v-col>
@@ -70,8 +71,9 @@
               v-model="providerFilter"
               :items="providerFilterOptions"
               label="Provider Filter"
-              outlined
-              dense
+              variant="outlined"
+              color="primary"
+              density="compact"
               clearable
             />
           </v-col>
@@ -80,26 +82,26 @@
         <!-- Quick Filter Buttons -->
         <v-row class="mb-4">
           <v-col cols="12">
-            <div class="mb-2 text-subtitle2 text--secondary">Quick Filters:</div>
+            <div class="mb-2 w3-gray-text">Quick Filters:</div>
             <v-chip-group v-model="quickFilter" column>
-              <v-chip filter outlined small @click="applyQuickFilter('active')">
-                <v-icon left small color="success">{{ mdiCheckCircle }}</v-icon>
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('active')">
+                <v-icon start size="small" color="success">{{ mdiCheckCircle }}</v-icon>
                 Active Only
               </v-chip>
-              <v-chip filter outlined small @click="applyQuickFilter('expired')">
-                <v-icon left small color="warning">{{ mdiClockOutline }}</v-icon>
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('expired')">
+                <v-icon start size="small" color="warning">{{ mdiClockOutline }}</v-icon>
                 Expired Only
               </v-chip>
-              <v-chip filter outlined small @click="applyQuickFilter('revoked')">
-                <v-icon left small color="error">{{ mdiCancel }}</v-icon>
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('revoked')">
+                <v-icon start size="small" color="error">{{ mdiCancel }}</v-icon>
                 Revoked Only
               </v-chip>
-              <v-chip filter outlined small @click="applyQuickFilter('patreon')">
-                <v-icon left small>{{ mdiPatreon }}</v-icon>
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('patreon')">
+                <v-icon start size="small">{{ mdiPatreon }}</v-icon>
                 Patreon
               </v-chip>
-              <v-chip filter outlined small @click="applyQuickFilter('kofi')">
-                <v-icon left small>{{ mdiHandHeart }}</v-icon>
+              <v-chip filter variant="outlined" color="primary" size="small" @click="applyQuickFilter('kofi')">
+                <v-icon start size="small">{{ mdiHandHeart }}</v-icon>
                 Ko-Fi
               </v-chip>
             </v-chip-group>
@@ -114,16 +116,16 @@
               :disabled="!selectedPlayer"
               @click="searchAssignments"
             >
-              <v-icon left>{{ mdiMagnify }}</v-icon>
+              <v-icon start>{{ mdiMagnify }}</v-icon>
               Search
             </v-btn>
           </v-col>
           <v-col cols="auto">
             <v-btn
-              outlined
+              variant="outlined"
               @click="clearSearch"
             >
-              <v-icon left>{{ mdiFilterRemove }}</v-icon>
+              <v-icon start>{{ mdiFilterRemove }}</v-icon>
               Clear All
             </v-btn>
           </v-col>
@@ -133,7 +135,7 @@
               :loading="loading"
               @click="loadAllAssignments"
             >
-              <v-icon left>{{ mdiRefresh }}</v-icon>
+              <v-icon start>{{ mdiRefresh }}</v-icon>
               Load All Assignments
             </v-btn>
           </v-col>
@@ -145,7 +147,7 @@
     <v-card class="elevation-2">
       <v-card-text v-if="loading && assignments.length === 0" class="text-center py-8">
         <v-skeleton-loader type="table" />
-        <div class="mt-4 text-subtitle1">Loading assignments...</div>
+        <div class="mt-4 text-subtitle-1 w3-gray-text">Loading assignments...</div>
       </v-card-text>
 
       <v-data-table
@@ -153,16 +155,15 @@
         :headers="headers"
         :items="assignments"
         :items-per-page="-1"
-        sort-by="assignedAt"
-        :sort-desc="true"
+        :sort-by="[{ key: 'assignedAt', order: 'desc' }]"
         :loading="loading && assignments.length > 0"
-        class="modern-table"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
         hide-default-footer
       >
         <template v-slot:item.userId="{ item }">
           <div class="d-flex align-center">
             <v-avatar size="32" class="mr-3" color="primary">
-              <v-icon small color="white">{{ mdiAccount }}</v-icon>
+              <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
             </v-avatar>
             <div>
               <div class="font-weight-medium">{{ item.userId }}</div>
@@ -172,24 +173,24 @@
 
         <template v-slot:item.rewardId="{ item }">
           <div class="d-flex align-center">
-            <v-icon class="mr-2" color="primary" small>{{ mdiGift }}</v-icon>
+            <v-icon class="mr-2" color="primary" size="small">{{ mdiGift }}</v-icon>
             <div>
               <div class="font-weight-medium text-primary">{{ getRewardName(item.rewardId) }}</div>
-              <div class="text-caption text--secondary">{{ item.rewardId }}</div>
+              <div class="text-caption w3-gray-text">{{ item.rewardId }}</div>
             </div>
           </div>
         </template>
 
         <template v-slot:item.status="{ item }">
-          <v-chip :color="getStatusColor(item.status)" small label>
-            <v-icon left x-small>{{ getStatusIcon(item.status) }}</v-icon>
+          <v-chip :color="getStatusColor(item.status)" size="small" label variant="flat">
+            <v-icon start size="small">{{ getStatusIcon(item.status) }}</v-icon>
             {{ getStatusName(item.status) }}
           </v-chip>
         </template>
 
         <template v-slot:item.providerId="{ item }">
-          <v-chip small outlined :color="getProviderColor(item.providerId)">
-            <v-icon left small :color="getProviderColor(item.providerId)">{{ getProviderIcon(item.providerId) }}</v-icon>
+          <v-chip size="small" variant="outlined" :color="getProviderColor(item.providerId)">
+            <v-icon start size="small" :color="getProviderColor(item.providerId)">{{ getProviderIcon(item.providerId) }}</v-icon>
             {{ formatProviderName(item.providerId) }}
           </v-chip>
         </template>
@@ -197,7 +198,7 @@
         <template v-slot:item.assignedAt="{ item }">
           <div>
             <div class="font-weight-medium">{{ formatDate(item.assignedAt) }}</div>
-            <div class="text-caption text--secondary">{{ formatTime(item.assignedAt) }}</div>
+            <div class="text-caption w3-gray-text">{{ formatTime(item.assignedAt) }}</div>
           </div>
         </template>
 
@@ -206,43 +207,45 @@
             <div :class="getExpirationClass(item.expiresAt)" class="font-weight-medium">
               {{ formatDate(item.expiresAt) }}
             </div>
-            <div class="text-caption text--secondary">{{ formatTime(item.expiresAt) }}</div>
-            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)" x-small color="orange" class="mt-1">
+            <div class="text-caption w3-gray-text">{{ formatTime(item.expiresAt) }}</div>
+            <v-chip v-if="isExpiringSoon(item.expiresAt) && !isExpired(item.expiresAt)" size="x-small" color="orange" class="mt-1">
               Expires Soon
             </v-chip>
           </div>
-          <div v-else class="text--secondary font-italic">Permanent</div>
+          <div v-else class="w3-gray-text font-italic">Permanent</div>
         </template>
 
         <template v-slot:item.actions="{ item }">
           <div class="d-flex justify-end">
             <v-btn
               icon
-              small
+              size="small"
               color="primary"
               class="mr-1"
+              variant="outlined"
               @click="viewDetails(item)"
             >
-              <v-icon small>{{ mdiEye }}</v-icon>
+              <v-icon size="small">{{ mdiEye }}</v-icon>
             </v-btn>
             <v-btn
               v-if="item.status === 0"
               icon
-              small
+              size="small"
               color="error"
+              variant="outlined"
               :disabled="item.status !== 0"
               @click="revokeAssignment(item)"
             >
-              <v-icon small>{{ mdiCancel }}</v-icon>
+              <v-icon size="small">{{ mdiCancel }}</v-icon>
             </v-btn>
           </div>
         </template>
 
         <template v-slot:no-data>
           <div class="text-center py-8">
-            <v-icon size="64" color="grey lighten-2" class="mb-4">{{ mdiDatabaseSearch }}</v-icon>
-            <div class="text-h6 text--secondary mb-2">No assignments found</div>
-            <div class="text-body-2 text--secondary mb-4">
+            <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ mdiDatabaseSearch }}</v-icon>
+            <div class="text-h6 w3-gray-text mb-2">No assignments found</div>
+            <div class="text-body-2 w3-gray-text mb-4">
               {{ selectedPlayer ? 'Try searching for a different user or adjust your filters' : 'Use the player search above to find user assignments or load all assignments' }}
             </div>
           </div>
@@ -258,10 +261,10 @@
           :length="paginationData.totalPages"
           :total-visible="7"
           color="primary"
-          @input="onPageChange"
+          @update:model-value="onPageChange"
         />
         <div class="d-flex justify-center align-center mt-3">
-          <div class="text-body-2 text--secondary mr-4">
+          <div class="text-body-2 w3-gray-text mr-4">
             Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, paginationData.totalCount) }}
             of {{ paginationData.totalCount.toLocaleString() }} assignments
           </div>
@@ -270,9 +273,9 @@
             :items="[25, 50, 100, 200]"
             label="Per page"
             style="max-width: 120px;"
-            dense
-            outlined
-            @change="onPageSizeChange"
+            density="compact"
+            variant="outlined"
+            @update:model-value="onPageSizeChange"
           />
         </div>
       </v-card-text>
@@ -281,8 +284,8 @@
     <!-- Enhanced Assignment Details Dialog -->
     <v-dialog v-model="detailsDialog" max-width="700px" scrollable>
       <v-card v-if="selectedAssignment">
-        <v-card-title class="text-h5 primary white--text">
-          <v-icon left color="white">{{ mdiClipboardText }}</v-icon>
+        <v-card-title class="text-h5 bg-primary text-white">
+          <v-icon start color="white">{{ mdiClipboardText }}</v-icon>
           Assignment Details
           <v-spacer />
           <v-btn icon color="white" @click="detailsDialog = false">
@@ -294,24 +297,24 @@
           <!-- User & Reward Info -->
           <v-row class="mb-4">
             <v-col cols="6">
-              <v-card outlined class="pa-3">
-                <div class="text-overline text--secondary mb-1">User</div>
+              <v-card border class="pa-3">
+                <div class="text-overline w3-gray-text mb-1">User</div>
                 <div class="d-flex align-center">
                   <v-avatar size="32" color="primary" class="mr-2">
-                    <v-icon small color="white">{{ mdiAccount }}</v-icon>
+                    <v-icon size="small" color="white">{{ mdiAccount }}</v-icon>
                   </v-avatar>
                   <div class="font-weight-bold">{{ selectedAssignment.userId }}</div>
                 </div>
               </v-card>
             </v-col>
             <v-col cols="6">
-              <v-card outlined class="pa-3">
-                <div class="text-overline text--secondary mb-1">Reward</div>
+              <v-card border class="pa-3">
+                <div class="text-overline w3-gray-text mb-1">Reward</div>
                 <div class="d-flex align-center">
                   <v-icon class="mr-2" color="primary">{{ mdiGift }}</v-icon>
                   <div>
                     <div class="font-weight-bold">{{ getRewardName(selectedAssignment.rewardId) }}</div>
-                    <div class="text-caption text--secondary">{{ selectedAssignment.rewardId }}</div>
+                    <div class="text-caption w3-gray-text">{{ selectedAssignment.rewardId }}</div>
                   </div>
                 </div>
               </v-card>
@@ -321,19 +324,19 @@
           <!-- Status & Provider -->
           <v-row class="mb-4">
             <v-col cols="6">
-              <v-card outlined class="pa-3">
-                <div class="text-overline text--secondary mb-1">Status</div>
+              <v-card border class="pa-3">
+                <div class="text-overline w3-gray-text mb-1">Status</div>
                 <v-chip :color="getStatusColor(selectedAssignment.status)" label>
-                  <v-icon left x-small>{{ getStatusIcon(selectedAssignment.status) }}</v-icon>
+                  <v-icon start size="x-small">{{ getStatusIcon(selectedAssignment.status) }}</v-icon>
                   {{ getStatusName(selectedAssignment.status) }}
                 </v-chip>
               </v-card>
             </v-col>
             <v-col cols="6">
-              <v-card outlined class="pa-3">
-                <div class="text-overline text--secondary mb-1">Provider</div>
-                <v-chip outlined :color="getProviderColor(selectedAssignment.providerId)">
-                  <v-icon left small :color="getProviderColor(selectedAssignment.providerId)">{{ getProviderIcon(selectedAssignment.providerId) }}</v-icon>
+              <v-card border class="pa-3">
+                <div class="text-overline w3-gray-text mb-1">Provider</div>
+                <v-chip variant="outlined" :color="getProviderColor(selectedAssignment.providerId)">
+                  <v-icon start size="small" :color="getProviderColor(selectedAssignment.providerId)">{{ getProviderIcon(selectedAssignment.providerId) }}</v-icon>
                   {{ formatProviderName(selectedAssignment.providerId) }}
                 </v-chip>
               </v-card>
@@ -341,16 +344,16 @@
           </v-row>
 
           <!-- Timeline Information -->
-          <v-card outlined class="mb-4">
+          <v-card border class="mb-4">
             <v-card-subtitle class="pb-0">
-              <v-icon left class="mr-2">{{ mdiTimeline }}</v-icon>
+              <v-icon start class="mr-2">{{ mdiTimeline }}</v-icon>
               Timeline
             </v-card-subtitle>
             <v-card-text>
-              <v-timeline dense>
-                <v-timeline-item color="success" small>
+              <v-timeline density="compact">
+                <v-timeline-item dot-color="success" size="small">
                   <template v-slot:icon>
-                    <v-icon small>{{ mdiPlus }}</v-icon>
+                    <v-icon size="small">{{ mdiPlus }}</v-icon>
                   </template>
                   <div>
                     <div class="font-weight-bold">Assigned</div>
@@ -360,11 +363,11 @@
 
                 <v-timeline-item
                   v-if="selectedAssignment.expiresAt"
-                  :color="isExpired(selectedAssignment.expiresAt) ? 'warning' : 'info'"
-                  small
+                  :dot-color="isExpired(selectedAssignment.expiresAt) ? 'warning' : 'info'"
+                  size="small"
                 >
                   <template v-slot:icon>
-                    <v-icon small>{{ isExpired(selectedAssignment.expiresAt) ? mdiClockAlert : mdiClock }}</v-icon>
+                    <v-icon size="small">{{ isExpired(selectedAssignment.expiresAt) ? mdiClockAlert : mdiClock }}</v-icon>
                   </template>
                   <div>
                     <div class="font-weight-bold">
@@ -374,9 +377,9 @@
                   </div>
                 </v-timeline-item>
 
-                <v-timeline-item v-if="selectedAssignment.revokedAt" color="error" small>
+                <v-timeline-item v-if="selectedAssignment.revokedAt" dot-color="error" size="small">
                   <template v-slot:icon>
-                    <v-icon small>{{ mdiCancel }}</v-icon>
+                    <v-icon size="small">{{ mdiCancel }}</v-icon>
                   </template>
                   <div>
                     <div class="font-weight-bold">Revoked</div>
@@ -393,14 +396,14 @@
           <!-- Technical Details -->
           <v-expansion-panels v-model="detailsExpansionPanel">
             <v-expansion-panel>
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 <div class="d-flex align-center">
                   <v-icon class="mr-2">{{ mdiCog }}</v-icon>
                   Technical Details
                 </div>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-simple-table dense>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-table density="compact">
                   <tbody>
                     <tr>
                       <td class="font-weight-bold" style="width: 40%;">Assignment ID:</td>
@@ -421,8 +424,8 @@
                       </td>
                     </tr>
                   </tbody>
-                </v-simple-table>
-              </v-expansion-panel-content>
+                </v-table>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
@@ -432,10 +435,10 @@
           <v-btn
             v-if="selectedAssignment.status === 0"
             color="error"
-            outlined
+            variant="outlined"
             @click="revokeAssignment(selectedAssignment)"
           >
-            <v-icon left>{{ mdiCancel }}</v-icon>
+            <v-icon start>{{ mdiCancel }}</v-icon>
             Revoke Assignment
           </v-btn>
           <v-btn color="primary" @click="detailsDialog = false">
@@ -445,15 +448,14 @@
       </v-card>
     </v-dialog>
 
-
-    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000" top>
-      <v-icon v-if="snackbarColor === 'success'" left>{{ mdiCheckCircle }}</v-icon>
-      <v-icon v-if="snackbarColor === 'error'" left>{{ mdiAlert }}</v-icon>
-      <v-icon v-if="snackbarColor === 'warning'" left>{{ mdiAlertCircle }}</v-icon>
-      <v-icon v-if="snackbarColor === 'info'" left>{{ mdiInformation }}</v-icon>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000" location="top">
+      <v-icon v-if="snackbarColor === 'success'" start>{{ mdiCheckCircle }}</v-icon>
+      <v-icon v-if="snackbarColor === 'error'" start>{{ mdiAlert }}</v-icon>
+      <v-icon v-if="snackbarColor === 'warning'" start>{{ mdiAlertCircle }}</v-icon>
+      <v-icon v-if="snackbarColor === 'info'" start>{{ mdiInformation }}</v-icon>
       {{ snackbarText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn text v-bind="attrs" @click="snackbar = false">
+      <template v-slot:actions="{ isActive }">
+        <v-btn variant="text" v-bind="isActive" @click="snackbar = false">
           <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>
       </template>
@@ -477,6 +479,7 @@ import {
   mdiClock, mdiClockAlert, mdiAlert, mdiAlertCircle,
   mdiInformation
 } from "@mdi/js";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminAssignments",
@@ -507,31 +510,28 @@ export default defineComponent({
     const currentPage = ref(1);
     const pageSize = ref(50);
 
-
     const token = computed(() => oauthStore.token);
 
-    const headers = [
-      { text: "User", value: "userId", sortable: true, width: "200px" },
-      { text: "Reward", value: "rewardId", sortable: false, width: "250px" },
-      { text: "Provider", value: "providerId", sortable: true, width: "120px" },
-      { text: "Status", value: "status", sortable: true, width: "120px" },
-      { text: "Assigned", value: "assignedAt", sortable: true, width: "150px" },
-      { text: "Expires", value: "expiresAt", sortable: true, width: "150px" },
-      { text: "Actions", value: "actions", sortable: false, width: "100px" },
+    const headers: DataTableHeader[] = [
+      { title: "User", value: "userId", sortable: true, width: "200px" },
+      { title: "Reward", value: "rewardId", sortable: false, width: "250px" },
+      { title: "Provider", value: "providerId", sortable: true, width: "120px" },
+      { title: "Status", value: "status", sortable: true, width: "120px" },
+      { title: "Assigned", value: "assignedAt", sortable: true, width: "150px" },
+      { title: "Expires", value: "expiresAt", sortable: true, width: "150px" },
+      { title: "Actions", value: "actions", sortable: false, width: "100px" },
     ];
 
-
-    const statusFilterOptions = computed(() => [
-      { text: "Active", value: RewardStatus.Active },
-      { text: "Expired", value: RewardStatus.Expired },
-      { text: "Revoked", value: RewardStatus.Revoked },
+    const statusFilterOptions = ref<{ title: string; value: RewardStatus }[]>([
+      { title: "Active", value: RewardStatus.Active },
+      { title: "Expired", value: RewardStatus.Expired },
+      { title: "Revoked", value: RewardStatus.Revoked },
     ]);
 
-    const providerFilterOptions = computed(() => [
-      { text: "Patreon", value: "patreon" },
-      { text: "Ko-Fi", value: "kofi" },
+    const providerFilterOptions = ref<{ title: string; value: string }[]>([
+      { title: "Patreon", value: "patreon" },
+      { title: "Ko-Fi", value: "kofi" },
     ]);
-
 
     const loadRewards = async () => {
       try {
@@ -667,9 +667,9 @@ export default defineComponent({
     };
 
     const getExpirationClass = (expiresAt: string): string => {
-      if (isExpired(expiresAt)) return "error--text";
-      if (isExpiringSoon(expiresAt)) return "warning--text";
-      return "text--primary";
+      if (isExpired(expiresAt)) return "text-error";
+      if (isExpiringSoon(expiresAt)) return "text-warning";
+      return "text-primary";
     };
 
     const getStatusIcon = (status: RewardStatus): string => {
@@ -780,10 +780,6 @@ export default defineComponent({
       snackbar.value = true;
     };
 
-
-
-
-
     // New method to load all assignments with pagination
     const loadAllAssignments = async () => {
       loading.value = true;
@@ -831,13 +827,6 @@ export default defineComponent({
         loadAllAssignments();
       }
     };
-
-
-
-
-
-
-
 
     onMounted(() => {
       loadRewards();
@@ -927,20 +916,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.modern-table >>> .v-data-table__wrapper {
-  border-radius: 8px;
-}
-
-.modern-table >>> th {
-  background-color: var(--v-primary-lighten5) !important;
-  color: var(--v-primary-darken2) !important;
-  font-weight: 600 !important;
-}
-
-.modern-table >>> tr:hover {
-  background-color: var(--v-primary-lighten5) !important;
-}
-
 .font-family-monospace {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 0.875rem;

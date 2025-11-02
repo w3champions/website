@@ -5,34 +5,47 @@
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="tabsModel">
-        <v-tabs-slider />
         <v-tab>General</v-tab>
         <v-tab>Advanced</v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tabsModel">
-        <v-tab-item :transition="false">
+      <v-window v-model="tabsModel">
+        <v-window-item :transition="false">
           <v-text-field
             v-model="name"
             label="Name"
             hide-details
             single-line
+            variant="underlined"
+            color="primary"
           />
           <v-select
             v-if="isEdit"
             v-model="state"
             :items="states"
-            item-text="name"
+            item-title="name"
             item-value="id"
             label="State"
             hide-details
             single-line
+            variant="underlined"
+            color="primary"
             :menu-props="{ maxHeight: '400' }"
           />
           <div class="mt-5 d-flex justify-center">
-            <v-date-picker v-model="startDate" landscape />
-            <v-time-picker v-model="startTime" landscape format="24hr" />
+            <v-date-picker
+              v-model="startDate"
+              landscape
+              first-day-of-week="1"
+              hide-header
+              show-adjacent-months
+            />
+            <v-time-picker
+              v-model="startTime"
+              landscape
+              format="24hr"
+            />
           </div>
-          <div class="mt-4">
+          <div class="mt-4 w3-gray-text">
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
@@ -42,13 +55,15 @@
                 :multiple="true"
                 :label="map.name"
                 :value="map.id"
-                :dense="true"
                 hide-details
+                color="primary"
+                class="w3-gray-text"
+                density="compact"
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-        <v-tab-item :transition="false">
+        </v-window-item>
+        <v-window-item :transition="false">
           <v-row class="mt-0">
             <v-col cols="4">
               <v-text-field
@@ -56,6 +71,7 @@
                 label="Registration Time (mins)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -64,6 +80,7 @@
                 label="Ready Time (s)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -72,6 +89,7 @@
                 label="Veto Time (s)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -82,6 +100,7 @@
                 label="Show Winner Time (hrs)"
                 hide-details
                 type="number"
+                color="primary"
               />
             </v-col>
             <v-col cols="8">
@@ -89,6 +108,8 @@
                 v-model="matcherinoUrl"
                 label="Matcherino URL"
                 hide-details
+                variant="underlined"
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -98,11 +119,12 @@
                 v-model="mode"
                 :items="gameModes"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Game Mode"
                 hide-details
                 single-line
+                color="primary"
               />
             </v-col>
             <v-col cols="4">
@@ -110,11 +132,12 @@
                 v-model="format"
                 :items="formats"
                 :disabled="true"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Format"
                 hide-details
                 single-line
+                color="primary"
               />
             </v-col>
           </v-row>
@@ -124,7 +147,8 @@
                 v-model="maxPlayers"
                 :items="[2, 4, 8, 16, 32, 64]"
                 label="Max Players"
-                outlined
+                variant="outlined"
+                color="primary"
               />
             </v-col>
             <v-col cols="3">
@@ -132,10 +156,11 @@
                 v-model="floNode"
                 :items="enabledFloNodes"
                 label="Flo Node"
-                item-text="name"
+                item-title="name"
                 return-object
-                outlined
-                @change="setFloNode"
+                variant="outlined"
+                color="primary"
+                @update:model-value="setFloNode"
               />
             </v-col>
             <v-col cols="3">
@@ -143,20 +168,21 @@
                 v-model="floNodeMaxPing"
                 :items="[100, 200, 300, 400]"
                 label="Flo Node Max Ping"
-                outlined
+                variant="outlined"
+                color="primary"
                 :disabled="floNode === null"
               />
             </v-col>
           </v-row>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-window-item>
+      </v-window>
     </v-card-text>
     <v-card-actions class="pt-0 pb-2">
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || !formValid" @click="save">
+      <v-btn class="bg-primary text-w3-race-bg" :disabled="saving || !formValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

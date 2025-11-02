@@ -1,13 +1,13 @@
 <template>
-  <div class="custom-table-wrapper elevation-1">
+  <div class="elevation-1">
     <table class="custom-table">
       <thead>
-        <tr>
+        <tr class="w3-gray-text">
           <td
             v-for="header in headers"
             :key="header.name"
             class="header"
-            :class="{ clickable: header.sortFunction !== undefined }"
+            :class="{ 'cursor-pointer': header.sortFunction !== undefined }"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -29,6 +29,7 @@
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag(),
+            'w3-gray-text': true,
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
@@ -40,7 +41,7 @@
               :class="{ 'ml-md-3': index > 0 }"
             >
               <div
-                class="player-avatar mr-1 alignRight race-icon"
+                class="player-avatar mr-1 pa-0 race-icon"
                 :title="getTitleRace(item, index).toString()"
                 :style="{
                   'background-image': 'url(' + getRaceIcon(item, index) + ')',
@@ -58,25 +59,27 @@
                 />
               </div>
               <div v-if="isTwitchLive(item, index)" class="twitch__container">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
+                <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+                  <template v-slot:activator="{ props }">
+                    <span style="display: inline" class="cursor-pointer" v-bind="props">
                       <v-btn
                         icon
                         :href="'https:///twitch.tv/' + item.playersInfo[index].twitchName"
                         target="_blank"
-                        v-on="on"
+                        v-bind="props"
+                        class="bg-transparent"
+                        variant="flat"
                       >
                         <v-icon
                           v-if="!isCurrentlyLive(item.player.playerIds)"
-                          color="purple accent-4"
+                          color="purple-accent-4"
                         >
                           {{ mdiTwitch }}
                         </v-icon>
                         <v-icon
                           v-if="isCurrentlyLive(item.player.playerIds)"
                           class="blinker"
-                          color="red accent-4"
+                          color="red-accent-4"
                         >
                           {{ mdiTwitch }}
                         </v-icon>
@@ -97,11 +100,9 @@
                 v-if="isCurrentlyLive(item.player.playerIds) && !isTwitchLive(item, index)"
                 style="position: relative"
               >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span style="display: inline" class="pointer" v-on="on">
-                      <sword-icon class="swords blinker" />
-                    </span>
+                <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+                  <template v-slot:activator="{ props }">
+                    <sword-icon class="swords blinker cursor-pointer" v-bind="props" />
                   </template>
                   <div>
                     {{ $t("components_ladder_rankingsgrid.nowplayingvs") }}
@@ -118,8 +119,8 @@
           <td class="number-text text-end">
             {{ item.playersInfo.map((p) => (p.clanId ? p.clanId : "-")).join("/") }}
           </td>
-          <td class="number-text text-end won">{{ item.player.wins }}</td>
-          <td class="number-text text-end lost">{{ item.player.losses }}</td>
+          <td class="number-text text-end w3-won">{{ item.player.wins }}</td>
+          <td class="number-text text-end w3-lost">{{ item.player.losses }}</td>
           <td class="number-text text-end">{{ item.player.games }}</td>
           <td class="number-text text-end">{{ (item.player.winrate * 100).toFixed(1) }}%</td>
           <td class="number-text text-end">{{ item.player.mmr }}</td>
@@ -142,9 +143,10 @@ import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
-import { useVuetify } from "@/plugins/vuetify";
+import { useGoTo } from "vuetify";
+import { InternalGoToOptions } from "vuetify/lib/composables/goto";
 
 export default defineComponent({
   name: "RankingsGrid",
@@ -166,12 +168,15 @@ export default defineComponent({
     },
     selectedRank: {
       type: Object as PropType<Ranking>,
-      required: true,
+      required: false,
+      default() {
+        return {};
+      },
     }
   },
   setup(props) {
     const { t } = useI18n();
-    const vuetify = useVuetify();
+    const goTo = useGoTo();
     const twitchStore = useTwitchStore();
     const rankingsStore = useRankingStore();
     const sortColumn = ref<string>("Rank");
@@ -351,15 +356,20 @@ export default defineComponent({
       return props.selectedRank.player.id;
     }
 
+    const goToOptions: Partial<Partial<InternalGoToOptions>> = {
+      duration: 500,
+      easing: "easeInOutCubic",
+      offset: -window.innerHeight / 2,
+    };
+
     function goToRank(rank: Ranking): void {
       setTimeout(() => {
-        const listItemOfPlayer = document.getElementById(`listitem_${rank.rankNumber}`);
+        const elementId = `listitem_${rank.rankNumber}`;
+        const listItemOfPlayer = document.getElementById(elementId);
 
         if (!listItemOfPlayer) return;
 
-        vuetify.goTo(listItemOfPlayer, {
-          offset: window.innerHeight - 150,
-        });
+        goTo(`#${elementId}`, goToOptions);
       }, 500);
     }
 
@@ -508,22 +518,18 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.theme--light {
+.v-theme--human, .v-theme--orc {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: lightblue !important;
   }
 }
 
-.theme--dark {
+.v-theme--nightelf, .v-theme--undead {
   tr.searchedItem,
   tr.searchedItem:hover {
     background-color: #310e6f !important;
   }
-}
-
-.red {
-  left: 10px;
 }
 
 @media (max-width: 768px) {
@@ -537,8 +543,6 @@ export default defineComponent({
 .rank-icon-container {
   display: flex;
   align-items: center;
-  /*width: 50%;*/
-  /* fix aliases display */
   margin-left: 0 !important;
   min-height: 39px;
 }
@@ -562,14 +566,5 @@ td.header {
   position: absolute;
   top: -10px;
   left: 18px;
-  cursor: pointer;
-}
-
-.clickable {
-  cursor: pointer;
-}
-
-.race-icon {
-  padding: 0;
 }
 </style>

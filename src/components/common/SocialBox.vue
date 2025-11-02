@@ -1,6 +1,6 @@
 <template>
   <v-card tile class="socials-card">
-    <v-card-text class="text-center" style="opacity: 0.87">
+    <v-card-text class="text-center w3-gray-text" style="opacity: 0.87">
       {{ $t("views_home.joinus") }}
     </v-card-text>
 
@@ -10,13 +10,13 @@
       href="https://discord.gg/uJmQxG2"
       target="_blank"
       tile
-      outlined
+      border
       style="padding-bottom: 0px"
     >
       <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
     </v-card>
 
-    <v-card-text class="text-center" style="opacity: 0.87">
+    <v-card-text class="text-center w3-gray-text" style="opacity: 0.87">
       {{ $t("views_home.socialmedia") }}
     </v-card-text>
 
@@ -26,7 +26,7 @@
       href="https://twitter.com/W3ChampionsTeam"
       target="_blank"
       tile
-      outlined
+      border
     >
       <v-img src="/assets/socials/Twitter_button.png" alt="Twitter" />
     </v-card>
@@ -44,8 +44,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .socials-subcard {
-  border: none !important;
-  padding: 2px;
+  border: none;
+  margin: 2px;
 }
 
 .socials-card {

@@ -3,8 +3,8 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { activeGameModes } from "@/mixins/GameModesMixin";
+import { useI18n } from "vue-i18n";
+import { activeGameModes } from "@/composables/GameModesMixin";
 import { GameDay, GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
 import { ChartData, ChartDataset, Point } from "chart.js";

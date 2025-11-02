@@ -6,35 +6,34 @@
           <v-select
             v-model="selectedSeason"
             :items="seasons"
-            item-text="id"
+            item-title="id"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
-            outlined
+            variant="outlined"
           />
 
           <v-select
             v-model="selectedGameMode"
-            class="over-chart-select-box"
             :items="activeGameModes()"
-            item-text="name"
+            item-title="name"
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
-            outlined
-            @change="gameModeChanged"
+            variant="outlined"
+            @update:model-value="gameModeChanged"
           />
         </v-card-text>
         <v-card-text v-if="!loadingMapAndRaceStats && isGatewayNeeded">
           <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
 
-        <v-card-text>
+        <v-card-text class="w3-gray-text">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
           <div>{{ standardDeviation }}</div>
         </v-card-text>
-        <v-card-text>
+        <v-card-text class="w3-gray-text">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
         </v-card-text>
-        <v-card-text v-if="authCode">
+        <v-card-text v-if="authCode" class="w3-gray-text">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.greenbardesc") }}
         </v-card-text>
       </v-col>
@@ -55,7 +54,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { activeGameModes, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeGameModes, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { Gateways, Season } from "@/store/ranking/types";
 import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";

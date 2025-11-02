@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="pa-3 w3-container-width">
     <v-card tile>
-      <v-card-title>{{ $t("views_app.faq") }}</v-card-title>
+      <v-card-title class="pt-3">{{ $t("views_app.faq") }}</v-card-title>
       <v-tabs v-model="tab">
         <v-tab @click="navigateToFaq">{{ $t("views_app.faq") }}</v-tab>
         <v-tab @click="navigateToSetupGuides">{{ $t("views_setupguides.title") }}</v-tab>
@@ -11,12 +11,12 @@
         <v-card-text>
           <v-expansion-panels tile>
             <v-expansion-panel v-for="(faq, i) in faqs" :key="i" tile>
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 <div>{{ faq.question }}</div>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
                 <div v-html="faq.answer"></div>
-              </v-expansion-panel-content>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router/composables";
+import { useRoute, useRouter } from "vue-router";
 import { API_URL } from "@/main";
 import { EMainRouteName, ESetupGuideRouteName } from "@/router/types";
 

@@ -7,7 +7,13 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="12">
-            <v-text-field v-model="battleTag" label="Battletag" autofocus />
+            <v-text-field
+              v-model="battleTag"
+              label="Battletag"
+              autofocus
+              variant="underlined"
+              color="primary"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -15,7 +21,7 @@
             <v-select
               v-model="race"
               :items="races()"
-              item-text="raceName"
+              item-title="raceName"
               item-value="raceId"
               label="Race"
             />
@@ -26,10 +32,10 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn text @click="cancel">
+      <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn color="primary" class="w3-race-bg--text" :disabled="saving || battleTag.length === 0" @click="save">
+      <v-btn class="bg-primary text-w3-race-bg" :disabled="saving || battleTag.length === 0" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>

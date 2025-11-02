@@ -1,6 +1,6 @@
 <template>
-  <v-tooltip v-if="renderIcon" top style="white-space: pre-line">
-    <template v-slot:activator="{ on }">
+  <v-tooltip v-if="renderIcon" location="top" content-class="w3-tooltip elevation-1">
+    <template v-slot:activator="{ props }">
       <img
         class="race-icon"
         height="24px"
@@ -8,7 +8,7 @@
         :alt="enumToString.toString()"
         :src="renderIcon"
         :title="enumToString.toString()"
-        v-on="on"
+        v-bind="props"
       />
     </template>
     <span>{{ enumToString }}</span>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ERaceEnum } from "@/store/types";

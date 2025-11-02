@@ -61,12 +61,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.theme--light .hero-level-flag {
-  background: rgba(52, 122, 154, 0.5);
+.v-theme--human, .v-theme--orc {
+  .hero-level-flag {
+    background: rgba(52, 122, 154, 0.5);
+  }
 }
 
-.theme--dark .hero-level-flag {
-  background: rgba(50, 194, 165, 0.4);
+.v-theme--nightelf, .v-theme--undead {
+  .hero-level-flag {
+    background: rgba(50, 194, 165, 0.4);
+  }
 }
 
 .hero-level-flag {
@@ -92,7 +96,7 @@ export default defineComponent({
   transition: border-color 0.2s;
 }
 .hero-icon-highlight-wrapper.highlighted {
-  border-color: gold;
-  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.5);
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 6px 2px rgba(var(--v-theme-primary), 0.5);
 }
 </style>

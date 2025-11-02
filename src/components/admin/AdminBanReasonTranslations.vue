@@ -1,25 +1,24 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Ban Reason Translations
     </v-card-title>
     <v-data-table
       :headers="headers"
       :items="banReasonTranslations"
       :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       class="elevation-1"
       item-key="_id"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
+        <div class="d-flex px-4">
           <v-spacer />
           <v-dialog v-model="dialog" max-width="600px">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                class="bg-primary text-w3-race-bg"
+                v-bind="props"
                 @click="openAddDialog"
               >
                 Add Translation
@@ -37,6 +36,8 @@
                       <v-text-field
                         v-model="editedItem.translations.en"
                         label="English"
+                        variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>
@@ -44,6 +45,8 @@
                       <v-text-field
                         v-model="editedItem.translations.cn"
                         label="Chinese (CN)"
+                        variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>
@@ -51,6 +54,8 @@
                       <v-text-field
                         v-model="editedItem.translations.es"
                         label="Spanish"
+                        variant="underlined"
+                        color="primary"
                         required
                       />
                     </v-col>
@@ -60,12 +65,11 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="close">
+                <v-btn variant="text" @click="close">
                   Cancel
                 </v-btn>
                 <v-btn
-                  color="primary"
-                  class="w3-race-bg--text"
+                  class="bg-primary text-w3-race-bg"
                   :disabled="!isValid"
                   @click="save"
                 >
@@ -74,11 +78,11 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -90,14 +94,7 @@ import { BanReasonTranslation, CreateBanReasonTranslationRequest, UpdateBanReaso
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
-
-type AdminBanReasonTranslationsHeader = {
-  text: string;
-  value: string;
-  sortable: boolean;
-  width?: string;
-  align?: "start" | "center" | "end";
-};
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminBanReasonTranslations",
@@ -125,36 +122,36 @@ export default defineComponent({
 
     const editedItem = ref<BanReasonTranslation>({ ...defaultItem });
 
-    const headers = ref<AdminBanReasonTranslationsHeader[]>([
+    const headers: DataTableHeader[] = [
       {
-        text: "English",
+        title: "English",
         value: "translations.en",
         sortable: true,
       },
       {
-        text: "Chinese (CN)",
+        title: "Chinese (CN)",
         value: "translations.cn",
         sortable: true,
       },
       {
-        text: "Spanish",
+        title: "Spanish",
         value: "translations.es",
         sortable: true,
       },
       {
-        text: "Created By",
+        title: "Created By",
         value: "createdBy",
         sortable: true,
         width: "150px",
       },
       {
-        text: "Actions",
+        title: "Actions",
         value: "actions",
         sortable: false,
         width: "100px",
         align: "end",
       },
-    ]);
+    ];
 
     const dialogTitle = computed<string>(() => {
       return isEditMode.value ? "Edit Translation" : "Add Translation";

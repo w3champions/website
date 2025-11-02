@@ -1,28 +1,30 @@
 <template>
-  <v-tabs v-model="selectedTab">
-    <v-tabs-slider />
-    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
-      <span v-if="race.raceId === ERaceEnum.TOTAL">
-        {{ $t("common.allraces") }}
-      </span>
-      <race-icon v-else :race="race.raceId" />
-    </v-tab>
-
-    <v-tab-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
-      <v-card-text>
-        <v-row>
-          <v-col cols="md-12">
-            <player-hero-statistics-table :hero-statistics="heroUsages" />
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-tab-item>
-  </v-tabs>
+  <div>
+    <v-tabs v-model="selectedTab">
+      <v-tab v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <span v-if="race.raceId === ERaceEnum.TOTAL">
+          {{ $t("common.allraces") }}
+        </span>
+        <race-icon v-else :race="race.raceId" />
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="selectedTab">
+      <v-tabs-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <v-card-text>
+          <v-row>
+            <v-col cols="md-12">
+              <player-hero-statistics-table :hero-statistics="heroUsages" />
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
@@ -56,7 +58,7 @@ export default defineComponent({
 
     const selectedRace = computed<number>(() => Number(selectedTab.value.split("-")[1]));
 
-    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+    const selectedTab = ref<string>("");
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
         (newData: RaceWinsOnMap[]) => {

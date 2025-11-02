@@ -14,20 +14,20 @@
           <v-select
             v-model="selectedHeroesPlayedMode"
             :items="gameModes"
-            item-text="name"
+            item-title="name"
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
-            outlined
-            @change="setSelectedHeroesPlayedMode"
+            variant="outlined"
+            @update:model-value="setSelectedHeroesPlayedMode"
           />
           <v-select
             v-model="selectedHeroesPlayedPick"
             :items="picks"
-            item-text="pickName"
+            item-title="pickName"
             item-value="pickId"
             :label="$t(`components_overall-statistics_tabs_herotab.pick`)"
-            outlined
-            @change="setSelectedHeroesPlayedPick"
+            variant="outlined"
+            @update:model-value="setSelectedHeroesPlayedPick"
           />
         </v-card-text>
       </v-col>
@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/mixins/GameModesMixin";
+import { activeMeleeGameModesWithAT, IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
 import HeroWinrate from "@/components/overall-statistics/HeroWinrate.vue";
 import PlayedHeroesChart from "@/components/overall-statistics/PlayedHeroesChart.vue";
 import { EGameMode, EPick } from "@/store/types";

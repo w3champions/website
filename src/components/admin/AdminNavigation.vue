@@ -1,54 +1,44 @@
 <template>
-  <v-navigation-drawer permanent>
+  <v-navigation-drawer permanent class="mt-0 w3-glass">
     <v-list-item>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("views_admin.adminpage") }}
-        </v-list-item-title>
-      </v-list-item-content>
+      <v-list-item-title>
+        {{ $t("views_admin.adminpage") }}
+      </v-list-item-title>
     </v-list-item>
 
-    <v-list dense nav>
+    <v-list density="compact" nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
           v-if="!item.items || item.items.length === 0"
-          :key="index"
+          :key="`listItem-${index}`"
+          :prepend-icon="item.icon || mdiAccountTie"
           :to="{ name: item.routeName }"
-        >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon || mdiAccountTie }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
+          :title="item.title"
+        />
         <v-list-group
           v-if="item.items && item.items.length > 0"
-          :key="index"
-          :value="false"
-          :prepend-icon="item.icon"
-          no-action
+          :key="`listGroup-${index}`"
+          :value="item.title"
         >
-          <template v-slot:activator>
-            <v-list-item-content>
+          <template v-slot:activator="{ props, isOpen }">
+            <v-list-item
+              v-bind="props"
+              :prepend-icon="item.icon"
+              :class="isOpen && 'text-primary'"
+            >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+            </v-list-item>
           </template>
 
           <v-list-item
-            v-for="(subItem, i) in item.items"
-            :key="i"
-            class="ml-0 pl-6"
+            v-for="(subItem, subIndex) in item.items"
+            :key="`subItem-${subIndex}-${index}`"
+            :prepend-icon="subItem.icon || mdiAccountTie"
             :to="{ name: subItem.routeName }"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ subItem.icon || mdiAccountTie }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-title>{{ subItem.title }}</v-list-item-title>
-          </v-list-item>
+            :title="subItem.title"
+            :value="subItem.title"
+            color="primary"
+          />
         </v-list-group>
       </template>
     </v-list>
@@ -61,7 +51,7 @@ import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter, useRoute } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,

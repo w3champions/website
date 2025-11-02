@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="w3-container-width">
     <v-card class="text-center">
       <v-progress-circular
         :size="100"
@@ -16,7 +16,7 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useOauthStore } from "@/store/oauth/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "LoginView",

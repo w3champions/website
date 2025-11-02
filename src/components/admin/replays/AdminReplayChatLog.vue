@@ -4,7 +4,12 @@
     <v-card-text>
       <v-row>
         <v-col>
-          <v-switch v-model="openGameDetail" :label="`Show Game Detail`" />
+          <v-switch
+            v-model="openGameDetail"
+            label="Show Game Detail"
+            color="primary"
+            class="w3-gray-text"
+          />
         </v-col>
         <v-col>
           <download-replay-icon :gameId="matchId" />

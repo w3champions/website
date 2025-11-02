@@ -26,9 +26,9 @@
         {{ wins === 0 && losses === 0 ? "-" : (winrate * 100).toFixed(2) + "%" }}
       </span>
       <br />
-      <span class="won">{{ wins }}</span>
+      <span class="w3-won">{{ wins }}</span>
       -
-      <span class="lost">{{ losses }}</span>
+      <span class="w3-lost">{{ losses }}</span>
     </h2>
     <br />
   </v-card-text>
@@ -49,8 +49,8 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
 
     const winrateClass = computed<string>(() => {
-      if (winrate.value > 0.55) return "won";
-      if (winrate.value < 0.45) return "lost";
+      if (winrate.value > 0.55) return "w3-won";
+      if (winrate.value < 0.45) return "w3-lost";
       return "";
     });
 

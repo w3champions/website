@@ -1,15 +1,17 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Proxy Settings
     </v-card-title>
-    <v-container>
-      <v-row>
-        <player-search
-          classes="ml-5 mr-5"
-          @searchCleared="searchCleared"
-          @playerFound="playerFound"
-        />
+    <v-container class="w3-container-width">
+      <v-row class="d-flex justify-center">
+        <v-col cols="12" md="8">
+          <player-search
+            classes="ml-5 mr-5"
+            @searchCleared="searchCleared"
+            @playerFound="playerFound"
+          />
+        </v-col>
       </v-row>
 
       <review-proxies

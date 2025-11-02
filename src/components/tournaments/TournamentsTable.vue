@@ -5,8 +5,9 @@
     :items="tournaments"
     :disable-pagination="true"
     :items-per-page="-1"
-    :item-style="itemStyle"
+    :row-props="itemStyle"
     :hide-default-footer="true"
+    :header-props="{ class: ['w3-gray-text', 'font-weight-bold', 'w3-font-size-small'] }"
     @click:row="onRowClick"
   >
     <template v-slot:[`item.startDateTime`]="{ item }">
@@ -29,11 +30,19 @@ import { defineComponent, StyleValue } from "vue";
 import { ITournament } from "@/store/tournaments/types";
 import { TournamentStateLabel } from "@/helpers/tournaments";
 import { formatDateToDateWeekday } from "@/helpers/date-functions";
+import { DataTableHeader } from "vuetify";
 
-interface TournamentsTableHeader {
-  text: string;
-  value: string;
-}
+// Not sure what Vuetify type this is, so defining it here.
+type rowObject = {
+  item: ITournament;
+  columns: DataTableHeader[];
+  index: number;
+  internalItem: unknown;
+  isExpanded: unknown;
+  isSelected: unknown;
+  toggleExpand: unknown;
+  toggleSelect: unknown;
+};
 
 export default defineComponent({
   name: "TournamentsTable",
@@ -48,8 +57,8 @@ export default defineComponent({
     const formatDate = (tournament: ITournament): string => formatDateToDateWeekday(tournament.startDateTime);
     const getStateDescription = (tournament: ITournament): string => TournamentStateLabel[tournament.state];
 
-    function onRowClick(item: ITournament) {
-      context.emit("click:row", item);
+    function onRowClick(_event: PointerEvent, rowObject: rowObject) {
+      context.emit("click:row", rowObject.item);
     }
 
     const itemStyle = (): StyleValue => {
@@ -58,26 +67,31 @@ export default defineComponent({
       };
     };
 
-    const headers: TournamentsTableHeader[] = [
+    const headers: DataTableHeader[] = [
       {
-        text: "Tournament Name",
+        title: "Tournament Name",
         value: "name",
+        sortable: true,
       },
       {
-        text: "Date / Time",
+        title: "Date / Time",
         value: "startDateTime",
+        sortable: true,
       },
       {
-        text: "Status",
+        title: "Status",
         value: "state",
+        sortable: true,
       },
       {
-        text: "Player Count",
+        title: "Player Count",
         value: "playerCount",
+        sortable: true,
       },
       {
-        text: "Winner",
+        title: "Winner",
         value: "winner",
+        sortable: true,
       },
     ];
 
@@ -91,9 +105,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.tournament-row {
-  cursor: pointer;
-}
-</style>

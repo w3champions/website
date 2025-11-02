@@ -1,19 +1,20 @@
 <template>
-  <v-container class="rewards-page">
+  <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col>
         <!-- Account Information -->
         <v-card class="mb-4">
           <v-card-title>{{ $t("views_rewards.account_info") }}</v-card-title>
-          <v-card-text>
+          <v-card-text class="w3-gray-text">
             <div v-if="authCode">
               <strong>{{ $t("views_rewards.battlenet_account") }}:</strong> {{ battleTag }}
               <div class="mt-2">
                 <strong>{{ $t("views_rewards.patreon_status") }}:</strong>
                 <v-chip
                   :color="patreonLinkStatus ? 'success' : 'grey'"
-                  small
+                  size="small"
                   class="ml-2"
+                  variant="flat"
                 >
                   {{ patreonLinkStatus ? $t("views_rewards.linked") : $t("views_rewards.not_linked") }}
                 </v-chip>
@@ -34,15 +35,16 @@
         <!-- Patreon Linking Section -->
         <v-card v-if="authCode" class="mb-4">
           <v-card-title>{{ $t("views_rewards.patreon_linking") }}</v-card-title>
-          <v-card-text>
+          <v-card-text class="w3-gray-text">
             <div v-if="!patreonLinkStatus">
               <p>{{ $t("views_rewards.patreon_description") }}</p>
               <v-btn
                 :loading="isLinkingPatreon"
                 class="mt-2"
+                variant="outlined"
                 @click="linkWithPatreon"
               >
-                <v-icon left>mdi-patreon</v-icon>
+                <v-icon start>{{ mdiPatreon }}</v-icon>
                 {{ $t("views_rewards.link_with_patreon") }}
               </v-btn>
             </div>
@@ -50,7 +52,7 @@
               <p>{{ $t("views_rewards.patreon_linked_success") }}</p>
               <v-btn
                 color="error"
-                text
+                variant="outlined"
                 :loading="isUnlinkingPatreon"
                 class="mt-2"
                 @click="unlinkPatreon"
@@ -64,7 +66,7 @@
         <!-- Rewards Section -->
         <v-card v-if="authCode">
           <v-card-title>{{ $t("views_rewards.your_rewards") }}</v-card-title>
-          <v-card-text>
+          <v-card-text class="bg-transparent">
             <div v-if="isLoadingRewards">
               <v-progress-circular indeterminate color="primary" />
               {{ $t("views_rewards.loading_rewards") }}
@@ -72,12 +74,12 @@
             <div v-else-if="userRewards.length === 0">
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
-            <v-simple-table v-else>
+            <v-table v-else class="bg-transparent">
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
-                    <th class="text-left" style="width: 70%">{{ $t("views_rewards.description") }}</th>
+                    <th class="w3-gray-text" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
+                    <th class="w3-gray-text" style="width: 70%">{{ $t("views_rewards.description") }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,24 +92,24 @@
                   </tr>
                 </tbody>
               </template>
-            </v-simple-table>
+            </v-table>
           </v-card-text>
         </v-card>
 
         <!-- Error Messages -->
-        <v-alert v-if="errorMessage" type="error" dismissible @input="errorMessage = ''">
+        <v-alert v-if="errorMessage" type="error" closable @update:model-value="errorMessage = ''">
           {{ errorMessage }}
         </v-alert>
 
         <!-- Success Messages -->
-        <v-alert v-if="successMessage" type="success" dismissible @input="successMessage = ''">
+        <v-alert v-if="successMessage" type="success" closable @update:model-value="successMessage = ''">
           {{ successMessage }}
         </v-alert>
       </v-col>
     </v-row>
 
     <!-- Sign In Dialog -->
-    <sign-in-dialog v-model="showSignIn" />
+    <sign-in-dialog :value="showSignIn" />
   </v-container>
 </template>
 
@@ -117,6 +119,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import noop from "lodash/noop";
+import { mdiPatreon } from "@mdi/js";
 
 export default defineComponent({
   name: "RewardsPage",
@@ -243,14 +246,8 @@ export default defineComponent({
       sortedRewards,
       getRewardName,
       getRewardDescription,
+      mdiPatreon,
     };
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.rewards-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-</style>

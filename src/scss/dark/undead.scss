@@ -1,6 +1,6 @@
 @import "../shared/index.scss";
 
-.theme--dark.v-application {
+.v-application.undead {
   --w3-bg-glass: rgba(0, 0, 0, 0.9);
 
   background: url("/assets/backgrounds/undead.jpg") no-repeat !important;
@@ -9,10 +9,19 @@
   align-items: center !important;
   justify-content: center !important;
 
-  .v-data-table,
-  .custom-table {
-    tr:hover {
-      box-shadow: 0 0 17px grey;
-    }
+  .v-card {
+    background-color: var(--w3-bg-glass);
+  }
+
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
+  }
+}
+
+// Dialogs are not placed in the dom as a child of .v-application.undead, so we need to define this class here as well.
+.v-theme--undead {
+  --w3-bg-glass: rgba(0, 0, 0, 0.9);
+  .w3-glass {
+    background-color: var(--w3-bg-glass);
   }
 }

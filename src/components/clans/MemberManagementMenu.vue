@@ -1,20 +1,18 @@
 <template>
-  <v-menu offset-x>
-    <template v-slot:activator="{ on }">
-      <v-btn tile class="transparent" v-on="on">
-        <v-icon style="margin-right: 5px">{{ mdiPencil }}</v-icon>
+  <v-menu location="right">
+    <template v-slot:activator="{ props }">
+      <v-btn size="small" variant="outlined" v-bind="props">
+        <v-icon size="x-large">{{ mdiPencil }}</v-icon>
       </v-btn>
     </template>
     <v-card>
-      <v-list dense max-height="400" class="overflow-y-auto">
+      <v-list density="compact" max-height="400" class="overflow-y-auto">
         <v-list-item
           v-for="a in actions"
           :key="a.name"
           @click="invoke(a.action)"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ a.name }}</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>{{ a.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

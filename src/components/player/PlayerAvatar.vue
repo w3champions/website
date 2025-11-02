@@ -2,24 +2,23 @@
   <div>
     <v-row>
       <v-col cols="5" md="12">
-        <v-tooltip top :disabled="!avatarDescription">
-          <template v-slot:activator="{ on }">
+        <v-tooltip location="top" :disabled="!avatarDescription" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
             <v-card-text
-              style="cursor: pointer"
               :style="{'background-image': 'url(' + picture(avatarCategory, avatarIcon) + ')'}"
-              class="player-avatar text-center"
+              class="player-avatar text-center cursor-pointer"
+              v-bind="props"
               @click.stop="iconsDialogOpened = true"
-              v-on="on"
             />
           </template>
           <span>{{ avatarDescription }}</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+        <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
             <div
-              class="country__container clickable"
-              v-on="on"
+              class="country__container cursor-pointer"
+              v-bind="props"
               @click="goToCountryRankings()"
             >
               <country-flag
@@ -36,80 +35,83 @@
     </v-row>
     <player-socials :userProfile="userProfile" />
 
-    <v-dialog v-model="iconsDialogOpened" max-width="1150px" class="scroll-v-dialog">
-      <v-card>
+    <v-dialog v-model="iconsDialogOpened" max-width="1150px" scrollable>
+      <v-card class="pt-1">
         <v-checkbox
           v-model="useClassicIcons"
-          style="margin-left: 25px"
+          class="ml-3"
+          color="primary"
           :label="$t('components_player_playeravatar.useClassicIcons')"
         />
 
-        <!-- Starter Icons -->
-        <v-row class="pb-3" align="center" justify="center">
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Starter</v-card-text>
-          <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-card-text
-                  class="player-avatar-choosing"
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
-                  @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
-                  v-on="on"
-                />
-              </template>
-              <span>Starter</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+        <v-card-text>
+          <!-- Starter Icons -->
+          <v-row class="pb-3" align="center" justify="center">
+            <v-card-text class="py-0 w-100" align="center">Starter</v-card-text>
+            <v-col v-for="number in starterPicNumbers" :key="number" cols="auto">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    class="player-avatar-choosing cursor-pointer"
+                    :style="{'background-image': 'url(' + picture(EAvatarCategory.STARTER, number) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer ? savePicture(EAvatarCategory.STARTER, number) : null"
+                  />
+                </template>
+                <span>Starter</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
 
-        <!-- Race Icons Grid -->
-        <v-row
-          v-for="race in races"
-          :key="race"
-          class="mt-0 mb-2"
-          style="padding-left: 25px; padding-right: 25px"
-          align="center"
-          justify="center"
-        >
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">
-            {{ enumToString(race) }}
-          </v-card-text>
-          <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-card-text
-                  :class="getCorrectClasses(raceToAvatar(race), number)"
-                  :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
-                  @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
-                  v-on="on"
-                />
-              </template>
-              <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+          <!-- Race Icons Grid -->
+          <v-row
+            v-for="race in races"
+            :key="race"
+            class="mt-0 mb-2"
+            style="padding-left: 25px; padding-right: 25px"
+            align="center"
+            justify="center"
+          >
+            <v-card-text class="py-0 w-100" align="center">
+              {{ enumToString(race) }}
+            </v-card-text>
+            <v-col v-for="number in racePicNumbers" :key="number" cols="auto">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    :class="getCorrectClasses(raceToAvatar(race), number)"
+                    :style="{'background-image': 'url(' + picture(raceToAvatar(race), number) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer ? savePicture(raceToAvatar(race), number) : null"
+                  />
+                </template>
+                <span>{{ winsOf(winsOfRace(race), number, race) }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
 
-        <!-- Special Icons -->
-        <v-row v-if="specialPictures.length > 0" class="pb-3" align="center" justify="center">
-          <v-card-text class="avatar-choose-headers pa-0 ma-0" align="center">Specials</v-card-text>
-          <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-card-text
-                  class="player-avatar-choosing"
-                  :class="{ pointer: isLoggedInPlayer }"
-                  :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
-                  @click="isLoggedInPlayer
-                    ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
-                    : null
-                  "
-                  v-on="on"
-                />
-              </template>
-              <span>{{ specialPicture.description }}</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+          <!-- Special Icons -->
+          <v-row v-if="specialPictures.length > 0" align="center" justify="center">
+            <v-card-text class="py-0 w-100" align="center">Specials</v-card-text>
+            <v-col v-for="specialPicture in specialPictures" :key="specialPicture.pictureId" cols="auto">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props }">
+                  <v-card-text
+                    class="player-avatar-choosing"
+                    :class="{ 'cursor-pointer': isLoggedInPlayer }"
+                    :style="{'background-image': 'url(' + picture(EAvatarCategory.SPECIAL, specialPicture.pictureId) + ')'}"
+                    v-bind="props"
+                    @click="isLoggedInPlayer
+                      ? savePicture(EAvatarCategory.SPECIAL, specialPicture.pictureId, specialPicture.description)
+                      : null
+                    "
+                  />
+                </template>
+                <span>{{ specialPicture.description }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -157,90 +159,90 @@
     </v-row>
     <v-row v-if="isLoggedInPlayer">
       <v-col>
-        <v-dialog v-model="personalSettingsDialogOpened" persistent max-width="600px">
-          <template v-slot:activator="{ on }">
+        <v-dialog v-model="personalSettingsDialogOpened" max-width="600px">
+          <template v-slot:activator="{ props }">
             <v-btn
-              small
+              size="small"
               class="ma-0"
-              outlined
+              variant="outlined"
               color="primary"
-              v-on="on"
+              v-bind="props"
               @click="personalSettingsDialogOpened = true"
             >
-              <v-icon left>{{ mdiPencil }}</v-icon>
+              <v-icon start size="medium">{{ mdiPencil }}</v-icon>
               {{ $t("components_player_playeravatar.edit") }}
             </v-btn>
           </template>
-          <v-card>
+          <v-card class="w3-glass">
             <v-card-title>
               <span class="text-h5">
                 {{ $t("components_player_playeravatar.userprofile") }}
               </span>
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pb-0">
               <v-container>
                 <v-row>
                   <v-text-field
                     v-model="userProfile.twitch"
                     :prepend-icon="mdiTwitch"
-                    color="purple accent-4"
-                    dense
-                    clearable
+                    color="purple-accent-4"
+                    icon-color="purple-accent-4"
+                    glow
+                    density="compact"
                     single-line
-                    shaped
                     prefix="https://twitch.tv/"
                     :hint="$t('components_player_playeravatar.entertwitchname')"
                   />
                   <v-text-field
                     v-model="userProfile.youtube"
                     :prepend-icon="mdiYoutube"
-                    color="red darken-2"
-                    dense
-                    clearable
+                    color="red-darken-2"
+                    icon-color="red-darken-2"
+                    glow
+                    density="compact"
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.enterytname')"
                     prefix="https://www.youtube.com/"
                   />
                   <v-text-field
                     v-model="userProfile.twitter"
                     :prepend-icon="mdiTwitter"
-                    color="blue darken-2"
-                    dense
-                    clearable
+                    color="blue-darken-2"
+                    icon-color="blue-darken-2"
+                    glow
+                    density="compact"
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.entertwittername')"
                     prefix="https://www.twitter.com/"
                   />
                   <v-text-field
                     v-model="userProfile.trovo"
+                    class="w-100"
                     prepend-icon="$trovo"
-                    color="green darken-3"
-                    dense
-                    clearable
+                    color="green-darken-3"
+                    icon-color="green-darken-3"
+                    glow
+                    density="compact"
                     single-line
-                    shaped
                     :hint="$t('components_player_playeravatar.entertrovoname')"
                     prefix="https://trovo.live/"
                   />
                   <v-text-field
                     v-model="userProfile.homePage"
                     :prepend-icon="mdiHome"
-                    color="blue darken-2"
-                    dense
+                    color="blue-darken-2"
+                    icon-color="blue-darken-2"
+                    glow
+                    density="compact"
                     :rules="[rules.maxLength(50)]"
                     single-line
-                    clearable
-                    shaped
                     :hint="$t('components_player_playeravatar.entercustomhp')"
                     label="Homepage"
                   />
-                  <v-container>
+                  <v-container class="py-0 pl-0">
                     <v-checkbox
                       v-model="userProfile.aliasSettings.showAka"
-                      dense
-                      class="alias-checkbox"
+                      color="primary"
                       :prepend-icon="mdiAccountCheck"
                       :label="$t('components_player_playeravatar.showalias')"
                     />
@@ -256,28 +258,31 @@
                       :label="`Show Liquipedia Page Link`"
                     /> -->
                   </v-container>
-                </v-row>
-                <v-row no-gutters class="countryInput">
-                  <v-col md="12">
+                  <v-col md="12" class="pl-0 pt-0">
                     <v-autocomplete
                       v-model="selectedCountry"
                       :prepend-icon="mdiFlag"
+                      class="w3-autocomplete"
                       clearable
                       :item-value="countryCode"
+                      item-title="country"
                       :items="countries"
-                      :filter="countryFilter"
                       :label="$t('components_player_playeravatar.selectcountry')"
-                      item-text="country"
-                      :return-object="false"
+                      variant="underlined"
+                      color="primary"
+                      icon-color="primary"
+                      glow
                     >
-                      <template v-slot:item="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
-                        {{ item.country }}
-                        <v-spacer />
+                      <template v-slot:item="{ props, item }">
+                        <v-list-item v-bind="props" :title="item.raw.country">
+                          <template v-slot:prepend>
+                            <country-flag :country="item.raw.countryCode" size="normal" class="ma-0" />
+                          </template>
+                        </v-list-item>
                       </template>
                       <template v-slot:selection="{ item }">
-                        <country-flag :country="item.countryCode" size="normal" style="margin: 0;" />
-                        {{ item.country }}
+                        <country-flag :country="item.raw.countryCode" size="normal" style="margin: 0;" />
+                        {{ item.raw.country }}
                       </template>
                     </v-autocomplete>
                   </v-col>
@@ -286,10 +291,10 @@
                   <v-col>
                     <v-textarea
                       v-model="userProfile.about"
-                      outlined
+                      variant="outlined"
                       name="input-7-1"
                       label="About"
-                      clearable
+                      color="primary"
                       :rules="[rules.maxLength(300)]"
                       :hint="$t('components_player_playeravatar.aboutdesc')"
                     />
@@ -299,10 +304,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click="resetUserProfile">
+              <v-btn color="primary" @click="resetUserProfile">
                 {{ $t("components_player_playeravatar.close") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="saveUserProfile">
+              <v-btn color="primary" @click="saveUserProfile">
                 {{ $t("components_player_playeravatar.save") }}
               </v-btn>
             </v-card-actions>
@@ -314,8 +319,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { computed, defineAsyncComponent, defineComponent, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
 import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
@@ -325,11 +330,11 @@ import { enumKeys } from "@/helpers/general";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { usePlayerStore } from "@/store/player/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import { CountryType } from "@/store/ranking/types";
 
 // Lazy load.
-const CountryFlag = () => import(/* webpackChunkName: "country-flag" */ "vue-country-flag");
+const CountryFlag = defineAsyncComponent(() => import( "vue-country-flag-next"));
 
 export default defineComponent({
   name: "PlayerAvatar",
@@ -428,12 +433,6 @@ export default defineComponent({
       } satisfies ProfilePlayerSocials;
     });
 
-    function countryFilter(item: CountryType, queryText: string): boolean {
-      const textOne = item.country.toLowerCase();
-      const searchText = queryText.toLowerCase();
-      return textOne.includes(searchText);
-    }
-
     async function resetUserProfile(): Promise<void> {
       // userProfile.value = {
       //   twitch: twitch.value,
@@ -491,7 +490,7 @@ export default defineComponent({
 
     function getCorrectClasses(category: EAvatarCategory, iconId: number): string[] {
       const classes = ["player-avatar-choosing"];
-      if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("pointer");
+      if (props.isLoggedInPlayer && enabledIfEnoughWins(category, iconId)) classes.push("cursor-pointer");
 
       if (!enabledIfEnoughWins(category, iconId)) classes.push("player-avatar-choosing-disabled");
 
@@ -553,6 +552,7 @@ export default defineComponent({
     }
 
     onMounted((): void => {
+      populateCountriesForDropdown();
       init();
     });
 
@@ -566,35 +566,35 @@ export default defineComponent({
       }
     );
 
-    async function init() {
-      await personalSettingsStore.loadPersonalSetting();
-
-      useClassicIcons.value = personalSetting.value?.profilePicture?.isClassic ?? false;
-
-      // populate countries dropdown for combobox
+    const populateCountriesForDropdown = (): void => {
       enumKeys(ECountries).map((key) => {
         const country = {
           country: key,
           countryCode: ECountries[key],
         };
-
-        if (countryCode.value && countryCode.value == country.countryCode) {
-          selectedCountry.value = country.country;
-          selectedCountryCode.value = country.countryCode;
-        }
-
         countries.value.push(country);
       });
+    };
+
+    async function init() {
+      await personalSettingsStore.loadPersonalSetting();
+
+      useClassicIcons.value = personalSetting.value?.profilePicture?.isClassic ?? false;
+
+      if (countryCode.value) {
+        const foundCountry = countries.value.find((c) => c.countryCode === countryCode.value);
+        if (foundCountry) {
+          selectedCountry.value = foundCountry.country;
+          selectedCountryCode.value = foundCountry.countryCode;
+        }
+      }
 
       if (!selectedCountryCode.value && personalSetting.value?.location) {
-        selectedCountryCode.value = personalSetting.value.location;
-
-        enumKeys(ECountries).map((key) => {
-          const element = ECountries[key] as string;
-          if (element == selectedCountryCode.value) {
-            selectedCountry.value = key;
-          }
-        });
+        const foundCountry = countries.value.find((c) => c.countryCode === personalSetting.value.location);
+        if (foundCountry) {
+          selectedCountry.value = foundCountry.country;
+          selectedCountryCode.value = foundCountry.countryCode;
+        }
       }
     }
 
@@ -636,7 +636,6 @@ export default defineComponent({
       savedMessageValue,
       countryCode,
       countries,
-      countryFilter,
       rules,
       resetUserProfile,
       saveUserProfile,
@@ -647,10 +646,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.countryInput {
-  margin-left: -11px;
-}
-
 .player-country {
   position: absolute;
   border-color: white;
@@ -663,15 +658,6 @@ export default defineComponent({
 .country__container {
   position: relative;
   max-width: 120px;
-}
-
-.socialIcon {
-  padding-top: 0px;
-  padding-left: 2px;
-}
-
-.twitchIcon {
-  margin-top: 2px;
 }
 
 @media (min-width: 960px) {
@@ -701,41 +687,5 @@ export default defineComponent({
 .player-avatar-choosing-disabled {
   opacity: 0.5;
   filter: alpha(opacity=50);
-}
-
-.player-league {
-  width: 182px;
-
-  .player-league-rank {
-    font-size: 20px;
-  }
-
-  .player-league-points {
-    font-size: 13px;
-  }
-}
-
-.special-icons {
-  .col {
-    margin-left: 10px;
-  }
-
-  .col:first-child {
-    margin-left: 0;
-  }
-}
-
-.alias-checkbox {
-  margin-top: 0px;
-  padding-top: 0px;
-}
-
-.avatar-choose-headers {
-  padding-left: 25px;
-  padding-right: 25px;
-}
-
-.clickable {
-  cursor: pointer;
 }
 </style>

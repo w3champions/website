@@ -1,6 +1,6 @@
 <template>
   <v-card class="support-card" tile>
-    <v-card-text class="text-center text-primary" style="opacity: 0.87">
+    <v-card-text class="text-center w3-gray-text" style="opacity: 0.87">
       {{ $t("views_home.supportus") }}
     </v-card-text>
 
@@ -10,7 +10,7 @@
       href="https://www.patreon.com/w3champions"
       target="_blank"
       tile
-      outlined
+      border
       style="padding-bottom: 0px"
     >
       <v-img src="/assets/socials/Patreon_button.png" alt="Patreon" />
@@ -22,7 +22,7 @@
       href="https://www.paypal.me/w3championsdonate"
       target="_blank"
       tile
-      outlined
+      border
     >
       <v-img src="/assets/socials/PayPal_button.png" alt="Paypal" />
     </v-card>
@@ -33,7 +33,7 @@
       :key="crypto.coin"
       class="support-subcard"
       tile
-      outlined
+      border
       @click.stop="crypto.dialog = true"
     >
       <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name" />
@@ -51,7 +51,7 @@
       :key="alternate.name"
       class="support-subcard"
       tile
-      outlined
+      border
       @click.stop="alternate.dialog = true"
     >
       <alternate-payments-dialog
@@ -95,11 +95,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .support-subcard {
-  border: none !important;
-  padding: 1px;
+  border: none;
+  padding: 1px 2px;
 }
 
 .support-card {
-  padding: 1px;
+  padding: 2px;
 }
 </style>

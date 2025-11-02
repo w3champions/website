@@ -1,25 +1,23 @@
 <template>
-  <v-app class="w3app" :class="getTheme" :dark="isDarkTheme.get()">
+  <v-app :class="getTheme">
     <v-navigation-drawer
       v-model="navigationDrawerOpen"
       temporary
       absolute
       transition="slide-x-transition"
     >
-      <v-list dense>
+      <v-list density="compact">
         <v-list-item>
-          <v-list-item-content>
-            <router-link :to="{ name: EMainRouteName.HOME }">
-              <brand-logo :is-dark-theme="isDarkTheme.get()" />
-            </router-link>
-          </v-list-item-content>
-          <v-list-item-icon>
+          <router-link :to="{ name: EMainRouteName.HOME }">
+            <brand-logo :is-dark-theme="isDarkTheme.get()" />
+          </router-link>
+          <template v-slot:append>
             <v-icon class="ml-5" @click="setNavigationDrawerOpen(false)">{{ mdiClose }}</v-icon>
-          </v-list-item-icon>
+          </template>
         </v-list-item>
       </v-list>
       <v-divider />
-      <v-list dense nav>
+      <v-list density="compact" nav>
         <v-list-item
           v-for="item in items"
           v-show="isNavItemVisible(item)"
@@ -27,22 +25,20 @@
           link
           :to="{ name: item.to }"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ $t(`views_app.${item.title}`) }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <template v-slot:prepend>
+            <v-icon size="x-large">{{ item.icon }}</v-icon>
+          </template>
+          <v-list-item-title>
+            {{ $t(`views_app.${item.title}`) }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" :dark="isDarkTheme.get()" app>
+    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" class="pr-3">
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
-      <v-toolbar-title class="pa-0">
+      <v-toolbar-title style="margin-inline-start: 16px">
         <router-link :to="{ name: EMainRouteName.HOME }">
           <brand-logo
             :is-dark-theme="isDarkTheme.get()"
@@ -51,7 +47,6 @@
           />
         </router-link>
       </v-toolbar-title>
-      <v-spacer />
 
       <!-- alternative menu for lg+ only -->
       <span class="d-none d-lg-flex">
@@ -59,7 +54,7 @@
           v-for="item in items"
           v-show="isNavItemVisible(item)"
           :key="item.title"
-          text
+          variant="text"
           tile
           :to="{ name: item.to }"
           :class="item.class"
@@ -67,23 +62,23 @@
           <span class="mr-2">
             {{ $t(`views_app.${item.title}`) }}
           </span>
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon size="x-large">{{ item.icon }}</v-icon>
         </v-btn>
         <v-divider vertical />
       </span>
 
       <global-search />
 
-      <v-btn v-if="!authCode" text tile @click="loginOrGoToProfile">
-        <v-icon v-if="!authCode" class="mr-2">{{ mdiAccountCircleOutline }}</v-icon>
-        <sign-in-dialog v-model="showSignInDialog" />
+      <v-btn v-if="!authCode" variant="text" tile @click="loginOrGoToProfile">
+        <v-icon v-if="!authCode" class="mr-2" size="x-large">{{ mdiAccountCircleOutline }}</v-icon>
+        <sign-in-dialog :value="showSignInDialog" @toggle-dialog="toggleSignInDialog" />
       </v-btn>
 
       <v-menu v-if="authCode">
-        <template v-slot:activator="{ on }">
-          <v-btn text tile v-on="on">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile v-bind="props">
             <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
-            <v-icon>{{ mdiAccountCircle }}</v-icon>
+            <v-icon size="x-large">{{ mdiAccountCircle }}</v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -96,14 +91,14 @@
         </v-list>
       </v-menu>
 
-      <v-btn text tile :to="{ name: EMainRouteName.REWARDS }">
-        <v-icon>{{ mdiTreasureChest }}</v-icon>
+      <v-btn variant="text" tile :to="{ name: EMainRouteName.REWARDS }">
+        <v-icon size="x-large">{{ mdiTreasureChest }}</v-icon>
       </v-btn>
 
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile class="right-menu" v-on="on">
-            <v-icon>{{ mdiInvertColors }}</v-icon>
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile class="right-menu" v-bind="props">
+            <v-icon size="x-large">{{ mdiInvertColors }}</v-icon>
           </v-btn>
         </template>
         <v-list max-height="400" class="theme-selector overflow-y-auto">
@@ -122,9 +117,9 @@
         </v-list>
       </v-menu>
 
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn text tile style="margin-top: 2px" v-on="on">
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" tile style="margin-top: 2px" v-bind="props">
             <locale-icon :locale="savedLocale.get()" :showTwoLetterCode="false" />
           </v-btn>
         </template>
@@ -143,9 +138,9 @@
     <v-main>
       <router-view />
     </v-main>
-    <v-footer padless class>
+    <v-footer class="pa-0 flex-0-0 w3-glass">
       <v-row justify="center" no-gutters>
-        <v-btn text tile class="my-2" to="/imprint">Imprint</v-btn>
+        <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
     </v-footer>
   </v-app>
@@ -155,16 +150,15 @@
 import { onBeforeMount, onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
-import localeIcon from "@/components/common/LocaleIcon.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter } from "vue-router/composables";
+import { useRouter } from "vue-router";
 import languages from "@/locales/languages";
-import { useVuetify } from "@/plugins/vuetify";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
+import { useTheme } from "vuetify";
 
 import {
   mdiAccountCircle,
@@ -195,17 +189,16 @@ export default defineComponent({
   components: {
     BrandLogo,
     SignInDialog,
-    localeIcon,
     GlobalSearch,
   },
   setup() {
     const { locale } = useI18n();
     const router = useRouter();
-    const vuetify = useVuetify();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
+    const theme = useTheme();
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -305,37 +298,8 @@ export default defineComponent({
     function setTheme(val: string) {
       window.localStorage.setItem("theme", val);
       selectedTheme.value = val;
-      vuetify.theme.dark = isDarkTheme.get();
-      setThemeColors();
-      rootStateStore.SET_DARK_MODE(isDarkTheme.get());
+      theme.change(val);
     }
-
-    const themeColors = ({
-      get: () => {
-        switch (getTheme.value) {
-          case "nightelf":
-            return {
-              primary: "#ffd428",
-              "w3-race-bg": "#0d0718",
-            };
-          case "undead":
-            return {
-              primary: "#ffd428",
-              "w3-race-bg": "#000",
-            };
-          case "orc":
-            return {
-              primary: "#5c2604",
-              "w3-race-bg": "#c7baa1",
-            };
-          default:
-            return {
-              primary: "#1976d2",
-              "w3-race-bg": "#e9e9e9",
-            };
-        }
-      },
-    });
 
     const isDarkTheme = ({
       get: () => {
@@ -352,14 +316,9 @@ export default defineComponent({
       return true;
     }
 
-    function setThemeColors() {
-      vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"] =
-      Object.assign(
-        {},
-        vuetify.theme.themes[isDarkTheme.get() ? "dark" : "light"],
-        themeColors.get()
-      );
-    }
+    const toggleSignInDialog = (val: boolean) => {
+      showSignInDialog.value = val;
+    };
 
     async function init() {
       rootStateStore.loadLocale();
@@ -380,7 +339,6 @@ export default defineComponent({
       if (t && t.length > 0) {
         setTheme(t);
       }
-      setThemeColors();
     });
 
     return {
@@ -412,38 +370,8 @@ export default defineComponent({
       getTheme,
       setTheme,
       EMainRouteName,
+      toggleSignInDialog,
     };
   },
 });
 </script>
-
-<style lang="scss">
-@import "./scss/main.scss";
-
-.level {
-  color: white;
-  text-shadow: 0.5px 0.5px 0.5px black, 0.5px -0.5px 0.5px black,
-    -0.5px 0.5px 0.5px black, -0.5px -0.5px 0.5px black;
-}
-
-.profile {
-  .v-tabs {
-    .v-tabs-bar__content {
-      border-bottom: 1px solid #cdcdcd !important;
-    }
-  }
-}
-
-.button-margin {
-  margin-right: 10px;
-  top: 9px;
-}
-
-.theme--dark.v-badge .v-badge__badge::after {
-  border-color: #ffffff !important;
-}
-
-.theme--light.v-badge .v-badge__badge::after {
-  border-color: #36393f !important;
-}
-</style>

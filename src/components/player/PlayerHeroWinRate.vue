@@ -1,68 +1,73 @@
 <template>
-  <v-tabs v-model="selectedTab">
-    <v-tabs-slider />
-    <v-tab v-for="race of racesWithTotal" :key="race.raceId" :href="`#tab-${race.raceId}`">
-      <span v-if="race.raceId === ERaceEnum.TOTAL">
-        {{ $t("common.allraces") }}
-      </span>
-      <race-icon v-else :race="race.raceId" />
-    </v-tab>
+  <div>
+    <v-tabs v-model="selectedTab">
+      <v-tab v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <span v-if="race.raceId === ERaceEnum.TOTAL">
+          {{ $t("common.allraces") }}
+        </span>
+        <race-icon v-else :race="race.raceId" />
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="selectedTab">
+      <v-tabs-window-item v-for="race of racesWithTotal" :key="race.raceId" :value="`tab-${race.raceId}`">
+        <v-card-text>
+          <v-row>
+            <v-col cols="md-12">
+              <div>
+                <v-data-table
+                  hide-default-footer
+                  :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                >
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th v-for="header in headers" :key="header.value" :class="`text-${header.align}`">
+                          {{ header.text }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
+                        <td>
+                          <img class="mt-1" :src="item.image" height="40" width="40" />
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" location="top" content-class="w3-tooltip elevation-1">
+                          <template v-slot:activator="{ props }">
+                            <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-bind="props">{{ item[header.value] }}</td>
+                          </template>
+                          <div v-if="item.numbers_by_race[header.value]">
+                            <span class="number-text w3-won">{{ item.numbers_by_race[header.value].number }}W</span>
+                            -
+                            <span class="number-text w3-lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
+                            &nbsp;&nbsp;
+                            {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
+                          </div>
+                        </v-tooltip>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-data-table>
 
-    <v-tab-item v-for="race of racesWithTotal" :key="race.raceId" :value="'tab-' + race.raceId">
-      <v-card-text>
-        <v-row>
-          <v-col cols="md-12">
-            <div>
-              <v-simple-table>
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th v-for="header in headers" :key="header.value" :class="`text-${header.align}`">
-                        {{ header.text }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in heroStatsCurrentPage" :key="item.hero">
-                      <td>
-                        <img class="mt-1" :src="item.image" height="40" width="40" />
-                      </td>
-                      <td>{{ item.name }}</td>
-                      <v-tooltip v-for="header in headersWithoutImageAndName" :key="header.value" top>
-                        <template v-slot:activator="{ on }">
-                          <td :class="[...getWinRateClass(item, header.value), 'text-right']" v-on="on">{{ item[header.value] }}</td>
-                        </template>
-                        <div v-if="item.numbers_by_race[header.value]">
-                          <span class="number-text won">{{ item.numbers_by_race[header.value].number }}W</span>
-                          -
-                          <span class="number-text lost">{{ item.numbers_by_race[header.value].total - item.numbers_by_race[header.value].number }}L</span>
-                          &nbsp;&nbsp;
-                          {{ $t("common.total") }} <span class="number-text">{{ item.numbers_by_race[header.value].total }}</span>
-                        </div>
-                      </v-tooltip>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-
-              <v-pagination
-                v-if="pageLength > 1"
-                v-model="page"
-                :length="pageLength"
-                :prev-icon="mdiMenuLeft"
-                :next-icon="mdiMenuRight"
-              />
-            </div>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-tab-item>
-  </v-tabs>
+                <v-pagination
+                  v-if="pageLength > 1"
+                  v-model="page"
+                  :length="pageLength"
+                  :prev-icon="mdiMenuLeft"
+                  :next-icon="mdiMenuRight"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, RaceWinsOnMap } from "@/store/player/types";
@@ -107,7 +112,7 @@ export default defineComponent({
     const pageLength = computed(() => Math.ceil(heroWinRates().length / paginationSize));
     const heroStatsCurrentPage = computed(() => heroWinRates().slice((pageOffset.value - paginationSize), pageOffset.value));
 
-    const selectedTab = ref<string>(defaultStatsTab(playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All));
+    const selectedTab = ref<string>("");
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
         (newData: RaceWinsOnMap[]) => {
@@ -126,10 +131,10 @@ export default defineComponent({
 
       const winrate = raceStats.number / raceStats.total;
       if (winrate > (props.winThreshold || 0.6)) {
-        classes.push("won");
+        classes.push("w3-won");
       }
       if (winrate < (props.lossThreshold || 0.4)) {
-        classes.push("lost");
+        classes.push("w3-lost");
       }
 
       return classes;

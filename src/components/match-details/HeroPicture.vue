@@ -1,7 +1,7 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-on="on" />
+  <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+    <template v-slot:activator="{ props }">
+      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-bind="props" />
     </template>
     <div>{{ heroName }} ({{ $t("common.level") }} {{ heroLevel }})</div>
   </v-tooltip>
@@ -11,7 +11,7 @@
 import { defineComponent, ref } from "vue";
 import { getAsset } from "@/helpers/url-functions";
 import { TranslateResult } from "vue-i18n";
-import { useI18n } from "vue-i18n-bridge";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "HeroPicture",

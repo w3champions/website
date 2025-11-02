@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Message Of The Day
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <div v-if="!loaded">
-        <v-alert class="ma-4 pa-4" dense outlined type="error">Could not load the Message of the Day</v-alert>
+        <v-alert class="ma-4 pa-4" density="compact" variant="outlined" type="error">Could not load the Message of the Day</v-alert>
       </div>
       <v-card v-else>
         <div v-if="!loading">
@@ -15,12 +15,14 @@
             {{ motd }}
             <v-divider class="mt-4" />
           </v-card-text>
-          <v-card-actions class="ma-3 pa-3">
-            <v-textarea v-model="newMotd" outlined counter label="New Motd:" :rules="rules" />
-          </v-card-actions>
-          <v-card-actions class="pa-3 ma-3 justify-end">
-            <v-btn color="primary" class="w3-race-bg--text" @click="confirmNewMotd">Set New Motd</v-btn>
-          </v-card-actions>
+          <v-form ref="form" v-model="isFormValid">
+            <v-card-actions class="ma-3 pa-3">
+              <v-textarea v-model="newMotd" variant="outlined" counter label="New Motd:" :rules="rules" />
+            </v-card-actions>
+            <v-card-actions class="pa-3 ma-3 justify-end">
+              <v-btn class="bg-primary text-w3-race-bg" :disabled="!isFormValid" @click="confirmNewMotd">Set New Motd</v-btn>
+            </v-card-actions>
+          </v-form>
         </div>
       </v-card>
     </v-container>
@@ -31,7 +33,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
-import { InputValidationRules } from "vuetify";
+import { ValidationRule } from "vuetify";
 
 export default defineComponent({
   name: "AdminMotd",
@@ -42,9 +44,16 @@ export default defineComponent({
     const loading = ref<boolean>(true);
     const loaded = ref<boolean>(false);
     const newMotd = ref<string>("");
+    const form = ref();
+    const isFormValid = ref(false);
 
-    const rules = computed<InputValidationRules>(() => [(value: string) => value.length <= 400 || "Max 400 characters"]);
     const motd = computed<string>(() => infoMessagesStore.messageOfTheDay.motd);
+
+    const rules = computed<ValidationRule[]>(() => {
+      return [
+        (value: string) => value.length <= 400 || "Max 400 characters",
+      ];
+    });
 
     async function confirmNewMotd(): Promise<void> {
       await setMotd(newMotd.value);
@@ -71,6 +80,8 @@ export default defineComponent({
       rules,
       newMotd,
       confirmNewMotd,
+      form,
+      isFormValid,
     };
   },
 });

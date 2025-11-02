@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       News
     </v-card-title>
     <v-data-table
@@ -8,18 +8,17 @@
       :items="news"
       :items-per-page="5"
       class="elevation-1"
+      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
     >
       <template v-slot:top>
-        <v-toolbar flat color="transparent">
-          <v-toolbar-title>News for Launcher</v-toolbar-title>
+        <div class="d-flex align-center px-4">
+          <div class="text-h6">News for Launcher</div>
           <v-spacer />
           <v-dialog v-model="dialog" max-width="1185" @click:outside="closeNews">
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                color="primary"
-                class="mb-2 w3-race-bg--text"
-                v-bind="attrs"
-                v-on="on"
+                class="bg-primary text-w3-race-bg"
+                v-bind="props"
               >
                 {{ $t("views_admin.addnews") }}
               </v-btn>
@@ -32,7 +31,8 @@
               <v-card-text>
                 <v-text-field
                   v-model="editedNewsItem.date"
-                  filled
+                  variant="filled"
+                  color="primary"
                   :label="$t(`views_admin.headline`)"
                 />
                 <div class="editor">
@@ -168,20 +168,20 @@
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn text @click="closeNews">
+                <v-btn variant="text" @click="closeNews">
                   {{ $t(`views_admin.cancel`) }}
                 </v-btn>
-                <v-btn color="primary" class="w3-race-bg--text" @click="saveNews">
+                <v-btn class="bg-primary text-w3-race-bg" @click="saveNews">
                   {{ $t(`views_admin.save`) }}
                 </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-        </v-toolbar>
+        </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
-        <v-icon small @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
+        <v-icon size="small" class="mr-2" @click="editNewsItem(item)">{{ mdiPencil }}</v-icon>
+        <v-icon size="small" @click="deleteNewsItem(item)">{{ mdiDelete }}</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -211,7 +211,7 @@ import {
   mdiRedo,
   mdiUndo,
 } from "@mdi/js";
-import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Editor, EditorContent } from "@tiptap/vue-3";
 import { Document } from "@tiptap/extension-document";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Text } from "@tiptap/extension-text";
@@ -229,6 +229,7 @@ import { Heading } from "@tiptap/extension-heading";
 import { HorizontalRule } from "@tiptap/extension-horizontal-rule";
 import { OrderedList } from "@tiptap/extension-ordered-list";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminNewsForLauncher",
@@ -329,10 +330,10 @@ export default defineComponent({
       editor.destroy();
     });
 
-    const headers = [
-      { text: "Text", value: "message" },
-      { text: "Headline", value: "date" },
-      { text: "Actions", value: "actions", sortable: false },
+    const headers: DataTableHeader[] = [
+      { title: "Text", value: "message" },
+      { title: "Headline", value: "date" },
+      { title: "Actions", value: "actions", sortable: false },
     ];
 
     return {
@@ -369,3 +370,69 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.menubar {
+  margin-bottom: 1rem;
+  transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
+
+  &.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.is-focused {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s;
+  }
+
+  &__button {
+    font-weight: bold;
+    display: inline-flex;
+    background: transparent;
+    border: 0;
+    padding: 0.2rem 0.5rem;
+    margin-right: 0.2rem;
+    border-radius: 3px;
+    cursor: pointer;
+
+    &:hover {
+      outline: 1px solid;
+    }
+
+    &.is-active {
+      outline: 1px solid;
+    }
+  }
+
+  span#{&}__button {
+    font-size: 13.3333px;
+  }
+}
+
+.editor {
+  position: relative;
+  margin: 0 auto;
+}
+
+:deep(.editor__content) {
+  padding: 0.5rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  .ProseMirror {
+    outline: 1px solid;
+    outline-offset: 0.5rem;
+  }
+
+  .ProseMirror-focused {
+    outline: 2px solid;
+  }
+
+  * {
+    caret-color: currentColor;
+  }
+}
+</style>

@@ -1,21 +1,27 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       View Game Chat
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-card>
         <v-container class="mt-5">
           <v-row>
             <v-col />
             <v-col cols="6">
-              <v-text-field v-model="matchId" solo outlined clearable placeholder="Game ID" autofocus />
+              <v-text-field
+                v-model="matchId"
+                variant="outlined"
+                color="primary"
+                clearable
+                placeholder="Game ID"
+                autofocus
+              />
             </v-col>
             <v-col>
               <v-dialog v-model="dialog" width="1500">
-                >
-                <template v-slot:activator="{ on }">
-                  <v-btn x-large class="primary w3-race-bg--text" v-on="on" @click="openConfirmation">Load</v-btn>
+                <template v-slot:activator="{ props }">
+                  <v-btn size="x-large" class="bg-primary text-w3-race-bg" v-bind="props" @click="openConfirmation">Load</v-btn>
                 </template>
 
                 <v-card>
@@ -24,8 +30,8 @@
 
                     <v-card-actions>
                       <v-spacer />
-                      <v-btn x-large color="primary w3-race-bg--text" @click="accept">Accept</v-btn>
-                      <v-btn x-large color="error w3-race-bg--text" @click="dialog = false">Cancel</v-btn>
+                      <v-btn size="x-large" class="bg-primary text-w3-race-bg" @click="accept">Accept</v-btn>
+                      <v-btn size="x-large" class="bg-error text-w3-race-bg" @click="dialog = false">Cancel</v-btn>
                       <v-spacer />
                     </v-card-actions>
                     <match-detail-view :matchId="matchId" />
@@ -36,7 +42,6 @@
             <v-col />
           </v-row>
         </v-container>
-
         <admin-replay-chat-log v-if="acceptedGame" :matchId="matchId" />
       </v-card>
     </v-container>

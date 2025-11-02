@@ -1,11 +1,12 @@
 <template>
   <div>
-    <v-card-title>
-      <v-row align="center">
-        <v-col cols="12" md="5">
-          {{ $t("components_player_tabs_matchhistorytab.title") }}
-        </v-col>
-        <v-col cols="12" md="5">
+    <v-card-title class="pb-0 pt-3">
+      {{ $t("components_player_tabs_matchhistorytab.title") }}
+    </v-card-title>
+    <v-card-text class="pb-3">
+      <v-row>
+        <v-spacer />
+        <v-col cols="12" md="5" class="pt-0 px-4">
           <player-search
             :setAutofocus="false"
             @playerFound="playerFound"
@@ -16,59 +17,62 @@
       <v-row>
         <v-col cols="12" md="2">
           <v-select
-            class="over-chart-select-box"
             :items="activeGameModesWithAll()"
-            item-text="name"
+            item-title="name"
             item-value="id"
-            :value="profileMatchesGameMode"
+            :model-value="profileMatchesGameMode"
             label="Mode"
-            outlined
-            @change="setSelectedGameModeForSearch"
+            variant="outlined"
+            color="primary"
+            hide-details
+            @update:model-value="setSelectedGameModeForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
-            class="player-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="playerRace"
+            :model-value="playerRace"
             label="Player Race"
-            outlined
-            @change="setPlayerRaceForSearch"
+            variant="outlined"
+            color="primary"
+            hide-details
+            @update:model-value="setPlayerRaceForSearch"
           />
         </v-col>
         <v-col cols="12" md="2">
           <v-select
-            class="opponent-race-select-box"
             :items="races"
-            item-text="raceName"
+            item-title="raceName"
             item-value="raceId"
-            :value="opponentRace"
+            :model-value="opponentRace"
             label="Opponent Race"
-            outlined
-            @change="setOpponentRaceForSearch"
+            variant="outlined"
+            color="primary"
+            hide-details
+            @update:model-value="setOpponentRaceForSearch"
           />
         </v-col>
-        <v-col align-self="center" cols="12" md="3">
+        <v-col cols="12" md="3">
           <hero-select
             :is-player-matches-tab="true"
             :selectedHeroes="selectedHeroes"
             @heroChanged="heroChanged"
           />
         </v-col>
-        <v-col align-self="center">
+        <v-col class="pt-5 pl-0">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
-    </v-card-title>
+    </v-card-text>
     <v-card-text v-if="foundPlayer">
       <v-row align="center">
         <v-col cols="12">
           <div>vs. {{ foundPlayer }}</div>
-          <span class="won">Wins: {{ opponentWins }}</span>
+          <span class="w3-won">Wins: {{ opponentWins }}</span>
           /
-          <span class="lost">
+          <span class="w3-lost">
             Losses: {{ totalMatchesAgainstOpponent - opponentWins }}
           </span>
           <span>({{ winRateVsOpponent }}%)</span>
@@ -91,8 +95,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { loadActiveGameModes, activeGameModesWithAll } from "@/mixins/GameModesMixin";
+import { useI18n } from "vue-i18n";
+import { loadActiveGameModes, activeGameModesWithAll } from "@/composables/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -123,7 +127,7 @@ export default defineComponent({
     const commonStore = useCommonStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
-    const showHeroIcons = ref<boolean>(true);
+    const showHeroIcons = ref<boolean>(false);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
@@ -275,9 +279,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-::v-deep(.v-text-field__details) {
-  display: none;
-}
-</style>

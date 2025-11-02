@@ -1,64 +1,61 @@
 <template>
-  <v-data-table hide-default-footer :headers="headers" :items="gameModeStatsCombined" mobile-breakpoint="400" :items-per-page="-1">
-    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ header }">
-      <v-tooltip :key="h.text" top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{ header.text }}</span>
+  <v-data-table
+    hide-default-footer
+    :headers="headers"
+    :items="gameModeStatsCombined"
+    :mobile-breakpoint="400"
+    :items-per-page="-1"
+    :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+  >
+    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ column }">
+      <v-tooltip :key="h.title" location="top">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">{{ column.title }}</span>
         </template>
-        <span style="white-space: pre-line">{{ header.tooltip }}</span>
+        <span style="white-space: pre-line">{{ h.tooltip }}</span>
       </v-tooltip>
     </template>
     <template v-slot:body="{ items }">
-      <tbody>
-        <tr v-for="item in items" :key="item.id">
-          <td class="cell d-flex justify-center align-center">
-            <span>{{ $t("gameModes." + EGameMode[item.gameMode]) }}</span>
-            <race-icon style="display: inline; padding-left: 10px" :race="item.race" />
-          </td>
-          <td class="number-text text-start cell">
-            <div class="text-center">
-              <span class="won">{{ item.wins }}</span>
-              -
-              <span class="lost">{{ item.losses }}</span>
-            </div>
-            <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
-          </td>
-          <td class="number-text text-end cell">
-            <div class="text-center">
-              {{ item.rank !== 0 ? item.mmr : "-" }}
-            </div>
-            <div v-if="item.rank !== 0" class="sub-value">
-              <span>{{ $t("common.top") }} {{ getTopPercent(item) }}%</span>
-            </div>
-          </td>
-          <td class="number-text text-center cell" style="min-width: 100px">
-            <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
-            <div v-else>-</div>
-          </td>
-        </tr>
-      </tbody>
+      <tr v-for="item in items" :key="item.id">
+        <td class="d-flex justify-center align-center text-no-wrap">
+          <span class="mr-2">{{ $t("gameModes." + EGameMode[item.gameMode]) }}</span>
+          <race-icon :race="item.race" />
+        </td>
+        <td class="number-text text-start text-no-wrap">
+          <div class="text-center">
+            <span class="w3-won">{{ item.wins }}</span>
+            -
+            <span class="w3-lost">{{ item.losses }}</span>
+          </div>
+          <div class="sub-value">{{ (item.winrate * 100).toFixed(1) }}%</div>
+        </td>
+        <td class="number-text text-end text-no-wrap">
+          <div class="text-center">
+            {{ item.rank !== 0 ? item.mmr : "-" }}
+          </div>
+          <div v-if="item.rank !== 0" class="sub-value">
+            <span>{{ $t("common.top") }} {{ getTopPercent(item) }}%</span>
+          </div>
+        </td>
+        <td class="number-text text-center text-no-wrap" style="min-width: 100px">
+          <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
+          <div v-else>-</div>
+        </td>
+      </tr>
     </template>
   </v-data-table>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { useI18n } from "vue-i18n-bridge";
-import { TranslateResult } from "vue-i18n";
-import { AT_modes } from "@/mixins/GameModesMixin";
+import { TranslateResult, useI18n } from "vue-i18n";
+import { AT_modes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import isEmpty from "lodash/isEmpty";
-
-interface ModeStatsGridHeader {
-  text: TranslateResult;
-  align: string;
-  sortable: boolean;
-  tooltip: TranslateResult;
-  value: string;
-}
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "ModeStatsGrid",
@@ -115,30 +112,30 @@ export default defineComponent({
       return topPerc.toFixed(1);
     }
 
-    const headers: ModeStatsGridHeader[] = [
+    const headers: (DataTableHeader & {tooltip: TranslateResult})[] = [
       {
-        text: t("components_player_modestatsgrid.mode"),
+        title: t("components_player_modestatsgrid.mode"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mode"),
         value: "mode",
       },
       {
-        text: t("components_player_modestatsgrid.winloss"),
+        title: t("components_player_modestatsgrid.winloss"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.winloss"),
         value: "winloss",
       },
       {
-        text: t("components_player_modestatsgrid.mmr"),
+        title: t("components_player_modestatsgrid.mmr"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.mmr"),
         value: "mmr",
       },
       {
-        text: t("components_player_modestatsgrid.level"),
+        title: t("components_player_modestatsgrid.level"),
         align: "center",
         sortable: false,
         tooltip: t("components_player_modestatsgrid.leveldesc"),
@@ -163,17 +160,9 @@ export default defineComponent({
   text-align: center;
 }
 
-.theme--light {
+.v-theme--human, .v-theme--orc {
   .sub-value {
     border-top: 2px solid rgb(205, 205, 205);
   }
-}
-
-.tooltip-inner {
-  white-space: pre-line;
-}
-
-.cell {
-  white-space: nowrap;
 }
 </style>

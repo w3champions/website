@@ -1,24 +1,23 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="pt-3">
       Manage Permissions
     </v-card-title>
-    <v-container>
+    <v-container class="w3-container-width">
       <v-data-table
         :headers="headers"
         :items-per-page="-1"
         :items="permissions"
+        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
       >
         <template v-slot:top>
-          <v-toolbar flat color="transparent">
+          <div class="d-flex align-center px-4">
             <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  color="primary"
-                  class="mb-2 w3-race-bg--text"
-                  v-bind="attrs"
-                  v-on="on"
+                  class="mb-2 bg-primary text-w3-race-bg"
+                  v-bind="props"
                 >
                   Add Admin
                 </v-btn>
@@ -26,15 +25,15 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="text-h5">{{ formTitle }}</span>
+                  {{ formTitle }}
                 </v-card-title>
 
                 <v-card-text>
                   <v-container>
-                    <v-row>
+                    <v-row class="w-100">
                       <player-search
                         v-if="isAddDialog"
-                        class="mx-5"
+                        class="w-100 ml-5"
                         @playerFound="playerFound"
                       />
                       <v-text-field
@@ -42,6 +41,8 @@
                         v-model="editedItem.battleTag"
                         label="BattleTag"
                         class="mx-5"
+                        variant="underlined"
+                        color="primary"
                       />
                     </v-row>
                     <v-row>
@@ -49,6 +50,8 @@
                         <v-text-field
                           v-model="editedItem.description"
                           :label="'Description'"
+                          variant="underlined"
+                          color="primary"
                         />
                       </v-col>
                       <v-col class="px-5 py-0">
@@ -60,18 +63,17 @@
                           :multiple="true"
                           :label="permission.name"
                           :value="permission.value"
-                          :dense="true"
+                          hide-details
                         />
                       </v-col>
                     </v-row>
-                    <v-alert v-model="isValidationError" type="warning" dense class="ml-4 mr-4">
+                    <v-alert v-model="isValidationError" type="warning" density="compact" class="ml-4 mr-4">
                       {{ validationError }}
                     </v-alert>
                     <v-row>
                       <v-col>
                         <v-btn
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="save"
                         >
                           {{ $t(`views_admin.ok`) }}
@@ -79,8 +81,7 @@
                       </v-col>
                       <v-col class="text-right">
                         <v-btn
-                          color="primary"
-                          class="w3-race-bg--text"
+                          class="bg-primary text-w3-race-bg"
                           @click="close"
                         >
                           {{ $t(`views_admin.cancel`) }}
@@ -91,7 +92,7 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
-          </v-toolbar>
+          </div>
         </template>
         <template v-slot:[`item.permissionName`]="{ item }">
           <td>
@@ -99,8 +100,8 @@
           </td>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon small class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
-          <v-icon small @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+          <v-icon size="small" class="mr-2" @click="openEditDialog(item)">{{ mdiPencil }}</v-icon>
+          <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -115,6 +116,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { usePermissionStore } from "@/store/admin/permission/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
+import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminPermissions",
@@ -241,12 +243,12 @@ export default defineComponent({
       return EPermission[id];
     }
 
-    const headers = [
-      { text: "BattleTag", sortable: true, value: "battleTag" },
-      { text: "Description", sortable: true, filterable: false, value: "description", width: "12vw" },
-      { text: "Permissions", sortable: true, filterable: false, value: "permissionName" },
-      { text: "Author", sortable: true, filterable: false, value: "author" },
-      { text: "Actions", sortable: false, value: "actions" },
+    const headers: DataTableHeader[] = [
+      { title: "BattleTag", sortable: true, value: "battleTag" },
+      { title: "Description", sortable: true, value: "description", width: "12vw" },
+      { title: "Permissions", sortable: true, value: "permissionName" },
+      { title: "Author", sortable: true, value: "author" },
+      { title: "Actions", sortable: false, value: "actions" },
     ];
 
     return {

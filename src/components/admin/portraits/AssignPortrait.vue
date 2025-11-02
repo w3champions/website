@@ -1,13 +1,13 @@
 <template>
-  <v-container class="ma-0 pa-0" @click="assignPortrait">
-    <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-on="on" />
+  <v-container @click="assignPortrait">
+    <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+      <template v-slot:activator="{ props }">
+        <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-bind="props" />
       </template>
       <span>ID: {{ portraitId }}</span>
     </v-tooltip>
-    <v-btn v-if="isAssigned" class="cancel-button" right icon @click="removeAssignedPortrait">
-      <v-icon large>{{ mdiCloseCircleOutline }}</v-icon>
+    <v-btn v-if="isAssigned" class="cancel-button" style="background-color: transparent" icon variant="flat" size="x-large" density="compact" @click="removeAssignedPortrait">
+      <v-icon size="x-large">{{ mdiCloseCircleOutline }}</v-icon>
     </v-btn>
   </v-container>
 </template>

@@ -1,10 +1,4 @@
-.hide-footer {
-  .v-data-footer__select {
-    display: none !important;
-  }
-}
-
-.v-card__title {
+.v-card-title {
   font-family: "Friz Quadrata Std Medium" !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
@@ -16,7 +10,7 @@
   text-transform: uppercase !important;
 }
 
-.v-application {
+.v-application, .v-btn.v-tab, .v-card-text, .v-tooltip {
   font-family: "Inter Variable" !important;
 }
 
@@ -27,194 +21,11 @@ h3 {
   text-transform: uppercase !important;
 }
 
-
-.v-card {
-  overflow: hidden !important;
+.v-autocomplete {
+  font-family: "Friz Quadrata Std Medium" !important;
+  letter-spacing: 1.56px !important;
 }
 
-.v-list {
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-}
-
-.v-tabs-bar {
+.v-data-table {
   background-color: transparent !important;
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-}
-
-.v-tabs-slider-wrapper {
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-}
-
-.v-tabs-items {
-  background-color: transparent !important;
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-}
-
-.v-tab {
-  background-color: transparent !important;
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-}
-
-.v-data-table,
-.custom-table {
-  background-color: transparent !important;
-  -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  transform: translate3d(0, 0, 0);
-  transform: translateZ(0);
-
-  tr:hover {
-    background-color: transparent !important;
-    position: relative;
-    z-index: 1;
-  }
-}
-.custom-table-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.v-text-field__prefix {
-  padding-right: 0px !important;
-}
-
-.v-card__title {
-  filter: blur(0) !important;
-}
-
-.row {
-  filter: blur(0);
-}
-
-.scroll-v-dialog {
-  background: inherit !important;
-  overflow-y: scroll !important;
-}
-
-.editor {
-  position: relative;
-  margin: 0 auto;
-
-  &__content {
-    padding: 0.5rem;
-
-    .ProseMirror {
-      outline: 1px solid;
-      outline-offset: 0.5rem;
-    }
-
-    .ProseMirror-focused {
-      outline: 2px solid;
-    }
-
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-
-
-    * {
-      caret-color: currentColor;
-    }
-  }
-}
-
-.menubar {
-  margin-bottom: 1rem;
-  transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
-
-  &.is-hidden {
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  &.is-focused {
-    visibility: visible;
-    opacity: 1;
-    transition: visibility 0.2s, opacity 0.2s;
-  }
-
-  &__button {
-    font-weight: bold;
-    display: inline-flex;
-    background: transparent;
-    border: 0;
-    padding: 0.2rem 0.5rem;
-    margin-right: 0.2rem;
-    border-radius: 3px;
-    cursor: pointer;
-
-    &:hover {
-      outline: 1px solid;
-    }
-
-    &.is-active {
-      outline: 1px solid;
-    }
-  }
-
-  span#{&}__button {
-    font-size: 13.3333px;
-  }
-}
-
-.w3app {
-  overflow-y: hidden;
-}
-
-// Set cursor to 'pointer' instead of 'text' in dropdown menus.
-.v-select {
-  .v-select__selections {
-    input {
-      cursor: pointer;
-    }
-  }
-}
-
-.v-carousel {
-  height: 400px !important;
-  .v-window__container {
-    margin-bottom: 50px;
-  }
-  .v-window-item .v-responsive__content {
-    overflow-y: auto;
-  }
 }
