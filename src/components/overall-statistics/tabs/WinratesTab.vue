@@ -10,6 +10,7 @@
             item-value="mapId"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmap`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedMap"
           />
           <v-select
@@ -19,6 +20,7 @@
             item-value="mmr"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedMmr"
           />
           <v-select
@@ -28,6 +30,7 @@
             item-value="patch"
             :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedPatch"
           />
         </v-card-text>
