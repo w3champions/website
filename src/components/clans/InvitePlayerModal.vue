@@ -2,7 +2,6 @@
   <v-dialog v-model="dialog" max-width="600px">
     <template v-slot:activator="{ props }">
       <v-btn
-        class="ma-0"
         variant="outlined"
         color="primary"
         v-bind="props"
@@ -26,7 +25,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue-darken-1"
+          color="primary"
           variant="text"
           :disabled="!player"
           @click="invitePlayer"

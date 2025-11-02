@@ -1,8 +1,8 @@
 <template>
-  <v-menu>
+  <v-menu location="right">
     <template v-slot:activator="{ props }">
-      <v-btn tile class="bg-transparent" v-bind="props">
-        <v-icon style="margin-right: 5px">{{ mdiPencil }}</v-icon>
+      <v-btn size="small" variant="outlined" v-bind="props">
+        <v-icon size="x-large">{{ mdiPencil }}</v-icon>
       </v-btn>
     </template>
     <v-card>

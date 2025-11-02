@@ -12,13 +12,13 @@
     <accept-invite-panel v-if="hasPendingInvite && isLoggedInPlayer" />
     <clan-creation-panel v-if="!hasPendingInvite && hasNoClan && isLoggedInPlayer" />
     <div v-if="!hasNoClan">
-      <v-card-title class="justify-space-between">
+      <v-card-title class="d-flex justify-space-between pt-0">
         <span>{{ playersClan.clanName }} ({{ playersClan.clanId }})</span>
         <invite-player-modal v-if="loggedInPlayerIsShaman" />
       </v-card-title>
       <br />
       <br />
-      <v-row v-if="clanIsFunded">
+      <v-row v-if="clanIsFunded" class="pt-4">
         <v-col
           v-for="mode in [
             EGameMode.GM_1ON1,
@@ -37,7 +37,7 @@
         <table class="custom-table">
           <tr @click="goToPlayer(playersClan.chiefTain)">
             <td>
-              <v-row class="justify-space-between align-center ma-0">
+              <v-row class="justify-space-between align-center" no-gutters>
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.ChiefTain" />
                   <span class="cursor-pointer" @click="goToPlayer(playersClan.chiefTain)">
@@ -59,8 +59,8 @@
         <table class="custom-table">
           <tr v-for="shaman in shamans" :key="shaman" @click="goToPlayer(shaman)">
             <td>
-              <v-row class="justify-space-between align-center ma-0">
-                <v-col class="pa-0">
+              <v-row class="justify-space-between align-center" no-gutters>
+                <v-col>
                   <clan-role-icon :role="roleEnums.Shaman" />
                   <span class="cursor-pointer" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
@@ -74,7 +74,7 @@
                     <div>1 vs 1</div>
                   </v-tooltip>
                 </v-col>
-                <v-col class="text-right pa-0">
+                <v-col class="text-right">
                   <member-management-menu
                     v-if="loggedInPlayerIsChiefTain"
                     :battle-tag="shaman"
@@ -89,8 +89,8 @@
         <table class="custom-table">
           <tr v-for="member in members" :key="member" @click="goToPlayer(member)">
             <td>
-              <v-row class="justify-space-between align-center ma-0">
-                <v-col class="pa-0">
+              <v-row class="justify-space-between align-center" no-gutters>
+                <v-col>
                   <clan-role-icon :role="roleEnums.Member" />
                   <span class="cursor-pointer" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
@@ -104,7 +104,7 @@
                     <div>1 vs 1</div>
                   </v-tooltip>
                 </v-col>
-                <v-col class="text-right pa-0">
+                <v-col class="text-right">
                   <member-management-menu
                     v-if="loggedInPlayerIsShaman"
                     :battle-tag="member"

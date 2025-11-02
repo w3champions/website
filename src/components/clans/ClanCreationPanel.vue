@@ -11,22 +11,20 @@
     <v-row class="justify-center">
       <v-col cols="6">
         <v-text-field
-          :v-model="clanNameToCreate"
+          v-model="clanNameToCreate"
           :rules="[mustBeBetween(3, 30, ' ')]"
           :label="$t(`components_clans_clancreationpanel.clanname`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanname`)"
           variant="underlined"
           color="primary"
-          @change="changeInsertedClanName"
         />
         <v-text-field
-          :v-model="clanAbbreviationToCreate"
+          v-model="clanAbbreviationToCreate"
           :rules="[mustBeBetween(2, 5, '')]"
           :label="$t(`components_clans_clancreationpanel.clanabbrev`)"
           :hint="$t(`components_clans_clancreationpanel.enterclanabbrev`)"
           variant="underlined"
           color="primary"
-          @change="changeInsertedClanAbbreviation"
         />
       </v-col>
     </v-row>
@@ -78,14 +76,6 @@ export default defineComponent({
       };
     }
 
-    function changeInsertedClanName(newName: string): void {
-      clanNameToCreate.value = newName;
-    }
-
-    function changeInsertedClanAbbreviation(newName: string): void {
-      clanAbbreviationToCreate.value = newName;
-    }
-
     async function createClan(): Promise<void> {
       await clanStore.createClan({
         clanName: clanNameToCreate.value.trim(),
@@ -100,8 +90,6 @@ export default defineComponent({
       clanValidationError,
       isValidationError,
       mustBeBetween,
-      changeInsertedClanName,
-      changeInsertedClanAbbreviation,
       createClan,
     };
   },

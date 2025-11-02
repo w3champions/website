@@ -9,11 +9,9 @@
             </v-btn>
           </template>
           <v-card>
-            <v-card-title class="text-center">
-              <span>
-                {{ $t("components_clans_deleteclanmodal.areyousuredelete") }}
-                {{ clanName }}?
-              </span>
+            <v-card-title class="text-center text-pre-wrap pt-3">
+              {{ $t("components_clans_deleteclanmodal.areyousuredelete") }}
+              {{ clanName }}?
             </v-card-title>
             <v-card-actions>
               <v-spacer />
