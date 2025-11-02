@@ -13,6 +13,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             variant="outlined"
+            color="primary"
             hide-details
             @update:model-value="setSelectedGamesPerDayMode"
           />
@@ -63,6 +64,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedModeForMaps"
           />
           <v-select
@@ -72,6 +74,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedSeasonForMaps"
           />
         </v-card-text>
@@ -99,10 +102,11 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedPopularHourMode"
           />
         </v-card-text>
-        <div style="padding: 15px; font-size: 14px">
+        <div class="pl-4 w3-gray-text">
           Graph adjusted to your timezone
         </div>
       </v-col>
@@ -126,6 +130,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmode`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedLengthMode"
           />
         </v-card-text>
@@ -151,6 +156,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedMatchupRace1"
           />
           <v-select
@@ -160,6 +166,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectrace`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedMatchupRace2"
           />
           <v-select
@@ -169,6 +176,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectmmr`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setSelectedMatchupMmr"
           />
           <v-select
@@ -178,12 +186,13 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.selectseason`)"
             variant="outlined"
+            color="primary"
             @update:model-value="setMatchupLengthSeason"
           />
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
-        <v-card-text>
+        <v-card-text class="w3-gray-text">
           {{ race1String }} vs {{ race2String }}
           <matchup-length-bar-chart />
         </v-card-text>

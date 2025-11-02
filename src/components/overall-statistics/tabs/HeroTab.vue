@@ -13,12 +13,12 @@
         <v-card-text>
           <v-select
             v-model="selectedHeroesPlayedMode"
-            :items="gameModes"
+            :items="gameModes()"
             item-title="name"
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_herotab.mode`)"
             variant="outlined"
-            @update:model-value="setSelectedHeroesPlayedMode"
+            color="primary"
           />
           <v-select
             v-model="selectedHeroesPlayedPick"
@@ -27,7 +27,7 @@
             item-value="pickId"
             :label="$t(`components_overall-statistics_tabs_herotab.pick`)"
             variant="outlined"
-            @update:model-value="setSelectedHeroesPlayedPick"
+            color="primary"
           />
         </v-card-text>
       </v-col>
@@ -65,25 +65,15 @@ export default defineComponent({
       await overallStatsStore.loadPlayedHeroes();
     });
 
-    const gameModes = computed<IGameModeBrief[]>(() => activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT));
+    const gameModes = (): IGameModeBrief[] => {
+      return activeMeleeGameModesWithAT().filter((x) => x.id !== EGameMode.GM_4ON4_AT);
+    };
 
     const picks = [
-      {
-        pickName: "overall",
-        pickId: EPick.OVERALL,
-      },
-      {
-        pickName: "first",
-        pickId: EPick.FIRST,
-      },
-      {
-        pickName: "second",
-        pickId: EPick.SECOND,
-      },
-      {
-        pickName: "third",
-        pickId: EPick.THIRD,
-      },
+      { pickName: "overall", pickId: EPick.OVERALL },
+      { pickName: "first", pickId: EPick.FIRST },
+      { pickName: "second", pickId: EPick.SECOND },
+      { pickName: "third", pickId: EPick.THIRD },
     ];
 
     const selectedPlayedHeroes = computed<PlayedHero[]>(() => {
@@ -95,21 +85,12 @@ export default defineComponent({
       );
     });
 
-    function setSelectedHeroesPlayedPick(pick: number) {
-      selectedHeroesPlayedPick.value = pick;
-    }
-
-    function setSelectedHeroesPlayedMode(mode: EGameMode) {
-      selectedHeroesPlayedMode.value = mode;
-    }
     return {
       selectedHeroesPlayedPick,
       selectedHeroesPlayedMode,
       gameModes,
       picks,
       selectedPlayedHeroes,
-      setSelectedHeroesPlayedPick,
-      setSelectedHeroesPlayedMode,
     };
   },
 });

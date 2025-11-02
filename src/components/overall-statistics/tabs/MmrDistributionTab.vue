@@ -10,6 +10,7 @@
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.selectseason`)"
             return-object
             variant="outlined"
+            color="primary"
           />
 
           <v-select
@@ -19,6 +20,7 @@
             item-value="id"
             :label="$t(`components_overall-statistics_tabs_mmrdistributiontab.mode`)"
             variant="outlined"
+            color="primary"
             @update:model-value="gameModeChanged"
           />
         </v-card-text>
