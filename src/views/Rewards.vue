@@ -11,9 +11,10 @@
               <div class="mt-2">
                 <strong>{{ $t("views_rewards.patreon_status") }}:</strong>
                 <v-chip
-                  :color="patreonLinkStatus ? 'success' : ''"
+                  :color="patreonLinkStatus ? 'success' : 'grey'"
                   size="small"
                   class="ml-2"
+                  variant="flat"
                 >
                   {{ patreonLinkStatus ? $t("views_rewards.linked") : $t("views_rewards.not_linked") }}
                 </v-chip>
@@ -40,7 +41,7 @@
               <v-btn
                 :loading="isLinkingPatreon"
                 class="mt-2"
-                style="background-color: transparent"
+                variant="outlined"
                 @click="linkWithPatreon"
               >
                 <v-icon start>{{ mdiPatreon }}</v-icon>
@@ -51,7 +52,7 @@
               <p>{{ $t("views_rewards.patreon_linked_success") }}</p>
               <v-btn
                 color="error"
-                variant="text"
+                variant="outlined"
                 :loading="isUnlinkingPatreon"
                 class="mt-2"
                 @click="unlinkPatreon"
@@ -65,7 +66,7 @@
         <!-- Rewards Section -->
         <v-card v-if="authCode">
           <v-card-title>{{ $t("views_rewards.your_rewards") }}</v-card-title>
-          <v-card-text class="w3-gray-text">
+          <v-card-text class="bg-transparent">
             <div v-if="isLoadingRewards">
               <v-progress-circular indeterminate color="primary" />
               {{ $t("views_rewards.loading_rewards") }}
@@ -73,12 +74,12 @@
             <div v-else-if="userRewards.length === 0">
               <p>{{ $t("views_rewards.no_rewards") }}</p>
             </div>
-            <v-table v-else>
+            <v-table v-else class="bg-transparent">
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
-                    <th class="text-left" style="width: 70%">{{ $t("views_rewards.description") }}</th>
+                    <th class="w3-gray-text" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
+                    <th class="w3-gray-text" style="width: 70%">{{ $t("views_rewards.description") }}</th>
                   </tr>
                 </thead>
                 <tbody>

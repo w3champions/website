@@ -1,8 +1,8 @@
 <template>
-  <v-container class="patreon-callback">
+  <v-container>
     <v-row justify="center" align="center" class="fill-height">
       <v-col cols="12" md="6">
-        <v-card class="text-center">
+        <v-card class="text-center pt-1 pb-2">
           <v-card-title class="justify-center">
             {{ $t("views_patreon_callback.title") }}
           </v-card-title>
@@ -20,7 +20,7 @@
 
             <div v-else-if="isSuccess">
               <v-icon color="success" size="100" class="mb-4">
-                mdi-check-circle
+                {{ mdiCheckCircle }}
               </v-icon>
               <h2 class="mb-2">{{ $t("views_patreon_callback.success_title") }}</h2>
               <p>{{ $t("views_patreon_callback.success_message") }}</p>
@@ -31,7 +31,7 @@
 
             <div v-else-if="errorMessage">
               <v-icon color="error" size="100" class="mb-4">
-                mdi-alert-circle
+                {{ mdiAlertCircle }}
               </v-icon>
               <h2 class="mb-2">{{ $t("views_patreon_callback.error_title") }}</h2>
               <p>{{ errorMessage }}</p>
@@ -41,6 +41,7 @@
           <v-card-actions class="justify-center">
             <v-btn
               :disabled="isProcessing"
+              variant="outlined"
               @click="goToRewards"
             >
               {{ $t("views_patreon_callback.go_to_rewards") }}
@@ -58,6 +59,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRewardsStore } from "@/store/rewards/store";
 import { EMainRouteName } from "@/router/types";
+import { mdiCheckCircle, mdiAlertCircle } from "@mdi/js";
 
 export default defineComponent({
   name: "PatreonCallback",
@@ -145,16 +147,14 @@ export default defineComponent({
       errorMessage,
       patreonEmail,
       goToRewards,
+      mdiCheckCircle,
+      mdiAlertCircle,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.patreon-callback {
-  min-height: 100vh;
-}
-
 .fill-height {
   min-height: 50vh;
 }
