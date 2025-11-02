@@ -50,7 +50,7 @@
               </div>
             </v-row>
           </v-card-title>
-          <v-container v-if="ongoingMatch.id" class="pt-0">
+          <v-container v-if="ongoingMatch.id" class="pt-2">
             <v-row justify="center">
               <div class="d-flex justify-center" style="font-size: 0.9rem">
                 <span>Live</span>
