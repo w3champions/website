@@ -45,8 +45,15 @@ export interface ChangePortraitsDto {
 }
 
 export interface UserVisibleBanReason {
-  translationId?: string;
-  freeText?: string;
+  translationId?: string; // Translation ID corresponding to a predefined set of translations
+  freeText?: string; // Not translated message
+  inlineTranslations?: BanReasonTranslations; // Manually entered translations
+}
+
+export interface BanReasonTranslations {
+  en: string;
+  cn: string;
+  es: string;
 }
 
 export interface BannedPlayer {
