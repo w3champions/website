@@ -1,6 +1,4 @@
 import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 import TrovoIcon from "@/components/player/TrovoIcon.vue";
 import LiquipediaIcon from "@/components/player/LiquipediaIcon.vue";
@@ -11,8 +9,6 @@ import { nightelf } from "./nightelf";
 import { undead } from "./undead";
 
 export const vuetify = createVuetify({
-  components,
-  directives,
   theme: {
     defaultTheme: "human",
     variations: {
