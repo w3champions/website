@@ -65,7 +65,6 @@
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
-    "deepmerge": "^4.2.2",
     "dotenv": "^16.0.3",
     "dprint": "^0.47.2",
     "eslint": "^8.57.1",

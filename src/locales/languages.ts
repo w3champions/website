@@ -1,6 +1,7 @@
-import deepmerge from "deepmerge";
+import merge from "lodash/merge";
 import localizationData from "./data";
 import en from "./en";
 
-const languages = deepmerge(localizationData, { en });
+const languages = merge(localizationData, { en });
+
 export default languages;
