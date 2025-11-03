@@ -159,6 +159,9 @@ import languages from "@/locales/languages";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
 import { useTheme } from "vuetify";
+import { battleTagToName } from "./helpers/profile";
+import { EMainRouteName } from "@/router/types";
+import LocaleIcon from "@/components/common/LocaleIcon.vue";
 
 import {
   mdiAccountCircle,
@@ -174,8 +177,6 @@ import {
   mdiTrophy,
   mdiViewList,
 } from "@mdi/js";
-import { battleTagToName } from "./helpers/profile";
-import { EMainRouteName } from "@/router/types";
 
 export type ItemType = {
   title: string;
@@ -190,6 +191,7 @@ export default defineComponent({
     BrandLogo,
     SignInDialog,
     GlobalSearch,
+    LocaleIcon,
   },
   setup() {
     const { locale } = useI18n();

@@ -31,6 +31,7 @@ import { Ranking } from "@/store/ranking/types";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { ERaceEnum } from "@/store/types";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
 type RankingsRaceDistributionData = {
   race: number;
@@ -40,6 +41,9 @@ type RankingsRaceDistributionData = {
 
 export default defineComponent({
   name: "RankingsRaceDistribution",
+  components: {
+    RaceIcon
+  },
   props: {
     rankings: {
       type: Array<Ranking>,
