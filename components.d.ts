@@ -214,6 +214,7 @@ declare module 'vue' {
     VResponsive: typeof import('vuetify/components')['VResponsive']
     VRow: typeof import('vuetify/components')['VRow']
     VSelect: typeof import('vuetify/components')['VSelect']
+    VSheet: typeof import('vuetify/components')['VSheet']
     VSkeletonLoader: typeof import('vuetify/components')['VSkeletonLoader']
     VSnackbar: typeof import('vuetify/components')['VSnackbar']
     VSpacer: typeof import('vuetify/components')['VSpacer']
