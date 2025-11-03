@@ -15,6 +15,54 @@
       item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"
     >
+      <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
+        <v-btn
+          :append-icon="isExpanded(internalItem) ? mdiChevronUp : mdiChevronDown"
+          :text="isExpanded(internalItem) ? 'Hide' : 'Show'"
+          color="medium-emphasis"
+          size="small"
+          variant="text"
+          width="90"
+          border
+          slim
+          @click="toggleExpand(internalItem)"
+        />
+      </template>
+      <template v-slot:expanded-row="{ columns, item }">
+        <tr>
+          <td :colspan="columns.length" class="py-2">
+            <v-sheet rounded="lg" border>
+              <v-table density="compact">
+                <tbody class="bg-surface-light">
+                  <tr>
+                    <th class="w-50">Ban Reason</th>
+                    <th>User-Visible Ban Reason</th>
+                  </tr>
+                </tbody>
+
+                <tbody>
+                  <tr>
+                    <td class="py-2">{{ item.banReason }}</td>
+                    <td class="py-2">{{ getUserVisibleBanReasonText(item) }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-sheet>
+          </td>
+        </tr>
+      </template>
+      <template v-slot:[`item.gameModesText`]="{ item }">
+        <td v-if="!isEmpty(item.gameModes)">
+          <div v-for="(id, index) in item.gameModes" :key="`${id}-${index}`">{{ getGameModeName(id) }}</div>
+        </td>
+        <td v-else>All</td>
+      </template>
+      <template v-slot:[`item.banReason`]="{ item }">
+        <div class="text-truncate" style="width: 15vw;">{{ item.banReason }}</div>
+      </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
+      </template>
       <template v-slot:top>
         <div class="d-flex align-center px-4">
           <div class="w-50">
@@ -177,18 +225,6 @@
           </v-dialog>
         </div>
       </template>
-      <template v-slot:[`item.gameModesText`]="{ item }">
-        <td v-if="!isEmpty(item.gameModes)">
-          <div v-for="(id, index) in item.gameModes" :key="`${id}-${index}`">{{ getGameModeName(id) }}</div>
-        </td>
-        <td v-else>All</td>
-      </template>
-      <template v-slot:[`item.userVisibleBanReasonText`]="{ item }">
-        <td>{{ getUserVisibleBanReasonText(item) }}</td>
-      </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-icon size="small" @click="deleteItem(item)">{{ mdiDelete }}</v-icon>
-      </template>
     </v-data-table-server>
   </div>
 </template>
@@ -202,7 +238,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { usePlayerSearchStore } from "@/store/playerSearch/store";
-import { mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
+import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
 import { TranslateResult, useI18n } from "vue-i18n";
@@ -422,8 +458,8 @@ export default defineComponent({
       { title: "Game modes", value: "gameModesText", sortable: false, width: "10vw" },
       { title: "IP ban", value: "isIpBan", sortable: false, width: "5vw" },
       { title: "Author", value: "author", sortable: true, width: "10vw" },
-      { title: "Ban reason", value: "banReason", sortable: false },
-      { title: "User-Visible Ban Reason", value: "userVisibleBanReasonText", sortable: false, width: "15vw" },
+      { title: "Ban reason", value: "banReason", width: "15vw", nowrap: true, sortable: false },
+      { title: "Reasons", key: "data-table-expand", align: "center" },
       { title: "Actions", value: "actions", sortable: false, width: "1vw", align: "center" },
     ];
 
@@ -461,6 +497,8 @@ export default defineComponent({
       selectedTranslationId,
       userVisibleFreeText,
       translationItems,
+      mdiChevronDown,
+      mdiChevronUp,
     };
   },
 });
