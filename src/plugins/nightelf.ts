@@ -10,6 +10,9 @@ export const nightelf = {
     "w3-race-bg": "#0d0718",
     lost: colors.red.accent2,
   },
+  variables: {
+    "hover-opacity": 0.08,
+  },
 };
 
 // Old color classes for reference:

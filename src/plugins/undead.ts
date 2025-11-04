@@ -10,6 +10,9 @@ export const undead = {
     "w3-race-bg": colors.shades.black,
     lost: colors.red.accent2,
   },
+  variables: {
+    "hover-opacity": 0.08,
+  },
 };
 
 // Vuetify 2 color classes for reference:

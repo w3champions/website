@@ -10,6 +10,9 @@ export const orc = {
     "w3-race-bg": "#c7baa1",
     lost: "#BF0025",
   },
+  variables: {
+    "hover-opacity": 0.08,
+  },
 };
 
 // Vuetify 2 color classes for reference:

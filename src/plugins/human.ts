@@ -18,6 +18,7 @@ export const human = {
     // "disabled-opacity": 0.38,
     // "idle-opacity": 0.04,
     // "hover-opacity": 0.04,
+    "hover-opacity": 0.08,
     // "focus-opacity": 0.12,
     // "selected-opacity": 0.08,
     // "activated-opacity": 0.12,
