@@ -2,7 +2,7 @@
   <div class="elevation-1">
     <table class="custom-table">
       <thead>
-        <tr class="text-medium-emphasis">
+        <tr class="w3-mid-emphasis">
           <td
             v-for="header in headers"
             :key="header.name"
