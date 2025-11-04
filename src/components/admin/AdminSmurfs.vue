@@ -16,6 +16,7 @@
                 :items="[1, 2, 3, 4, 5]"
                 label="Search depth"
                 variant="outlined"
+                color="primary"
                 density="compact"
                 hide-details
                 width="150"
@@ -43,6 +44,7 @@
                 :items="availableIdentifierTypes"
                 label="Identifier Type"
                 variant="outlined"
+                color="primary"
                 density="compact"
                 hide-details
                 disabled
@@ -96,7 +98,7 @@
               <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
               <v-spacer />
-              <v-btn @click="goToProfile(battleTag)">Go to profile</v-btn>
+              <v-btn variant="text" border @click="goToProfile(battleTag)">Go to profile</v-btn>
             </div>
           </v-list-item>
         </v-list>
