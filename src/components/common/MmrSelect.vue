@@ -7,7 +7,7 @@
       </v-btn>
     </template>
     <v-card class="px-2">
-      <div class="w3-gray-text pt-2 pl-1">{{ $t('components_common_mmrselect.selectmmr') }}</div>
+      <div class="text-medium-emphasis pt-2 pl-1">{{ $t('components_common_mmrselect.selectmmr') }}</div>
       <v-card-text>
         <v-range-slider
           v-model="currentMinMax"

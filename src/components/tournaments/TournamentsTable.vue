@@ -7,7 +7,7 @@
     :items-per-page="-1"
     :row-props="itemStyle"
     :hide-default-footer="true"
-    :header-props="{ class: ['w3-gray-text', 'font-weight-bold', 'w3-font-size-small'] }"
+    :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold', 'w3-font-size-small'] }"
     @click:row="onRowClick"
   >
     <template v-slot:[`item.startDateTime`]="{ item }">

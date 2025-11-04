@@ -88,3 +88,26 @@ export default vuetify;
 //     "bottom-navigation": "var(--v-w3-race-bg-base)",
 //   },
 // },
+
+// Some default vuetify typography variables:
+// Read more here: https://vuetifyjs.com/en/styles/text-and-typography
+
+// Light mode:
+// disabled
+// rgba(0, 0, 0, 0.38) / #00000061
+
+// medium-emphasis
+// rgba(0, 0, 0, 0.6) / #00000099
+
+// high-emphasis
+// rgba(0, 0, 0, 0.87) / #000000de
+
+// Dark mode:
+// disabled
+// rgba(255, 255, 255, 0.5) / #ffffff80
+
+// medium-emphasis
+// rgba(255, 255, 255, 0.7) / #ffffffb3
+
+// high-emphasis
+// rgba(255, 255, 255) / #FFFFFF

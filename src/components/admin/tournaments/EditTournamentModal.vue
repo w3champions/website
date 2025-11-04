@@ -45,7 +45,7 @@
               format="24hr"
             />
           </div>
-          <div class="mt-4 w3-gray-text">
+          <div class="mt-4 text-medium-emphasis">
             Map Pool
           </div>
           <v-row class="mt-0 mb-0">
@@ -57,7 +57,7 @@
                 :value="map.id"
                 hide-details
                 color="primary"
-                class="w3-gray-text"
+                class="text-medium-emphasis"
                 density="compact"
               />
             </v-col>

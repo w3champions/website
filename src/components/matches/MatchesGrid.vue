@@ -8,11 +8,11 @@
               v-for="header in headers"
               :key="header.name"
               :style="header.style"
-              class="w3-gray-text"
+              class="text-medium-emphasis"
             >
               {{ header.text }}
             </td>
-            <td v-if="!unfinished" class="text-center w3-gray-text">
+            <td v-if="!unfinished" class="text-center text-medium-emphasis">
               {{ $t("components_matches_matchesgrid.replay") }}
             </td>
           </tr>

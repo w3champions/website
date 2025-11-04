@@ -28,14 +28,14 @@
           <gateway-select @gatewayChanged="gatewayChanged" />
         </v-card-text>
 
-        <v-card-text class="w3-gray-text">
+        <v-card-text class="text-medium-emphasis">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
           <div>{{ standardDeviation }}</div>
         </v-card-text>
-        <v-card-text class="w3-gray-text">
+        <v-card-text class="text-medium-emphasis">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
         </v-card-text>
-        <v-card-text v-if="authCode" class="w3-gray-text">
+        <v-card-text v-if="authCode" class="text-medium-emphasis">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.greenbardesc") }}
         </v-card-text>
       </v-col>

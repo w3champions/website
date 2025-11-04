@@ -2,7 +2,7 @@
   <div class="elevation-1">
     <table class="custom-table">
       <thead>
-        <tr class="w3-gray-text">
+        <tr class="text-medium-emphasis">
           <td
             v-for="header in headers"
             :key="header.name"
@@ -29,7 +29,7 @@
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag(),
-            'w3-gray-text': true,
+            'text-medium-emphasis': true,
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>

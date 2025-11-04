@@ -19,12 +19,12 @@
           />
           <v-switch
             v-model="normalizedGamesPerDay"
-            class="mt-2 normalizedSwitch w3-gray-text"
+            class="mt-2 normalizedSwitch text-medium-emphasis"
             color="primary"
             :label="$t(`components_overall-statistics_tabs_playeractivitytab.normalized`)"
             @update:model-value="setNormalizedGamesPerDay!"
           />
-          <div v-if="normalizedGamesPerDay" class="w3-gray-text">
+          <div v-if="normalizedGamesPerDay" class="text-medium-emphasis">
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc1") }}
             <br />
             {{ $t("components_overall-statistics_tabs_playeractivitytab.gamemodedesc2") }}
@@ -106,7 +106,7 @@
             @update:model-value="setSelectedPopularHourMode"
           />
         </v-card-text>
-        <div class="pl-4 w3-gray-text">
+        <div class="pl-4 text-medium-emphasis">
           Graph adjusted to your timezone
         </div>
       </v-col>
@@ -192,7 +192,7 @@
         </v-card-text>
       </v-col>
       <v-col cols="12" md="10">
-        <v-card-text class="w3-gray-text">
+        <v-card-text class="text-medium-emphasis">
           {{ race1String }} vs {{ race2String }}
           <matchup-length-bar-chart />
         </v-card-text>

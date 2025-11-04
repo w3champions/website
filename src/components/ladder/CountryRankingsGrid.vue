@@ -2,7 +2,7 @@
   <div class="elevation-1">
     <table v-for="countryRank in rankings" :key="countryRank.league" class="custom-table">
       <thead>
-        <tr class="text-uppercase font-weight-bold w3-gray-text">
+        <tr class="text-uppercase font-weight-bold text-medium-emphasis">
           <td
             v-if="leagueMap.get(countryRank.league)"
             colspan="100%"
@@ -20,11 +20,11 @@
         </tr>
       </thead>
       <thead>
-        <tr class="w3-gray-text">
+        <tr class="text-medium-emphasis">
           <td
             v-for="(header, index) in headers"
             :key="index"
-            class="w3-gray-text"
+            class="text-medium-emphasis"
             :style="{
               width: header.width,
               'min-width': header.minWidth,
@@ -39,7 +39,7 @@
           v-for="item in countryRank.ranks"
           :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
-          class="w3-gray-text"
+          class="text-medium-emphasis"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td>

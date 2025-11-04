@@ -16,7 +16,7 @@
               <div>
                 <v-data-table
                   hide-default-footer
-                  :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                  :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
                 >
                   <template v-slot:default>
                     <thead>

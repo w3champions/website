@@ -32,16 +32,16 @@
     background-color: transparent;
   }
 
-  .w3-gray-text {
-    color: rgba(black, 0.75); // #000000DE
-  }
-
   .w3-tooltip {
     color: rgb(var(--v-theme-secondary-darken-1));
     background-color: rgb(var(--v-theme-w3-race-bg-lighten-1));
   }
 
   .w3-gray-gold-text {
-    color: rgba(black, 0.54);  // #0000008A
+    color: rgba(black, 0.54);  // #0000008a
   }
+  
+  // .w3-gray-text {
+  //   color: rgba(black, 0.75); // #000000bf
+  // }
 }

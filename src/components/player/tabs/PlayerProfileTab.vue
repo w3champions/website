@@ -41,7 +41,7 @@
                 hide-default-footer
                 :headers="raceHeaders"
                 :items="selectedRaceStats"
-                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
               >
                 <template v-slot:item.race="{ item }">
                   <span><race-icon :race="item.race" /></span>

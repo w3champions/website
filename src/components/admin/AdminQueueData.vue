@@ -22,7 +22,7 @@
                   :items-per-page="-1"
                   :disable-pagination="true"
                   :hide-default-footer="true"
-                  :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                  :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
                 />
               </div>
               <div v-else>No Data found.</div>

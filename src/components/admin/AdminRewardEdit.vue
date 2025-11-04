@@ -49,7 +49,7 @@
               <v-card-text>
                 <div><strong>Name:</strong> {{ getRewardName(localReward.displayId) }}</div>
                 <div><strong>Description:</strong> {{ getRewardDescription(localReward.displayId) }}</div>
-                <div v-if="!hasTranslation(localReward.displayId)" class="w3-gray-text mt-2">
+                <div v-if="!hasTranslation(localReward.displayId)" class="text-medium-emphasis mt-2">
                   <v-icon size="small" color="warning">mdi-alert</v-icon>
                   No translation found for display ID "{{ localReward.displayId }}"
                 </div>
@@ -120,7 +120,7 @@
         <v-row>
           <v-col cols="12">
             <v-list-subheader>Duration Settings</v-list-subheader>
-            <v-radio-group v-model="durationType" inline class="w3-gray-text">
+            <v-radio-group v-model="durationType" inline class="text-medium-emphasis">
               <v-radio label="Permanent" value="permanent" />
               <v-radio label="Time Limited" value="limited" />
             </v-radio-group>

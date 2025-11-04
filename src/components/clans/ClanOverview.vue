@@ -40,7 +40,7 @@
               <v-row class="justify-space-between align-center" no-gutters>
                 <v-col class="pa-0">
                   <clan-role-icon :role="roleEnums.ChiefTain" />
-                  <span class="cursor-pointer w3-gray-text" @click="goToPlayer(playersClan.chiefTain)">
+                  <span class="cursor-pointer text-medium-emphasis" @click="goToPlayer(playersClan.chiefTain)">
                     {{ battleTagToName(playersClan.chiefTain) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)" content-class="w3-tooltip elevation-1">
@@ -62,7 +62,7 @@
               <v-row class="justify-space-between align-center" no-gutters>
                 <v-col>
                   <clan-role-icon :role="roleEnums.Shaman" />
-                  <span class="cursor-pointer w3-gray-text" @click="goToPlayer(shaman)">
+                  <span class="cursor-pointer text-medium-emphasis" @click="goToPlayer(shaman)">
                     {{ battleTagToName(shaman) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)" content-class="w3-tooltip elevation-1">
@@ -92,7 +92,7 @@
               <v-row class="justify-space-between align-center" no-gutters>
                 <v-col>
                   <clan-role-icon :role="roleEnums.Member" />
-                  <span class="cursor-pointer w3-gray-text" @click="goToPlayer(member)">
+                  <span class="cursor-pointer text-medium-emphasis" @click="goToPlayer(member)">
                     {{ battleTagToName(member) }}
                   </span>
                   <v-tooltip location="top" :disabled="!getLeagueOrder(member)" content-class="w3-tooltip elevation-1">
@@ -124,7 +124,7 @@
         <table class="custom-table">
           <tr v-for="member in playersClan.foundingFathers" :key="member">
             <td>
-              <span class="cursor-pointer w3-gray-text" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
+              <span class="cursor-pointer text-medium-emphasis" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
             </td>
           </tr>
         </table>

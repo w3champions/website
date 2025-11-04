@@ -5,7 +5,7 @@
     :items="gameModeStatsCombined"
     :mobile-breakpoint="400"
     :items-per-page="-1"
-    :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+    :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
   >
     <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ column }">
       <v-tooltip :key="h.title" location="top">

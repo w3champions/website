@@ -12,7 +12,7 @@
       :sort-by="[{ key: 'createdAt', order: 'desc' }]"
       :search="tableSearch"
       class="elevation-1"
-      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
     >
       <template v-slot:top>
         <div class="d-flex align-center px-4">
@@ -53,7 +53,7 @@
       <template v-slot:item.translatedName="{ item }">
         <div>
           <strong>{{ getRewardName(item.displayId) }}</strong>
-          <div v-if="!hasTranslation(item.displayId)" class="w3-gray-text text-caption">
+          <div v-if="!hasTranslation(item.displayId)" class="text-medium-emphasis text-caption">
             <v-icon size="small" color="warning">mdi-alert</v-icon>
             No translation
           </div>
@@ -70,7 +70,7 @@
         <span v-if="item.duration">
           {{ formatDuration(item.duration) }}
         </span>
-        <span v-else class="w3-gray-text">Permanent</span>
+        <span v-else class="text-medium-emphasis">Permanent</span>
       </template>
 
       <template v-slot:item.assignmentStats="{ item }">
