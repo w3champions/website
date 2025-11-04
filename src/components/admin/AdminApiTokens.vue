@@ -150,7 +150,7 @@
 
           <v-divider class="my-4" />
 
-          <div class="text-h6 mb-3 w3-gray-text">
+          <div class="text-h6 mb-3 text-medium-emphasis">
             Scopes & Rate Limits
             <v-btn
               color="primary"
@@ -275,8 +275,8 @@
           <v-alert type="warning" density="compact" class="mb-3">
             Regenerating this token will invalidate the current token value.
           </v-alert>
-          <p class="text-body-1 w3-gray-text">Are you sure you want to regenerate the token "{{ tokenToRegenerate?.name }}"?</p>
-          <p class="text-body-1 w3-gray-text">Any applications using the current token will stop working until updated with the new token.</p>
+          <p class="text-body-1 text-medium-emphasis">Are you sure you want to regenerate the token "{{ tokenToRegenerate?.name }}"?</p>
+          <p class="text-body-1 text-medium-emphasis">Any applications using the current token will stop working until updated with the new token.</p>
         </v-card-text>
         <v-card-actions>
           <v-spacer />

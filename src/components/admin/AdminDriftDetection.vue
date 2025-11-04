@@ -13,7 +13,7 @@ J<template>
           </v-card-title>
           <v-card-text>
             <div v-if="!lastResult">
-              <p class="w3-gray-text">No drift detection has been run yet.</p>
+              <p class="text-medium-emphasis">No drift detection has been run yet.</p>
             </div>
             <div v-else>
               <v-row>
@@ -108,7 +108,7 @@ J<template>
           </v-card-title>
           <v-card-text>
             <div v-if="!reconciliationResult">
-              <p class="w3-gray-text">No reconciliation has been run yet.</p>
+              <p class="text-medium-emphasis">No reconciliation has been run yet.</p>
             </div>
             <div v-else>
               <v-row>
@@ -314,7 +314,7 @@ J<template>
               </v-btn>
 
               <v-card v-if="showSyncDetails" border class="mt-2 pa-3">
-                <div class="w3-gray-text mb-2">Processed Associations ({{ syncResult.processedAssociations.length }}):</div>
+                <div class="text-medium-emphasis mb-2">Processed Associations ({{ syncResult.processedAssociations.length }}):</div>
                 <div class="text-body-2">
                   <div v-for="(association, index) in syncResult.processedAssociations" :key="index" class="mb-1">
                     • {{ association }}
@@ -344,7 +344,7 @@ J<template>
                 :items="lastResult.details.missingMembers"
                 :items-per-page="10"
                 class="elevation-0"
-                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
               >
                 <template v-slot:item.entitledTierIds="{ item }">
                   <v-chip
@@ -373,7 +373,7 @@ J<template>
                 :items="lastResult.details.extraAssignments"
                 :items-per-page="10"
                 class="elevation-0"
-                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
               />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -391,7 +391,7 @@ J<template>
                 :items="lastResult.details.mismatchedTiers"
                 :items-per-page="10"
                 class="elevation-0"
-                :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+                :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
               />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -429,7 +429,7 @@ J<template>
               :items="reconciliationDetailsItems"
               :items-per-page="10"
               class="elevation-0"
-              :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+              :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
             >
               <template v-slot:item.action="{ item }">
                 <v-chip

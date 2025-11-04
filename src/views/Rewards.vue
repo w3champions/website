@@ -5,7 +5,7 @@
         <!-- Account Information -->
         <v-card class="mb-4">
           <v-card-title>{{ $t("views_rewards.account_info") }}</v-card-title>
-          <v-card-text class="w3-gray-text">
+          <v-card-text class="w3-mid-emphasis">
             <div v-if="authCode">
               <strong>{{ $t("views_rewards.battlenet_account") }}:</strong> {{ battleTag }}
               <div class="mt-2">
@@ -35,7 +35,7 @@
         <!-- Patreon Linking Section -->
         <v-card v-if="authCode" class="mb-4">
           <v-card-title>{{ $t("views_rewards.patreon_linking") }}</v-card-title>
-          <v-card-text class="w3-gray-text">
+          <v-card-text class="w3-mid-emphasis">
             <div v-if="!patreonLinkStatus">
               <p>{{ $t("views_rewards.patreon_description") }}</p>
               <v-btn
@@ -78,8 +78,8 @@
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="w3-gray-text" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
-                    <th class="w3-gray-text" style="width: 70%">{{ $t("views_rewards.description") }}</th>
+                    <th class="text-medium-emphasis" style="width: 30%">{{ $t("views_rewards.reward_name") }}</th>
+                    <th class="text-medium-emphasis" style="width: 70%">{{ $t("views_rewards.description") }}</th>
                   </tr>
                 </thead>
                 <tbody>

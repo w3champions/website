@@ -73,7 +73,7 @@
             :items="filteredUsers"
             :items-per-page="10"
             class="elevation-1"
-            :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+            :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
           >
             <template v-slot:item.userId="{ item }">
               <div class="font-weight-medium">{{ item.userId }}</div>
@@ -104,7 +104,7 @@
 
             <template v-slot:item.expiresAt="{ item }">
               <div v-if="item.expiresAt">{{ formatDate(item.expiresAt) }}</div>
-              <div v-else class="w3-gray-text">Permanent</div>
+              <div v-else class="text-medium-emphasis">Permanent</div>
             </template>
 
             <template v-slot:item.revocationReason="{ item }">
@@ -112,12 +112,12 @@
                 <v-icon size="small" color="warning" class="mr-1">mdi-information-outline</v-icon>
                 {{ getRevocationReason(item) }}
               </div>
-              <div v-else class="w3-gray-text text-center">—</div>
+              <div v-else class="text-medium-emphasis text-center">—</div>
             </template>
           </v-data-table>
         </div>
 
-        <div v-else class="text-center pa-4 w3-gray-text">
+        <div v-else class="text-center pa-4 text-medium-emphasis">
           <v-icon color="grey" size="64" class="mb-2">{{ mdiAccountOff }}</v-icon>
           <div>No users found</div>
         </div>

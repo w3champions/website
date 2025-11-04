@@ -10,7 +10,7 @@
         :items="productMappings"
         :items-per-page="10"
         class="elevation-0"
-        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+        :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <div class="d-flex align-center pa-4">
@@ -48,9 +48,9 @@
           <div>
             <div v-for="rewardId in item.rewardIds" :key="rewardId" class="mb-1">
               <div class="font-weight-medium">{{ getRewardName(rewardId) }}</div>
-              <div class="text-caption w3-gray-text">{{ rewardId }}</div>
+              <div class="text-caption text-medium-emphasis">{{ rewardId }}</div>
             </div>
-            <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption w3-gray-text">No rewards assigned</div>
+            <div v-if="!item.rewardIds || item.rewardIds.length === 0" class="text-caption text-medium-emphasis">No rewards assigned</div>
           </div>
         </template>
 

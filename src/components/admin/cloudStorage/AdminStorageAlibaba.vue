@@ -13,7 +13,7 @@
         :search="tableSearch"
         :loading="isLoadingFiles"
         loading-text="Loading... Please wait"
-        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+        :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       >
         <template v-slot:top>
           <div class="d-flex align-center px-4">
