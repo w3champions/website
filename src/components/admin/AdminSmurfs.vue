@@ -50,28 +50,16 @@
                 disabled
                 style="max-width: 150px;"
               />
-              <!-- Autocomplete Btag search -->
-              <v-autocomplete
-                v-model="searchPlayerModel"
-                v-model:search="search"
-                menu-icon=""
-                :append-inner-icon="mdiMagnify"
-                label="Search..."
-                clearable
-                :items="searchedPlayers"
-                bg-color="transparent"
-                return-object
-                autofocus
-                glow
-                color="primary"
-                icon-color="primary"
-                class="ml-4 mr-4 w3-autocomplete"
-                variant="underlined"
-                autocomplete="off"
-                @click:clear="revertToDefault"
-              />
+              <div class="w-100 px-5">
+                <player-search
+                  ref="playerSearchComponent"
+                  :hideDetails="false"
+                  @playerFound="playerFound"
+                  @searchCleared="searchCleared"
+                />
+              </div>
               <v-btn
-                :disabled="!searchPlayerModel"
+                :disabled="!selectedPlayer"
                 @click="executeSearch"
               >
                 Search
@@ -80,7 +68,7 @@
           </v-row>
         </v-card-text>
       </v-card>
-      <v-card v-if="showSmurfResults && smurfResults">
+      <v-card v-if="smurfResults">
         <v-card-title>Smurfs:</v-card-title>
         <v-list>
           <v-list-item v-for="battleTag in smurfResults.connectedBattleTags" :key="battleTag">
@@ -183,10 +171,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch, onMounted } from "vue";
+import { computed, defineComponent, ref, onMounted, useTemplateRef } from "vue";
 import { useAdminStore } from "@/store/admin/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
-import { mdiMagnify } from "@mdi/js";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRouter } from "vue-router";
 import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
@@ -194,32 +180,32 @@ import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsT
 import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
+import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
 export default defineComponent({
   name: "AdminSmurfs",
   components: {
     SmurfBattleTagDetailsTable,
     ModerationStatusBadges,
+    PlayerSearch,
   },
   setup() {
     const router = useRouter();
     const adminStore = useAdminStore();
-    const playerSearchStore = usePlayerSearchStore();
     const oauthStore = useOauthStore();
 
-    const searchPlayerModel = ref<string>();
-    const search = ref<string>("");
-    const showSmurfResults = ref<boolean>(false);
     const showExplanation = ref<boolean>(false);
-    const oldSearchTerm = ref<string>("");
     const smurfResults = ref<SmurfDetectionResult>();
     const generateExplanation = ref<boolean>(false);
     const searchDepth = ref<number>(1);
     const selectedIdentifierType = ref<string>("battleTag");
     const availableIdentifierTypes = ref<string[]>(["battleTag"]);
     const loadingModerationStatus = ref<boolean>(false);
+    const selectedPlayer = ref<string>("");
 
-    const searchedPlayers = computed<string[]>(() => playerSearchStore.searchedPlayers.map((player) => player.battleTag));
+    type PlayerSearchType = InstanceType<typeof PlayerSearch>;
+    const playerSearchRef = useTemplateRef<PlayerSearchType>("playerSearchComponent");
+
     const permissions = computed<string[]>(() => oauthStore.permissions);
     const canSeeSmurfCheckerQueryExplanation = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQueryExplanation]));
     const hasModerationPermission = computed(() => permissions.value.includes(EPermission[EPermission.Moderation]));
@@ -235,28 +221,21 @@ export default defineComponent({
     }
 
     function searchSmurfsFromClick(bTag: string) {
-      selectedIdentifierType.value = "battleTag";
-      searchPlayerModel.value = bTag;
-      search.value = bTag;
+      selectedPlayer.value = bTag;
       executeSearch();
-    }
 
-    function revertToDefault(): void {
-      showSmurfResults.value = false;
-      oldSearchTerm.value = "";
-      playerSearchStore.clearPlayerSearch();
-      smurfResults.value = undefined;
+      if (playerSearchRef.value) {
+        playerSearchRef.value.selected = bTag;
+      }
     }
 
     async function executeSearch(): Promise<void> {
-      if (!searchPlayerModel.value) return;
-      if (selectedIdentifierType?.value != "battleTag") return; // Only battle tags are searchable
+      if (!selectedPlayer.value) return;
+      if (selectedIdentifierType.value != "battleTag") return; // Only battle tags are searchable
 
-      smurfResults.value = await adminStore.querySmurfsForIdentifier(selectedIdentifierType.value, searchPlayerModel.value, searchDepth.value, generateExplanation.value);
+      smurfResults.value = await adminStore.querySmurfsForIdentifier(selectedIdentifierType.value, selectedPlayer.value, searchDepth.value, generateExplanation.value);
 
       if ((smurfResults.value != null || undefined) && smurfResults.value.connectedBattleTags.length > 0) {
-        showSmurfResults.value = true;
-
         // Load moderation data if user has permission
         if (hasModerationPermission.value) {
           loadingModerationStatus.value = true;
@@ -266,35 +245,23 @@ export default defineComponent({
             loadingModerationStatus.value = false;
           }
         }
-      } else {
-        showSmurfResults.value = false;
       }
     }
-
-    watch(search, onSearchChanged);
 
     onMounted(async () => {
       availableIdentifierTypes.value = await adminStore.getSmurfIdentifierTypes();
     });
 
-    function onSearchChanged(newValue: string): void {
-      if (newValue && newValue.length > 2 && newValue !== oldSearchTerm.value) {
-        playerSearchStore.searchBnetTag({
-          searchText: newValue,
-        });
-        oldSearchTerm.value = newValue;
-      } else {
-        revertToDefault();
-      }
+    function playerFound(bTag: string): void {
+      selectedPlayer.value = bTag;
+    }
+
+    function searchCleared(): void {
+      selectedPlayer.value = "";
+      smurfResults.value = undefined;
     }
 
     return {
-      mdiMagnify,
-      searchPlayerModel,
-      searchedPlayers,
-      search,
-      revertToDefault,
-      showSmurfResults,
       smurfResults,
       searchSmurfsFromClick,
       goToProfile,
@@ -308,6 +275,9 @@ export default defineComponent({
       canSeeSmurfCheckerQueryExplanation,
       hasModerationPermission,
       loadingModerationStatus,
+      playerFound,
+      searchCleared,
+      selectedPlayer,
     };
   },
 });

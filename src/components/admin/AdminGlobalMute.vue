@@ -147,7 +147,6 @@ import { GloballyMutedPlayer, GlobalMute } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiMagnify, mdiDelete } from "@mdi/js";
 import { DataTableHeader } from "vuetify";
 import { formatTimestampString } from "@/helpers/date-functions";
@@ -160,7 +159,6 @@ export default defineComponent({
   setup() {
     const adminStore = useAdminStore();
     const oauthStore = useOauthStore();
-    const playerSearchStore = usePlayerSearchStore();
 
     const dateMenu = ref<boolean>(false);
     const dialog = ref<boolean>(false);
@@ -231,7 +229,6 @@ export default defineComponent({
       // Only trigger on dialog close, not dialog open
       if (!dialog.value) {
         searchCleared();
-        playerSearchStore.clearPlayerSearch();
       }
     }
 
