@@ -39,7 +39,7 @@
           v-for="item in countryRank.ranks"
           :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
-          class="text-medium-emphasis"
+          class="w3-mid-emphasis"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>
           <td>

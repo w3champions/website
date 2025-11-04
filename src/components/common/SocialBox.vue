@@ -1,6 +1,6 @@
 <template>
   <v-card tile class="socials-card">
-    <v-card-text class="text-center text-medium-emphasis">
+    <v-card-text class="text-center w3-mid-emphasis">
       {{ $t("views_home.joinus") }}
     </v-card-text>
 
@@ -16,7 +16,7 @@
       <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
     </v-card>
 
-    <v-card-text class="text-center text-medium-emphasis">
+    <v-card-text class="text-center w3-mid-emphasis">
       {{ $t("views_home.socialmedia") }}
     </v-card-text>
 

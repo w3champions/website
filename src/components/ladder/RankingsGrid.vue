@@ -29,7 +29,7 @@
           :key="item.player.id"
           :class="{
             searchedItem: item.player.id === selectedRankBattleTag(),
-            'text-medium-emphasis': true,
+            'w3-mid-emphasis': true,
           }"
         >
           <td class="number-text">{{ item.rankNumber }}.</td>

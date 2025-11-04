@@ -1,6 +1,6 @@
 <template>
   <v-card class="support-card" tile>
-    <v-card-text class="text-center text-medium-emphasis">
+    <v-card-text class="text-center w3-mid-emphasis">
       {{ $t("views_home.supportus") }}
     </v-card-text>
 

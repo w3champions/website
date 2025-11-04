@@ -1,6 +1,6 @@
 <template>
   <v-card tile class="socials-card">
-    <v-card-text class="text-center text-medium-emphasis" style="opacity: 0.87">
+    <v-card-text class="text-center w3-mid-emphasis">
       {{ $t("views_home.partners") }}
     </v-card-text>
     <v-card
