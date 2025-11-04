@@ -2,8 +2,9 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn
-        :tile="!isPlayerMatchesTab"
-        :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
+        v-if="isPlayerMatchesTab"
+        tile
+        class="is-player-matches-tab"
         color="medium-emphasis"
         variant="text"
         border="sm opacity-25"
@@ -11,6 +12,14 @@
         height="56"
         active-color="primary"
         :active="!!selectedHeroes.length"
+        v-bind="props"
+      >
+        <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>
+        {{ selectedText }}
+      </v-btn>
+      <v-btn
+        v-else
+        style="background-color: transparent"
         v-bind="props"
       >
         <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>
