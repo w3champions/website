@@ -34,7 +34,7 @@
             </v-carousel>
           </v-card-text>
           <v-card-title>{{ $t("views_home.hometitle") }}</v-card-title>
-          <v-card-text class="w3-gray-text">
+          <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
                 {{ $t("views_home.homebody1") }}

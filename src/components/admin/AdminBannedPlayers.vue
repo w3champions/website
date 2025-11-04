@@ -10,7 +10,7 @@
       :search="tableSearch"
       :items-length="bannedPlayersCount"
       :options="bannedPlayersTableOptions"
-      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       :sort-by="[{ key: bannedPlayersTableOptions.sortBy[0]?.key, order: bannedPlayersTableOptions.sortBy[0]?.order }]"
       item-value="banInsertDate"
       @update:options="onTableOptionsUpdate"

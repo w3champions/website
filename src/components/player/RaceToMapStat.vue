@@ -7,7 +7,7 @@
       hide-default-footer
       :mobile-breakpoint="400"
       :hidden="stats.length === 0"
-      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
     >
       <template v-slot:body>
         <tr v-for="item in sortedStats" :key="item.mapName || item.map">

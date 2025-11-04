@@ -7,7 +7,7 @@
       :headers="headers"
       :items="banReasonTranslations"
       :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
-      :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+      :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       class="elevation-1"
       item-key="_id"
     >

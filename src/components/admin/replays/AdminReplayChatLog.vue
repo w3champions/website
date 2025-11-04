@@ -8,7 +8,7 @@
             v-model="openGameDetail"
             label="Show Game Detail"
             color="primary"
-            class="w3-gray-text"
+            class="text-medium-emphasis"
           />
         </v-col>
         <v-col>

@@ -53,7 +53,7 @@
             <v-checkbox
               v-model="mapRef.disabled"
               label="Disable map"
-              class="w3-gray-text"
+              class="text-medium-emphasis"
             />
           </v-col>
         </v-row>

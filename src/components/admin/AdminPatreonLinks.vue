@@ -10,19 +10,19 @@
       <v-col cols="12" sm="6" md="4">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-primary mb-1">{{ getTotalLinks() }}</div>
-          <div class="w3-gray-text">Total Links</div>
+          <div class="text-medium-emphasis">Total Links</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-success mb-1">{{ getRecentLinks() }}</div>
-          <div class="w3-gray-text">Recent (30 days)</div>
+          <div class="text-medium-emphasis">Recent (30 days)</div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <v-card border class="text-center pa-4">
           <div class="text-h4 text-warning mb-1">{{ getStaleLinks() }}</div>
-          <div class="w3-gray-text">Not Synced (7+ days)</div>
+          <div class="text-medium-emphasis">Not Synced (7+ days)</div>
         </v-card>
       </v-col>
     </v-row>
@@ -87,7 +87,7 @@
         :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
         :sort-by="[{ key: 'linkedAt', order: 'desc' }]"
         :loading="loading && patreonLinks.length > 0"
-        :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+        :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       >
         <template v-slot:item.battleTag="{ item }">
           <div class="d-flex align-center">
@@ -108,14 +108,14 @@
         <template v-slot:item.linkedAt="{ item }">
           <div>
             <div class="font-weight-medium">{{ formatDate(item.linkedAt) }}</div>
-            <div class="text-caption w3-gray-text">{{ formatTime(item.linkedAt) }}</div>
+            <div class="text-caption text-medium-emphasis">{{ formatTime(item.linkedAt) }}</div>
           </div>
         </template>
 
         <template v-slot:item.lastSyncAt="{ item }">
           <div>
             <div class="font-weight-medium" :class="getSyncStatusClass(item.lastSyncAt)">{{ formatDate(item.lastSyncAt) }}</div>
-            <div class="text-caption w3-gray-text">{{ formatTime(item.lastSyncAt) }}</div>
+            <div class="text-caption text-medium-emphasis">{{ formatTime(item.lastSyncAt) }}</div>
             <v-chip v-if="isStaleSync(item.lastSyncAt)" size="x-small" color="orange" class="mt-1">
               Stale Sync
             </v-chip>
@@ -164,8 +164,8 @@
         <template v-slot:no-data>
           <div class="text-center py-8">
             <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ mdiAccountSearch }}</v-icon>
-            <div class="text-h6 w3-gray-text mb-2">No Patreon links found</div>
-            <div class="text-body-2 w3-gray-text mb-4">
+            <div class="text-h6 text-medium-emphasis mb-2">No Patreon links found</div>
+            <div class="text-body-2 text-medium-emphasis mb-4">
               {{ selectedPlayer ? 'No Patreon account linked for this user' : 'No Patreon account links exist or try adjusting your search' }}
             </div>
           </div>
@@ -215,19 +215,19 @@
           <!-- User Info -->
           <v-row class="mb-4">
             <v-col cols="12">
-              <div class="w3-gray-text mb-1">BattleTag</div>
+              <div class="text-medium-emphasis mb-1">BattleTag</div>
               <div class="text-body-1 font-weight-medium">{{ memberDetails.battleTag }}</div>
             </v-col>
           </v-row>
 
           <!-- Patreon Status -->
           <v-divider class="mb-4" />
-          <div class="text-subtitle-1 w3-gray-text font-weight-bold mb-3">Patreon Status</div>
+          <div class="text-subtitle-1 text-medium-emphasis font-weight-bold mb-3">Patreon Status</div>
 
           <v-row v-if="memberDetails.found">
             <v-col cols="12" md="6">
               <v-card border class="pa-3">
-                <div class="text-caption w3-gray-text">Patron Status</div>
+                <div class="text-caption text-medium-emphasis">Patron Status</div>
                 <v-chip
                   :color="memberDetails.isActivePatron ? 'success' : 'error'"
                   size="small"
@@ -239,7 +239,7 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-card border class="pa-3">
-                <div class="text-caption w3-gray-text">Last Charge</div>
+                <div class="text-caption text-medium-emphasis">Last Charge</div>
                 <div class="text-body-2 mt-1">
                   <v-chip
                     :color="memberDetails.lastChargeStatus === 'Paid' ? 'success' : 'warning'"
@@ -262,24 +262,24 @@
           <!-- Member Info -->
           <div v-if="memberDetails.found" class="mt-4">
             <v-divider class="mb-4" />
-            <div class="text-subtitle-1 w3-gray-text font-weight-bold mb-3">Member Information</div>
+            <div class="text-subtitle-1 text-medium-emphasis font-weight-bold mb-3">Member Information</div>
 
             <v-table density="compact">
               <tbody>
                 <tr>
-                  <td class="w3-gray-text">Patreon User ID</td>
+                  <td class="text-medium-emphasis">Patreon User ID</td>
                   <td class="font-family-monospace">{{ memberDetails.patreonUserId }}</td>
                 </tr>
                 <tr>
-                  <td class="w3-gray-text">Member ID</td>
+                  <td class="text-medium-emphasis">Member ID</td>
                   <td class="font-family-monospace">{{ memberDetails.patreonMemberId }}</td>
                 </tr>
                 <tr v-if="memberDetails.email">
-                  <td class="w3-gray-text">Email</td>
+                  <td class="text-medium-emphasis">Email</td>
                   <td>{{ memberDetails.email }}</td>
                 </tr>
                 <tr v-if="memberDetails.pledgeRelationshipStart">
-                  <td class="w3-gray-text">Member Since</td>
+                  <td class="text-medium-emphasis">Member Since</td>
                   <td>{{ formatDate(memberDetails.pledgeRelationshipStart) }}</td>
                 </tr>
               </tbody>
@@ -289,12 +289,12 @@
           <!-- Tier Information -->
           <div v-if="memberDetails.found && memberDetails.entitledTierIds" class="mt-4">
             <v-divider class="mb-4" />
-            <div class="text-subtitle-1 w3-gray-text font-weight-bold mb-3">Tier Information</div>
+            <div class="text-subtitle-1 text-medium-emphasis font-weight-bold mb-3">Tier Information</div>
 
             <v-row>
               <v-col cols="12" md="6">
                 <v-card border class="pa-3">
-                  <div class="text-caption w3-gray-text mb-2">Patreon Entitled Tiers</div>
+                  <div class="text-caption text-medium-emphasis mb-2">Patreon Entitled Tiers</div>
                   <v-chip
                     v-for="tier in memberDetails.entitledTierIds"
                     :key="tier"
@@ -309,7 +309,7 @@
               </v-col>
               <v-col cols="12" md="6">
                 <v-card border class="pa-3">
-                  <div class="text-caption w3-gray-text mb-2">Internal Associations</div>
+                  <div class="text-caption text-medium-emphasis mb-2">Internal Associations</div>
                   <div class="text-body-2">
                     <strong>{{ memberDetails.activeAssociationCount }}</strong> active association(s)
                   </div>

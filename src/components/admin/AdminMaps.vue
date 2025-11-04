@@ -34,7 +34,7 @@
             v-model="adminMapsFilters.hideDisabled"
             label="Hide disabled maps"
             hide-details
-            class="w3-gray-text"
+            class="text-medium-emphasis"
             color="primary"
           />
         </div>
@@ -45,7 +45,7 @@
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
           :search="search"
           class="elevation-1"
-          :header-props="{ class: ['w3-gray-text', 'font-weight-bold'] }"
+          :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.path`]="{ item }">
             {{ getMapPath(item) }}

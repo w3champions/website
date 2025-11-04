@@ -2,8 +2,23 @@
   <v-menu location="right">
     <template v-slot:activator="{ props }">
       <v-btn
-        :tile="!isPlayerMatchesTab"
-        :class="{ 'is-player-matches-tab': isPlayerMatchesTab }"
+        v-if="isPlayerMatchesTab"
+        tile
+        class="is-player-matches-tab"
+        color="medium-emphasis"
+        variant="text"
+        border="sm opacity-25"
+        width="250"
+        height="56"
+        active-color="primary"
+        :active="!!selectedHeroes.length"
+        v-bind="props"
+      >
+        <v-icon size="x-large" start>{{ mdiDramaMasks }}</v-icon>
+        {{ selectedText }}
+      </v-btn>
+      <v-btn
+        v-else
         style="background-color: transparent"
         v-bind="props"
       >
@@ -99,12 +114,5 @@ export default defineComponent({
   @media (max-width: 960px) {
     width: 100% !important;
   }
-  height: 56px !important;
-  min-width: 250px !important;
-  border-radius: 4px;
-  border-color: rgb(128, 128, 128, 0.5) !important;
-  border-width: 1px !important;
-  border-style: solid !important;
-  box-shadow: none !important;
 }
 </style>
