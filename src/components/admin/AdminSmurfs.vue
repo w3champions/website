@@ -10,7 +10,7 @@
         </v-card-title>
         <v-card-text>
           <v-row>
-            <v-col cols="auto" class="d-flex align-center pa-0 ml-5 mr-5">
+            <v-col cols="auto" class="d-flex align-center pb-0">
               <v-select
                 v-model="searchDepth"
                 :items="[1, 2, 3, 4, 5]"
@@ -36,8 +36,8 @@
           Search
         </v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col class="d-flex align-center flex-grow-1 ml-2 mr-2">
+          <v-row class="align-center">
+            <v-col cols="2">
               <!-- We dont support search by the other identifier types yet, but already prepare the UI for it. Remove 'disabled' once ready. -->
               <v-select
                 v-model="selectedIdentifierType"
@@ -50,14 +50,16 @@
                 disabled
                 style="max-width: 150px;"
               />
-              <div class="w-100 px-5">
-                <player-search
-                  ref="playerSearchComponent"
-                  :hideDetails="false"
-                  @playerFound="playerFound"
-                  @searchCleared="searchCleared"
-                />
-              </div>
+            </v-col>
+            <v-col class="pl-0" cols="8">
+              <player-search
+                ref="playerSearchComponent"
+                :hideDetails="false"
+                @playerFound="playerFound"
+                @searchCleared="searchCleared"
+              />
+            </v-col>
+            <v-col cols="2">
               <v-btn
                 :disabled="!selectedPlayer"
                 @click="executeSearch"
