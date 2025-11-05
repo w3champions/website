@@ -50,7 +50,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { useClanStore } from "@/store/clan/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { mdiMagnify, mdiPencil } from "@mdi/js";
 
@@ -60,7 +59,6 @@ export default defineComponent({
     PlayerSearch,
   },
   setup() {
-    const playerSearchStore = usePlayerSearchStore();
     const clanStore = useClanStore();
     const dialog = ref<boolean>(false);
     const player = ref<string>("");
@@ -79,7 +77,6 @@ export default defineComponent({
     async function invitePlayer(): Promise<void> {
       await clanStore.invitePlayer(player.value);
       await clanStore.retrievePlayersClan();
-      playerSearchStore.clearPlayerSearch();
     }
 
     function playerFound(bTag: string): void {

@@ -466,7 +466,6 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import AdminService from "@/services/admin/AdminService";
 import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -489,7 +488,6 @@ export default defineComponent({
   setup() {
     const instance = getCurrentInstance();
     const oauthStore = useOauthStore();
-    const playerSearchStore = usePlayerSearchStore();
     const assignments = ref<RewardAssignment[]>([]);
     const rewards = ref<Reward[]>([]);
     const selectedPlayer = ref<string>("");
@@ -584,8 +582,6 @@ export default defineComponent({
       assignments.value = [];
       paginationData.value = null;
       currentPage.value = 1;
-      // Clear the player search component
-      playerSearchStore.clearPlayerSearch();
       showSnackbar("All filters cleared", "info");
     };
 
@@ -605,7 +601,6 @@ export default defineComponent({
       selectedPlayer.value = "";
       assignments.value = [];
       paginationData.value = null;
-      playerSearchStore.clearPlayerSearch();
     };
 
     // Translation helper function

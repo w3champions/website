@@ -362,7 +362,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import AdminService from "@/services/admin/AdminService";
 import { PatreonAccountLink } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -381,7 +380,6 @@ export default defineComponent({
   },
   setup() {
     const oauthStore = useOauthStore();
-    const playerSearchStore = usePlayerSearchStore();
 
     // Data
     const patreonLinks = ref<PatreonAccountLink[]>([]);
@@ -523,7 +521,6 @@ export default defineComponent({
     // New utility functions that we added in template but didn't implement
     const clearFilters = () => {
       selectedPlayer.value = "";
-      playerSearchStore.clearPlayerSearch();
       filterLinks();
       showSnackbar("Filters cleared", "info");
     };
@@ -540,7 +537,6 @@ export default defineComponent({
 
     const clearPlayerSelection = () => {
       selectedPlayer.value = "";
-      playerSearchStore.clearPlayerSearch();
       filterLinks();
     };
 
