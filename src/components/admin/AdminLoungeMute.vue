@@ -158,7 +158,6 @@ import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useLoungeMuteStore } from "@/store/admin/loungeMute/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiDelete } from "@mdi/js";
 import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
 import { DataTableHeader } from "vuetify";
@@ -171,7 +170,6 @@ export default defineComponent({
   setup() {
     const oauthStore = useOauthStore();
     const loungeMuteStore = useLoungeMuteStore();
-    const playerSearchStore = usePlayerSearchStore();
 
     const dateMenu = ref<boolean>(false);
     const dialog = ref<boolean>(false);
@@ -251,7 +249,6 @@ export default defineComponent({
       // Only trigger on dialog close, not dialog open
       if (!dialog.value) {
         searchCleared();
-        playerSearchStore.clearPlayerSearch();
       }
     }
 

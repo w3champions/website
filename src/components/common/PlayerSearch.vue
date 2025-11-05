@@ -14,7 +14,7 @@
       :loading="isLoading"
       :autofocus="setAutofocus"
       bg-color="transparent"
-      hide-details
+      :hide-details="hideDetails"
       glow
       color="primary"
       icon-color="primary"
@@ -47,6 +47,11 @@ export default defineComponent({
       required: false,
       default: true,
     },
+    hideDetails: {
+      type: Boolean,
+      required: false,
+      default: true,
+    }
   },
   setup: (_props, context) => {
     const input = ref<string>("");
@@ -84,6 +89,10 @@ export default defineComponent({
       context.emit("searchCleared");
       isLoading.value = false;
     };
+
+    context.expose({
+      selected
+    });
 
     const noDataText = computed<string>(() =>
       (!input.value || input.value.length < 3)

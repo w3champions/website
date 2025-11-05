@@ -237,7 +237,6 @@ import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
@@ -263,7 +262,6 @@ export default defineComponent({
     const { t } = useI18n();
     const oauthStore = useOauthStore();
     const adminStore = useAdminStore();
-    const playerSearchStore = usePlayerSearchStore();
 
     const dialog = ref<boolean>(false);
     const dateMenu = ref<boolean>(false);
@@ -372,7 +370,6 @@ export default defineComponent({
       if (!isValidationError.value) {
         close();
         await loadBanList();
-        playerSearchStore.clearPlayerSearch();
       }
     }
 
@@ -409,7 +406,6 @@ export default defineComponent({
       });
       selectedTranslationId.value = "";
       userVisibleFreeText.value = "";
-      playerSearchStore.clearPlayerSearch();
     }
 
     watch(dialog, onDialogToggled);
@@ -418,7 +414,6 @@ export default defineComponent({
       if (!dialog.value) {
         adminStore.resetBanValidationMessage();
         resetDialog();
-        playerSearchStore.clearPlayerSearch();
         foundPlayer.value = "";
         selectedDateString.value = "";
       }

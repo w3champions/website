@@ -115,7 +115,6 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePermissionStore } from "@/store/admin/permission/store";
 import { mdiDelete, mdiPencil } from "@mdi/js";
-import { usePlayerSearchStore } from "@/store/playerSearch/store";
 import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
@@ -126,7 +125,6 @@ export default defineComponent({
   setup() {
     const oauthStore = useOauthStore();
     const permissionStore = usePermissionStore();
-    const playerSearchStore = usePlayerSearchStore();
     const dialog = ref<boolean>(false);
     const editedIndex = ref<number>(-1);
     const battleTag = ref<string>("");
@@ -223,7 +221,6 @@ export default defineComponent({
         editedItem.value = Object.assign({}, defaultItem);
         editedIndex.value = -1;
       });
-      playerSearchStore.clearPlayerSearch();
       validationError.value = "";
     }
 
