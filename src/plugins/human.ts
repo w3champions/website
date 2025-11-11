@@ -1,5 +1,3 @@
-import colors from "vuetify/util/colors";
-
 export const human = {
   dark: false,
   colors: {

@@ -60,11 +60,11 @@ export default defineComponent({
 
     const matchStatuses: MatchStatusSelectData[] = [
       {
-        name: t(`matchStatuses.onGoing`),
+        name: t("matchStatuses.onGoing"),
         status: MatchStatus.onGoing,
       },
       {
-        name: t(`matchStatuses.past`),
+        name: t("matchStatuses.past"),
         status: MatchStatus.past,
       },
     ];

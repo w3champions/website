@@ -37,10 +37,6 @@ export const vuetify = createVuetify({
   },
 });
 
-export function useVuetify() {
-  return vuetify;
-}
-
 export default vuetify;
 
 // Vuetify 2 color classes for reference:

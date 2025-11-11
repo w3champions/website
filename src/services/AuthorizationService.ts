@@ -55,11 +55,11 @@ export default class AuthorizationService {
     return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
   }
 
-  public static async saveAuthRegion(region: BnetOAuthRegion) {
+  public static async saveAuthRegion(region: BnetOAuthRegion): Promise<void> {
     VueCookies.set(w3CAuthRegion, region, Infinity); // Cookie never expires
   }
 
-  public static async saveAuthToken(token: W3cToken) {
+  public static async saveAuthToken(token: W3cToken): Promise<void> {
     VueCookies.set(w3CAuth, token.jwt, Infinity); // Cookie never expires
   }
 

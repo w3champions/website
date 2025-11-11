@@ -35,7 +35,7 @@ export default defineComponent({
     const { t } = useI18n();
 
     const icon = computed<string>(() => {
-      if (!props.host) return getAsset(`icons/hosterror.png`);
+      if (!props.host) return getAsset("icons/hosterror.png");
       return getAsset(`icons/${props.host.provider}.png`);
     });
 

@@ -41,7 +41,7 @@ export const authorizedFetch = async (method: string, url: RequestInfo | URL, to
   });
 };
 
-export const authDownload = (url: string, token: string, fileName: string) => {
+export const authDownload = (url: string, token: string, fileName: string): void => {
   fetch(url, {
     method: "GET",
     headers: {

@@ -1,7 +1,7 @@
 const localeLocalStorageKey = "w3c-locale";
 
 export default class LocaleService {
-  public static setLocale(locale: string) {
+  public static setLocale(locale: string): void {
     localStorage.setItem(localeLocalStorageKey, locale);
   }
 

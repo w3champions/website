@@ -18,7 +18,7 @@ const AT_EQUIVALENT: { [key: number]: EGameMode } = {
   [EGameMode.GM_MINIDOTA_3ON3]: EGameMode.GM_MINIDOTA_3ON3_AT,
 };
 
-export async function loadActiveGameModes() {
+export async function loadActiveGameModes(): Promise<void> {
   const rankingsStore = useRankingStore();
   await rankingsStore.retrieveActiveGameModes();
 }

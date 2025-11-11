@@ -37,7 +37,6 @@ ChartJS.register(Tooltip);
 ChartJS.register(chartJSPluginAnnotation);
 ChartJS.register(Legend);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultOptionsXAxis: ScaleOptions<"time"> = {
   type: "time",
   time: {
@@ -94,7 +93,7 @@ const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color:
     return gradient;
 };
 
-export const getBackgroundColor = (context: ScriptableContext<"line">, color: string) => {
+export const getBackgroundColor = (context: ScriptableContext<"line">, color: string): CanvasGradient | undefined => {
   const chart = context.chart;
   const { ctx, chartArea } = chart;
 
