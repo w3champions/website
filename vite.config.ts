@@ -13,6 +13,9 @@ export default defineConfig({
   server: {
     port: 8080,
   },
+  preview: {
+    port: 8080,
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -31,4 +34,19 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks
+     }
+    }
+  }
 });
+
+function manualChunks(id: string) {
+  if (id.includes('node_modules/vuetify')) {
+		return 'vuetify';
+	}
+
+	return null;
+}
