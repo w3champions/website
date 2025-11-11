@@ -78,11 +78,6 @@ export default defineConfig([
       "vue/no-lone-template": ["warn"],
       "vue/v-on-event-hyphenation": ["off"],
       "vue/require-explicit-emits": ["off"],
-
-      // This rule is for Vue 2, and was deprecated in eslint-plugin-vue v10.0.0, and will be removed in v11.
-      // https://github.com/vuejs/eslint-plugin-vue/pull/2675
-      // "vue/no-v-model-argument": ["warn"],
-
       "vue/no-deprecated-delete-set": "warn",
       "vue/no-deprecated-dollar-listeners-api": "warn",
       "vue/no-deprecated-model-definition": "warn",
