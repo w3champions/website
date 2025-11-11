@@ -116,7 +116,7 @@
 
     <!-- View Users Dialog -->
     <reward-users-dialog
-      :visible.sync="usersDialog"
+      :visible="usersDialog"
       :title="`Users with Reward: ${selectedReward && getRewardName(selectedReward.displayId) || 'Unknown'}`"
       :users="rewardUsers"
       :loading="loadingUsers"

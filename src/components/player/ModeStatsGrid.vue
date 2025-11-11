@@ -7,8 +7,8 @@
     :items-per-page="-1"
     :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
   >
-    <template v-for="h in headers" v-slot:[`header.${h.value}`]="{ column }">
-      <v-tooltip :key="h.title" location="top">
+    <template v-for="h in headers" :key="h.title" v-slot:[`header.${h.value}`]="{ column }">
+      <v-tooltip location="top">
         <template v-slot:activator="{ props }">
           <span v-bind="props">{{ column.title }}</span>
         </template>

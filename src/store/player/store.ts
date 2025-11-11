@@ -194,7 +194,7 @@ export const usePlayerStore = defineStore("player", {
         await this.initMmrRpTimeline();
         const personalSettingsStore = usePersonalSettingsStore();
         await personalSettingsStore.loadPersonalSetting();
-      } catch (err) {
+      } catch (_err) {
         // error already handled in loadProfile
       }
       this.SET_LOADING_PROFILE(false);
