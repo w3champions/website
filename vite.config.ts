@@ -37,16 +37,16 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks
-     }
-    }
-  }
+        manualChunks,
+      },
+    },
+  },
 });
 
 function manualChunks(id: string) {
-  if (id.includes('node_modules/vuetify')) {
-		return 'vuetify';
-	}
+  if (id.includes("node_modules/vuetify")) {
+    return "vuetify";
+  }
 
-	return null;
+  return null;
 }
