@@ -13,20 +13,20 @@ export default defineConfig([
   ...pluginVue.configs["flat/recommended"],
   defineConfigWithVueTs(vueTsConfigs.recommended),
   ...eslintPluginVue.configs["flat/recommended"],
-  globalIgnores(["**/dist/**", "src/locales/data.ts"]),
+  globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts"]),
   {
     name: "eslint",
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
     rules: {
       "arrow-parens": ["warn", "always"],
       "camelcase": "off",
-      "comma-dangle": "off",
+      "comma-dangle": ["warn", "only-multiline"],
       "no-trailing-spaces": "warn",
       "object-curly-spacing": ["warn", "always"],
       "prefer-const": "warn",
       "quotes": "warn",
-      "semi": "off",
-      "space-infix-ops": "off",
+      "semi": "warn",
+      "space-infix-ops": "warn",
     }
   },
   {
@@ -34,12 +34,10 @@ export default defineConfig([
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
     rules: {
       "@typescript-eslint/ban-ts-comment": "warn",
-      // "@typescript-eslint/comma-dangle": ["warn", "only-multiline"], TODO: install @stylistic/eslint-plugin (https://eslint.style/rules). read more about deprecation here: https://typescript-eslint.io/rules/quotes/
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       // "@typescript-eslint/member-delimiter-style": "warn", TODO: install @stylistic/eslint-plugin (https://eslint.style/rules)
       "@typescript-eslint/no-loss-of-precision": "warn",
       "@typescript-eslint/no-non-null-assertion": "off",
-      // "@typescript-eslint/semi": "warn", TODO: install @stylistic/eslint-plugin (https://eslint.style/rules)
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-unused-vars": ["error", {
