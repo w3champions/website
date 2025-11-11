@@ -17,7 +17,6 @@ import ClanOverview from "@/components/clans/ClanOverview.vue";
 import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
-import Admin from "@/views/Admin.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
 import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
@@ -29,6 +28,7 @@ const lazyLoaded = {
   MmrDistributionTab: () => import("@/components/overall-statistics/tabs/MmrDistributionTab.vue"),
   WinrateTab: () => import("@/components/overall-statistics/tabs/WinratesTab.vue"),
   HeroTab: () => import("@/components/overall-statistics/tabs/HeroTab.vue"),
+  Admin: () => import("@/views/Admin.vue"),
   AdminQueueData: () => import("@/components/admin/AdminQueueData.vue"),
   AdminBannedPlayers: () => import("@/components/admin/AdminBannedPlayers.vue"),
   AdminBanReasonTranslations: () => import("@/components/admin/AdminBanReasonTranslations.vue"),
@@ -247,7 +247,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/admin",
     name: EMainRouteName.ADMIN,
-    component: Admin,
+    component: lazyLoaded.Admin,
     children: [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: lazyLoaded.AdminQueueData },
       { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: lazyLoaded.AdminBannedPlayers },
