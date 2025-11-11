@@ -54,11 +54,11 @@ export default defineComponent({
 
     const sortings: SortSelectData[] = [
       {
-        name: t(`components_matches_sortselect.starttimedescending`),
+        name: t("components_matches_sortselect.starttimedescending"),
         mode: SortMode.startTimeDescending,
       },
       {
-        name: t(`components_matches_sortselect.mmrdescending`),
+        name: t("components_matches_sortselect.mmrdescending"),
         mode: SortMode.mmrDescending,
       },
     ];

@@ -124,7 +124,7 @@ export default defineComponent({
 
     function sanitizeString(string: string): string {
       let str = string;
-      str = str.replace(/-/g, `_`);
+      str = str.replace(/-/g, "_");
       return str;
     }
 

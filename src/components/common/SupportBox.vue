@@ -76,9 +76,9 @@ export default defineComponent({
   },
   setup() {
     const cryptos = ref<{coin: string; name: string; address: string; dialog: boolean}[]>([
-      { coin: `BTC`, name: "Bitcoin", address: `bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80`, dialog: false },
-      { coin: `ETH`, name: "Ethereum", address: `0x284a0e918e126dF38cFc0207c00D5564CAFbe658`, dialog: false },
-      { coin: `LTC`, name: "Litecoin", address: `ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0`, dialog: false },
+      { coin: "BTC", name: "Bitcoin", address: "bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80", dialog: false },
+      { coin: "ETH", name: "Ethereum", address: "0x284a0e918e126dF38cFc0207c00D5564CAFbe658", dialog: false },
+      { coin: "LTC", name: "Litecoin", address: "ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0", dialog: false },
     ]);
     const alternates = ref<{ name: string; dialog: boolean }[]>([
       { name: "AliPay", dialog: false },

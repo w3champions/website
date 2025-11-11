@@ -177,7 +177,7 @@ export default defineComponent({
     }
 
     async function deleteItem(item: BanReasonTranslation) {
-      if (confirm(`Are you sure you want to delete this translation?`)) {
+      if (confirm("Are you sure you want to delete this translation?")) {
         await adminStore.deleteBanReasonTranslation(item._id);
       }
     }

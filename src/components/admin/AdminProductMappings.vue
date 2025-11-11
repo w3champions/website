@@ -219,7 +219,7 @@
 
     <!-- View Users Dialog -->
     <reward-users-dialog
-      :visible.sync="usersDialog"
+      :visible="usersDialog"
       :title="`Users for Product Mapping: ${selectedMapping?.productName || 'Product Mapping'}`"
       :users="mappingUsersForDialog"
       :loading="loadingUsers"
