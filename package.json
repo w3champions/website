@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite build && vite preview",
     "build:prod": "npm run generate-locales && vite build",
-    "generate-locales": "tsx scripts/generate-locales.ts",
+    "generate-locales": "node --experimental-strip-types scripts/generate-locales.ts",
     "lint": "eslint --no-fix --max-warnings=0 src/",
     "lint:fix": "eslint --fix src/",
     "dprint": "dprint check",
@@ -76,7 +76,6 @@
     "sass": "~1.32.13",
     "terser": "^5.29.2",
     "ts-node": "^10.9.1",
-    "tsx": "^4.7.1",
     "typescript": "~4.9.5",
     "vite": "^5.0.0",
     "vite-plugin-vuetify": "2.1.2"
