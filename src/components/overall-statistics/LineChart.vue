@@ -93,7 +93,7 @@ const getGradient = (ctx: CanvasRenderingContext2D, chartArea: ChartArea, color:
     return gradient;
 };
 
-export const getBackgroundColor = (context: ScriptableContext<"line">, color: string) => {
+export const getBackgroundColor = (context: ScriptableContext<"line">, color: string): CanvasGradient | undefined => {
   const chart = context.chart;
   const { ctx, chartArea } = chart;
 

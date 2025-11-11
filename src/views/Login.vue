@@ -36,7 +36,7 @@ export default defineComponent({
 
     function openPlayerProfile() {
       router.push({
-        path: getProfileUrl(account.value) + `?freshLogin=true`,
+        path: getProfileUrl(account.value) + "?freshLogin=true",
       });
     }
 

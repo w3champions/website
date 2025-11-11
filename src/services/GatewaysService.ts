@@ -13,7 +13,7 @@ export default class GatewaysService {
     return Gateways.Europe;
   }
 
-  public static setGateway(gateway: Gateways) {
+  public static setGateway(gateway: Gateways): void {
     localStorage.setItem(gatewayLocalStorageKey, gateway.toString());
   }
 }

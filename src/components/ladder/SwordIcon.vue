@@ -10,7 +10,7 @@ export default defineComponent({
   name: "SwordIcon",
   components: {},
   setup() {
-    const swordIcon = ref<string>(getAsset(`swords.svg`));
+    const swordIcon = ref<string>(getAsset("swords.svg"));
 
     return {
       swordIcon,

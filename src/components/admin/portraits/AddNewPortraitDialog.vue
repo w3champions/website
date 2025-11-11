@@ -230,7 +230,7 @@ export default defineComponent({
           uploadProgress.value.push({
             step: `Create Portrait Definition (ID: ${filePortraitId})`,
             status: "uploading",
-            message: `Creating portrait definition...`,
+            message: "Creating portrait definition...",
           });
 
           try {
