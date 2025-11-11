@@ -27,7 +27,7 @@ export default defineConfig([
       "quotes": "warn",
       "semi": "warn",
       "space-infix-ops": "warn",
-    }
+    },
   },
   {
     name: "typescript-eslint",
@@ -41,11 +41,11 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-unused-vars": ["error", {
-        "argsIgnorePattern": "^_" ,
+        "argsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
       }],
-    }
+    },
   },
   {
     name: "eslint-plugin-vue",
@@ -57,17 +57,17 @@ export default defineConfig([
         "html": {
           "void": "always",
           "normal": "never",
-          "component": "always"
+          "component": "always",
         },
         "svg": "always",
       }],
       "vue/max-attributes-per-line": ["error", {
         "singleline": {
-          "max": 10
+          "max": 10,
         },
         "multiline": {
-          "max": 1
-        }
+          "max": 1,
+        },
       }],
       "vue/v-bind-style": ["error", "shorthand"],
       "vue/v-slot-style": ["error", "longform"],
@@ -89,7 +89,7 @@ export default defineConfig([
       "vue/no-deprecated-props-default-this": "warn",
       "vue/no-deprecated-slot-attribute": "warn",
       "vue/prefer-import-from-vue": "warn",
-    }
+    },
   },
   {
     name: "eslint-plugin-lodash",
