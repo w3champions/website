@@ -8,11 +8,11 @@
  */
 
 import fs from "node:fs";
-import set from "lodash/set.js";
+import set from "lodash/set";
 import prettier from "prettier";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import { activeLanguages } from "./active-languages.ts";
-import keyConstant from "./key.ts";
+import { activeLanguages } from "./active-languages";
+import keyConstant from "./key";
 
 async function main() {
   if (!keyConstant) {
