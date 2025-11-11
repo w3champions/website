@@ -47,6 +47,20 @@ function manualChunks(id: string) {
   if (id.includes("node_modules/vuetify")) {
     return "vuetify";
   }
-
+  if (id.includes("node_modules/chartjs") || id.includes("node_modules/chart.js") || id.includes("node_modules/vue-chartjs")) {
+    return "chartjs";
+  }
+  if (id.includes("node_modules/vue-country-flag-next")) {
+    return "vue-country-flag-next";
+  }
+  if (id.includes("node_modules/vue")) {
+    return "vue";
+  }
+  if (id.includes("node_modules/@tiptap") || id.includes("node_modules/prosemirror")) {
+    return "tiptap";
+  }
+  if (id.includes("node_modules")) {
+    return "vendor";
+  }
   return null;
 }
