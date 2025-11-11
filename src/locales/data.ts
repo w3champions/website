@@ -51,7 +51,7 @@ const data = {
       launcherfeaturesbody1: "Always have W3C installed and updated",
       launcherfeaturesbody2: "Custom inventory and hero hotkeys",
       launcherfeaturesbody3: "Graphical user interface for custom hotkeys",
-      launcherfeaturesbody4: "Custom team coloring",
+      launcherfeaturesbody4: "Custom team colors",
       launcherfeaturesbody5:
         "Keep up with the scene by getting the latest news",
       manualwintitle: "Manual Windows",
@@ -109,12 +109,17 @@ const data = {
       installwar3intro:
         "You may find that WarCraft III doesn't appear in the Battle.net launcher even though you own the game either via direct purchase, or via adding your old WC3 The Frozen Throne CD key to your account. To install, follow these steps:",
       installwar3step1: "Click the Battle.net logo in the top left",
-      installwar3step2: "Click \"Log Out\"",
-      installwar3step3: "From the login screen (don't log in yet), click the gear in the top-right. Sometimes this menu doesn't appear correctly the first time, click it again until it appears.",
-      installwar3step4: "Click \"Continue Without Logging In\", the last option in the menu.",
-      installwar3step5: "Find WarCraft III Reforged in the Games list, click the \"Install\" button in the bottom-left.",
-      installwar3step6: "Once installed, you may click \"Go Online\" in the top-right panel, or via the top-left logo button Log Out, then log in as normal.",
-      installwar3step7: "WarCraft III Reforged will now be visible while logged in.",
+      installwar3step2: 'Click "Log Out"',
+      installwar3step3:
+        "From the login screen (don't log in yet), click the gear in the top-right. Sometimes this menu doesn't appear correctly the first time, click it again until it appears.",
+      installwar3step4:
+        'Click "Continue Without Logging In", the last option in the menu.',
+      installwar3step5:
+        'Find WarCraft III Reforged in the Games list, click the "Install" button in the bottom-left.',
+      installwar3step6:
+        'Once installed, you may click "Go Online" in the top-right panel, or via the top-left logo button Log Out, then log in as normal.',
+      installwar3step7:
+        "WarCraft III Reforged will now be visible while logged in.",
     },
     views_home: {
       w3c_motto: "The ladder you have been waiting for!",
@@ -245,7 +250,7 @@ const data = {
       selectgateway: "Select a gateway:",
     },
     components_common_mmrselect: {
-      selectmmr: "Select MMR range:",
+      selectmmr: "Select MMR range",
     },
     components_common_copybutton: {
       tooltip: "Copy to clipboard",
@@ -524,9 +529,6 @@ const data = {
       GM_DOTA_5ON5: "Dota 5v5",
       GM_DOTA_5ON5_AT: "Dota 5v5 AT",
       GM_WARHAMMER_1ON1: "Warhammer 1v1",
-      GM_RISK_EUROPE_1ON1: "Risk Europe 1v1",
-      GM_MINIDOTA_3ON3: "MiniDota 3v3",
-      GM_MINIDOTA_3ON3_AT: "MiniDota 3v3 AT",
     },
     gatewayNames: {
       Global: "Global",
@@ -689,12 +691,17 @@ const data = {
       installwar3intro:
         "Возможно, вы обнаружите, что WarCraft III не отображается в лаунчере Battle.net, хотя вы владеете игрой либо через прямую покупку, либо через добавление старого ключа CD WC3 The Frozen Throne к вашей учетной записи. Для установки следуйте этим шагам:",
       installwar3step1: "Нажмите на логотип Battle.net в верхнем левом углу",
-      installwar3step2: "Нажмите \"Выйти\"",
-      installwar3step3: "С экрана входа в систему (еще не входите), нажмите на шестеренку в верхнем правом углу. Иногда это меню не появляется правильно с первого раза, нажмите еще раз, пока оно не появится.",
-      installwar3step4: "Нажмите \"Продолжить без входа в систему\", последний вариант в меню.",
-      installwar3step5: "Найдите WarCraft III Reforged в списке игр, нажмите кнопку \"Установить\" в нижнем левом углу.",
-      installwar3step6: "После установки вы можете нажать \"Войти в сеть\" в верхней правой панели, или через кнопку выхода в верхнем левом логотипе, затем войти в систему как обычно.",
-      installwar3step7: "WarCraft III Reforged теперь будет виден при входе в систему.",
+      installwar3step2: 'Нажмите "Выйти"',
+      installwar3step3:
+        "С экрана входа в систему (еще не входите), нажмите на шестеренку в верхнем правом углу. Иногда это меню не появляется правильно с первого раза, нажмите еще раз, пока оно не появится.",
+      installwar3step4:
+        'Нажмите "Продолжить без входа в систему", последний вариант в меню.',
+      installwar3step5:
+        'Найдите WarCraft III Reforged в списке игр, нажмите кнопку "Установить" в нижнем левом углу.',
+      installwar3step6:
+        'После установки вы можете нажать "Войти в сеть" в верхней правой панели, или через кнопку выхода в верхнем левом логотипе, затем войти в систему как обычно.',
+      installwar3step7:
+        "WarCraft III Reforged теперь будет виден при входе в систему.",
     },
     views_home: {
       w3c_motto: "Ладдер, которого вы ждали!",
@@ -1207,11 +1214,14 @@ const data = {
       installwar3intro:
         "WarCraft III가 Battle.net 런처에 나타나지 않을 수 있습니다. 게임을 직접 구매했거나 기존 WC3 The Frozen Throne CD 키를 계정에 추가했음에도 불구하고요. 설치하려면 다음 단계를 따르세요:",
       installwar3step1: "왼쪽 상단의 Battle.net 로고를 클릭하세요",
-      installwar3step2: "\"로그아웃\"을 클릭하세요",
-      installwar3step3: "로그인 화면에서 (아직 로그인하지 마세요), 오른쪽 상단의 기어를 클릭하세요. 이 메뉴가 처음에 제대로 나타나지 않을 수 있으니, 나타날 때까지 다시 클릭하세요.",
-      installwar3step4: "메뉴의 마지막 옵션인 \"로그인 없이 계속\"을 클릭하세요.",
-      installwar3step5: "게임 목록에서 WarCraft III Reforged를 찾고, 왼쪽 하단의 \"설치\" 버튼을 클릭하세요.",
-      installwar3step6: "설치가 완료되면 오른쪽 상단 패널에서 \"온라인으로 이동\"을 클릭하거나, 왼쪽 상단 로고 버튼을 통해 로그아웃한 후 정상적으로 로그인하세요.",
+      installwar3step2: "로그아웃을 클릭하세요",
+      installwar3step3:
+        "로그인 화면에서 (아직 로그인하지 마세요), 오른쪽 상단의 기어를 클릭하세요. 이 메뉴가 처음에 제대로 나타나지 않을 수 있으니, 나타날 때까지 다시 클릭하세요.",
+      installwar3step4: '메뉴의 마지막 옵션인 "로그인 없이 계속"을 클릭하세요.',
+      installwar3step5:
+        '게임 목록에서 WarCraft III Reforged를 찾고, 왼쪽 하단의 "설치" 버튼을 클릭하세요.',
+      installwar3step6:
+        '설치가 완료되면 오른쪽 상단 패널에서 "온라인으로 이동"을 클릭하거나, 왼쪽 상단 로고 버튼을 통해 로그아웃한 후 정상적으로 로그인하세요.',
       installwar3step7: "이제 WarCraft III Reforged가 로그인 시 표시됩니다.",
     },
     views_home: {
@@ -1650,11 +1660,14 @@ const data = {
       installwar3intro:
         "您可能会发现，即使您通过直接购买或将旧的 WC3 The Frozen Throne CD 密钥添加到您的账户中拥有游戏，WarCraft III 也不会出现在 Battle.net 启动器中。要安装，请按照以下步骤操作：",
       installwar3step1: "点击左上角的 Battle.net 标志",
-      installwar3step2: "点击 \"注销\"",
-      installwar3step3: "在登录屏幕上（暂时不要登录），点击右上角的齿轮。有时此菜单第一次不会正确显示，请再次点击直到它出现。",
-      installwar3step4: "点击 \"无需登录继续\"，菜单中的最后一个选项。",
-      installwar3step5: "在游戏列表中找到 WarCraft III Reforged，点击左下角的 \"安装\" 按钮。",
-      installwar3step6: "安装完成后，您可以在右上角面板中点击 \"上线\"，或通过左上角标志按钮注销，然后正常登录。",
+      installwar3step2: '点击 "注销"',
+      installwar3step3:
+        "在登录屏幕上（暂时不要登录），点击右上角的齿轮。有时此菜单第一次不会正确显示，请再次点击直到它出现。",
+      installwar3step4: '点击 "无需登录继续"，菜单中的最后一个选项。',
+      installwar3step5:
+        '在游戏列表中找到 WarCraft III Reforged，点击左下角的 "安装" 按钮。',
+      installwar3step6:
+        '安装完成后，您可以在右上角面板中点击 "上线"，或通过左上角标志按钮注销，然后正常登录。',
       installwar3step7: "现在 WarCraft III Reforged 将在登录时可见。",
     },
     views_home: {
@@ -2179,12 +2192,17 @@ const data = {
       installwar3intro:
         "Möglicherweise stellen Sie fest, dass WarCraft III nicht im Battle.net-Launcher erscheint, obwohl Sie das Spiel entweder durch direkten Kauf oder durch Hinzufügen Ihres alten WC3 The Frozen Throne CD-Schlüssels zu Ihrem Konto besitzen. Um zu installieren, folgen Sie diesen Schritten:",
       installwar3step1: "Klicken Sie auf das Battle.net-Logo oben links",
-      installwar3step2: "Klicken Sie auf \"Abmelden\"",
-      installwar3step3: "Vom Anmeldebildschirm aus (melden Sie sich noch nicht an), klicken Sie auf das Zahnrad oben rechts. Manchmal erscheint dieses Menü beim ersten Mal nicht korrekt, klicken Sie erneut, bis es erscheint.",
-      installwar3step4: "Klicken Sie auf \"Ohne Anmeldung fortfahren\", die letzte Option im Menü.",
-      installwar3step5: "Suchen Sie WarCraft III Reforged in der Spieleliste und klicken Sie auf die Schaltfläche \"Installieren\" unten links.",
-      installwar3step6: "Nach der Installation können Sie \"Online gehen\" in der oberen rechten Ecke anklicken, oder über die Abmelde-Schaltfläche des Logos oben links, dann normal anmelden.",
-      installwar3step7: "WarCraft III Reforged wird nun bei der Anmeldung sichtbar sein.",
+      installwar3step2: 'Klicken Sie auf "Abmelden"',
+      installwar3step3:
+        "Vom Anmeldebildschirm aus (melden Sie sich noch nicht an), klicken Sie auf das Zahnrad oben rechts. Manchmal erscheint dieses Menü beim ersten Mal nicht korrekt, klicken Sie erneut, bis es erscheint.",
+      installwar3step4:
+        'Klicken Sie auf "Ohne Anmeldung fortfahren", die letzte Option im Menü.',
+      installwar3step5:
+        'Suchen Sie WarCraft III Reforged in der Spieleliste und klicken Sie auf die Schaltfläche "Installieren" unten links.',
+      installwar3step6:
+        'Nach der Installation können Sie "Online gehen" in der oberen rechten Ecke anklicken, oder über die Abmelde-Schaltfläche des Logos oben links, dann normal anmelden.',
+      installwar3step7:
+        "WarCraft III Reforged wird nun bei der Anmeldung sichtbar sein.",
     },
     views_home: {
       w3c_motto: "Die Ladder, auf die Du gewartet hast!",
@@ -2654,12 +2672,17 @@ const data = {
       installwar3intro:
         "Możesz zauważyć, że WarCraft III nie pojawia się w launcherze Battle.net, mimo że posiadasz grę poprzez bezpośredni zakup lub dodanie starego klucza CD WC3 The Frozen Throne do swojego konta. Aby zainstalować, wykonaj następujące kroki:",
       installwar3step1: "Kliknij logo Battle.net w lewym górnym rogu",
-      installwar3step2: "Kliknij \"Wyloguj się\"",
-      installwar3step3: "Z ekranu logowania (jeszcze się nie loguj), kliknij trybik w prawym górnym rogu. Czasami to menu nie pojawia się poprawnie za pierwszym razem, kliknij ponownie, aż się pojawi.",
-      installwar3step4: "Kliknij \"Kontynuuj bez logowania\", ostatnią opcję w menu.",
-      installwar3step5: "Znajdź WarCraft III Reforged na liście gier, kliknij przycisk \"Zainstaluj\" w lewym dolnym rogu.",
-      installwar3step6: "Po zainstalowaniu możesz kliknąć \"Przejdź online\" w prawym górnym panelu, lub poprzez przycisk wylogowania logo w lewym górnym rogu, a następnie zaloguj się normalnie.",
-      installwar3step7: "WarCraft III Reforged będzie teraz widoczny podczas logowania.",
+      installwar3step2: 'Kliknij "Wyloguj się"',
+      installwar3step3:
+        "Z ekranu logowania (jeszcze się nie loguj), kliknij trybik w prawym górnym rogu. Czasami to menu nie pojawia się poprawnie za pierwszym razem, kliknij ponownie, aż się pojawi.",
+      installwar3step4:
+        'Kliknij "Kontynuuj bez logowania", ostatnią opcję w menu.',
+      installwar3step5:
+        'Znajdź WarCraft III Reforged na liście gier, kliknij przycisk "Zainstaluj" w lewym dolnym rogu.',
+      installwar3step6:
+        'Po zainstalowaniu możesz kliknąć "Przejdź online" w prawym górnym panelu, lub poprzez przycisk wylogowania logo w lewym górnym rogu, a następnie zaloguj się normalnie.',
+      installwar3step7:
+        "WarCraft III Reforged będzie teraz widoczny podczas logowania.",
     },
     views_home: {
       w3c_motto: "Ladder, na który czekałeś!",
@@ -3199,13 +3222,19 @@ const data = {
       manualmacbody22: "Запустіть Warcraft III. Ви маєте побачити W3Champions",
       installwar3intro:
         "Ви можете помітити, що WarCraft III не з'являється в лаунчері Battle.net, хоча ви володієте грою через прямий покупку або додавання старого ключа CD WC3 The Frozen Throne до вашого облікового запису. Щоб встановити, дотримуйтеся цих кроків:",
-      installwar3step1: "Натисніть на логотип Battle.net у верхньому лівому куті",
-      installwar3step2: "Натисніть \"Вийти\"",
-      installwar3step3: "З екрану входу (ще не входьте), натисніть на шестерню у верхньому правому куті. Іноді це меню не з'являється правильно з першого разу, натисніть ще раз, поки воно не з'явиться.",
-      installwar3step4: "Натисніть \"Продовжити без входу\", останній варіант у меню.",
-      installwar3step5: "Знайдіть WarCraft III Reforged у списку ігор, натисніть кнопку \"Встановити\" у нижньому лівому куті.",
-      installwar3step6: "Після встановлення ви можете натиснути \"Перейти онлайн\" у верхній правій панелі, або через кнопку виходу логотипу у верхньому лівому куті, потім увійдіть як зазвичай.",
-      installwar3step7: "Тепер WarCraft III Reforged буде видимий під час входу.",
+      installwar3step1:
+        "Натисніть на логотип Battle.net у верхньому лівому куті",
+      installwar3step2: 'Натисніть "Вийти"',
+      installwar3step3:
+        "З екрану входу (ще не входьте), натисніть на шестерню у верхньому правому куті. Іноді це меню не з'являється правильно з першого разу, натисніть ще раз, поки воно не з'явиться.",
+      installwar3step4:
+        'Натисніть "Продовжити без входу", останній варіант у меню.',
+      installwar3step5:
+        'Знайдіть WarCraft III Reforged у списку ігор, натисніть кнопку "Встановити" у нижньому лівому куті.',
+      installwar3step6:
+        'Після встановлення ви можете натиснути "Перейти онлайн" у верхній правій панелі, або через кнопку виходу логотипу у верхньому лівому куті, потім увійдіть як зазвичай.',
+      installwar3step7:
+        "Тепер WarCraft III Reforged буде видимий під час входу.",
     },
     views_home: {
       w3c_motto: "Ладдер, на який ви чекали!",
@@ -3721,13 +3750,19 @@ const data = {
       manualmacbody22: "Execute Warcraft 3. Você deve ver W3Champions.",
       installwar3intro:
         "Você pode descobrir que o WarCraft III não aparece no launcher do Battle.net, mesmo que você possua o jogo por meio de compra direta ou adicionando sua antiga chave de CD do WC3 The Frozen Throne à sua conta. Para instalar, siga estes passos:",
-      installwar3step1: "Clique no logo do Battle.net no canto superior esquerdo",
-      installwar3step2: "Clique em \"Sair\"",
-      installwar3step3: "Na tela de login (não faça login ainda), clique na engrenagem no canto superior direito. Às vezes este menu não aparece corretamente na primeira vez, clique novamente até que apareça.",
-      installwar3step4: "Clique em \"Continuar sem fazer login\", a última opção no menu.",
-      installwar3step5: "Encontre WarCraft III Reforged na lista de jogos, clique no botão \"Instalar\" no canto inferior esquerdo.",
-      installwar3step6: "Uma vez instalado, você pode clicar em \"Ir Online\" no painel superior direito, ou via o botão de logout do logo no canto superior esquerdo, então faça login normalmente.",
-      installwar3step7: "O WarCraft III Reforged agora será visível quando logado.",
+      installwar3step1:
+        "Clique no logo do Battle.net no canto superior esquerdo",
+      installwar3step2: 'Clique em "Sair"',
+      installwar3step3:
+        "Na tela de login (não faça login ainda), clique na engrenagem no canto superior direito. Às vezes este menu não aparece corretamente na primeira vez, clique novamente até que apareça.",
+      installwar3step4:
+        'Clique em "Continuar sem fazer login", a última opção no menu.',
+      installwar3step5:
+        'Encontre WarCraft III Reforged na lista de jogos, clique no botão "Instalar" no canto inferior esquerdo.',
+      installwar3step6:
+        'Uma vez instalado, você pode clicar em "Ir Online" no painel superior direito, ou via o botão de logout do logo no canto superior esquerdo, então faça login normalmente.',
+      installwar3step7:
+        "O WarCraft III Reforged agora será visível quando logado.",
     },
     views_home: {
       w3c_motto: "A ladder por qual você estava esperando!",
@@ -4245,12 +4280,17 @@ const data = {
       installwar3intro:
         "Vous pouvez constater que WarCraft III n'apparaît pas dans le launcher Battle.net même si vous possédez le jeu soit par achat direct, soit en ajoutant votre ancienne clé CD WC3 The Frozen Throne à votre compte. Pour installer, suivez ces étapes :",
       installwar3step1: "Cliquez sur le logo Battle.net en haut à gauche",
-      installwar3step2: "Cliquez sur \"Se déconnecter\"",
-      installwar3step3: "Depuis l'écran de connexion (ne vous connectez pas encore), cliquez sur l'engrenage en haut à droite. Parfois ce menu n'apparaît pas correctement la première fois, cliquez à nouveau jusqu'à ce qu'il apparaisse.",
-      installwar3step4: "Cliquez sur \"Continuer sans se connecter\", la dernière option du menu.",
-      installwar3step5: "Trouvez WarCraft III Reforged dans la liste des jeux, cliquez sur le bouton \"Installer\" en bas à gauche.",
-      installwar3step6: "Une fois installé, vous pouvez cliquer sur \"Aller en ligne\" dans le panneau en haut à droite, ou via le bouton de déconnexion du logo en haut à gauche, puis connectez-vous normalement.",
-      installwar3step7: "WarCraft III Reforged sera désormais visible lorsque vous êtes connecté.",
+      installwar3step2: 'Cliquez sur "Se déconnecter"',
+      installwar3step3:
+        "Depuis l'écran de connexion (ne vous connectez pas encore), cliquez sur l'engrenage en haut à droite. Parfois ce menu n'apparaît pas correctement la première fois, cliquez à nouveau jusqu'à ce qu'il apparaisse.",
+      installwar3step4:
+        'Cliquez sur "Continuer sans se connecter", la dernière option du menu.',
+      installwar3step5:
+        'Trouvez WarCraft III Reforged dans la liste des jeux, cliquez sur le bouton "Installer" en bas à gauche.',
+      installwar3step6:
+        'Une fois installé, vous pouvez cliquer sur "Aller en ligne" dans le panneau en haut à droite, ou via le bouton de déconnexion du logo en haut à gauche, puis connectez-vous normalement.',
+      installwar3step7:
+        "WarCraft III Reforged sera désormais visible lorsque vous êtes connecté.",
     },
     views_home: {
       w3c_motto: "Le ladder que vous attendiez !",
@@ -4786,12 +4826,17 @@ const data = {
       installwar3intro:
         "Možda ćete primetiti da se WarCraft III ne pojavljuje u Battle.net launcher-u iako posedujete igru bilo putem direktne kupovine ili dodavanjem vašeg starog WC3 The Frozen Throne CD ključa na vaš nalog. Da biste instalirali, pratite ove korake:",
       installwar3step1: "Kliknite na Battle.net logo u gornjem levom uglu",
-      installwar3step2: "Kliknite \"Odjavi se\"",
-      installwar3step3: "Sa ekrana za prijavu (još se ne prijavljujte), kliknite na zupčanik u gornjem desnom uglu. Ponekad ovaj meni ne pojavi se ispravno prvi put, kliknite ponovo dok se ne pojavi.",
-      installwar3step4: "Kliknite \"Nastavi bez prijave\", poslednja opcija u meniju.",
-      installwar3step5: "Pronađite WarCraft III Reforged u listi igara, kliknite na dugme \"Instaliraj\" u donjem levom uglu.",
-      installwar3step6: "Nakon instalacije, možete kliknuti \"Idi online\" u gornjoj desnoj ploči, ili preko dugmeta za odjavu logo-a u gornjem levom uglu, zatim se prijavite normalno.",
-      installwar3step7: "WarCraft III Reforged će sada biti vidljiv prilikom prijave.",
+      installwar3step2: 'Kliknite "Odjavi se"',
+      installwar3step3:
+        "Sa ekrana za prijavu (još se ne prijavljujte), kliknite na zupčanik u gornjem desnom uglu. Ponekad ovaj meni ne pojavi se ispravno prvi put, kliknite ponovo dok se ne pojavi.",
+      installwar3step4:
+        'Kliknite "Nastavi bez prijave", poslednja opcija u meniju.',
+      installwar3step5:
+        'Pronađite WarCraft III Reforged u listi igara, kliknite na dugme "Instaliraj" u donjem levom uglu.',
+      installwar3step6:
+        'Nakon instalacije, možete kliknuti "Idi online" u gornjoj desnoj ploči, ili preko dugmeta za odjavu logo-a u gornjem levom uglu, zatim se prijavite normalno.',
+      installwar3step7:
+        "WarCraft III Reforged će sada biti vidljiv prilikom prijave.",
     },
     views_home: {
       join_button: "Preuzmi odmah!",
