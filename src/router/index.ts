@@ -19,44 +19,41 @@ import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
+import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
+import OverallStatistics from "@/views/OverallStatistics.vue";
+import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivityTab.vue";
+import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
+import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
+import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
+import Admin from "@/views/Admin.vue";
+import AdminQueueData from "@/components/admin/AdminQueueData.vue";
+import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
+import AdminBanReasonTranslations from "@/components/admin/AdminBanReasonTranslations.vue";
+import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
+import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
+import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
+import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
+import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
+import AdminProxies from "@/components/admin/AdminProxies.vue";
+import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
+import AdminLoadingScreenTips from "@/components/admin/AdminLoadingScreenTips.vue";
+import AdminMotd from "@/components/admin/AdminMotd.vue";
+import AdminRewards from "@/components/admin/AdminRewards.vue";
+import AdminProductMappings from "@/components/admin/AdminProductMappings.vue";
+import AdminAssignments from "@/components/admin/AdminAssignments.vue";
+import AdminPatreonLinks from "@/components/admin/AdminPatreonLinks.vue";
+import AdminDriftDetection from "@/components/admin/AdminDriftDetection.vue";
+import AdminAssignPortraits from "@/components/admin/AdminAssignPortraits.vue";
+import AdminManagePortraits from "@/components/admin/AdminManagePortraits.vue";
+import AdminStorageAlibaba from "@/components/admin/cloudStorage/AdminStorageAlibaba.vue";
+import AdminStorageS3 from "@/components/admin/cloudStorage/AdminStorageS3.vue";
+import AdminMaps from "@/components/admin/AdminMaps.vue";
+import AdminTournaments from "@/components/admin/AdminTournaments.vue";
+import AdminPermissions from "@/components/admin/AdminPermissions.vue";
+import AdminApiTokens from "@/components/admin/AdminApiTokens.vue";
+import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
+import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
-
-const lazyLoaded = {
-  PlayerStatisticTab: () => import("@/components/player/tabs/PlayerStatisticTab.vue"),
-  OverallStatistics: () => import("@/views/OverallStatistics.vue"),
-  PlayerActivityTab: () => import("@/components/overall-statistics/tabs/PlayerActivityTab.vue"),
-  MmrDistributionTab: () => import("@/components/overall-statistics/tabs/MmrDistributionTab.vue"),
-  WinrateTab: () => import("@/components/overall-statistics/tabs/WinratesTab.vue"),
-  HeroTab: () => import("@/components/overall-statistics/tabs/HeroTab.vue"),
-  Admin: () => import("@/views/Admin.vue"),
-  AdminQueueData: () => import("@/components/admin/AdminQueueData.vue"),
-  AdminBannedPlayers: () => import("@/components/admin/AdminBannedPlayers.vue"),
-  AdminBanReasonTranslations: () => import("@/components/admin/AdminBanReasonTranslations.vue"),
-  AdminSmurfs: () => import("@/components/admin/AdminSmurfs.vue"),
-  AdminSmurfManageIdentifiers: () => import("@/components/admin/AdminSmurfManageIdentifiers.vue"),
-  AdminGlobalMute: () => import("@/components/admin/AdminGlobalMute.vue"),
-  AdminLoungeMute: () => import("@/components/admin/AdminLoungeMute.vue"),
-  AdminViewGameChat: () => import("@/components/admin/AdminViewGameChat.vue"),
-  AdminProxies: () => import("@/components/admin/AdminProxies.vue"),
-  AdminNewsForLauncher: () => import("@/components/admin/AdminNewsForLauncher.vue"),
-  AdminLoadingScreenTips: () => import("@/components/admin/AdminLoadingScreenTips.vue"),
-  AdminMotd: () => import("@/components/admin/AdminMotd.vue"),
-  AdminRewards: () => import("@/components/admin/AdminRewards.vue"),
-  AdminProductMappings: () => import("@/components/admin/AdminProductMappings.vue"),
-  AdminAssignments: () => import("@/components/admin/AdminAssignments.vue"),
-  AdminPatreonLinks: () => import("@/components/admin/AdminPatreonLinks.vue"),
-  AdminDriftDetection: () => import("@/components/admin/AdminDriftDetection.vue"),
-  AdminAssignPortraits: () => import("@/components/admin/AdminAssignPortraits.vue"),
-  AdminManagePortraits: () => import("@/components/admin/AdminManagePortraits.vue"),
-  AdminStorageAlibaba: () => import("@/components/admin/cloudStorage/AdminStorageAlibaba.vue"),
-  AdminStorageS3: () => import("@/components/admin/cloudStorage/AdminStorageS3.vue"),
-  AdminMaps: () => import("@/components/admin/AdminMaps.vue"),
-  AdminTournaments: () => import("@/components/admin/AdminTournaments.vue"),
-  AdminPermissions: () => import("@/components/admin/AdminPermissions.vue"),
-  AdminApiTokens: () => import("@/components/admin/AdminApiTokens.vue"),
-  AdminServerLogs: () => import("@/components/admin/AdminServerLogs.vue"),
-  AdminServerLog: () => import("@/components/admin/AdminServerLog.vue"),
-};
 
 const routes: RouteRecordRaw[] = [
   {
@@ -195,7 +192,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: "statistics",
         name: EPlayerRouteName.PLAYER_PROFILE_STATISTICS,
-        component: lazyLoaded.PlayerStatisticTab,
+        component: PlayerStatisticTab,
       },
       {
         path: "clan",
@@ -218,64 +215,64 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/OverallStatistics",
-    component: lazyLoaded.OverallStatistics,
+    component: OverallStatistics,
     name: EMainRouteName.OVERALL_STATISTICS,
     redirect: { name: EStatisticsRouteName.PLAYER_ACTIVITY },
     children: [
       {
         path: "",
-        component: lazyLoaded.PlayerActivityTab,
+        component: PlayerActivityTab,
         name: EStatisticsRouteName.PLAYER_ACTIVITY,
       },
       {
         path: "mmr-distribution",
         name: EStatisticsRouteName.MMR,
-        component: lazyLoaded.MmrDistributionTab,
+        component: MmrDistributionTab,
       },
       {
         path: "winrates-per-race-and-map",
         name: EStatisticsRouteName.WINRATES,
-        component: lazyLoaded.WinrateTab,
+        component: WinrateTab,
       },
       {
         path: "heroes-winrates",
         name: EStatisticsRouteName.HEROES,
-        component: lazyLoaded.HeroTab,
+        component: HeroTab,
       },
     ],
   },
   {
     path: "/admin",
     name: EMainRouteName.ADMIN,
-    component: lazyLoaded.Admin,
+    component: Admin,
     children: [
-      { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: lazyLoaded.AdminQueueData },
-      { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: lazyLoaded.AdminBannedPlayers },
-      { path: "admin-ban-reason-translations", name: EAdminRouteName.BAN_REASON_TRANSLATIONS, component: lazyLoaded.AdminBanReasonTranslations },
-      { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: lazyLoaded.AdminSmurfs },
-      { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: lazyLoaded.AdminSmurfManageIdentifiers },
-      { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: lazyLoaded.AdminGlobalMute },
-      { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: lazyLoaded.AdminLoungeMute },
-      { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: lazyLoaded.AdminViewGameChat },
-      { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: lazyLoaded.AdminProxies },
-      { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: lazyLoaded.AdminNewsForLauncher },
-      { path: "admin-loading-screen-tips", name: EAdminRouteName.LOADING_SCREEN_TIPS, component: lazyLoaded.AdminLoadingScreenTips },
-      { path: "admin-motd", name: EAdminRouteName.MESSAGE_OF_THE_DAY, component: lazyLoaded.AdminMotd },
-      { path: "admin-rewards", name: EAdminRouteName.MANAGE_REWARDS, component: lazyLoaded.AdminRewards },
-      { path: "admin-product-mappings", name: EAdminRouteName.PRODUCT_MAPPINGS, component: lazyLoaded.AdminProductMappings },
-      { path: "admin-assignments", name: EAdminRouteName.REWARD_ASSIGNMENTS, component: lazyLoaded.AdminAssignments },
-      { path: "admin-patreon-links", name: EAdminRouteName.PATREON_LINKS, component: lazyLoaded.AdminPatreonLinks },
-      { path: "admin-drift-detection", name: EAdminRouteName.DRIFT_DETECTION, component: lazyLoaded.AdminDriftDetection },
-      { path: "admin-assign-portraits", name: EAdminRouteName.ASSIGN_PORTRAITS, component: lazyLoaded.AdminAssignPortraits },
-      { path: "admin-manage-portraits", name: EAdminRouteName.MANAGE_PORTRAITS, component: lazyLoaded.AdminManagePortraits },
-      { path: "admin-storage-alibaba", name: EAdminRouteName.MANAGE_ALIBABA_FILES, component: lazyLoaded.AdminStorageAlibaba },
-      { path: "admin-storage-s3", name: EAdminRouteName.MANAGE_S3_FILES, component: lazyLoaded.AdminStorageS3 },
-      { path: "admin-maps", name: EAdminRouteName.MANAGE_MAPS, component: lazyLoaded.AdminMaps },
-      { path: "admin-tournaments", name: EAdminRouteName.MANAGE_TOURNAMENTS, component: lazyLoaded.AdminTournaments },
-      { path: "admin-permissions", name: EAdminRouteName.MANAGE_PERMISSIONS, component: lazyLoaded.AdminPermissions },
-      { path: "admin-api-tokens", name: EAdminRouteName.MANAGE_API_TOKENS, component: lazyLoaded.AdminApiTokens },
-      { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: lazyLoaded.AdminServerLogs },
-      { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: lazyLoaded.AdminServerLog, props: true },
+      { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
+      { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
+      { path: "admin-ban-reason-translations", name: EAdminRouteName.BAN_REASON_TRANSLATIONS, component: AdminBanReasonTranslations },
+      { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
+      { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
+      { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
+      { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
+      { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
+      { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
+      { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },
+      { path: "admin-loading-screen-tips", name: EAdminRouteName.LOADING_SCREEN_TIPS, component: AdminLoadingScreenTips },
+      { path: "admin-motd", name: EAdminRouteName.MESSAGE_OF_THE_DAY, component: AdminMotd },
+      { path: "admin-rewards", name: EAdminRouteName.MANAGE_REWARDS, component: AdminRewards },
+      { path: "admin-product-mappings", name: EAdminRouteName.PRODUCT_MAPPINGS, component: AdminProductMappings },
+      { path: "admin-assignments", name: EAdminRouteName.REWARD_ASSIGNMENTS, component: AdminAssignments },
+      { path: "admin-patreon-links", name: EAdminRouteName.PATREON_LINKS, component: AdminPatreonLinks },
+      { path: "admin-drift-detection", name: EAdminRouteName.DRIFT_DETECTION, component: AdminDriftDetection },
+      { path: "admin-assign-portraits", name: EAdminRouteName.ASSIGN_PORTRAITS, component: AdminAssignPortraits },
+      { path: "admin-manage-portraits", name: EAdminRouteName.MANAGE_PORTRAITS, component: AdminManagePortraits },
+      { path: "admin-storage-alibaba", name: EAdminRouteName.MANAGE_ALIBABA_FILES, component: AdminStorageAlibaba },
+      { path: "admin-storage-s3", name: EAdminRouteName.MANAGE_S3_FILES, component: AdminStorageS3 },
+      { path: "admin-maps", name: EAdminRouteName.MANAGE_MAPS, component: AdminMaps },
+      { path: "admin-tournaments", name: EAdminRouteName.MANAGE_TOURNAMENTS, component: AdminTournaments },
+      { path: "admin-permissions", name: EAdminRouteName.MANAGE_PERMISSIONS, component: AdminPermissions },
+      { path: "admin-api-tokens", name: EAdminRouteName.MANAGE_API_TOKENS, component: AdminApiTokens },
+      { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
+      { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
     ],
   },
   {
