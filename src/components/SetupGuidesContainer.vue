@@ -3,7 +3,6 @@
     <div class="px-0">
       <v-tabs
         v-model="activeTab"
-        grow
         show-arrows
       >
         <v-tab @click="navigateToLauncher">
