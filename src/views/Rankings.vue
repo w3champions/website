@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-3 w3-container-width">
-    <v-card tile>
+    <v-card class="overflow-x-auto" tile>
       <v-card-title class="pt-3">
         {{ $t("views_app.rankings") }}
       </v-card-title>

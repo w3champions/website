@@ -3,7 +3,7 @@
     <admin-check-jwt-lifetime />
     <div v-if="isAdmin">
       <admin-navigation />
-      <v-card tile>
+      <v-card class="overflow-x-auto" tile>
         <router-view />
       </v-card>
     </div>
