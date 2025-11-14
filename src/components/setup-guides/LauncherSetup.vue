@@ -1,6 +1,6 @@
 <template>
   <v-row class="justify-center">
-    <v-col cols="12" md="10" lg="8">
+    <v-col cols="12">
       <v-container class="overflow-x-auto">
         <v-card-title>
           {{ $t("views_gettingstarted.howtoinstall") }}
