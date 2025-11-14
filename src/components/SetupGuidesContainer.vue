@@ -2,8 +2,9 @@
   <div class="pt-4">
     <div class="px-0">
       <v-tabs
+        direction="vertical"
         v-model="activeTab"
-        show-arrows
+        class="ml-md-4"
       >
         <v-tab @click="navigateToLauncher">
           {{ $t("views_setupguides.launcher_setup") }}
