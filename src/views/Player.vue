@@ -2,7 +2,7 @@
   <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col>
-        <v-card tile>
+        <v-card class="overflow-x-auto" tile>
           <v-card-title>
             <v-row no-gutters>
               <v-col class="d-flex flex-wrap">

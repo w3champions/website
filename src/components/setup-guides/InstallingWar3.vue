@@ -1,6 +1,6 @@
 <template>
   <v-card-text class="px-4">
-    <v-card-text class="">
+    <v-card-text class="overflow-x-auto">
       {{ $t("views_gettingstarted.installwar3intro") }}
       <ol class="pl-6 mt-3">
         <li class="mb-2">{{ $t("views_gettingstarted.installwar3step1") }}</li>

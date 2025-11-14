@@ -1,7 +1,10 @@
 <template>
   <div class="pt-4">
     <div class="px-0">
-      <v-tabs v-model="activeTab">
+      <v-tabs 
+        :direction="$vuetify.display.smAndDown ? 'vertical' : 'horizontal'"
+        v-model="activeTab"
+        >
         <v-tab @click="navigateToLauncher">
           {{ $t("views_setupguides.launcher_setup") }}
         </v-tab>
