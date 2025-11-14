@@ -29,8 +29,3 @@ h3 {
 .v-data-table {
   background-color: transparent !important;
 }
-
-/* BsK : fix 13.11.2025 : horizontally responsive scroll */
-.v-application .v-container .v-card:first-child {
-  overflow-x:auto;
-}
