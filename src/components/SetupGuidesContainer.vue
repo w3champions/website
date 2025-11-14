@@ -2,7 +2,7 @@
   <div class="pt-4">
     <div class="px-0">
       <v-tabs
-        direction="vertical"
+        :direction="$vuetify.display.smAndDown ? 'vertical' : 'horizontal'"
         v-model="activeTab"
         class="ml-md-4"
       >
