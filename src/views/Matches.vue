@@ -2,7 +2,7 @@
   <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
-        <v-card class="overflow-x-auto" tile>
+        <v-card tile>
           <v-card-title class="pt-3">
             {{ $t("views_app.matches") }}
           </v-card-title>
