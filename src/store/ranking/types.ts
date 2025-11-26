@@ -36,6 +36,8 @@ export type ActiveGameMode = {
   type: EGameModeType;
   name: string;
   maps: MapShortInfo[];
+  teamCount: number;
+  teamSize: number;
 };
 
 export interface MapShortInfo {
