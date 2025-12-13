@@ -16,7 +16,7 @@ export default class PersonalSettingsService {
     value: PersonalSetting,
     authToken: string,
   ): Promise<boolean> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/?authorization=${authToken}`;
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}`;
     const response = await authorizedFetch("PUT", url, authToken, JSON.stringify(value));
     return response.ok;
   }
@@ -26,7 +26,7 @@ export default class PersonalSettingsService {
     value: ProfilePicture,
     authToken: string,
   ): Promise<boolean> {
-    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/profile-picture?authorization=${authToken}`;
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTag)}/profile-picture`;
 
     const post = {
       pictureId: value.pictureId,

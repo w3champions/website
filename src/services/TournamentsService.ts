@@ -62,7 +62,7 @@ export default class TournamentsService {
   }
 
   public static async registerPlayer(tournamentId: string, player: ITournamentPlayer, token: string): Promise<boolean> {
-    const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
+    const url = `${API_URL}api/tournaments/${tournamentId}/players`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify(player));
 
     const responseBody: ITournamentResponse = await response?.json();
@@ -71,7 +71,7 @@ export default class TournamentsService {
   }
 
   public static async unregisterPlayer(tournamentId: string, battleTag: string, token: string): Promise<boolean> {
-    const url = `${API_URL}api/tournaments/${tournamentId}/players?authorization=${token}`;
+    const url = `${API_URL}api/tournaments/${tournamentId}/players`;
     const response = await authorizedFetch("DELETE", url, token, JSON.stringify({ battleTag }));
 
     const responseBody: ITournamentResponse = await response?.json();
@@ -80,7 +80,7 @@ export default class TournamentsService {
   }
 
   public static async createTournament(tournament: ITournament, token: string): Promise<boolean> {
-    const url = `${API_URL}api/tournaments?authorization=${token}`;
+    const url = `${API_URL}api/tournaments`;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...data } = tournament;
 
@@ -93,7 +93,7 @@ export default class TournamentsService {
 
   public static async updateTournament(tournament: ITournament, token: string): Promise<boolean> {
     const id = tournament.id;
-    const url = `${API_URL}api/tournaments/${id}?authorization=${token}`;
+    const url = `${API_URL}api/tournaments/${id}`;
 
     const fieldNames = [
       "name",
