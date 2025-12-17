@@ -530,3 +530,10 @@ export interface ModerationStatus {
 }
 
 export type BattleTagModerationMap = Record<string, ModerationStatus>;
+
+export interface LauncherChatMessage {
+  id: string;
+  message: string;
+  time: string;
+  battleTag: string;
+}

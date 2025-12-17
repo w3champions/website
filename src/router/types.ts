@@ -8,6 +8,7 @@ export enum EAdminRouteName {
   GLOBAL_MUTE = "Admin - Global Mute",
   LOUNGE_MUTE = "Admin - Lounge Mute",
   VIEW_GAME_CHAT = "Admin - View Game Chat",
+  LAUNCHER_CHAT = "Admin - Launcher Game Chat",
   PROXY_SETTINGS = "Admin - Proxy Settings",
   NEWS = "Admin - News",
   LOADING_SCREEN_TIPS = "Admin - Loading Screen Tips",
