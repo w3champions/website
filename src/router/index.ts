@@ -54,6 +54,7 @@ import AdminApiTokens from "@/components/admin/AdminApiTokens.vue";
 import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
+import AdminLauncherChat from "@/components/admin/AdminLauncherChat.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -254,6 +255,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
+      { path: "admin-launcher-chat", name: EAdminRouteName.LAUNCHER_CHAT, component: AdminLauncherChat },
       { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
       { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },
       { path: "admin-loading-screen-tips", name: EAdminRouteName.LOADING_SCREEN_TIPS, component: AdminLoadingScreenTips },

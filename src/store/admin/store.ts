@@ -5,6 +5,7 @@ import ModerationService from "@/services/admin/ModerationService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
 import { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
+
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
