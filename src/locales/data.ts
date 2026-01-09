@@ -472,6 +472,12 @@ const data = {
     components_player_tabs_matchhistorytab: {
       title: "Match History",
     },
+    components_player_ping: {
+      player_avg: "Player average ping",
+      opponents_avg: "Opponents average ping",
+      no_data: "No ping data",
+      offset_note: "Averages computed from the current offset (showing up to {size} matches)",
+    },
     components_tournaments_TournamentMatchUpdate: {
       updatematch: "Update match",
       date: "Date",

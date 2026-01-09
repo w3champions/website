@@ -79,6 +79,10 @@
         </v-col>
       </v-row>
     </v-card-text>
+    <v-card-text v-if="matches && matches.length > 0" class="pb-4 pt-2 px-4">
+      <player-ping-summary :matches="matches" :battle-tag="battleTag" :page-size="50" />
+    </v-card-text>
+
     <matches-grid
       v-model="matches"
       :total-matches="totalMatches"
@@ -104,6 +108,7 @@ import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
+import PlayerPingSummary from "@/components/player/PlayerPingSummary.vue";
 import { useCommonStore } from "@/store/common/store";
 
 export default defineComponent({
@@ -113,6 +118,7 @@ export default defineComponent({
     PlayerSearch,
     HeroIconToggle,
     HeroSelect,
+    PlayerPingSummary,
   },
   props: {
     id: {
