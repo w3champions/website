@@ -158,7 +158,7 @@ import { computed, defineComponent, onMounted } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
-import { Match, PlayerScore, Team } from "@/store/types";
+import { Match, PlayerInTeam, PlayerScore, Team } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
@@ -277,26 +277,17 @@ export default defineComponent({
     });
 
     function getPlayerScores(team: Team): PlayerScore[] {
-      const scores: PlayerScore[] = playerScores.value
-        .map((playerScore) => {
-          // Use the battleTag from the Match record, since it is sometimes incorrect on the PlayerScore record
-          const matchedPlayer = team.players.find((p) =>
-            playerScore.battleTag
-              .toLowerCase()
-              .includes(p.battleTag.toLowerCase().split("#", 1)[0]) ||
-              p.inviteName && p.inviteName === playerScore.battleTag
-          );
-          return {
-            ...playerScore,
-            battleTag: matchedPlayer?.battleTag ?? "",
-          };
-        });
+      return team.players.map((p: PlayerInTeam) => {
+        const playerInTeamBattleTag = p.battleTag.toLowerCase();
+        const score = playerScores.value.find((score) => score.battleTag.toLowerCase() === playerInTeamBattleTag) || // Check exact match
+          playerScores.value.find((score) => score.battleTag.toLowerCase().includes(playerInTeamBattleTag.split("#", 1)[0])) || // Check without tag numbers
+          playerScores.value.find((score) => score.battleTag === p.inviteName); // Check inviteName match
 
-      const playerScoreDictionary = _keyBy(scores, "battleTag");
-
-      return team.players.map(
-        (player) => playerScoreDictionary[player.battleTag]
-      );
+        return {
+          ...score ?? {} as PlayerScore,
+          battleTag: p.battleTag, // Use the battleTag from the Match (PlayerInTeam) record, since it is sometimes incorrect on the PlayerScore record
+        };
+      });
     }
 
     // watch(matchIdRef, init);
