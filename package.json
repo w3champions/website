@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@types/google-spreadsheet": "^3.3.0",
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.11.30",
     "@vitejs/plugin-legacy": "^5.0.0",
@@ -69,7 +68,7 @@
     "eslint-plugin-lodash": "^8.0.0",
     "eslint-plugin-vue": "^10.5.1",
     "eslint-plugin-vuetify": "^2.5.3",
-    "google-spreadsheet": "^3.2.0",
+    "google-spreadsheet": "^5.2.0",
     "prettier": "2.8.8",
     "sass": "~1.32.13",
     "terser": "^5.29.2",

@@ -10,7 +10,7 @@
 import fs from "node:fs";
 import set from "lodash/set.js";
 import prettier from "prettier";
-import { GoogleSpreadsheet } from "google-spreadsheet";
+import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
 import { activeLanguages } from "./active-languages.ts";
 import keyConstant from "./key.ts";
 
@@ -22,22 +22,21 @@ async function main() {
 
   const doc = new GoogleSpreadsheet(
     "1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc",
+    { apiKey: keyConstant },
   );
-
-  doc.useApiKey(keyConstant);
 
   const languages = activeLanguages || ["en", "de"];
   const locales = {};
 
   await doc.loadInfo();
   const firstSheet = doc.sheetsByIndex[0];
-  const rows = await firstSheet.getRows({ offset: 1 });
+  const rows: GoogleSpreadsheetRow[] = await firstSheet.getRows({ offset: 1 });
 
   for (const row of rows) {
     for (const lang of languages) {
       // we don't want empty strings inside our translation file
-      const value = !row[lang]?.trim() ? undefined : row[lang];
-      set(locales, `${lang}.${row.location}.${row.id}`, value);
+      const value = !row.get(lang)?.trim() ? undefined : row.get(lang);
+      set(locales, `${lang}.${row.get("location")}.${row.get("id")}`, value);
     }
   }
 
