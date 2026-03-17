@@ -2,33 +2,25 @@
 
 ## Development setup
 
+### Install dependencies
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
-
+### Run development server
 ```
 npm start
 ```
 
-#### .env
-When running locally, environmental variables will be taken from [this](https://github.com/w3champions/website/blob/master/public/env.js) file.
+### Environment variables
+When running locally, environment variables will be taken from [this](https://github.com/w3champions/website/blob/master/public/env.js) file.
 
-### Compiles and minifies for production
-This also spins up a web server after the build, so you can check your work after building.
-```
-npm run serve:dev
-```
-
-### Lints and fixes files
-
+### Lint and fix files
 ```
 npm run lint:fix
 ```
 
 ### Customize configuration
-
 See [Configuration Reference](https://cli.vuejs.org/config/) for Vue options.
 
 ## Optional: Setup website backend server (and authenticate as admin)
