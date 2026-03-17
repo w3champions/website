@@ -22,7 +22,7 @@ async function main() {
 
   const doc = new GoogleSpreadsheet(
     "1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc",
-    { apiKey: keyConstant }
+    { apiKey: keyConstant },
   );
 
   const languages = activeLanguages || ["en", "de"];
