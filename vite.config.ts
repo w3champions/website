@@ -28,7 +28,7 @@ export default defineConfig({
       sass: {
         additionalData: [
           // vuetify variable overrides
-          '@import "@/scss/variables.scss"',
+          "@import '@/scss/variables.scss'",
           "",
         ].join("\n"),
       },
@@ -58,9 +58,6 @@ function manualChunks(id: string) {
   }
   if (id.includes("node_modules/@tiptap") || id.includes("node_modules/prosemirror")) {
     return "tiptap";
-  }
-  if (id.includes("node_modules")) {
-    return "vendor";
   }
   return null;
 }
