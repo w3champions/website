@@ -76,13 +76,6 @@ SET_IS_ADMIN(isAdmin: boolean): void {
 }
 ```
 
-### Deploying to a Pull Request Environment
-If you branch starts with "DEPLOY_" azure will create an automatic deployment for your pull request, so you can test it in an isolated environment. It will be deployed to whatever comes after "DEPLOY_". For example, if my branch is called DEPLOY_add-new-language the pr will be published to https://add-new-language.w3champions.com. The https certificate will be generated after the deployment, but this can take some time.
-
-If you need any other connection strings, just update the docker-compose.toke.yaml file accordingly, for example if you want to use a different backend for the identification for example (which can also be deployed by a PR just like this repo).
-
-When you are done, please contact one of the older devs, because they can delete the unused containers again.
-
 ### Working with Localization
 The website rebuilds localizations on each new deployment, running this script:
 
@@ -99,5 +92,3 @@ It then merges with the existing localizations here, which contains some english
 If you'd like to add new strings to the website, you can request access to edit the localization document above to add them, and then refer to them in the html by calling the `v18n` library in that component.
 
 [example](https://github.com/w3champions/website/blob/10eb639aad5175481a6230d3ff55a18f11f831f5/src/views/Home.vue#L8)
-
-Contact @CepheidUK for access to the sheet.
