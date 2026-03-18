@@ -18,7 +18,7 @@ export default defineComponent({
     LineChart,
   },
   props: {
-    gameDays: {
+    gameDaysPerMode: {
       type: Array<GameDayPerMode>,
       required: true,
     },
@@ -35,7 +35,7 @@ export default defineComponent({
     const { t } = useI18n();
 
     // Get the "All" set, or an empty set if it doesn't exist
-    const allSet = computed(() => props.gameDays
+    const allSet = computed(() => props.gameDaysPerMode
       .find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
         gameMode: EGameMode.UNDEFINED,
         gameDays: [] as GameDay[],
@@ -50,7 +50,7 @@ export default defineComponent({
 
     // Recompute the "All" set using all the other game modes,
     // using each mode's normalizing multiplier (the backend doesn't normalize)
-    const normalizedAllSet = computed(() => props.gameDays
+    const normalizedAllSet = computed(() => props.gameDaysPerMode
       .filter((g) => g.gameMode !== EGameMode.UNDEFINED)
       .reduce((acc: GameDayPerMode, curr: GameDayPerMode) => ({
         ...acc,
@@ -69,7 +69,7 @@ export default defineComponent({
       const activeGameModeIds = activeGameModes().map((m) => m.id);
       return {
         labels: gameDayDates.value,
-        datasets: props.gameDays
+        datasets: props.gameDaysPerMode
           // Use the calculated total for "All" (UNDEFINED) if normalized is on
           .map((c) => c.gameMode == EGameMode.UNDEFINED && props.normalized ? normalizedAllSet.value : c)
           // Filter out inactive gamemodes, but show total games (UNDEFINED)
