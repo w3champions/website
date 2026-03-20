@@ -13,8 +13,8 @@ window._env_ = {
   LAUNCHER_UPDATE_URL: "https://update-service.test.w3champions.com/api/",
 
   //* CDN resources url
-  INGAME_STATIC_RESOURCES_URL: "https://w3champions.wc3.tools/test/integration/",
-  // INGAME_STATIC_RESOURCES_URL: "https://w3champions.wc3.tools/prod/integration/",
+  INGAME_STATIC_RESOURCES_URL: "https://storage.w3champions.com/test/integration/",
+  // INGAME_STATIC_RESOURCES_URL: "https://storage.w3champions.com/prod/integration/",
 
   //* public API client ID for W3Champions
   BNET_API_CLIENT_ID: "d7bd6dd46e2842c8a680866759ad34c2",
