@@ -336,14 +336,7 @@ export default defineComponent({
 
     const loadingGamesPerDayStats = computed<boolean>(() => overallStatsStore.loadingGamesPerDayStats);
     const loadingPlayersPerDayStats = computed<boolean>(() => overallStatsStore.loadingPlayersPerDayStats);
-    const gameDays = computed<GameDayPerMode[]>(() => {
-      return overallStatsStore.gamesPerDay[0].map((g: GameDayPerMode) => {
-        return {
-          gameMode: g.gameMode,
-          gameDays: g.gameDays.toSorted((a, b) => a.date.localeCompare(b.date))
-        };
-      });
-    });
+    const gameDays = computed<GameDayPerMode[]>(() => overallStatsStore.gamesPerDay[0]);
     const gameLength = computed<GameLength[]>(() => overallStatsStore.gameLengths);
     const popularGameHours = computed<PopularHours[]>(() => overallStatsStore.popularHours);
 
