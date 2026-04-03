@@ -1,5 +1,5 @@
-@import "./undead.scss";
-@import "./nightelf.scss";
+@use "./undead.scss";
+@use "./nightelf.scss";
 
 .v-theme--nightelf, .v-theme--undead {
   .w3-won {

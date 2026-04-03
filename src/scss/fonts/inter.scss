@@ -13,18 +13,18 @@ Used weights:
 As of 2023: 400, 500, 700, 900
 */
 // Static font package: @fontsource/inter
-//@import "@fontsource/inter/100.css"; /* Thin */
-//@import "@fontsource/inter/200.css"; /* ExtraLight */
-//@import "@fontsource/inter/300.css"; /* Light */
-//@import "@fontsource/inter/400.css"; /* Regular */
-//@import "@fontsource/inter/500.css"; /* Medium */
-//@import "@fontsource/inter/600.css"; /* SemiBold */
-//@import "@fontsource/inter/700.css"; /* Bold */
-//@import "@fontsource/inter/800.css"; /* ExtraBold */
-//@import "@fontsource/inter/900.css"; /* Black */
+//@use "@fontsource/inter/100.css"; /* Thin */
+//@use "@fontsource/inter/200.css"; /* ExtraLight */
+//@use "@fontsource/inter/300.css"; /* Light */
+//@use "@fontsource/inter/400.css"; /* Regular */
+//@use "@fontsource/inter/500.css"; /* Medium */
+//@use "@fontsource/inter/600.css"; /* SemiBold */
+//@use "@fontsource/inter/700.css"; /* Bold */
+//@use "@fontsource/inter/800.css"; /* ExtraBold */
+//@use "@fontsource/inter/900.css"; /* Black */
 
 // Variable font package: @fontsource-variable/inter
 // font-family: 'Inter Variable'
 // Supports weights 100-900
-@import "@fontsource-variable/inter/wght.css"; /* Contains ONLY variable weights and no other axes. */
-//@import "@fontsource-variable/inter/slnt.css"; /* This contains ALL variable axes. Font files are larger. Just for advanced customisation. */
+@use "@fontsource-variable/inter/wght.css"; /* Contains ONLY variable weights and no other axes. */
+//@use "@fontsource-variable/inter/slnt.css"; /* This contains ALL variable axes. Font files are larger. Just for advanced customisation. */
