@@ -18,11 +18,11 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Put env variables into container
 WORKDIR /usr/share/nginx/html
-COPY env.sh .
+COPY scripts/env.sh .
 RUN apk add --no-cache bash
 RUN chmod +x env.sh
 
-ADD start.sh /
+ADD scripts/start.sh /
 RUN chmod +x /start.sh
 
 EXPOSE 80
