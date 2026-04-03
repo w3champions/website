@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["vuetify", "chart.js", "lodash", "node"],
+    "types": ["vuetify", "chart.js", "node"],
     "paths": {
       "@/*": ["./src/*"]
     },
