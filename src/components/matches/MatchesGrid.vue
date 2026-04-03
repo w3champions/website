@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="elevation-1 overflow-x-auto">
+    <div class="elevation-1 overflow-x-auto overflow-y-hidden">
       <table class="custom-table">
         <thead>
           <tr>
