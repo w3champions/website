@@ -1,5 +1,5 @@
-@import "./human.scss";
-@import "./orc.scss";
+@use "./human.scss";
+@use "./orc.scss";
 
 .v-theme--human, .v-theme--orc {
   .w3-lost {

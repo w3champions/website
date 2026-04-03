@@ -1,3 +1,4 @@
-@import "./light/index.scss";
-@import "./dark/index.scss";
-@import "./fonts.scss";
+@use "./shared/index.scss" as shared-index;
+@use "./light/index.scss" as light-index;
+@use "./dark/index.scss" as dark-index;
+@use "./fonts.scss";
