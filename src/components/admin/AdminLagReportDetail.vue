@@ -10,7 +10,6 @@
     </v-container>
 
     <v-container v-else-if="report" fluid class="pa-4">
-
       <!-- ====== GAME HEADER ====== -->
       <v-card variant="outlined" class="mb-4">
         <v-card-text class="py-3">
@@ -40,10 +39,10 @@
                 v-for="(ce, ci) in player.diagnostics.connectionEvents"
                 :key="'ce-' + pi + '-' + ci"
                 size="x-small"
-                :color="ce.eventType === EConnectionEventType.Reconnect ? 'warning' : 'error'"
+                :color="[EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType) ? 'warning' : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType) ? 'info' : 'error'"
                 variant="flat"
               >
-                {{ ce.eventType }} {{ formatGameTime(ce.gameTimeOffsetMs) }} ({{ playerName(player.battleTag) }})
+                {{ connectionEventLabel(ce.eventType) }} {{ formatGameTime(ce.gameTimeOffsetMs) }} ({{ playerName(player.battleTag) }})
               </v-chip>
             </template>
             <span class="text-medium-emphasis text-caption ml-2">Categories:</span>
@@ -82,8 +81,14 @@
               <!-- Topology nodes and arrows built from playerTopology computed -->
               <template v-for="(segment, si) in playerTopology(player)" :key="'seg-' + pi + '-' + si">
                 <!-- Node -->
-                <v-sheet v-if="segment.type === 'node'" rounded border class="pa-2 text-center" min-width="80"
-                  :style="{ borderColor: segment.borderColor + ' !important' }">
+                <v-sheet
+                  v-if="segment.type === 'node'"
+                  rounded
+                  border
+                  class="pa-2 text-center"
+                  min-width="80"
+                  :style="{ borderColor: segment.borderColor + ' !important' }"
+                >
                   <div :style="{ color: segment.labelColor }" class="font-weight-bold">{{ segment.label }}</div>
                   <div class="text-medium-emphasis" style="font-size: 10px;">{{ segment.role }}</div>
                   <div v-if="segment.subtitle" class="text-medium-emphasis" style="font-size: 9px;">{{ segment.subtitle }}</div>
@@ -115,7 +120,6 @@
             <span class="text-medium-emphasis text-caption ml-2">Data collected throughout the entire game</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-
             <!-- Player toggles -->
             <div class="d-flex ga-4 mb-3 justify-end">
               <v-checkbox
@@ -203,7 +207,6 @@
             <span class="text-medium-emphasis text-caption ml-2">Drag markers on chart or use quick-jump buttons</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-
             <!-- Quick-jump buttons for events -->
             <div class="d-flex ga-2 flex-wrap mb-3 align-center">
               <span class="text-caption text-medium-emphasis">Jump to:</span>
@@ -284,7 +287,6 @@
             <span class="text-medium-emphasis text-caption ml-2">All-server baselines and burst measurements</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-
             <!-- All-server baseline table (expandable rows) -->
             <template v-for="(player, pi) in report.players" :key="'baseline-' + pi">
               <div v-if="player.diagnostics.allServerBaselines.length" class="mb-4">
@@ -355,8 +357,8 @@
                       <td class="text-caption">{{ formatDate(ce.timestamp) }}</td>
                       <td>{{ formatGameTime(ce.gameTimeOffsetMs) }}</td>
                       <td>
-                        <v-chip :color="ce.eventType === EConnectionEventType.Reconnect ? 'warning' : 'error'" size="x-small" variant="flat">
-                          {{ ce.eventType }}
+                        <v-chip :color="[EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType) ? 'warning' : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType) ? 'info' : 'error'" size="x-small" variant="flat">
+                          {{ connectionEventLabel(ce.eventType) }}
                         </v-chip>
                       </td>
                       <td>{{ ce.durationMs != null ? (ce.durationMs / 1000).toFixed(1) + 's' : '—' }}</td>
@@ -422,7 +424,6 @@
             </template>
           </v-expansion-panel-text>
         </v-expansion-panel>
-
       </v-expansion-panels>
     </v-container>
 
@@ -435,7 +436,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, ref } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
-import { EConnectionEventType, EConnectionType, HopData, LagReportDetail, LagReportPlayer } from "@/store/admin/lagReports/types";
+import { EConnectionEventType, EConnectionType, HopData, LagReportPlayer } from "@/store/admin/lagReports/types";
 import { mdiArrowLeft, mdiChevronDown, mdiChevronRight, mdiCircle } from "@mdi/js";
 import { useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
@@ -490,6 +491,20 @@ export default defineComponent({
       const min = Math.floor(totalSec / 60);
       const sec = totalSec % 60;
       return `${min}:${sec.toString().padStart(2, "0")}`;
+    }
+
+    const connectionEventLabelMap: Record<string, string> = {
+      [EConnectionEventType.Reconnect]: "Reconnected",
+      [EConnectionEventType.FailureDisconnect]: "Disconnected",
+      [EConnectionEventType.GameCrashed]: "Game crashed",
+      [EConnectionEventType.GamePaused]: "Game paused",
+      [EConnectionEventType.GameResumed]: "Game resumed",
+      [EConnectionEventType.StartLag]: "Lag detected",
+      [EConnectionEventType.StopLag]: "Lag resolved",
+    };
+
+    function connectionEventLabel(eventType: string): string {
+      return connectionEventLabelMap[eventType] ?? eventType;
     }
 
     function lastHopAvg(hops: HopData[]): string {
@@ -869,6 +884,16 @@ export default defineComponent({
             };
             idx++;
           });
+          const annotationColorMap: Record<string, string> = {
+            [EConnectionEventType.Reconnect]: "#ff9800",
+            [EConnectionEventType.FailureDisconnect]: "#f44336",
+            [EConnectionEventType.GameCrashed]: "#f44336",
+            [EConnectionEventType.GamePaused]: "#ff9800",
+            [EConnectionEventType.GameResumed]: "#2196f3",
+            [EConnectionEventType.StartLag]: "#ff9800",
+            [EConnectionEventType.StopLag]: "#2196f3",
+          };
+
           player.diagnostics.connectionEvents.forEach((ce) => {
             const ts = new Date(ce.timestamp).getTime();
             // For reconnects, add a "Disconnected" marker at the start of the outage
@@ -890,18 +915,22 @@ export default defineComponent({
                 },
               };
             }
+
+            const color = annotationColorMap[ce.eventType] ?? "#f44336";
+            const label = connectionEventLabelMap[ce.eventType] ?? ce.eventType;
+
             annotations[`conn-${idx}`] = {
               type: "line",
               xMin: ts,
               xMax: ts,
-              borderColor: ce.eventType === EConnectionEventType.Reconnect ? "#ff9800" : "#f44336",
+              borderColor: color,
               borderWidth: 2,
               borderDash: [4, 2],
               label: {
                 display: true,
-                content: ce.eventType === EConnectionEventType.Reconnect ? "Reconnected" : ce.eventType,
+                content: label,
                 position: "start",
-                backgroundColor: ce.eventType === EConnectionEventType.Reconnect ? "#ff9800" : "#f44336",
+                backgroundColor: color,
                 color: "#fff",
                 font: { size: 9 },
               },
@@ -987,7 +1016,7 @@ export default defineComponent({
     const playerSummaries = computed(() => {
       const r = report.value;
       if (!r) return [];
-      return r.players.map((player, pi) => {
+      return r.players.map((player, _pi) => {
         const ping = player.diagnostics.pingHistory;
         const clientStats = computePingStats(ping.map((p) => p.avg).filter((v): v is number => v != null));
         const lossRates = ping.map((p) => p.lossRate).filter((v) => v != null);
@@ -1137,6 +1166,7 @@ export default defineComponent({
       expandedBaselines,
       toggleBaseline,
       EConnectionEventType,
+      connectionEventLabel,
       mdiArrowLeft,
       mdiChevronDown,
       mdiChevronRight,

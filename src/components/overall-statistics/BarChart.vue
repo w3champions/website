@@ -53,13 +53,6 @@ const defaultOptions = (): ChartOptions => {
 export default {
   name: "BarChart",
   components: { BarChartGeneric },
-  expose: ["chart"],
-  computed: {
-    chart() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (this.$refs.chartRef as any)?.chart;
-    },
-  },
   props: {
     chartData: {
       // Unfortunately we can't use ChartData<"bar"> here,
@@ -78,6 +71,12 @@ export default {
     //   type: String,
     //   default: "label",
     // },
+  },
+  expose: ["chart"],
+  computed: {
+    chart(): unknown {
+      return (this.$refs.chartRef as { chart?: unknown })?.chart;
+    },
   },
 };
 </script>
