@@ -1,3 +1,27 @@
+export enum EConnectionType {
+  Direct = "Direct",
+  Proxied = "Proxied",
+}
+
+export enum EConnectionEventType {
+  Reconnect = "Reconnect",
+  FailureDisconnect = "FailureDisconnect",
+}
+
+export enum EIssueCategory {
+  InputDelay = "InputDelay",
+  GameStutter = "GameStutter",
+  WaitingForPlayers = "WaitingForPlayers",
+  RubberBanding = "RubberBanding",
+  SpikeLag = "SpikeLag",
+  ConsistentLag = "ConsistentLag",
+  Reconnecting = "Reconnecting",
+  FullDisconnect = "FullDisconnect",
+  Desync = "Desync",
+  FpsDrops = "FpsDrops",
+  Other = "Other",
+}
+
 export type LagReportsState = {
   reports: LagReportListItem[];
   total: number;
@@ -22,9 +46,9 @@ export interface LagReportListItem {
 export interface LagReportPlayerSummary {
   battleTag: string;
   isExplicit: boolean;
-  connectionType: string;
+  connectionType: EConnectionType;
   proxyName: string | null;
-  issueCategories: string[];
+  issueCategories: EIssueCategory[];
   lagEventCount: number;
   connectionEventCount: number;
 }
@@ -68,12 +92,12 @@ export interface LagReportDetail {
 export interface LagReportPlayer {
   battleTag: string;
   clientIp: string | null;
-  connectionType: string;
+  connectionType: EConnectionType;
   proxyName: string | null;
   proxyIp: string | null;
   proxyPort: number | null;
   isExplicit: boolean;
-  issueCategories: string[];
+  issueCategories: EIssueCategory[];
   freeText: string;
   annotations: LagReportAnnotation[];
   diagnostics: PlayerDiagnostics;
@@ -131,7 +155,7 @@ export interface PingSample {
 export interface ConnectionEventData {
   timestamp: string;
   gameTimeOffsetMs: number;
-  eventType: string;
+  eventType: EConnectionEventType;
   durationMs: number | null;
 }
 

@@ -1,5 +1,6 @@
 <template>
   <bar-chart-generic
+    ref="chartRef"
     :data="chartData"
     :options="chartOptions"
   />
@@ -8,6 +9,7 @@
 <script lang="ts">
 import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend, ChartData } from "chart.js";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
+import zoomPlugin from "chartjs-plugin-zoom";
 import { PropType } from "vue";
 import { Bar as BarChartGeneric } from "vue-chartjs";
 
@@ -18,6 +20,7 @@ ChartJS.register(LinearScale);
 ChartJS.register(Filler);
 ChartJS.register(Tooltip);
 ChartJS.register(chartJSPluginAnnotation);
+ChartJS.register(zoomPlugin);
 ChartJS.register(Legend);
 
 const defaultOptions = (): ChartOptions => {
@@ -50,6 +53,13 @@ const defaultOptions = (): ChartOptions => {
 export default {
   name: "BarChart",
   components: { BarChartGeneric },
+  expose: ["chart"],
+  computed: {
+    chart() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (this.$refs.chartRef as any)?.chart;
+    },
+  },
   props: {
     chartData: {
       // Unfortunately we can't use ChartData<"bar"> here,
