@@ -728,18 +728,23 @@ export default defineComponent({
     // Collect disconnect pauses (Reconnect events with duration) across all players.
     // Used to realign server-side ping (game-time seconds) to wall-clock.
     // During a disconnect, game-time freezes but wall-clock advances by durationMs.
-    const disconnectPauses = computed(() => {
+    const gameClockPauses = computed(() => {
       const r = report.value;
       if (!r) return [];
       const pauses: { gameTimeSec: number; durationMs: number }[] = [];
       for (const player of r.players) {
         for (const ce of player.diagnostics.connectionEvents) {
-          if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
+          if (
+            (ce.eventType === EConnectionEventType.Reconnect ||
+             ce.eventType === EConnectionEventType.GameResumed ||
+             ce.eventType === EConnectionEventType.StopLag) &&
+            ce.durationMs
+          ) {
             pauses.push({ gameTimeSec: ce.gameTimeOffsetMs / 1000, durationMs: ce.durationMs });
           }
         }
       }
-      // Deduplicate by gameTimeSec (same disconnect affects all players)
+      // Deduplicate by gameTimeSec (same event affects all players)
       const seen = new Set<number>();
       return pauses.filter((p) => {
         if (seen.has(p.gameTimeSec)) return false;
@@ -752,7 +757,7 @@ export default defineComponent({
     // accounting for disconnect pauses where game-time froze.
     function gameTimeToWallClockMs(gameTimeSec: number): number {
       let extraMs = 0;
-      for (const pause of disconnectPauses.value) {
+      for (const pause of gameClockPauses.value) {
         if (pause.gameTimeSec < gameTimeSec) {
           extraMs += pause.durationMs;
         } else {
@@ -825,7 +830,7 @@ export default defineComponent({
           const color = pi >= 0 ? PLAYER_COLORS[pi % PLAYER_COLORS.length] : PLAYER_COLORS[si % PLAYER_COLORS.length];
           if (sp.samples.length) {
             const points: { x: number; y: number | null }[] = [];
-            const pauses = disconnectPauses.value;
+            const pauses = gameClockPauses.value;
             let prevTime = -1;
             for (const s of sp.samples) {
               // If a disconnect pause falls between the previous and current sample, insert null gap
