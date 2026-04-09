@@ -7,6 +7,10 @@ export enum EConnectionEventType {
   Reconnect = "Reconnect",
   FailureDisconnect = "FailureDisconnect",
   GameCrashed = "GameCrashed",
+  GamePaused = "GamePaused",
+  GameResumed = "GameResumed",
+  StartLag = "StartLag",
+  StopLag = "StopLag",
 }
 
 export enum EIssueCategory {
