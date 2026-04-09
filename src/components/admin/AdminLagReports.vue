@@ -213,6 +213,7 @@ export default defineComponent({
       "FullDisconnect",
       "Desync",
       "FpsDrops",
+      "GameCrashed",
       "Other",
     ];
 

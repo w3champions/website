@@ -6,6 +6,7 @@ export enum EConnectionType {
 export enum EConnectionEventType {
   Reconnect = "Reconnect",
   FailureDisconnect = "FailureDisconnect",
+  GameCrashed = "GameCrashed",
 }
 
 export enum EIssueCategory {
@@ -19,6 +20,7 @@ export enum EIssueCategory {
   FullDisconnect = "FullDisconnect",
   Desync = "Desync",
   FpsDrops = "FpsDrops",
+  GameCrashed = "GameCrashed",
   Other = "Other",
 }
 
