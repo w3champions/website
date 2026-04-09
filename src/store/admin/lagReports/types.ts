@@ -62,8 +62,8 @@ export interface LagReportQueryParams {
   page: number;
   pageSize: number;
   battleTag?: string;
-  gameId?: number;
-  serverNodeId?: number;
+  gameSearch?: string;
+  serverName?: string;
   proxyName?: string;
   proxyIp?: string;
   dateFrom?: string;

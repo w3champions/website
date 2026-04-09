@@ -18,9 +18,8 @@
         </v-col>
         <v-col cols="12" md="2">
           <v-text-field
-            v-model="filters.gameId"
-            label="Game ID"
-            type="number"
+            v-model="filters.gameSearch"
+            label="Game ID / Name"
             variant="underlined"
             color="primary"
             clearable
@@ -29,9 +28,8 @@
         </v-col>
         <v-col cols="12" md="2">
           <v-text-field
-            v-model="filters.serverNodeId"
-            label="Server Node ID"
-            type="number"
+            v-model="filters.serverName"
+            label="Server Name"
             variant="underlined"
             color="primary"
             clearable
@@ -194,8 +192,8 @@ export default defineComponent({
 
     const filters = reactive({
       battleTag: "",
-      gameId: null as number | null,
-      serverNodeId: null as number | null,
+      gameSearch: "",
+      serverName: "",
       proxyName: "",
       proxyIp: "",
       issueCategory: "",
@@ -233,8 +231,8 @@ export default defineComponent({
         page: tableOptions.value.page - 1,
         pageSize: tableOptions.value.itemsPerPage,
         battleTag: filters.battleTag || undefined,
-        gameId: filters.gameId ?? undefined,
-        serverNodeId: filters.serverNodeId ?? undefined,
+        gameSearch: filters.gameSearch || undefined,
+        serverName: filters.serverName || undefined,
         proxyName: filters.proxyName || undefined,
         proxyIp: filters.proxyIp || undefined,
         dateFrom: filters.dateFrom || undefined,

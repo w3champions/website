@@ -9,8 +9,8 @@ export default class LagReportService {
     query.set("pageSize", params.pageSize.toString());
 
     if (params.battleTag) query.set("battleTag", params.battleTag);
-    if (params.gameId != null) query.set("gameId", params.gameId.toString());
-    if (params.serverNodeId != null) query.set("serverNodeId", params.serverNodeId.toString());
+    if (params.gameSearch) query.set("gameSearch", params.gameSearch);
+    if (params.serverName) query.set("serverName", params.serverName);
     if (params.proxyName) query.set("proxyName", params.proxyName);
     if (params.proxyIp) query.set("proxyIp", params.proxyIp);
     if (params.dateFrom) query.set("dateFrom", params.dateFrom);
