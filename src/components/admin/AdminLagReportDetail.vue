@@ -1082,7 +1082,7 @@ export default defineComponent({
             });
           }
           events.push({
-            label: `${ce.eventType} ${formatGameTime(ce.gameTimeOffsetMs)} (${playerName(player.battleTag)})`,
+            label: `${connectionEventLabel(ce.eventType)} ${formatGameTime(ce.gameTimeOffsetMs)} (${playerName(player.battleTag)})`,
             timestamp: ce.timestamp,
           });
         });
