@@ -28,6 +28,8 @@ export enum EAdminRouteName {
   VIEW_SERVER_LOGS = "Admin - View Server Logs",
   SERVER_LOG = "Admin - Server Log",
   MANAGE_API_TOKENS = "Admin - Manage API Tokens",
+  LAG_REPORTS = "Admin - Lag Reports",
+  LAG_REPORT_DETAIL = "Admin - Lag Report Detail",
 }
 
 export enum EStatisticsRouteName {

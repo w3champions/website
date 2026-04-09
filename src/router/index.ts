@@ -55,6 +55,8 @@ import AdminServerLogs from "@/components/admin/AdminServerLogs.vue";
 import AdminServerLog from "@/components/admin/AdminServerLog.vue";
 import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName, EStatisticsRouteName } from "./types";
 import AdminLauncherChat from "@/components/admin/AdminLauncherChat.vue";
+import AdminLagReports from "@/components/admin/AdminLagReports.vue";
+import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -275,6 +277,8 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-api-tokens", name: EAdminRouteName.MANAGE_API_TOKENS, component: AdminApiTokens },
       { path: "admin-server-logs", name: EAdminRouteName.VIEW_SERVER_LOGS, component: AdminServerLogs },
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
+      { path: "admin-lag-reports", name: EAdminRouteName.LAG_REPORTS, component: AdminLagReports },
+      { path: "admin-lag-reports/:id", name: EAdminRouteName.LAG_REPORT_DETAIL, component: AdminLagReportDetail, props: true },
     ],
   },
   {
