@@ -59,7 +59,7 @@ import {
   mdiCog, mdiFormatAlignLeft, mdiGift, mdiMapPlus, mdiMapSearch, mdiMessageAlert,
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
-  mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate
+  mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -368,6 +368,20 @@ export default defineComponent({
             permission: EPermission.Permissions,
             component: "admin-api-tokens",
             routeName: EAdminRouteName.MANAGE_API_TOKENS,
+          },
+        ],
+      },
+      {
+        title: "Network Diagnostics",
+        icon: mdiWaveform,
+        permission: EPermission.Proxies,
+        items: [
+          {
+            title: "Lag Reports",
+            icon: mdiWaveform,
+            permission: EPermission.Proxies,
+            component: "admin-lag-reports",
+            routeName: EAdminRouteName.LAG_REPORTS,
           },
         ],
       },

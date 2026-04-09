@@ -1,7 +1,9 @@
 <template>
   <bar-chart-generic
+    ref="chartRef"
     :data="chartData"
     :options="chartOptions"
+    :plugins="chartPlugins"
   />
 </template>
 
@@ -64,10 +66,20 @@ export default {
       type: Object,
       default: defaultOptions,
     },
+    chartPlugins: {
+      type: Array,
+      default: (): unknown[] => [],
+    },
     // datasetIdKey: {
     //   type: String,
     //   default: "label",
     // },
+  },
+  expose: ["chart"],
+  computed: {
+    chart(): unknown {
+      return (this.$refs.chartRef as { chart?: unknown })?.chart;
+    },
   },
 };
 </script>
