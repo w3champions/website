@@ -66,7 +66,7 @@ export default defineComponent({
     // Example: 1500     -> 00:15
     // Example: 15000000 -> 04:10:00
     function formatTime(timeMs: number): string {
-      const totalSeconds = Math.max(0, Math.floor(timeMs / 1000));
+      const totalSeconds = Math.floor(timeMs / 1000);
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
