@@ -197,6 +197,7 @@ export type ReplayPlayer = {
 };
 
 export type ReplayMessage = {
+  time: number;
   fromPlayer: number;
   scope: ReplayMessageScope;
   content: string;

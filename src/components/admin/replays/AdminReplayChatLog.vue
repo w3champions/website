@@ -24,6 +24,7 @@
         <replay-chat-message
           v-for="(item, index) in messages"
           :key="index"
+          :time="item.time"
           :sentBy="getSenderName(item)"
           :team="getTeam(item)"
           :content="item.content"
