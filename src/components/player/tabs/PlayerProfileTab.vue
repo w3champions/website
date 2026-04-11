@@ -74,11 +74,11 @@ import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
+import uniqBy from "lodash/uniqBy";
 import PlayerLeague from "@/components/player/PlayerLeague.vue";
 import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
 import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
-import { EGameMode } from "@/store/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -131,43 +131,11 @@ export default defineComponent({
     const topGameModeStats = computed<ModeStat[]>(() => {
       if (!gameModeStats.value) return [];
 
-      const oneVOnes = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_1ON1);
+      const rankedModes = gameModeStats.value.filter((g) => g.rank !== 0);
+      const bestModes = sortBy(rankedModes, ["leagueOrder", "division", "rank"]);
+      const uniqueModes = uniqBy(bestModes, (x) => x.gameMode);
 
-      const rankedOneVOnes = oneVOnes.filter((x) => x.rank != 0);
-
-      let bestOneVOne = sortBy(rankedOneVOnes, ["leagueOrder", "division", "rank"])[0];
-
-      if (!bestOneVOne) {
-        bestOneVOne = oneVOnes[0];
-      }
-
-      const twoV2s = gameModeStats.value.filter((g) => g.gameMode === EGameMode.GM_2ON2_AT);
-      const rankedtwoV2s = twoV2s.filter((x) => x.rank != 0);
-
-      let besttwoV2s = sortBy(rankedtwoV2s, ["leagueOrder", "division", "rank"])[0];
-
-      if (!besttwoV2s) {
-        besttwoV2s = twoV2s[0];
-      }
-
-      const otherModes = gameModeStats.value.filter(
-        (g) => g.gameMode !== EGameMode.GM_1ON1 && g.gameMode !== EGameMode.GM_2ON2_AT
-      );
-
-      const otherModesRanked = otherModes.filter((g) => g.rank != 0);
-      const bestOtherModes = sortBy(otherModesRanked, ["leagueOrder", "division", "rank"]);
-
-      const allModes = [];
-      if (bestOneVOne) allModes.push(bestOneVOne);
-      if (besttwoV2s) allModes.push(besttwoV2s);
-      allModes.push(...bestOtherModes);
-
-      const bestAllModesSorted = sortBy(allModes, ["leagueOrder", "division", "rank"]);
-
-      return take(
-        bestAllModesSorted.filter((x) => x.rank != 0),
-        3
-      );
+      return take(uniqueModes, 3);
     });
 
     const raceHeaders: DataTableHeader[] = [
