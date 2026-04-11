@@ -196,7 +196,7 @@ export default defineComponent({
             label: `${playerName(player.battleTag)} client`,
             data: player.diagnostics.pingHistory.map((p) => ({
               x: new Date(p.timestamp).getTime(),
-              y: p.avg ?? 0,
+              y: p.current,
             })),
             borderColor: color,
             backgroundColor: "transparent",
