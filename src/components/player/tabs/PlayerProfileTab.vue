@@ -1,3 +1,4 @@
+// PlayerProfileTab
 <template>
   <div>
     <v-card-text v-if="loadingProfile" style="min-height: 500px" class="text-center">
@@ -69,16 +70,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import sortBy from "lodash/sortBy";
 import take from "lodash/take";
 import uniqBy from "lodash/uniqBy";
-import PlayerLeague from "@/components/player/PlayerLeague.vue";
-import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
-import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
-import RaceIcon from "@/components/player/RaceIcon.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -86,82 +83,68 @@ import { ModeStat, RaceStat } from "@/store/player/types";
 import { Season } from "@/store/ranking/types";
 import { DataTableHeader } from "vuetify";
 
-export default defineComponent({
-  name: "PlayerProfileTab",
-  components: {
-    RaceIcon,
-    ModeStatsGrid,
-    PlayerAvatar,
-    PlayerLeague,
-  },
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { t } = useI18n();
-    const oauthStore = useOauthStore();
-    const playerStore = usePlayerStore();
-    const rootStateStore = useRootStateStore();
+// Components
+import PlayerLeague from "@/components/player/PlayerLeague.vue";
+import PlayerAvatar from "@/components/player/PlayerAvatar.vue";
+import ModeStatsGrid from "@/components/player/ModeStatsGrid.vue";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 
-    const battleTag = computed<string>(() => decodeURIComponent(props.id));
-    const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
-    const isBetaSeason = computed<boolean>(() => selectedSeason.value?.id === 0);
-    const loadingProfile = computed<boolean>(() => playerStore.loadingProfile);
-    const loadProfileError = computed<string | undefined>(() => playerStore.loadProfileError);
-    const verifiedBtag = computed<string>(() => oauthStore.blizzardVerifiedBtag);
-    const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
-    const raceStats = computed<RaceStat[]>(() => playerStore.raceStats);
-
-    const isLoggedInPlayer = computed<boolean>(() => {
-      if (verifiedBtag.value === "") return false;
-      return battleTag.value.startsWith(verifiedBtag.value);
-    });
-
-    const selectedRaceStats = computed<RaceStat[]>(() => {
-      if (!raceStats.value) return [];
-
-      return raceStats.value.filter(
-        (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id
-      );
-    });
-
-    const topGameModeStats = computed<ModeStat[]>(() => {
-      if (!gameModeStats.value) return [];
-
-      const rankedModes = gameModeStats.value.filter((g) => g.rank !== 0);
-      const bestModes = sortBy(rankedModes, ["leagueOrder", "division", "rank"]);
-      const uniqueModes = uniqBy(bestModes, (x) => x.gameMode);
-
-      return take(uniqueModes, 3);
-    });
-
-    const raceHeaders: DataTableHeader[] = [
-      {
-        title: t("components_player_tabs_playerprofiletab.race"),
-        sortable: false,
-        value: "race",
-      },
-      {
-        title: t("components_player_tabs_playerprofiletab.winloss"),
-        sortable: false,
-        value: "wins",
-      },
-    ];
-    return {
-      loadingProfile,
-      loadProfileError,
-      isLoggedInPlayer,
-      isBetaSeason,
-      topGameModeStats,
-      raceHeaders,
-      selectedRaceStats,
-      gameModeStats,
-    };
-  },
+const { id } = defineProps({
+  id: {
+    type: String,
+    required: true,
+  }
 });
+
+const { t } = useI18n();
+const oauthStore = useOauthStore();
+const playerStore = usePlayerStore();
+const rootStateStore = useRootStateStore();
+
+const battleTag = computed<string>(() => decodeURIComponent(id));
+const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+const isBetaSeason = computed<boolean>(() => selectedSeason.value?.id === 0);
+const loadingProfile = computed<boolean>(() => playerStore.loadingProfile);
+const loadProfileError = computed<string | undefined>(() => playerStore.loadProfileError);
+const verifiedBtag = computed<string>(() => oauthStore.blizzardVerifiedBtag);
+const gameModeStats = computed<ModeStat[]>(() => playerStore.gameModeStats);
+const raceStats = computed<RaceStat[]>(() => playerStore.raceStats);
+
+const isLoggedInPlayer = computed<boolean>(() => {
+  if (verifiedBtag.value === "") return false;
+  return battleTag.value.startsWith(verifiedBtag.value);
+});
+
+const selectedRaceStats = computed<RaceStat[]>(() => {
+  if (!raceStats.value) return [];
+
+  return raceStats.value.filter(
+    (r) => r.gateWay === rootStateStore.gateway && r.season === selectedSeason.value?.id
+  );
+});
+
+const topGameModeStats = computed<ModeStat[]>(() => {
+  if (!gameModeStats.value) return [];
+
+  const rankedModes = gameModeStats.value.filter((g) => g.rank !== 0);
+  const bestModes = sortBy(rankedModes, ["leagueOrder", "division", "rank"]);
+  const uniqueModes = uniqBy(bestModes, (x) => x.gameMode);
+
+  return take(uniqueModes, 3);
+});
+
+const raceHeaders: DataTableHeader[] = [
+  {
+    title: t("components_player_tabs_playerprofiletab.race"),
+    sortable: false,
+    value: "race",
+  },
+  {
+    title: t("components_player_tabs_playerprofiletab.winloss"),
+    sortable: false,
+    value: "wins",
+  },
+];
 </script>
 
 <style lang="scss" scoped>
