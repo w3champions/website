@@ -85,7 +85,7 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             path: "",
-            redirect: "launcher-setup",
+            redirect: "/faq/setup-guides/launcher-setup",
           },
           {
             path: "launcher-setup",
@@ -103,11 +103,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/getting-started",
-    redirect: "/faq/setup-guides",
+    redirect: "/faq/setup-guides/launcher-setup",
   },
   {
     path: "/setup-guides",
-    redirect: "/faq/setup-guides",
+    redirect: "/faq/setup-guides/launcher-setup",
   },
   {
     path: "/setup-guides/launcher-setup",
