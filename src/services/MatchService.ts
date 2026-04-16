@@ -19,8 +19,8 @@ export default class MatchService {
     const offset = page * this.pageSize;
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
-    const minDuration = duration.min > 300 ? `&minDuration=${duration.min}` : "";
-    const maxDuration = duration.max < 99999 ? `&maxDuration=${duration.max}` : "";
+    const minDuration = `&minDuration=${duration.min}`;
+    const maxDuration = `&maxDuration=${duration.max}`;
     const heroQuery = Array.isArray(heroes) && heroes.length > 0 ? heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("") : "";
     let seasonParam: number = -1;
 
@@ -70,8 +70,8 @@ export default class MatchService {
   ): Promise<{ count: number; matches: Match[] }> {
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
-    const minDuration = duration.min > 300 ? `&minDuration=${duration.min}` : "";
-    const maxDuration = duration.max < 99999 ? `&maxDuration=${duration.max}` : "";
+    const minDuration = `&minDuration=${duration.min}`;
+    const maxDuration = `&maxDuration=${duration.max}`;
 
     const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}${minDuration}${maxDuration}&sort=${sort}`;
     const response = await fetch(url);

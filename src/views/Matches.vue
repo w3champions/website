@@ -83,7 +83,7 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
-    const duration = computed<{ min: number; max: number }>(() => matchStore.duration || { min: 300, max: 99999 });
+    const duration = computed<{ min: number; max: number }>(() => matchStore.duration || { min: 0, max: 86400 });
 
     const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);

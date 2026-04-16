@@ -18,7 +18,7 @@ export const useMatchStore = defineStore("match", {
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
     mmr: { min: 0, max: 3000 } as Mmr,
-    duration: { min: 300, max: 99999 },
+    duration: { min: 0, max: 86400 },
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
     showHeroIcons: false,
@@ -54,7 +54,7 @@ export const useMatchStore = defineStore("match", {
           this.map,
           this.mmr,
           this.duration,
-          this.selectedSeason.id,
+          this.selectedSeason,
           this.selectedHeroFilter,
         );
       }
