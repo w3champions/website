@@ -47,22 +47,22 @@ export default defineComponent({
   name: "DurationSelect",
   props: {
     duration: {
-      type: Object as PropType<{ min: number; max: number }>,
-      required: true,
+      type: Object as PropType<{ min: number; max: number } | null>,
+      default: null,
     },
   },
   emits: ["durationFilterChanged"],
 
   setup(props, { emit }) {
     const minSelectable = ref(0);
-    const maxSelectable = ref(1440);
+    const maxSelectable = ref(240);
 
-    const currentMinMaxMinutes = ref<number[]>([0, 1440]);
+    const currentMinMaxMinutes = ref<number[]>([0, 240]);
 
     const selected = computed(() => {
       const [min, max] = currentMinMaxMinutes.value;
 
-      if (min === 0 && max === 1440) {
+      if (min === 0 && max === 240) {
         return "Duration";
       }
 
@@ -70,8 +70,8 @@ export default defineComponent({
         ? `${min} min`
         : `${Math.floor(min / 60)}h ${min % 60 ? min % 60 + "min" : ""}`.trim();
 
-      const maxLabel = max === 1440
-        ? "24h+"
+      const maxLabel = max === 240
+        ? "4h+"
         : max < 60
           ? `${max} min`
           : `${Math.floor(max / 60)}h ${max % 60 ? max % 60 + "min" : ""}`.trim();
@@ -87,11 +87,13 @@ export default defineComponent({
     }
 
     const updateSlider = () => {
-      if (props.duration) {
-        const minMin = Math.floor(props.duration.min / 60);
-        const maxMin = Math.min(Math.ceil(props.duration.max / 60), 1440);
-        currentMinMaxMinutes.value = [minMin, maxMin];
+      if (!props.duration) {
+        currentMinMaxMinutes.value = [0, 240];
+        return;
       }
+      const minMin = Math.floor(props.duration.min / 60);
+      const maxMin = Math.min(Math.ceil(props.duration.max / 60), 240);
+      currentMinMaxMinutes.value = [minMin, maxMin];
     };
 
     onMounted(updateSlider);
@@ -105,14 +107,13 @@ export default defineComponent({
     function onMenuToggled(opened: boolean): void {
       if (!opened) {
         const [min, max] = currentMinMaxMinutes.value;
-        if (min > 0 || max < 1440) {
+        if (min > 0 || max < 240) {
           emit("durationFilterChanged", {
             min: min * 60,
             max: max * 60,
           });
         } else {
-
-          emit("durationFilterChanged", { min: 0, max: 86400 });
+          emit("durationFilterChanged", null);
         }
       }
     }

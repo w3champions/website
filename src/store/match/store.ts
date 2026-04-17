@@ -18,7 +18,7 @@ export const useMatchStore = defineStore("match", {
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
     mmr: { min: 0, max: 3000 } as Mmr,
-    duration: { min: 0, max: 86400 },
+    duration: null as { min: number; max: number } | null,
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
     showHeroIcons: false,
@@ -103,7 +103,7 @@ export const useMatchStore = defineStore("match", {
       this.SET_PAGE(1);
       await this.loadMatches();
     },
-    async setDuration(duration: { min: number; max: number }) {
+    async setDuration(duration: { min: number; max: number } | null) {
       this.SET_DURATION(duration);
       this.SET_PAGE(1);
       await this.loadMatches();
@@ -161,7 +161,7 @@ export const useMatchStore = defineStore("match", {
     SET_MMR(mmr: Mmr): void {
       this.mmr = mmr;
     },
-    SET_DURATION(duration: { min: number; max: number }): void {
+    SET_DURATION(duration: { min: number; max: number } | null): void {
       this.duration = duration;
     },
     SET_SORT(sort: string): void {

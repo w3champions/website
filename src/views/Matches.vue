@@ -83,7 +83,7 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
-    const duration = computed<{ min: number; max: number }>(() => matchStore.duration || { min: 0, max: 86400 });
+    const duration = computed<{ min: number; max: number } | null>(() => matchStore.duration);
 
     const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
@@ -174,7 +174,7 @@ export default defineComponent({
     function mmrFilterChanged(mmr: Mmr): void {
       matchStore.setMmr(mmr);
     }
-    function durationFilterChanged(duration: { min: number; max: number }): void {
+    function durationFilterChanged(duration: { min: number; max: number } | null): void {
       matchStore.setDuration(duration);
     }
 
