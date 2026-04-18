@@ -1,14 +1,12 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import legacy from "@vitejs/plugin-legacy";
 import vuetify from "vite-plugin-vuetify";
 
 export default defineConfig({
   plugins: [
     vue(),
     vuetify({ autoImport: true }), // Enabled by default
-    legacy(), // Build for old browser.
   ],
   server: {
     port: 8080,
