@@ -22,4 +22,14 @@
   .w3-glass {
     background-color: var(--w3-bg-glass);
   }
+
+  // Make tonal chip backgrounds opaque by pre-multiplying the color instead of using opacity.
+  // This prevents the chip background from blending with whatever is behind it.
+  // Dark themes blend toward black; light themes blend toward white.
+  .v-chip--variant-tonal .v-chip__underlay {
+    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #000000);
+    opacity: 1;
+    position: absolute;
+    z-index: 0;
+  }
 }

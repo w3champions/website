@@ -6,7 +6,7 @@
 
     <v-container>
       <v-row dense>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="2">
           <v-text-field
             v-model="filters.battleTag"
             label="BattleTag"
@@ -69,13 +69,14 @@
             @update:modelValue="onFilterChange"
           />
         </v-col>
-        <v-col cols="12" md="2">
-          <v-checkbox
+        <v-col cols="12" md="2" class="d-flex justify-center align-center">
+          <v-switch
             v-model="filters.explicitOnly"
             label="Explicit only"
             color="primary"
             density="compact"
             hide-details
+            class="flex-grow-0"
             @update:modelValue="onFilterChange"
           />
         </v-col>
@@ -103,7 +104,6 @@
         </v-col>
         <v-col cols="12" md="2" class="d-flex align-center">
           <v-btn
-            class="refresh-results-btn"
             color="primary"
             variant="outlined"
             block
@@ -460,9 +460,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.refresh-results-btn {
-  margin-top: 4px;
-}
-</style>

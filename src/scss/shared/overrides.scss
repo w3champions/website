@@ -42,37 +42,10 @@ h3 {
   }
 }
 
-// Make tonal chip backgrounds opaque by pre-multiplying the color instead of using opacity.
-// This prevents the chip background from blending with whatever is behind it.
-// Dark themes blend toward black; light themes blend toward white.
-.v-theme--nightelf,
-.v-theme--undead {
-  .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #000000);
-    opacity: 1;
-    position: absolute;
-    z-index: 0;
-  }
-}
-
-.v-theme--human {
-  .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #e9e9e9);
-    opacity: 1;
-    position: absolute;
-    z-index: 0;
-  }
-}
-
-.v-theme--orc {
-  .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #c7baa1);
-    opacity: 1;
-    position: absolute;
-    z-index: 0;
-  }
-}
-
+// Since we're overriding the tonal chips for each
+// theme to adjust the BG color with color-mix,
+// we need to make the text appear on top of the
+// underlay by setting its z-index to 1.
 .v-chip--variant-tonal .v-chip__content,
 .v-chip--variant-tonal .v-chip__prepend,
 .v-chip--variant-tonal .v-chip__append,

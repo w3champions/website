@@ -11,7 +11,7 @@
       target="_blank"
       tile
       border
-      style="padding-bottom: 0px"
+      flat
     >
       <v-img src="/assets/socials/Patreon_button.png" alt="Patreon" />
     </v-card>
@@ -23,6 +23,7 @@
       target="_blank"
       tile
       border
+      flat
     >
       <v-img src="/assets/socials/PayPal_button.png" alt="Paypal" />
     </v-card>
@@ -34,6 +35,7 @@
       class="support-subcard"
       tile
       border
+      flat
       @click.stop="crypto.dialog = true"
     >
       <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name" />
@@ -52,6 +54,7 @@
       class="support-subcard"
       tile
       border
+      flat
       @click.stop="alternate.dialog = true"
     >
       <alternate-payments-dialog

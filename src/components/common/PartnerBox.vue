@@ -11,6 +11,7 @@
       :href="partner.link"
       target="_blank"
       border
+      flat
     >
       <v-img :src="imgSource(partner.img)" :alt="partner.img" />
     </v-card>
