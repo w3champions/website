@@ -5,18 +5,21 @@
       <span class="text-medium-emphasis text-caption ml-2">Drag markers on chart or use quick-jump buttons</span>
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <!-- Quick-jump buttons for events -->
+      <!-- Quick-jump chips for events -->
       <div class="d-flex ga-2 flex-wrap mb-3 align-center">
         <span class="text-caption text-medium-emphasis">Jump to:</span>
-        <v-btn
+        <v-chip
           v-for="(evt, ei) in inspectableEvents"
           :key="'evt-' + ei"
-          variant="outlined"
-          size="small"
+          :color="evt.color"
+          variant="tonal"
+          size="x-small"
+          class="cursor-pointer"
           @click="jumpToEvent(evt.timestamp)"
         >
-          {{ evt.label }}
-        </v-btn>
+          {{ evt.prefix }}
+          <span class="ml-1" :style="{ color: evt.playerColor, fontWeight: 600 }">({{ evt.playerName }})</span>
+        </v-chip>
       </div>
 
       <template v-if="inspectorLeftMs != null || inspectorRightMs != null">
@@ -26,15 +29,19 @@
             v-for="(player, pi) in report.players"
             :key="'ptab-' + pi"
             :value="pi"
+            class="text-none inspector-tab"
           >
-            {{ playerName(player.battleTag) }} — forward
+            <span :style="{ color: playerColors[pi] }">{{ playerName(player.battleTag) }}</span>
+            <span class="text-medium-emphasis">&nbsp;— forward</span>
           </v-tab>
           <v-tab
             v-for="(player, pi) in report.players"
             :key="'rtab-' + pi"
             :value="'reverse-' + pi"
+            class="text-none inspector-tab"
           >
-            {{ playerName(player.battleTag) }} — reverse
+            <span :style="{ color: playerColors[pi] }">{{ playerName(player.battleTag) }}</span>
+            <span class="text-medium-emphasis">&nbsp;— reverse</span>
           </v-tab>
         </v-tabs>
 
@@ -146,26 +153,53 @@ export default defineComponent({
       return earliest === Infinity ? new Date(props.report.createdAt).getTime() : earliest;
     });
 
+    function eventColor(eventType: EConnectionEventType): string {
+      if ([EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(eventType)) {
+        return "warning";
+      }
+      if ([EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(eventType)) {
+        return "info";
+      }
+      return "error";
+    }
+
     const inspectableEvents = computed(() => {
-      const events: { label: string; timestamp: string }[] = [];
-      props.report.players.forEach((player) => {
+      const events: {
+        prefix: string;
+        playerName: string;
+        playerColor: string;
+        timestamp: string;
+        color: string;
+      }[] = [];
+      props.report.players.forEach((player, pi) => {
+        const pName = playerName(player.battleTag);
+        const pColor = props.playerColors[pi] ?? "#ffffff";
         player.diagnostics.lagEvents.forEach((le) => {
           events.push({
-            label: `-lag ${formatGameTime(le.gameTimeOffsetMs)} (${playerName(player.battleTag)})`,
+            prefix: `-lag ${formatGameTime(le.gameTimeOffsetMs)}`,
+            playerName: pName,
+            playerColor: pColor,
             timestamp: le.timestamp,
+            color: "warning",
           });
         });
         player.diagnostics.connectionEvents.forEach((ce) => {
           if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
             const disconnectMs = new Date(ce.timestamp).getTime() - ce.durationMs;
             events.push({
-              label: `Disconnected ${formatGameTime(ce.gameTimeOffsetMs)} (${playerName(player.battleTag)})`,
+              prefix: `Disconnected ${formatGameTime(ce.gameTimeOffsetMs)}`,
+              playerName: pName,
+              playerColor: pColor,
               timestamp: new Date(disconnectMs).toISOString(),
+              color: "error",
             });
           }
           events.push({
-            label: `${connectionEventLabel(ce.eventType)} ${formatGameTime(ce.gameTimeOffsetMs)} (${playerName(player.battleTag)})`,
+            prefix: `${connectionEventLabel(ce.eventType)} ${formatGameTime(ce.gameTimeOffsetMs)}`,
+            playerName: pName,
+            playerColor: pColor,
             timestamp: ce.timestamp,
+            color: eventColor(ce.eventType),
           });
         });
       });
@@ -221,3 +255,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+:deep(.inspector-tab.v-btn) {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+</style>

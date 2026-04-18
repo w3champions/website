@@ -7,6 +7,8 @@ export const orc = {
     "w3-gold": "#FFD428",
     "w3-race-bg": "#c7baa1",
     lost: "#BF0025",
+    warning: "#D97706",
+    "on-warning": "#78350F",
   },
   variables: {
     "hover-opacity": 0.08,

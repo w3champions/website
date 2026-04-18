@@ -9,27 +9,27 @@ The backend belonging to this repository lives in ../website-backend. Whenever y
 
 ### Development
 ```bash
-yarn dev              # Start development server at http://localhost:5173
-yarn build:prod       # Production build with locale generation
-yarn build:dev        # Development build without locale generation
+npm run dev           # Start development server at http://localhost:5173
+npm run build:prod    # Production build with locale generation
+npm run build:dev     # Development build without locale generation
 ```
 
 ### Code Quality
 ```bash
-yarn lint             # Run ESLint to check for code issues
-yarn lint:fix         # Auto-fix ESLint issues
-yarn dprint           # Check code formatting
-yarn dprint:fix       # Auto-format code with dprint
+npm run lint          # Run ESLint to check for code issues
+npm run lint:fix      # Auto-fix ESLint issues
+npm run dprint        # Check code formatting
+npm run dprint:fix    # Auto-format code with dprint
 ```
 
 ## Architecture Overview
 
 ### Technology Stack
-- **Vue 2.7** with Composition API support (not Vue 3)
+- **Vue 3.4** for the frontend framework
 - **TypeScript 4.9** for type safety
-- **Vuetify 2.7** for Material Design components
+- **Vuetify 3.10** for Material Design components
 - **Pinia** for state management (stores in `/src/store/`)
-- **Vue Router 3** for routing
+- **Vue Router 4** for routing
 - **Vite** as the build tool
 - **Chart.js** for data visualization
 - **TipTap** for rich text editing
@@ -118,8 +118,8 @@ Use Vuetify's loading components consistently:
 
 ### Testing Approach
 The project doesn't have a traditional test suite. When making changes:
-1. Run `yarn lint` to catch TypeScript and linting errors
-2. Run `yarn dprint` to ensure consistent formatting
+1. Run `npm run lint` to catch TypeScript and linting errors
+2. Run `npm run dprint` to ensure consistent formatting
 3. Test functionality manually in development mode
 4. Verify no console errors in browser developer tools
 
@@ -132,13 +132,13 @@ Development environment variables are in `/public/env.js`:
 
 ### Localization
 - Translations managed via Google Sheets (see README)
-- Generated with `yarn generate-locales`
+- Generated with `npm run generate-locales`
 - Locale files in `/src/locales/`
 - Use `$t()` or `$i18n.t()` for translations
 
 ### Important Notes
-- This is Vue 2.7, not Vue 3 - use appropriate syntax
+- This is a Vue 3 codebase - use Vue 3 patterns and APIs
 - Always check if backend changes are needed
 - Respect the existing code style and patterns
 - Use TypeScript types from `/src/store/*/types.ts`
-- Follow Vuetify 2 component patterns, not Vuetify 3
+- Follow Vuetify 3 component patterns
