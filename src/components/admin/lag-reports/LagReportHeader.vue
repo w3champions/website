@@ -18,19 +18,25 @@
           <v-chip
             v-if="player.diagnostics.lagEvents.length"
             size="x-small"
-            :color="playerColors[pi]"
             variant="flat"
+            :style="playerLagChipStyle(playerColors[pi])"
           >
-            {{ player.diagnostics.lagEvents.length }}x -lag ({{ playerName(player.battleTag) }})
+            {{ player.diagnostics.lagEvents.length }}x -lag
+            <span class="ml-1" :style="{ color: playerColors[pi], fontWeight: 600 }">
+              ({{ playerName(player.battleTag) }})
+            </span>
           </v-chip>
           <v-chip
             v-for="(ce, ci) in player.diagnostics.connectionEvents"
             :key="'ce-' + pi + '-' + ci"
             size="x-small"
-            :color="[EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType) ? 'warning' : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType) ? 'info' : 'error'"
-            variant="flat"
+            :color="eventColor(ce.eventType)"
+            variant="tonal"
           >
-            {{ connectionEventLabel(ce.eventType) }} {{ formatGameTime(ce.gameTimeOffsetMs) }} ({{ playerName(player.battleTag) }})
+            {{ connectionEventLabel(ce.eventType) }} {{ formatGameTime(ce.gameTimeOffsetMs) }}
+            <span class="ml-1" :style="{ color: playerColors[pi], fontWeight: 600 }">
+              ({{ playerName(player.battleTag) }})
+            </span>
           </v-chip>
         </template>
         <span class="text-medium-emphasis text-caption ml-2">Categories:</span>
@@ -58,6 +64,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { EConnectionEventType, LagReportDetail } from "@/store/admin/lagReports/types";
+import { playerColorStyle } from "@/helpers/lag-report-colors";
 
 export default defineComponent({
   name: "LagReportHeader",
@@ -96,11 +103,28 @@ export default defineComponent({
       return connectionEventLabelMap[eventType] ?? eventType;
     }
 
+    function eventColor(eventType: EConnectionEventType): string {
+      if ([EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(eventType)) {
+        return "warning";
+      }
+      if ([EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(eventType)) {
+        return "info";
+      }
+      return "error";
+    }
+
+    function playerLagChipStyle(baseColor: string): Record<string, string> {
+      const { bgColor, textColor } = playerColorStyle(baseColor);
+      return { backgroundColor: bgColor, color: textColor };
+    }
+
     return {
       playerName,
       formatDate,
       formatGameTime,
       connectionEventLabel,
+      eventColor,
+      playerLagChipStyle,
       EConnectionEventType,
     };
   },

@@ -75,8 +75,15 @@
                 <td class="text-caption">{{ formatDate(ce.timestamp) }}</td>
                 <td>{{ formatGameTime(ce.gameTimeOffsetMs) }}</td>
                 <td>
-                  <v-chip :color="[EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType) ? 'warning' : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType) ? 'info' : 'error'" size="x-small" variant="flat">
+                  <v-chip
+                    :color="eventColor(ce.eventType)"
+                    size="x-small"
+                    variant="tonal"
+                  >
                     {{ connectionEventLabel(ce.eventType) }}
+                    <span class="ml-1" :style="{ color: playerColors[pi], fontWeight: 600 }">
+                      ({{ playerName(player.battleTag) }})
+                    </span>
                   </v-chip>
                 </td>
                 <td>{{ ce.durationMs != null ? (ce.durationMs / 1000).toFixed(1) + 's' : '—' }}</td>
@@ -100,6 +107,7 @@ export default defineComponent({
   components: { MtrHopTable },
   props: {
     players: { type: Array as PropType<LagReportPlayer[]>, required: true },
+    playerColors: { type: Array as PropType<string[]>, required: true },
   },
   setup() {
     const expandedBaselines = reactive<Record<string, boolean>>({});
@@ -134,6 +142,16 @@ export default defineComponent({
       return connectionEventLabelMap[eventType] ?? eventType;
     }
 
+    function eventColor(eventType: EConnectionEventType): string {
+      if ([EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(eventType)) {
+        return "warning";
+      }
+      if ([EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(eventType)) {
+        return "info";
+      }
+      return "error";
+    }
+
     function lastHopAvg(hops: HopData[]): string {
       if (!hops.length) return "—";
       const last = hops[hops.length - 1];
@@ -156,6 +174,7 @@ export default defineComponent({
       formatDate,
       formatGameTime,
       connectionEventLabel,
+      eventColor,
       lastHopAvg,
       lastHopLoss,
       toggleBaseline,
@@ -166,3 +185,5 @@ export default defineComponent({
   },
 });
 </script>
+
+

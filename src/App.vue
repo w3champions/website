@@ -38,8 +38,8 @@
     <v-app-bar :class="{ darkmode: isDarkTheme.get() }" class="pr-3">
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
-      <v-toolbar-title style="margin-inline-start: 16px">
-        <router-link :to="{ name: EMainRouteName.HOME }">
+      <v-toolbar-title class="ms-4">
+        <router-link class="d-inline-flex w-auto" :to="{ name: EMainRouteName.HOME }">
           <brand-logo
             :is-dark-theme="isDarkTheme.get()"
             style="max-height: 30px"
@@ -59,7 +59,7 @@
           :to="{ name: item.to }"
           :class="item.class"
         >
-          <span class="mr-2">
+          <span class="mr-1">
             {{ $t(`views_app.${item.title}`) }}
           </span>
           <v-icon size="x-large">{{ item.icon }}</v-icon>
@@ -70,22 +70,28 @@
       <global-search />
 
       <v-btn v-if="!authCode" variant="text" tile @click="loginOrGoToProfile">
-        <v-icon v-if="!authCode" class="mr-2" size="x-large">{{ mdiAccountCircleOutline }}</v-icon>
+        <v-icon v-if="!authCode" size="x-large">{{ mdiAccountCircleOutline }}</v-icon>
         <sign-in-dialog :value="showSignInDialog" @toggle-dialog="toggleSignInDialog" />
       </v-btn>
 
       <v-menu v-if="authCode">
         <template v-slot:activator="{ props }">
           <v-btn variant="text" tile v-bind="props">
-            <span class="d-none d-sm-flex mr-2">{{ loginName }}</span>
+            <span class="d-none d-sm-flex mr-1">{{ loginName }}</span>
             <v-icon size="x-large">{{ mdiAccountCircle }}</v-icon>
           </v-btn>
         </template>
         <v-list>
           <v-list-item @click="openPlayerProfile">
+            <template v-slot:prepend>
+              <v-icon>{{ mdiAccountCircle }}</v-icon>
+            </template>
             <v-list-item-title>{{ $t("views_app.viewprofile") }}</v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout">
+            <template v-slot:prepend>
+              <v-icon>{{ mdiLogout }}</v-icon>
+            </template>
             <v-list-item-title>{{ $t("views_app.logout") }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -173,6 +179,7 @@ import {
   mdiControllerClassic,
   mdiHelpCircleOutline,
   mdiInvertColors,
+  mdiLogout,
   mdiTreasureChest,
   mdiTrophy,
   mdiViewList,
@@ -349,6 +356,7 @@ export default defineComponent({
       mdiAccountCircle,
       mdiCog,
       mdiInvertColors,
+      mdiLogout,
       mdiTreasureChest,
       oauthStore,
       savedLanguage,

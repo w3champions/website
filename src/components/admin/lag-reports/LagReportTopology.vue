@@ -6,7 +6,7 @@
         <div class="d-flex align-center ga-2 mb-2">
           <v-icon :color="playerColors[pi]" size="x-small">{{ mdiCircle }}</v-icon>
           <strong :style="{ color: playerColors[pi] }">{{ player.battleTag }}</strong>
-          <v-chip v-if="player.isExplicit" size="x-small" color="warning" variant="flat">reported -lag</v-chip>
+          <v-chip v-if="player.isExplicit" size="x-small" color="warning" variant="tonal">reported -lag</v-chip>
           <v-chip v-else size="x-small" variant="outlined" color="grey">auto-measured</v-chip>
         </div>
         <div class="d-flex align-center ga-1 flex-wrap text-caption">

@@ -31,13 +31,56 @@
         </div>
         <div
           v-if="pingChartData.datasets.length"
-          style="cursor: crosshair;"
+          style="cursor: crosshair; position: relative;"
           @pointerdown="onChartPointerDown"
           @pointermove="onChartPointerMove"
           @pointerup="onChartPointerUp"
-          @pointerleave="onChartPointerUp"
+          @pointerleave="onChartPointerLeave"
         >
           <bar-chart ref="pingChartRef" :chart-data="pingChartData" :chart-options="pingChartOptions" :chart-plugins="[zoomPlugin]" />
+          <div
+            v-if="hoveredEventTooltip"
+            :style="{
+              position: 'absolute',
+              left: `${hoveredEventTooltip.left}px`,
+              top: `${hoveredEventTooltip.top}px`,
+              backgroundColor: tooltipBgColor(hoveredEventTooltip.style.bgColor),
+              color: tooltipTextColor(hoveredEventTooltip.style.textColor),
+              border: `1px solid ${hoveredEventTooltip.style.border}`,
+              borderRadius: '6px',
+              padding: '6px 8px',
+              fontSize: '12px',
+              lineHeight: '1.25',
+              pointerEvents: 'none',
+              zIndex: '10',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              maxWidth: '260px',
+              whiteSpace: 'normal',
+            }"
+          >
+            <div
+              v-if="hoveredEventTooltip.swatchColor && hoveredEventTooltip.lines.length"
+              style="display:flex; align-items:center; gap:6px; margin-bottom:2px;"
+            >
+              <span
+                :style="{
+                  display: 'inline-block',
+                  width: '12px',
+                  height: '8px',
+                  borderRadius: '2px',
+                  backgroundColor: hoveredEventTooltip.swatchColor,
+                  border: '1px solid rgba(0,0,0,0.2)',
+                }"
+              ></span>
+              <span style="font-weight: 600;">{{ hoveredEventTooltip.lines[0] }}</span>
+            </div>
+            <div
+              v-for="(line, li) in hoveredEventTooltip.swatchColor ? hoveredEventTooltip.lines.slice(1) : hoveredEventTooltip.lines"
+              :key="li"
+            >
+              {{ line }}
+            </div>
+          </div>
         </div>
         <div v-else class="text-medium-emphasis text-caption pa-4 text-center">No ping data available</div>
       </v-card>
@@ -88,13 +131,32 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, reactive, ref, watch } from "vue";
+import { useTheme } from "vuetify";
 import { EConnectionEventType, EConnectionType, LagReportDetail } from "@/store/admin/lagReports/types";
 import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { ChartData, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
+import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle } from "@/helpers/lag-report-colors";
 
 const PLAYER_COLORS = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d", "#ab47bc", "#26c6da", "#ec407a", "#8d6e63"];
+
+type EventMarkerInfo = {
+  id: string;
+  ts: number;
+  shortLabel: string;
+  detailLines: string[];
+  style: LagAnnotationStyle;
+  dashed?: boolean;
+};
+
+type HoveredEventTooltip = {
+  left: number;
+  top: number;
+  lines: string[];
+  style: LagAnnotationStyle;
+  swatchColor?: string;
+};
 
 export default defineComponent({
   name: "LagReportContinuousMonitoring",
@@ -107,9 +169,15 @@ export default defineComponent({
   },
   emits: ["update:inspectorLeftMs", "update:inspectorRightMs", "openInspector"],
   setup(props, { emit }) {
+    const theme = useTheme();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pingChartRef = ref<any>(null);
+    const zoomRangeMs = ref<{ min: number; max: number } | null>(null);
+    const chartNavigating = ref(false);
     const draggingMarker = ref<"left" | "right" | null>(null);
+    const hoveredEventTooltip = ref<HoveredEventTooltip | null>(null);
+    const hoveredDatasetIndex = ref<number | null>(null);
+    const hoveredMarkerId = ref<string | null>(null);
     const visiblePlayers = reactive<Record<number, boolean>>({});
 
     function playerName(battleTag: string): string {
@@ -121,6 +189,48 @@ export default defineComponent({
       const min = Math.floor(totalSec / 60);
       const sec = totalSec % 60;
       return `${min}:${sec.toString().padStart(2, "0")}`;
+    }
+
+    function formatWallClock(ms: number): string {
+      return new Date(ms).toLocaleTimeString();
+    }
+
+    function tooltipBgColor(_color: string): string {
+      return theme.current.value.dark ? "rgba(10, 14, 22, 0.94)" : "rgba(245, 248, 255, 0.96)";
+    }
+
+    function tooltipTextColor(_color: string): string {
+      return theme.current.value.dark ? "rgba(245, 248, 255, 0.98)" : "rgba(10, 14, 22, 0.92)";
+    }
+
+    function withAlpha(color: string, alpha: number): string {
+      const rgba = color.match(/^rgba\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\)$/i);
+      if (rgba) return `rgba(${rgba[1]}, ${rgba[2]}, ${rgba[3]}, ${alpha})`;
+
+      const rgb = color.match(/^rgb\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\)$/i);
+      if (rgb) return `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})`;
+
+      const hex = color.match(/^#?([0-9a-f]{6})$/i);
+      if (hex) {
+        const n = hex[1];
+        const r = Number.parseInt(n.slice(0, 2), 16);
+        const g = Number.parseInt(n.slice(2, 4), 16);
+        const b = Number.parseInt(n.slice(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      return color;
+    }
+
+    function rememberZoomRange() {
+      const xScale = pingChartRef.value?.chart?.scales?.x;
+      if (!xScale) return;
+
+      const min = Number(xScale.min);
+      const max = Number(xScale.max);
+      if (!Number.isFinite(min) || !Number.isFinite(max) || min >= max) return;
+
+      zoomRangeMs.value = { min, max };
     }
 
     const connectionEventLabelMap: Record<string, string> = {
@@ -194,6 +304,8 @@ export default defineComponent({
           datasets.push({
             type: "line",
             label: `${playerName(player.battleTag)} client`,
+            metric: "client-ping",
+            playerColor: color,
             data: player.diagnostics.pingHistory.map((p) => ({
               x: new Date(p.timestamp).getTime(),
               y: p.current,
@@ -202,6 +314,8 @@ export default defineComponent({
             backgroundColor: "transparent",
             borderWidth: 1.5,
             pointRadius: 1,
+            pointHoverRadius: 4,
+            pointHitRadius: 12,
             tension: 0.2,
             yAxisID: "y",
             order: 1,
@@ -211,16 +325,22 @@ export default defineComponent({
         const lossPoints = player.diagnostics.pingHistory.filter((p) => p.lossRate > 0);
         if (lossPoints.length) {
           datasets.push({
-            type: "bar",
+            type: "line",
             label: `${playerName(player.battleTag)} loss`,
+            metric: "packet-loss",
+            playerColor: color,
             data: lossPoints.map((p) => ({
               x: new Date(p.timestamp).getTime(),
               y: p.lossRate * 100,
             })),
-            backgroundColor: color + "40",
+            showLine: false,
+            backgroundColor: color,
             borderColor: color,
-            borderWidth: 1,
-            maxBarThickness: 8,
+            borderWidth: 0,
+            pointStyle: "rectRounded",
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointHitRadius: 14,
             yAxisID: "yLoss",
             order: 2,
           });
@@ -248,12 +368,16 @@ export default defineComponent({
             datasets.push({
               type: "line",
               label: `${sp.playerName.split("#")[0]} server`,
+              metric: "server-ping",
+              playerColor: color,
               data: points,
               borderColor: color,
               backgroundColor: "transparent",
               borderWidth: 1,
               borderDash: [4, 3],
               pointRadius: 0,
+              pointHoverRadius: 4,
+              pointHitRadius: 12,
               tension: 0.2,
               spanGaps: false,
               yAxisID: "y",
@@ -263,93 +387,161 @@ export default defineComponent({
         });
       }
 
+      datasets.forEach((ds, i) => {
+        const base = (ds.playerColor as string | undefined) ?? (ds.borderColor as string | undefined) ?? "#888888";
+        const dimmed = hoveredDatasetIndex.value != null && hoveredDatasetIndex.value !== i;
+
+        ds.borderColor = withAlpha(base, dimmed ? 0.2 : 1);
+
+        if (ds.type === "line" && ds.showLine === false) {
+          ds.backgroundColor = withAlpha(base, dimmed ? 0.2 : 1);
+          ds.pointBorderColor = withAlpha(base, dimmed ? 0.25 : 1);
+          ds.pointBackgroundColor = withAlpha(base, dimmed ? 0.25 : 1);
+        } else {
+          ds.pointBorderColor = withAlpha(base, dimmed ? 0.35 : 1);
+          ds.pointBackgroundColor = withAlpha(base, dimmed ? 0.35 : 1);
+        }
+      });
+
       return { datasets };
+    });
+
+    const eventMarkers = computed<EventMarkerInfo[]>(() => {
+      const markers: EventMarkerInfo[] = [];
+      const chipColors = readLagChipColors();
+      let idx = 0;
+
+      props.report.players.forEach((player, pi) => {
+        if (!visiblePlayers[pi]) return;
+        const pName = playerName(player.battleTag);
+        const pStyle = playerColorTonalStyle(PLAYER_COLORS[pi % PLAYER_COLORS.length]);
+
+        player.diagnostics.lagEvents.forEach((le) => {
+          const ts = new Date(le.timestamp).getTime();
+          markers.push({
+            id: `lag-${idx}`,
+            ts,
+            shortLabel: `-lag (${pName})`,
+            detailLines: [
+              `Game ${formatGameTime(le.gameTimeOffsetMs)}`,
+              `At ${formatWallClock(ts)}`,
+            ],
+            style: pStyle,
+          });
+          idx++;
+        });
+
+        player.diagnostics.connectionEvents.forEach((ce) => {
+          const ts = new Date(ce.timestamp).getTime();
+          const ceLabel = connectionEventLabelMap[ce.eventType] ?? ce.eventType;
+          const semanticKey = (
+            [EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType)
+              ? "warning"
+              : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType)
+                ? "info"
+                : "error"
+          ) as keyof typeof chipColors;
+
+          if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
+            const disconnectTs = ts - ce.durationMs;
+            const disconnectGameMs = Math.max(0, ce.gameTimeOffsetMs - ce.durationMs);
+            markers.push({
+              id: `disc-${idx}`,
+              ts: disconnectTs,
+              shortLabel: `Disconnected (${pName})`,
+              detailLines: [
+                `Game ${formatGameTime(disconnectGameMs)}`,
+                `At ${formatWallClock(disconnectTs)}`,
+              ],
+              style: chipColors.error,
+            });
+          }
+
+          markers.push({
+            id: `conn-${idx}`,
+            ts,
+            shortLabel: `${ceLabel} (${pName})`,
+            detailLines: [
+              `Game ${formatGameTime(ce.gameTimeOffsetMs)}`,
+              `At ${formatWallClock(ts)}`,
+            ],
+            style: chipColors[semanticKey],
+            dashed: true,
+          });
+          idx++;
+        });
+      });
+
+      return markers;
+    });
+
+    const hoverMarkers = computed<EventMarkerInfo[]>(() => {
+      const markers = [...eventMarkers.value];
+
+      if (props.inspectorLeftMs != null) {
+        markers.push({
+          id: "inspector-left",
+          ts: props.inspectorLeftMs,
+          shortLabel: "Inspector Left (L)",
+          detailLines: [
+            "Shift+drag to move",
+            `At ${formatWallClock(props.inspectorLeftMs)}`,
+          ],
+          style: {
+            border: "#42a5f5",
+            bgColor: "rgba(66,165,245,0.18)",
+            textColor: "#42a5f5",
+          },
+          dashed: true,
+        });
+      }
+
+      if (props.inspectorRightMs != null) {
+        markers.push({
+          id: "inspector-right",
+          ts: props.inspectorRightMs,
+          shortLabel: "Inspector Right (R)",
+          detailLines: [
+            "Shift+drag to move",
+            `At ${formatWallClock(props.inspectorRightMs)}`,
+          ],
+          style: {
+            border: "#ffb74d",
+            bgColor: "rgba(255,183,77,0.18)",
+            textColor: "#ffb74d",
+          },
+          dashed: true,
+        });
+      }
+
+      return markers;
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pingChartOptions = computed<ChartOptions<any>>(() => {
       const annotations: Record<string, unknown> = {};
-      const r = props.report;
-      let idx = 0;
-      r.players.forEach((player) => {
-        player.diagnostics.lagEvents.forEach((le) => {
-          const ts = new Date(le.timestamp).getTime();
-          annotations[`lag-${idx}`] = {
-            type: "line",
-            xMin: ts,
-            xMax: ts,
-            borderColor: "#ffb74d",
-            borderWidth: 2,
-            label: {
-              display: true,
-              content: `-lag ${formatGameTime(le.gameTimeOffsetMs)}`,
-              position: "start",
-              backgroundColor: "#ffb74d",
-              color: "#000",
-              font: { size: 9 },
-            },
-          };
-          idx++;
-        });
-        const annotationColorMap: Record<string, string> = {
-          [EConnectionEventType.Reconnect]: "#ff9800",
-          [EConnectionEventType.FailureDisconnect]: "#f44336",
-          [EConnectionEventType.GameCrashed]: "#f44336",
-          [EConnectionEventType.GamePaused]: "#ff9800",
-          [EConnectionEventType.GameResumed]: "#2196f3",
-          [EConnectionEventType.StartLag]: "#ff9800",
-          [EConnectionEventType.StopLag]: "#2196f3",
+      for (const marker of eventMarkers.value) {
+        const dimmed = hoveredMarkerId.value != null && hoveredMarkerId.value !== marker.id;
+        annotations[marker.id] = {
+          id: marker.id,
+          type: "line",
+          xMin: marker.ts,
+          xMax: marker.ts,
+          borderColor: withAlpha(marker.style.border, dimmed ? 0.25 : 1),
+          borderWidth: dimmed ? 1 : 2,
+          borderDash: marker.dashed ? [4, 2] : undefined,
+          hitTolerance: 12,
+          label: { display: false },
         };
-
-        player.diagnostics.connectionEvents.forEach((ce) => {
-          const ts = new Date(ce.timestamp).getTime();
-          if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
-            const disconnectTs = ts - ce.durationMs;
-            annotations[`disc-${idx}`] = {
-              type: "line",
-              xMin: disconnectTs,
-              xMax: disconnectTs,
-              borderColor: "#f44336",
-              borderWidth: 2,
-              label: {
-                display: true,
-                content: "Disconnected",
-                position: "start",
-                backgroundColor: "#f44336",
-                color: "#fff",
-                font: { size: 9 },
-              },
-            };
-          }
-
-          const color = annotationColorMap[ce.eventType] ?? "#f44336";
-          const label = connectionEventLabelMap[ce.eventType] ?? ce.eventType;
-
-          annotations[`conn-${idx}`] = {
-            type: "line",
-            xMin: ts,
-            xMax: ts,
-            borderColor: color,
-            borderWidth: 2,
-            borderDash: [4, 2],
-            label: {
-              display: true,
-              content: label,
-              position: "start",
-              backgroundColor: color,
-              color: "#fff",
-              font: { size: 9 },
-            },
-          };
-          idx++;
-        });
-      });
+      }
 
       return {
+        animation: false,
         maintainAspectRatio: true,
         aspectRatio: 4,
         plugins: {
           legend: { display: true, position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } },
+          tooltip: { enabled: false },
           annotation: {
             annotations: {
               ...annotations,
@@ -358,17 +550,10 @@ export default defineComponent({
                   type: "line",
                   xMin: props.inspectorLeftMs,
                   xMax: props.inspectorLeftMs,
-                  borderColor: "#42a5f5",
-                  borderWidth: 2,
+                  borderColor: withAlpha("#42a5f5", hoveredMarkerId.value && hoveredMarkerId.value !== "inspector-left" ? 0.25 : 1),
+                  borderWidth: hoveredMarkerId.value && hoveredMarkerId.value !== "inspector-left" ? 1 : 2,
                   borderDash: [6, 3],
-                  label: {
-                    display: true,
-                    content: "L",
-                    position: "end",
-                    backgroundColor: "#42a5f5",
-                    color: "#fff",
-                    font: { size: 10, weight: "bold" },
-                  },
+                  label: { display: false },
                 },
               } : {}),
               ...(props.inspectorRightMs != null ? {
@@ -376,34 +561,61 @@ export default defineComponent({
                   type: "line",
                   xMin: props.inspectorRightMs,
                   xMax: props.inspectorRightMs,
-                  borderColor: "#ffb74d",
-                  borderWidth: 2,
+                  borderColor: withAlpha("#ffb74d", hoveredMarkerId.value && hoveredMarkerId.value !== "inspector-right" ? 0.25 : 1),
+                  borderWidth: hoveredMarkerId.value && hoveredMarkerId.value !== "inspector-right" ? 1 : 2,
                   borderDash: [6, 3],
-                  label: {
-                    display: true,
-                    content: "R",
-                    position: "end",
-                    backgroundColor: "#ffb74d",
-                    color: "#000",
-                    font: { size: 10, weight: "bold" },
-                  },
+                  label: { display: false },
                 },
               } : {}),
             },
           },
           zoom: {
-            pan: { enabled: true, mode: "x" },
+            pan: {
+              enabled: true,
+              mode: "x",
+              onPanStart: () => {
+                chartNavigating.value = true;
+              },
+              onPan: rememberZoomRange,
+              onPanComplete: () => {
+                rememberZoomRange();
+                chartNavigating.value = false;
+              },
+            },
             zoom: {
               wheel: { enabled: true },
               pinch: { enabled: true },
               mode: "x",
+              onZoomStart: () => {
+                chartNavigating.value = true;
+              },
+              onZoom: rememberZoomRange,
+              onZoomComplete: () => {
+                rememberZoomRange();
+                chartNavigating.value = false;
+              },
             },
+            limits: (() => {
+              // Prevent zooming out past the extent of actual data.
+              let xMin = Infinity;
+              let xMax = -Infinity;
+              for (const ds of pingChartData.value.datasets) {
+                for (const pt of (ds.data as { x?: number }[])) {
+                  if (pt?.x != null) {
+                    if (pt.x < xMin) xMin = pt.x;
+                    if (pt.x > xMax) xMax = pt.x;
+                  }
+                }
+              }
+              return xMin < xMax ? { x: { min: xMin, max: xMax } } : {};
+            })(),
           },
         },
         scales: {
           x: {
             type: "time",
             time: { tooltipFormat: "HH:mm:ss", displayFormats: { second: "HH:mm:ss", minute: "HH:mm" } },
+            ...(zoomRangeMs.value ? { min: zoomRangeMs.value.min, max: zoomRangeMs.value.max } : {}),
           },
           y: { beginAtZero: true, title: { display: true, text: "ms" } },
           yLoss: {
@@ -413,7 +625,7 @@ export default defineComponent({
             grid: { drawOnChartArea: false },
           },
         },
-        elements: { point: { radius: 1, hitRadius: 8 } },
+        elements: { point: { radius: 1, hitRadius: 12 } },
       };
     });
 
@@ -516,14 +728,121 @@ export default defineComponent({
     }
 
     function onChartPointerMove(event: PointerEvent) {
-      if (!draggingMarker.value) return;
-      event.preventDefault();
-      const ms = getChartXFromEvent(event);
-      if (ms == null) return;
-      if (draggingMarker.value === "left") {
-        emit("update:inspectorLeftMs", ms);
+      if (draggingMarker.value) {
+        event.preventDefault();
+        const ms = getChartXFromEvent(event);
+        if (ms == null) return;
+        if (draggingMarker.value === "left") {
+          emit("update:inspectorLeftMs", ms);
+        } else {
+          emit("update:inspectorRightMs", ms);
+        }
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = null;
+        hoveredEventTooltip.value = null;
+        return;
+      }
+
+      // While dragging for pan (mouse button down), disable hover-driven chart updates.
+      if (event.buttons !== 0 && !event.shiftKey) {
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = null;
+        hoveredEventTooltip.value = null;
+        return;
+      }
+
+      if (chartNavigating.value) {
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = null;
+        hoveredEventTooltip.value = null;
+        return;
+      }
+
+      const chart = pingChartRef.value?.chart;
+      if (!chart?.scales?.x) {
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = null;
+        hoveredEventTooltip.value = null;
+        return;
+      }
+
+      const rect = chart.canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+
+      const nearestPoint = chart.getElementsAtEventForMode(
+        event as unknown as Event,
+        "nearest",
+        { intersect: false, axis: "xy" },
+        false,
+      )[0];
+
+      if (nearestPoint) {
+        const pointEl = nearestPoint.element as { x: number; y: number };
+        const dx = mouseX - pointEl.x;
+        const dy = mouseY - pointEl.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const POINT_HOVER_THRESHOLD_PX = 20;
+
+        if (dist <= POINT_HOVER_THRESHOLD_PX) {
+          const ds = chart.data.datasets[nearestPoint.datasetIndex] as {
+            label?: string;
+            metric?: string;
+            playerColor?: string;
+            data?: Array<{ x?: number; y?: number }>;
+          };
+          const dp = ds.data?.[nearestPoint.index];
+          const xMs = typeof dp?.x === "number" ? dp.x : null;
+          const yVal = typeof dp?.y === "number" ? dp.y : null;
+          const pStyle = playerColorTonalStyle(ds.playerColor ?? "#888888");
+
+          const valueLine = ds.metric === "packet-loss"
+            ? `Loss ${yVal != null ? yVal.toFixed(1) : "?"}%`
+            : `Ping ${yVal != null ? Math.round(yVal) : "?"} ms`;
+
+          hoveredDatasetIndex.value = nearestPoint.datasetIndex;
+          hoveredMarkerId.value = null;
+          hoveredEventTooltip.value = {
+            left: Math.min(mouseX + 14, Math.max(8, rect.width - 260)),
+            top: Math.min(mouseY + 14, Math.max(8, rect.height - 100)),
+            lines: [
+              ds.label ?? "Series",
+              valueLine,
+              xMs != null ? `At ${formatWallClock(xMs)}` : "",
+            ].filter(Boolean),
+            style: pStyle,
+            swatchColor: ds.playerColor,
+          };
+          return;
+        }
+      }
+
+      const HOVER_THRESHOLD_PX = 12;
+
+      let nearest: EventMarkerInfo | null = null;
+      let nearestDistance = Infinity;
+      for (const marker of hoverMarkers.value) {
+        const markerX = chart.scales.x.getPixelForValue(marker.ts);
+        const dist = Math.abs(mouseX - markerX);
+        if (dist < nearestDistance) {
+          nearestDistance = dist;
+          nearest = marker;
+        }
+      }
+
+      if (nearest && nearestDistance <= HOVER_THRESHOLD_PX) {
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = nearest.id;
+        hoveredEventTooltip.value = {
+          left: Math.min(mouseX + 14, Math.max(8, rect.width - 260)),
+          top: Math.min(mouseY + 14, Math.max(8, rect.height - 100)),
+          lines: [nearest.shortLabel, ...nearest.detailLines],
+          style: nearest.style,
+        };
       } else {
-        emit("update:inspectorRightMs", ms);
+        hoveredDatasetIndex.value = null;
+        hoveredMarkerId.value = null;
+        hoveredEventTooltip.value = null;
       }
     }
 
@@ -531,7 +850,15 @@ export default defineComponent({
       draggingMarker.value = null;
     }
 
+    function onChartPointerLeave() {
+      draggingMarker.value = null;
+      hoveredDatasetIndex.value = null;
+      hoveredMarkerId.value = null;
+      hoveredEventTooltip.value = null;
+    }
+
     function resetPingChartZoom() {
+      zoomRangeMs.value = null;
       pingChartRef.value?.chart?.resetZoom();
     }
 
@@ -545,13 +872,17 @@ export default defineComponent({
     return {
       visiblePlayers,
       playerName,
+      tooltipBgColor,
+      tooltipTextColor,
       pingChartRef,
       pingChartData,
       pingChartOptions,
+      hoveredEventTooltip,
       resetPingChartZoom,
       onChartPointerDown,
       onChartPointerMove,
       onChartPointerUp,
+      onChartPointerLeave,
       playerSummaries,
       mdiCircle,
       zoomPlugin,

@@ -10,7 +10,7 @@
   >
     <template v-slot:activator="{ props }">
       <v-btn variant="text" tile v-bind="props">
-        <v-icon size="x-large" class="mr-2">{{ mdiMagnify }}</v-icon>
+        <v-icon size="x-large">{{ mdiMagnify }}</v-icon>
       </v-btn>
     </template>
     <v-card class="px-2 pb-2 pt-0">

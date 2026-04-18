@@ -11,6 +11,7 @@
       target="_blank"
       tile
       border
+      flat
       style="padding-bottom: 0px"
     >
       <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
@@ -27,6 +28,7 @@
       target="_blank"
       tile
       border
+      flat
     >
       <v-img src="/assets/socials/Twitter_button.png" alt="Twitter" />
     </v-card>

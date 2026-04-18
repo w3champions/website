@@ -26,6 +26,30 @@ h3 {
   letter-spacing: 1.56px !important;
 }
 
-.v-data-table {
+.v-data-table,
+.v-table {
   background-color: transparent !important;
+}
+
+// Nested cards and expansion panels should be transparent when inside containers
+.v-expansion-panel, .v-sheet {
+  background-color: transparent !important;
+}
+
+.v-card {
+  .v-card {
+    background-color: transparent !important;
+  }
+}
+
+// Since we're overriding the tonal chips for each
+// theme to adjust the BG color with color-mix,
+// we need to make the text appear on top of the
+// underlay by setting its z-index to 1.
+.v-chip--variant-tonal .v-chip__content,
+.v-chip--variant-tonal .v-chip__prepend,
+.v-chip--variant-tonal .v-chip__append,
+.v-chip--variant-tonal .v-chip__close {
+  position: relative;
+  z-index: 1;
 }

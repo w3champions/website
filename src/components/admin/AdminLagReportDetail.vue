@@ -38,7 +38,7 @@
           @update:inspector-right-ms="inspectorRightMs = $event"
         />
 
-        <lag-report-event-data :players="report.players" />
+        <lag-report-event-data :players="report.players" :player-colors="playerColors" />
 
         <lag-report-raw-data :players="report.players" :player-colors="playerColors" />
       </v-expansion-panels>
@@ -54,7 +54,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
 import { mdiArrowLeft } from "@mdi/js";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import LagReportHeader from "@/components/admin/lag-reports/LagReportHeader.vue";
 import LagReportTopology from "@/components/admin/lag-reports/LagReportTopology.vue";
@@ -81,6 +81,7 @@ export default defineComponent({
   setup(props) {
     const lagReportsStore = useLagReportsStore();
     const router = useRouter();
+    const route = useRoute();
 
     const report = computed(() => lagReportsStore.selectedReport);
     const loading = computed(() => lagReportsStore.selectedReportLoading);
@@ -100,7 +101,7 @@ export default defineComponent({
     }
 
     function goBack() {
-      router.push({ name: EAdminRouteName.LAG_REPORTS });
+      router.push({ name: EAdminRouteName.LAG_REPORTS, query: route.query });
     }
 
     onMounted(async () => {

@@ -7,6 +7,8 @@ export const human = {
     "w3-gold": "#FFD428",
     "w3-race-bg": "#e9e9e9",
     lost: "#DF323B",
+    warning: "#D97706",
+    "on-warning": "#78350F",
   },
   variables: {
     // "border-color": "#000000",
