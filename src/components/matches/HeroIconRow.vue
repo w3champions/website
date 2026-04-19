@@ -10,14 +10,14 @@
 import { Hero } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 
-const { heroes = [], left, show = false, size = 128, selectedHeroes = [] } = defineProps<{
-  heroes?: Hero[];
+const { heroes, left, show, selectedHeroes, size = 128 } = defineProps<{
+  heroes: Hero[] | null;
   left: boolean;
-  show?: boolean;
+  show: boolean;
+  selectedHeroes: number[];
   size?: number;
-  selectedHeroes?: number[];
 }>();
 
-const heroList = left ? heroes.toReversed() : heroes;
-const firstHeroIndex = left ? heroList.length - 1 : 0;
+const heroList = left && heroes ? heroes.toReversed() : heroes;
+const firstHeroIndex = left && heroList ? heroList.length - 1 : 0;
 </script>
