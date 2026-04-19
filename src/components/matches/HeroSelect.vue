@@ -52,61 +52,52 @@
   </v-menu>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
 import { TranslateResult, useI18n } from "vue-i18n";
 import { mdiCheck, mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
 
-export default defineComponent({
-  name: "HeroSelect",
-  props: {
-    isPlayerMatchesTab: {
-      type: Boolean,
-      default: false,
-    },
-    selectedHeroes: {
-      type: Array<number>,
-      default: [],
-    },
+const { isPlayerMatchesTab, selectedHeroes } = defineProps({
+  isPlayerMatchesTab: {
+    type: Boolean,
+    default: false,
   },
-  setup: (props, context) => {
-    const { t } = useI18n();
-    const commonStore = useCommonStore();
-    const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
-
-    const selectedText = computed<TranslateResult>(() => {
-      if (!props.selectedHeroes.length) {
-        return t("heroNames.allfilter");
-      }
-      const hero = heroFilters.value.find((h) => h.type === props.selectedHeroes[0]);
-      return hero ? t(`heroNames.${hero.name}`) : t("heroNames.allfilter");
-    });
-
-    onMounted(async (): Promise<void> => {
-      await commonStore.loadHeroFilters();
-    });
-
-    const toggleHero = (hero: HeroFilter) => {
-      context.emit("heroChanged", hero.name === "allfilter" ? [] : [hero.type]);
-    };
-
-    const isSelected = (hero: HeroFilter): boolean => {
-      if (hero.name === "allfilter") return props.selectedHeroes.length === 0;
-      return props.selectedHeroes.includes(hero.type);
-    };
-
-    return {
-      mdiCheck,
-      mdiDramaMasks,
-      heroFilters,
-      toggleHero,
-      isSelected,
-      selectedText,
-    };
+  selectedHeroes: {
+    type: Array<number>,
+    default: [],
   },
 });
+
+const emit = defineEmits<{
+  heroChanged: [heroes: number[]];
+}>();
+
+const { t } = useI18n();
+const commonStore = useCommonStore();
+const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
+
+const selectedText = computed<TranslateResult>(() => {
+  if (!selectedHeroes.length) {
+    return t("heroNames.allfilter");
+  }
+  const hero = heroFilters.value.find((h) => h.type === selectedHeroes[0]);
+  return hero ? t(`heroNames.${hero.name}`) : t("heroNames.allfilter");
+});
+
+onMounted(async (): Promise<void> => {
+  await commonStore.loadHeroFilters();
+});
+
+const toggleHero = (hero: HeroFilter) => {
+  emit("heroChanged", hero.name === "allfilter" ? [] : [hero.type]);
+};
+
+const isSelected = (hero: HeroFilter): boolean => {
+  if (hero.name === "allfilter") return selectedHeroes.length === 0;
+  return selectedHeroes.includes(hero.type);
+};
 </script>
 
 <style lang="scss" scoped>

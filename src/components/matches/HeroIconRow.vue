@@ -6,52 +6,18 @@
   </v-row>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
 import { Hero } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 
-export default defineComponent({
-  name: "HeroIconRow",
-  components: {
-    HeroIcon,
-  },
-  props: {
-    heroes: {
-      type: Array as PropType<Hero[]>,
-      required: false,
-      default: Array<Hero[]>
-    },
-    left: {
-      type: Boolean,
-      required: true,
-    },
-    show: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    size: {
-      type: Number,
-      required: false,
-      default: 128,
-    },
-    selectedHeroes: {
-      type: Array as PropType<number[]>,
-      required: false,
-      default: () => [],
-    },
-  },
-  setup(props) {
-    let heroList = props.heroes;
-    if (props.left && heroList) {
-      // must slice to avoid mutating the original array
-      heroList = heroList.slice().reverse();
-    }
-    return {
-      heroList,
-      firstHeroIndex: props.left && heroList ? heroList.length - 1 : 0,
-    };
-  }
-});
+const { heroes = [], left, show = false, size = 128, selectedHeroes = [] } = defineProps<{
+  heroes?: Hero[];
+  left: boolean;
+  show?: boolean;
+  size?: number;
+  selectedHeroes?: number[];
+}>();
+
+const heroList = left ? heroes.toReversed() : heroes;
+const firstHeroIndex = left ? heroList.length - 1 : 0;
 </script>

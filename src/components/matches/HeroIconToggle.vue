@@ -11,35 +11,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import { mdiEye, mdiEyeOff } from "@mdi/js";
 
-export default defineComponent({
-  name: "HeroIconToggle",
-  props: {
-    showHeroes: {
-      type: Boolean,
-      required: true,
-    },
-    unfinished: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-  emits: ["update:showHeroes"],
-  setup(props, { emit }) {
+const props = defineProps<{
+  showHeroes: boolean;
+  unfinished?: boolean;
+}>();
 
-    function toggle() {
-      emit("update:showHeroes", !props.showHeroes);
-    }
+const emit = defineEmits<{
+  "update:showHeroes": [boolean];
+}>();
 
-    return {
-      toggle,
-      mdiEye,
-      mdiEyeOff,
-    };
-  },
-});
+function toggle() {
+  emit("update:showHeroes", !props.showHeroes);
+}
 </script>
