@@ -48,7 +48,7 @@
           />
         </span>
       </span>
-      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :size="24" :selectedHeroes="selectedHeroes" />
+      <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :selectedHeroes="selectedHeroes" :size="24" />
     </div>
     <player-icon
       v-if="left"

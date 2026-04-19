@@ -69,7 +69,7 @@
                     :selectedHeroes="selectedHeroes"
                   />
                 </v-col>
-                <v-col cols="1" align-self="center" class="py-2">
+                <v-col cols="1" class="py-2 d-flex flex-column justify-center align-center">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
                   <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
                 </v-col>
