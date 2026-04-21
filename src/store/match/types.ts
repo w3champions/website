@@ -13,7 +13,7 @@ export type MatchState = {
   gameMode: EGameMode;
   map: string;
   mmr: Mmr;
-  duration: { min: number; max: number } | null;
+  duration: { min: number; max: number };
   sort: string;
   selectedSeason: Season;
   showHeroIcons: boolean;

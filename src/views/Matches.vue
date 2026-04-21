@@ -11,7 +11,7 @@
             <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
             <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
             <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
-            <duration-select :duration="duration" @durationFilterChanged="durationFilterChanged" />
+            <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
             <sort-select v-if="unfinished" />
             <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
             <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
@@ -83,7 +83,8 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
-    const duration = computed<{ min: number; max: number } | null>(() => matchStore.duration);
+    const duration = computed<{ min: number; max: number }>(() => matchStore.duration);
+
 
     const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
@@ -174,7 +175,7 @@ export default defineComponent({
     function mmrFilterChanged(mmr: Mmr): void {
       matchStore.setMmr(mmr);
     }
-    function durationFilterChanged(duration: { min: number; max: number } | null): void {
+    function durationFilterChanged(duration: { min: number; max: number }): void {
       matchStore.setDuration(duration);
     }
 

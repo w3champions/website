@@ -1,5 +1,9 @@
 <template>
-  <v-menu location="right" :close-on-content-click="false" @update:model-value="onMenuToggled">
+  <v-menu
+    location="right"
+    :close-on-content-click="false"
+    @update:model-value="onMenuToggled"
+  >
     <template v-slot:activator="{ props }">
       <v-btn tile style="background-color: transparent" v-bind="props">
         <v-icon size="x-large" start>{{ mdiTimerSand }}</v-icon>
@@ -7,113 +11,75 @@
       </v-btn>
     </template>
 
-    <v-card class="px-2">
+    <v-card class="px-2" min-width="300">
       <v-card-text class="text-body-1 w3-mid-emphasis pt-3 pl-1 pb-0">
-        Match Duration (minutes)
+        Match Duration
       </v-card-text>
 
-      <v-card-text>
-        <v-range-slider
-          v-model="currentMinMaxMinutes"
-          color="primary"
-          thumb-color="primary"
-          :min="minSelectable"
-          :max="maxSelectable"
-          step="1"
-          thumb-label="always"
-          class="pt-6"
-          strict
-          min-width="340"
-          track-size="1"
+      <v-card-text class="d-flex flex-column gap-4">
+        <v-select
+          v-model="minMinutes"
+          label="Min Duration"
+          :items="durationOptions"
+          density="comfortable"
           hide-details
-        >
-          <template v-slot:prepend>
-            <span class="text-caption">{{ formatLabel(currentMinMaxMinutes[0]) }}</span>
-          </template>
-          <template v-slot:append>
-            <span class="text-caption">{{ formatLabel(currentMinMaxMinutes[1]) }}</span>
-          </template>
-        </v-range-slider>
+        />
+        <v-select
+          v-model="maxMinutes"
+          label="Max Duration"
+          :items="durationOptions"
+          density="comfortable"
+          hide-details
+        />
       </v-card-text>
     </v-card>
   </v-menu>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType, ref, watch, onMounted } from "vue";
+import { defineComponent, computed, PropType, ref } from "vue";
 import { mdiTimerSand } from "@mdi/js";
 
 export default defineComponent({
   name: "DurationSelect",
   props: {
     duration: {
-      type: Object as PropType<{ min: number; max: number } | null>,
+      type: Object as PropType<{ min: number; max: number }>,
       default: null,
     },
   },
   emits: ["durationFilterChanged"],
 
   setup(props, { emit }) {
-    const minSelectable = ref(0);
-    const maxSelectable = ref(240);
 
-    const currentMinMaxMinutes = ref<number[]>([0, 240]);
+    const durationOptions = Array.from({ length: 241 }, (_, i) => ({
+      title: i === 240 ? "4h+" : i < 60 ? `${i} min` : `${Math.floor(i / 60)}h ${i % 60 ? i % 60 + "min" : ""}`.trim(),
+      value: i,
+    }));
+
+    const minMinutes = ref(props.duration ? Math.floor(props.duration.min / 60) : 0);
+    const maxMinutes = ref(props.duration ? Math.floor(props.duration.max / 60) : 240);
 
     const selected = computed(() => {
-      const [min, max] = currentMinMaxMinutes.value;
-
-      if (min === 0 && max === 240) {
+      if (minMinutes.value === 0 && maxMinutes.value === 240) {
         return "Duration";
       }
 
-      const minLabel = min < 60
-        ? `${min} min`
-        : `${Math.floor(min / 60)}h ${min % 60 ? min % 60 + "min" : ""}`.trim();
-
-      const maxLabel = max === 240
-        ? "4h+"
-        : max < 60
-          ? `${max} min`
-          : `${Math.floor(max / 60)}h ${max % 60 ? max % 60 + "min" : ""}`.trim();
+      const minLabel = durationOptions[minMinutes.value].title;
+      const maxLabel = durationOptions[maxMinutes.value].title;
 
       return `${minLabel} - ${maxLabel}`;
     });
 
-    function formatLabel(minutes: number): string {
-      if (minutes < 60) return `${minutes} min`;
-      const hours = Math.floor(minutes / 60);
-      const remaining = minutes % 60;
-      return remaining === 0 ? `${hours}h` : `${hours}h ${remaining}min`;
-    }
-
-    const updateSlider = () => {
-      if (!props.duration) {
-        currentMinMaxMinutes.value = [0, 240];
-        return;
-      }
-      const minMin = Math.floor(props.duration.min / 60);
-      const maxMin = Math.min(Math.ceil(props.duration.max / 60), 240);
-      currentMinMaxMinutes.value = [minMin, maxMin];
-    };
-
-    onMounted(updateSlider);
-
-    watch(
-      () => props.duration,
-      updateSlider,
-      { deep: true }
-    );
-
-    function onMenuToggled(opened: boolean): void {
+    function onMenuToggled(opened: boolean) {
       if (!opened) {
-        const [min, max] = currentMinMaxMinutes.value;
-        if (min > 0 || max < 240) {
-          emit("durationFilterChanged", {
-            min: min * 60,
-            max: max * 60,
-          });
-        } else {
+        if (minMinutes.value === 0 && maxMinutes.value === 240) {
           emit("durationFilterChanged", null);
+        } else {
+          emit("durationFilterChanged", {
+            min: minMinutes.value * 60,
+            max: maxMinutes.value * 60,
+          });
         }
       }
     }
@@ -121,11 +87,10 @@ export default defineComponent({
     return {
       mdiTimerSand,
       selected,
-      currentMinMaxMinutes,
-      minSelectable,
-      maxSelectable,
+      durationOptions,
+      minMinutes,
+      maxMinutes,
       onMenuToggled,
-      formatLabel,
     };
   },
 });

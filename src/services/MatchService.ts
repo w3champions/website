@@ -12,8 +12,8 @@ export default class MatchService {
     gameMode: EGameMode,
     map: string,
     mmr: Mmr,
-    duration: { min: number; max: number } | null,
-    season: number | { id: number } | null | undefined,
+    duration: { min: number; max: number },
+    season: number,
     heroes: number[],
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
@@ -26,15 +26,7 @@ export default class MatchService {
     const heroQuery = Array.isArray(heroes) && heroes.length > 0
       ? heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("")
       : "";
-
-    let seasonParam: number = -1;
-    if (typeof season === "number") {
-      seasonParam = season;
-    } else if (typeof season === "object" && season !== null && "id" in season) {
-      seasonParam = (season as { id: number }).id;
-    }
-
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}${_durationQuery}&season=${seasonParam}${heroQuery}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}${_durationQuery}&season=${season}${heroQuery}`;
 
     const response = await fetch(url);
     return await response.json();
@@ -46,7 +38,7 @@ export default class MatchService {
     gameMode: EGameMode,
     map: string,
     mmr: Mmr,
-    duration: { min: number; max: number } | null,
+    duration: { min: number; max: number },
     sort: string,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
@@ -70,16 +62,12 @@ export default class MatchService {
     gameMode: EGameMode,
     map: string,
     mmr: Mmr,
-    duration: { min: number; max: number } | null,
+    duration: { min: number; max: number },
     sort: string,
   ): Promise<{ count: number; matches: Match[] }> {
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
     const maxMmr = mmr.max === 3000 ? "" : `&maxMmr=${mmr.max}`;
-    const _durationQuery = duration
-      ? `&minDuration=${duration.min}&maxDuration=${duration.max}`
-      : "";
-
-    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}${_durationQuery}&sort=${sort}`;
+    const url = `${API_URL}api/matches/ongoing?offset=${offset}&gateway=${gateway}&pageSize=${pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}&sort=${sort}`;
 
     const response = await fetch(url);
     return await response.json();
