@@ -11,6 +11,7 @@
             <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
             <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
             <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
+            <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
             <sort-select v-if="unfinished" />
             <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
             <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
@@ -42,6 +43,7 @@ import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
 import MmrSelect from "@/components/common/MmrSelect.vue";
+import DurationSelect from "@/components/common/DurationSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
 import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
@@ -65,6 +67,7 @@ export default defineComponent({
     SortSelect,
     HeroIconToggle,
     HeroSelect,
+    DurationSelect,
   },
   setup() {
     const overallStatsStore = useOverallStatsStore();
@@ -80,6 +83,8 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
+    const duration = computed<{ min: number; max: number }>(() => matchStore.duration);
+
 
     const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
@@ -170,6 +175,9 @@ export default defineComponent({
     function mmrFilterChanged(mmr: Mmr): void {
       matchStore.setMmr(mmr);
     }
+    function durationFilterChanged(duration: { min: number; max: number }): void {
+      matchStore.setDuration(duration);
+    }
 
     async function selectSeason(season: Season): Promise<void> {
       await matchStore.setSeason(season);
@@ -191,6 +199,8 @@ export default defineComponent({
       map,
       mmrFilterChanged,
       mmr,
+      duration,
+      durationFilterChanged,
       selectSeason,
       unfinished,
       matches,
