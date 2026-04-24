@@ -5,30 +5,36 @@
     @update:model-value="onMenuToggled"
   >
     <template v-slot:activator="{ props }">
-      <v-btn tile style="background-color: transparent" v-bind="props">
+      <v-btn
+        tile
+        style="background-color: transparent; min-width: 180px;"
+        v-bind="props"
+      >
         <v-icon size="x-large" start>{{ mdiTimerSand }}</v-icon>
         {{ selected }}
       </v-btn>
     </template>
 
     <v-card class="px-2" min-width="300">
-      <v-card-text class="text-body-1 w3-mid-emphasis pt-3 pl-1 pb-0">
+      <v-card-text class="text-body-1 w3-mid-emphasis pt-3 pl-1 pb-1">
         Match Duration
       </v-card-text>
 
-      <v-card-text class="d-flex flex-column gap-4">
-        <v-select
-          v-model="minMinutes"
-          label="Min Duration"
-          :items="durationOptions"
-          density="comfortable"
-          hide-details
-        />
-        <v-select
-          v-model="maxMinutes"
-          label="Max Duration"
-          :items="durationOptions"
-          density="comfortable"
+      <div class="px-4 pb-1 d-flex justify-space-between uniform-values">
+        <span>{{ format(currentMinMax[0]) }}</span>
+        <span>{{ format(currentMinMax[1]) }}</span>
+      </div>
+
+      <v-card-text class="pt-0">
+        <v-range-slider
+          v-model="currentMinMax"
+          :min="0"
+          :max="240"
+          step="1"
+          color="primary"
+          thumb-color="primary"
+          class="mt-0"
+          track-size="1"
           hide-details
         />
       </v-card-text>
@@ -51,35 +57,54 @@ export default defineComponent({
   emits: ["durationFilterChanged"],
 
   setup(props, { emit }) {
+    const minSelectable = 0;
+    const maxSelectable = 240;
 
-    const durationOptions = Array.from({ length: 241 }, (_, i) => ({
-      title: i === 240 ? "4h+" : i < 60 ? `${i} min` : `${Math.floor(i / 60)}h ${i % 60 ? i % 60 + "min" : ""}`.trim(),
-      value: i,
-    }));
+    const initialMin = props.duration
+      ? Math.floor(props.duration.min / 60)
+      : minSelectable;
 
-    const minMinutes = ref(props.duration ? Math.floor(props.duration.min / 60) : 0);
-    const maxMinutes = ref(props.duration ? Math.floor(props.duration.max / 60) : 240);
+    const initialMax = props.duration
+      ? Math.floor(props.duration.max / 60)
+      : maxSelectable;
+
+    let previousMinMax = [initialMin, initialMax];
+
+    const currentMinMax = ref<number[]>([initialMin, initialMax]);
+
+    const format = (m: number) =>
+      m === 240
+        ? "4h+"
+        : m < 60
+        ? `${m} min`
+        : `${Math.floor(m / 60)}h ${m % 60 ? m % 60 + "min" : ""}`.trim();
 
     const selected = computed(() => {
-      if (minMinutes.value === 0 && maxMinutes.value === 240) {
-        return "Duration";
-      }
+      if (!props.duration) return "Duration";
 
-      const minLabel = durationOptions[minMinutes.value].title;
-      const maxLabel = durationOptions[maxMinutes.value].title;
+      const min = Math.floor(props.duration.min / 60);
+      const max = Math.floor(props.duration.max / 60);
 
-      return `${minLabel} - ${maxLabel}`;
+      if (min === 0 && max === 240) return "Duration";
+
+      return `${format(min)} - ${format(max)}`;
     });
 
     function onMenuToggled(opened: boolean) {
       if (!opened) {
-        if (minMinutes.value === 0 && maxMinutes.value === 240) {
-          emit("durationFilterChanged", null);
-        } else {
-          emit("durationFilterChanged", {
-            min: minMinutes.value * 60,
-            max: maxMinutes.value * 60,
-          });
+        const [min, max] = currentMinMax.value;
+
+        if (min !== previousMinMax[0] || max !== previousMinMax[1]) {
+          previousMinMax = [...currentMinMax.value];
+
+          if (min === 0 && max === 240) {
+            emit("durationFilterChanged", null);
+          } else {
+            emit("durationFilterChanged", {
+              min: min * 60,
+              max: max * 60,
+            });
+          }
         }
       }
     }
@@ -87,11 +112,18 @@ export default defineComponent({
     return {
       mdiTimerSand,
       selected,
-      durationOptions,
-      minMinutes,
-      maxMinutes,
+      currentMinMax,
       onMenuToggled,
+      format,
     };
   },
 });
 </script>
+
+<style scoped>
+.uniform-values {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.75);
+}
+</style>
