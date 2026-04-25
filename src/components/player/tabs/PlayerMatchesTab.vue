@@ -8,6 +8,7 @@
         <v-spacer />
         <v-col cols="12" md="5" class="pt-0 px-4">
           <player-search
+            :key="battleTag"
             :setAutofocus="false"
             @playerFound="playerFound"
             @searchCleared="searchCleared"
@@ -94,7 +95,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { loadActiveGameModes, activeGameModesWithAll } from "@/composables/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -141,6 +143,21 @@ export default defineComponent({
       await loadActiveGameModes();
       await commonStore.loadHeroFilters();
     });
+
+    onBeforeRouteLeave((): void => {
+      resetProfileMatchFilters();
+    });
+
+    watch(battleTag, (newBattleTag: string, oldBattleTag: string | undefined): void => {
+      if (!oldBattleTag || newBattleTag === oldBattleTag) return;
+      resetProfileMatchFilters();
+    });
+
+    function resetProfileMatchFilters(): void {
+      foundPlayer.value = "";
+      rankingsStore.clearSearch();
+      playerStore.RESET_PROFILE_MATCH_FILTERS();
+    }
 
     async function playerFound(bTag: string): Promise<void> {
       foundPlayer.value = bTag;
