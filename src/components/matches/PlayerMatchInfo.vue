@@ -20,9 +20,9 @@
               class="truncated-text text-primary cursor-pointer"
               :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
               v-bind="props"
-              @click="notClickable ? null : goToPlayer()"
-              @click.middle="openProfileInNewTab()"
-              @click.right="openProfileInNewTab()"
+              @click.stop="notClickable ? null : goToPlayer()"
+              @click.middle.stop="openProfileInNewTab()"
+              @click.right.stop="openProfileInNewTab()"
             >
               {{ nameWithoutBtag }}<span v-if="currentRating !== null"> ({{ currentRating }})<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
                 <span v-if="mmrChange > 0">+</span>{{ mmrChange }}

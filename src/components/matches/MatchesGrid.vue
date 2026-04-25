@@ -12,96 +12,155 @@
             >
               {{ header.text }}
             </td>
+            <td v-if="!unfinished" class="text-center text-medium-emphasis match-page-cell">
+              {{ $t("components_matches_matchesgrid.match") }}
+            </td>
             <td v-if="!unfinished" class="text-center text-medium-emphasis">
               {{ $t("components_matches_matchesgrid.replay") }}
             </td>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in matches" :key="item.id">
-            <td>
-              <div
-                v-if="isFfa(item.gameMode)"
-                :class="{ 'cursor-pointer': !unfinished }"
-                class="my-3"
-                @click="goToMatchDetailPage(item)"
+          <template v-for="item in matches" :key="item.id">
+            <tr>
+              <td
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
               >
-                <v-row v-if="alwaysLeftName" justify="center">
-                  <v-col offset="4" class="py-1">
+                <div
+                  v-if="isFfa(item.gameMode)"
+                  class="my-3"
+                >
+                  <v-row v-if="alwaysLeftName" justify="center">
+                    <v-col offset="4" class="py-1">
+                      <team-match-info
+                        :not-clickable="unfinished"
+                        :team="getPlayerTeam(item)"
+                        :unfinishedMatch="unfinished"
+                        :is-anonymous="true"
+                        :highlightedPlayer="alwaysLeftName"
+                        :show-heroes="showHeroes"
+                        :selectedHeroes="selectedHeroes"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row v-for="(team, index) in getOpponentTeams(item)" :key="index" justify="center">
+                    <v-col offset="4" class="py-1">
+                      <team-match-info
+                        :not-clickable="unfinished"
+                        :team="team"
+                        :unfinishedMatch="unfinished"
+                        :is-anonymous="true"
+                        :show-heroes="showHeroes"
+                        :selectedHeroes="selectedHeroes"
+                      />
+                    </v-col>
+                  </v-row>
+                </div>
+                <v-row
+                  v-if="!isFfa(item.gameMode)"
+                  class="force-no-wrap"
+                >
+                  <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
                     <team-match-info
-                      :not-clickable="!unfinished"
-                      :team="getPlayerTeam(item)"
+                      :not-clickable="unfinished"
+                      :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
                       :unfinishedMatch="unfinished"
-                      :is-anonymous="true"
-                      :highlightedPlayer="alwaysLeftName"
+                      :left="true"
+                      :highlightedPlayer="nameIfNonSolo(item)"
+                      :show-heroes="showHeroes"
+                      :selectedHeroes="selectedHeroes"
+                    />
+                  </v-col>
+                  <v-col cols="1" class="py-2 d-flex flex-column justify-center align-center">
+                    <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
+                    <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
+                  </v-col>
+                  <v-col cols="5.5" class="team-match-info-container" align-self="center">
+                    <team-match-info
+                      :not-clickable="unfinished"
+                      :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
+                      :unfinishedMatch="unfinished"
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
                     />
                   </v-col>
                 </v-row>
-                <v-row v-for="(team, index) in getOpponentTeams(item)" :key="index" justify="center">
-                  <v-col offset="4" class="py-1">
-                    <team-match-info
-                      :not-clickable="!unfinished"
-                      :team="team"
-                      :unfinishedMatch="unfinished"
-                      :is-anonymous="true"
-                      :show-heroes="showHeroes"
-                      :selectedHeroes="selectedHeroes"
-                    />
-                  </v-col>
-                </v-row>
-              </div>
-              <v-row
-                v-if="!isFfa(item.gameMode)"
-                :class="{ 'cursor-pointer': !unfinished }"
-                class="force-no-wrap"
-                @click="goToMatchDetailPage(item)"
+              </td>
+              <td
+                class="text-center"
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
               >
-                <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
-                    :unfinishedMatch="unfinished"
-                    :left="true"
-                    :highlightedPlayer="nameIfNonSolo(item)"
-                    :show-heroes="showHeroes"
-                    :selectedHeroes="selectedHeroes"
-                  />
-                </v-col>
-                <v-col cols="1" class="py-2 d-flex flex-column justify-center align-center">
-                  <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
-                </v-col>
-                <v-col cols="5.5" class="team-match-info-container" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
-                    :unfinishedMatch="unfinished"
-                    :show-heroes="showHeroes"
-                    :selectedHeroes="selectedHeroes"
-                  />
-                </v-col>
-              </v-row>
-            </td>
-            <td class="text-center">
-              <span>{{ gameModeTranslation(item.gameMode) }}</span>
-              <br />
-              <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
-            </td>
-            <td class="text-right">
-              {{ getStartTime(item) }}
-            </td>
-            <td class="text-right">
-              <div class="d-flex flex-column text-right align-end">
-                <span class="number-text">{{ getDuration(item) }}</span>
-                <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }"></div>
-              </div>
-            </td>
-            <td v-if="showReplayDownload(item)" class="text-center">
-              <download-replay-icon :gameId="item.id" />
-            </td>
-          </tr>
+                <span>{{ gameModeTranslation(item.gameMode) }}</span>
+                <br />
+                <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
+              </td>
+              <td
+                class="text-right"
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
+              >
+                {{ getStartTime(item) }}
+              </td>
+              <td
+                class="text-right"
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
+              >
+                <div class="d-flex flex-column text-right align-end">
+                  <span class="number-text">{{ getDuration(item) }}</span>
+                  <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }"></div>
+                </div>
+              </td>
+              <td
+                v-if="!unfinished"
+                class="text-center match-page-cell"
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
+              >
+                <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                  <template v-slot:activator="{ props }">
+                    <span v-bind="props">
+                      <v-btn
+                        class="ma-2 w3-gray-gold-text"
+                        icon
+                        variant="outlined"
+                        size="small"
+                        @click.stop="goToMatchDetailPage(item)"
+                      >
+                        <v-icon size="x-large">{{ mdiOpenInNew }}</v-icon>
+                      </v-btn>
+                    </span>
+                  </template>
+                  <span>{{ $t("components_matches_matchesgrid.openMatch") }}</span>
+                </v-tooltip>
+              </td>
+              <td
+                v-if="!unfinished"
+                class="text-center"
+                :class="{ 'cursor-pointer': isAccordionCellActive() }"
+                @click="onAccordionCellSelected(item)"
+              >
+                <span v-if="showReplayDownload(item)" @click.stop>
+                  <download-replay-icon :gameId="item.id" />
+                </span>
+              </td>
+            </tr>
+            <tr v-if="isExpanded(item)" class="match-detail-row">
+              <td :colspan="matchDetailColspan" class="pa-0">
+                <div v-if="isLoadingMatchDetail(item.id)" class="text-center pa-6">
+                  <v-progress-circular indeterminate color="primary" />
+                </div>
+                <match-detail-content
+                  v-else-if="matchDetailsById[item.id]"
+                  :match-detail="matchDetailsById[item.id]"
+                  :match-id="item.id"
+                  :show-replay-download="false"
+                />
+              </td>
+            </tr>
+          </template>
           <tr v-if="!matches || matches.length == 0">
             <td colspan="4" class="text-center">
               {{ $t("components_matches_matchesgrid.nomatchesfound") }}
@@ -121,19 +180,22 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, StyleValue, PropType } from "vue";
+import { computed, defineComponent, StyleValue, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
+import { EGameMode, Match, MatchDetail, PlayerInTeam, Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
+import MatchDetailContent from "@/components/match-details/MatchDetailContent.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { TranslateResult } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { usePlayerStore } from "@/store/player/store";
+import MatchService from "@/services/MatchService";
+import { mdiOpenInNew } from "@mdi/js";
 
 interface MatchesGridHeader {
   name: string;
@@ -149,6 +211,7 @@ export default defineComponent({
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
+    MatchDetailContent,
   },
   props: {
     modelValue: {
@@ -187,6 +250,11 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
+    inlineDetails: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, context) {
     const { t } = useI18n();
@@ -195,8 +263,12 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
     const isFfa = (gameMode: EGameMode) => GAME_MODES_FFA.includes(gameMode);
+    const expandedMatchId = ref<string>("");
+    const matchDetailsById = ref<Record<string, MatchDetail>>({});
+    const loadingMatchDetailsById = ref<Record<string, boolean>>({});
 
     const matches = computed<Match[]>(() => props.modelValue);
+    const matchDetailColspan = computed<number>(() => headers.length + (props.unfinished ? 0 : 2));
 
     const currentMatchesLowRange = computed<number>(() => {
       if (props.totalMatches === 0) return 0;
@@ -215,6 +287,7 @@ export default defineComponent({
     });
 
     function onPageChanged(page: number): void {
+      expandedMatchId.value = "";
       context.emit("pageChanged", page);
     }
 
@@ -231,9 +304,65 @@ export default defineComponent({
       },
     });
 
-    function goToMatchDetailPage(match: Match): void {
+    watch(matches, (): void => {
+      expandedMatchId.value = "";
+    });
+
+    async function onMatchSelected(match: Match): Promise<void> {
       if (props.unfinished) return;
+      if (!props.inlineDetails) {
+        goToMatchDetailPage(match);
+        return;
+      }
+
+      if (expandedMatchId.value === match.id) {
+        expandedMatchId.value = "";
+        return;
+      }
+
+      expandedMatchId.value = match.id;
+      await loadInlineMatchDetail(match.id);
+    }
+
+    function isAccordionCellActive(): boolean {
+      return props.inlineDetails && !props.unfinished;
+    }
+
+    async function onAccordionCellSelected(match: Match): Promise<void> {
+      if (!isAccordionCellActive()) return;
+
+      await onMatchSelected(match);
+    }
+
+    function goToMatchDetailPage(match: Match): void {
       router.push({ path: `/match/${match.id}` });
+    }
+
+    async function loadInlineMatchDetail(matchId: string): Promise<void> {
+      if (matchDetailsById.value[matchId] || loadingMatchDetailsById.value[matchId]) return;
+
+      loadingMatchDetailsById.value = {
+        ...loadingMatchDetailsById.value,
+        [matchId]: true,
+      };
+
+      const matchDetail = await MatchService.retrieveMatchDetail(matchId);
+      matchDetailsById.value = {
+        ...matchDetailsById.value,
+        [matchId]: matchDetail,
+      };
+      loadingMatchDetailsById.value = {
+        ...loadingMatchDetailsById.value,
+        [matchId]: false,
+      };
+    }
+
+    function isExpanded(match: Match): boolean {
+      return expandedMatchId.value === match.id;
+    }
+
+    function isLoadingMatchDetail(matchId: string): boolean {
+      return loadingMatchDetailsById.value[matchId] === true;
     }
 
     const getWinner = (match: Match): Team => match.teams[0];
@@ -340,6 +469,9 @@ export default defineComponent({
       currentMatchesHighRange,
       onPageChanged,
       getTotalPages,
+      onMatchSelected,
+      onAccordionCellSelected,
+      isAccordionCellActive,
       goToMatchDetailPage,
       getWinner,
       getLoser,
@@ -351,6 +483,11 @@ export default defineComponent({
       getDuration,
       getDurationBarWidth,
       showReplayDownload,
+      isExpanded,
+      isLoadingMatchDetail,
+      matchDetailsById,
+      matchDetailColspan,
+      mdiOpenInNew,
     };
   },
 });
@@ -377,4 +514,9 @@ export default defineComponent({
 .force-no-wrap {
   flex-wrap: nowrap !important;
 }
+
+.match-page-cell {
+  padding-right: 0 !important;
+}
+
 </style>
