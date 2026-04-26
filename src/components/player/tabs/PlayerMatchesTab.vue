@@ -89,6 +89,7 @@
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
       :selectedHeroes="selectedHeroes"
+      inline-details
       @pageChanged="onPageChanged"
     />
   </div>
