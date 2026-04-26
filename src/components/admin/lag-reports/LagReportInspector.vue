@@ -103,7 +103,7 @@ export default defineComponent({
   },
   emits: ["update:inspectorLeftMs", "update:inspectorRightMs"],
   setup(props, { emit }) {
-    const inspectorPlayerTab = ref(0);
+    const inspectorPlayerTab = ref<number | string>(0);
 
     function playerName(battleTag: string): string {
       return battleTag.split("#")[0];
