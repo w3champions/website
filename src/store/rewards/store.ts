@@ -100,20 +100,6 @@ export const useRewardsStore = defineStore("rewards", {
     },
 
     /**
-     * Load available rewards
-     */
-    async loadAvailableRewards(): Promise<void> {
-      try {
-        const rewards = await RewardsService.getAvailableRewards();
-        this.availableRewards = rewards;
-      } catch (error) {
-        console.error("Failed to load available rewards:", error);
-        this.availableRewards = [];
-        throw error;
-      }
-    },
-
-    /**
      * Set Patreon link status
      */
     setPatreonLinkStatus(status: PatreonLinkStatus): void {
