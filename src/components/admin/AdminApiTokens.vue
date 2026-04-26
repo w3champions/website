@@ -178,7 +178,7 @@
                   :disabled="editingToken !== null"
                   hint="e.g., replay, stats"
                   variant="outlined"
-                  @blur="(e) => renameScope(scopeName, e.target.value)"
+                  @blur="(e: FocusEvent) => renameScope(scopeName, (e.target as HTMLInputElement).value)"
                 />
               </v-col>
               <v-col cols="3">

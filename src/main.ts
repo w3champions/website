@@ -4,7 +4,6 @@ import router from "./router";
 import vuetify from "./plugins/vuetify";
 import { createI18n } from "vue-i18n";
 import languages from "@/locales/languages";
-import VueCookies from "vue-cookies";
 import { createPinia } from "pinia";
 import "vuetify/styles";
 import "@/scss/main.scss";
@@ -20,7 +19,6 @@ const i18n = createI18n({
 
 const app = createApp(App);
 
-app.use(VueCookies);
 app.use(i18n);
 app.use(pinia);
 app.use(router);

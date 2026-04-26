@@ -1,20 +1,12 @@
 import { API_URL, PATREON_REDIRECT_URL } from "@/main";
 import { authorizedFetch } from "@/helpers/general";
+import { UserReward } from "@/store/rewards/types";
 
 export interface PatreonLinkStatus {
   isLinked: boolean;
   patreonEmail?: string;
   patreonUserId?: string;
   linkedAt?: string;
-}
-
-export interface UserReward {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  assignedAt: string;
-  expiresAt?: string;
 }
 
 export interface RewardAssignment {
@@ -101,25 +93,6 @@ export default class RewardsService {
 
     if (!response.ok) {
       throw new Error("Failed to get user rewards");
-    }
-
-    return await response.json();
-  }
-
-  /**
-   * Get all available rewards
-   */
-  public static async getAvailableRewards(): Promise<UserReward[]> {
-    const url = `${API_URL}api/rewards`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to get available rewards");
     }
 
     return await response.json();
