@@ -25,7 +25,8 @@
             <tr>
               <td
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 <div
                   v-if="isFfa(item.gameMode)"
@@ -90,7 +91,8 @@
               <td
                 class="text-center"
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 <span>{{ gameModeTranslation(item.gameMode) }}</span>
                 <br />
@@ -99,14 +101,16 @@
               <td
                 class="text-right"
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 {{ getStartTime(item) }}
               </td>
               <td
                 class="text-right"
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 <div class="d-flex flex-column text-right align-end">
                   <span class="number-text">{{ getDuration(item) }}</span>
@@ -117,7 +121,8 @@
                 v-if="!unfinished"
                 class="text-center match-page-cell"
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 <v-tooltip location="top" content-class="w3-tooltip elevation-1">
                   <template v-slot:activator="{ props }">
@@ -140,7 +145,8 @@
                 v-if="!unfinished"
                 class="text-center"
                 :class="{ 'cursor-pointer': isAccordionCellActive() }"
-                @click="onAccordionCellSelected(item)"
+                @click.exact="onMatchSelected(item)"
+                @click.ctrl="openMatchDetailPageInNewTab(item)"
               >
                 <span v-if="showReplayDownload(item)" @click.stop>
                   <download-replay-icon :gameId="item.id" />
@@ -328,14 +334,15 @@ export default defineComponent({
       return props.inlineDetails && !props.unfinished;
     }
 
-    async function onAccordionCellSelected(match: Match): Promise<void> {
-      if (!isAccordionCellActive()) return;
-
-      await onMatchSelected(match);
-    }
-
     function goToMatchDetailPage(match: Match): void {
       router.push({ path: `/match/${match.id}` });
+    }
+
+    function openMatchDetailPageInNewTab(match: Match): void {
+      if (props.unfinished) return;
+
+      const route = router.resolve({ path: `/match/${match.id}` });
+      window.open(route.href, "_blank");
     }
 
     async function loadInlineMatchDetail(matchId: string): Promise<void> {
@@ -470,9 +477,9 @@ export default defineComponent({
       onPageChanged,
       getTotalPages,
       onMatchSelected,
-      onAccordionCellSelected,
       isAccordionCellActive,
       goToMatchDetailPage,
+      openMatchDetailPageInNewTab,
       getWinner,
       getLoser,
       getPlayerTeam,
