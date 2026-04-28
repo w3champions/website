@@ -10,7 +10,7 @@ export default class MatchService {
     page: number,
     gateway: number,
     gameMode: EGameMode,
-    map: string,
+    mapName: string,
     mmr: Mmr,
     duration: { min: number; max: number },
     season: number,
@@ -26,7 +26,17 @@ export default class MatchService {
     const heroQuery = Array.isArray(heroes) && heroes.length > 0
       ? heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("")
       : "";
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&map=${map}${minMmr}${maxMmr}${_durationQuery}&season=${season}${heroQuery}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&mapName=${mapName}${minMmr}${maxMmr}${_durationQuery}&season=${season}${heroQuery}`;
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  public static async retrieveMapNames(
+    season: number,
+    gameMode: EGameMode,
+  ): Promise<string[]> {
+    const url = `${API_URL}api/matches/map-names?season=${season}&gameMode=${gameMode}`;
 
     const response = await fetch(url);
     return await response.json();

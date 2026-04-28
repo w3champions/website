@@ -6,6 +6,7 @@ export type MatchState = {
   matches: Match[];
   allOngoingMatches: Match[];
   matchDetail: MatchDetail;
+  mapNames: string[];
   page: number;
   totalMatches: number;
   loadingMatchDetail: boolean;

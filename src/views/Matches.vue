@@ -90,6 +90,13 @@ export default defineComponent({
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
 
     const maps = computed<Array<MapInfo>>(() => {
+      if (!unfinished.value) {
+        // Ongoing matches need map AND mapName, hence this object with both properties
+        // Finished matches only need mapName, so just pass mapName as the value for both.
+        // Kind of stupid but would be complicated to fix
+        return matchStore.mapNames.map((mapName) => ({ map: mapName, mapName }));
+      }
+
       if (!currentSeason.value) {
         return [];
       }
