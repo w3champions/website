@@ -60,6 +60,7 @@
       <alternate-payments-dialog
         v-model="alternate.dialog"
         :name="alternate.name"
+        @hide="alternate.dialog = false"
       />
       <v-img :src="`/assets/socials/${alternate.name}_button.png`" :alt="alternate.name" />
     </v-card>
