@@ -42,6 +42,12 @@ steps:
       command: 'custom'
       customCommand: 'run lint'
 
+  - task: Npm@1
+    displayName: tsc
+    inputs:
+      command: 'custom'
+      customCommand: 'run type-check-vue'
+
   - task: Docker@2
     inputs:
       containerRegistry: "official-docker-modmoto"
