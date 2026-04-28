@@ -44,6 +44,7 @@
         :crypto="crypto.coin"
         :cryptoName="crypto.name"
         :cryptoAddress="crypto.address"
+        @hide="crypto.dialog = false"
       />
     </v-card>
 
