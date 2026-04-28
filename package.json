@@ -13,7 +13,9 @@
     "lint": "eslint --no-fix --max-warnings=0 src/",
     "lint:fix": "eslint --fix src/",
     "dprint": "dprint check",
-    "dprint:fix": "dprint fmt"
+    "dprint:fix": "dprint fmt",
+    "type-check": "tsc -noEmit",
+    "type-check-vue": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@fontsource-variable/inter": "~5.2.8",
@@ -45,12 +47,12 @@
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
     "debounce": "^3.0.0",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.18.1",
     "marked": "^17.0.5",
     "pinia": "^2.0.32",
     "vue": "^3.4.0",
     "vue-chartjs": "^5.2.0",
-    "vue-cookies": "^1.8.4",
     "vue-country-flag-next": "^2.3.2",
     "vue-i18n": "^11.3.0",
     "vue-router": "^4.2.0",
@@ -58,6 +60,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.24",
     "@types/node": "^20.11.30",
     "@vitejs/plugin-vue": "^6.0.5",
@@ -72,9 +75,10 @@
     "prettier": "2.8.8",
     "sass": "~1.99.0",
     "terser": "^5.29.2",
-    "typescript": "~4.9.5",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^8.0.3",
-    "vite-plugin-vuetify": "2.1.2"
+    "vite-plugin-vuetify": "2.1.2",
+    "vue-tsc": "^3.2.7"
   }
 }
