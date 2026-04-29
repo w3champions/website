@@ -20,9 +20,14 @@
         Match Duration
       </v-card-text>
 
-      <div class="px-4 pb-1 d-flex justify-space-between uniform-values">
-        <span>{{ format(currentMinMax[0]) }}</span>
-        <span>{{ format(currentMinMax[1]) }}</span>
+      <div class="px-4 pb-1 d-flex justify-space-between">
+        <v-chip size="small" color="primary" variant="flat">
+          {{ format(currentMinMax[0]) }}
+        </v-chip>
+
+        <v-chip size="small" color="primary" variant="flat">
+          {{ format(currentMinMax[1]) }}
+        </v-chip>
       </div>
 
       <v-card-text class="pt-0">
