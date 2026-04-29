@@ -15,6 +15,7 @@ export const useMatchStore = defineStore("match", {
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
     mapNames: [],
+    mapNamesCache: {},
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
@@ -96,7 +97,14 @@ export const useMatchStore = defineStore("match", {
         return;
       }
 
+      const cacheKey = `${this.selectedSeason.id}:${this.gameMode}`;
+      if (cacheKey in this.mapNamesCache) {
+        this.SET_MAP_NAMES(this.mapNamesCache[cacheKey]);
+        return;
+      }
+
       const mapNames = await MatchService.retrieveMapNames(this.selectedSeason.id, this.gameMode);
+      this.SET_MAP_NAMES_CACHE(cacheKey, mapNames);
       this.SET_MAP_NAMES(mapNames);
     },
     async setStatus(matchStatus: MatchStatus) {
@@ -169,6 +177,9 @@ export const useMatchStore = defineStore("match", {
     },
     SET_MAP_NAMES(mapNames: string[]): void {
       this.mapNames = mapNames;
+    },
+    SET_MAP_NAMES_CACHE(cacheKey: string, mapNames: string[]): void {
+      this.mapNamesCache[cacheKey] = mapNames;
     },
     SET_LOADING_MATCH_DETAIL(loading: boolean): void {
       this.loadingMatchDetail = loading;
