@@ -1,14 +1,14 @@
 <template>
   <bar-chart-generic
     ref="chartRef"
-    :data="chartData"
-    :options="chartOptions"
-    :plugins="chartPlugins"
+    :data="$props.chartData"
+    :options="$props.chartOptions"
+    :plugins="$props.chartPlugins"
   />
 </template>
 
 <script lang="ts">
-import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend, ChartData } from "chart.js";
+import { BarController, BarElement, CategoryScale, Chart as ChartJS, ChartOptions, Filler, LinearScale, Tooltip, Legend, ChartData, Plugin } from "chart.js";
 import chartJSPluginAnnotation from "chartjs-plugin-annotation";
 import { PropType } from "vue";
 import { Bar as BarChartGeneric } from "vue-chartjs";
@@ -63,12 +63,12 @@ export default {
       required: true,
     },
     chartOptions: {
-      type: Object,
+      type: Object as PropType<ChartOptions<any>>,
       default: defaultOptions,
     },
     chartPlugins: {
-      type: Array,
-      default: (): unknown[] => [],
+      type: Array<Plugin<any>>,
+      default: (): Plugin[] => [],
     },
     // datasetIdKey: {
     //   type: String,

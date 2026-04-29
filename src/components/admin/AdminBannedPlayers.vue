@@ -243,7 +243,7 @@ import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-fun
 import { TranslateResult, useI18n } from "vue-i18n";
 import debounce from "debounce";
 import { DataTableHeader } from "vuetify";
-import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort";
+import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";
 
 type VuetifyTableUpdateOptions = {
   page: number;

@@ -247,14 +247,22 @@ export const usePlayerStore = defineStore("player", {
     SET_PROFILE_STATISTICS_GAME_MODE(gameMode: EGameMode): void {
       this.profileStatisticsGameMode = gameMode;
     },
-    SET_PLAYER_RACE(playerRace: ERaceEnum): void {
+    SET_PLAYER_RACE(playerRace: ERaceEnum | undefined): void {
       this.playerRace = playerRace;
     },
-    SET_OPPONENT_RACE(opponentRace: ERaceEnum): void {
+    SET_OPPONENT_RACE(opponentRace: ERaceEnum | undefined): void {
       this.opponentRace = opponentRace;
     },
     SET_SELECTED_HEROES(heroes: number[]): void {
       this.selectedHeroes = heroes;
+    },
+    RESET_PROFILE_MATCH_FILTERS(): void {
+      this.SET_OPPONENT_TAG("");
+      this.SET_PROFILE_MATCHES_GAME_MODE(EGameMode.UNDEFINED);
+      this.SET_PLAYER_RACE(undefined);
+      this.SET_OPPONENT_RACE(undefined);
+      this.SET_SELECTED_HEROES([]);
+      this.SET_PAGE(1);
     },
     SET_ONGOING_MATCH(match: Match): void {
       this.ongoingMatch = match;

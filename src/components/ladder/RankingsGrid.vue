@@ -146,7 +146,7 @@ import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
 import { useGoTo } from "vuetify";
-import { InternalGoToOptions } from "vuetify/lib/composables/goto";
+import { InternalGoToOptions } from "vuetify/lib/composables/goto.mjs";
 
 export default defineComponent({
   name: "RankingsGrid",

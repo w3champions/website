@@ -562,13 +562,14 @@ export default defineComponent({
       }).length;
     };
 
-    const isStaleSync = (lastSyncAt: string): boolean => {
+    const isStaleSync = (lastSyncAt: string | null): boolean => {
+      if (!lastSyncAt) return false;
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       return new Date(lastSyncAt) < sevenDaysAgo;
     };
 
-    const getSyncStatusClass = (lastSyncAt: string): string => {
+    const getSyncStatusClass = (lastSyncAt: string | null): string => {
       if (isStaleSync(lastSyncAt)) {
         return "text-warning";
       }
