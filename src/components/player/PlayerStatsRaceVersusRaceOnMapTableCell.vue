@@ -6,11 +6,11 @@
       </td>
     </template>
     <div>
-      <span class="number-text w3-won">{{ stats.wins }}W</span>
+      <span class="number-text w3-won">{{ formatTooltipNumber(stats.wins) }}W</span>
       -
-      <span class="number-text w3-lost">{{ stats.losses }}L</span>
+      <span class="number-text w3-lost">{{ formatTooltipNumber(stats.losses) }}L</span>
       &nbsp;&nbsp;
-      {{ $t("common.total") }} <span class="number-text">{{ stats.games }}</span>
+      {{ $t("common.total") }} <span class="number-text">{{ formatTooltipNumber(stats.games) }}</span>
     </div>
   </v-tooltip>
 </template>
@@ -44,8 +44,15 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    ignoreCompareRace: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
+    const formatTooltipNumber = (value: number): string => Intl.NumberFormat().format(value);
+
     const toWinText = computed<string>(() => {
       if (isComparingSameRace.value || props.stats.games == 0) {
         return "-";
@@ -73,6 +80,10 @@ export default defineComponent({
     });
 
     const isComparingSameRace = computed<boolean>(() => {
+      if (props.ignoreCompareRace) {
+        return false;
+      }
+
       // We must explicitly check nil here because compareRace could be RANDOM and !0 is true
       if (isNil(props.compareRace) || !props.stats) {
         return false;
@@ -82,6 +93,7 @@ export default defineComponent({
     });
 
     return {
+      formatTooltipNumber,
       toWinClass,
       toWinText,
     };

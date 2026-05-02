@@ -55,6 +55,13 @@
                   :winThreshold="0.51"
                   :lossThreshold="0.49"
                 />
+                <player-stats-race-versus-race-on-map-table-cell
+                  :stats="item.overall"
+                  :compareRace="item.race"
+                  :winThreshold="0.51"
+                  :lossThreshold="0.49"
+                  :ignoreCompareRace="true"
+                />
               </tr>
             </template>
           </v-data-table>
@@ -69,7 +76,7 @@ import { computed, defineComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import { Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
+import { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { DataTableHeader } from "vuetify";
@@ -118,6 +125,11 @@ export default defineComponent({
         sortable: false,
         align: "end",
       },
+      {
+        title: t("common.overall"),
+        sortable: false,
+        align: "end",
+      },
     ];
 
     const mmrs = computed<{ league: TranslateResult; mmr: number }[]>(() => {
@@ -146,7 +158,7 @@ export default defineComponent({
       return a.race - b.race;
     };
 
-    const raceWinrate = computed<Ratio[]>(() => {
+    const raceWinrate = computed<(Ratio & { overall: RaceWinLoss })[]>(() => {
       if (!statsPerRaceAndMap.value || !statsPerRaceAndMap.value[0] || !statsPerRaceAndMap.value[0].patchToStatsPerModes[selectedPatch.value]) {
         return [];
       }
@@ -162,8 +174,30 @@ export default defineComponent({
       // Sort both the rows and columns by race.
       return statsPerMapAndRace.ratio
         .sort(sortByRaceWithRandomLast)
-        .map((item) => ({ ...item, winLosses: [...item.winLosses].sort(sortByRaceWithRandomLast) }));
+        .map((item) => {
+          const winLosses = [...item.winLosses].sort(sortByRaceWithRandomLast);
+
+          return {
+            ...item,
+            winLosses,
+            overall: buildOverallWinLoss(item.race, winLosses),
+          };
+        });
     });
+
+    function buildOverallWinLoss(race: ERaceEnum, winLosses: RaceWinLoss[]): RaceWinLoss {
+      const wins = winLosses.reduce((total, entry) => total + entry.wins, 0);
+      const losses = winLosses.reduce((total, entry) => total + entry.losses, 0);
+      const games = winLosses.reduce((total, entry) => total + entry.games, 0);
+
+      return {
+        race,
+        wins,
+        losses,
+        games,
+        winrate: games > 0 ? wins / games : 0,
+      };
+    }
 
     const patches = computed<string[]>(() => {
       if (statsPerRaceAndMap.value[0]) {
