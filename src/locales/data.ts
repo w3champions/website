@@ -311,6 +311,8 @@ const data = {
       starttime: "Start time",
       duration: "Duration",
       replay: "Replay",
+      match: "Match",
+      openMatch: "Open match page",
       showHeroIcons: "Show Heroes",
       hideHeroIcons: "Hide Heroes",
     },
