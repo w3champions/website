@@ -14,6 +14,8 @@ export const useMatchStore = defineStore("match", {
     matches: [] as Match[],
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
+    mapNames: [],
+    mapNamesCache: {},
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
@@ -47,6 +49,13 @@ export const useMatchStore = defineStore("match", {
           return;
         }
       } else {
+        // If the selected map isn't available in this season, reset the map filter
+        const map = this.mapNames.includes(this.map) ? this.map : "Overall";
+
+        if (map !== this.map) {
+          this.SET_MAP(map);
+        }
+
         response = await MatchService.retrieveMatches(
           this.page - 1,
           rootStateStore.gateway,
@@ -82,15 +91,34 @@ export const useMatchStore = defineStore("match", {
       this.SET_MATCH_DETAIL(response);
       this.SET_LOADING_MATCH_DETAIL(false);
     },
+    async loadMapNames() {
+      if (this.status === MatchStatus.onGoing) {
+        this.SET_MAP_NAMES([]);
+        return;
+      }
+
+      const cacheKey = `${this.selectedSeason.id}:${this.gameMode}`;
+      if (cacheKey in this.mapNamesCache) {
+        this.SET_MAP_NAMES(this.mapNamesCache[cacheKey]);
+        return;
+      }
+
+      const mapNames = await MatchService.retrieveMapNames(this.selectedSeason.id, this.gameMode);
+      this.SET_MAP_NAMES_CACHE(cacheKey, mapNames);
+      this.SET_MAP_NAMES(mapNames);
+    },
     async setStatus(matchStatus: MatchStatus) {
       this.SET_STATUS(matchStatus);
+      this.SET_MAP("Overall");
       this.SET_PAGE(1);
+      await this.loadMapNames();
       await this.loadMatches();
     },
     async setGameMode(gameMode: EGameMode) {
       this.SET_GAME_MODE(gameMode);
       this.SET_MAP("Overall");
       this.SET_PAGE(1);
+      await this.loadMapNames();
       await this.loadMatches();
     },
     async setMap(map: string) {
@@ -116,6 +144,7 @@ export const useMatchStore = defineStore("match", {
     async setSeason(season: Season) {
       this.SET_SEASON(season);
       this.SET_PAGE(1);
+      await this.loadMapNames();
       await this.loadMatches();
     },
     async setPlayerScores(playerScores: PlayerScore[]) {
@@ -145,6 +174,12 @@ export const useMatchStore = defineStore("match", {
     },
     SET_MATCH_DETAIL(matchDetail: MatchDetail): void {
       this.matchDetail = matchDetail;
+    },
+    SET_MAP_NAMES(mapNames: string[]): void {
+      this.mapNames = mapNames;
+    },
+    SET_MAP_NAMES_CACHE(cacheKey: string, mapNames: string[]): void {
+      this.mapNamesCache[cacheKey] = mapNames;
     },
     SET_LOADING_MATCH_DETAIL(loading: boolean): void {
       this.loadingMatchDetail = loading;
