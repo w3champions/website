@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" max-width="500" @click:outside="show = false">
+  <v-dialog max-width="500">
     <v-card>
       <v-card-title class="justify-center">
         {{ cryptoName }}
@@ -29,7 +29,7 @@
 
         <v-row class="mt-2">
           <v-spacer />
-          <v-btn @click.stop="show = false">Close</v-btn>
+          <v-btn @click.stop="emit('hide')">Close</v-btn>
           <v-spacer />
         </v-row>
       </v-container>
@@ -37,34 +37,16 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
+<script setup lang="ts">
 import CopyButton from "./CopyButton.vue";
 
-export default defineComponent({
-  name: "CryptoDialog",
-  components: {
-    CopyButton
-  },
-  props: {
-    crypto: { type: String, required: true },
-    cryptoName: { type: String, required: true },
-    cryptoAddress: { type: String, required: true },
-    value: { type: Boolean, required: false, default: false },
-  },
-  setup(props, context) {
-    const show = computed<boolean>({
-      get(): boolean {
-        return props.value;
-      },
-      set(val: boolean): void {
-        context.emit("input", val);
-      },
-    });
+defineProps<{
+  crypto: string;
+  cryptoName: string;
+  cryptoAddress: string;
+}>();
 
-    return {
-      show,
-    };
-  },
-});
+const emit = defineEmits<{
+  hide: [void];
+}>();
 </script>
