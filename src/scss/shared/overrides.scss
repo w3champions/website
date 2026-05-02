@@ -31,8 +31,9 @@ h3 {
   background-color: transparent !important;
 }
 
-// Nested cards and expansion panels should be transparent when inside containers
-.v-expansion-panel, .v-sheet {
+// Nested cards and expansion panels should be transparent when inside containers,
+// but pickers should not be affected because they should appear on top.
+.v-expansion-panel, .v-sheet:not(.v-picker) {
   background-color: transparent !important;
 }
 

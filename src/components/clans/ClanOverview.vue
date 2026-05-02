@@ -35,86 +35,92 @@
       <br />
       <div v-if="playersClan.isSuccesfullyFounded">
         <table class="custom-table">
-          <tr @click="goToPlayer(playersClan.chiefTain)">
-            <td>
-              <v-row class="justify-space-between align-center" no-gutters>
-                <v-col class="pa-0">
-                  <clan-role-icon :role="roleEnums.ChiefTain" />
-                  <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(playersClan.chiefTain)">
-                    {{ battleTagToName(playersClan.chiefTain) }}
-                  </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)" content-class="w3-tooltip elevation-1">
-                    <template v-slot:activator="{ props }">
-                      <div style="display: inline">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-bind="props" />
-                      </div>
-                    </template>
-                    <div>1 vs 1</div>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
-            </td>
-          </tr>
+          <tbody>
+            <tr @click="goToPlayer(playersClan.chiefTain)">
+              <td>
+                <v-row class="justify-space-between align-center" no-gutters>
+                  <v-col class="pa-0">
+                    <clan-role-icon :role="roleEnums.ChiefTain" />
+                    <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(playersClan.chiefTain)">
+                      {{ battleTagToName(playersClan.chiefTain) }}
+                    </span>
+                    <v-tooltip location="top" :disabled="!getLeagueOrder(playersClan.chiefTain)" content-class="w3-tooltip elevation-1">
+                      <template v-slot:activator="{ props }">
+                        <div style="display: inline">
+                          <league-icon class="ml-4 mb-1" :league="getLeagueOrder(playersClan.chiefTain)" v-bind="props" />
+                        </div>
+                      </template>
+                      <div>1 vs 1</div>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </td>
+            </tr>
+          </tbody>
         </table>
         <table class="custom-table">
-          <tr v-for="shaman in shamans" :key="shaman" @click="goToPlayer(shaman)">
-            <td>
-              <v-row class="justify-space-between align-center" no-gutters>
-                <v-col>
-                  <clan-role-icon :role="roleEnums.Shaman" />
-                  <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(shaman)">
-                    {{ battleTagToName(shaman) }}
-                  </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)" content-class="w3-tooltip elevation-1">
-                    <template v-slot:activator="{ props }">
-                      <div style="display: inline">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-bind="props" />
-                      </div>
-                    </template>
-                    <div>1 vs 1</div>
-                  </v-tooltip>
-                </v-col>
-                <v-col class="text-right">
-                  <member-management-menu
-                    v-if="loggedInPlayerIsChiefTain"
-                    :battle-tag="shaman"
-                    :role="defineRole(shaman)"
-                    :logged-in-user-role="loggedInRole"
-                  />
-                </v-col>
-              </v-row>
-            </td>
-          </tr>
+          <tbody>
+            <tr v-for="shaman in shamans" :key="shaman" @click="goToPlayer(shaman)">
+              <td>
+                <v-row class="justify-space-between align-center" no-gutters>
+                  <v-col>
+                    <clan-role-icon :role="roleEnums.Shaman" />
+                    <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(shaman)">
+                      {{ battleTagToName(shaman) }}
+                    </span>
+                    <v-tooltip location="top" :disabled="!getLeagueOrder(shaman)" content-class="w3-tooltip elevation-1">
+                      <template v-slot:activator="{ props }">
+                        <div style="display: inline">
+                          <league-icon class="ml-4 mb-1" :league="getLeagueOrder(shaman)" v-bind="props" />
+                        </div>
+                      </template>
+                      <div>1 vs 1</div>
+                    </v-tooltip>
+                  </v-col>
+                  <v-col class="text-right">
+                    <member-management-menu
+                      v-if="loggedInPlayerIsChiefTain"
+                      :battle-tag="shaman"
+                      :role="defineRole(shaman)"
+                      :logged-in-user-role="loggedInRole"
+                    />
+                  </v-col>
+                </v-row>
+              </td>
+            </tr>
+          </tbody>
         </table>
         <table class="custom-table">
-          <tr v-for="member in members" :key="member" @click="goToPlayer(member)">
-            <td>
-              <v-row class="justify-space-between align-center" no-gutters>
-                <v-col>
-                  <clan-role-icon :role="roleEnums.Member" />
-                  <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(member)">
-                    {{ battleTagToName(member) }}
-                  </span>
-                  <v-tooltip location="top" :disabled="!getLeagueOrder(member)" content-class="w3-tooltip elevation-1">
-                    <template v-slot:activator="{ props }">
-                      <div style="display: inline">
-                        <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-bind="props" />
-                      </div>
-                    </template>
-                    <div>1 vs 1</div>
-                  </v-tooltip>
-                </v-col>
-                <v-col class="text-right">
-                  <member-management-menu
-                    v-if="loggedInPlayerIsShaman"
-                    :battle-tag="member"
-                    :role="defineRole(member)"
-                    :logged-in-user-role="loggedInRole"
-                  />
-                </v-col>
-              </v-row>
-            </td>
-          </tr>
+          <tbody>
+            <tr v-for="member in members" :key="member" @click="goToPlayer(member)">
+              <td>
+                <v-row class="justify-space-between align-center" no-gutters>
+                  <v-col>
+                    <clan-role-icon :role="roleEnums.Member" />
+                    <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(member)">
+                      {{ battleTagToName(member) }}
+                    </span>
+                    <v-tooltip location="top" :disabled="!getLeagueOrder(member)" content-class="w3-tooltip elevation-1">
+                      <template v-slot:activator="{ props }">
+                        <div style="display: inline">
+                          <league-icon class="ml-4 mb-1" :league="getLeagueOrder(member)" v-bind="props" />
+                        </div>
+                      </template>
+                      <div>1 vs 1</div>
+                    </v-tooltip>
+                  </v-col>
+                  <v-col class="text-right">
+                    <member-management-menu
+                      v-if="loggedInPlayerIsShaman"
+                      :battle-tag="member"
+                      :role="defineRole(member)"
+                      :logged-in-user-role="loggedInRole"
+                    />
+                  </v-col>
+                </v-row>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div v-if="!playersClan.isSuccesfullyFounded">
@@ -122,11 +128,13 @@
           {{ $t("components_clans_clanoverview.signeecounter") }} ({{ playersClan.foundingFathers.length }} / 2):
         </v-card-title>
         <table class="custom-table">
-          <tr v-for="member in playersClan.foundingFathers" :key="member">
-            <td>
-              <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
-            </td>
-          </tr>
+          <tbody>
+            <tr v-for="member in playersClan.foundingFathers" :key="member">
+              <td>
+                <span class="cursor-pointer w3-mid-emphasis" @click="goToPlayer(member)">{{ battleTagToName(member) }}</span>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <pending-invites-panel v-if="loggedInPlayerIsShaman" />
