@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "npm run dev",
-    "dev": "vite -d --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
+    "debug": "vite -d --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite build && vite preview",
     "build:prod": "npm run generate-locales && vite build",
