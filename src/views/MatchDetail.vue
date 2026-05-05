@@ -113,6 +113,15 @@
               />
             </v-col>
           </v-row>
+          <match-head-to-head
+            v-if="isCompleteGame && !matchIsFFA && playerBattleTag && opponentBattleTag"
+            :player-battle-tag="playerBattleTag"
+            :opponent-battle-tag="opponentBattleTag"
+            :current-match-id="matchId"
+            :season="season"
+            :gateway="match.gateWay"
+            :match-is-f-f-a="matchIsFFA"
+          />
           <v-row v-if="isCompleteGame && matchIsFFA" class="mb-3">
             <v-col cols="2" />
             <v-col>
@@ -163,6 +172,7 @@ import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
+import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
 import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
@@ -177,6 +187,7 @@ export default defineComponent({
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
+    MatchHeadToHead,
   },
   props: {
     matchId: {
@@ -197,6 +208,14 @@ export default defineComponent({
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
+    });
+
+    const playerBattleTag = computed<string>(() => {
+      return match.value?.teams?.[0]?.players?.[0]?.battleTag ?? "";
+    });
+
+    const opponentBattleTag = computed<string>(() => {
+      return match.value?.teams?.[1]?.players?.[0]?.battleTag ?? "";
     });
 
     const isJubileeGame = computed<boolean>(() => {
@@ -328,7 +347,9 @@ export default defineComponent({
       ffaLoser3,
       rowLabels,
       ffaPlayers,
-      battleTagToName
+      battleTagToName,
+      playerBattleTag,
+      opponentBattleTag,
     };
   },
 });

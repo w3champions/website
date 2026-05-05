@@ -485,6 +485,25 @@ const en = {
     warden: "Warden",
   },
 
+  components_matchdetails_matchheadtohead: {
+    headToHead: "Head-to-Head History",
+    gamesPlayed: "games this season",
+    last50: "Last 50 games this season",
+    recentForm: "Recent Form",
+    oldest: "oldest",
+    newest: "newest",
+    byMap: "By Map",
+    gamePatterns: "Game Patterns",
+    avgDuration: "Avg. Duration",
+    shortest: "Shortest",
+    longest: "Longest",
+    showAll: "Show all",
+    hideShort: "Filter short",
+    filterTooltip: "Toggle games under 2 minutes (disconnects/leaves)",
+    previousMatches: "Previous Matches",
+    noGames: "No matches between these players this season",
+  },
+
   matchStatuses: {
     onGoing: "Now Playing",
     past: "Finished",
