@@ -88,7 +88,14 @@
               <v-progress-circular v-else-if="hasModerationPermission && loadingModerationStatus" indeterminate size="20" width="2" class="ml-3" />
 
               <v-spacer />
-              <v-btn variant="text" border @click="goToProfile(battleTag)">Go to profile</v-btn>
+              <v-btn
+                variant="text"
+                border
+                :href="getProfileUrl(battleTag)"
+                @click.left.exact.prevent="goToProfile(battleTag)"
+              >
+                Go to profile
+              </v-btn>
             </div>
           </v-list-item>
         </v-list>
@@ -176,7 +183,7 @@
 import { computed, defineComponent, ref, onMounted, useTemplateRef } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 import { getProfileUrl } from "@/helpers/url-functions";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
 import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
@@ -193,6 +200,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const adminStore = useAdminStore();
     const oauthStore = useOauthStore();
 
@@ -218,6 +226,17 @@ export default defineComponent({
       }).catch(() => null);
     }
 
+    function updateUrl(): void {
+      router.replace({
+        query: {
+          ...route.query,
+          player: selectedPlayer.value || undefined,
+          depth: searchDepth.value !== 1 ? String(searchDepth.value) : undefined,
+          explain: generateExplanation.value ? "1" : undefined,
+        },
+      }).catch(() => null);
+    }
+
     function totalLogins(list: BattleTagLoginCount[]): number {
       return list.reduce((acc, curr) => acc + curr.numberOfLogins, 0);
     }
@@ -234,6 +253,8 @@ export default defineComponent({
     async function executeSearch(): Promise<void> {
       if (!selectedPlayer.value) return;
       if (selectedIdentifierType.value != "battleTag") return; // Only battle tags are searchable
+
+      updateUrl();
 
       smurfResults.value = await adminStore.querySmurfsForIdentifier(selectedIdentifierType.value, selectedPlayer.value, searchDepth.value, generateExplanation.value);
 
@@ -252,6 +273,22 @@ export default defineComponent({
 
     onMounted(async () => {
       availableIdentifierTypes.value = await adminStore.getSmurfIdentifierTypes();
+
+      const playerParam = route.query.player as string | undefined;
+      const depthParam = route.query.depth as string | undefined;
+      const explainParam = route.query.explain as string | undefined;
+
+      if (!playerParam) return;
+
+      selectedPlayer.value = playerParam;
+      if (depthParam) searchDepth.value = parseInt(depthParam, 10) || 1;
+      if (explainParam) generateExplanation.value = explainParam === "1";
+
+      if (playerSearchRef.value) {
+        playerSearchRef.value.selected = selectedPlayer.value;
+      }
+
+      await executeSearch();
     });
 
     function playerFound(bTag: string): void {
@@ -261,12 +298,14 @@ export default defineComponent({
     function searchCleared(): void {
       selectedPlayer.value = "";
       smurfResults.value = undefined;
+      router.replace({ query: { ...route.query, player: undefined, depth: undefined, explain: undefined } }).catch(() => null);
     }
 
     return {
       smurfResults,
       searchSmurfsFromClick,
       goToProfile,
+      getProfileUrl,
       generateExplanation,
       searchDepth,
       selectedIdentifierType,

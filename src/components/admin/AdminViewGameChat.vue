@@ -34,7 +34,7 @@
                       <v-btn size="x-large" class="bg-error text-w3-race-bg" @click="dialog = false">Cancel</v-btn>
                       <v-spacer />
                     </v-card-actions>
-                    <match-detail-view :matchId="matchId" />
+                    <match-detail-view :matchId="matchId" :preview-mode="true" />
                   </v-container>
                 </v-card>
               </v-dialog>
