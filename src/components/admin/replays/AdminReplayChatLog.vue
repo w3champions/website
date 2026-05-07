@@ -3,7 +3,7 @@
     <v-card-title>Chat Log</v-card-title>
     <v-card-text>
       <v-row>
-        <v-col v-if="showControls">
+        <v-col>
           <v-switch
             v-model="openGameDetail"
             label="Show Game Detail"
@@ -11,7 +11,7 @@
             class="text-medium-emphasis"
           />
         </v-col>
-        <v-col v-if="showControls">
+        <v-col>
           <download-replay-icon :gameId="matchId" />
           <span>Download Replay</span>
         </v-col>
@@ -45,11 +45,6 @@ export default defineComponent({
     matchId: {
       type: String,
       required: true,
-    },
-    showControls: {
-      type: Boolean,
-      required: false,
-      default: true,
     },
   },
   setup() {
