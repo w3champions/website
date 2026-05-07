@@ -56,6 +56,26 @@
               <v-col cols="1" />
               <div class="subicon">
                 <download-replay-icon :gameId="matchId" />
+                <v-tooltip
+                  v-if="showChatLogShortcut"
+                  location="left"
+                  content-class="w3-tooltip elevation-1"
+                >
+                  <template v-slot:activator="{ props: activatorProps }">
+                    <span v-bind="activatorProps">
+                      <v-btn
+                        class="ma-2 w3-gray-gold-text"
+                        icon
+                        variant="outlined"
+                        size="small"
+                        @click="openChatLogDialog"
+                      >
+                        <v-icon size="x-large">{{ mdiChatProcessingOutline }}</v-icon>
+                      </v-btn>
+                    </span>
+                  </template>
+                  <span>View Chat Log</span>
+                </v-tooltip>
               </div>
             </v-row>
           </v-card-title>
@@ -115,7 +135,7 @@
             </v-col>
           </v-row>
           <match-head-to-head
-            v-if="isCompleteGame && isOneVsOne"
+            v-if="isCompleteGame && isOneVsOne && !previewMode"
             :player-battle-tag="playerBattleTag"
             :opponent-battle-tag="opponentBattleTag"
             :current-match-id="matchId"
@@ -158,13 +178,19 @@
             <v-col cols="1" />
           </v-row>
         </v-card>
+
+        <v-dialog v-model="chatLogDialog" width="1500">
+          <v-card>
+            <admin-replay-chat-log-messages v-if="chatLogDialog" :matchId="matchId" />
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch, toRef } from "vue";
+import { computed, defineComponent, ref, watch, toRef } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
@@ -179,6 +205,10 @@ import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
 import { GAME_MODES_FFA } from "@/store/constants";
+import { useOauthStore } from "@/store/oauth/store";
+import { EPermission } from "@/store/admin/permission/types";
+import AdminReplayChatLogMessages from "@/components/admin/replays/AdminReplayChatLogMessages.vue";
+import { mdiChatProcessingOutline } from "@mdi/js";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -189,15 +219,23 @@ export default defineComponent({
     HostIcon,
     DownloadReplayIcon,
     MatchHeadToHead,
+    AdminReplayChatLogMessages,
   },
   props: {
     matchId: {
       type: String,
       required: true,
     },
+    previewMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const matchStore = useMatchStore();
+    const oauthStore = useOauthStore();
+    const chatLogDialog = ref<boolean>(false);
     const match = computed<Match>(() => matchStore.matchDetail.match);
     const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
     const playedDate = computed<string>(() => formatTimestampStringToDateTime(match.value.startTime));
@@ -206,6 +244,9 @@ export default defineComponent({
     const season = computed<number>(() => matchStore.matchDetail.match.season ?? 1);
     const isCompleteGame = computed<PlayerScore[]>(() => matchStore.matchDetail.playerScores);
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
+    const permissions = computed<string[]>(() => oauthStore.permissions);
+    const hasModerationPermission = computed<boolean>(() => permissions.value.includes(EPermission[EPermission.Moderation]));
+    const showChatLogShortcut = computed<boolean>(() => hasModerationPermission.value && !props.previewMode);
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
@@ -451,6 +492,10 @@ export default defineComponent({
       if (props.matchId !== requestedId) return;
     }
 
+    function openChatLogDialog(): void {
+      chatLogDialog.value = true;
+    }
+
     const rowLabels = [
       "",
       "Units killed",
@@ -484,6 +529,10 @@ export default defineComponent({
       battleTagToName,
       playerBattleTag,
       opponentBattleTag,
+      chatLogDialog,
+      showChatLogShortcut,
+      openChatLogDialog,
+      mdiChatProcessingOutline,
     };
   },
 });
@@ -506,7 +555,9 @@ export default defineComponent({
 }
 
 .subicon {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   position: absolute;
   top: 8px;
   right: 8px;
