@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
@@ -93,7 +93,38 @@ export default defineComponent({
     const selectedPatch = ref<string>("All");
     const selectedMmr = ref<number>(0);
     const selectedMap = ref<TranslateResult>(t("common.overall"));
+    const hasAutoSelectedPatch = ref(false);
     const statsPerRaceAndMap = computed<StatsPerWinrate[]>(() => overallStatsStore.statsPerMapAndRace);
+
+    function isNumericPatch(patch: string): boolean {
+      return patch
+        .split(".")
+        .every((segment) => /^\d+$/.test(segment));
+    }
+
+    function comparePatchesDescending(a: string, b: string): number {
+      const aIsNumeric = isNumericPatch(a);
+      const bIsNumeric = isNumericPatch(b);
+
+      if (aIsNumeric && !bIsNumeric) return -1;
+      if (!aIsNumeric && bIsNumeric) return 1;
+      if (!aIsNumeric && !bIsNumeric) return a.localeCompare(b);
+
+      const aSegments = a.split(".").map((segment) => Number.parseInt(segment, 10));
+      const bSegments = b.split(".").map((segment) => Number.parseInt(segment, 10));
+      const maxLength = Math.max(aSegments.length, bSegments.length);
+
+      for (let i = 0; i < maxLength; i++) {
+        const aValue = aSegments[i] ?? 0;
+        const bValue = bSegments[i] ?? 0;
+
+        if (aValue !== bValue) {
+          return bValue - aValue;
+        }
+      }
+
+      return bSegments.length - aSegments.length;
+    }
 
     const headers: DataTableHeader[] = [
       {
@@ -147,7 +178,10 @@ export default defineComponent({
     const maps = computed<{ mapId: string; mapName: TranslateResult }[]>(() => {
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
-      return stats.patchToStatsPerModes[selectedPatch.value].map((r) => {
+      const patchStats = stats.patchToStatsPerModes[selectedPatch.value];
+      if (!patchStats) return [];
+
+      return patchStats.map((r) => {
         return { mapId: r.mapName, mapName: t("mapNames." + r.mapName) };
       });
     });
@@ -214,10 +248,28 @@ export default defineComponent({
           }
         }
 
-        return allowedPatches;
+        const sortedPatches = allowedPatches
+          .filter((patch) => patch !== "All")
+          .sort(comparePatchesDescending);
+
+        return ["All", ...sortedPatches];
       }
       return [];
     });
+
+    watch(
+      patches,
+      (availablePatches) => {
+        if (hasAutoSelectedPatch.value || availablePatches.length === 0) {
+          return;
+        }
+
+        const latestNumericPatch = availablePatches.find((patch) => isNumericPatch(patch));
+        selectedPatch.value = latestNumericPatch ?? availablePatches[0];
+        hasAutoSelectedPatch.value = true;
+      },
+      { immediate: true }
+    );
 
     function getNumberOfMatches(patchStats: StatsPerMapAndRace[]) {
       const dict: { [key: string]: number } = {};
